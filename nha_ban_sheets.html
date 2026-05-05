@@ -1140,7 +1140,7 @@
       // Cố gắng copy vào clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(msg).then(() => {
-          alert('Đã sao chép thông tin căn nhà. Bạn chỉ cần "Dán" vào tin nhắn Zalo để gửi cho Khang nhé!');
+          alert('Đã copy mã sản phẩm -> bạn nhớ dán vào Zalo để gửi cho Khang nhé!');
           window.location.href = `https://zalo.me/${SDT}`;
         }).catch(() => {
           window.location.href = `https://zalo.me/${SDT}`;
