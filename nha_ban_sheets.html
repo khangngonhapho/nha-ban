@@ -814,7 +814,7 @@
       </div>
       <div class="scta">
         <a href="tel:0979841573" class="cb ccall" id="mCall">📞 Gọi ngay</a>
-        <a href="https://zalo.me/0979841573" class="cb czalo" id="mZalo">💬 Zalo tư vấn</a>
+        <button class="cb czalo" id="mZalo" onclick="">💬 Hỏi về căn này</button>
       </div>
     </div>
   </div>
@@ -1087,6 +1087,12 @@
     <div class="ib"><div class="il">Hướng</div><div class="iv">${p.huong}</div></div>
     <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>`;
       document.getElementById('mD').textContent = p.m;
+      
+      // Cấu hình nút hỏi Zalo
+      const btnZalo = document.getElementById('mZalo');
+      btnZalo.textContent = `💬 Hỏi về mã #${p.id}`;
+      btnZalo.onclick = () => askZalo(p.id, p.t);
+      
       document.getElementById('ov').classList.add('open');
       document.getElementById('sbody').scrollTop = 0;
       document.body.style.overflow = 'hidden';
@@ -1125,6 +1131,23 @@
           <span class="share-count" id="shareCount">0</span>
         </button>
       `);
+    }
+
+    // Xử lý hỏi Zalo thông minh
+    function askZalo(id, title) {
+      const msg = `Chào Khang Ngô Nhà Phố, tôi quan tâm căn nhà mã #${id}: ${title}. Tư vấn giúp tôi nhé!`;
+      
+      // Cố gắng copy vào clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã sao chép thông tin căn nhà. Bạn chỉ cần "Dán" vào tin nhắn Zalo để gửi cho Khang nhé!');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
     }
 
     // Khởi động
