@@ -24,12 +24,10 @@
       --safe-bot: env(safe-area-inset-bottom, 0px);
     }
 
-    /* Mặc định ẩn Filter & Stats (Sẽ hiện ra nếu là Admin) */
+    /* 2026-05-05: Cache Busting Fix */
     .tabs, .stats { display: none !important; }
     
-    /* Chỉ hiện khi body có class .is-admin */
-    body.is-admin .tabs { display: flex !important; }
-    body.is-admin .stats { display: flex !important; }
+    body.is-admin .tabs, body.is-admin .stats { display: flex !important; }
     
     body:not(.is-admin) header { padding-bottom: 14px; }
 
