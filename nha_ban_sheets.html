@@ -347,15 +347,16 @@
 
     .mid {
       position: absolute;
-      top: 7px;
-      right: 7px;
-      background: rgba(0,0,0,0.6);
+      top: 0;
+      left: 0;
+      background: var(--gold);
       color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 0 0 12px 0;
       z-index: 4;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     }
 
     .info {
@@ -983,12 +984,10 @@
       <div class="crow" onclick="openS('${p.id}')">
         <div class="ibox">
           <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
-          <span class="lg">Giảm chào</span>
-          <span class="lc">Chuẩn</span>
-          <span class="mid">ID: ${p.id}</span>
+          <span class="mid">MÃ: ${p.id}</span>
         </div>
         <div class="info">
-          <div style="font-size: 10px; color: var(--sub); font-weight: 600; margin-bottom: 2px;">MÃ: ${p.id}</div>
+          <div style="font-size: 12px; color: var(--gold); font-weight: 800; margin-bottom: 2px;">MÃ NHÀ: ${p.id}</div>
           <div class="ititle">${p.t}</div>
           <div class="chips">
             <span class="chip">📐 ${p.dt}m²</span>
@@ -1076,6 +1075,7 @@
       // Load ảnh lớn w1200 cho album chi tiết
       buildG(p.imgs.map(url => fixImgUrl(url, 'w1200')));
       document.getElementById('mG').innerHTML = `
+    <div class="ib"><div class="il">Mã nhà</div><div class="iv" style="color:var(--gold)">${p.id}</div></div>
     <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
     <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
     <div class="ib"><div class="il">Đơn giá</div><div class="iv" style="color:var(--gold);font-weight:800">${p.giabq}</div></div>
