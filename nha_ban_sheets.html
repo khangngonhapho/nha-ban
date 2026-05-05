@@ -784,32 +784,43 @@
       if (old) old.remove();
 
       // Callback toàn cục, Google sẽ gọi hàm này khi load xong
-      window.__gsCallback = function(response) {
+      window.__gsCallback = function (response) {
         try {
           const rows = response.table.rows;
           DATA = rows
             .filter(r => r.c[0] && r.c[0].v)
-            .map(r => ({
-              id:   cv(r.c[0]),
-              t:    cv(r.c[1]),
-              dt:   cv(r.c[2]),
-              tang: cv(r.c[3]),
-              mat:  cv(r.c[4]),
-              gia:  cv(r.c[5]),
-              q:    String(cv(r.c[6])).trim().toLowerCase(),
-              ql:   cv(r.c[7]),
-              m:    cv(r.c[8]),
-              imgs: [cv(r.c[9]), cv(r.c[10]), cv(r.c[11]), cv(r.c[12])].map(fixImgUrl).filter(Boolean)
-            }));
+            .map(r => {
+              const dt = parseFloat(cv(r.c[2])) || 0;
+              const gia = parseFloat(cv(r.c[5])) || 0;
+              const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0; // Giá tỷ -> quy ra triệu/m2
+              return {
+                id: cv(r.c[0]),
+                t: cv(r.c[1]),
+                dt: cv(r.c[2]),
+                tang: cv(r.c[3]),
+                mat: cv(r.c[4]),
+                gia: cv(r.c[5]),
+                q: String(cv(r.c[6])).trim().toLowerCase(),
+                ql: cv(r.c[7]),
+                loai_hinh: cv(r.c[8]) || 'Hẻm', // I
+                huong: cv(r.c[9]) || '-', // J
+                duong: cv(r.c[10]) || '-', // K
+                rong_hem: cv(r.c[11]) || '-', // L
+                tinh_trang: cv(r.c[12]) || '-', // M
+                giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+                m: cv(r.c[13]), // N
+                imgs: [cv(r.c[14]), cv(r.c[15]), cv(r.c[16]), cv(r.c[17])].map(fixImgUrl).filter(Boolean) // O,P,Q,R
+              };
+            });
           updateStats();
           render(curFilter);
-        } catch(e) {
+        } catch (e) {
           showError('Lỗi parse dữ liệu: ' + e.message);
         }
       };
 
       const s = document.createElement('script');
-      s.id  = '_gs';
+      s.id = '_gs';
       s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback`;
       s.onerror = () => showError('Không kết nối được Google Sheets. Kiểm tra SHEET_ID và quyền truy cập.');
       document.head.appendChild(s);
@@ -941,10 +952,15 @@
       document.getElementById('mG').innerHTML = `
     <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
     <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
-    <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang} tầng</div></div>
-    <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat}</div></div>
+    <div class="ib"><div class="il">Đơn giá</div><div class="iv" style="color:var(--gold);font-weight:800">${p.giabq}</div></div>
     <div class="ib"><div class="il">Quận</div><div class="iv">${p.ql}</div></div>
-    <div class="ib"><div class="il">Loại</div><div class="iv">HXH</div></div>`;
+    <div class="ib"><div class="il">Loại</div><div class="iv">${p.loai_hinh}</div></div>
+    <div class="ib"><div class="il">Đường</div><div class="iv">${p.duong}</div></div>
+    <div class="ib"><div class="il">Rộng</div><div class="iv">${p.rong_hem} m</div></div>
+    <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
+    <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat}</div></div>
+    <div class="ib"><div class="il">Hướng</div><div class="iv">${p.huong}</div></div>
+    <div class="ib"><div class="il" style="grid-column: span 2">Tình trạng</div><div class="iv" style="grid-column: span 2">${p.tinh_trang}</div></div>`;
       document.getElementById('mD').textContent = p.m;
       document.getElementById('ov').classList.add('open');
       document.getElementById('sbody').scrollTop = 0;
