@@ -307,8 +307,8 @@
       background: #f0f0f2;
     }
 
-    /* Hiệu ứng Shimmer */
-    .ibox::after {
+    /* Hiệu ứng Shimmer - Chỉ hiện khi CHƯA có class .is-loaded */
+    .ibox:not(.is-loaded)::after {
       content: ""; position: absolute; inset: 0;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
       transform: translateX(-100%); animation: shimmer 1.5s infinite;
@@ -969,7 +969,7 @@
       ${isAdmin ? `<input type="checkbox" class="card-sel" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
       <div class="crow" onclick="openS('${p.id}')">
         <div class="ibox">
-          <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.classList.add('loaded')">
+          <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
           <span class="lg">Giảm chào</span>
           <span class="lc">Chuẩn</span>
         </div>
