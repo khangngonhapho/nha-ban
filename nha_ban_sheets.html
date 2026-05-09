@@ -30,6 +30,8 @@
     /* Ward tabs: ẩn mặc định, JS tự bật khi có dữ liệu */
     #wardTabs { display: none !important; }
     body.is-admin #wardTabs.has-wards { display: flex !important; }
+    #duongTabs { display: none !important; }
+    body.is-admin #duongTabs.has-duong { display: flex !important; }
 
     body:not(.is-admin) header { padding-bottom: 14px; }
 
@@ -70,7 +72,7 @@
       transition: max-height .32s cubic-bezier(.4,0,.2,1);
     }
     body.is-admin .filter-panel { display: block; }
-    .filter-panel.open { max-height: 240px; }
+    .filter-panel.open { max-height: 320px; }
 
     .filter-section-lbl {
       font-size: 10px; font-weight: 700;
@@ -825,6 +827,8 @@
       </div>
       <div class="filter-section-lbl" id="wardLbl" style="display:none">Phường</div>
       <div class="tabs" id="wardTabs"></div>
+      <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
+      <div class="tabs" id="duongTabs"></div>
     </div>
   </header>
 
@@ -921,6 +925,7 @@
     let DATA = [];
     let curFilter = 'all';
     let curWard = 'all';
+    let curDuong = 'all';
     let filterOpen = false;
     const SELECTED_IDS = new Set();
 
@@ -969,7 +974,7 @@
                 phuong: cv(r.c[8]) || '-', // I (MỚI)
                 loai_hinh: cv(r.c[9]) || 'Hẻm', // J
                 huong: cv(r.c[10]) || '-', // K
-                duong: cv(r.c[11]) || '-', // L
+                duong_truoc_nha: cv(r.c[11]) || '-', // L — đường trước nhà
                 rong_hem: cv(r.c[12]) || '-', // M
                 tinh_trang: cv(r.c[13]) || '-', // N
                 danh_gia: cv(r.c[14]) || '', // O
@@ -999,6 +1004,7 @@
           DATA.sort((a, b) => (parseFloat(b.gia) || 0) - (parseFloat(a.gia) || 0));
 
           buildWardTabs();
+          buildDuongTabs();
           updateStats();
           render(curFilter);
         } catch (e) {
@@ -1058,20 +1064,42 @@
       const wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
       const wt = document.getElementById('wardTabs');
       const wl = document.getElementById('wardLbl');
-      if (!wards.length) {
-        wt.classList.remove('has-wards');
-        wl.style.display = 'none';
-        return;
-      }
+      if (!wards.length) { wt.classList.remove('has-wards'); wl.style.display = 'none'; return; }
       wl.style.display = 'block';
       wt.innerHTML = `<button class="tab ${curWard==='all'?'on':''}" onclick="setWard('all',this)">Tất cả</button>`
         + wards.map(w => `<button class="tab ${curWard===w?'on':''}" onclick="setWard('${w}',this)">${w}</button>`).join('');
       wt.classList.add('has-wards');
     }
 
+    // ── Build duong_truoc_nha tabs dynamically ──
+    function buildDuongTabs() {
+      let pool = DATA;
+      if (curFilter !== 'all' && curFilter !== 'ngon' && curFilter !== 'loi') pool = DATA.filter(p => p.q === curFilter);
+      if (curWard !== 'all') pool = pool.filter(p => p.phuong === curWard);
+      const duongs = [...new Set(pool.map(p => p.duong_truoc_nha).filter(d => d && d !== '-'))].sort();
+      const dt = document.getElementById('duongTabs');
+      const dl = document.getElementById('duongLbl');
+      if (!duongs.length) { dt.classList.remove('has-duong'); dl.style.display = 'none'; return; }
+      dl.style.display = 'block';
+      dt.innerHTML = `<button class="tab ${curDuong==='all'?'on':''}" onclick="setDuong('all',this)">Tất cả</button>`
+        + duongs.map(d => `<button class="tab ${curDuong===d?'on':''}" onclick="setDuong('${d}',this)">${d}</button>`).join('');
+      dt.classList.add('has-duong');
+    }
+
     function setWard(w, el) {
       curWard = w;
+      curDuong = 'all'; // reset đường khi đổi phường
       document.querySelectorAll('#wardTabs .tab').forEach(t => t.classList.remove('on'));
+      el.classList.add('on');
+      buildDuongTabs();
+      updateFilterSummary();
+      updateStats();
+      render(curFilter);
+    }
+
+    function setDuong(d, el) {
+      curDuong = d;
+      document.querySelectorAll('#duongTabs .tab').forEach(t => t.classList.remove('on'));
       el.classList.add('on');
       updateFilterSummary();
       updateStats();
@@ -1082,8 +1110,9 @@
       const names = {all:'Tất cả',q3:'Quận 3',pn:'Phú Nhuận',tb:'Tân Bình',bt:'Bình Thạnh',gv:'Gò Vấp',q10:'Quận 10',ngon:'💎 Ngon',loi:'⚠️ Lỗi'};
       let s = names[curFilter] || curFilter;
       if (curWard !== 'all') s += ' · P.' + curWard;
+      if (curDuong !== 'all') s += ' · ' + curDuong;
       document.getElementById('filterSummary').textContent = s;
-      document.getElementById('filterBtn').classList.toggle('active', curFilter !== 'all' || curWard !== 'all' || filterOpen);
+      document.getElementById('filterBtn').classList.toggle('active', curFilter !== 'all' || curWard !== 'all' || curDuong !== 'all' || filterOpen);
     }
 
     function render(f) {
@@ -1099,6 +1128,8 @@
       });
       // Áp dụng filter phường
       if (curWard !== 'all') arr = arr.filter(p => p.phuong === curWard);
+      // Áp dụng filter đường trước nhà
+      if (curDuong !== 'all') arr = arr.filter(p => p.duong_truoc_nha === curDuong);
 
       if (!arr.length) {
         list.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;">Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.</div>');
@@ -1122,7 +1153,7 @@
           <div class="chips">
             <span class="chip">📐 ${p.dt}m²</span>
             <span class="chip">🏠 ${p.tang} tầng</span>
-            <span class="chip">🛣️ ${p.duong}</span>
+            <span class="chip">🛣️ ${p.duong_truoc_nha}</span>
           </div>
           <div class="pr"><span class="pv">${p.gia} tỷ</span><span class="pu">VND</span></div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
@@ -1144,10 +1175,12 @@
 
     function setF(f, el) {
       curFilter = f;
-      curWard = 'all'; // reset phường khi đổi quận
+      curWard = 'all';
+      curDuong = 'all';
       document.querySelectorAll('#districtTabs .tab').forEach(t => t.classList.remove('on'));
       el.classList.add('on');
       buildWardTabs();
+      buildDuongTabs();
       updateFilterSummary();
       updateStats();
       render(f);
@@ -1218,7 +1251,7 @@
     <div class="ib"><div class="il">Quận/TP</div><div class="iv">${p.ql}</div></div>
     <div class="ib"><div class="il">Phường</div><div class="iv">${p.phuong}</div></div>
     <div class="ib"><div class="il">Loại</div><div class="iv">${p.loai_hinh}</div></div>
-    <div class="ib"><div class="il">Đường</div><div class="iv">${p.duong}</div></div>
+    <div class="ib"><div class="il">Đường trước</div><div class="iv">${p.duong_truoc_nha}</div></div>
     <div class="ib"><div class="il">Rộng hẻm</div><div class="iv">${p.rong_hem} m</div></div>
     <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
     <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat} m</div></div>
