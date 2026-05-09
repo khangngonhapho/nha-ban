@@ -937,6 +937,9 @@
             DATA = fullList;
           }
 
+          // Sắp xếp dữ liệu theo giá từ cao xuống thấp
+          DATA.sort((a, b) => (parseFloat(b.gia) || 0) - (parseFloat(a.gia) || 0));
+
           updateStats();
           render(curFilter);
         } catch (e) {
