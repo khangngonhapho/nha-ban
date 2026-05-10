@@ -148,7 +148,11 @@
       padding: calc(var(--safe-top) + 14px) 16px 0;
       position: sticky;
       top: 0;
-      z-index: 90
+      z-index: 90;
+      transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    header.hide {
+      transform: translateY(-100%);
     }
 
     .hdr-top {
@@ -1545,6 +1549,24 @@
         window.location.href = `https://zalo.me/${SDT}`;
       }
     }
+
+    // Xử lý ẩn hiện Header khi cuộn trang
+    let lastScrollY = window.scrollY;
+    const headerEl = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY <= 0) {
+        headerEl.classList.remove('hide');
+        lastScrollY = currentScrollY;
+        return;
+      }
+      if (currentScrollY > lastScrollY && currentScrollY > 80 && !filterOpen) {
+        headerEl.classList.add('hide');
+      } else if (currentScrollY < lastScrollY) {
+        headerEl.classList.remove('hide');
+      }
+      lastScrollY = currentScrollY;
+    }, { passive: true });
 
     // Khởi động
     updateFavBtnUI();
