@@ -1658,7 +1658,7 @@
       document.getElementById('shareCount').textContent = SELECTED_IDS.size;
     }
 
-    function generateShareLink() {
+    async function generateShareLink() {
       try {
         if (SELECTED_IDS.size === 0) {
           alert('Vui lòng chọn ít nhất 1 căn nhà!');
@@ -1666,7 +1666,20 @@
         }
         const ids = Array.from(SELECTED_IDS);
         const baseUrl = window.location.origin + window.location.pathname;
-        const shareUrl = `${baseUrl}?s=${ids.join(',')}`;
+        let shareUrl = `${baseUrl}?s=${ids.join(',')}`;
+
+        // Nếu URL quá dài (>1800 ký tự), tự động rút gọn
+        if (shareUrl.length > 1800) {
+          const btn = document.querySelector('.share-btn-float');
+          if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
+          try {
+            const resp = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(shareUrl)}`);
+            if (resp.ok) {
+              shareUrl = await resp.text();
+            }
+          } catch(_) { /* Dùng link dài nếu rút gọn thất bại */ }
+          if (btn) { btn.style.opacity = ''; btn.style.pointerEvents = ''; }
+        }
 
         // Dùng Web Share API trên điện thoại (native share sheet)
         if (navigator.share) {
