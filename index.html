@@ -1099,21 +1099,30 @@
     
     // Logic chia sẻ: giải mã danh sách ID từ URL
     let sharedIds = null;
+    const shareBitmask = urlParams.get('b'); // Format mới: bitmask
     if (shareToken) {
       try {
-        // Format mới: danh sách ID phân cách bằng dấu phẩy (không cần base64)
         if (shareToken.includes(',') || !shareToken.includes('[')) {
           sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
         } else {
-          // Format cũ (base64 JSON) - backward compatible
           const decoded = atob(shareToken);
           const parsed = JSON.parse(decoded);
           if (Array.isArray(parsed)) sharedIds = parsed;
         }
       } catch (e) {
-        // Nếu atob lỗi, thử split trực tiếp
         sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
       }
+    }
+    // Hàm giải mã bitmask (gọi sau khi load data)
+    const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    function decodeBitmask(encoded, allIds) {
+      let bits = '';
+      for (const ch of encoded) {
+        const val = B64.indexOf(ch);
+        if (val < 0) continue;
+        bits += val.toString(2).padStart(6, '0');
+      }
+      return allIds.filter((id, i) => bits[i] === '1');
     }
 
     //  ⚙️  CẤU HÌNH 
@@ -1247,10 +1256,14 @@
             });
 
           // Lọc dữ liệu nếu là khách được chia sẻ link
+          if (shareBitmask) {
+            // Giải mã bitmask từ URL
+            const allIds = fullList.map(p => String(p.id));
+            sharedIds = decodeBitmask(shareBitmask, allIds);
+          }
           if (sharedIds) {
             DATA = fullList.filter(p => sharedIds.map(String).includes(String(p.id)));
           } else if (!isAdmin) {
-            // Nếu không phải admin và không có link share
             DATA = []; 
             showError('Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.');
           } else {
@@ -1664,33 +1677,32 @@
           alert('Vui lòng chọn ít nhất 1 căn nhà!');
           return;
         }
-        const ids = Array.from(SELECTED_IDS);
-        const baseUrl = window.location.origin + window.location.pathname;
-        let shareUrl = `${baseUrl}?s=${ids.join(',')}`;
 
-        // Nếu URL quá dài (>1800 ký tự), tự động rút gọn
-        if (shareUrl.length > 1800) {
-          const btn = document.querySelector('.share-btn-float');
-          if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
-          try {
-            const resp = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(shareUrl)}`);
-            if (resp.ok) {
-              shareUrl = await resp.text();
-            }
-          } catch(_) { /* Dùng link dài nếu rút gọn thất bại */ }
-          if (btn) { btn.style.opacity = ''; btn.style.pointerEvents = ''; }
+        // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
+        const allIds = DATA.map(p => String(p.id));
+        let bits = '';
+        allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
+        // Pad to multiple of 6
+        while (bits.length % 6) bits += '0';
+        let encoded = '';
+        for (let i = 0; i < bits.length; i += 6) {
+          encoded += B64[parseInt(bits.substr(i, 6), 2)];
         }
 
-        // Dùng Web Share API trên điện thoại (native share sheet)
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}?b=${encoded}`;
+        const count = SELECTED_IDS.size;
+
+        // Dùng Web Share API trên điện thoại
         if (navigator.share) {
           navigator.share({
-            title: 'Khang Ngô Nhà Phố - ' + ids.length + ' căn',
+            title: 'Khang Ngô Nhà Phố - ' + count + ' căn',
             url: shareUrl
           }).catch(() => {});
           return;
         }
 
-        // Desktop: copy bằng execCommand (đồng bộ, không bị treo)
+        // Desktop: copy
         const ta = document.createElement('textarea');
         ta.value = shareUrl;
         ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
@@ -1698,7 +1710,7 @@
         ta.focus(); ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        alert('Đã copy link gửi khách!\n(' + ids.length + ' căn)\n\nDán link này vào Zalo để gửi cho khách nhé.');
+        alert('Đã copy link gửi khách!\n(' + count + ' căn)\n\nDán link này vào Zalo để gửi cho khách nhé.');
       } catch(e) {
         alert('Có lỗi xảy ra: ' + e.message);
       }
