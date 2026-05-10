@@ -454,6 +454,8 @@
       font-size: 17px;
       font-weight: 800;
       color: var(--sub);
+      word-break: break-all;
+      padding-right: 8px;
     }
 
     /* Nhãn đánh giá hàng */
@@ -531,12 +533,14 @@
       border: 1.5px solid var(--red);
       color: var(--red);
       border-radius: 20px;
-      padding: 7px 18px;
+      padding: 7px 14px;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       min-height: 44px;
-      font-family: inherit
+      font-family: inherit;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .bsee:active {
@@ -941,7 +945,7 @@
         <div class="stitle" id="mT"></div>
         <button class="xbtn" onclick="closeS()">✕</button>
       </div>
-      <div id="mID" style="padding: 0 20px 4px; font-size: 13px; color: var(--sub); font-weight: 600; text-align: right;"></div>
+      <div id="mID" style="padding: 0 20px 4px; font-size: 17px; color: var(--sub); font-weight: 800; text-align: right; word-break: break-all;"></div>
       <div class="sbody" id="sbody">
         <div class="gwrap" id="gw">
           <div class="gtrack" id="gt"></div>
