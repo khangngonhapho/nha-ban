@@ -1323,6 +1323,15 @@
       btn.textContent = filterOpen ? '✕ Đóng' : '🎚 Bộ lọc';
       btn.classList.toggle('active', filterOpen);
     }
+    function closeFilter() {
+      if (!filterOpen) return;
+      filterOpen = false;
+      document.getElementById('filterPanel').classList.remove('open');
+      const btn = document.getElementById('filterBtn');
+      btn.textContent = '🎚 Bộ lọc';
+      const anyActive = !!(selDistricts.size||selWards.size||selDuongs.size||selGia.size||selDanhGia.size);
+      btn.classList.toggle('active', anyActive);
+    }
 
     // ── Build ward tabs dynamically ──
     function buildWardTabs() {
@@ -1776,13 +1785,21 @@
         lastScrollY = currentScrollY;
         return;
       }
-      if (currentScrollY > lastScrollY && currentScrollY > 80 && !filterOpen) {
+      // Cuộn xuống: ẩn header và tự động đóng bộ lọc
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
         headerEl.classList.add('hide');
+        closeFilter();
       } else if (currentScrollY < lastScrollY) {
         headerEl.classList.remove('hide');
       }
       lastScrollY = currentScrollY;
     }, { passive: true });
+
+    // Bấm ra ngoài header → tự động đóng bộ lọc
+    document.addEventListener('click', (e) => {
+      if (!filterOpen) return;
+      if (!e.target.closest('header')) closeFilter();
+    });
 
     // Khởi động
     updateFavBtnUI();
