@@ -1212,7 +1212,7 @@
         });
       });
     }
-    function onSearchInput() { updateStats(); applyFilter(); }
+    function onSearchInput() { updateStats(); applyFilter(); saveState(); }
 
     function getFiltered() {
       let a = DATA;
@@ -1314,9 +1314,12 @@
 
           // Sắp xếp được xử lý động trong render()
 
+          restoreState();
+
           buildWardTabs();
           buildDuongTabs();
           buildHuongTabs();
+          updateFilterSummary();
           updateStats();
           render();
         } catch (e) {
@@ -1341,6 +1344,59 @@
       <h3>🏠 Thông báo</h3>
       <p style="font-size: 15px; font-weight: 500;">Vui lòng liên hệ <b>Khang Ngô Nhà Phố</b> để được cung cấp thông tin.</p>
     </div>`);
+    }
+
+    // ── Local Storage State ──
+    function saveState() {
+      if (!isAdmin || shareBitmask || shareToken) return;
+      const state = {
+        districts: [...selDistricts],
+        wards: [...selWards],
+        duongs: [...selDuongs],
+        huongs: [...selHuong],
+        gia: [...selGia],
+        danhGia: [...selDanhGia],
+        selectedIds: [...SELECTED_IDS],
+        sort: currentSort,
+        favOnly: showFavOnly,
+        search: document.getElementById('searchInput')?.value || ''
+      };
+      localStorage.setItem('adminState', JSON.stringify(state));
+    }
+
+    function restoreState() {
+      if (!isAdmin || shareBitmask || shareToken) return;
+      try {
+        const saved = localStorage.getItem('adminState');
+        if (!saved) return;
+        const state = JSON.parse(saved);
+        
+        state.districts?.forEach(x => selDistricts.add(x));
+        state.wards?.forEach(x => selWards.add(x));
+        state.duongs?.forEach(x => selDuongs.add(x));
+        state.huongs?.forEach(x => selHuong.add(x));
+        state.gia?.forEach(x => selGia.add(x));
+        state.danhGia?.forEach(x => selDanhGia.add(x));
+        state.selectedIds?.forEach(x => SELECTED_IDS.add(x));
+        
+        if (state.sort) currentSort = state.sort;
+        if (state.favOnly !== undefined) showFavOnly = state.favOnly;
+        
+        const sInput = document.getElementById('searchInput');
+        if (sInput && state.search) sInput.value = state.search;
+        
+        syncTabUI('districtTabs', selDistricts);
+        syncTabUI('giaTabs', selGia);
+        syncTabUI('danhGiaTabs', selDanhGia);
+        
+        document.getElementById('sortToggleBtn').textContent = currentSort === 'desc' ? '⬇' : '⬆';
+        updateFavBtnUI();
+        
+        const sc = document.getElementById('shareCount');
+        if (sc) sc.textContent = SELECTED_IDS.size;
+      } catch (e) {
+        console.error('Lỗi restore state:', e);
+      }
     }
 
     function updateStats() {
@@ -1460,6 +1516,7 @@
       const anyActive = !!(selDistricts.size||selWards.size||selDuongs.size||selHuong.size||selGia.size||selDanhGia.size);
       document.getElementById('filterBtn').classList.toggle('active', anyActive || filterOpen);
       document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';
+      saveState();
     }
 
     function resetFilters() {
@@ -1475,6 +1532,7 @@
     function toggleSort() {
       currentSort = currentSort === 'desc' ? 'asc' : 'desc';
       document.getElementById('sortToggleBtn').textContent = currentSort === 'desc' ? '⬇' : '⬆';
+      saveState();
       render();
     }
 
@@ -1488,6 +1546,7 @@
     function toggleFavFilter() {
       showFavOnly = !showFavOnly;
       updateFavBtnUI();
+      saveState();
       updateStats(); applyFilter();
     }
 
@@ -1496,7 +1555,7 @@
       const lbl = list.querySelector('.sec-lbl');
       list.innerHTML = '';
       if (lbl) list.appendChild(lbl);
-      const arr = getFiltered().slice().sort((a, b) => {
+      const arr = DATA.slice().sort((a, b) => {
         const ga = parseFloat(a.gia) || 0, gb = parseFloat(b.gia) || 0;
         return currentSort === 'asc' ? ga - gb : gb - ga;
       });
@@ -1545,6 +1604,7 @@
         frag.appendChild(c);
       });
       list.appendChild(frag);
+      applyFilter();
     }
 
     // Lọc nhanh bằng ẩn/hiện card (không tạo lại DOM)
@@ -1740,6 +1800,7 @@
       if (el.checked) SELECTED_IDS.add(String(id));
       else SELECTED_IDS.delete(String(id));
       document.getElementById('shareCount').textContent = SELECTED_IDS.size;
+      saveState();
     }
 
     async function generateShareLink() {
@@ -1818,6 +1879,7 @@
       const btn = document.getElementById('selAllBtn');
       btn.textContent = allSelected ? '☐' : '☑';
       btn.classList.toggle('all-on', !allSelected);
+      saveState();
     }
 
     // Xử lý hỏi Zalo thông minh
