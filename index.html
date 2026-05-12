@@ -998,7 +998,7 @@
 </head>
 
 <body>
-
+  <div id="welcomeBanner" style="display:none; background: #27ae60; color: white; padding: 10px 16px; font-weight: 600; font-size: 14px; text-align: center;"></div>
   <header>
     <div class="hdr-top">
       <div style="display: flex; align-items: center; gap: 10px;">
@@ -1129,12 +1129,52 @@
 
   <script>
     // ============================================================
-    //  ⚙️  KIỂM TRA QUYỀN TRUY CẬP (Chạy ngay lập tức)
+    //  ⚙️  KIỂM TRA QUYỀN TRUY CẬP & GIAI ĐOẠN 1 TRACKING
     // ============================================================
     const ADMIN_PASSWORD = 'trang'; 
     const urlParams = new URLSearchParams(window.location.search);
     const isAdmin = urlParams.get('pwd') === ADMIN_PASSWORD;
     const shareToken = urlParams.get('s');
+    
+    // Giai đoạn 1: Giải mã tên khách hàng
+    let customerName = "";
+    const customerToken = urlParams.get('c');
+    if (customerToken) {
+      try {
+        customerName = decodeURIComponent(escape(window.atob(customerToken)));
+      } catch(e) {
+        customerName = "Khách Hàng";
+      }
+    }
+
+    // Giai đoạn 1: Hàm Tracking gửi data về Google Apps Script
+    // Đã cấu hình Tracking API thực tế
+    const TRACKING_URL = 'https://script.google.com/macros/s/AKfycbxsFXAQiX11LaSAslvefiv7ncWcHVgeyyd8Gi2pgRAneHhyZpE0AZKjP4rRrHD15oNN1g/exec';
+    
+    function trackAction(action, details = "") {
+      if (isAdmin || !customerName) return; // Không track Admin
+      try {
+        fetch(TRACKING_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer: customerName,
+            action: action,
+            details: details
+          })
+        }).catch(e => {});
+      } catch (error) {}
+    }
+
+    if (customerName) {
+      const banner = document.getElementById('welcomeBanner');
+      if (banner) {
+        banner.innerHTML = `👋 Xin chào <b>${customerName}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;
+        banner.style.display = 'block';
+      }
+    }
+
     if (isAdmin) document.body.classList.add('is-admin');
     
     // Logic chia sẻ: giải mã danh sách ID từ URL
@@ -1756,6 +1796,10 @@
     function openS(id) {
       const p = DATA.find(x => String(x.id) === String(id));
       if (!p) return;
+      
+      // Tracking: Xem chi tiết căn nhà
+      trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
+
       document.getElementById('mT').textContent = p.t;
       document.getElementById('mID').textContent = `#${p.id}`;
       // Ưu tiên video luôn lên đầu mảng trong gallery chi tiết
@@ -1848,12 +1892,51 @@
       }
     }
 
+    // Giai đoạn 1: Tạo Link kèm Tên Khách
+    function promptGenerateLink() {
+      if (SELECTED_IDS.size === 0) {
+        alert('Vui lòng chọn ít nhất 1 căn nhà để tạo link!');
+        return;
+      }
+      const cName = prompt("Nhập tên Khách hàng (Sẽ lưu vào Tracking):");
+      if (!cName) return; // Hủy nếu không nhập
+
+      try {
+        const allIds = DATA.map(p => String(p.id));
+        let bits = '';
+        allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
+        while (bits.length % 6) bits += '0';
+        let encoded = '';
+        for (let i = 0; i < bits.length; i += 6) {
+          encoded += B64[parseInt(bits.substr(i, 6), 2)];
+        }
+
+        // Encode tên khách
+        const encodedName = window.btoa(unescape(encodeURIComponent(cName)));
+
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}?b=${encoded}&c=${encodedName}`;
+        const count = SELECTED_IDS.size;
+
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert(`Đã copy link cá nhân hoá cho khách: ${cName}!\n(Gồm ${count} căn)\n\nDán link này vào Zalo để gửi cho khách nhé.`);
+      } catch (e) {
+        alert('Có lỗi xảy ra: ' + e.message);
+      }
+    }
+
     // Thêm nút tạo link nếu là admin
     if (isAdmin) {
       document.body.insertAdjacentHTML('beforeend', `
         <button class="selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
-        <button class="share-btn-float" onclick="generateShareLink()">
-          🔗
+        <button class="share-btn-float" onclick="promptGenerateLink()" style="background:#27ae60;">
+          🔗 Tạo Link Khách
           <span class="share-count" id="shareCount">0</span>
         </button>
       `);
