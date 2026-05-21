@@ -1342,6 +1342,7 @@
       window.__gsCallback = function (response) {
         try {
           const rows = response.table.rows;
+          const QUAN_FULL = { pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp' };
           const fullList = rows
             .filter(r => r.c[0] && r.c[0].v)
             .map((r, index) => {
@@ -1358,7 +1359,7 @@
                 mat: cv(r.c[4]),
                 gia: cv(r.c[5]),
                 q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
-                ql: cleanQ.toUpperCase(),
+                ql: QUAN_FULL[cleanQ.toLowerCase()] || cleanQ.toUpperCase(),
                 phuong: cv(r.c[7]) || '-', // H
                 loai_hinh: cv(r.c[8]) || 'Hẻm', // I
                 huong: cv(r.c[9]) || '-', // J
