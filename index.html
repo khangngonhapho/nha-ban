@@ -1315,8 +1315,8 @@
     }
     const SELECTED_IDS = new Set();
 
-    // Lấy giá trị ô từ Google Sheets JSON (xử lý null)
-    function cv(cell) { return cell ? (cell.v ?? '') : ''; }
+    // Lấy giá trị ô từ Google Sheets JSON (xử lý null do lỗi mixed type của gviz)
+    function cv(cell) { return cell ? (cell.v ?? cell.f ?? '') : ''; }
 
     // Tự động convert link Google Drive → ảnh có thể nhúng với kích thước tùy chỉnh
     function fixImgUrl(url, sz = 'w800') {
