@@ -1875,8 +1875,8 @@
         const bVis = (b.includes('facebook.com') || b.includes('fb.watch') || b.includes('fb.gg')) ? 1 : 0;
         return bVis - aVis;
       });
-      // Load ảnh w800 cho album chi tiết (đủ sắc nét cho mọi màn hình kể cả Retina 2x, tránh lỗi đen trên mobile)
-      buildG(sortedImgs.map(url => fixImgUrl(url, 'w800')));
+      // Load ảnh lớn w1200 cho album chi tiết
+      buildG(sortedImgs.map(url => fixImgUrl(url, 'w1200')));
       document.getElementById('mG').innerHTML = `
     <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
     <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
