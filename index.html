@@ -1349,7 +1349,17 @@
               const dt = parseFloat(cv(r.c[2])) || 0;
               const gia = parseFloat(cv(r.c[5])) || 0;
               const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0; // Giá tỷ -> quy ra triệu/m2
-              const cleanQ = String(cv(r.c[6])).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+              let rawQ = cv(r.c[6]);
+              // Fallback: Nếu gviz trả về rỗng (do lỗi trộn lẫn số "10" và chữ "PN" trong cùng cột Quận)
+              // Ta sẽ tự trích xuất từ cột Tiêu đề (c[1])
+              if (!rawQ) {
+                const titleLower = String(cv(r.c[1])).toLowerCase();
+                if (titleLower.includes('phú nhuận') || titleLower.includes('pn')) rawQ = 'PN';
+                else if (titleLower.includes('tân bình') || titleLower.includes('tb')) rawQ = 'TB';
+                else if (titleLower.includes('bình thạnh') || titleLower.includes('bt')) rawQ = 'BT';
+                else if (titleLower.includes('gò vấp') || titleLower.includes('gv')) rawQ = 'GV';
+              }
+              const cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
               return {
                 temp_id: index + 1, // Mã tạm theo số tăng dần, bắt đầu từ 1
                 id: cv(r.c[0]),
