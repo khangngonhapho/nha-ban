@@ -6,6 +6,14 @@
 // 0. CẤU HÌNH API KEY (Thay thế bằng OpenAI API Key thực tế của bạn)
 var OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Điền OpenAI API Key của bạn vào đây
 
+// Tự động tối ưu bảo mật: Ưu tiên lấy API Key từ Script Properties (Cài đặt -> Thuộc tính dự án) để tránh lộ key trên Git
+if (typeof PropertiesService !== 'undefined') {
+  var savedKey = PropertiesService.getScriptProperties().getProperty('OPENAI_API_KEY');
+  if (savedKey && savedKey.trim().indexOf('sk-') === 0) {
+    OPENAI_API_KEY = savedKey.trim();
+  }
+}
+
 /**
  * Hàm tạo Menu khi mở Sheet Source
  */
