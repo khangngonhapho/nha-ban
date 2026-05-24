@@ -2364,9 +2364,7 @@
 
     function fetchFacadeImages(token) {
       if (!token) return;
-      const PRIVATE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
-      const range = 'Source!D2:AM';
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${PRIVATE_SHEET_ID}/values/${encodeURIComponent(range)}`;
+      const url = `/api/get-facade-images`;
 
       fetch(url, {
         headers: {

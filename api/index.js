@@ -4,6 +4,40 @@ const path = require('path');
 const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
 
 module.exports = async (req, res) => {
+  const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  const pathname = urlObj.pathname;
+
+  // Xử lý secure API endpoint trung gian lấy ảnh mặt tiền
+  if (pathname === '/api/get-facade-images') {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthorized: Missing or invalid token' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const PRIVATE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+    const range = 'Source!D2:AM';
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${PRIVATE_SHEET_ID}/values/${encodeURIComponent(range)}`;
+
+    try {
+      const sheetsResponse = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!sheetsResponse.ok) {
+        return res.status(sheetsResponse.status).json({ error: `Google API returned status ${sheetsResponse.status}` });
+      }
+
+      const data = await sheetsResponse.json();
+      return res.status(200).json(data);
+    } catch (err) {
+      console.error('Error fetching facade images in serverless function:', err);
+      return res.status(500).json({ error: 'Internal Server Error fetching Google Sheets API' });
+    }
+  }
+
   let html = '';
   try {
     html = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf8');
