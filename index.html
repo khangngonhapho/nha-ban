@@ -1365,12 +1365,21 @@
       let a = DATA;
       const sv = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
       if (sv) {
-        a = a.filter(p => 
-          String(p.id).toLowerCase().includes(sv) ||
-          p.t.toLowerCase().includes(sv) ||
-          p.duong_truoc_nha.toLowerCase().includes(sv) ||
-          p.phuong.toLowerCase().includes(sv)
-        );
+        a = a.filter(p => {
+          const idMatch = String(p.id).toLowerCase().includes(sv);
+          const tMatch = p.t.toLowerCase().includes(sv);
+          const dMatch = p.duong_truoc_nha.toLowerCase().includes(sv);
+          const pMatch = p.phuong.toLowerCase().includes(sv);
+          const qMatch = p.q.toLowerCase().includes(sv) || 
+                         p.ql.toLowerCase().includes(sv) ||
+                         (sv === 'phú nhuận' && p.q === 'pn') ||
+                         (sv === 'tân bình' && p.q === 'tb') ||
+                         (sv === 'bình thạnh' && p.q === 'bt') ||
+                         (sv === 'gò vấp' && p.q === 'gv') ||
+                         (sv === 'quận 3' && p.q === 'q3') ||
+                         (sv === 'quận 10' && p.q === 'q10');
+          return idMatch || tMatch || dMatch || pMatch || qMatch;
+        });
       }
       if (showFavOnly) a = a.filter(p => favs.has(String(p.id)));
       if (selDistricts.size) a = a.filter(p => selDistricts.has(p.q));
@@ -1450,7 +1459,7 @@
                 mat: cv(r.c[4]),
                 gia: cv(r.c[5]),
                 q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
-                ql: QUAN_FULL[cleanQ.toLowerCase()] || cleanQ.toUpperCase(),
+                ql: cleanQ.toUpperCase(),
                 phuong: cv(r.c[7]) || '-', // H
                 loai_hinh: cv(r.c[8]) || 'Hẻm', // I
                 huong: cv(r.c[9]) || '-', // J
