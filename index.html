@@ -228,7 +228,7 @@
     .search-bar input {
       width: 100%;
       box-sizing: border-box;
-      padding: 10px 14px 10px 36px;
+      padding: 10px 36px;
       border: 1px solid rgba(255,255,255,0.25);
       border-radius: 20px;
       background: rgba(255,255,255,0.15);
@@ -254,6 +254,26 @@
       height: 16px;
       color: rgba(255,255,255,0.8);
       pointer-events: none;
+    }
+    .search-bar .search-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 5;
+      transition: color 0.15s;
+    }
+    .search-bar .search-clear:hover {
+      color: #fff;
     }
 
     .tabs {
@@ -1020,6 +1040,7 @@
     <div class="search-bar">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input type="text" id="searchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()">
+      <span class="search-clear" id="searchClear" onclick="clearSearchInput()" style="display:none">✕</span>
     </div>
     <!-- Admin: nút mở bộ lọc -->
     <div class="filter-bar">
@@ -1291,7 +1312,26 @@
         });
       });
     }
-    function onSearchInput() { updateStats(); applyFilter(); saveState(); }
+    function toggleSearchClearBtn() {
+      const sInput = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('searchClear');
+      if (sInput && clearBtn) {
+        clearBtn.style.display = sInput.value.trim() ? 'flex' : 'none';
+      }
+    }
+    function clearSearchInput() {
+      const sInput = document.getElementById('searchInput');
+      if (sInput) {
+        sInput.value = '';
+        onSearchInput();
+      }
+    }
+    function onSearchInput() { 
+      toggleSearchClearBtn();
+      updateStats(); 
+      applyFilter(); 
+      saveState(); 
+    }
 
     function getFiltered() {
       let a = DATA;
@@ -1501,7 +1541,10 @@
         if (state.favOnly !== undefined) showFavOnly = state.favOnly;
         
         const sInput = document.getElementById('searchInput');
-        if (sInput && state.search) sInput.value = state.search;
+        if (sInput && state.search) {
+          sInput.value = state.search;
+          toggleSearchClearBtn();
+        }
         
         syncTabUI('districtTabs', selDistricts);
         syncTabUI('giaTabs', selGia);
@@ -1646,6 +1689,7 @@
       // Xóa ô tìm kiếm
       const sInput = document.getElementById('searchInput');
       if (sInput) sInput.value = '';
+      toggleSearchClearBtn();
       
       // Ward, Duong & Huong tabs cần rebuild vì là dynamic
       buildWardTabs(); buildDuongTabs(); buildHuongTabs();
