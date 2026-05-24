@@ -2,3 +2,6 @@
 *.md
 **/*.md
 docs/
+
+# Ignore Google Apps Script files
+*.gs
