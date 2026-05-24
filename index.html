@@ -1446,7 +1446,7 @@
             window.__tempFullList = fullList;
             const s2 = document.createElement('script');
             s2.id = '_gs_admin';
-            s2.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsAdminCallback&sheet=Source&tq=select%20D%2C%20AM`;
+            s2.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsAdminCallback&sheet=Source`;
             s2.onerror = () => {
               finalizeData(window.__tempFullList);
             };
