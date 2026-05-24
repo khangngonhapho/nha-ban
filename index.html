@@ -15,6 +15,8 @@
   <title>Khang Ngô Nhà Phố</title>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
+  <!-- Google Identity Services (GSI) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     /* ======= PASTE SHEET ID CỦA BẠN VÀO ĐÂY (xem hướng dẫn bên dưới) ======= */
     :root {
@@ -46,6 +48,7 @@
 
     .admin-only { display: none; }
     body.is-admin .admin-only { display: block; }
+    body.is-admin #gLoginBtn { display: inline-flex !important; }
 
     /* ── Filter toggle bar ── */
     .filter-bar {
@@ -1038,6 +1041,15 @@
         <h1>Khang Ngô<br><span>Nhà Phố</span></h1>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
+        <button class="admin-only" id="gLoginBtn" onclick="handleGoogleLoginClick()" style="display: none; align-items: center; gap: 6px; background: #fff; color: #1c1c1e; border: 1.5px solid #fff; border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.15); font-family: inherit;">
+          <svg style="width:14px; height:14px; display:block;" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.66 15.02 1 12 1 7.35 1 3.39 3.65 1.39 7.5l3.85 2.99C6.18 7.37 8.87 5.04 12 5.04z"/>
+            <path fill="#4285F4" d="M23.49 12.27c0-.82-.07-1.6-.2-2.36H12v4.51h6.44c-.28 1.48-1.12 2.74-2.38 3.59l3.7 2.87c2.16-1.99 3.73-4.92 3.73-8.61z"/>
+            <path fill="#FBBC05" d="M5.24 14.49c-.25-.76-.4-1.56-.4-2.39s.15-1.63.4-2.39L1.39 6.72C.5 8.49 0 10.49 0 12.5s.5 4.01 1.39 5.78l3.85-2.99z"/>
+            <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.7-2.87c-1.03.69-2.35 1.1-4.26 1.1-3.13 0-5.82-2.33-6.76-5.46L1.39 15.85C3.39 19.7 7.35 23 12 23z"/>
+          </svg>
+          <span id="gLoginText">Đăng nhập</span>
+        </button>
         <button class="fav-filter-btn" id="favFilterBtn" onclick="toggleFavFilter()">♡ Đã lưu</button>
         <span class="badge" id="totalBadge">... BĐS</span>
       </div>
@@ -1087,6 +1099,15 @@
         <button class="tab on" data-val="all" onclick="tDanhGia('all')">Tất cả</button>
         <button class="tab" data-val="Hàng Ngon" style="background:var(--gold);color:#fff" onclick="tDanhGia('Hàng Ngon')">💎 Ngon</button>
         <button class="tab" data-val="Hàng Lỗi" style="background:#7f8c8d;color:#fff" onclick="tDanhGia('Hàng Lỗi')">⚠️ Lỗi</button>
+      </div>
+      <div class="filter-section-lbl admin-only">Cấu hình Google Admin</div>
+      <div class="admin-only" style="padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; margin: 5px 0 10px; display: none;">
+        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Google OAuth Client ID:</div>
+        <div style="display: flex; gap: 8px;">
+          <input type="password" id="gClientIdInput" placeholder="Dán Client ID vào đây..." style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; outline: none; font-family: inherit;">
+          <button onclick="saveGoogleClientId()" style="padding: 8px 14px; border-radius: 8px; border: none; background: var(--gold); color: #fff; font-weight: 700; font-size: 12px; cursor: pointer; font-family: inherit;">Lưu</button>
+        </div>
+        <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">* Client ID này lưu an toàn trên trình duyệt của bạn (LocalStorage)</div>
       </div>
     </div>
   </header>
@@ -1440,52 +1461,10 @@
               };
             });
 
-          if (isAdmin) {
-            // Bước 2: Chỉ dành cho Admin, cào DUY NHẤT cột A (id) và B (Hình Mặt Tiền) từ sheet Source của file public
-            // (sheet này dùng IMPORTRANGE để kéo riêng 2 cột từ file private Master sang để bảo mật tuyệt đối)
-            window.__tempFullList = fullList;
-            const s2 = document.createElement('script');
-            s2.id = '_gs_admin';
-            s2.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsAdminCallback&sheet=Source&tq=${encodeURIComponent('select A, B')}`;
-            s2.onerror = () => {
-              finalizeData(window.__tempFullList);
-            };
-            document.head.appendChild(s2);
-          } else {
-            finalizeData(fullList);
-          }
+          finalizeData(fullList);
         } catch (e) {
           showError('Lỗi parse dữ liệu: ' + e.message);
         }
-      };
-
-      // Callback phụ để xử lý ghép ảnh mặt tiền cho Admin
-      window.__gsAdminCallback = function (response) {
-        try {
-          const rows = response.table.rows || [];
-          const facadeMap = {};
-          rows.forEach(r => {
-            if (r.c[0] && r.c[1]) {
-              const id = cv(r.c[0]);
-              const img = cv(r.c[1]);
-              if (id && img) facadeMap[id] = img;
-            }
-          });
-
-          const list = window.__tempFullList || [];
-          list.forEach(p => {
-            if (facadeMap[p.id]) {
-              p.img_mat_tien = facadeMap[p.id];
-            }
-          });
-
-          finalizeData(list);
-        } catch (e) {
-          finalizeData(window.__tempFullList || []);
-        }
-
-        const oldAdmin = document.getElementById('_gs_admin');
-        if (oldAdmin) oldAdmin.remove();
       };
 
       const s = document.createElement('script');
@@ -1540,6 +1519,9 @@
       updateFilterSummary();
       updateStats();
       render();
+      if (isAdmin) {
+        autoLoginOrSilentRefresh();
+      }
     }
 
     function showError(msg) {
@@ -2251,8 +2233,192 @@
       if (!e.target.closest('header')) closeFilter();
     });
 
+    // ============================================================
+    //  🔑 GOOGLE OAUTH2 & SECURE FACADE IMAGE FETCHING (US-024)
+    // ============================================================
+    let gTokenClient = null;
+
+    function saveGoogleClientId() {
+      const input = document.getElementById('gClientIdInput');
+      if (!input) return;
+      const val = input.value.trim();
+      if (!val) {
+        alert("Vui lòng nhập Client ID hợp lệ!");
+        return;
+      }
+      localStorage.setItem('gClientId', val);
+      alert("Đã lưu Client ID thành công! Đang khởi tạo bộ xác thực Google...");
+      initGoogleAuth();
+    }
+
+    function initGoogleAuth() {
+      const clientId = localStorage.getItem('gClientId');
+      if (!clientId) {
+        console.log("Google Client ID not configured.");
+        showGoogleLoginButtonState(false);
+        return;
+      }
+      const gClientIdInput = document.getElementById('gClientIdInput');
+      if (gClientIdInput) gClientIdInput.value = clientId;
+
+      try {
+        gTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: clientId,
+          scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+          callback: (tokenResponse) => {
+            if (tokenResponse.error !== undefined) {
+              console.error("OAuth2 error:", tokenResponse.error);
+              showGoogleLoginButtonState(false);
+              return;
+            }
+            const token = tokenResponse.access_token;
+            const expiry = Date.now() + (tokenResponse.expires_in - 60) * 1000;
+            localStorage.setItem('g_access_token', token);
+            localStorage.setItem('g_token_expiry', expiry);
+            showGoogleLoginButtonState(true);
+            fetchFacadeImages(token);
+          }
+        });
+        console.log("Google Auth GSI Client initialized successfully.");
+      } catch (e) {
+        console.error("Error initializing Google Auth GSI:", e);
+      }
+    }
+
+    function handleGoogleLoginClick() {
+      const clientId = localStorage.getItem('gClientId');
+      if (!clientId) {
+        alert("Vui lòng nhập Google OAuth Client ID của bạn ở mục 'Cấu hình Google Admin' trong Bộ lọc trước!");
+        if (!filterOpen) toggleFilter();
+        setTimeout(() => {
+          const input = document.getElementById('gClientIdInput');
+          if (input) input.focus();
+        }, 300);
+        return;
+      }
+
+      if (!gTokenClient) {
+        initGoogleAuth();
+      }
+
+      if (gTokenClient) {
+        try {
+          gTokenClient.requestAccessToken();
+        } catch (e) {
+          console.error("Error requesting access token:", e);
+          alert("Lỗi yêu cầu token. Vui lòng kiểm tra lại Client ID hoặc kết nối mạng.");
+        }
+      } else {
+        alert("Không thể khởi tạo Client xác thực. Vui lòng tải lại trang.");
+      }
+    }
+
+    function showGoogleLoginButtonState(isLoggedIn) {
+      const gLoginBtn = document.getElementById('gLoginBtn');
+      const gLoginText = document.getElementById('gLoginText');
+      if (!gLoginBtn || !gLoginText) return;
+      if (isLoggedIn) {
+        gLoginBtn.style.background = '#27ae60';
+        gLoginBtn.style.color = '#fff';
+        gLoginBtn.style.borderColor = '#27ae60';
+        gLoginText.innerText = "Đã liên kết Gmail";
+      } else {
+        gLoginBtn.style.background = '#fff';
+        gLoginBtn.style.color = '#1c1c1e';
+        gLoginBtn.style.borderColor = '#fff';
+        const clientId = localStorage.getItem('gClientId');
+        gLoginText.innerText = clientId ? "Đăng nhập" : "Cấu hình API";
+      }
+    }
+
+    function autoLoginOrSilentRefresh() {
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (token && expiry && parseInt(expiry, 10) > now) {
+        console.log("Found valid access token in LocalStorage. Expiry in:", Math.round((parseInt(expiry, 10) - now) / 1000), "s");
+        showGoogleLoginButtonState(true);
+        fetchFacadeImages(token);
+      } else {
+        const clientId = localStorage.getItem('gClientId');
+        if (clientId) {
+          console.log("Access token expired or missing. Attempting Silent Auto-Login...");
+          const checkAndRefresh = () => {
+            if (gTokenClient) {
+              try {
+                gTokenClient.requestAccessToken({ prompt: 'none' });
+              } catch (e) {
+                console.warn("Silent token request failed:", e);
+                showGoogleLoginButtonState(false);
+              }
+            } else {
+              setTimeout(checkAndRefresh, 300);
+            }
+          };
+          checkAndRefresh();
+        } else {
+          showGoogleLoginButtonState(false);
+        }
+      }
+    }
+
+    function fetchFacadeImages(token) {
+      if (!token) return;
+      const PRIVATE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const range = 'Source!D2:AM';
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${PRIVATE_SHEET_ID}/values/${encodeURIComponent(range)}`;
+
+      fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            console.warn("OAuth token invalid or unauthorized. Cleared from storage.");
+            localStorage.removeItem('g_access_token');
+            localStorage.removeItem('g_token_expiry');
+            showGoogleLoginButtonState(false);
+          }
+          throw new Error(`Google Sheets API returned status ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        const values = data.values || [];
+        const facadeMap = {};
+        values.forEach(row => {
+          if (row.length >= 1) {
+            const id = row[0];
+            const img = row[row.length - 1] || '';
+            if (id && img) {
+              facadeMap[id] = img;
+            }
+          }
+        });
+
+        // Merge facade images
+        DATA.forEach(p => {
+          if (facadeMap[p.id]) {
+            p.img_mat_tien = facadeMap[p.id];
+          }
+        });
+
+        console.log("Securely fetched and merged", Object.keys(facadeMap).length, "facade images.");
+        render();
+      })
+      .catch(err => {
+        console.error("Error fetching facade images from private sheet:", err);
+      });
+    }
+
     // Khởi động
     updateFavBtnUI();
+    if (isAdmin) {
+      setTimeout(initGoogleAuth, 800);
+    }
     loadData();
   </script>
 </body>
