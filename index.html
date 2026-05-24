@@ -1429,6 +1429,9 @@
                 else if (titleLower.includes('gò vấp') || titleLower.includes('gv') || phuongLower.includes('gò vấp') || phuongLower.includes('gv')) rawQ = 'GV';
               }
               let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+              if (cleanQ.endsWith('.0')) {
+                cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+              }
               
               // Chuẩn hóa triệt để tên Quận để bộ lọc luôn hoạt động chính xác (không lo sai lệch định dạng từ Sheet)
               const cleanQLower = cleanQ.toLowerCase();
