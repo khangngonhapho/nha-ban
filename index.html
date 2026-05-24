@@ -1427,7 +1427,16 @@
                 else if (titleLower.includes('bình thạnh') || titleLower.includes('bt')) rawQ = 'BT';
                 else if (titleLower.includes('gò vấp') || titleLower.includes('gv')) rawQ = 'GV';
               }
-              const cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+              let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+              
+              // Chuẩn hóa triệt để tên Quận để bộ lọc luôn hoạt động chính xác (không lo sai lệch định dạng từ Sheet)
+              const cleanQLower = cleanQ.toLowerCase();
+              if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+              else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+              else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+              else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+              else if (cleanQLower === '3' || cleanQLower === 'q3') cleanQ = '3';
+              else if (cleanQLower === '10' || cleanQLower === 'q10') cleanQ = '10';
               return {
                 temp_id: index + 1, // Mã tạm theo số tăng dần, bắt đầu từ 1
                 id: cv(r.c[0]),
