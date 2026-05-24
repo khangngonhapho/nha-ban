@@ -1,0 +1,8 @@
+{
+  "name": "bds-khangngo",
+  "version": "1.0.0",
+  "description": "Khang Ngo Nha Pho - Client Web on Vercel Serverless",
+  "engines": {
+    "node": ">=18"
+  }
+}
