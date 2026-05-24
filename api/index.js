@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
 
     if (house) {
       const cleanTitle = house.t || 'Khang Ngô Nhà Phố';
-      const cleanDesc = `Diện tích: ${house.dt}m², ${house.tang} tầng, Đường ${house.duong_truoc_nha}, P.${house.phuong}. Giá bán: ${house.gia} tỷ VND. Liên hệ ngay!`;
+      const cleanDesc = `Mã căn: #${house.id} - Diện tích: ${house.dt}m², ${house.tang} tầng, Đường ${house.duong_truoc_nha}, P.${house.phuong}. Giá bán: ${house.gia} tỷ VND. Liên hệ ngay!`;
       let cleanImg = house.imgs[0] || 'https://khangngonhapho.github.io/nha-ban/avatarKhangNgo.jpg';
       
       if (cleanImg.includes('drive.google.com')) {
