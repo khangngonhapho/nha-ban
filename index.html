@@ -1389,18 +1389,22 @@
       window.__gsCallback = function (response) {
         try {
           const rows = response.table.rows;
+          // Tự động phát hiện offset cột dựa trên vị trí cột "id" để hỗ trợ cả sheet Source và Public
+          const cols = response.table.cols || [];
+          const offset = cols.findIndex(col => (col.label || '').toLowerCase().trim() === 'id') || 0;
+
           const QUAN_FULL = { pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp' };
           const fullList = rows
-            .filter(r => r.c[0] && r.c[0].v)
+            .filter(r => r.c[offset] && r.c[offset].v)
             .map((r, index) => {
-              const dt = parseFloat(cv(r.c[2])) || 0;
-              const gia = parseFloat(cv(r.c[5])) || 0;
+              const dt = parseFloat(cv(r.c[2 + offset])) || 0;
+              const gia = parseFloat(cv(r.c[5 + offset])) || 0;
               const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0; // Giá tỷ -> quy ra triệu/m2
-              let rawQ = cv(r.c[6]);
+              let rawQ = cv(r.c[6 + offset]);
               // Fallback: Nếu gviz trả về rỗng (do lỗi trộn lẫn số "10" và chữ "PN" trong cùng cột Quận)
-              // Ta sẽ tự trích xuất từ cột Tiêu đề (c[1])
+              // Ta sẽ tự trích xuất từ cột Tiêu đề (c[1 + offset])
               if (!rawQ) {
-                const titleLower = String(cv(r.c[1])).toLowerCase();
+                const titleLower = String(cv(r.c[1 + offset])).toLowerCase();
                 if (titleLower.includes('phú nhuận') || titleLower.includes('pn')) rawQ = 'PN';
                 else if (titleLower.includes('tân bình') || titleLower.includes('tb')) rawQ = 'TB';
                 else if (titleLower.includes('bình thạnh') || titleLower.includes('bt')) rawQ = 'BT';
@@ -1409,34 +1413,34 @@
               const cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
               return {
                 temp_id: index + 1, // Mã tạm theo số tăng dần, bắt đầu từ 1
-                id: cv(r.c[0]),
-                t: cv(r.c[1]),
-                dt: cv(r.c[2]),
-                tang: cv(r.c[3]),
-                mat: cv(r.c[4]),
-                gia: cv(r.c[5]),
+                id: cv(r.c[offset]),
+                t: cv(r.c[1 + offset]),
+                dt: cv(r.c[2 + offset]),
+                tang: cv(r.c[3 + offset]),
+                mat: cv(r.c[4 + offset]),
+                gia: cv(r.c[5 + offset]),
                 q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
                 ql: QUAN_FULL[cleanQ.toLowerCase()] || cleanQ.toUpperCase(),
-                phuong: cv(r.c[7]) || '-', // H
-                loai_hinh: cv(r.c[8]) || 'Hẻm', // I
-                huong: cv(r.c[9]) || '-', // J
-                duong_truoc_nha: cv(r.c[10]) || '-', // K
-                rong_hem: cv(r.c[11]) || '-', // L
-                tinh_trang: cv(r.c[12]) || '-', // M
-                danh_gia: cv(r.c[13]) || '', // N
-                is_invisible: (cv(r.c[12]) || '').toLowerCase().includes('ẩn') || 
-                              (cv(r.c[12]) || '').toLowerCase().includes('đã bán') ||
-                              (cv(r.c[12]) || '').toLowerCase().includes('invisible'),
-                ngu_tang_tret: cv(r.c[14]) || '-', // O
-                chdv: cv(r.c[15]) || '-', // P
+                phuong: cv(r.c[7 + offset]) || '-', // H
+                loai_hinh: cv(r.c[8 + offset]) || 'Hẻm', // I
+                huong: cv(r.c[9 + offset]) || '-', // J
+                duong_truoc_nha: cv(r.c[10 + offset]) || '-', // K
+                rong_hem: cv(r.c[11 + offset]) || '-', // L
+                tinh_trang: cv(r.c[12 + offset]) || '-', // M
+                danh_gia: cv(r.c[13 + offset]) || '', // N
+                is_invisible: (cv(r.c[12 + offset]) || '').toLowerCase().includes('ẩn') || 
+                              (cv(r.c[12 + offset]) || '').toLowerCase().includes('đã bán') ||
+                              (cv(r.c[12 + offset]) || '').toLowerCase().includes('invisible'),
+                ngu_tang_tret: cv(r.c[14 + offset]) || '-', // O
+                chdv: cv(r.c[15 + offset]) || '-', // P
                 giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-                m: cv(r.c[16]), // Q
+                m: cv(r.c[16 + offset]), // Q
                 imgs: [
-                  cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]), 
-                  cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26])
+                  cv(r.c[17 + offset]), cv(r.c[18 + offset]), cv(r.c[19 + offset]), cv(r.c[20 + offset]), cv(r.c[21 + offset]), 
+                  cv(r.c[22 + offset]), cv(r.c[23 + offset]), cv(r.c[24 + offset]), cv(r.c[25 + offset]), cv(r.c[26 + offset])
                 ].filter(Boolean), // R đến AA
-                system_id: cv(r.c[34]) || (index + 1).toString(), // Cột AI
-                img_mat_tien: cv(r.c[35]) || '' // Cột AJ (tương ứng Cột AM ở Source)
+                system_id: cv(r.c[34 + offset]) || (index + 1).toString(), // Cột AI
+                img_mat_tien: cv(r.c[35 + offset]) || '' // Cột AJ (tương ứng Cột AM ở Source)
               };
             });
 
@@ -1496,7 +1500,7 @@
 
       const s = document.createElement('script');
       s.id = '_gs';
-      s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback`;
+      s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback${isAdmin ? '&sheet=Source' : ''}`;
       s.onerror = () => showError('Không kết nối được Google Sheets. Kiểm tra SHEET_ID và quyền truy cập.');
       document.head.appendChild(s);
     }
