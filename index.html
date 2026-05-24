@@ -2229,24 +2229,41 @@
       }
     }
 
-    // Xử lý ẩn hiện Header khi cuộn trang
+    // Xử lý ẩn hiện Header khi cuộn trang (Nâng cấp: Cuộn nhanh/mạnh mới hiện menu)
     let lastScrollY = window.scrollY;
+    let lastScrollTime = Date.now();
     const headerEl = document.querySelector('header');
     window.addEventListener('scroll', () => {
       const currentScrollY = window.scrollY;
+      const currentScrollTime = Date.now();
+      
       if (currentScrollY <= 0) {
         headerEl.classList.remove('hide');
         lastScrollY = currentScrollY;
+        lastScrollTime = currentScrollTime;
         return;
       }
-      // Cuộn xuống: ẩn header và tự động đóng bộ lọc
+      
+      const deltaY = lastScrollY - currentScrollY; // > 0 khi cuộn lên, < 0 khi cuộn xuống
+      const deltaTime = currentScrollTime - lastScrollTime;
+      
       if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Cuộn xuống: ẩn header và tự động đóng bộ lọc
         headerEl.classList.add('hide');
         closeFilter();
-      } else if (currentScrollY < lastScrollY) {
-        headerEl.classList.remove('hide');
+      } else if (deltaY > 0) {
+        // Cuộn lên: Chỉ hiện menu khi quét/vuốt lên nhanh và mạnh
+        // Vận tốc cuộn (px/ms) = deltaY / deltaTime
+        const velocity = deltaTime > 0 ? (deltaY / deltaTime) : 0;
+        
+        // Ngưỡng: Vuốt nhanh (vận tốc > 0.8 px/ms) HOẶC khoảng cách vuốt một lần lớn (> 25px)
+        if (velocity > 0.8 || deltaY > 25) {
+          headerEl.classList.remove('hide');
+        }
       }
+      
       lastScrollY = currentScrollY;
+      lastScrollTime = currentScrollTime;
     }, { passive: true });
 
     // Bấm ra ngoài header → tự động đóng bộ lọc
