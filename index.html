@@ -2252,11 +2252,10 @@
     }
 
     function initGoogleAuth() {
-      const clientId = localStorage.getItem('gClientId');
+      let clientId = localStorage.getItem('gClientId');
       if (!clientId) {
-        console.log("Google Client ID not configured.");
-        showGoogleLoginButtonState(false);
-        return;
+        clientId = '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+        localStorage.setItem('gClientId', clientId);
       }
       const gClientIdInput = document.getElementById('gClientIdInput');
       if (gClientIdInput) gClientIdInput.value = clientId;
