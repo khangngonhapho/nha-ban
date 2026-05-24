@@ -3,7 +3,8 @@
 // Hỗ trợ Tự động Mã hóa ID & Trigger Đẩy sang Public
 //
 // [Latest Update / User Story]
-// - US-020: Tích hợp nút Đăng tin batdongsan.com.vn vào sheet Source (Cập nhật ngày 2026-05-22)
+// - US-025: Cấu trúc Tiêu đề BDS AI mới (Cập nhật ngày 2026-05-24)
+// - US-026: Giới hạn độ dài Tiêu đề & Auto-Trimmer (Cập nhật ngày 2026-05-24)
 // ==========================================
 
 const PUBLIC_FILE_ID = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"; // File BDS_KhangNgo_Source
