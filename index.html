@@ -1523,8 +1523,6 @@
         gia: [...selGia],
         danhGia: [...selDanhGia],
         selectedIds: [...SELECTED_IDS],
-        sortType: currentSortType,
-        sortDir: currentSortDir,
         favOnly: showFavOnly,
         search: document.getElementById('searchInput')?.value || ''
       };
@@ -1546,13 +1544,6 @@
         state.danhGia?.forEach(x => selDanhGia.add(x));
         state.selectedIds?.forEach(x => SELECTED_IDS.add(x));
         
-        if (state.sortType) currentSortType = state.sortType;
-        if (state.sortDir) currentSortDir = state.sortDir;
-        if (state.sort && !state.sortType) {
-          // Legacy support
-          currentSortType = 'price';
-          currentSortDir = state.sort;
-        }
         if (state.favOnly !== undefined) showFavOnly = state.favOnly;
         
         const sInput = document.getElementById('searchInput');
