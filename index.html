@@ -1422,10 +1422,11 @@
               let rawQ = cv(r.c[6]);
               if (!rawQ) {
                 const titleLower = String(cv(r.c[1])).toLowerCase();
-                if (titleLower.includes('phú nhuận') || titleLower.includes('pn')) rawQ = 'PN';
-                else if (titleLower.includes('tân bình') || titleLower.includes('tb')) rawQ = 'TB';
-                else if (titleLower.includes('bình thạnh') || titleLower.includes('bt')) rawQ = 'BT';
-                else if (titleLower.includes('gò vấp') || titleLower.includes('gv')) rawQ = 'GV';
+                const phuongLower = String(cv(r.c[7])).toLowerCase();
+                if (titleLower.includes('phú nhuận') || titleLower.includes('pn') || phuongLower.includes('phú nhuận') || phuongLower.includes('pn')) rawQ = 'PN';
+                else if (titleLower.includes('tân bình') || titleLower.includes('tb') || phuongLower.includes('tân bình') || phuongLower.includes('tb')) rawQ = 'TB';
+                else if (titleLower.includes('bình thạnh') || titleLower.includes('bt') || phuongLower.includes('bình thạnh') || phuongLower.includes('bt')) rawQ = 'BT';
+                else if (titleLower.includes('gò vấp') || titleLower.includes('gv') || phuongLower.includes('gò vấp') || phuongLower.includes('gv')) rawQ = 'GV';
               }
               let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
               
