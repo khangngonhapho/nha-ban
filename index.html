@@ -98,6 +98,11 @@
       transition: background .15s;
     }
     .sort-icon-btn:hover { background: rgba(255,255,255,.28); }
+    .sort-icon-btn.active {
+      background: #fff;
+      color: var(--red);
+      border-color: #fff;
+    }
 
     /* ── Collapsible filter panel ── */
     .filter-panel {
@@ -1046,7 +1051,8 @@
     <div class="filter-bar">
       <button class="filter-btn" id="filterBtn" onclick="toggleFilter()">🎚 Bộ lọc</button>
       <span class="filter-summary" id="filterSummary">Tất cả</span>
-      <button class="sort-icon-btn" id="sortToggleBtn" onclick="toggleSort()" title="Sắp xếp Giá">⬇</button>
+      <button class="sort-icon-btn" id="sortNewBtn" onclick="toggleSortNew()" title="Sắp xếp thời gian">⏱️</button>
+      <button class="sort-icon-btn" id="sortPriceBtn" onclick="toggleSortPrice()" title="Sắp xếp giá">💰</button>
       <button class="reset-btn" id="resetBtn" onclick="resetFilters()" style="display:none">↺ Xóa lọc</button>
     </div>
     <!-- Collapsible panel -->
@@ -1283,7 +1289,8 @@
     const selGia      = new Set();
     const selDanhGia  = new Set();
     let filterOpen = false;
-    let currentSort = 'desc'; // 'desc' = cao→thấp, 'asc' = thấp→cao
+    let currentSortType = 'newest'; // 'newest' or 'price'
+    let currentSortDir = 'desc'; // 'desc' = high/newest first, 'asc' = low/oldest first
     let showFavOnly = false;
     let favs = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
 
@@ -1473,6 +1480,7 @@
           // Sắp xếp được xử lý động trong render()
 
           restoreState();
+          updateSortButtonsUI();
 
           buildWardTabs();
           buildDuongTabs();
@@ -1515,7 +1523,8 @@
         gia: [...selGia],
         danhGia: [...selDanhGia],
         selectedIds: [...SELECTED_IDS],
-        sort: currentSort,
+        sortType: currentSortType,
+        sortDir: currentSortDir,
         favOnly: showFavOnly,
         search: document.getElementById('searchInput')?.value || ''
       };
@@ -1537,7 +1546,13 @@
         state.danhGia?.forEach(x => selDanhGia.add(x));
         state.selectedIds?.forEach(x => SELECTED_IDS.add(x));
         
-        if (state.sort) currentSort = state.sort;
+        if (state.sortType) currentSortType = state.sortType;
+        if (state.sortDir) currentSortDir = state.sortDir;
+        if (state.sort && !state.sortType) {
+          // Legacy support
+          currentSortType = 'price';
+          currentSortDir = state.sort;
+        }
         if (state.favOnly !== undefined) showFavOnly = state.favOnly;
         
         const sInput = document.getElementById('searchInput');
@@ -1550,7 +1565,7 @@
         syncTabUI('giaTabs', selGia);
         syncTabUI('danhGiaTabs', selDanhGia);
         
-        document.getElementById('sortToggleBtn').textContent = currentSort === 'desc' ? '⬇' : '⬆';
+        updateSortButtonsUI();
         updateFavBtnUI();
         
         const sc = document.getElementById('shareCount');
@@ -1696,9 +1711,44 @@
       updateFilterSummary(); updateStats(); applyFilter();
     }
 
-    function toggleSort() {
-      currentSort = currentSort === 'desc' ? 'asc' : 'desc';
-      document.getElementById('sortToggleBtn').textContent = currentSort === 'desc' ? '⬇' : '⬆';
+    function updateSortButtonsUI() {
+      const btnNew = document.getElementById('sortNewBtn');
+      const btnPrice = document.getElementById('sortPriceBtn');
+      if (!btnNew || !btnPrice) return;
+
+      if (currentSortType === 'newest') {
+        btnNew.classList.add('active');
+        btnNew.textContent = currentSortDir === 'desc' ? '⏱️⬇' : '⏱️⬆';
+        btnPrice.classList.remove('active');
+        btnPrice.textContent = '💰';
+      } else {
+        btnPrice.classList.add('active');
+        btnPrice.textContent = currentSortDir === 'desc' ? '💰⬇' : '💰⬆';
+        btnNew.classList.remove('active');
+        btnNew.textContent = '⏱️';
+      }
+    }
+
+    function toggleSortNew() {
+      if (currentSortType === 'newest') {
+        currentSortDir = currentSortDir === 'desc' ? 'asc' : 'desc';
+      } else {
+        currentSortType = 'newest';
+        currentSortDir = 'desc';
+      }
+      updateSortButtonsUI();
+      saveState();
+      render();
+    }
+
+    function toggleSortPrice() {
+      if (currentSortType === 'price') {
+        currentSortDir = currentSortDir === 'desc' ? 'asc' : 'desc';
+      } else {
+        currentSortType = 'price';
+        currentSortDir = 'desc';
+      }
+      updateSortButtonsUI();
       saveState();
       render();
     }
@@ -1723,8 +1773,14 @@
       list.innerHTML = '';
       if (lbl) list.appendChild(lbl);
       const arr = DATA.slice().sort((a, b) => {
-        const ga = parseFloat(a.gia) || 0, gb = parseFloat(b.gia) || 0;
-        return currentSort === 'asc' ? ga - gb : gb - ga;
+        if (currentSortType === 'newest') {
+          const ta = parseInt(a.temp_id, 10) || 0;
+          const tb = parseInt(b.temp_id, 10) || 0;
+          return currentSortDir === 'asc' ? ta - tb : tb - ta;
+        } else {
+          const ga = parseFloat(a.gia) || 0, gb = parseFloat(b.gia) || 0;
+          return currentSortDir === 'asc' ? ga - gb : gb - ga;
+        }
       });
 
       if (!arr.length) {
