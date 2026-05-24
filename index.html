@@ -1435,7 +1435,8 @@
                   cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]), 
                   cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26])
                 ].filter(Boolean), // R đến AA
-                system_id: cv(r.c[34]) || (index + 1).toString() // Cột AI
+                system_id: cv(r.c[34]) || (index + 1).toString(), // Cột AI
+                img_mat_tien: cv(r.c[38]) || '' // Cột AM
               };
             });
 
@@ -1782,7 +1783,8 @@
       const frag = document.createDocumentFragment();
       arr.forEach((p, i) => {
         const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
-        const thumb = imgUrls[0] ? fixImgUrl(imgUrls[0], 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
+        let thumbUrl = (isAdmin && p.img_mat_tien) ? p.img_mat_tien : imgUrls[0];
+        const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
         const c = document.createElement('div');
         c.className = 'card';
         c.dataset.pid = String(p.id);
