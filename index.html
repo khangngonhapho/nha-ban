@@ -1441,12 +1441,13 @@
             });
 
           if (isAdmin) {
-            // Bước 2: Chỉ dành cho Admin, cào DUY ĐẤT cột D (id) và AM (Hình Mặt Tiền) từ sheet Source
-            // Hạn chế tuyệt đối việc phơi bày các cột nhạy cảm khác (tên chủ nhà, SĐT, target chốt...)
+            // Bước 2: Chỉ dành cho Admin, cào DUY NHẤT cột D (id) và AM (Hình Mặt Tiền) từ sheet Source của file private Master
+            // Bảo mật tuyệt đối, không phơi bày các cột nhạy cảm khác (tên chủ nhà, SĐT, target chốt...)
             window.__tempFullList = fullList;
+            const privateSheetId = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
             const s2 = document.createElement('script');
             s2.id = '_gs_admin';
-            s2.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsAdminCallback&sheet=Source`;
+            s2.src = `https://docs.google.com/spreadsheets/d/${privateSheetId}/gviz/tq?tqx=out:json;responseHandler:__gsAdminCallback&sheet=Source&tq=${encodeURIComponent('select D, AM')}`;
             s2.onerror = () => {
               finalizeData(window.__tempFullList);
             };
