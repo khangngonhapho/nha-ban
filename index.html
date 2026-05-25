@@ -1757,14 +1757,18 @@
     const customerToken = urlParams.get('c');
     if (customerToken) {
       try {
-        const safeToken = customerToken.replace(/ /g, '+');
+        let safeToken = customerToken.replace(/ /g, '+');
+        // Khôi phục padding = cho Base64URL nếu bị thiếu
+        while (safeToken.length % 4) {
+          safeToken += '=';
+        }
         const decoded = decodeURIComponent(escape(window.atob(safeToken)));
-        const parts = decoded.split(" | ");
+        const parts = decoded.split("|").map(p => p.trim());
         displayCustomerName = parts[0];
         trackingCustomerName = `${parts[0]}${parts[1] ? ' - ' + parts[1] : ''}`;
 
         // GIẢI MÃ & CẬP NHẬT TIÊU ĐỀ TRANG TÙY CHỈNH (US-033)
-        const customPageTitle = parts[2] ? parts[2].trim() : "";
+        const customPageTitle = parts[2] || "";
         if (customPageTitle) {
           document.title = customPageTitle;
         } else {
@@ -2732,11 +2736,20 @@
 
       const cTitle = document.getElementById('linkCustTitle').value.trim();
       const cNote = document.getElementById('linkCustNote').value.trim();
-      const fullCustomerString = `${cName} | ${cNote} | ${cTitle}`;
+
+      // Tối ưu hóa chuỗi ghép bằng phân tách '|' và loại bỏ trường trống ở đuôi (US-034)
+      let parts = [cName];
+      if (cTitle) {
+        parts.push(cNote || "");
+        parts.push(cTitle);
+      } else if (cNote) {
+        parts.push(cNote);
+      }
+      const compactCustomerString = parts.join('|');
 
       try {
-        // Encode tên khách + ghi chú + tiêu đề
-        const encodedName = window.btoa(unescape(encodeURIComponent(fullCustomerString)));
+        // Encode và loại bỏ hoàn toàn dấu padding '=' (Base64URL)
+        const encodedName = window.btoa(unescape(encodeURIComponent(compactCustomerString))).replace(/=/g, '');
         const baseUrl = window.location.origin + window.location.pathname;
         const count = SELECTED_IDS.size;
         let shareUrl = '';

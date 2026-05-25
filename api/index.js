@@ -126,10 +126,14 @@ module.exports = async (req, res) => {
   const c = req.query.c;
   if (c) {
     try {
-      const safeToken = c.replace(/ /g, '+');
+      let safeToken = c.replace(/ /g, '+');
+      // Khôi phục padding = cho Base64URL nếu bị thiếu
+      while (safeToken.length % 4) {
+        safeToken += '=';
+      }
       const decoded = Buffer.from(safeToken, 'base64').toString('utf8');
-      const parts = decoded.split(" | ");
-      const customPageTitle = parts[2] ? parts[2].trim() : "";
+      const parts = decoded.split("|").map(p => p.trim());
+      const customPageTitle = parts[2] || "";
       if (customPageTitle) {
         html = html.replace(/<title>[^<]*<\/title>/i, `<title>${customPageTitle}</title>`);
         html = html.replace(/<meta[^>]*property="og:title"[^>]*content="[^"]*"/i, `<meta property="og:title" content="${customPageTitle}"`);
