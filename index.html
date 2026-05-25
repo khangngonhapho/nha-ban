@@ -138,8 +138,8 @@
       position: absolute;
       bottom: 8px;
       left: 8px;
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       z-index: 5;
       accent-color: var(--gold);
       cursor: pointer;
@@ -746,11 +746,11 @@
       right: 4px;
       background: none;
       border: none;
-      font-size: 20px;
+      font-size: 24px;
       cursor: pointer;
       color: rgba(255,255,255,0.9);
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -765,44 +765,6 @@
       color: var(--red);
     }
 
-    .sfoot-float {
-      position: fixed;
-      bottom: 20px;
-      right: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 100;
-    }
-    .fb-float {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      border: none;
-      cursor: pointer;
-      font-size: 20px;
-      text-decoration: none;
-      transition: transform 0.2s, background 0.2s;
-    }
-    .fb-float:active {
-      transform: scale(0.92);
-    }
-    .fcall-float {
-      background: var(--red);
-      color: #fff;
-    }
-    .fzalo-float {
-      background: var(--blue);
-      color: #fff;
-    }
-    body.is-admin .sfoot-float {
-      right: auto;
-      left: 16px;
-    }
 
     .overlay {
       display: none;
@@ -1220,10 +1182,6 @@
     </div>
   </main>
 
-  <div class="sfoot-float" id="contactFloatBar">
-    <a href="tel:0979841573" class="fb-float fcall-float" id="btnCallFloat" title="Gọi ngay">📞</a>
-    <a href="https://zalo.me/0979841573" class="fb-float fzalo-float" id="btnZaloFloat" title="Zalo tư vấn">💬</a>
-  </div>
 
   <!-- Lightbox (Full Screen Media Viewer) -->
   <div class="lightbox" id="lbOverlay">
