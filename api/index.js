@@ -124,5 +124,27 @@ module.exports = async (req, res) => {
     // Fallback gracefully to original html
   }
 
+  // GIẢI MÃ THAM SỐ C VÀ TIÊM ĐỘNG TIÊU ĐỀ TÙY CHỈNH (US-033 SERVER-SIDE)
+  const c = req.query.c;
+  if (c) {
+    try {
+      const decoded = Buffer.from(c, 'base64').toString('utf8');
+      const parts = decoded.split(" | ");
+      const customPageTitle = parts[2] ? parts[2].trim() : "";
+      if (customPageTitle) {
+        html = html.replace(/<title>[^<]*<\/title>/i, `<title>${customPageTitle}</title>`);
+        html = html.replace(/<meta[^>]*property="og:title"[^>]*content="[^"]*"/i, `<meta property="og:title" content="${customPageTitle}"`);
+      } else {
+        // Chỉ ghi đè nếu chưa bị thay đổi bởi căn nhà (giữ nguyên tiêu đề mặc định giỏ hàng nếu không có s)
+        if (!req.query.s) {
+          html = html.replace(/<title>[^<]*<\/title>/i, `<title>Giỏ hàng độc quyền - Khang Ngô Nhà Phố</title>`);
+          html = html.replace(/<meta[^>]*property="og:title"[^>]*content="[^"]*"/i, `<meta property="og:title" content="Giỏ Hàng Độc Quyền - Khang Ngô Nhà Phố"`);
+        }
+      }
+    } catch (e) {
+      console.error('Error decoding c parameter in serverless:', e);
+    }
+  }
+
   res.status(200).setHeader('Content-Type', 'text/html; charset=utf-8').send(html);
 };
