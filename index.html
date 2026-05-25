@@ -135,11 +135,15 @@
       border: none; cursor: pointer; font-size: 24px;
     }
     .card-sel {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
       width: 18px;
       height: 18px;
       z-index: 5;
       accent-color: var(--gold);
       cursor: pointer;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
     }
     .share-count {
       position: absolute; top: -5px; right: -5px;
@@ -555,13 +559,13 @@
       display: flex;
       align-items: stretch;
       width: 100%;
-      height: 140px;
+      height: 160px;
     }
 
     .ibox {
       position: relative;
-      width: 100px;
-      min-width: 100px;
+      width: 120px;
+      min-width: 120px;
       height: auto;
       overflow: hidden;
       border-radius: 16px 0 0 16px;
@@ -711,7 +715,7 @@
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       padding: 4px 12px;
       min-height: 28px
     }
@@ -737,11 +741,14 @@
     }
 
     .heart {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
       background: none;
       border: none;
       font-size: 20px;
       cursor: pointer;
-      color: #ccc;
+      color: rgba(255,255,255,0.9);
       width: 28px;
       height: 28px;
       display: flex;
@@ -749,6 +756,7 @@
       justify-content: center;
       transition: transform 0.2s;
       z-index: 6;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
     }
     .heart:active {
       transform: scale(0.9);
@@ -1935,6 +1943,8 @@
       <div class="crow">
         <div class="ibox">
           <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+          ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
+          <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
         </div>
         <div class="card-right">
           <div class="info">
@@ -1953,10 +1963,6 @@
             </div>
           </div>
           <div class="cfoot">
-            <div style="display:flex; align-items:center; gap:8px;">
-              ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
-              <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
-            </div>
             <div class="id-large">#${p.id}</div>
           </div>
         </div>
