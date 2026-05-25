@@ -210,8 +210,8 @@
       right: 20px;
       background: var(--gold);
       color: #fff;
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -220,7 +220,11 @@
       z-index: 100;
       border: none;
       cursor: pointer;
-      font-size: 24px;
+      font-size: 20px;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .share-btn-float:active {
+      transform: scale(0.9);
     }
 
     .card-sel {
@@ -254,8 +258,8 @@
       right: 20px;
       background: #555;
       color: #fff;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -265,7 +269,10 @@
       border: none;
       cursor: pointer;
       font-size: 18px;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .selall-btn-float:active {
+      transform: scale(0.9);
     }
 
     .selall-btn-float.all-on {
@@ -1075,8 +1082,8 @@
       right: 20px;
       background: #2980b9;
       color: #fff;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1086,10 +1093,10 @@
       border: none;
       cursor: pointer;
       font-size: 18px;
-      transition: background 0.2s, transform 0.2s;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     }
     .col-btn-float:active {
-      transform: scale(0.92);
+      transform: scale(0.9);
     }
 
     .overlay {
