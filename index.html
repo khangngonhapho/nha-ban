@@ -135,9 +135,11 @@
       border: none; cursor: pointer; font-size: 24px;
     }
     .card-sel {
-      position: absolute; top: 10px; left: 10px; /* Chuyển sang trái để không đè tiêu đề */
-      width: 24px; height: 24px; z-index: 5;
-      accent-color: var(--gold); transform: scale(1.3);
+      width: 18px;
+      height: 18px;
+      z-index: 5;
+      accent-color: var(--gold);
+      cursor: pointer;
     }
     .share-count {
       position: absolute; top: -5px; right: -5px;
@@ -709,7 +711,7 @@
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
       padding: 4px 12px;
       min-height: 28px
     }
@@ -735,30 +737,24 @@
     }
 
     .heart {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: rgba(255, 255, 255, 0.9);
+      background: none;
       border: none;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #ccc;
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      cursor: pointer;
-      color: #aaa;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
       z-index: 6;
-      transition: transform 0.2s, background 0.2s;
     }
     .heart:active {
       transform: scale(0.9);
     }
     .heart.on {
       color: var(--red);
-      background: #fff;
     }
 
     .sfoot-float {
@@ -1936,11 +1932,9 @@
         c.dataset.pid = String(p.id);
         c.setAttribute('onclick', `openS('${p.id}')`);
         c.innerHTML = `
-      ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
       <div class="crow">
         <div class="ibox">
           <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
-          <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
         </div>
         <div class="card-right">
           <div class="info">
@@ -1959,6 +1953,10 @@
             </div>
           </div>
           <div class="cfoot">
+            <div style="display:flex; align-items:center; gap:8px;">
+              ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
+              <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+            </div>
             <div class="id-large">#${p.id}</div>
           </div>
         </div>
