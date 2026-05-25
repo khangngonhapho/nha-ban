@@ -95,7 +95,7 @@
       color: #fff;
       border: 1.5px solid rgba(255,255,255,.4);
       border-radius: 50%;
-      width: 36px; height: 36px;
+      width: 34px; height: 34px;
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; cursor: pointer; flex-shrink: 0;
       transition: background .15s;
@@ -105,6 +105,9 @@
       background: #fff;
       color: var(--red);
       border-color: #fff;
+    }
+    body.is-admin .sort-icon-btn.admin-only {
+      display: flex;
     }
 
     /* ── Collapsible filter panel ── */
@@ -1084,6 +1087,8 @@
     <div class="hdr-top">
       <div style="display: flex; align-items: center; gap: 8px;">
         <span class="badge" id="totalBadge">...</span>
+        <button class="sort-icon-btn admin-only" id="sortNewBtn" onclick="toggleSortNew()" title="Sắp xếp thời gian">⏱️</button>
+        <button class="sort-icon-btn admin-only" id="sortPriceBtn" onclick="toggleSortPrice()" title="Sắp xếp giá">💰</button>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
         <button class="admin-only" id="gLoginBtn" onclick="handleGoogleLoginClick()" style="display: none; align-items: center; justify-content: center; width: 34px; height: 34px; background: #fff; border: 1.5px solid #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.15); padding: 0;" title="Đăng nhập Google">
@@ -1095,13 +1100,18 @@
           </svg>
           <span id="gLoginText" style="display:none"></span>
         </button>
-        <button class="hdr-icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()" title="Tìm kiếm">
-          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        </button>
         <div style="position: relative;">
           <button class="hdr-icon-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="Yêu thích">♡</button>
           <span class="fav-count-badge" id="favCount" style="display:none">0</span>
         </div>
+        <button class="hdr-icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()" title="Tìm kiếm">
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+        <button class="hdr-icon-btn admin-only" id="filterBtn" onclick="toggleFilter()" title="Bộ lọc">
+          <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+        </button>
       </div>
     </div>
     <div class="search-bar" id="searchBar">
@@ -1109,12 +1119,9 @@
       <input type="text" id="searchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()">
       <span class="search-clear" id="searchClear" onclick="clearSearchInput()" style="display:none">✕</span>
     </div>
-    <!-- Admin: nút mở bộ lọc -->
-    <div class="filter-bar">
-      <button class="sort-icon-btn" id="filterBtn" onclick="toggleFilter()" title="Bộ lọc">🎚</button>
+    <!-- Admin: thông tin bộ lọc hiện tại -->
+    <div class="filter-bar" id="filterBar" style="display:none">
       <span class="filter-summary" id="filterSummary">Tất cả</span>
-      <button class="sort-icon-btn" id="sortNewBtn" onclick="toggleSortNew()" title="Sắp xếp thời gian">⏱️</button>
-      <button class="sort-icon-btn" id="sortPriceBtn" onclick="toggleSortPrice()" title="Sắp xếp giá">💰</button>
       <button class="reset-btn" id="resetBtn" onclick="resetFilters()" style="display:none">↺ Xóa lọc</button>
     </div>
     <!-- Collapsible panel -->
@@ -1698,7 +1705,6 @@
       filterOpen = !filterOpen;
       document.getElementById('filterPanel').classList.toggle('open', filterOpen);
       const btn = document.getElementById('filterBtn');
-      btn.textContent = filterOpen ? '✕ Đóng' : '🎚 Bộ lọc';
       btn.classList.toggle('active', filterOpen);
     }
     function closeFilter() {
@@ -1706,7 +1712,6 @@
       filterOpen = false;
       document.getElementById('filterPanel').classList.remove('open');
       const btn = document.getElementById('filterBtn');
-      btn.textContent = '🎚 Bộ lọc';
       const anyActive = !!(selDistricts.size||selWards.size||selDuongs.size||selHuong.size||selGia.size||selDanhGia.size);
       btn.classList.toggle('active', anyActive);
     }
@@ -1795,6 +1800,13 @@
       const anyActive = !!(selDistricts.size||selWards.size||selDuongs.size||selHuong.size||selGia.size||selDanhGia.size);
       document.getElementById('filterBtn').classList.toggle('active', anyActive || filterOpen);
       document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';
+      
+      // Hiển thị dòng thứ 2 (bộ lọc hiện tại) chỉ khi có filter hoạt động
+      const bar = document.getElementById('filterBar');
+      if (bar) {
+        bar.style.display = (isAdmin && anyActive) ? 'flex' : 'none';
+      }
+      
       saveState();
     }
 
