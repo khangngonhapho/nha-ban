@@ -52,12 +52,15 @@
 
     /* ── Filter toggle bar ── */
     .filter-bar {
-      display: none;
+      display: flex;
       align-items: center;
+      justify-content: flex-end; /* Align to right for guests */
       gap: 8px;
       padding: 0 0 10px;
     }
-    body.is-admin .filter-bar { display: flex; }
+    body.is-admin .filter-bar {
+      justify-content: flex-start; /* Normal layout for admin */
+    }
 
     .filter-btn {
       background: rgba(255,255,255,.18);
@@ -68,8 +71,9 @@
       font-size: 13px; font-weight: 600;
       cursor: pointer; white-space: nowrap;
       font-family: inherit; min-height: 36px;
-      display: flex; align-items: center; gap: 5px; flex-shrink: 0;
+      display: none; align-items: center; gap: 5px; flex-shrink: 0;
     }
+    body.is-admin .filter-btn { display: flex; }
     .filter-btn.active { background: #fff; color: var(--red); border-color: #fff; }
 
     .reset-btn {
@@ -87,7 +91,9 @@
     .filter-summary {
       color: rgba(255,255,255,.8); font-size: 12px; font-weight: 600;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+      display: none;
     }
+    body.is-admin .filter-summary { display: block; }
 
     /* ── Sort icon btn ── */
     .sort-icon-btn {
@@ -1209,6 +1215,9 @@
 
   <script>
     // ============================================================
+    // [Latest Update / User Story]
+    // - US-028: Sắp xếp mặc định sản phẩm mới nhất lên hàng đầu, thêm nút xếp thời gian ⏱️ và xếp giá 💰 cho tất cả người dùng có BĐS (Cập nhật ngày 2026-05-25)
+    // ============================================================
     //  ⚙️  KIỂM TRA QUYỀN TRUY CẬP & GIAI ĐOẠN 1 TRACKING
     // ============================================================
     const ADMIN_PASSWORD = 'trang'; 
@@ -1530,6 +1539,8 @@
       // Tracking: Bắt đầu xem danh sách
       if (DATA.length > 0) {
         trackAction("Mở danh sách nhà", `Số lượng hiển thị: ${DATA.length} căn`);
+        const bar = document.querySelector('.filter-bar');
+        if (bar) bar.style.display = 'flex';
       }
 
       restoreState();
@@ -1547,6 +1558,9 @@
     }
 
     function showError(msg) {
+      const bar = document.querySelector('.filter-bar');
+      if (bar) bar.style.display = 'none';
+
       const list = document.getElementById('list');
       const lbl = list.querySelector('.sec-lbl');
       list.innerHTML = '';
