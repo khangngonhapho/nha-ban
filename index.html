@@ -1211,6 +1211,7 @@
     // ============================================================
     // [Latest Update / User Story]
     // - US-028: Sắp xếp mặc định sản phẩm mới nhất lên hàng đầu, thêm nút xếp thời gian ⏱️ kế bên xếp giá 💰 trên thanh điều khiển của Admin (Cập nhật ngày 2026-05-25)
+    // - US-023.6: Đồng bộ cơ chế nén mã hóa Bitmask (?b=...) siêu ngắn cho luồng tạo link gửi khách (Flow B) khi chọn nhiều căn, giữ URL cực ngắn tránh bị Zalo/Messenger cắt ngắn (Cập nhật ngày 2026-05-25)
     // ============================================================
     //  ⚙️  KIỂM TRA QUYỀN TRUY CẬP & GIAI ĐOẠN 1 TRACKING
     // ============================================================
@@ -1502,8 +1503,8 @@
     function finalizeData(fullList) {
       // Lọc dữ liệu nếu là khách được chia sẻ link
       if (shareBitmask) {
-        // Giải mã bitmask từ URL (Format cũ)
-        const allIds = fullList.map(p => String(p.id));
+        // Giải mã bitmask từ URL (Đồng bộ lọc bỏ sản phẩm ẩn)
+        const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
         sharedIds = decodeBitmask(shareBitmask, allIds);
       } else if (sharedIds) {
         // Giải mã System ID (hoặc mã tạm, mã cũ)
@@ -2078,20 +2079,29 @@
           return;
         }
 
-        // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
-        const allIds = DATA.map(p => String(p.id));
-        let bits = '';
-        allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
-        // Pad to multiple of 6
-        while (bits.length % 6) bits += '0';
-        let encoded = '';
-        for (let i = 0; i < bits.length; i += 6) {
-          encoded += B64[parseInt(bits.substr(i, 6), 2)];
-        }
-
         const baseUrl = window.location.origin + window.location.pathname;
-        const shareUrl = `${baseUrl}?b=${encoded}`;
         const count = SELECTED_IDS.size;
+        let shareUrl = '';
+
+        if (count === 1) {
+          // Lấy duy nhất 1 ID được chọn để kích hoạt dynamic preview trên Vercel
+          const singleId = [...SELECTED_IDS][0];
+          const house = DATA.find(p => String(p.id) === String(singleId));
+          const systemId = house ? house.system_id : singleId;
+          shareUrl = `${baseUrl}?s=${systemId}`;
+        } else {
+          // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
+          const allIds = DATA.map(p => String(p.id));
+          let bits = '';
+          allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
+          // Pad to multiple of 6
+          while (bits.length % 6) bits += '0';
+          let encoded = '';
+          for (let i = 0; i < bits.length; i += 6) {
+            encoded += B64[parseInt(bits.substr(i, 6), 2)];
+          }
+          shareUrl = `${baseUrl}?b=${encoded}`;
+        }
 
         // Dùng Web Share API trên điện thoại
         if (navigator.share) {
@@ -2140,21 +2150,31 @@
       const fullCustomerString = cNote ? `${cName} | ${cNote}` : cName;
 
       try {
-        // Thu thập các System ID của những căn được chọn
-        const tempIds = [];
-        SELECTED_IDS.forEach(id => {
-          // Lưu ý: Cần tìm trong fullListGlobal hoặc DATA vì SELECTED_IDS chứa id thực sự
-          // Tuy nhiên ta không lưu fullListGlobal, nên ta dùng DATA để lấy system_id
-          const house = DATA.find(p => p.id === id);
-          if (house) tempIds.push(house.system_id);
-        });
-
         // Encode tên khách + ghi chú
         const encodedName = window.btoa(unescape(encodeURIComponent(fullCustomerString)));
-
         const baseUrl = window.location.origin + window.location.pathname;
-        const shareUrl = `${baseUrl}?s=${tempIds.join(',')}&c=${encodedName}`;
         const count = SELECTED_IDS.size;
+        let shareUrl = '';
+
+        if (count === 1) {
+          // Lấy duy nhất 1 ID được chọn để kích hoạt dynamic preview trên Vercel
+          const singleId = [...SELECTED_IDS][0];
+          const house = DATA.find(p => String(p.id) === String(singleId));
+          const systemId = house ? house.system_id : singleId;
+          shareUrl = `${baseUrl}?s=${systemId}&c=${encodedName}`;
+        } else {
+          // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
+          const allIds = DATA.map(p => String(p.id));
+          let bits = '';
+          allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
+          // Pad to multiple of 6
+          while (bits.length % 6) bits += '0';
+          let encodedBitmask = '';
+          for (let i = 0; i < bits.length; i += 6) {
+            encodedBitmask += B64[parseInt(bits.substr(i, 6), 2)];
+          }
+          shareUrl = `${baseUrl}?b=${encodedBitmask}&c=${encodedName}`;
+        }
 
         // Đóng Modal
         document.getElementById('linkModal').classList.remove('open');
