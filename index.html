@@ -208,17 +208,17 @@
       position: fixed;
       bottom: 155px;
       right: 20px;
-      background: var(--gold);
-      color: #fff;
+      background: #1c1c1e;
+      color: #2ecc71;
       width: 50px;
       height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       z-index: 100;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       cursor: pointer;
       font-size: 20px;
       transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -241,32 +241,32 @@
 
     .share-count {
       position: absolute;
-      top: -5px;
-      right: -5px;
-      background: var(--red);
+      top: -4px;
+      right: -4px;
+      background: #e74c3c;
       color: #fff;
       font-size: 10px;
       padding: 2px 6px;
       border-radius: 10px;
       font-weight: 800;
-      border: 2px solid #fff;
+      border: 1.5px solid #1c1c1e;
     }
 
     .selall-btn-float {
       position: fixed;
       bottom: 85px;
       right: 20px;
-      background: #555;
-      color: #fff;
+      background: #1c1c1e;
+      color: rgba(255, 255, 255, 0.9);
       width: 50px;
       height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       z-index: 100;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       cursor: pointer;
       font-size: 18px;
       transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -276,7 +276,9 @@
     }
 
     .selall-btn-float.all-on {
-      background: var(--gold);
+      background: #1c1c1e;
+      color: #f1c40f;
+      border-color: #f1c40f;
     }
 
     *,
@@ -1080,17 +1082,17 @@
       position: fixed;
       bottom: 225px;
       right: 20px;
-      background: #2980b9;
-      color: #fff;
+      background: #1c1c1e;
+      color: #3498db;
       width: 50px;
       height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       z-index: 100;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       cursor: pointer;
       font-size: 18px;
       transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -2768,7 +2770,7 @@
       document.body.insertAdjacentHTML('beforeend', `
         <button class="selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
         <button class="col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
-        <button class="share-btn-float" onclick="promptGenerateLink()" style="background:#27ae60;">
+        <button class="share-btn-float" onclick="promptGenerateLink()">
           🔗
           <span class="share-count" id="shareCount">0</span>
         </button>
