@@ -2237,7 +2237,7 @@
       const currentScrollY = window.scrollY;
       const currentScrollTime = Date.now();
       
-      if (currentScrollY <= 0) {
+      if (currentScrollY < 120) {
         headerEl.classList.remove('hide');
         lastScrollY = currentScrollY;
         lastScrollTime = currentScrollTime;
@@ -2251,13 +2251,13 @@
         // Cuộn xuống: ẩn header và tự động đóng bộ lọc
         headerEl.classList.add('hide');
         closeFilter();
-      } else if (deltaY > 0) {
-        // Cuộn lên: Chỉ hiện menu khi quét/vuốt lên nhanh và mạnh
-        // Vận tốc cuộn (px/ms) = deltaY / deltaTime
+      } else if (deltaY > 10) {
+        // Cuộn lên: Chỉ hiện menu khi quét/vuốt lên cực kỳ nhanh và dứt khoát
+        // Bắt buộc deltaY > 10px để loại bỏ các vi-điều chỉnh (micro-jitter)
         const velocity = deltaTime > 0 ? (deltaY / deltaTime) : 0;
         
-        // Ngưỡng: Vuốt nhanh (vận tốc > 0.8 px/ms) HOẶC khoảng cách vuốt một lần lớn (> 25px)
-        if (velocity > 0.8 || deltaY > 25) {
+        // Ngưỡng dứt khoát: Vận tốc vuốt cực nhanh (velocity > 1.6 px/ms) HOẶC cuộn kéo lên cực lớn trong 1 lần (> 150px)
+        if (velocity > 1.6 || deltaY > 150) {
           headerEl.classList.remove('hide');
         }
       }
