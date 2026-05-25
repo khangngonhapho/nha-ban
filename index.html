@@ -1671,6 +1671,14 @@
         <div style="font-size:12px; color:#888; margin-top:4px;">* Tên này sẽ hiển thị ở dòng chào mừng trên web.</div>
       </div>
 
+      <div style="margin-bottom: 16px;">
+        <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tiêu đề trang (hiển thị trên tab trình duyệt của khách)</label>
+        <input type="text" id="linkCustTitle"
+          style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+          placeholder="Mặc định: Giỏ hàng độc quyền - Khang Ngô Nhà Phố">
+        <div style="font-size:12px; color:#888; margin-top:4px;">* Nếu để trống, trang web sẽ sử dụng tên mặc định.</div>
+      </div>
+
       <div style="margin-bottom: 24px;">
         <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Ghi chú nội
           bộ</label>
@@ -1744,7 +1752,6 @@
     const shareToken = urlParams.get('s');
 
     // Giai đoạn 1: Giải mã tên khách hàng
-    // Giai đoạn 1: Giải mã tên khách hàng
     let displayCustomerName = "";
     let trackingCustomerName = "";
     const customerToken = urlParams.get('c');
@@ -1753,11 +1760,22 @@
         const decoded = decodeURIComponent(escape(window.atob(customerToken)));
         const parts = decoded.split(" | ");
         displayCustomerName = parts[0];
-        trackingCustomerName = decoded.replace(" | ", " - "); // Đổi dấu cho dễ nhìn trong Tracking
+        trackingCustomerName = `${parts[0]}${parts[1] ? ' - ' + parts[1] : ''}`;
+
+        // GIẢI MÃ & CẬP NHẬT TIÊU ĐỀ TRANG TÙY CHỈNH (US-033)
+        const customPageTitle = parts[2] ? parts[2].trim() : "";
+        if (customPageTitle) {
+          document.title = customPageTitle;
+        } else {
+          document.title = "Giỏ hàng độc quyền - Khang Ngô Nhà Phố";
+        }
       } catch (e) {
         displayCustomerName = "Khách Hàng";
         trackingCustomerName = "Khách Hàng";
+        document.title = "Giỏ hàng độc quyền - Khang Ngô Nhà Phố";
       }
+    } else {
+      document.title = "Khang Ngô Nhà Phố";
     }
 
     // Giai đoạn 1: Hàm Tracking gửi data về Google Apps Script
@@ -2698,6 +2716,7 @@
       }
       document.getElementById('linkModalCount').textContent = SELECTED_IDS.size;
       document.getElementById('linkCustName').value = '';
+      document.getElementById('linkCustTitle').value = ''; // Reset tiêu đề tùy chỉnh
       document.getElementById('linkCustNote').value = '';
       document.getElementById('linkModal').classList.add('open');
     }
@@ -2710,11 +2729,12 @@
         return;
       }
 
+      const cTitle = document.getElementById('linkCustTitle').value.trim();
       const cNote = document.getElementById('linkCustNote').value.trim();
-      const fullCustomerString = cNote ? `${cName} | ${cNote}` : cName;
+      const fullCustomerString = `${cName} | ${cNote} | ${cTitle}`;
 
       try {
-        // Encode tên khách + ghi chú
+        // Encode tên khách + ghi chú + tiêu đề
         const encodedName = window.btoa(unescape(encodeURIComponent(fullCustomerString)));
         const baseUrl = window.location.origin + window.location.pathname;
         const count = SELECTED_IDS.size;
