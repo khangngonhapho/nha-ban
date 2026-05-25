@@ -412,8 +412,6 @@
         gap: 16px; 
         padding-top: 10px;
       }
-      /* Label chiếm full hàng, không khuyết ô đầu */
-      #list .sec-lbl { grid-column: 1 / -1; }
       /* Thông báo trống cũng chiếm full */
       #list > div[style*="text-align:center"] { grid-column: 1 / -1; }
       #noResultMsg { grid-column: 1 / -1; }
@@ -1188,7 +1186,6 @@
   </div>
 
   <main id="list">
-    <div class="sec-lbl">Danh sách bất động sản</div>
     <div class="loading">
       <div class="spinner"></div>
       <div>Đang tải dữ liệu...</div>
@@ -1619,9 +1616,7 @@
 
     function showError(msg) {
       const list = document.getElementById('list');
-      const lbl = list.querySelector('.sec-lbl');
       list.innerHTML = '';
-      if (lbl) list.appendChild(lbl);
       list.insertAdjacentHTML('beforeend', `
     <div class="err-box">
       <h3>🏠 Thông báo</h3>
@@ -1884,9 +1879,7 @@
 
     function render() {
       const list = document.getElementById('list');
-      const lbl = list.querySelector('.sec-lbl');
       list.innerHTML = '';
-      if (lbl) list.appendChild(lbl);
       const arr = DATA.slice().sort((a, b) => {
         if (currentSortType === 'newest') {
           const ta = parseInt(a.temp_id, 10) || 0;
