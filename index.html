@@ -1757,7 +1757,8 @@
     const customerToken = urlParams.get('c');
     if (customerToken) {
       try {
-        const decoded = decodeURIComponent(escape(window.atob(customerToken)));
+        const safeToken = customerToken.replace(/ /g, '+');
+        const decoded = decodeURIComponent(escape(window.atob(safeToken)));
         const parts = decoded.split(" | ");
         displayCustomerName = parts[0];
         trackingCustomerName = `${parts[0]}${parts[1] ? ' - ' + parts[1] : ''}`;
@@ -2745,7 +2746,7 @@
           const singleId = [...SELECTED_IDS][0];
           const house = DATA.find(p => String(p.id) === String(singleId));
           const systemId = house ? house.system_id : singleId;
-          shareUrl = `${baseUrl}?s=${systemId}&c=${encodedName}`;
+          shareUrl = `${baseUrl}?s=${systemId}&c=${encodeURIComponent(encodedName)}`;
         } else {
           // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
           const allIds = DATA.map(p => String(p.id));
@@ -2757,7 +2758,7 @@
           for (let i = 0; i < bits.length; i += 6) {
             encodedBitmask += B64[parseInt(bits.substr(i, 6), 2)];
           }
-          shareUrl = `${baseUrl}?b=${encodedBitmask}&c=${encodedName}`;
+          shareUrl = `${baseUrl}?b=${encodedBitmask}&c=${encodeURIComponent(encodedName)}`;
         }
 
         // Đóng Modal

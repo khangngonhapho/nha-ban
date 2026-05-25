@@ -128,7 +128,8 @@ module.exports = async (req, res) => {
   const c = req.query.c;
   if (c) {
     try {
-      const decoded = Buffer.from(c, 'base64').toString('utf8');
+      const safeToken = c.replace(/ /g, '+');
+      const decoded = Buffer.from(safeToken, 'base64').toString('utf8');
       const parts = decoded.split(" | ");
       const customPageTitle = parts[2] ? parts[2].trim() : "";
       if (customPageTitle) {
