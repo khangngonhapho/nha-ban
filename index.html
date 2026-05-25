@@ -551,16 +551,17 @@
 
     .crow {
       display: flex;
-      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
     }
 
     .ibox {
       position: relative;
-      width: 100%;
-      min-width: 100%;
-      height: 200px;
+      width: 125px;
+      min-width: 125px;
+      height: auto;
       overflow: hidden;
-      border-radius: 16px 16px 0 0;
+      border-radius: 16px 0 0 16px;
       background: #f0f0f2;
     }
 
@@ -602,9 +603,17 @@
       border-radius: 6px
     }
 
+    .card-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
     .info {
       flex: 1;
-      padding: 12px 14px;
+      padding: 10px 12px 8px 12px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -1923,24 +1932,26 @@
           <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
           <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
         </div>
-        <div class="info">
-          <div class="ititle">${p.t}</div>
-          <div class="chips">
-            <span class="chip">📐 ${p.dt}m²</span>
-            <span class="chip">🏠 ${p.tang} tầng</span>${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
-            <span class="chip">🛣️ ${p.duong_truoc_nha}</span>
-          </div>
-          <div class="pr"><span class="pv">${p.gia} tỷ</span><span class="pu">VND</span></div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-            <div class="loc">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-              P.${p.phuong}, Q.${p.ql}
+        <div class="card-right">
+          <div class="info">
+            <div class="ititle">${p.t}</div>
+            <div class="chips">
+              <span class="chip">📐 ${p.dt}m²</span>
+              <span class="chip">🏠 ${p.tang} tầng</span>${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
+              <span class="chip">🛣️ ${p.duong_truoc_nha}</span>
+            </div>
+            <div class="pr"><span class="pv">${p.gia} tỷ</span><span class="pu">VND</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <div class="loc">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                P.${p.phuong}, Q.${p.ql}
+              </div>
             </div>
           </div>
+          <div class="cfoot">
+            <div class="id-large">#${p.id}</div>
+          </div>
         </div>
-      </div>
-      <div class="cfoot">
-        <div class="id-large">#${p.id}</div>
       </div>`;
         frag.appendChild(c);
       });
