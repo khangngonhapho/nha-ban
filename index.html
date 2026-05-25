@@ -423,7 +423,7 @@
       .card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,.12); }
       
       /* Ảnh lớn hơn trên desktop */
-      .crow { flex-direction: column; }
+      .crow { flex-direction: column; height: auto; }
       .ibox { width: 100%; min-width: 100%; height: 220px; border-radius: 16px 16px 0 0; }
       .info { padding: 16px; }
       
@@ -553,6 +553,7 @@
       display: flex;
       align-items: stretch;
       width: 100%;
+      height: 120px;
     }
 
     .ibox {
@@ -686,6 +687,14 @@
     .pu {
       font-size: 12px;
       color: var(--sub)
+    }
+
+    .pr-loc {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: auto;
     }
 
     .loc {
@@ -1941,8 +1950,8 @@
               <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
               <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
             </div>
-            <div class="pr"><span class="pv">${p.gia} tỷ</span><span class="pu">VND</span></div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            <div class="pr-loc">
+              <div class="pr"><span class="pv">${p.gia} tỷ</span><span class="pu">VND</span></div>
               <div class="loc">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
                 P.${p.phuong}, Q.${p.ql}
