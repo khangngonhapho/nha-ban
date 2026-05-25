@@ -557,8 +557,8 @@
 
     .ibox {
       position: relative;
-      width: 125px;
-      min-width: 125px;
+      width: 115px;
+      min-width: 115px;
       height: auto;
       overflow: hidden;
       border-radius: 16px 0 0 16px;
@@ -613,10 +613,10 @@
 
     .info {
       flex: 1;
-      padding: 10px 12px 8px 12px;
+      padding: 8px 12px 6px 12px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       position: relative;
     }
 
@@ -627,8 +627,8 @@
     }
 
     .id-large {
-      font-size: 17px;
-      font-weight: 800;
+      font-size: 13px;
+      font-weight: 700;
       color: var(--sub);
       word-break: break-all;
       padding-right: 8px;
@@ -701,8 +701,8 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding: 6px 12px;
-      min-height: 34px
+      padding: 4px 12px;
+      min-height: 28px
     }
 
     .bsee {
@@ -1562,6 +1562,7 @@
                   cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26])
                 ].filter(Boolean), // R đến AA
                 system_id: cv(r.c[34]) || (index + 1).toString(), // Cột AI
+                so_pn: cv(r.c[29]) || '-', // Cột AD
                 img_mat_tien: '' // Chỉ nạp khi đăng nhập Admin thành công
               };
             });
@@ -1937,8 +1938,8 @@
             <div class="ititle">${p.t}</div>
             <div class="chips">
               <span class="chip">📐 ${p.dt}m²</span>
-              <span class="chip">🏠 ${p.tang} tầng</span>${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
-              <span class="chip">🛣️ ${p.duong_truoc_nha}</span>
+              <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
+              <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
             </div>
             <div class="pr"><span class="pv">${p.gia} tỷ</span><span class="pu">VND</span></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
