@@ -2025,8 +2025,26 @@
               else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
               else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
               else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+              else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+              else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+              else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+              else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+              else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+              else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+              else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+              else if (cleanQLower.includes('cần giờ') || cleanQLower === 'cg') cleanQ = 'cg';
+              else if (cleanQLower === '1' || cleanQLower === 'q1') cleanQ = '1';
+              else if (cleanQLower === '2' || cleanQLower === 'q2') cleanQ = '2';
               else if (cleanQLower === '3' || cleanQLower === 'q3') cleanQ = '3';
+              else if (cleanQLower === '4' || cleanQLower === 'q4') cleanQ = '4';
+              else if (cleanQLower === '5' || cleanQLower === 'q5') cleanQ = '5';
+              else if (cleanQLower === '6' || cleanQLower === 'q6') cleanQ = '6';
+              else if (cleanQLower === '7' || cleanQLower === 'q7') cleanQ = '7';
+              else if (cleanQLower === '8' || cleanQLower === 'q8') cleanQ = '8';
+              else if (cleanQLower === '9' || cleanQLower === 'q9') cleanQ = '9';
               else if (cleanQLower === '10' || cleanQLower === 'q10') cleanQ = '10';
+              else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
+              else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
               return {
                 temp_id: index + 1, // Mã tạm theo số tăng dần, bắt đầu từ 1
                 id: cv(r.c[0]),
@@ -2110,6 +2128,7 @@
         trackAction("Mở danh sách nhà", `Số lượng hiển thị: ${DATA.length} căn`);
       }
 
+      buildDistrictTabs();
       restoreState();
       updateSortButtonsUI();
 
@@ -2219,6 +2238,37 @@
       btn.classList.toggle('active', anyActive);
     }
 
+    // ── Build district tabs dynamically ──
+    function buildDistrictTabs() {
+      const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+      const dNamesFull = {
+        q1: 'Quận 1', q2: 'Quận 2', q3: 'Quận 3', q4: 'Quận 4', q5: 'Quận 5', q6: 'Quận 6',
+        q7: 'Quận 7', q8: 'Quận 8', q9: 'Quận 9', q10: 'Quận 10', q11: 'Quận 11', q12: 'Quận 12',
+        pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp',
+        tp: 'Tân Phú', btan: 'Bình Tân', td: 'Thủ Đức',
+        hm: 'Hóc Môn', nb: 'Nhà Bè', bc: 'Bình Chánh', cc: 'Củ Chi', cg: 'Cần Giờ'
+      };
+
+      const order = ['q3', 'q10', 'pn', 'tb', 'bt', 'gv', 'q1', 'q2', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q11', 'q12', 'tp', 'btan', 'td', 'hm', 'nb', 'bc', 'cc', 'cg'];
+      
+      districtsInPool.sort((a, b) => {
+        let idxA = order.indexOf(a);
+        let idxB = order.indexOf(b);
+        if (idxA === -1) idxA = 999;
+        if (idxB === -1) idxB = 999;
+        return idxA - idxB;
+      });
+
+      const container = document.getElementById('districtTabs');
+      if (!container) return;
+
+      container.innerHTML = `<button class="tab ${selDistricts.size === 0 ? 'on' : ''}" data-val="all" onclick="tDistrict('all')">Tất cả</button>`
+        + districtsInPool.map(d => {
+            const name = dNamesFull[d] || d.toUpperCase();
+            return `<button class="tab ${selDistricts.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDistrict('${d}')">${name}</button>`;
+          }).join('');
+    }
+
     // ── Build ward tabs dynamically ──
     function buildWardTabs() {
       const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
@@ -2290,7 +2340,13 @@
     }
 
     function updateFilterSummary() {
-      const dNames = { q3: 'Q.3', q10: 'Q.10', pn: 'P.Nhuận', tb: 'T.Bình', bt: 'B.Thạnh', gv: 'G.Vấp' };
+      const dNames = {
+        q1: 'Q.1', q2: 'Q.2', q3: 'Q.3', q4: 'Q.4', q5: 'Q.5', q6: 'Q.6',
+        q7: 'Q.7', q8: 'Q.8', q9: 'Q.9', q10: 'Q.10', q11: 'Q.11', q12: 'Q.12',
+        pn: 'P.Nhuận', tb: 'T.Bình', bt: 'B.Thạnh', gv: 'G.Vấp',
+        tp: 'T.Phú', btan: 'B.Tân', td: 'T.Đức',
+        hm: 'H.Môn', nb: 'N.Bè', bc: 'B.Chánh', cc: 'C.Chi', cg: 'C.Giờ'
+      };
       const gNames = { 'lt7': '<7t', '7-10': '7-10t', '10-15': '10-15t', '15-20': '15-20t', 'gt20': '>20t' };
       const parts = [];
       if (selDistricts.size) parts.push([...selDistricts].map(d => dNames[d] || d).join('+'));
@@ -2315,6 +2371,7 @@
 
     function resetFilters() {
       selDistricts.clear(); selWards.clear(); selDuongs.clear(); selHuong.clear(); selGia.clear(); selDanhGia.clear();
+      buildDistrictTabs();
       syncTabUI('districtTabs', selDistricts);
       syncTabUI('giaTabs', selGia);
       syncTabUI('danhGiaTabs', selDanhGia);
