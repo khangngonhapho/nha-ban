@@ -2086,10 +2086,10 @@
     <!-- Collapsible panel -->
     <div class="filter-panel" id="filterPanel">
       <!-- Admin Search Input -->
-      <div class="admin-only" style="padding: 0 10px 12px 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); display: none;">
-        <div class="filter-section-lbl" style="margin-top:0;">🔍 Tìm kiếm nâng cao Admin (Tin thô)</div>
+      <div class="admin-only" style="padding: 0 10px 12px 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div class="filter-section-lbl" style="margin-top:0;">🔍 Tìm nâng cao Admin (Đầu chủ, SĐT, Tin thô)</div>
         <div style="position: relative;">
-          <input type="text" id="adminSearchInput" placeholder="Tìm tên đầu chủ, nội dung chính, mô tả thô..." onkeyup="onSearchInput()"
+          <input type="text" id="adminSearchInput" placeholder="Tìm tên đầu chủ, số điện thoại, tin thô..." onkeyup="onSearchInput()"
             style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; outline: none; font-family: inherit;">
         </div>
       </div>
@@ -2393,7 +2393,13 @@
       }
     }
 
-    if (isAdmin) document.body.classList.add('is-admin');
+    if (isAdmin) {
+      document.body.classList.add('is-admin');
+      const sInput = document.getElementById('searchInput');
+      if (sInput) {
+        sInput.placeholder = "Tìm mã căn, đường, tên đầu chủ, ĐT...";
+      }
+    }
 
     // Logic chia sẻ: giải mã danh sách ID từ URL
     let sharedIds = null;
@@ -2530,6 +2536,19 @@
             (sv === 'gò vấp' && p.q === 'gv') ||
             (sv === 'quận 3' && p.q === 'q3') ||
             (sv === 'quận 10' && p.q === 'q10');
+          
+          if (isAdmin) {
+            const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(sv);
+            const dtMatch = (p.raw_dt_dau_chu || '').toLowerCase().includes(sv);
+            const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(sv);
+            const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(sv);
+            const noteMatch = (p.note || '').toLowerCase().includes(sv);
+            const cpMatch = (p.cu_phap || '').toLowerCase().includes(sv);
+            const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(sv);
+            const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(sv);
+            return idMatch || tMatch || dMatch || pMatch || qMatch ||
+                   dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
+          }
           return idMatch || tMatch || dMatch || pMatch || qMatch;
         });
       }
@@ -2539,13 +2558,14 @@
       if (isAdmin && asv) {
         a = a.filter(p => {
           const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(asv);
+          const dtMatch = (p.raw_dt_dau_chu || '').toLowerCase().includes(asv);
           const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(asv);
           const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(asv);
           const noteMatch = (p.note || '').toLowerCase().includes(asv);
           const cpMatch = (p.cu_phap || '').toLowerCase().includes(asv);
           const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(asv);
           const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(asv);
-          return dauChuMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
+          return dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
         });
       }
 
