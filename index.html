@@ -2349,7 +2349,7 @@
     <button onclick="exitCollectionView()">✕ Hủy xem</button>
   </div>
 
-  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display:none;">
+  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer">
     <div class="mode-segmented-control">
       <button class="mode-btn active" id="modeSourceBtn" onclick="switchActiveMode('source')">
         🛍️ ĐÃ LÊN SÓNG (<span id="countOnAir">-</span>)
@@ -4104,6 +4104,17 @@
       const p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
 
+      const cleanRawNoiDungChinh = (text) => {
+        if (!text) return '';
+        const keyword = 'nguồn';
+        const idx = text.toLowerCase().indexOf(keyword);
+        if (idx !== -1) {
+          return text.substring(0, idx).trim();
+        }
+        return text.trim();
+      };
+      const cleanedNoiDungChinh = cleanRawNoiDungChinh(p.raw_noi_dung_chinh);
+
       // Tracking: Xem chi tiết căn nhà
       if (p.id) {
         trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
@@ -4111,7 +4122,7 @@
 
       const mID = document.getElementById('mID');
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
-        document.getElementById('mT').textContent = p.raw_noi_dung_chinh || p.t;
+        document.getElementById('mT').textContent = cleanedNoiDungChinh || p.t;
         if (mID) mID.style.display = 'none';
       } else {
         document.getElementById('mT').textContent = p.t;
@@ -4217,10 +4228,8 @@
                 <div class="admin-map-container"></div>
 
                 <!-- Mô tả boxed -->
-                <div class="admin-raw-title" style="margin-top:16px;">📝 NỘI DUNG CHÍNH (THÔ)</div>
-                <div class="admin-mota-box red-text">${p.raw_noi_dung_chinh || 'Chưa có nội dung chính.'}</div>
-
-                <div class="admin-raw-title" style="margin-top:16px;">📝 MÔ TẢ CHI TIẾT (THÔ)</div>
+                <div class="admin-raw-title" style="margin-top:16px;">📝 NỘI DUNG CHÍNH & MÔ TẢ CHI TIẾT (THÔ)</div>
+                <div class="admin-mota-box red-text" style="margin-bottom:8px;">${cleanedNoiDungChinh || 'Chưa có nội dung chính.'}</div>
                 <div class="admin-mota-box black-text" id="adminMotaGocBox">${p.raw_mo_ta_chi_tiet || p.m || 'Chưa có mô tả chi tiết.'}</div>
               </div>
             </div>
