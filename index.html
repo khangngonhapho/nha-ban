@@ -5411,23 +5411,23 @@
           <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CỌ SƠN CHỌN NHANH 🎨)</label>
           
           <!-- IMAGE EDITOR TOOLBAR -->
-          <div class="image-editor-toolbar" style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap;">
-            <span style="font-size: 10px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px;">Cọ Biên Tập:</span>
-            <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
-              🔒 Mặt Tiền (MT)
+          <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: nowrap; overflow-x: auto; width: 100%; box-sizing: border-box;">
+            <span style="font-size: 9.5px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; margin-right: 4px;">Cọ Sơn:</span>
+            <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              🔒 Mặt Tiền
             </button>
-            <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
-              ⭐ Ảnh Nền
+            <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              ⭐ Nền
             </button>
-            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit;">
+            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center;">
               ✕ Hủy
             </button>
           </div>
           <div style="font-size: 9.5px; color: var(--gold); text-align: center; margin-top: -6px; margin-bottom: 10px; font-weight: 600;">
-            💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Ảnh Nền. Click ảnh khi không chọn cọ để Ẩn/Hiện!
+            💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Nền. Click ảnh bình thường để Ẩn/Hiện!
           </div>
 
-          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
       // 1. Facade photo (Hình Mặt tiền gốc thô)
@@ -5531,9 +5531,12 @@
 
       return `
         <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isPublic ? 'is-public' : ''}" 
-          data-type="${type}" data-index="${index}" data-url="${url}">
-          <div class="edit-img-card-wrap" onclick="window.onImageCardClick(event, this.closest('.edit-img-card'))" style="cursor: pointer;">
-            <img src="${fixImgUrl(url, 'w200')}" alt="Ảnh ${index}" loading="lazy">
+          data-type="${type}" data-index="${index}" data-url="${url}"
+          style="position: relative; background: #000; border: ${cardBorder}; border-radius: 8px; overflow: hidden; display: block; width: 100%; box-sizing: border-box;">
+          <div style="position: relative; width: 100%; height: 0; padding-top: 75%; overflow: hidden; cursor: pointer;" 
+            onclick="window.onImageCardClick(event, this.closest('.edit-img-card'))">
+            <img src="${fixImgUrl(url, 'w200')}" alt="Ảnh ${index}" loading="lazy"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
             <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px; z-index: 5;">
               ${typeBadge}
             </span>
@@ -5541,7 +5544,7 @@
               <span class="mattien-lock-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Mặt Tiền</span>
             ` : ''}
             ${isAnhNen && !isMatTien ? `
-              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Ảnh Nền</span>
+              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Nền</span>
             ` : ''}
             ${type !== "facade" ? `
               <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; background: rgba(0,0,0,0.65); padding: 4px; border-radius: 6px; cursor: pointer; margin: 0; z-index: 10; line-height: 0;">
@@ -5559,7 +5562,8 @@
       window.currentImageEditorTool = tool;
       const facadeBtn = document.getElementById('toolFacadeBtn');
       const coverBtn = document.getElementById('toolCoverBtn');
-      if (!facadeBtn || !coverBtn) return;
+      const clearBtn = document.getElementById('toolClearBtn');
+      if (!facadeBtn || !coverBtn || !clearBtn) return;
       
       // Reset to dark transparent
       facadeBtn.style.background = 'rgba(0,0,0,0.5)';
@@ -5576,11 +5580,15 @@
         facadeBtn.style.background = 'var(--red)';
         facadeBtn.style.borderColor = 'var(--red)';
         facadeBtn.style.boxShadow = '0 0 8px rgba(231, 76, 60, 0.6)';
+        clearBtn.style.display = 'flex'; // Show cancel button
       } else if (tool === 'cover') {
         coverBtn.style.background = 'var(--gold)';
         coverBtn.style.borderColor = 'var(--gold)';
         coverBtn.style.color = '#000';
         coverBtn.style.boxShadow = '0 0 8px rgba(241, 196, 15, 0.6)';
+        clearBtn.style.display = 'flex'; // Show cancel button
+      } else {
+        clearBtn.style.display = 'none'; // Hide cancel button
       }
     };
 
