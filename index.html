@@ -177,7 +177,7 @@
     /* ── Collapsible filter panel ── */
     .filter-panel {
       display: block;
-      background: #1c1c1e;
+      background: #2a0a0a; /* Đỏ Burgundy Rượu Vang Thẫm */
       border-radius: 0 0 16px 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       padding: 0 16px;
@@ -190,8 +190,31 @@
 
     .filter-panel.open {
       max-height: 75vh;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1.5px solid rgba(255,255,255,0.15);
       padding: 10px 16px;
+    }
+
+    /* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Burgundy & Gold */
+    .filter-panel .tab {
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .filter-panel .tab:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .filter-panel .tab.on {
+      background: var(--gold);
+      color: #2a0a0a;
+      border-color: var(--gold);
+    }
+
+    .filter-panel .tab.on:hover {
+      background: #f1b709;
+      border-color: #f1b709;
     }
 
     /* ── Detailed specs range filters ── */
@@ -2304,16 +2327,7 @@
     </div>
     <!-- Collapsible panel -->
     <div class="filter-panel" id="filterPanel">
-      <!-- Admin Search Input -->
-      <div class="admin-only" style="padding: 0 10px 12px 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
-        <div class="filter-section-lbl" style="margin-top:0;">🔍 Tìm nâng cao Admin (Đầu chủ, SĐT, Tin thô)</div>
-        <div style="position: relative;">
-          <input type="text" id="adminSearchInput" placeholder="Tìm tên đầu chủ, số điện thoại, tin thô..." onkeyup="onSearchInput()"
-            style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; outline: none; font-family: inherit;">
-        </div>
-      </div>
-
-      <div class="filter-section-lbl">Quận / TP</div>
+      <div class="filter-section-lbl" style="margin-top:4px;">Quận / TP</div>
       <div class="tabs" id="districtTabs">
         <button class="tab on" data-val="all" onclick="tDistrict('all')">Tất cả</button>
         <button class="tab" data-val="q3" onclick="tDistrict('q3')">Quận 3</button>
@@ -2396,15 +2410,6 @@
       <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
       <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
       
-      <div class="filter-section-lbl admin-only">🌐 Tra cứu & Lên sóng nhanh từ Pool</div>
-      <div class="admin-only"
-        style="padding: 12px; background: rgba(255,191,36,0.08); border: 1px dashed rgba(255,191,36,0.3); border-radius: 12px; margin: 5px 0 15px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">Tìm kiếm và chọn căn trong Pool để lên sóng tức thì:</div>
-        <input type="text" id="poolSearchToolInput" placeholder="Tìm địa chỉ, đường hoặc mã căn trong Pool thô..." onkeyup="onPoolSearchToolKeyup()"
-          style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; outline: none; font-family: inherit;">
-        <div id="poolSearchToolResults" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-top: 4px;"></div>
-      </div>
-
       <div class="filter-section-lbl admin-only">Cấu hình Google Admin</div>
       <div class="admin-only"
         style="padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; margin: 5px 0 10px; display: none;">
@@ -2421,7 +2426,7 @@
 
       <!-- Action Button Footer -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 10px 15px 10px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 8px;">
-        <button onclick="toggleFilter()" style="padding: 11px; border-radius: 8px; border: none; background: var(--gold); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <button onclick="toggleFilter()" style="padding: 11px; border-radius: 8px; border: none; background: var(--gold); color: #2a0a0a; font-weight: 800; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
           <span>🔍 ÁP DỤNG</span>
         </button>
         <button onclick="clearAllFilters()" style="padding: 11px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.4); background: transparent; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
@@ -3076,22 +3081,6 @@
                    dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
           }
           return idMatch || tMatch || dMatch || pMatch || qMatch;
-        });
-      }
-
-      // LỌC THEO BỘ LỌC ADMIN NÂNG CAO
-      const asv = (document.getElementById('adminSearchInput')?.value || '').trim().toLowerCase();
-      if (isAdmin && asv) {
-        a = a.filter(p => {
-          const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(asv);
-          const dtMatch = (p.raw_dt_dau_chu || '').toLowerCase().includes(asv);
-          const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(asv);
-          const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(asv);
-          const noteMatch = (p.note || '').toLowerCase().includes(asv);
-          const cpMatch = (p.cu_phap || '').toLowerCase().includes(asv);
-          const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(asv);
-          const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(asv);
-          return dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
         });
       }
 
@@ -3856,7 +3845,6 @@
 
       // Xóa các ô lọc thông số chi tiết nâng cao
       const advInputs = [
-        'adminSearchInput',
         'filterDtMin', 'filterDtMax',
         'filterNgangMin', 'filterNgangMax',
         'filterDaiMin', 'filterDaiMax',
@@ -4105,9 +4093,7 @@
       
       if (!isAdmin || activeMode === 'pool' || visibleCount > 0) return;
       
-      const mainSearchVal = (document.getElementById('searchInput')?.value || '').trim();
-      const adminSearchVal = (document.getElementById('adminSearchInput')?.value || '').trim();
-      const searchVal = mainSearchVal || adminSearchVal;
+      const searchVal = (document.getElementById('searchInput')?.value || '').trim();
       
       if (!searchVal) return;
       
@@ -4391,123 +4377,121 @@
         if (scta) scta.style.display = 'none';
         
         sbody.innerHTML = `
-          <div class="admin-accordion">
-            <!-- ACCORDION 1: THÔNG TIN THÔ - POOL -->
-            <div class="accordion-item expanded" id="accPool">
-              <div class="accordion-header active" onclick="toggleAdminAccordion(this)">
-                <span>THÔNG TIN THÔ - POOL</span>
-                <span class="arrow">▼</span>
+          <!-- THÔNG TIN THÔ - POOL (HIỂN THỊ PHẲNG TRỰC TIẾP) -->
+          <div id="accPool" style="margin-bottom: 24px; padding: 0 4px;">
+            <div style="font-size: 13px; font-weight: 800; color: var(--gold); margin-bottom: 16px; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <span>📄</span> THÔNG TIN THÔ - POOL
+            </div>
+
+            <!-- Carousels -->
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+              <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
+                <div id="carouselNha" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
               </div>
-              <div class="accordion-content" style="display:block;">
-                <!-- Carousels -->
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-                  <div>
-                    <div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
-                    <div id="carouselNha" style="position: relative;">
-                      <div class="admin-scroll-carousel"></div>
-                      <div class="admin-carousel-dots"></div>
-                    </div>
-                  </div>
-                  ${(p.raw_sodo1 || p.raw_sodo2) ? `
-                  <div>
-                    <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sơ đồ thửa đất</div>
-                    <div id="carouselSo" style="position: relative;">
-                      <div class="admin-scroll-carousel"></div>
-                      <div class="admin-carousel-dots"></div>
-                    </div>
-                  </div>
-                  ` : ''}
+              ${(p.raw_sodo1 || p.raw_sodo2) ? `
+              <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sơ đồ thửa đất</div>
+                <div id="carouselSo" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
                 </div>
+              </div>
+              ` : ''}
+            </div>
 
-                <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
-                <div class="admin-mota-box red-text" style="margin-top:14px; margin-bottom:8px; font-size:12px;">${formatRawDescription(cleanedNoiDungChinh) || 'Chưa có nội dung chính.'}</div>
-                <div class="admin-mota-box black-text" id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet || p.m) || 'Chưa có mô tả chi tiết.'}</div>
+            <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
+            <div class="admin-mota-box red-text" style="margin-top:14px; margin-bottom:8px; font-size:12px;">${formatRawDescription(cleanedNoiDungChinh) || 'Chưa có nội dung chính.'}</div>
+            <div class="admin-mota-box black-text" id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet || p.m) || 'Chưa có mô tả chi tiết.'}</div>
 
-                <!-- Technical Specs Dotted Grid -->
-                <div class="admin-raw-section">
-                  <div class="admin-raw-title">Thông tin</div>
-                  <div class="admin-raw-grid">
-                    <div class="admin-raw-cell">
-                      <span class="label">Diện tích thực tế:</span>
-                      <span class="value dotted">${p.raw_dt_thuc_te || p.dt || '-'} m²</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Diện tích trên sổ:</span>
-                      <span class="value dotted">${p.raw_dt_tren_so || p.dt || '-'} m²</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Chiều ngang:</span>
-                      <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Chiều dài:</span>
-                      <span class="value dotted">${p.dai_nha || '-'} m</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Đường trước nhà:</span>
-                      <span class="value dotted">${p.raw_duong_truoc_nha || p.duong_truoc_nha || '-'} m</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Số tầng:</span>
-                      <span class="value dotted">${p.raw_so_tang || p.tang || '-'} tầng</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Số phòng ngủ:</span>
-                      <span class="value dotted">${p.raw_so_pn || p.so_pn || '-'} PN</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Số WC:</span>
-                      <span class="value dotted">${p.raw_so_wc || '-'} WC</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Giá chào:</span>
-                      <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia || '-'} tỷ</span>
-                    </div>
-                    <div class="admin-raw-cell">
-                      <span class="label">Trích thưởng:</span>
-                      <span class="value dotted" style="color:#27ae60; font-weight:800;">${extractCommission(p)}</span>
-                    </div>
-                  </div>
+            <!-- Technical Specs Dotted Grid -->
+            <div class="admin-raw-section">
+              <div class="admin-raw-title">Thông tin</div>
+              <div class="admin-raw-grid">
+                <div class="admin-raw-cell">
+                  <span class="label">Diện tích thực tế:</span>
+                  <span class="value dotted">${p.raw_dt_thuc_te || p.dt || '-'} m²</span>
                 </div>
-
-                <div class="admin-raw-section" style="margin-top: 14px;">
-                  <div class="admin-raw-title">Thông tin nguồn</div>
-                  <div class="admin-raw-source">
-                    <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
-                      <span style="color:#57606f;">Nguồn:</span>
-                      <span style="font-weight:700;">${extractSource(p.raw_noi_dung_chinh)}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between;">
-                      <span style="color:#57606f;">Link Facebook:</span>
-                      <span>
-                        ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" class="dotted-val" style="color:var(--blue);">Xem FB Đầu Chủ ↗</a>` : '-'}
-                      </span>
-                    </div>
-                  </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Diện tích trên sổ:</span>
+                  <span class="value dotted">${p.raw_dt_tren_so || p.dt || '-'} m²</span>
                 </div>
-
-                <div class="admin-raw-section" style="margin-top: 14px;">
-                  <div class="admin-raw-title">Thông tin đầu chủ</div>
-                  <div class="admin-raw-source">
-                    <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
-                      <span style="color:#57606f;">Tên đầu chủ:</span>
-                      <span style="font-weight:700;">${p.raw_ten_dau_chu || '-'}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between;">
-                      <span style="color:#57606f;">SĐT đầu chủ:</span>
-                      <span>
-                        ${p.raw_dt_dau_chu ? `<a href="tel:${formatPhone(p.raw_dt_dau_chu)}" class="dotted-val" style="color:var(--blue); font-weight:700;">${formatPhone(p.raw_dt_dau_chu)}</a>` : '-'}
-                      </span>
-                    </div>
-                  </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Chiều ngang:</span>
+                  <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
                 </div>
-
-                <!-- Google Maps Embed -->
-                <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
-                <div class="admin-map-container"></div>
+                <div class="admin-raw-cell">
+                  <span class="label">Chiều dài:</span>
+                  <span class="value dotted">${p.dai_nha || '-'} m</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Đường trước nhà:</span>
+                  <span class="value dotted">${p.raw_duong_truoc_nha || p.duong_truoc_nha || '-'} m</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Số tầng:</span>
+                  <span class="value dotted">${p.raw_so_tang || p.tang || '-'} tầng</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Số phòng ngủ:</span>
+                  <span class="value dotted">${p.raw_so_pn || p.so_pn || '-'} PN</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Số WC:</span>
+                  <span class="value dotted">${p.raw_so_wc || '-'} WC</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Giá chào:</span>
+                  <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia || '-'} tỷ</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Trích thưởng:</span>
+                  <span class="value dotted" style="color:#27ae60; font-weight:800;">${extractCommission(p)}</span>
+                </div>
               </div>
             </div>
 
+            <div class="admin-raw-section" style="margin-top: 14px;">
+              <div class="admin-raw-title">Thông tin nguồn</div>
+              <div class="admin-raw-source">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                  <span style="color:#57606f;">Nguồn:</span>
+                  <span style="font-weight:700;">${extractSource(p.raw_noi_dung_chinh)}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:#57606f;">Link Facebook:</span>
+                  <span>
+                    ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" class="dotted-val" style="color:var(--blue);">Xem FB Đầu Chủ ↗</a>` : '-'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-raw-section" style="margin-top: 14px;">
+              <div class="admin-raw-title">Thông tin đầu chủ</div>
+              <div class="admin-raw-source">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                  <span style="color:#57606f;">Tên đầu chủ:</span>
+                  <span style="font-weight:700;">${p.raw_ten_dau_chu || '-'}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:#57606f;">SĐT đầu chủ:</span>
+                  <span>
+                    ${p.raw_dt_dau_chu ? `<a href="tel:${formatPhone(p.raw_dt_dau_chu)}" class="dotted-val" style="color:var(--blue); font-weight:700;">${formatPhone(p.raw_dt_dau_chu)}</a>` : '-'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Google Maps Embed -->
+            <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
+            <div class="admin-map-container"></div>
+          </div>
+
+          <div class="admin-accordion">
             <!-- ACCORDION 2: BIÊN TẬP CUSTOM - SOURCE -->
             <div class="accordion-item" id="accSource">
               <div class="accordion-header" onclick="toggleAdminAccordion(this)">
