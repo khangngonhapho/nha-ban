@@ -3674,7 +3674,18 @@
         const ndChinh = row[9] || '';
 
         const div = document.createElement('div');
-        div.style.cssText = 'padding: 12px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 12px;';
+        div.style.cssText = 'padding: 12px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s;';
+        
+        div.onmouseenter = () => div.style.background = 'rgba(255,255,255,0.08)';
+        div.onmouseleave = () => div.style.background = 'rgba(255,255,255,0.04)';
+        
+        if (isAlready) {
+          // If already on air, click card to open standard detail view (openS)
+          div.onclick = () => openS(id);
+        } else {
+          // If not yet on air, click card to open raw curation detail view (openPoolS)
+          div.onclick = () => openPoolS(systemId);
+        }
         
         div.innerHTML = `
           <div style="flex: 1; min-width: 0;">
@@ -3823,15 +3834,17 @@
       document.getElementById('ar').style.display = gI === gN - 1 ? 'none' : 'flex';
     }
 
-    function openS(id) {
-      const p = DATA.find(x => String(x.id) === String(id));
+    function openS(id, tempP = null) {
+      const p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
 
       // Tracking: Xem chi tiết căn nhà
-      trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
+      if (p.id) {
+        trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
+      }
 
       const mID = document.getElementById('mID');
-      if (isAdmin && p.original_row_data) {
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         document.getElementById('mT').textContent = p.raw_noi_dung_chinh || p.t;
         if (mID) mID.style.display = 'none';
       } else {
@@ -3845,7 +3858,7 @@
       const sbody = document.getElementById('sbody');
       const scta = document.querySelector('.scta');
 
-      if (isAdmin && p.original_row_data) {
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         if (scta) scta.style.display = 'none';
         
         sbody.innerHTML = `
@@ -3960,13 +3973,18 @@
                   </div>
 
                   <div class="admin-edit-group">
+                    <label for="editMaKhangNgo">Mã Khang Ngô (ID):</label>
+                    <input type="text" id="editMaKhangNgo" value="${p.isFromPoolOnly ? (generateMaKhangNgo(p.raw_so_nha, p.raw_ten_duong) || p.id) : p.id}" placeholder="Mã Khang Ngô..." style="font-weight: 700; color: var(--red);">
+                  </div>
+
+                  <div class="admin-edit-group">
                     <label for="editTieuDeBds">Tiêu đề public (dưới 85 ký tự):</label>
-                    <input type="text" id="editTieuDeBds" value="${p.original_row_data[39] || p.raw_tieu_de_public || ''}" placeholder="Nhập tiêu đề BĐS ngắn gọn...">
+                    <input type="text" id="editTieuDeBds" value="${p.isFromPoolOnly ? (p.raw_tieu_de_public || generateAutoTitle(p)) : ((p.original_row_data && p.original_row_data[39]) || p.raw_tieu_de_public || '')}" placeholder="Nhập tiêu đề BĐS ngắn gọn...">
                   </div>
 
                   <div class="admin-edit-group">
                     <label for="editMoTaBds">Mô tả public:</label>
-                    <textarea id="editMoTaBds" rows="6" placeholder="Nhập mô tả công khai cho khách hàng...">${p.m || p.raw_mo_ta_public || ''}</textarea>
+                    <textarea id="editMoTaBds" rows="6" placeholder="Nhập mô tả công khai cho khách hàng...">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || '')}</textarea>
                   </div>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -4021,7 +4039,7 @@
 
                     <div class="admin-edit-group">
                       <label for="editSoWc">Số WC:</label>
-                      <input type="number" id="editSoWc" value="${p.original_row_data[33] !== '-' ? p.original_row_data[33] : ''}" placeholder="Số WC...">
+                      <input type="number" id="editSoWc" value="${(p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || '')}" placeholder="Số WC...">
                     </div>
                   </div>
 
@@ -4047,7 +4065,7 @@
                 <span class="arrow">▶</span>
               </div>
               <div class="accordion-content">
-                <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
+                <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.isFromPoolOnly ? (p.raw_tieu_de_public || generateAutoTitle(p)) : (p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.')}</div>
                 <div class="admin-raw-grid" style="margin-bottom: 12px;">
                   <div class="admin-raw-cell">
                     <span class="label">Giá bán:</span>
@@ -4087,12 +4105,19 @@
                     <span class="value dotted">${p.tinh_trang}</span>
                   </div>` : ''}
                 </div>
-                <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
+                <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.')}</div>
               </div>
             </div>
           </div>
-          <div class="admin-sticky-footer">
-            <button class="admin-save-btn" id="saveBtn" onclick="saveSourceChanges('${p.id}')">💾 LƯU THAY ĐỔI</button>
+          <div class="admin-sticky-footer" style="display: flex; gap: 10px; width: 100%;">
+            ${p.isFromPoolOnly ? `
+              <button class="admin-save-btn" id="saveBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" style="background: #27ae60; flex: 1;">⚡ LÊN SÓNG & LƯU</button>
+            ` : `
+              <button class="admin-save-btn" id="saveBtn" onclick="saveSourceChanges('${p.id}')" style="flex: 1;">💾 LƯU THAY ĐỔI</button>
+              <button class="admin-save-btn" onclick="shareZaloFromAdminDetail('${p.id}')" style="background: var(--blue); flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span>🔗</span> Gửi Zalo
+              </button>
+            `}
           </div>
         `;
       } else {
@@ -4139,7 +4164,7 @@
         btnZalo.onclick = () => askZalo(p.id, p.t);
       }
 
-      if (isAdmin && p.original_row_data) {
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         setTimeout(() => {
           const editHuong = document.getElementById('editHuong');
           if (editHuong) editHuong.value = p.huong || '-';
@@ -4598,6 +4623,169 @@
     }
     // ⚡ REAL-TIME POOL CURATION & PULL UTILITIES
     // ============================================================
+    // Accents removal for road name abbreviation
+    function stripVietnameseAccents(str) {
+      if (!str) return "";
+      return str.normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D");
+    }
+
+    function abbreviateAndReverseRoad(roadName) {
+      if (!roadName) return "";
+      const cleanRoad = stripVietnameseAccents(roadName);
+      const words = cleanRoad.trim().split(/\s+/).filter(w => w.length > 0);
+      const abbr = words.map(w => w[0].toUpperCase()).join('');
+      return abbr.split('').reverse().join('');
+    }
+
+    function mapSoNha(soNha) {
+      if (!soNha) return "";
+      const map = { '1': 'M', '2': 'H', '3': 'B', '4': 'A', '5': 'N', '6': 'S', '7': 'Z', '8': 'T', '9': 'C', '0': 'O', '/': 'I', '.': 'I' };
+      let res = "";
+      for (const char of String(soNha)) {
+        const lowerChar = char.toLowerCase();
+        if (map[lowerChar]) {
+          res += map[lowerChar];
+        } else if (/[a-z]/i.test(char)) {
+          res += lowerChar;
+        }
+      }
+      return res;
+    }
+
+    function generateMaKhangNgo(soNha, duong) {
+      const soNhaCode = mapSoNha(soNha);
+      const duongCode = abbreviateAndReverseRoad(duong);
+      if (!soNhaCode || !duongCode) return "";
+      const base = soNhaCode + 'I' + duongCode;
+      return base.substring(0, 1) + 'W' + base.substring(1);
+    }
+
+    function generateAutoTitle(p) {
+      const typeStr = (p.raw_so_nha && (p.raw_so_nha.includes('/') || p.raw_so_nha.includes('.'))) ? "Hẻm" : "Mặt tiền";
+      const phuongStr = p.phuong ? (p.phuong.toLowerCase().startsWith('p') ? p.phuong : 'P.' + p.phuong) : '';
+      const quanStr = p.ql ? ('Q.' + p.ql) : '';
+      const dtStr = (p.dt || p.raw_dt_tren_so) ? ((p.dt || p.raw_dt_tren_so) + 'm²') : '';
+      return `${typeStr} ${phuongStr}, ${quanStr} - ${dtStr}`.trim().replace(/,\s*$/, '');
+    }
+
+    function generateAutoDescription(p) {
+      const typeStr = (p.raw_so_nha && (p.raw_so_nha.includes('/') || p.raw_so_nha.includes('.'))) ? "HẺM XE HƠI SẠCH SẼ" : "MẶT TIỀN KINH DOANH SẦM UẤT";
+      const dt = p.dt || p.raw_dt_tren_so || "-";
+      const ngang = p.mat || p.raw_mat_tien || "-";
+      const dai = p.dai_nha || "-";
+      const ketCau = p.tang || p.raw_so_tang || "-";
+      const huong = p.huong || "-";
+      const gia = p.gia || p.raw_gia_chao || "-";
+      const phuong = p.phuong || "-";
+      const quan = p.ql || "-";
+
+      return `🔥 CHÍNH CHỦ CẦN BÁN GẤP CĂN NHÀ SIÊU ĐẸP - VỊ TRÍ ĐẮC ĐỊA 🔥\n\n📍 Vị trí: ${typeStr}, thuộc Phường ${phuong}, Quận ${quan}.\n📐 Thông số vàng: Diện tích ${dt}m² (Ngang ${ngang}m x Dài ${dai}m).\n🏗️ Kết cấu: ${ketCau} tầng kiên cố, công năng đầy đủ, nhà sạch dọn vào ở ngay.\n🧭 Hướng: ${huong}.\n💎 Pháp lý: Sổ hồng chính chủ, hoàn công đầy đủ, sang tên công chứng trong ngày.\n💰 Giá bán chỉ: ${gia} tỷ (Thương lượng chính chủ).\n\n📞 Liên hệ ngay Khang Ngô Nhà Phố để xem nhà thực tế và sở hữu bất động sản tốt nhất Quận ${quan}!`;
+    }
+
+    window.shareZaloFromAdminDetail = function(id) {
+      SELECTED_IDS.clear();
+      SELECTED_IDS.add(String(id));
+      updateShareUI();
+      promptGenerateLink();
+    };
+
+    window.openPoolS = function(systemId) {
+      if (!POOL_ROWS || !POOL_ROWS.length) {
+        showToast("Dữ liệu Pool chưa được nạp!", "error");
+        return;
+      }
+      const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+      if (!row) {
+        showToast("Không tìm thấy căn nhà này trong Pool thô!", "error");
+        return;
+      }
+
+      // Map row to p structure
+      const dt = parseFloat(row[13] || row[14]) || 0;
+      const gia = parseFloat(row[11] || row[57]) || 0;
+      const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+
+      let rawQ = row[3] || '';
+      let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+      if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+      const cleanQLower = cleanQ.toLowerCase();
+      if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+      else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+      else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+      else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+      else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+      else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+      else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+      else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+      else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+      else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+      else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+
+      const poolImgs = [];
+      for (let c = 40; c <= 54; c++) {
+        if (row[c]) poolImgs.push(row[c]);
+      }
+
+      const p = {
+        temp_id: "pool_" + systemId,
+        id: row[55] || row[54] || '',
+        cu_phap: "",
+        t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
+        dt: row[13] || row[14] || '',
+        tang: row[15] || '',
+        mat: row[16] || '',
+        gia: row[11] || '',
+        q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+        ql: cleanQ.toUpperCase(),
+        phuong: row[4] || '-',
+        loai_hinh: (row[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
+        huong: row[17] || '-',
+        duong_truoc_nha: row[58] || '-',
+        rong_hem: row[59] || '-',
+        tinh_trang: row[60] || '-',
+        danh_gia: row[66] || '',
+        is_invisible: false,
+        ngu_tang_tret: row[67] || '-',
+        chdv: row[68] || '-',
+        giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+        m: row[57] || '',
+        imgs: poolImgs,
+        system_id: systemId,
+        so_pn: row[63] || '-',
+        img_mat_tien: row[29] || '',
+
+        raw_ten_dau_chu: row[75] || '',
+        raw_dt_dau_chu: row[74] || '',
+        raw_link_fb: row[76] || '',
+        raw_noi_dung_chinh: row[9] || '',
+        raw_mo_ta_chi_tiet: row[10] || '',
+        raw_sodo1: row[27] || '',
+        raw_sodo2: row[28] || '',
+        raw_so_nha: row[6] || '',
+        raw_ten_duong: row[5] || '',
+        raw_dt_tren_so: row[14] || '',
+        raw_gia_chao: row[11] || '',
+        raw_so_tang: row[15] || '',
+        raw_mat_tien: row[16] || '',
+        raw_duong_truoc_nha: row[60] || '',
+        raw_do_rong_hem: row[61] || '',
+        raw_so_pn: row[64] || '',
+        raw_so_wc: row[65] || '',
+        raw_tieu_de_public: row[56] || '',
+        raw_mo_ta_public: row[57] || '',
+        pool_row_index: POOL_ROWS.indexOf(row) + 2,
+
+        isFromPoolOnly: true,
+        pool_row_data: row
+      };
+      p.dai_nha = getDaiNha(p);
+
+      openS(null, p);
+    };
+
     function searchPoolRows(query) {
       if (!query || !POOL_ROWS.length) return [];
       const q = query.toLowerCase().trim();
@@ -4645,7 +4833,18 @@
         const sdt = row[74] || '';
 
         const div = document.createElement('div');
-        div.style.cssText = 'padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 8px;';
+        div.style.cssText = 'padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.2s;';
+        
+        div.onmouseenter = () => div.style.background = 'rgba(255,255,255,0.1)';
+        div.onmouseleave = () => div.style.background = 'rgba(255,255,255,0.05)';
+        
+        if (isAlready) {
+          // If already on air, click card to open standard detail view (openS)
+          div.onclick = () => openS(id);
+        } else {
+          // If not yet on air, click card to open raw curation detail view (openPoolS)
+          div.onclick = () => openPoolS(systemId);
+        }
         
         div.innerHTML = `
           <div style="flex: 1; min-width: 0; text-align: left;">
@@ -5522,6 +5721,289 @@
         if (saveBtn) {
           saveBtn.disabled = false;
           saveBtn.innerHTML = '💾 LƯU THAY ĐỔI';
+        }
+      }
+    };
+
+    window.saveNewListingFromPool = async function(systemId, btnElement) {
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+      
+      if (!token || !expiry || parseInt(expiry, 10) <= now) {
+        showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+        return;
+      }
+      
+      let oldText = "";
+      if (btnElement) {
+        oldText = btnElement.innerHTML;
+        btnElement.disabled = true;
+        btnElement.innerHTML = '⌛ Đang lên sóng...';
+      }
+      
+      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      
+      try {
+        // Step 1: Đọc Sheet Pool để lấy dòng gốc
+        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`;
+        const poolRes = await fetch(poolUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!poolRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Pool (Mã: ${poolRes.status}).`);
+        }
+        
+        const poolData = await poolRes.json();
+        const rows = poolData.values || [];
+        
+        const matchedRow = rows.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+        if (!matchedRow) {
+          throw new Error("Không tìm thấy căn nhà này trong kho Pool hoặc không khớp System ID.");
+        }
+
+        // Đọc dữ liệu từ form trong modal
+        const note = document.getElementById('editNote').value.trim();
+        const maKhangNgo = document.getElementById('editMaKhangNgo').value.trim();
+        const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+        const moTaBds = document.getElementById('editMoTaBds').value.trim();
+        const huong = document.getElementById('editHuong').value;
+        const duong = document.getElementById('editDuong').value;
+        const danhGia = document.getElementById('editDanhGia').value;
+        const rongHem = document.getElementById('editRongHem').value.trim();
+        const soPn = document.getElementById('editSoPn').value.trim();
+        const soWc = document.getElementById('editSoWc').value.trim();
+        const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
+        const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
+
+        if (!maKhangNgo) {
+          throw new Error("Vui lòng điền Mã Khang Ngô!");
+        }
+        
+        // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
+        const sourceRes = await fetch(sourceUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!sourceRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}).`);
+        }
+        
+        const sourceData = await sourceRes.json();
+        const sourceRows = sourceData.values || [];
+        
+        const sysIdMatched = matchedRow[71] || matchedRow[72] || '';
+        if (!sysIdMatched) {
+          throw new Error("Dữ liệu căn nhà trong Pool thiếu System ID.");
+        }
+        
+        const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
+        const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+        
+        // Map 15 ảnh nội thất sạch và ảnh hẻm
+        const finalImages = [];
+        const anhDuocChon = (matchedRow[61] || "").toString().replace(/\s/g, '');
+        const anhHemDuocChon = (matchedRow[62] || "").toString().replace(/\s/g, '');
+        
+        if (anhDuocChon === "") {
+          alert("⚠️ Căn nhà này chưa được dán nhãn ảnh nội thất an toàn ở Curator App! Vui lòng nhờ Trang biên tập ảnh trước.");
+          if (btnElement) {
+            btnElement.disabled = false;
+            btnElement.innerHTML = oldText;
+          }
+          return;
+        }
+        
+        const noithatIndices = anhDuocChon.split(',');
+        
+        // 1. Cover
+        const firstNoithatIdx = parseInt(noithatIndices[0]);
+        if (!isNaN(firstNoithatIdx) && firstNoithatIdx >= 1 && firstNoithatIdx <= 15) {
+          const coverImgUrl = matchedRow[39 + firstNoithatIdx];
+          if (coverImgUrl) finalImages.push(coverImgUrl);
+        }
+        
+        // 2. Alley
+        const maxHem = 2;
+        if (anhHemDuocChon !== "") {
+          const hemIndices = anhHemDuocChon.split(',');
+          let addedHem = 0;
+          for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+            const hemIdx = parseInt(hemIndices[i]);
+            if (!isNaN(hemIdx) && hemIdx >= 1 && hemIdx <= 10) {
+              const hemUrl = matchedRow[29 + hemIdx];
+              if (hemUrl) {
+                finalImages.push(hemUrl);
+                addedHem++;
+              }
+            }
+          }
+        } else {
+          const availableHem = [];
+          for (let i = 1; i <= 10; i++) {
+            const hemUrl = matchedRow[29 + i];
+            if (hemUrl) availableHem.push(hemUrl);
+          }
+          for (let i = availableHem.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = availableHem[i];
+            availableHem[i] = availableHem[j];
+            availableHem[j] = temp;
+          }
+          for (let i = 0; i < Math.min(maxHem, availableHem.length); i++) {
+            finalImages.push(availableHem[i]);
+          }
+        }
+        
+        // 3. Nội thất khác
+        for (let i = 1; i < noithatIndices.length; i++) {
+          const imgIdx = parseInt(noithatIndices[i]);
+          if (!isNaN(imgIdx) && imgIdx >= 1 && imgIdx <= 15) {
+            const imgUrl = matchedRow[39 + imgIdx];
+            if (imgUrl) finalImages.push(imgUrl);
+          }
+        }
+        
+        while (finalImages.length < 10) finalImages.push("");
+        
+        // Xử lý Cú pháp
+        const noiDungChinh = matchedRow[9] || "";
+        let cuPhap = noiDungChinh;
+        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[A-Za-zÀ-ỹ0-9\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
+        if (matchCuPhap) {
+          cuPhap = matchCuPhap[1].trim();
+        }
+        
+        // Xử lý Quận
+        const formatQuan = (q) => {
+          if (!q) return "";
+          const qLower = q.toLowerCase();
+          if (qLower.includes("quận 3")) return "3";
+          if (qLower.includes("quận 10")) return "10";
+          if (qLower.includes("phú nhuận")) return "PN";
+          if (qLower.includes("tân bình")) return "TB";
+          return q;
+        };
+        
+        // Xử lý Giá
+        const formatGia = (g) => {
+          if (!g) return "";
+          const val = parseFloat(g.toString().replace(/,/g, ''));
+          if (isNaN(val)) return g;
+          if (val > 100) return val / 1000;
+          return val;
+        };
+        
+        const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
+        
+        // Xây dựng publicRowData 41 cột cho Sheet Source
+        const publicRowData = [
+          `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+          cuPhap,                        // 1: Cu_phap (Cột B)
+          note,                          // 2: Note (Cột C)
+          maKhangNgo,                    // 3: id (Cột D)
+          tieuDeBds || matchedRow[55],   // 4: tieu_de (Cột E)
+          matchedRow[13],                // 5: dien_tich (Cột F)
+          matchedRow[15],                // 6: so_tang (Cột G)
+          matchedRow[16],                // 7: mat_tien (Cột H)
+          formatGia(matchedRow[57]),     // 8: gia (Cột I)
+          formatQuan(matchedRow[3]),     // 9: quan (Cột J)
+          matchedRow[4],                 // 10: phuong (Cột K)
+          loaiHinh,                      // 11: loai_hinh (Cột L)
+          huong,                         // 12: huong_nha (Cột M)
+          duong,                         // 13: duong_truoc_nha (Cột N)
+          rongHem || '-',                // 14: do_rong_hem (Cột O)
+          matchedRow[60] || '-',         // 15: tinh_trang_nha (Cột P)
+          danhGia,                       // 16: danh_gia (Cột Q)
+          nguTret,                       // 17: ngu_tang_tret (Cột R)
+          chdv,                          // 18: chdv (Cột S)
+          moTaBds,                       // 19: mo_ta (Cột T)
+          finalImages[0],                // 20: anh_1 (Cột U)
+          finalImages[1],                // 21: anh_2 (Cột V)
+          finalImages[2],                // 22: anh_3 (Cột W)
+          finalImages[3],                // 23: anh_4 (Cột X)
+          finalImages[4],                // 24: anh_5 (Cột Y)
+          finalImages[5],                // 25: anh_6 (Cột Z)
+          finalImages[6],                // 26: anh_7 (Cột AA)
+          finalImages[7],                // 27: anh_8 (Cột AB)
+          finalImages[8],                // 28: anh_9 (Cột AC)
+          finalImages[9],                // 29: anh_10 (Cột AD)
+          new Date().toISOString(),      // 30: Last updated (Cột AE)
+          matchedRow[65],                // 31: phuong_cu (Cột AF)
+          soPn || '-',                   // 32: so_pn (Cột AG)
+          soWc || '-',                   // 33: so_wc (Cột AH)
+          matchedRow[5],                 // 34: ten_duong (Cột AI)
+          "",                            // 35: gio_dang (Cột AJ)
+          "",                            // 36: trang_thai (Cột AK)
+          sysIdMatched,                  // 37: System ID (Cột AL)
+          matchedRow[29],                // 38: Hình Mặt Tiền (Cột AM)
+          tieuDeBds,                     // 39: Tiêu đề BDS (Cột AN)
+          false                          // 40: Đăng BDS (Cột AO)
+        ];
+        
+        // Step 4: Ghi đè/Thêm mới vào Sheet Source
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AO${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeRes = await fetch(writeUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [publicRowData] })
+        });
+        
+        if (!writeRes.ok) {
+          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
+        }
+        
+        // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
+        try {
+          const poolRowNumber = rows.indexOf(matchedRow) + 2;
+          const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BZ${poolRowNumber}:BZ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ values: [[syncDateStr]] })
+          });
+        } catch (e) {
+          console.warn("Không thể ghi nhận Last Sync vào Pool:", e);
+        }
+        
+        showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}!`);
+        closeS();
+        
+        // Reset các ô tìm kiếm Pool
+        const pullInput = document.getElementById('poolSearchToolInput');
+        if (pullInput) pullInput.value = '';
+        const pullResults = document.getElementById('poolSearchToolResults');
+        if (pullResults) pullResults.innerHTML = '';
+
+        // Tải lại dữ liệu web
+        secureLoadAttempted = false;
+        isSecureLoaded = false;
+        isDataLoaded = false;
+        await loadData();
+
+        // Kích hoạt hỏi chia sẻ Zalo thông minh
+        setTimeout(() => {
+          if (confirm(`🎉 Căn nhà #${maKhangNgo} đã LÊN SÓNG thành công và đang hiển thị trên Customer View!\n\nBạn có muốn tạo Link chia sẻ gửi Zalo cho khách hàng ngay bây giờ không?`)) {
+            shareZaloFromAdminDetail(maKhangNgo);
+          }
+        }, 500);
+        
+      } catch (err) {
+        showToast(`❌ Lỗi đồng bộ: ${err.message}`, "error");
+        console.error(err);
+      } finally {
+        if (btnElement) {
+          btnElement.disabled = false;
+          btnElement.innerHTML = oldText;
         }
       }
     };
