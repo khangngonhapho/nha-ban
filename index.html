@@ -1381,37 +1381,48 @@
     }
 
     .shead {
-      padding: 10px 16px 12px;
-      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #f39c12, #f1c40f);
+      border-bottom: 1.5px solid #d4ac0d;
+      border-top-left-radius: 19px;
+      border-top-right-radius: 19px;
       display: flex;
-      align-items: flex-start;
-      gap: 10px
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
     .stitle {
       flex: 1;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--red);
-      line-height: 1.4
+      font-size: 15.5px;
+      font-weight: 850;
+      color: #1c1c1e;
+      line-height: 1.35;
+      letter-spacing: -0.2px;
     }
 
     .xbtn {
-      background: var(--chip);
+      background: rgba(0, 0, 0, 0.06);
       border: none;
       border-radius: 50%;
       width: 32px;
       height: 32px;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #555;
+      color: #1c1c1e;
       flex-shrink: 0;
-      min-width: 44px;
-      min-height: 44px;
-      font-family: inherit
+      min-width: 32px;
+      min-height: 32px;
+      font-weight: 700;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    
+    .xbtn:hover {
+      background: rgba(0, 0, 0, 0.12);
     }
 
     .sbody {
@@ -4035,7 +4046,7 @@
           <div class="card-right">
             <div class="info">
               <div class="ititle" style="color: var(--red); font-weight: 850; font-size: 14.5px; line-height: 1.35; margin-bottom: 6px;">
-                ${adminTitle}
+                ${String(adminTitle).includes(p.gia + ' tỷ') ? adminTitle : adminTitle + ' ' + p.gia + ' tỷ'}
               </div>
               <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                 <span>📍</span> P.${p.phuong}, Q.${p.ql}
@@ -4067,7 +4078,7 @@
           </div>
           <div class="card-right">
             <div class="info">
-              <div class="ititle">${p.t}</div>
+              <div class="ititle">${String(p.t).includes(p.gia + ' tỷ') ? p.t : p.t + ' ' + p.gia + ' tỷ'}</div>
               <div class="chips">
                 <span class="chip">📐 ${p.dt}m²</span>
                 <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
@@ -4387,7 +4398,9 @@
       const cleanTitle = cutTitleToDistrict(p.t);
       const floatActions = document.getElementById('adminDetailFloatActions');
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
-        document.getElementById('mT').textContent = generateAdminTitleFromNộiDungChinh(p);
+        const adminTitle = generateAdminTitleFromNộiDungChinh(p);
+        const finalAdminTitle = String(adminTitle).includes(p.gia + ' tỷ') ? adminTitle : `${adminTitle} ${p.gia} tỷ`;
+        document.getElementById('mT').textContent = finalAdminTitle;
         if (mID) mID.style.display = 'none';
         if (floatActions) {
           if (p.isFromPoolOnly) {
@@ -4404,7 +4417,8 @@
           }
         }
       } else {
-        document.getElementById('mT').textContent = cleanTitle;
+        const finalClientTitle = String(cleanTitle).includes(p.gia + ' tỷ') ? cleanTitle : `${cleanTitle} ${p.gia} tỷ`;
+        document.getElementById('mT').textContent = finalClientTitle;
         if (mID) {
           mID.style.display = 'block';
           mID.textContent = `#${p.id}`;
@@ -4645,6 +4659,11 @@
               </div>
               <div class="accordion-content">
                 <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.isFromPoolOnly ? (p.raw_tieu_de_public || generateAutoTitle(p)) : (p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.')}</div>
+                <!-- PREVIEW CAROUSEL -->
+                <div id="carouselClientPreview" style="position: relative; margin-bottom: 12px;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
                 <div class="admin-raw-grid" style="margin-bottom: 12px;">
                   <div class="admin-raw-cell">
                     <span class="label">Giá bán:</span>
@@ -4694,11 +4713,9 @@
         });
         
         sbody.innerHTML = `
-          <div class="gwrap" id="gw">
-            <div class="gtrack" id="gt"></div>
-            <div class="gdots" id="gd"></div>
-            <button class="garr al" id="al" onclick="gm(-1)">‹</button>
-            <button class="garr ar" id="ar" onclick="gm(1)">›</button>
+          <div id="carouselClientDetail" style="position: relative; margin-bottom: 12px;">
+            <div class="admin-scroll-carousel"></div>
+            <div class="admin-carousel-dots"></div>
           </div>
           <div class="ig" id="mG">
             <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
@@ -4717,7 +4734,7 @@
           </div>
           <div class="desc" id="mD">${p.m}</div>
         `;
-        buildG(sortedImgs.map(url => fixImgUrl(url, 'w1200')));
+        setupScrollCarousel('carouselClientDetail', sortedImgs, false);
       }
 
       const btnZalo = document.getElementById('mZalo');
@@ -4763,6 +4780,12 @@
             const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
             const floatActions = document.getElementById('adminDetailFloatActions');
 
+            // Append price to the preview title to match client detail style
+            const displayTieuDeVal = tieuDeVal ? (String(tieuDeVal).includes(p.gia + ' tỷ') ? tieuDeVal : `${tieuDeVal} ${p.gia} tỷ`) : '';
+
+            // Update the preview carousel dynamically
+            setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
+
             if (p.isFromPoolOnly) {
               const savePoolBtn = document.getElementById('savePoolBtn');
               if (isFilled) {
@@ -4779,7 +4802,7 @@
                 
                 const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
                 const previewDesc = accPreview.querySelector('.desc');
-                if (previewTitle) previewTitle.textContent = tieuDeVal;
+                if (previewTitle) previewTitle.textContent = displayTieuDeVal;
                 if (previewDesc) previewDesc.textContent = moTaVal;
               } else {
                 if (accPreview) accPreview.style.display = 'none';
@@ -4794,10 +4817,11 @@
               
               const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
               const previewDesc = accPreview.querySelector('.desc');
-              if (previewTitle) previewTitle.textContent = tieuDeVal || 'Chưa có tiêu đề public.';
+              if (previewTitle) previewTitle.textContent = displayTieuDeVal || 'Chưa có tiêu đề public.';
               if (previewDesc) previewDesc.textContent = moTaVal || 'Chưa có mô tả public.';
             }
           };
+          window.updateLivePreview = updateLivePreview;
 
           if (editTieuDe && editMoTa) {
             editTieuDe.addEventListener('input', updateLivePreview);
@@ -5312,7 +5336,7 @@
     function renderImageEditorWidget(p) {
       let html = `
         <div class="admin-edit-group" style="margin-top: 10px;">
-          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (VÀNG: NỀN | XANH: PUBLIC)</label>
+          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (ĐỎ: MẶT TIỀN 🔒 | VÀNG: ẢNH NỀN ⭐)</label>
           <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
@@ -5340,6 +5364,13 @@
 
       // Recover current selected public interior/alley indices
       let currentCover = p.img_mat_tien || '';
+      let currentPublicCover = '';
+      if (p.pool_row_data) {
+        currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
+      } else if (p.imgs && p.imgs.length > 0) {
+        currentPublicCover = p.imgs[0]; // First public image
+      }
+      
       let currentInteriorIndices = '';
       let currentAlleyIndices = '';
 
@@ -5360,6 +5391,7 @@
           </div>
           <!-- Hidden Inputs to hold current selections -->
           <input type="hidden" id="editCoverImgUrl" value="${currentCover}">
+          <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
           <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
           <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
         </div>
@@ -5369,7 +5401,13 @@
     }
 
     function renderImageCardForEdit(type, index, url, p) {
-      const isCover = String(p.img_mat_tien).trim() === String(url).trim();
+      const isMatTien = String(p.img_mat_tien || '').trim() === String(url).trim();
+      let isAnhNen = false;
+      if (p.pool_row_data) {
+        isAnhNen = String(p.pool_row_data[40] || '').trim() === String(url).trim();
+      } else if (p.imgs && p.imgs.length > 0) {
+        isAnhNen = String(p.imgs[0]).trim() === String(url).trim();
+      }
 
       let isPublic = false;
       if (type === "facade") {
@@ -5377,7 +5415,7 @@
       } else if (type === "interior") {
         let publicIntStr = '';
         if (p.pool_row_data) {
-          publicIntStr = String(p.pool_row_data[61] || '');
+          publicIntStr = String(p.pool_row_data[61] || '').trim();
         } else {
           isPublic = p.imgs ? p.imgs.includes(url) : false;
         }
@@ -5388,7 +5426,7 @@
       } else if (type === "alley") {
         let publicAlleyStr = '';
         if (p.pool_row_data) {
-          publicAlleyStr = String(p.pool_row_data[62] || '');
+          publicAlleyStr = String(p.pool_row_data[62] || '').trim();
         }
         if (publicAlleyStr) {
           const indices = publicAlleyStr.split(',').map(s => s.trim());
@@ -5398,27 +5436,36 @@
 
       const typeBadge = type === "facade" ? "Mặt Tiền" : (type === "interior" ? `Nội Thất ${index}` : `Hẻm ${index}`);
       const badgeColor = type === "facade" ? "var(--red)" : (type === "interior" ? "var(--green)" : "var(--blue)");
+      
+      const cardBorder = isMatTien ? '2px solid var(--red)' : (isAnhNen ? '2px solid var(--gold)' : (isPublic ? 'rgba(39, 174, 96, 0.5)' : 'transparent'));
 
       return `
-        <div class="edit-img-card ${isCover ? 'is-cover' : ''} ${isPublic ? 'is-public' : ''}" 
+        <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isPublic ? 'is-public' : ''}" 
           data-type="${type}" data-index="${index}" data-url="${url}"
-          style="position: relative; background: #000; border: 2px solid ${isCover ? 'var(--gold)' : (isPublic ? 'rgba(39, 174, 96, 0.5)' : 'transparent')}; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
+          style="position: relative; background: #000; border: ${cardBorder}; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
           <div style="position: relative; padding-top: 75%; overflow: hidden;">
             <img src="${fixImgUrl(url, 'w200')}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
             <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px;">
               ${typeBadge}
             </span>
-            ${isCover ? `
-              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 11px; background: rgba(0,0,0,0.75); padding: 2px; border-radius: 50%; color: var(--gold);">⭐</span>
+            ${isMatTien ? `
+              <span class="mattien-lock-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white;">🔒 Mặt Tiền</span>
+            ` : ''}
+            ${isAnhNen && !isMatTien ? `
+              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold);">⭐ Ảnh Nền</span>
             ` : ''}
           </div>
-          <div style="padding: 6px; background: rgba(0,0,0,0.6); display: flex; gap: 4px; justify-content: space-between; align-items: center;">
-            <button onclick="setImageAsCover(event, this)" class="edit-img-cover-btn" 
-              style="background: ${isCover ? 'var(--gold)' : 'rgba(255,255,255,0.15)'}; color: ${isCover ? '#000' : '#fff'}; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap;">
-              ${isCover ? '⭐ Nền' : 'Làm Nền'}
+          <div style="padding: 6px; background: rgba(0,0,0,0.6); display: flex; gap: 4px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <button onclick="setImageAsMatTien(event, this)" class="edit-img-mattien-btn" 
+              style="background: ${isMatTien ? 'var(--red)' : 'rgba(255,255,255,0.15)'}; color: #fff; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap;">
+              ${isMatTien ? '🔒 Khóa' : 'Làm Mặt Tiền'}
+            </button>
+            <button onclick="setImageAsAnhNen(event, this)" class="edit-img-cover-btn" 
+              style="background: ${isAnhNen ? 'var(--gold)' : 'rgba(255,255,255,0.15)'}; color: ${isAnhNen ? '#000' : '#fff'}; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap;">
+              ${isAnhNen ? '⭐ Nền' : 'Làm Nền'}
             </button>
             ${type !== "facade" ? `
-              <label style="display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; cursor: pointer; margin: 0;">
+              <label style="display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; cursor: pointer; margin: 0; width: 100%; justify-content: flex-end; margin-top: 4px;">
                 <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="toggleImagePublic(this)" 
                   style="margin: 0; transform: scale(0.9); cursor: pointer;">
                 Hiện
@@ -5429,14 +5476,59 @@
       `;
     }
 
-    window.setImageAsCover = function(event, btn) {
+    window.setImageAsMatTien = function(event, btn) {
       if (event) event.stopPropagation();
       const card = btn.closest('.edit-img-card');
       const url = card.dataset.url;
 
       document.querySelectorAll('.edit-img-card').forEach(c => {
-        c.classList.remove('is-cover');
-        c.style.borderColor = c.classList.contains('is-public') ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
+        c.classList.remove('is-mattien');
+        if (!c.classList.contains('is-anhnen')) {
+          c.style.borderColor = c.classList.contains('is-public') ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
+        }
+        const b = c.querySelector('.edit-img-mattien-btn');
+        if (b) {
+          b.style.background = 'rgba(255, 255, 255, 0.15)';
+          b.style.color = '#fff';
+          b.innerHTML = 'Làm Mặt Tiền';
+        }
+        const lock = c.querySelector('.mattien-lock-badge');
+        if (lock) lock.remove();
+      });
+
+      card.classList.add('is-mattien');
+      card.style.borderColor = 'var(--red)';
+      btn.style.background = 'var(--red)';
+      btn.style.color = '#fff';
+      btn.innerHTML = '🔒 Khóa';
+
+      const imgWrapper = card.firstElementChild;
+      const lockSpan = document.createElement('span');
+      lockSpan.className = 'mattien-lock-badge';
+      lockSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white;';
+      lockSpan.innerHTML = '🔒 Mặt Tiền';
+      imgWrapper.appendChild(lockSpan);
+
+      // Remove cover badge on this card if any
+      const star = card.querySelector('.cover-star-badge');
+      if (star) star.remove();
+
+      document.getElementById('editCoverImgUrl').value = url;
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+    };
+
+    window.setImageAsAnhNen = function(event, btn) {
+      if (event) event.stopPropagation();
+      const card = btn.closest('.edit-img-card');
+      const url = card.dataset.url;
+
+      document.querySelectorAll('.edit-img-card').forEach(c => {
+        c.classList.remove('is-anhnen');
+        if (!c.classList.contains('is-mattien')) {
+          c.style.borderColor = c.classList.contains('is-public') ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
+        }
         const b = c.querySelector('.edit-img-cover-btn');
         if (b) {
           b.style.background = 'rgba(255, 255, 255, 0.15)';
@@ -5447,20 +5539,31 @@
         if (star) star.remove();
       });
 
-      card.classList.add('is-cover');
-      card.style.borderColor = 'var(--gold)';
+      card.classList.add('is-anhnen');
+      if (!card.classList.contains('is-mattien')) {
+        card.style.borderColor = 'var(--gold)';
+      }
       btn.style.background = 'var(--gold)';
       btn.style.color = '#000';
       btn.innerHTML = '⭐ Nền';
 
-      const imgWrapper = card.firstElementChild;
-      const starSpan = document.createElement('span');
-      starSpan.className = 'cover-star-badge';
-      starSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 11px; background: rgba(0,0,0,0.75); padding: 2px; border-radius: 50%; color: var(--gold);';
-      starSpan.innerHTML = '⭐';
-      imgWrapper.appendChild(starSpan);
+      if (!card.classList.contains('is-mattien')) {
+        const imgWrapper = card.firstElementChild;
+        const starSpan = document.createElement('span');
+        starSpan.className = 'cover-star-badge';
+        starSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold);';
+        starSpan.innerHTML = '⭐ Ảnh Nền';
+        imgWrapper.appendChild(starSpan);
+      }
 
-      document.getElementById('editCoverImgUrl').value = url;
+      document.getElementById('editPublicCoverUrl').value = url;
+
+      // Auto-check "Hiện" checkbox for public cover
+      const cb = card.querySelector('.edit-img-pub-cb');
+      if (cb && !cb.checked) {
+        cb.checked = true;
+        toggleImagePublic(cb);
+      }
     };
 
     window.toggleImagePublic = function(cb) {
@@ -5470,7 +5573,7 @@
       const isChecked = cb.checked;
 
       card.classList.toggle('is-public', isChecked);
-      if (!card.classList.contains('is-cover')) {
+      if (!card.classList.contains('is-cover') && !card.classList.contains('is-mattien') && !card.classList.contains('is-anhnen')) {
         card.style.borderColor = isChecked ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
       }
 
@@ -5494,6 +5597,9 @@
         }
         indices.sort((a, b) => parseInt(a) - parseInt(b));
         publicAlleyInput.value = indices.join(',');
+      }
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
       }
     };
 
@@ -6236,6 +6342,60 @@
       }
     };
 
+    window.getPublicImagesFromForm = function(p) {
+      if (!p) return [];
+      const customCoverUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+      const publicCoverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
+      const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
+
+      if (p.pool_row_data) {
+        const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
+        const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+
+        const finalImages = [];
+        let publicCover = publicCoverUrl || (p.pool_row_data[40] || p.pool_row_data[39 + noithatIndices[0]] || p.pool_row_data[29]);
+        if (publicCover) {
+          finalImages.push(publicCover);
+        }
+        
+        const maxHem = 2;
+        let addedHem = 0;
+        for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+          const hemIdx = hemIndices[i];
+          const hemUrl = p.pool_row_data[29 + hemIdx];
+          if (hemUrl) {
+            finalImages.push(hemUrl);
+            addedHem++;
+          }
+        }
+        
+        for (let i = 0; i < noithatIndices.length; i++) {
+          const imgIdx = noithatIndices[i];
+          const imgUrl = p.pool_row_data[39 + imgIdx];
+          if (imgUrl && imgUrl !== publicCover && finalImages.length < 10) {
+            finalImages.push(imgUrl);
+          }
+        }
+        return finalImages.filter(Boolean);
+      } else {
+        const finalImages = [];
+        const publicCover = publicCoverUrl || (p.imgs && p.imgs[0]);
+        if (publicCover) {
+          finalImages.push(publicCover);
+        }
+        
+        if (p.imgs) {
+          p.imgs.forEach(url => {
+            if (url && url !== publicCover && !finalImages.includes(url)) {
+              finalImages.push(url);
+            }
+          });
+        }
+        return finalImages.filter(Boolean);
+      }
+    };
+
     window.setupScrollCarousel = function(containerId, imageUrls, isLegalImg = false) {
       const container = document.getElementById(containerId);
       if (!container) return;
@@ -6489,6 +6649,7 @@
 
         // Đọc dữ liệu hình ảnh được chọn từ form biên tập hình ảnh trực quan
         const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
         const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
         const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
 
@@ -6499,9 +6660,9 @@
 
           const finalImages = [];
           
-          let coverImgUrl = customCoverUrl || (p.pool_row_data[39 + noithatIndices[0]] || p.pool_row_data[29]);
-          if (coverImgUrl) {
-            finalImages.push(coverImgUrl);
+          let publicCover = publicCoverUrl || (p.pool_row_data[40] || p.pool_row_data[39 + noithatIndices[0]] || p.pool_row_data[29]);
+          if (publicCover) {
+            finalImages.push(publicCover);
           }
           
           const maxHem = 2;
@@ -6519,7 +6680,7 @@
             const imgIdx = noithatIndices[i];
             const imgUrl = p.pool_row_data[39 + imgIdx];
             // Tránh đẩy trùng hình cover/nền nếu đã có ở vị trí đầu
-            if (imgUrl && imgUrl !== coverImgUrl && finalImages.length < 10) {
+            if (imgUrl && imgUrl !== publicCover && finalImages.length < 10) {
               finalImages.push(imgUrl);
             }
           }
@@ -6530,15 +6691,24 @@
           for (let i = 0; i < 10; i++) {
             p.original_row_data[20 + i] = finalImages[i];
           }
-          p.original_row_data[38] = coverImgUrl;
-          p.img_mat_tien = coverImgUrl;
+          p.original_row_data[38] = customCoverUrl;
+          p.img_mat_tien = customCoverUrl;
           
           // Cập nhật mảng ảnh sạch client-side của đối tượng p
           p.imgs = finalImages.filter(Boolean);
-        } else if (customCoverUrl) {
-          // Fallback chỉ cập nhật cover
-          p.original_row_data[38] = customCoverUrl;
-          p.img_mat_tien = customCoverUrl;
+        } else {
+          if (customCoverUrl) {
+            p.original_row_data[38] = customCoverUrl;
+            p.img_mat_tien = customCoverUrl;
+          }
+          if (publicCoverUrl) {
+            p.original_row_data[20] = publicCoverUrl;
+            if (p.imgs) {
+              p.imgs[0] = publicCoverUrl;
+            } else {
+              p.imgs = [publicCoverUrl];
+            }
+          }
         }
 
         p.original_row_data[2] = note;
@@ -6602,8 +6772,8 @@
         }
 
         showToast("Đã lưu thay đổi lên Google Sheets thành công!");
-        closeS();
         render();
+        openS(id);
       } catch (err) {
         console.error("Lỗi lưu dữ liệu:", err);
         showToast(`Lỗi lưu thay đổi: ${err.message}`, "error");
@@ -6695,6 +6865,7 @@
         
         // Map 15 ảnh nội thất sạch và ảnh hẻm từ biên tập viên hình ảnh trực quan
         const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
         const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
         const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
 
@@ -6712,10 +6883,10 @@
 
         const finalImages = [];
         
-        // 1. Cover
-        let coverImgUrl = customCoverUrl || (matchedRow[39 + noithatIndices[0]] || matchedRow[29]);
-        if (coverImgUrl) {
-          finalImages.push(coverImgUrl);
+        // 1. Cover (Public cover goes to index 0 of finalImages -> Ảnh 1 / Cột U)
+        let publicCover = publicCoverUrl || (matchedRow[40] || matchedRow[39 + noithatIndices[0]] || matchedRow[29]);
+        if (publicCover) {
+          finalImages.push(publicCover);
         }
         
         // 2. Alley
@@ -6734,8 +6905,8 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = matchedRow[39 + imgIdx];
-          // Tránh đẩy trùng hình cover/nền nếu đã có ở vị trí đầu
-          if (imgUrl && imgUrl !== coverImgUrl && finalImages.length < 10) {
+          // Tránh đẩy trùng hình publicCover nếu đã có ở vị trí đầu
+          if (imgUrl && imgUrl !== publicCover && finalImages.length < 10) {
             finalImages.push(imgUrl);
           }
         }
@@ -6861,7 +7032,6 @@
         }
         
         showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}!`);
-        closeS();
         
         // Reset các ô tìm kiếm Pool
         const pullInput = document.getElementById('poolSearchToolInput');
@@ -6874,6 +7044,9 @@
         isSecureLoaded = false;
         isDataLoaded = false;
         await loadData();
+
+        // Mở chi tiết của căn vừa lên sóng tại chỗ
+        openS(maKhangNgo);
 
         // Kích hoạt hỏi chia sẻ Zalo thông minh
         setTimeout(() => {
