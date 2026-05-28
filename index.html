@@ -1464,6 +1464,561 @@
       opacity: 1;
       border-color: var(--gold);
     }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .spinner-small {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid white;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ============================================================ */
+    /* ADMIN VIEW & US-039 STYLES                                  */
+    /* ============================================================ */
+    body.is-admin .card {
+      padding: 0;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
+    }
+
+    .admin-card-inner {
+      display: flex;
+      width: 100%;
+      min-height: 155px;
+    }
+
+    .admin-card-left {
+      width: 120px;
+      min-width: 120px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-img-wrapper {
+      position: relative;
+      flex: 1;
+      border-radius: 16px 0 0 16px;
+      overflow: hidden;
+      background: #f0f0f2;
+    }
+
+    .admin-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .admin-img-wrapper img.loaded {
+      opacity: 1;
+    }
+
+    .admin-status-tag {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--blue);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-align: center;
+      padding: 5px 4px;
+      z-index: 2;
+    }
+
+    .admin-card-right {
+      flex: 1;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      min-width: 0;
+    }
+
+    .admin-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1.35;
+      margin-bottom: 5px;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .admin-card-details {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+    }
+
+    .admin-card-line {
+      font-size: 12px;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+    }
+
+    .admin-card-line.phone-line {
+      color: var(--red);
+    }
+
+    .admin-card-line.phone-line a {
+      color: #1c1c1e;
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px dotted #a4b0be;
+    }
+
+    .admin-card-right .heart {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: #bdc3c7;
+      cursor: pointer;
+      z-index: 5;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .admin-card-right .heart.on {
+      color: var(--red);
+    }
+
+    /* Admin Accordion details view */
+    .admin-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .accordion-header {
+      width: 100%;
+      padding: 13px 16px;
+      background: #f8f9fa;
+      border: none;
+      text-align: left;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #1c1c1e;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: inherit;
+    }
+
+    .accordion-item.expanded .accordion-header {
+      background: #f1f2f6;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .accordion-content {
+      padding: 16px 14px;
+      display: none;
+    }
+
+    .accordion-item.expanded .accordion-content {
+      display: block;
+    }
+
+    /* CSS Scroll Snap Carousels with Peek */
+    .admin-scroll-carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      gap: 10px;
+      padding: 0 20px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 4px;
+    }
+
+    .admin-scroll-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .admin-carousel-item {
+      flex: 0 0 85%;
+      scroll-snap-align: center;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .admin-carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .admin-carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin: 6px 0 14px;
+    }
+
+    .admin-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #dfe4ea;
+      transition: all 0.2s;
+    }
+
+    .admin-dot.on {
+      background: var(--red);
+      width: 12px;
+      border-radius: 2.5px;
+    }
+
+    .admin-detail-section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--red);
+      text-align: center;
+      margin: 12px 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Dotted technical specs grid */
+    .admin-raw-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f1f2f6;
+      font-size: 13px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    .admin-status-badge {
+      background: var(--blue);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11.5px;
+    }
+
+    .admin-ma-hang {
+      font-weight: 700;
+      color: #1c1c1e;
+    }
+
+    .admin-raw-section {
+      margin-top: 16px;
+    }
+
+    .admin-raw-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--red);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .admin-raw-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 14px;
+      margin-bottom: 10px;
+    }
+
+    .admin-raw-cell {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #2c3e50;
+    }
+
+    .admin-raw-cell .label {
+      color: #57606f;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .admin-raw-cell .value {
+      font-weight: 700;
+      color: #1c1c1e;
+      text-align: right;
+      flex: 1;
+      margin-left: 5px;
+    }
+
+    .dotted {
+      border-bottom: 1px dotted #a4b0be;
+    }
+
+    .admin-raw-price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1c1c1e;
+    }
+
+    .admin-raw-price-row .label {
+      color: var(--red);
+    }
+
+    .admin-raw-price-row .value {
+      flex: 1;
+      text-align: right;
+      margin-left: 8px;
+      color: var(--red);
+    }
+
+    .admin-raw-source {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: #2c3e50;
+    }
+
+    .dotted-val {
+      border-bottom: 1px dotted #a4b0be;
+      font-weight: 700;
+      color: #1c1c1e;
+      text-decoration: none;
+    }
+
+    /* Boxed descriptions & Xem them */
+    .admin-mota-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #1c1c1e;
+      margin: 16px 0 8px;
+      padding-left: 2px;
+      border-left: 3px solid var(--red);
+      line-height: 1.1;
+      text-indent: 6px;
+    }
+
+    .admin-mota-box {
+      border: 1px solid #dfe4ea;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12.5px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #fff;
+    }
+
+    .admin-mota-box.red-text {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .admin-mota-box.black-text {
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    .collapsible-box {
+      max-height: 160px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .collapsible-box::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .collapsible-box.expanded {
+      max-height: none;
+      overflow: visible;
+    }
+
+    .collapsible-box.expanded::after {
+      opacity: 0;
+      display: none;
+    }
+
+    .btn-show-more {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: block;
+      margin: -6px 0 12px auto;
+      padding: 4px 8px;
+      font-family: inherit;
+    }
+
+    /* Google Maps Embed Styles */
+    .admin-map-container {
+      width: 100%;
+      height: 240px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #dfe4ea;
+      margin-bottom: 16px;
+      background: #f1f2f6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    /* Admin Editable Form Elements */
+    .admin-edit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .admin-edit-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .admin-edit-group.row-group {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-edit-group.row-group label {
+      margin-bottom: 0;
+      cursor: pointer;
+    }
+
+    .admin-edit-group label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .admin-edit-group input[type="text"],
+    .admin-edit-group input[type="number"],
+    .admin-edit-group select,
+    .admin-edit-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #dfe4ea;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+
+    .admin-edit-group input[type="text"]:focus,
+    .admin-edit-group input[type="number"]:focus,
+    .admin-edit-group select:focus,
+    .admin-edit-group textarea:focus {
+      border-color: var(--red);
+    }
+
+    .admin-edit-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--red);
+      cursor: pointer;
+    }
+
+    /* Sticky Bottom Footer for Save Button */
+    .admin-sticky-footer {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 14px calc(10px + var(--safe-bot));
+      background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid var(--border);
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      margin: 12px -14px -8px;
+    }
+
+    .admin-save-btn {
+      width: 100%;
+      height: 48px;
+      background: #27ae60;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
+      font-family: inherit;
+    }
+
+    .admin-save-btn:disabled {
+      background: #95a5a6;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Zoom Overlay & Toast */
+    #zoomOverlay img {
+      transition: transform 0.1s ease-out;
+      transform-origin: center center;
+    }
   </style>
 </head>
 
@@ -1530,6 +2085,15 @@
     </div>
     <!-- Collapsible panel -->
     <div class="filter-panel" id="filterPanel">
+      <!-- Admin Search Input -->
+      <div class="admin-only" style="padding: 0 10px 12px 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); display: none;">
+        <div class="filter-section-lbl" style="margin-top:0;">🔍 Tìm kiếm nâng cao Admin (Tin thô)</div>
+        <div style="position: relative;">
+          <input type="text" id="adminSearchInput" placeholder="Tìm tên đầu chủ, nội dung chính, mô tả thô..." onkeyup="onSearchInput()"
+            style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; outline: none; font-family: inherit;">
+        </div>
+      </div>
+
       <div class="filter-section-lbl">Quận / TP</div>
       <div class="tabs" id="districtTabs">
         <button class="tab on" data-val="all" onclick="tDistrict('all')">Tất cả</button>
@@ -1565,6 +2129,24 @@
       </div>
       <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
       <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+      
+      <div class="filter-section-lbl admin-only">🌐 Yêu cầu lên sóng (Đồng bộ từ Pool)</div>
+      <div class="admin-only"
+        style="padding: 12px; background: rgba(255,191,36,0.08); border: 1px dashed rgba(255,191,36,0.3); border-radius: 12px; margin: 5px 0 15px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 11px; color: rgba(255,255,255,0.7);">Nhập Số nhà & Tên đường ở Pool để đồng bộ sang Source:</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <input type="text" id="pullSoNha" placeholder="Số nhà (VD: 163/24/80)..."
+            style="padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; outline: none; font-family: inherit;">
+          <input type="text" id="pullDuong" placeholder="Tên đường (VD: CMT8)..."
+            style="padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; outline: none; font-family: inherit;">
+        </div>
+        <button onclick="requestPullListing()" id="btnPullListing"
+          style="width: 100%; padding: 10px; border-radius: 8px; border: none; background: linear-gradient(135deg, var(--gold) 0%, #b58900 100%); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; box-shadow: 0 4px 15px rgba(255, 191, 36, 0.2); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>🌐 LÊN SÓNG</span>
+          <div class="spinner-small" id="pullSpinner" style="display: none; border-color: white; border-top-color: transparent;"></div>
+        </button>
+      </div>
+
       <div class="filter-section-lbl admin-only">Cấu hình Google Admin</div>
       <div class="admin-only"
         style="padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; margin: 5px 0 10px; display: none;">
@@ -1948,6 +2530,22 @@
           return idMatch || tMatch || dMatch || pMatch || qMatch;
         });
       }
+
+      // LỌC THEO BỘ LỌC ADMIN NÂNG CAO
+      const asv = (document.getElementById('adminSearchInput')?.value || '').trim().toLowerCase();
+      if (isAdmin && asv) {
+        a = a.filter(p => {
+          const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(asv);
+          const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(asv);
+          const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(asv);
+          const noteMatch = (p.note || '').toLowerCase().includes(asv);
+          const cpMatch = (p.cu_phap || '').toLowerCase().includes(asv);
+          const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(asv);
+          const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(asv);
+          return dauChuMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
+        });
+      }
+
       if (showFavOnly) a = a.filter(p => favs.has(String(p.id)));
       if (selDistricts.size) a = a.filter(p => selDistricts.has(p.q));
       if (selWards.size) a = a.filter(p => selWards.has(p.phuong));
@@ -1987,14 +2585,186 @@
     }
 
     // Dùng JSONP thay fetch để tránh lỗi CORS khi mở file:// cục bộ
-    function loadData() {
+    async function loadData() {
       // Xóa script cũ nếu có
       const old = document.getElementById('_gs');
       if (old) old.remove();
       const oldAdmin = document.getElementById('_gs_admin');
       if (oldAdmin) oldAdmin.remove();
 
-      // Callback toàn cục nhận danh sách chính từ sheet Public (hoàn toàn an toàn)
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+      const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+
+      if (isAdmin && isTokenValid) {
+        console.log("Loading parallel Admin data...");
+        const listContainer = document.getElementById('list');
+        if (listContainer) {
+          listContainer.innerHTML = '<div style="text-align:center; padding: 40px; font-weight: 700; color: var(--red);">🏠 ĐANG NẠP DỮ LIỆU BẢO MẬT ADMIN SONG SONG...</div>';
+        }
+
+        const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+        const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+
+        try {
+          const [sourceRes, poolRes] = await Promise.all([
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            }),
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            })
+          ]);
+
+          if (!sourceRes.ok || !poolRes.ok) {
+            throw new Error(`Lỗi tải API Google Sheets (Source: ${sourceRes.status}, Pool: ${poolRes.status})`);
+          }
+
+          const sourceDataJson = await sourceRes.json();
+          const poolDataJson = await poolRes.json();
+
+          const sourceRows = sourceDataJson.values || [];
+          const poolRows = poolDataJson.values || [];
+
+          const fullList = sourceRows
+            .map((sr, index) => {
+              if (!sr[3] && !sr[4]) return null;
+              
+              const targetRowNumber = index + 2;
+              const dt = parseFloat(sr[5]) || 0;
+              const gia = parseFloat(sr[8]) || 0;
+              const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+              
+              let rawQ = sr[9] || '';
+              let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+              if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+              
+              const cleanQLower = cleanQ.toLowerCase();
+              if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+              else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+              else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+              else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+              else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+              else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+              else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+              else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+              else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+              else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+              else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+              else if (cleanQLower.includes('cần giờ') || cleanQLower === 'cg') cleanQ = 'cg';
+              else if (cleanQLower === '1' || cleanQLower === 'q1') cleanQ = '1';
+              else if (cleanQLower === '2' || cleanQLower === 'q2') cleanQ = '2';
+              else if (cleanQLower === '3' || cleanQLower === 'q3') cleanQ = '3';
+              else if (cleanQLower === '4' || cleanQLower === 'q4') cleanQ = '4';
+              else if (cleanQLower === '5' || cleanQLower === 'q5') cleanQ = '5';
+              else if (cleanQLower === '6' || cleanQLower === 'q6') cleanQ = '6';
+              else if (cleanQLower === '7' || cleanQLower === 'q7') cleanQ = '7';
+              else if (cleanQLower === '8' || cleanQLower === 'q8') cleanQ = '8';
+              else if (cleanQLower === '9' || cleanQLower === 'q9') cleanQ = '9';
+              else if (cleanQLower === '10' || cleanQLower === 'q10') cleanQ = '10';
+              else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
+              else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
+
+              const p = {
+                temp_id: index + 1,
+                id: sr[3] || '',
+                t: sr[4] || '',
+                dt: sr[5] || '',
+                tang: sr[6] || '',
+                mat: sr[7] || '',
+                gia: sr[8] || '',
+                q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+                ql: cleanQ.toUpperCase(),
+                phuong: sr[10] || '-',
+                loai_hinh: sr[11] || 'Hẻm',
+                huong: sr[12] || '-',
+                duong_truoc_nha: sr[13] || '-',
+                rong_hem: sr[14] || '-',
+                tinh_trang: sr[15] || '-',
+                danh_gia: sr[16] || '',
+                is_invisible: (sr[15] || '').toLowerCase().includes('ẩn') ||
+                              (sr[15] || '').toLowerCase().includes('đã bán') ||
+                              (sr[15] || '').toLowerCase().includes('invisible'),
+                ngu_tang_tret: sr[17] || '-',
+                chdv: sr[18] || '-',
+                giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+                m: sr[19] || '',
+                imgs: [
+                  sr[20], sr[21], sr[22], sr[23], sr[24],
+                  sr[25], sr[26], sr[27], sr[28], sr[29]
+                ].filter(Boolean),
+                system_id: sr[37] || (index + 1).toString(),
+                so_pn: sr[32] || '-',
+                img_mat_tien: sr[38] || '',
+                
+                original_row_data: sr,
+                source_row_index: targetRowNumber
+              };
+
+              const poolRow = poolRows.find(pr => {
+                const prSystemId = pr[71] || '';
+                const prId = pr[54] || '';
+                return (p.system_id && prSystemId === p.system_id) || 
+                       (p.id && prId === p.id) ||
+                       (p.system_id && prId === p.system_id);
+              });
+
+              if (poolRow) {
+                p.raw_ten_dau_chu = poolRow[74] || '';
+                p.raw_dt_dau_chu = poolRow[73] || '';
+                p.raw_link_fb = poolRow[75] || '';
+                p.raw_noi_dung_chinh = poolRow[9] || '';
+                p.raw_mo_ta_chi_tiet = poolRow[56] || '';
+                p.raw_sodo1 = poolRow[27] || '';
+                p.raw_sodo2 = poolRow[28] || '';
+                p.raw_so_nha = poolRow[6] || '';
+                p.raw_ten_duong = poolRow[5] || '';
+                p.raw_dt_tren_so = poolRow[13] || '';
+                p.raw_gia_chao = poolRow[57] || '';
+                p.raw_so_tang = poolRow[15] || '';
+                p.raw_mat_tien = poolRow[16] || '';
+                p.raw_duong_truoc_nha = poolRow[58] || '';
+                p.raw_do_rong_hem = poolRow[59] || '';
+                p.raw_so_pn = poolRow[63] || '';
+                p.raw_so_wc = poolRow[64] || '';
+                p.pool_row_index = poolRows.indexOf(poolRow) + 2;
+              } else {
+                p.raw_ten_dau_chu = '';
+                p.raw_dt_dau_chu = '';
+                p.raw_link_fb = '';
+                p.raw_noi_dung_chinh = '';
+                p.raw_mo_ta_chi_tiet = '';
+                p.raw_sodo1 = '';
+                p.raw_sodo2 = '';
+                p.raw_so_nha = '';
+                p.raw_ten_duong = p.ten_duong || '';
+                p.raw_dt_tren_so = p.dt || '';
+                p.raw_gia_chao = p.gia || '';
+                p.raw_so_tang = p.tang || '';
+                p.raw_mat_tien = p.mat || '';
+                p.raw_duong_truoc_nha = p.duong_truoc_nha || '';
+                p.raw_do_rong_hem = p.rong_hem || '';
+                p.raw_so_pn = p.so_pn || '';
+                p.raw_so_wc = '';
+                p.pool_row_index = null;
+              }
+
+              return p;
+            })
+            .filter(Boolean);
+
+          finalizeData(fullList);
+        } catch (err) {
+          console.error("Error loading secure admin data, falling back to public:", err);
+          loadPublicDataFallback();
+        }
+      } else {
+        loadPublicDataFallback();
+      }
+    }
+
+    function loadPublicDataFallback() {
       window.__gsCallback = function (response) {
         try {
           const rows = response.table.rows;
@@ -2004,7 +2774,7 @@
             .map((r, index) => {
               const dt = parseFloat(cv(r.c[2])) || 0;
               const gia = parseFloat(cv(r.c[5])) || 0;
-              const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0; // Giá tỷ -> quy ra triệu/m2
+              const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
               let rawQ = cv(r.c[6]);
               if (!rawQ) {
                 const titleLower = String(cv(r.c[1])).toLowerCase();
@@ -2019,7 +2789,6 @@
                 cleanQ = cleanQ.substring(0, cleanQ.length - 2);
               }
 
-              // Chuẩn hóa triệt để tên Quận để bộ lọc luôn hoạt động chính xác (không lo sai lệch định dạng từ Sheet)
               const cleanQLower = cleanQ.toLowerCase();
               if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
               else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
@@ -2046,7 +2815,7 @@
               else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
               else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
               return {
-                temp_id: index + 1, // Mã tạm theo số tăng dần, bắt đầu từ 1
+                temp_id: index + 1,
                 id: cv(r.c[0]),
                 t: cv(r.c[1]),
                 dt: cv(r.c[2]),
@@ -2055,27 +2824,27 @@
                 gia: cv(r.c[5]),
                 q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
                 ql: cleanQ.toUpperCase(),
-                phuong: cv(r.c[7]) || '-', // H
-                loai_hinh: cv(r.c[8]) || 'Hẻm', // I
-                huong: cv(r.c[9]) || '-', // J
-                duong_truoc_nha: cv(r.c[10]) || '-', // K
-                rong_hem: cv(r.c[11]) || '-', // L
-                tinh_trang: cv(r.c[12]) || '-', // M
-                danh_gia: cv(r.c[13]) || '', // N
+                phuong: cv(r.c[7]) || '-',
+                loai_hinh: cv(r.c[8]) || 'Hẻm',
+                huong: cv(r.c[9]) || '-',
+                duong_truoc_nha: cv(r.c[10]) || '-',
+                rong_hem: cv(r.c[11]) || '-',
+                tinh_trang: cv(r.c[12]) || '-',
+                danh_gia: cv(r.c[13]) || '',
                 is_invisible: (cv(r.c[12]) || '').toLowerCase().includes('ẩn') ||
                   (cv(r.c[12]) || '').toLowerCase().includes('đã bán') ||
                   (cv(r.c[12]) || '').toLowerCase().includes('invisible'),
-                ngu_tang_tret: cv(r.c[14]) || '-', // O
-                chdv: cv(r.c[15]) || '-', // P
+                ngu_tang_tret: cv(r.c[14]) || '-',
+                chdv: cv(r.c[15]) || '-',
                 giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-                m: cv(r.c[16]), // Q
+                m: cv(r.c[16]),
                 imgs: [
                   cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]),
                   cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26])
-                ].filter(Boolean), // R đến AA
-                system_id: cv(r.c[34]) || (index + 1).toString(), // Cột AI
-                so_pn: cv(r.c[29]) || '-', // Cột AD
-                img_mat_tien: '' // Chỉ nạp khi đăng nhập Admin thành công
+                ].filter(Boolean),
+                system_id: cv(r.c[34]) || (index + 1).toString(),
+                so_pn: cv(r.c[29]) || '-',
+                img_mat_tien: ''
               };
             });
 
@@ -2093,13 +2862,10 @@
     }
 
     function finalizeData(fullList) {
-      // Lọc dữ liệu nếu là khách được chia sẻ link
       if (shareBitmask) {
-        // Giải mã bitmask từ URL (Đồng bộ lọc bỏ sản phẩm ẩn)
         const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
         sharedIds = decodeBitmask(shareBitmask, allIds);
       } else if (sharedIds) {
-        // Giải mã System ID (hoặc mã tạm, mã cũ)
         sharedIds = sharedIds.map(tk => {
           if (tk.startsWith('SYS-')) {
             const house = fullList.find(h => h.system_id === tk);
@@ -2113,7 +2879,6 @@
         }).filter(Boolean);
       }
 
-      // Loại bỏ các căn đã bị mark invisible
       if (sharedIds) {
         DATA = fullList.filter(p => sharedIds.map(String).includes(String(p.id)) && !p.is_invisible);
       } else if (!isAdmin) {
@@ -2123,7 +2888,6 @@
         DATA = fullList.filter(p => !p.is_invisible);
       }
 
-      // Tracking: Bắt đầu xem danh sách
       if (DATA.length > 0) {
         trackAction("Mở danh sách nhà", `Số lượng hiển thị: ${DATA.length} căn`);
       }
@@ -2481,35 +3245,74 @@
         c.className = 'card';
         c.dataset.pid = String(p.id);
         c.setAttribute('onclick', `openS('${p.id}')`);
-        c.innerHTML = `
-      <div class="crow">
-        <div class="ibox">
-          <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
-          ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
-          <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
-        </div>
-        <div class="card-right">
-          <div class="info">
-            <div class="ititle">${p.t}</div>
-            <div class="chips">
-              <span class="chip">📐 ${p.dt}m²</span>
-              <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
-              <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
+
+        if (isAdmin) {
+          c.innerHTML = `
+        <div class="crow">
+          <div class="ibox">
+            <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(52, 152, 219, 0.9); color: white; text-align: center; font-size: 11px; font-weight: 700; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase;">
+              ${p.tinh_trang || 'Bình thường'}
             </div>
-            <div class="pr-loc">
-              <div class="pr"><span class="pv">${p.gia} tỷ</span></div>
-              <div class="loc">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-                P.${p.phuong}, Q.${p.ql}
+            <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>
+            <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+          </div>
+          <div class="card-right">
+            <div class="info">
+              <div class="ititle" style="color: var(--red); font-weight: 850; font-size: 14.5px; line-height: 1.35; margin-bottom: 6px;">
+                ${p.raw_so_nha ? p.raw_so_nha + ' ' : ''}${p.raw_ten_duong ? p.raw_ten_duong : p.t} ${p.cu_phap ? '| ' + p.cu_phap : ''}
+              </div>
+              <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                <span>📍</span> P.${p.phuong}, Q.${p.ql}
+              </div>
+              <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <span>👤</span> ${p.raw_ten_dau_chu || 'Chưa rõ đầu chủ'}
+              </div>
+              <div style="font-size: 12.5px; color: var(--red); font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                <span>📞</span> 
+                ${p.raw_dt_dau_chu ? `<a href="tel:${p.raw_dt_dau_chu}" onclick="event.stopPropagation();" style="color: var(--red); text-decoration: underline; font-weight: 800;">${p.raw_dt_dau_chu}</a>` : 'Chưa có SĐT'}
+              </div>
+            </div>
+            <div class="cfoot" style="margin-top: 6px;">
+              ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
+              <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 6px;">
+                <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${p.gia} tỷ</span>
+                <span style="background: rgba(52, 152, 219, 0.15); color: #3498db; padding: 2px 6px; border-radius: 4px; font-size: 11px;">#${p.id}</span>
               </div>
             </div>
           </div>
-          <div class="cfoot">
-            ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
-            <div class="id-large">#${p.id}</div>
+        </div>`;
+        } else {
+          c.innerHTML = `
+        <div class="crow">
+          <div class="ibox">
+            <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+            ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
+            <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
           </div>
-        </div>
-      </div>`;
+          <div class="card-right">
+            <div class="info">
+              <div class="ititle">${p.t}</div>
+              <div class="chips">
+                <span class="chip">📐 ${p.dt}m²</span>
+                <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
+                <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
+              </div>
+              <div class="pr-loc">
+                <div class="pr"><span class="pv">${p.gia} tỷ</span></div>
+                <div class="loc">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                  P.${p.phuong}, Q.${p.ql}
+                </div>
+              </div>
+            </div>
+            <div class="cfoot">
+              ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
+              <div class="id-large">#${p.id}</div>
+            </div>
+          </div>
+        </div>`;
+        }
         frag.appendChild(c);
       });
       list.appendChild(frag);
@@ -2671,35 +3474,297 @@
 
       document.getElementById('mT').textContent = p.t;
       document.getElementById('mID').textContent = `#${p.id}`;
-      // Ưu tiên video luôn lên đầu mảng trong gallery chi tiết
-      const sortedImgs = [...p.imgs].sort((a, b) => {
-        const aVis = (a.includes('facebook.com') || a.includes('fb.watch') || a.includes('fb.gg')) ? 1 : 0;
-        const bVis = (b.includes('facebook.com') || b.includes('fb.watch') || b.includes('fb.gg')) ? 1 : 0;
-        return bVis - aVis;
-      });
-      // Load ảnh lớn w1200 cho album chi tiết
-      buildG(sortedImgs.map(url => fixImgUrl(url, 'w1200')));
-      document.getElementById('mG').innerHTML = `
-    <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
-    <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
-    <div class="ib"><div class="il">Đơn giá</div><div class="iv" style="color:var(--gold);font-weight:800">${p.giabq}</div></div>
-    <div class="ib"><div class="il">Quận/TP</div><div class="iv">${p.ql}</div></div>
-    <div class="ib"><div class="il">Phường</div><div class="iv">${p.phuong}</div></div>
-    <div class="ib"><div class="il">Loại</div><div class="iv">${p.loai_hinh}</div></div>
-    <div class="ib"><div class="il">Đường trước</div><div class="iv">${p.duong_truoc_nha}</div></div>
-    <div class="ib"><div class="il">Rộng hẻm</div><div class="iv">${p.rong_hem} m</div></div>
-    <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
-    <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat} m</div></div>
-    <div class="ib"><div class="il">Hướng</div><div class="iv">${p.huong}</div></div>
-    <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>
-    <div class="ib"><div class="il">Ngủ tầng trệt</div><div class="iv">${p.ngu_tang_tret}</div></div>
-    <div class="ib"><div class="il">CHDV</div><div class="iv">${p.chdv}</div></div>`;
-      document.getElementById('mD').textContent = p.m;
+      
+      const sbody = document.getElementById('sbody');
+      const scta = document.querySelector('.scta');
 
-      // Cấu hình nút hỏi Zalo
+      if (isAdmin && p.original_row_data) {
+        if (scta) scta.style.display = 'none';
+        
+        sbody.innerHTML = `
+          <div class="admin-accordion">
+            <!-- ACCORDION 1: THÔNG TIN THÔ - POOL -->
+            <div class="accordion-item expanded" id="accPool">
+              <div class="accordion-header active" onclick="toggleAdminAccordion(this)">
+                <span>📢 THÔNG TIN THÔ - POOL</span>
+                <span class="arrow">▼</span>
+              </div>
+              <div class="accordion-content" style="display:block;">
+                <!-- Carousels -->
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                  <div>
+                    <div class="admin-detail-section-title">🏠 HÌNH ẢNH NHÀ (NỘI THẤT SẠCH)</div>
+                    <div id="carouselNha" style="position: relative;">
+                      <div class="admin-scroll-carousel"></div>
+                      <div class="admin-carousel-dots"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="admin-detail-section-title">📜 SƠ ĐỒ THỬA ĐẤT (ẢNH SỔ)</div>
+                    <div id="carouselSo" style="position: relative;">
+                      <div class="admin-scroll-carousel"></div>
+                      <div class="admin-carousel-dots"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Technical Specs Dotted Grid -->
+                <div class="admin-raw-header-row">
+                  <span class="admin-ma-hang">#${p.id}</span>
+                  <span class="admin-status-badge">${p.tinh_trang || 'Bình thường'}</span>
+                </div>
+                <div class="admin-raw-section">
+                  <div class="admin-raw-title">📊 THÔNG SỐ KỸ THUẬT THÔ</div>
+                  <div class="admin-raw-grid">
+                    <div class="admin-raw-cell">
+                      <span class="label">DT trên sổ:</span>
+                      <span class="value dotted">${p.raw_dt_tren_so || p.dt || '-'} m²</span>
+                    </div>
+                    <div class="admin-raw-cell">
+                      <span class="label">Giá chào:</span>
+                      <span class="value dotted" style="color:var(--red); font-weight:800;">${p.raw_gia_chao || p.gia || '-'} tỷ</span>
+                    </div>
+                    <div class="admin-raw-cell">
+                      <span class="label">Ngang/mặt tiền:</span>
+                      <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
+                    </div>
+                    <div class="admin-raw-cell">
+                      <span class="label">Chiều dài sâu:</span>
+                      <span class="value dotted">${p.dai_nha || '-'} m</span>
+                    </div>
+                    <div class="admin-raw-cell">
+                      <span class="label">Độ rộng hẻm:</span>
+                      <span class="value dotted">${p.raw_do_rong_hem || p.rong_hem || '-'} m</span>
+                    </div>
+                    <div class="admin-raw-cell">
+                      <span class="label">Kết cấu:</span>
+                      <span class="value dotted">${p.raw_so_tang || p.tang || '-'} tầng</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="admin-raw-section" style="margin-top: 14px;">
+                  <div class="admin-raw-title">👤 THÔNG TIN NGUỒN CHỦ</div>
+                  <div class="admin-raw-source">
+                    <div style="display:flex; justify-content:space-between;">
+                      <span style="color:#57606f;">Tên đầu chủ:</span>
+                      <span style="font-weight:700;">${p.raw_ten_dau_chu || '-'}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                      <span style="color:#57606f;">SĐT đầu chủ:</span>
+                      <span>
+                        ${p.raw_dt_dau_chu ? `<a href="tel:${p.raw_dt_dau_chu}" class="dotted-val" style="color:var(--blue);">${p.raw_dt_dau_chu}</a>` : '-'}
+                      </span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                      <span style="color:#57606f;">Link Facebook:</span>
+                      <span>
+                        ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" class="dotted-val" style="color:var(--blue);">Xem FB Đầu Chủ ↗</a>` : '-'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Google Maps Embed -->
+                <div class="admin-raw-title" style="margin-top:16px;">🗺️ BẢN ĐỒ THỰC ĐỊA</div>
+                <div class="admin-map-container"></div>
+
+                <!-- Mô tả boxed -->
+                <div class="admin-mota-title">NỘI DUNG CHÍNH (THÔ)</div>
+                <div class="admin-mota-box red-text">${p.raw_noi_dung_chinh || 'Chưa có nội dung chính.'}</div>
+
+                <div class="admin-mota-title">MÔ TẢ CHI TIẾT (THÔ)</div>
+                <div class="admin-mota-box black-text collapsible-box" id="adminMotaGocBox">${p.raw_mo_ta_chi_tiet || p.m || 'Chưa có mô tả chi tiết.'}</div>
+                <button class="btn-show-more" id="btnExpandMotaGoc" onclick="toggleMotaGocCollapse()" style="display:none;">Xem thêm ▼</button>
+              </div>
+            </div>
+
+            <!-- ACCORDION 2: BIÊN TẬP CUSTOM - SOURCE -->
+            <div class="accordion-item" id="accSource">
+              <div class="accordion-header" onclick="toggleAdminAccordion(this)">
+                <span>✍️ BIÊN TẬP CUSTOM - SOURCE</span>
+                <span class="arrow">▶</span>
+              </div>
+              <div class="accordion-content">
+                <form class="admin-edit-form" onsubmit="event.preventDefault()">
+                  <div class="admin-edit-group">
+                    <label for="editNote">Ghi chú riêng (Note - Chỉ Admin thấy):</label>
+                    <textarea id="editNote" rows="3" placeholder="Nhập ghi chú riêng...">${p.note || ''}</textarea>
+                  </div>
+
+                  <div class="admin-edit-group">
+                    <label for="editTieuDeBds">Tiêu đề public (dưới 85 ký tự):</label>
+                    <input type="text" id="editTieuDeBds" value="${p.original_row_data[39] || ''}" placeholder="Nhập tiêu đề BĐS ngắn gọn...">
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editHuong">Hướng nhà:</label>
+                      <select id="editHuong">
+                        <option value="-">Chưa xác định</option>
+                        <option value="Đông">Đông</option>
+                        <option value="Tây">Tây</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Bắc">Bắc</option>
+                        <option value="Đông Nam">Đông Nam</option>
+                        <option value="Đông Bắc">Đông Bắc</option>
+                        <option value="Tây Nam">Tây Nam</option>
+                        <option value="Tây Bắc">Tây Bắc</option>
+                      </select>
+                    </div>
+                    
+                    <div class="admin-edit-group">
+                      <label for="editDuong">Đường trước nhà:</label>
+                      <select id="editDuong">
+                        <option value="-">Chưa xác định</option>
+                        <option value="Hẻm ba gác">Hẻm ba gác</option>
+                        <option value="Hẻm xe tải lý thuyết">Hẻm xe tải lý thuyết</option>
+                        <option value="Hẻm xe tải">Hẻm xe tải</option>
+                        <option value="Mặt tiền">Mặt tiền</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editDanhGia">Đánh giá:</label>
+                      <select id="editDanhGia">
+                        <option value="">Bình thường</option>
+                        <option value="Hàng Ngon">💎 Ngon</option>
+                        <option value="Hàng Lỗi">⚠️ Lỗi</option>
+                      </select>
+                    </div>
+
+                    <div class="admin-edit-group">
+                      <label for="editRongHem">Rộng hẻm (m):</label>
+                      <input type="number" id="editRongHem" step="0.1" value="${p.rong_hem !== '-' ? p.rong_hem : ''}" placeholder="Độ rộng (m)...">
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editSoPn">Số phòng ngủ:</label>
+                      <input type="number" id="editSoPn" value="${p.so_pn !== '-' ? p.so_pn : ''}" placeholder="Số phòng...">
+                    </div>
+
+                    <div class="admin-edit-group">
+                      <label for="editSoWc">Số WC:</label>
+                      <input type="number" id="editSoWc" value="${p.original_row_data[33] !== '-' ? p.original_row_data[33] : ''}" placeholder="Số WC...">
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+                    <div class="admin-edit-group row-group">
+                      <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checked' : ''}>
+                      <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+                    </div>
+
+                    <div class="admin-edit-group row-group">
+                      <input type="checkbox" id="editChdv" ${p.chdv === 'Có' ? 'checked' : ''}>
+                      <label for="editChdv" style="font-weight:700;">Có CHDV</label>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- ACCORDION 3: PREVIEW KHÁCH HÀNG -->
+            <div class="accordion-item" id="accPreview">
+              <div class="accordion-header" onclick="toggleAdminAccordion(this)">
+                <span>📄 PREVIEW KHÁCH HÀNG</span>
+                <span class="arrow">▶</span>
+              </div>
+              <div class="accordion-content">
+                <div style="font-size:14.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t}</div>
+                <div class="ig" style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
+                  <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
+                  <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
+                  <div class="ib"><div class="il">Đơn giá</div><div class="iv" style="color:var(--gold);font-weight:800">${p.giabq}</div></div>
+                  <div class="ib"><div class="il">Quận/TP</div><div class="iv">${p.ql}</div></div>
+                  <div class="ib"><div class="il">Phường</div><div class="iv">${p.phuong}</div></div>
+                  <div class="ib"><div class="il">Loại</div><div class="iv">${p.loai_hinh}</div></div>
+                  <div class="ib"><div class="il">Đường trước</div><div class="iv">${p.duong_truoc_nha}</div></div>
+                  <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
+                </div>
+                <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:13.5px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px;">${p.m}</div>
+              </div>
+            </div>
+          </div>
+          <div class="admin-sticky-footer">
+            <button class="admin-save-btn" id="saveBtn" onclick="saveSourceChanges('${p.id}')">💾 LƯU THAY ĐỔI</button>
+          </div>
+        `;
+      } else {
+        if (scta) scta.style.display = 'flex';
+        
+        const sortedImgs = [...p.imgs].sort((a, b) => {
+          const aVis = (a.includes('facebook.com') || a.includes('fb.watch') || a.includes('fb.gg')) ? 1 : 0;
+          const bVis = (b.includes('facebook.com') || b.includes('fb.watch') || b.includes('fb.gg')) ? 1 : 0;
+          return bVis - aVis;
+        });
+        
+        sbody.innerHTML = `
+          <div class="gwrap" id="gw">
+            <div class="gtrack" id="gt"></div>
+            <div class="gdots" id="gd"></div>
+            <button class="garr al" id="al" onclick="gm(-1)">‹</button>
+            <button class="garr ar" id="ar" onclick="gm(1)">›</button>
+          </div>
+          <div class="ig" id="mG">
+            <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
+            <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
+            <div class="ib"><div class="il">Đơn giá</div><div class="iv" style="color:var(--gold);font-weight:800">${p.giabq}</div></div>
+            <div class="ib"><div class="il">Quận/TP</div><div class="iv">${p.ql}</div></div>
+            <div class="ib"><div class="il">Phường</div><div class="iv">${p.phuong}</div></div>
+            <div class="ib"><div class="il">Loại</div><div class="iv">${p.loai_hinh}</div></div>
+            <div class="ib"><div class="il">Đường trước</div><div class="iv">${p.duong_truoc_nha}</div></div>
+            <div class="ib"><div class="il">Rộng hẻm</div><div class="iv">${p.rong_hem} m</div></div>
+            <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
+            <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat} m</div></div>
+            <div class="ib"><div class="il">Hướng</div><div class="iv">${p.huong}</div></div>
+            <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>
+            <div class="ib"><div class="il">Ngủ tầng trệt</div><div class="iv">${p.ngu_tang_tret}</div></div>
+            <div class="ib"><div class="il">CHDV</div><div class="iv">${p.chdv}</div></div>
+          </div>
+          <div class="desc" id="mD">${p.m}</div>
+        `;
+        buildG(sortedImgs.map(url => fixImgUrl(url, 'w1200')));
+      }
+
       const btnZalo = document.getElementById('mZalo');
-      btnZalo.textContent = `💬 Tư vấn ngay căn này`;
-      btnZalo.onclick = () => askZalo(p.id, p.t);
+      if (btnZalo) {
+        btnZalo.textContent = `💬 Tư vấn ngay căn này`;
+        btnZalo.onclick = () => askZalo(p.id, p.t);
+      }
+
+      if (isAdmin && p.original_row_data) {
+        setTimeout(() => {
+          const editHuong = document.getElementById('editHuong');
+          if (editHuong) editHuong.value = p.huong || '-';
+
+          const editDuong = document.getElementById('editDuong');
+          if (editDuong) editDuong.value = p.duong_truoc_nha || '-';
+
+          const editDanhGia = document.getElementById('editDanhGia');
+          if (editDanhGia) editDanhGia.value = p.danh_gia || '';
+
+          checkMoTaCollapse();
+          
+          const mapContainer = document.querySelector('.admin-map-container');
+          if (mapContainer) {
+            const fullAddress = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
+            mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
+          }
+
+          const nImgs = p.imgs || [];
+          setupScrollCarousel('carouselNha', nImgs, false);
+
+          const sImgs = [];
+          if (p.raw_sodo1) sImgs.push(p.raw_sodo1);
+          if (p.raw_sodo2) sImgs.push(p.raw_sodo2);
+          setupScrollCarousel('carouselSo', sImgs, true);
+        }, 50);
+      }
 
       document.getElementById('ov').classList.add('open');
       document.getElementById('sbody').scrollTop = 0;
@@ -2981,7 +4046,7 @@
       try {
         gTokenClient = google.accounts.oauth2.initTokenClient({
           client_id: clientId,
-          scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+          scope: 'https://www.googleapis.com/auth/spreadsheets',
           callback: (tokenResponse) => {
             if (tokenResponse.error !== undefined) {
               console.error("OAuth2 error:", tokenResponse.error);
@@ -2993,7 +4058,7 @@
             localStorage.setItem('g_access_token', token);
             localStorage.setItem('g_token_expiry', expiry);
             showGoogleLoginButtonState(true);
-            fetchFacadeImages(token);
+            loadData();
           }
         });
         console.log("Google Auth GSI Client initialized successfully.");
@@ -3056,7 +4121,7 @@
       if (token && expiry && parseInt(expiry, 10) > now) {
         console.log("Found valid access token in LocalStorage. Expiry in:", Math.round((parseInt(expiry, 10) - now) / 1000), "s");
         showGoogleLoginButtonState(true);
-        fetchFacadeImages(token);
+        loadData();
       } else {
         const clientId = localStorage.getItem('gClientId');
         if (clientId) {
@@ -3127,6 +4192,281 @@
         .catch(err => {
           console.error("Error fetching facade images from private sheet:", err);
         });
+    }
+
+    async function requestPullListing() {
+      const soNha = document.getElementById('pullSoNha').value.trim();
+      const duong = document.getElementById('pullDuong').value.trim();
+      
+      if (!soNha || !duong) {
+        alert("Vui lòng nhập đầy đủ Số nhà và Tên đường!");
+        return;
+      }
+      
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+      
+      if (!token || !expiry || parseInt(expiry, 10) <= now) {
+        alert("Phiên đăng nhập Google đã hết hạn hoặc chưa liên kết Gmail. Vui lòng bấm 'Đăng nhập / Liên kết Gmail' trước!");
+        return;
+      }
+      
+      const btn = document.getElementById('btnPullListing');
+      const spinner = document.getElementById('pullSpinner');
+      
+      btn.disabled = true;
+      spinner.style.display = 'inline-block';
+      
+      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      
+      try {
+        // Step 1: Đọc toàn bộ Sheet Pool
+        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`;
+        const poolRes = await fetch(poolUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!poolRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Pool (Mã: ${poolRes.status}). Kiểm tra quyền truy cập Sheet!`);
+        }
+        
+        const poolData = await poolRes.json();
+        const rows = poolData.values || [];
+        
+        // Helper chuẩn hóa địa chỉ để so khớp thông minh
+        const norm = (str) => {
+          if (!str) return "";
+          return str.toString()
+                    .toLowerCase()
+                    .replace(/cách mạng tháng (tám|8)|cmt8/g, "cmt8")
+                    .replace(/ba tháng hai|3 tháng 2|3\/2|3\-2/g, "3/2")
+                    .replace(/đường số /g, "ds")
+                    .replace(/\s+/g, "")
+                    .trim();
+        };
+        
+        const targetSoNha = norm(soNha);
+        const targetDuong = norm(duong);
+        
+        // Tìm dòng khớp Số nhà + Đường
+        const matchedRow = rows.find(r => norm(r[6]) === targetSoNha && norm(r[5]) === targetDuong);
+        
+        if (!matchedRow) {
+          alert(`❌ Căn nhà này chưa được cào về kho Pool. Vui lòng báo Trang chạy Crawler!`);
+          btn.disabled = false;
+          spinner.style.display = 'none';
+          return;
+        }
+        
+        // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
+        const sourceRes = await fetch(sourceUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!sourceRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}). Kiểm tra quyền truy cập Sheet!`);
+        }
+        
+        const sourceData = await sourceRes.json();
+        const sourceRows = sourceData.values || [];
+        
+        const systemId = matchedRow[71]; // Cột 71 (System ID)
+        if (!systemId) {
+          throw new Error("Dữ liệu căn nhà trong Pool thiếu System ID. Vui lòng cào lại hoặc biên tập lại!");
+        }
+        
+        const existIdx = sourceRows.findIndex(sr => sr[37] === systemId);
+        const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+        
+        // Step 3: Map dữ liệu 78 cột từ Pool -> 41 cột sang Source
+        const finalImages = [];
+        const anhDuocChon = (matchedRow[61] || "").toString().replace(/\s/g, '');
+        const anhHemDuocChon = (matchedRow[62] || "").toString().replace(/\s/g, '');
+        
+        if (anhDuocChon === "") {
+          alert("⚠️ Căn nhà này chưa được dán nhãn ảnh nội thất an toàn ở Curator App! Vui lòng nhờ Trang biên tập ảnh trước.");
+          btn.disabled = false;
+          spinner.style.display = 'none';
+          return;
+        }
+        
+        const noithatIndices = anhDuocChon.split(',');
+        
+        // 1. Cover
+        const firstNoithatIdx = parseInt(noithatIndices[0]);
+        if (!isNaN(firstNoithatIdx) && firstNoithatIdx >= 1 && firstNoithatIdx <= 15) {
+          const coverImgUrl = matchedRow[39 + firstNoithatIdx];
+          if (coverImgUrl) finalImages.push(coverImgUrl);
+        }
+        
+        // 2. Alley
+        const maxHem = 2;
+        if (anhHemDuocChon !== "") {
+          const hemIndices = anhHemDuocChon.split(',');
+          let addedHem = 0;
+          for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+            const hemIdx = parseInt(hemIndices[i]);
+            if (!isNaN(hemIdx) && hemIdx >= 1 && hemIdx <= 10) {
+              const hemUrl = matchedRow[29 + hemIdx];
+              if (hemUrl) {
+                finalImages.push(hemUrl);
+                addedHem++;
+              }
+            }
+          }
+        } else {
+          const availableHem = [];
+          for (let i = 1; i <= 10; i++) {
+            const hemUrl = matchedRow[29 + i];
+            if (hemUrl) availableHem.push(hemUrl);
+          }
+          for (let i = availableHem.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = availableHem[i];
+            availableHem[i] = availableHem[j];
+            availableHem[j] = temp;
+          }
+          for (let i = 0; i < Math.min(maxHem, availableHem.length); i++) {
+            finalImages.push(availableHem[i]);
+          }
+        }
+        
+        // 3. Nội thất khác
+        for (let i = 1; i < noithatIndices.length; i++) {
+          const imgIdx = parseInt(noithatIndices[i]);
+          if (!isNaN(imgIdx) && imgIdx >= 1 && imgIdx <= 15) {
+            const imgUrl = matchedRow[39 + imgIdx];
+            if (imgUrl) finalImages.push(imgUrl);
+          }
+        }
+        
+        while (finalImages.length < 10) finalImages.push("");
+        
+        // Xử lý Cú pháp (Lấy từ Nội dung chính thô)
+        const noiDungChinh = matchedRow[9] || "";
+        let cuPhap = noiDungChinh;
+        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[A-Za-zÀ-ỹ0-9\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
+        if (matchCuPhap) {
+          cuPhap = matchCuPhap[1].trim();
+        }
+        
+        // Xử lý Quận
+        const formatQuan = (q) => {
+          if (!q) return "";
+          const qLower = q.toLowerCase();
+          if (qLower.includes("quận 3")) return "3";
+          if (qLower.includes("quận 10")) return "10";
+          if (qLower.includes("phú nhuận")) return "PN";
+          if (qLower.includes("tân bình")) return "TB";
+          return q;
+        };
+        
+        // Xử lý Giá
+        const formatGia = (g) => {
+          if (!g) return "";
+          const val = parseFloat(g.toString().replace(/,/g, ''));
+          if (isNaN(val)) return g;
+          if (val > 100) return val / 1000;
+          return val;
+        };
+        
+        const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
+        
+        // Xây dựng publicRowData 41 cột cho Sheet Source
+        const publicRowData = [
+          `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+          cuPhap,                        // 1: Cu_phap (Cột B)
+          "",                            // 2: Note (Cột C)
+          matchedRow[54],                // 3: id (Cột D)
+          matchedRow[55],                // 4: tieu_de (Cột E)
+          matchedRow[13],                // 5: dien_tich (Cột F)
+          matchedRow[15],                // 6: so_tang (Cột G)
+          matchedRow[16],                // 7: mat_tien (Cột H)
+          formatGia(matchedRow[57]),     // 8: gia (Cột I)
+          formatQuan(matchedRow[3]),     // 9: quan (Cột J)
+          matchedRow[4],                 // 10: phuong (Cột K)
+          loaiHinh,                      // 11: loai_hinh (Cột L)
+          matchedRow[17],                // 12: huong_nha (Cột M)
+          matchedRow[58],                // 13: duong_truoc_nha (Cột N)
+          matchedRow[59],                // 14: do_rong_hem (Cột O)
+          matchedRow[60],                // 15: tinh_trang_nha (Cột P)
+          matchedRow[66],                // 16: danh_gia (Cột Q)
+          matchedRow[67],                // 17: ngu_tang_tret (Cột R)
+          matchedRow[68],                // 18: chdv (Cột S)
+          matchedRow[56],                // 19: mo_ta (Cột T)
+          finalImages[0],                // 20: anh_1 (Cột U)
+          finalImages[1],                // 21: anh_2 (Cột V)
+          finalImages[2],                // 22: anh_3 (Cột W)
+          finalImages[3],                // 23: anh_4 (Cột X)
+          finalImages[4],                // 24: anh_5 (Cột Y)
+          finalImages[5],                // 25: anh_6 (Cột Z)
+          finalImages[6],                // 26: anh_7 (Cột AA)
+          finalImages[7],                // 27: anh_8 (Cột AB)
+          finalImages[8],                // 28: anh_9 (Cột AC)
+          finalImages[9],                // 29: anh_10 (Cột AD)
+          new Date().toISOString(),      // 30: Last updated (Cột AE)
+          matchedRow[65],                // 31: phuong_cu (Cột AF)
+          matchedRow[63],                // 32: so_pn (Cột AG)
+          matchedRow[64],                // 33: so_wc (Cột AH)
+          matchedRow[5],                 // 34: ten_duong (Cột AI)
+          "",                            // 35: gio_dang (Cột AJ)
+          "",                            // 36: trang_thai (Cột AK)
+          systemId,                      // 37: System ID (Cột AL)
+          matchedRow[29],                // 38: Hình Mặt Tiền (Cột AM)
+          "",                            // 39: Tiêu đề BDS (Cột AN)
+          false                          // 40: Đăng BDS (Cột AO)
+        ];
+        
+        // Step 4: Ghi đè/Thêm mới vào Sheet Source
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AO${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeRes = await fetch(writeUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [publicRowData] })
+        });
+        
+        if (!writeRes.ok) {
+          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
+        }
+        
+        // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
+        try {
+          const poolRowNumber = rows.indexOf(matchedRow) + 2;
+          const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BZ${poolRowNumber}:BZ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ values: [[syncDateStr]] })
+          });
+        } catch (e) {
+          console.warn("Không thể ghi nhận Last Sync vào Pool:", e);
+        }
+        
+        alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[54]} (${matchedRow[55]})!`);
+        
+        // Clear form
+        document.getElementById('pullSoNha').value = '';
+        document.getElementById('pullDuong').value = '';
+        
+        // Tải lại dữ liệu web
+        loadData();
+        
+      } catch (err) {
+        alert(`❌ Lỗi đồng bộ: ${err.message}`);
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+      }
     }
 
     // ============================================================
@@ -3370,6 +4710,324 @@
         manager.appendChild(chip);
       });
     }
+
+    // ============================================================
+    //  ⚡ ADMIN CURATION DASHBOARD EXTRA HELPERS (US-039)
+    // ============================================================
+    window.toggleAdminAccordion = function(header) {
+      const item = header.closest('.accordion-item');
+      const arrow = header.querySelector('.arrow');
+      const isExpanded = item.classList.contains('expanded');
+      
+      if (isExpanded) {
+        item.classList.remove('expanded');
+        if (arrow) arrow.textContent = '▶';
+      } else {
+        item.classList.add('expanded');
+        if (arrow) arrow.textContent = '▼';
+      }
+    };
+
+    window.setupScrollCarousel = function(containerId, imageUrls, isLegalImg = false) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const track = container.querySelector('.admin-scroll-carousel');
+      const dotsContainer = container.querySelector('.admin-carousel-dots');
+      if (!track || !dotsContainer) return;
+
+      track.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      if (imageUrls.length === 0) {
+        track.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--sub); font-size:12.5px; font-weight:600; background:#f8f9fa;">Chưa có hình ảnh</div>`;
+        return;
+      }
+
+      imageUrls.forEach((url, idx) => {
+        const cleanUrl = fixImgUrl(url, 'w800');
+        const item = document.createElement('div');
+        item.className = 'admin-carousel-item';
+        item.setAttribute('onclick', `openZoomOverlay('${cleanUrl.replace(/'/g, "\\'")}')`);
+        item.style.cursor = 'zoom-in';
+        item.innerHTML = `<img src="${cleanUrl}" alt="Hình ${idx + 1}" loading="lazy">`;
+        track.appendChild(item);
+
+        const dot = document.createElement('div');
+        dot.className = 'admin-dot' + (idx === 0 ? ' on' : '');
+        dotsContainer.appendChild(dot);
+      });
+
+      track.onscroll = () => {
+        const width = track.clientWidth;
+        const scrollLeft = track.scrollLeft;
+        const activeIdx = Math.round(scrollLeft / (width * 0.85));
+        const dots = dotsContainer.querySelectorAll('.admin-dot');
+        dots.forEach((dot, dIdx) => {
+          dot.classList.toggle('on', dIdx === activeIdx);
+        });
+      };
+    };
+
+    window.openZoomOverlay = function(url) {
+      let overlay = document.getElementById('zoomOverlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'zoomOverlay';
+        overlay.style.cssText = `
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.95);
+          z-index: 100000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+        `;
+        overlay.innerHTML = `
+          <div style="position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; cursor: pointer; z-index: 100001;" onclick="closeZoomOverlay()">✕</div>
+          <img src="" style="max-width: 95%; max-height: 90%; object-fit: contain; transition: transform 0.15s ease-out; transform-origin: center center;" id="zoomImg">
+        `;
+        document.body.appendChild(overlay);
+
+        const img = overlay.querySelector('#zoomImg');
+        let scale = 1;
+        let startDist = 0;
+        let lastScale = 1;
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let posX = 0, posY = 0;
+
+        img.ontouchstart = (e) => {
+          if (e.touches.length === 2) {
+            startDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+          } else if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - posX;
+            startY = e.touches[0].clientY - posY;
+          }
+        };
+
+        img.ontouchmove = (e) => {
+          if (e.touches.length === 2 && startDist > 0) {
+            const dist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            scale = Math.max(1, Math.min(4, lastScale * (dist / startDist)));
+            img.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+          } else if (e.touches.length === 1 && isDragging && scale > 1) {
+            posX = e.touches[0].clientX - startX;
+            posY = e.touches[0].clientY - startY;
+            img.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+          }
+        };
+
+        img.ontouchend = (e) => {
+          lastScale = scale;
+          isDragging = false;
+          if (scale <= 1.05) {
+            posX = 0; posY = 0; scale = 1; lastScale = 1;
+            img.style.transform = 'translate(0px, 0px) scale(1)';
+          }
+        };
+
+        overlay.onclick = (e) => {
+          if (e.target === overlay) closeZoomOverlay();
+        };
+      }
+
+      const img = overlay.querySelector('#zoomImg');
+      img.src = url;
+      img.style.transform = 'translate(0px, 0px) scale(1)';
+      
+      overlay.style.pointerEvents = 'auto';
+      overlay.style.opacity = '1';
+      
+      window.closeZoomOverlay = function() {
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+      };
+    };
+
+    window.checkMoTaCollapse = function() {
+      const box = document.getElementById('adminMotaGocBox');
+      const btn = document.getElementById('btnExpandMotaGoc');
+      if (!box || !btn) return;
+      
+      box.classList.remove('expanded');
+      btn.textContent = 'Xem thêm ▼';
+      
+      const scrollHeight = box.scrollHeight;
+      if (scrollHeight > 165) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    };
+    
+    window.toggleMotaGocCollapse = function() {
+      const box = document.getElementById('adminMotaGocBox');
+      const btn = document.getElementById('btnExpandMotaGoc');
+      if (!box || !btn) return;
+      
+      const isExpanded = box.classList.contains('expanded');
+      if (isExpanded) {
+        box.classList.remove('expanded');
+        btn.textContent = 'Xem thêm ▼';
+        document.getElementById('sbody').scrollTop -= 100;
+      } else {
+        box.classList.add('expanded');
+        btn.textContent = 'Thu gọn ▲';
+      }
+    };
+
+    window.showToast = function(msg, type = 'success') {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = `
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 200000;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          pointer-events: none;
+          width: 90%;
+          max-width: 320px;
+        `;
+        document.body.appendChild(container);
+      }
+
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      `;
+      toast.innerHTML = `
+        <span>${type === 'success' ? '✅' : '❌'}</span>
+        <span>${msg}</span>
+      `;
+      container.appendChild(toast);
+
+      toast.offsetHeight;
+
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    };
+
+    window.saveSourceChanges = async function(id) {
+      const p = DATA.find(x => String(x.id) === String(id));
+      if (!p) {
+        showToast("Không tìm thấy thông tin căn nhà!", "error");
+        return;
+      }
+
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (!token || !expiry || parseInt(expiry, 10) <= now) {
+        showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveBtn');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '⌛ Đang lưu...';
+      }
+
+      try {
+        const note = document.getElementById('editNote').value.trim();
+        const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+        const huong = document.getElementById('editHuong').value;
+        const duong = document.getElementById('editDuong').value;
+        const danhGia = document.getElementById('editDanhGia').value;
+        const rongHem = document.getElementById('editRongHem').value.trim();
+        const soPn = document.getElementById('editSoPn').value.trim();
+        const soWc = document.getElementById('editSoWc').value.trim();
+        const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
+        const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
+
+        p.original_row_data[2] = note;
+        p.original_row_data[12] = huong;
+        p.original_row_data[13] = duong;
+        p.original_row_data[14] = rongHem || '-';
+        p.original_row_data[16] = danhGia;
+        p.original_row_data[17] = nguTret;
+        p.original_row_data[18] = chdv;
+        p.original_row_data[30] = new Date().toISOString();
+        p.original_row_data[32] = soPn || '-';
+        p.original_row_data[33] = soWc || '-';
+        p.original_row_data[39] = tieuDeBds;
+
+        p.note = note;
+        p.huong = huong;
+        p.duong_truoc_nha = duong;
+        p.rong_hem = rongHem || '-';
+        p.danh_gia = danhGia;
+        p.ngu_tang_tret = nguTret;
+        p.chdv = chdv;
+        p.so_pn = soPn || '-';
+
+        const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AO${p.source_row_index}?valueInputOption=USER_ENTERED`;
+
+        const writeRes = await fetch(writeUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [p.original_row_data] })
+        });
+
+        if (!writeRes.ok) {
+          throw new Error(`Google Sheets API returned status ${writeRes.status}`);
+        }
+
+        showToast("Đã lưu thay đổi lên Google Sheets thành công!");
+        closeS();
+        render();
+      } catch (err) {
+        console.error("Lỗi lưu dữ liệu:", err);
+        showToast(`Lỗi lưu thay đổi: ${err.message}`, "error");
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '💾 LƯU THAY ĐỔI';
+        }
+      }
+    };
 
     // Khởi động
     updateFavBtnUI();
