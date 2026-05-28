@@ -578,6 +578,72 @@
       border-color: #fff
     }
 
+    /* Segmented Mode Switcher (US-039.5) */
+    .mode-segmented-container {
+      padding: 12px 16px 4px 16px;
+      margin-bottom: 2px;
+    }
+    .mode-segmented-control {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 3px;
+      gap: 3px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .mode-segmented-control .mode-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 9px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .mode-segmented-control .mode-btn:active {
+      transform: scale(0.98);
+    }
+    .mode-segmented-control .mode-btn.active {
+      background: var(--gold);
+      color: #1c1c1e;
+      box-shadow: 0 3px 8px rgba(255, 191, 36, 0.25);
+    }
+
+    /* Pool card styling */
+    .card.is-pool-card {
+      border: 1px dashed rgba(255, 191, 36, 0.35) !important;
+      background: rgba(255, 191, 36, 0.02) !important;
+    }
+    .card.is-pool-card:hover {
+      border-color: var(--gold) !important;
+      box-shadow: 0 4px 15px rgba(255, 191, 36, 0.08) !important;
+    }
+    .pool-badge-tag {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: var(--gold);
+      color: #1c1c1e;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      z-index: 5;
+    }
+
     .stats {
       background: #fff;
       border-bottom: 1px solid var(--border);
@@ -2275,6 +2341,17 @@
     <button onclick="exitCollectionView()">✕ Hủy xem</button>
   </div>
 
+  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display:none;">
+    <div class="mode-segmented-control">
+      <button class="mode-btn active" id="modeSourceBtn" onclick="switchActiveMode('source')">
+        🛍️ ĐÃ LÊN SÓNG (<span id="countOnAir">-</span>)
+      </button>
+      <button class="mode-btn" id="modePoolBtn" onclick="switchActiveMode('pool')">
+        📦 KHO POOL THÔ (<span id="countPool">-</span>)
+      </button>
+    </div>
+  </div>
+
   <div class="stats">
     <div class="stat">
       <div class="sn" id="sTong">-</div>
@@ -2549,6 +2626,8 @@
 
     let DATA = [];
     let POOL_ROWS = [];
+    let activeMode = 'source'; // 'source' or 'pool'
+    let MAPPED_POOL_DATA = [];
     let secureLoadAttempted = false;
     let isSecureLoaded = false;
     let isDataLoaded = false;
@@ -2661,8 +2740,99 @@
       return 0;
     }
 
+    function getMappedPoolData() {
+      if (MAPPED_POOL_DATA.length === POOL_ROWS.length && MAPPED_POOL_DATA.length > 0) {
+        return MAPPED_POOL_DATA;
+      }
+      if (!POOL_ROWS || !POOL_ROWS.length) return [];
+      
+      MAPPED_POOL_DATA = POOL_ROWS.map(row => {
+        const systemId = row[72] || row[71] || '';
+        const dt = parseFloat(row[13] || row[14]) || 0;
+        const gia = parseFloat(row[11] || row[57]) || 0;
+        const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+
+        let rawQ = row[3] || '';
+        let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+        if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+        const cleanQLower = cleanQ.toLowerCase();
+        if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+        else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+        else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+        else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+        else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+        else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+        else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+        else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+        else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+        else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+        else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+
+        const poolImgs = [];
+        for (let c = 40; c <= 54; c++) {
+          if (row[c]) poolImgs.push(row[c]);
+        }
+
+        const p = {
+          temp_id: "pool_" + systemId,
+          id: row[55] || row[54] || '',
+          cu_phap: "",
+          t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
+          dt: row[13] || row[14] || '',
+          tang: row[15] || '',
+          mat: row[16] || '',
+          gia: row[11] || '',
+          q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+          ql: cleanQ.toUpperCase(),
+          phuong: row[4] || '-',
+          loai_hinh: (row[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
+          huong: row[17] || '-',
+          duong_truoc_nha: row[58] || '-',
+          rong_hem: row[59] || '-',
+          tinh_trang: row[60] || '-',
+          danh_gia: row[66] || '',
+          is_invisible: false,
+          ngu_tang_tret: row[67] || '-',
+          chdv: row[68] || '-',
+          giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+          m: row[57] || '',
+          imgs: poolImgs,
+          system_id: systemId,
+          so_pn: row[63] || '-',
+          img_mat_tien: row[29] || '',
+
+          raw_ten_dau_chu: row[75] || '',
+          raw_dt_dau_chu: row[74] || '',
+          raw_link_fb: row[76] || '',
+          raw_noi_dung_chinh: row[9] || '',
+          raw_mo_ta_chi_tiet: row[10] || '',
+          raw_sodo1: row[27] || '',
+          raw_sodo2: row[28] || '',
+          raw_so_nha: row[6] || '',
+          raw_ten_duong: row[5] || '',
+          raw_dt_tren_so: row[14] || '',
+          raw_gia_chao: row[11] || '',
+          raw_so_tang: row[15] || '',
+          raw_mat_tien: row[16] || '',
+          raw_duong_truoc_nha: row[60] || '',
+          raw_do_rong_hem: row[61] || '',
+          raw_so_pn: row[64] || '',
+          raw_so_wc: row[65] || '',
+          raw_tieu_de_public: row[56] || '',
+          raw_mo_ta_public: row[57] || '',
+          pool_row_index: POOL_ROWS.indexOf(row) + 2,
+
+          isFromPoolOnly: true,
+          pool_row_data: row
+        };
+        p.dai_nha = getDaiNha(p);
+        return p;
+      });
+      return MAPPED_POOL_DATA;
+    }
+
     function getFiltered() {
-      let a = DATA;
+      let a = (isAdmin && activeMode === 'pool') ? getMappedPoolData() : DATA;
       const sv = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
       if (sv) {
         a = a.filter(p => {
@@ -3113,6 +3283,30 @@
       document.head.appendChild(s);
     }
 
+    window.switchActiveMode = function(mode) {
+      if (!isAdmin) return;
+      activeMode = mode;
+      
+      const sBtn = document.getElementById('modeSourceBtn');
+      const pBtn = document.getElementById('modePoolBtn');
+      if (sBtn && pBtn) {
+        sBtn.classList.toggle('active', mode === 'source');
+        pBtn.classList.toggle('active', mode === 'pool');
+      }
+      
+      updateSwitcherCounts();
+      resetFilters();
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    function updateSwitcherCounts() {
+      const onAirEl = document.getElementById('countOnAir');
+      const poolEl = document.getElementById('countPool');
+      if (onAirEl) onAirEl.textContent = DATA ? DATA.length : '0';
+      if (poolEl) poolEl.textContent = POOL_ROWS ? POOL_ROWS.length : '0';
+    }
+
     function finalizeData(fullList) {
       isDataLoaded = true;
       if (shareBitmask) {
@@ -3155,6 +3349,7 @@
       updateFilterSummary();
       updateStats();
       render();
+      updateSwitcherCounts();
       if (isAdmin) {
         autoLoginOrSilentRefresh();
       }
@@ -3491,7 +3686,8 @@
     function render() {
       const list = document.getElementById('list');
       list.innerHTML = '';
-      const arr = DATA.slice().sort((a, b) => {
+      const sourceArr = (isAdmin && activeMode === 'pool') ? getMappedPoolData() : DATA;
+      const arr = sourceArr.slice().sort((a, b) => {
         if (currentSortType === 'newest') {
           const ta = parseInt(a.temp_id, 10) || 0;
           const tb = parseInt(b.temp_id, 10) || 0;
@@ -3503,19 +3699,27 @@
       });
 
       if (!arr.length) {
-        list.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;">Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.</div>');
+        if (isAdmin && activeMode === 'pool') {
+          list.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;">Không có bất động sản nào trong Kho Pool khớp với bộ lọc hiện tại.</div>');
+        } else {
+          list.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;">Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.</div>');
+        }
         return;
       }
 
+      const isPool = (isAdmin && activeMode === 'pool');
+      const maxRender = isPool ? 200 : arr.length;
+      const itemsToRender = arr.slice(0, maxRender);
+
       const frag = document.createDocumentFragment();
-      arr.forEach((p, i) => {
+      itemsToRender.forEach((p, i) => {
         const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
         let thumbUrl = (isAdmin && p.img_mat_tien) ? p.img_mat_tien : imgUrls[0];
         const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
         const c = document.createElement('div');
-        c.className = 'card';
+        c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
         c.dataset.pid = String(p.id);
-        c.setAttribute('onclick', `openS('${p.id}')`);
+        c.setAttribute('onclick', p.isFromPoolOnly ? `openPoolS('${p.system_id}')` : `openS('${p.id}')`);
 
         const cleanedT = p.t && p.t.includes('|') ? p.t.substring(p.t.indexOf('|') + 1).trim() : p.t;
         let adminTitle = '';
@@ -3535,6 +3739,7 @@
           c.innerHTML = `
         <div class="crow">
           <div class="ibox">
+            ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
             <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
             ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(52, 152, 219, 0.9); color: white; text-align: center; font-size: 11px; font-weight: 700; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase;">
@@ -3572,6 +3777,7 @@
           c.innerHTML = `
         <div class="crow">
           <div class="ibox">
+            ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
             <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
             ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
             <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
@@ -3602,6 +3808,16 @@
         frag.appendChild(c);
       });
       list.appendChild(frag);
+
+      if (isPool && arr.length > maxRender) {
+        list.insertAdjacentHTML('beforeend', `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 24px; color: rgba(255,255,255,0.45); font-size: 13px; font-weight: 500; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 15px; line-height: 1.5;">
+            📦 Đang hiển thị <b>200</b> trên tổng số <b>${arr.length}</b> căn trong Kho Pool.<br>
+            <span style="font-size:12px; color: var(--gold); font-weight: 600;">Vui lòng chọn Quận/Phường hoặc điền Khoảng Giá/Diện Tích để thu hẹp tìm kiếm!</span>
+          </div>
+        `);
+      }
+
       applyFilter();
     }
 
@@ -3637,7 +3853,7 @@
       const fallbackContainer = document.getElementById('poolFallbackArea');
       if (fallbackContainer) fallbackContainer.remove();
       
-      if (!isAdmin || visibleCount > 0) return;
+      if (!isAdmin || activeMode === 'pool' || visibleCount > 0) return;
       
       const mainSearchVal = (document.getElementById('searchInput')?.value || '').trim();
       const adminSearchVal = (document.getElementById('adminSearchInput')?.value || '').trim();
