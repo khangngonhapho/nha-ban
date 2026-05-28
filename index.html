@@ -183,8 +183,8 @@
       display: none;
       /* admin-only */
       max-height: 0;
-      overflow: hidden;
-      transition: max-height .32s cubic-bezier(.4, 0, .2, 1);
+      overflow-y: auto;
+      transition: max-height .38s cubic-bezier(.4, 0, .2, 1);
     }
 
     body.is-admin .filter-panel {
@@ -192,7 +192,82 @@
     }
 
     .filter-panel.open {
-      max-height: 620px;
+      max-height: 75vh;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+    }
+
+    /* ── Detailed specs range filters ── */
+    .range-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .range-box {
+      position: relative;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    
+    .range-box:focus-within {
+      border-color: var(--gold);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .range-box label {
+      position: absolute;
+      top: -8px;
+      left: 10px;
+      background: var(--red);
+      padding: 0 4px;
+      font-size: 9px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.75);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+    }
+    
+    .range-box input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      padding: 4px 0;
+      font-family: inherit;
+    }
+    
+    .range-box input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: normal;
+    }
+    
+    .range-box input::-webkit-outer-spin-button,
+    .range-box input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    .range-box input[type=number] {
+      -moz-appearance: textfield;
+    }
+    
+    .range-box .unit {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.55);
+      margin-left: 4px;
+      font-style: italic;
+      white-space: nowrap;
     }
 
     .filter-section-lbl {
@@ -2127,6 +2202,69 @@
         <button class="tab" data-val="Hàng Lỗi" style="background:#7f8c8d;color:#fff" onclick="tDanhGia('Hàng Lỗi')">⚠️
           Lỗi</button>
       </div>
+      <div class="filter-section-lbl">📊 Bộ lọc thông số chi tiết</div>
+      <div style="padding: 0 10px 10px 10px;">
+        <!-- Diện tích -->
+        <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 6px;">Diện tích thực tế</div>
+        <div class="range-group">
+          <div class="range-box">
+            <label>Từ DT</label>
+            <input type="number" id="filterDtMin" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">m²</span>
+          </div>
+          <div class="range-box">
+            <label>Đến DT</label>
+            <input type="number" id="filterDtMax" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">m²</span>
+          </div>
+        </div>
+
+        <!-- Chiều ngang -->
+        <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 6px;">Chiều ngang (Ngang)</div>
+        <div class="range-group">
+          <div class="range-box">
+            <label>Từ ngang</label>
+            <input type="number" step="0.1" id="filterNgangMin" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">m</span>
+          </div>
+          <div class="range-box">
+            <label>Đến ngang</label>
+            <input type="number" step="0.1" id="filterNgangMax" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">m</span>
+          </div>
+        </div>
+
+        <!-- Chiều dài -->
+        <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 6px;">Chiều dài (Dài)</div>
+        <div class="range-group">
+          <div class="range-box">
+            <label>Từ dài</label>
+            <input type="number" step="0.1" id="filterDaiMin" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">m</span>
+          </div>
+          <div class="range-box">
+            <label>Đến dài</label>
+            <input type="number" step="0.1" id="filterDaiMax" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">m</span>
+          </div>
+        </div>
+
+        <!-- Số phòng ngủ -->
+        <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 6px;">Số phòng ngủ</div>
+        <div class="range-group">
+          <div class="range-box">
+            <label>Từ số phòng</label>
+            <input type="number" id="filterPhongMin" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">phòng</span>
+          </div>
+          <div class="range-box">
+            <label>Đến số phòng</label>
+            <input type="number" id="filterPhongMax" placeholder="Không giới hạn" oninput="onSearchInput()">
+            <span class="unit">phòng</span>
+          </div>
+        </div>
+      </div>
+
       <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
       <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
       
@@ -2159,6 +2297,16 @@
         </div>
         <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">* Client ID này lưu an toàn trên
           trình duyệt của bạn (LocalStorage)</div>
+      </div>
+
+      <!-- Action Button Footer -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 10px 15px 10px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 8px;">
+        <button onclick="toggleFilter()" style="padding: 11px; border-radius: 8px; border: none; background: var(--gold); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <span>🔍 ÁP DỤNG</span>
+        </button>
+        <button onclick="clearAllFilters()" style="padding: 11px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.4); background: transparent; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <span>↺ XÓA ĐIỀU KIỆN</span>
+        </button>
       </div>
     </div>
   </header>
@@ -2519,6 +2667,40 @@
       }
     }
 
+    function getDaiNha(p) {
+      // 1. Thử trích xuất từ cú pháp cu_phap (Cột B Source)
+      if (p.cu_phap) {
+        const parts = String(p.cu_phap).trim().split(/\s+/);
+        const idxTy = parts.findIndex(part => part.toLowerCase().includes('tỷ'));
+        if (idxTy >= 3) {
+          const possibleDai = parseFloat(parts[idxTy - 2]);
+          const possibleNgang = parseFloat(parts[idxTy - 3]);
+          if (possibleDai > 0 && possibleNgang > 0 && Math.abs(possibleDai * possibleNgang - parseFloat(p.dt)) / parseFloat(p.dt) < 0.25) {
+            return possibleDai;
+          }
+        }
+      }
+      
+      // 2. Thử trích xuất từ tiêu đề hoặc mô tả (dạng Ngang x Dài)
+      const textToSearch = ((p.t || '') + ' ' + (p.m || '')).toLowerCase();
+      const matchX = textToSearch.match(/(?:[^\d]|^)(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)(?:[^\d]|$)/);
+      if (matchX) {
+        const possibleNgang = parseFloat(matchX[1]);
+        const possibleDai = parseFloat(matchX[2]);
+        if (possibleDai > 0 && possibleNgang > 0 && Math.abs(possibleDai * possibleNgang - parseFloat(p.dt)) / parseFloat(p.dt) < 0.25) {
+          return possibleDai;
+        }
+      }
+      
+      // 3. Tính toán tự động từ diện tích và chiều ngang mặt tiền
+      const dtVal = parseFloat(p.dt) || 0;
+      const ngangVal = parseFloat(p.mat) || 0;
+      if (dtVal > 0 && ngangVal > 0) {
+        return Math.round((dtVal / ngangVal) * 10) / 10;
+      }
+      return 0;
+    }
+
     function getFiltered() {
       let a = DATA;
       const sv = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
@@ -2566,6 +2748,52 @@
           const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(asv);
           const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(asv);
           return dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
+        });
+      }
+
+      // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT
+      const dtMin = document.getElementById('filterDtMin')?.value || '';
+      const dtMax = document.getElementById('filterDtMax')?.value || '';
+      const ngangMin = document.getElementById('filterNgangMin')?.value || '';
+      const ngangMax = document.getElementById('filterNgangMax')?.value || '';
+      const daiMin = document.getElementById('filterDaiMin')?.value || '';
+      const daiMax = document.getElementById('filterDaiMax')?.value || '';
+      const phongMin = document.getElementById('filterPhongMin')?.value || '';
+      const phongMax = document.getElementById('filterPhongMax')?.value || '';
+
+      if (dtMin !== '' || dtMax !== '') {
+        a = a.filter(p => {
+          const val = parseFloat(p.raw_dt_tren_so || p.dt) || 0;
+          if (dtMin !== '' && val < parseFloat(dtMin)) return false;
+          if (dtMax !== '' && val > parseFloat(dtMax)) return false;
+          return true;
+        });
+      }
+
+      if (ngangMin !== '' || ngangMax !== '') {
+        a = a.filter(p => {
+          const val = parseFloat(p.raw_mat_tien || p.mat) || 0;
+          if (ngangMin !== '' && val < parseFloat(ngangMin)) return false;
+          if (ngangMax !== '' && val > parseFloat(ngangMax)) return false;
+          return true;
+        });
+      }
+
+      if (daiMin !== '' || daiMax !== '') {
+        a = a.filter(p => {
+          const val = parseFloat(p.dai_nha) || 0;
+          if (daiMin !== '' && val < parseFloat(daiMin)) return false;
+          if (daiMax !== '' && val > parseFloat(daiMax)) return false;
+          return true;
+        });
+      }
+
+      if (phongMin !== '' || phongMax !== '') {
+        a = a.filter(p => {
+          const val = parseInt(p.raw_so_pn || p.so_pn) || 0;
+          if (phongMin !== '' && val < parseInt(phongMin, 10)) return false;
+          if (phongMax !== '' && val > parseInt(phongMax, 10)) return false;
+          return true;
         });
       }
 
@@ -2720,6 +2948,7 @@
               const p = {
                 temp_id: index + 1,
                 id: sr[3] || '',
+                cu_phap: sr[1] || '',
                 t: sr[4] || '',
                 dt: sr[5] || '',
                 tang: sr[6] || '',
@@ -2749,6 +2978,7 @@
                 original_row_data: sr,
                 source_row_index: targetRowNumber
               };
+              p.dai_nha = getDaiNha(p);
 
               if (poolRow) {
                 p.raw_ten_dau_chu = poolRow[75] || '';       // Tên Đầu Chủ (Hợp đồng) - Index 75, Column BX
@@ -2870,9 +3100,10 @@
               else if (cleanQLower === '10' || cleanQLower === 'q10') cleanQ = '10';
               else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
               else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
-              return {
+              const p = {
                 temp_id: index + 1,
                 id: cv(r.c[0]),
+                cu_phap: '',
                 t: cv(r.c[1]),
                 dt: cv(r.c[2]),
                 tang: cv(r.c[3]),
@@ -2902,6 +3133,8 @@
                 so_pn: cv(r.c[29]) || '-',
                 img_mat_tien: ''
               };
+              p.dai_nha = getDaiNha(p);
+              return p;
             });
 
           finalizeData(fullList);
@@ -3202,9 +3435,27 @@
       if (sInput) sInput.value = '';
       toggleSearchClearBtn();
 
+      // Xóa các ô lọc thông số chi tiết nâng cao
+      const advInputs = [
+        'adminSearchInput',
+        'filterDtMin', 'filterDtMax',
+        'filterNgangMin', 'filterNgangMax',
+        'filterDaiMin', 'filterDaiMax',
+        'filterPhongMin', 'filterPhongMax'
+      ];
+      advInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
       // Ward, Duong & Huong tabs cần rebuild vì là dynamic
       buildWardTabs(); buildDuongTabs(); buildHuongTabs();
       updateFilterSummary(); updateStats(); applyFilter();
+    }
+
+    function clearAllFilters() {
+      resetFilters();
+      saveState();
     }
 
     function updateSortButtonsUI() {
