@@ -5408,7 +5408,25 @@
     function renderImageEditorWidget(p) {
       let html = `
         <div class="admin-edit-group" style="margin-top: 10px;">
-          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (ĐỎ: MẶT TIỀN 🔒 | VÀNG: ẢNH NỀN ⭐)</label>
+          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CỌ SƠN CHỌN NHANH 🎨)</label>
+          
+          <!-- IMAGE EDITOR TOOLBAR -->
+          <div class="image-editor-toolbar" style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap;">
+            <span style="font-size: 10px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px;">Cọ Biên Tập:</span>
+            <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
+              🔒 Mặt Tiền (MT)
+            </button>
+            <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
+              ⭐ Ảnh Nền
+            </button>
+            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit;">
+              ✕ Hủy
+            </button>
+          </div>
+          <div style="font-size: 9.5px; color: var(--gold); text-align: center; margin-top: -6px; margin-bottom: 10px; font-weight: 600;">
+            💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Ảnh Nền. Click ảnh khi không chọn cọ để Ẩn/Hiện!
+          </div>
+
           <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
@@ -5514,7 +5532,7 @@
       return `
         <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isPublic ? 'is-public' : ''}" 
           data-type="${type}" data-index="${index}" data-url="${url}">
-          <div class="edit-img-card-wrap">
+          <div class="edit-img-card-wrap" onclick="window.onImageCardClick(event, this.closest('.edit-img-card'))" style="cursor: pointer;">
             <img src="${fixImgUrl(url, 'w200')}" alt="Ảnh ${index}" loading="lazy">
             <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px; z-index: 5;">
               ${typeBadge}
@@ -5525,20 +5543,10 @@
             ${isAnhNen && !isMatTien ? `
               <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Ảnh Nền</span>
             ` : ''}
-          </div>
-          <div class="edit-img-actions-bar">
-            <button onclick="setImageAsMatTien(event, this)" class="edit-img-mattien-btn" 
-              style="background: ${isMatTien ? 'var(--red)' : 'rgba(255,255,255,0.15)'}; color: #fff; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap; font-family: inherit;">
-              ${isMatTien ? '🔒 Khóa' : 'Mặt Tiền'}
-            </button>
-            <button onclick="setImageAsAnhNen(event, this)" class="edit-img-cover-btn" 
-              style="background: ${isAnhNen ? 'var(--gold)' : 'rgba(255,255,255,0.15)'}; color: ${isAnhNen ? '#000' : '#fff'}; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap; font-family: inherit;">
-              ${isAnhNen ? '⭐ Nền' : 'Ảnh Nền'}
-            </button>
             ${type !== "facade" ? `
-              <label style="display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; cursor: pointer; margin: 0; width: 100%; justify-content: flex-end; margin-top: 4px; font-family: inherit;">
-                <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="toggleImagePublic(this)" 
-                  style="margin: 0; transform: scale(0.9); cursor: pointer;">
+              <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; background: rgba(0,0,0,0.65); padding: 2px 5px; border-radius: 4px; cursor: pointer; margin: 0; z-index: 10; font-family: inherit;">
+                <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="window.toggleImagePublic(this)" 
+                  style="margin: 0; transform: scale(0.95); cursor: pointer;">
                 Hiện
               </label>
             ` : ''}
@@ -5547,38 +5555,74 @@
       `;
     }
 
-    window.setImageAsMatTien = function(event, btn) {
+    window.currentImageEditorTool = 'none';
+    window.selectImageEditorTool = function(tool) {
+      window.currentImageEditorTool = tool;
+      const facadeBtn = document.getElementById('toolFacadeBtn');
+      const coverBtn = document.getElementById('toolCoverBtn');
+      if (!facadeBtn || !coverBtn) return;
+      
+      // Reset
+      facadeBtn.style.background = 'rgba(255,255,255,0.1)';
+      facadeBtn.style.color = '#fff';
+      facadeBtn.style.borderColor = 'rgba(255,255,255,0.2)';
+      facadeBtn.style.boxShadow = 'none';
+      
+      coverBtn.style.background = 'rgba(255,255,255,0.1)';
+      coverBtn.style.color = '#fff';
+      coverBtn.style.borderColor = 'rgba(255,255,255,0.2)';
+      coverBtn.style.boxShadow = 'none';
+      
+      if (tool === 'facade') {
+        facadeBtn.style.background = 'var(--red)';
+        facadeBtn.style.borderColor = 'var(--red)';
+        facadeBtn.style.boxShadow = '0 0 8px rgba(231, 76, 60, 0.6)';
+      } else if (tool === 'cover') {
+        coverBtn.style.background = 'var(--gold)';
+        coverBtn.style.borderColor = 'var(--gold)';
+        coverBtn.style.color = '#000';
+        coverBtn.style.boxShadow = '0 0 8px rgba(241, 196, 15, 0.6)';
+      }
+    };
+
+    window.onImageCardClick = function(event, card) {
       if (event) event.stopPropagation();
-      const card = btn.closest('.edit-img-card');
+      const tool = window.currentImageEditorTool || 'none';
+      
+      if (tool === 'facade') {
+        window.setImageAsMatTien(event, card);
+      } else if (tool === 'cover') {
+        window.setImageAsAnhNen(event, card);
+      } else {
+        // Toggle public visibility
+        const cb = card.querySelector('.edit-img-pub-cb');
+        if (cb) {
+          cb.checked = !cb.checked;
+          window.toggleImagePublic(cb);
+        }
+      }
+    };
+
+    window.setImageAsMatTien = function(event, card) {
+      if (event) event.stopPropagation();
       const url = card.dataset.url;
 
       document.querySelectorAll('.edit-img-card').forEach(c => {
         c.classList.remove('is-mattien');
-        if (!c.classList.contains('is-anhnen')) {
-          c.style.borderColor = c.classList.contains('is-public') ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
-        }
-        const b = c.querySelector('.edit-img-mattien-btn');
-        if (b) {
-          b.style.background = 'rgba(255, 255, 255, 0.15)';
-          b.style.color = '#fff';
-          b.innerHTML = 'Mặt Tiền';
-        }
         const lock = c.querySelector('.mattien-lock-badge');
         if (lock) lock.remove();
       });
 
       card.classList.add('is-mattien');
-      card.style.borderColor = 'var(--red)';
-      btn.style.background = 'var(--red)';
-      btn.style.color = '#fff';
-      btn.innerHTML = '🔒 Khóa';
 
-      const imgWrapper = card.firstElementChild;
-      const lockSpan = document.createElement('span');
-      lockSpan.className = 'mattien-lock-badge';
-      lockSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white;';
-      lockSpan.innerHTML = '🔒 Mặt Tiền';
-      imgWrapper.appendChild(lockSpan);
+      const imgWrapper = card.querySelector('.edit-img-card-wrap');
+      if (imgWrapper) {
+        const lockSpan = document.createElement('span');
+        lockSpan.className = 'mattien-lock-badge';
+        lockSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;';
+        lockSpan.innerHTML = '🔒 Mặt Tiền';
+        imgWrapper.appendChild(lockSpan);
+      }
 
       // Remove cover badge on this card if any
       const star = card.querySelector('.cover-star-badge');
@@ -5590,41 +5634,27 @@
       }
     };
 
-    window.setImageAsAnhNen = function(event, btn) {
+    window.setImageAsAnhNen = function(event, card) {
       if (event) event.stopPropagation();
-      const card = btn.closest('.edit-img-card');
       const url = card.dataset.url;
 
       document.querySelectorAll('.edit-img-card').forEach(c => {
         c.classList.remove('is-anhnen');
-        if (!c.classList.contains('is-mattien')) {
-          c.style.borderColor = c.classList.contains('is-public') ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
-        }
-        const b = c.querySelector('.edit-img-cover-btn');
-        if (b) {
-          b.style.background = 'rgba(255, 255, 255, 0.15)';
-          b.style.color = '#fff';
-          b.innerHTML = 'Ảnh Nền';
-        }
         const star = c.querySelector('.cover-star-badge');
         if (star) star.remove();
       });
 
       card.classList.add('is-anhnen');
-      if (!card.classList.contains('is-mattien')) {
-        card.style.borderColor = 'var(--gold)';
-      }
-      btn.style.background = 'var(--gold)';
-      btn.style.color = '#000';
-      btn.innerHTML = '⭐ Nền';
 
       if (!card.classList.contains('is-mattien')) {
-        const imgWrapper = card.firstElementChild;
-        const starSpan = document.createElement('span');
-        starSpan.className = 'cover-star-badge';
-        starSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold);';
-        starSpan.innerHTML = '⭐ Ảnh Nền';
-        imgWrapper.appendChild(starSpan);
+        const imgWrapper = card.querySelector('.edit-img-card-wrap');
+        if (imgWrapper) {
+          const starSpan = document.createElement('span');
+          starSpan.className = 'cover-star-badge';
+          starSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;';
+          starSpan.innerHTML = '⭐ Ảnh Nền';
+          imgWrapper.appendChild(starSpan);
+        }
       }
 
       document.getElementById('editPublicCoverUrl').value = url;
@@ -5633,7 +5663,7 @@
       const cb = card.querySelector('.edit-img-pub-cb');
       if (cb && !cb.checked) {
         cb.checked = true;
-        toggleImagePublic(cb);
+        window.toggleImagePublic(cb);
       }
     };
 
