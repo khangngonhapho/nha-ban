@@ -1982,7 +1982,8 @@
     .edit-img-card-wrap {
       position: relative;
       width: 100%;
-      aspect-ratio: 4 / 3;
+      height: 0;
+      padding-top: 75%; /* Bulletproof 4:3 aspect-ratio hack that works perfectly on iOS Safari & Chrome */
       overflow: hidden;
       flex-shrink: 0;
     }
@@ -5528,11 +5529,11 @@
           <div class="edit-img-actions-bar">
             <button onclick="setImageAsMatTien(event, this)" class="edit-img-mattien-btn" 
               style="background: ${isMatTien ? 'var(--red)' : 'rgba(255,255,255,0.15)'}; color: #fff; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap; font-family: inherit;">
-              ${isMatTien ? '🔒 Khóa' : 'Làm Mặt Tiền'}
+              ${isMatTien ? '🔒 Khóa' : 'Mặt Tiền'}
             </button>
             <button onclick="setImageAsAnhNen(event, this)" class="edit-img-cover-btn" 
               style="background: ${isAnhNen ? 'var(--gold)' : 'rgba(255,255,255,0.15)'}; color: ${isAnhNen ? '#000' : '#fff'}; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap; font-family: inherit;">
-              ${isAnhNen ? '⭐ Nền' : 'Làm Nền'}
+              ${isAnhNen ? '⭐ Nền' : 'Ảnh Nền'}
             </button>
             ${type !== "facade" ? `
               <label style="display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; cursor: pointer; margin: 0; width: 100%; justify-content: flex-end; margin-top: 4px; font-family: inherit;">
@@ -5560,7 +5561,7 @@
         if (b) {
           b.style.background = 'rgba(255, 255, 255, 0.15)';
           b.style.color = '#fff';
-          b.innerHTML = 'Làm Mặt Tiền';
+          b.innerHTML = 'Mặt Tiền';
         }
         const lock = c.querySelector('.mattien-lock-badge');
         if (lock) lock.remove();
@@ -5603,7 +5604,7 @@
         if (b) {
           b.style.background = 'rgba(255, 255, 255, 0.15)';
           b.style.color = '#fff';
-          b.innerHTML = 'Làm Nền';
+          b.innerHTML = 'Ảnh Nền';
         }
         const star = c.querySelector('.cover-star-badge');
         if (star) star.remove();
