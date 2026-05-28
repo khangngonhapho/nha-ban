@@ -4509,7 +4509,93 @@
         gLoginText.innerText = "Đã liên kết Gmail";
       } else {
         gLoginBtn.style.background = '#fff';
-        gLoginBtn.styl    // ============================================================
+        gLoginBtn.style.color = '#1c1c1e';
+        gLoginBtn.style.borderColor = '#fff';
+        const clientId = localStorage.getItem('gClientId');
+        gLoginText.innerText = clientId ? "Đăng nhập" : "Cấu hình API";
+      }
+    }
+
+    function autoLoginOrSilentRefresh() {
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (token && expiry && parseInt(expiry, 10) > now) {
+        console.log("Found valid access token in LocalStorage. Expiry in:", Math.round((parseInt(expiry, 10) - now) / 1000), "s");
+        showGoogleLoginButtonState(true);
+        loadData();
+      } else {
+        const clientId = localStorage.getItem('gClientId');
+        if (clientId) {
+          console.log("Access token expired or missing. Attempting Silent Auto-Login...");
+          const checkAndRefresh = () => {
+            if (gTokenClient) {
+              try {
+                gTokenClient.requestAccessToken({ prompt: 'none' });
+              } catch (e) {
+                console.warn("Silent token request failed:", e);
+                showGoogleLoginButtonState(false);
+              }
+            } else {
+              setTimeout(checkAndRefresh, 300);
+            }
+          };
+          checkAndRefresh();
+        } else {
+          showGoogleLoginButtonState(false);
+        }
+      }
+    }
+
+    function fetchFacadeImages(token) {
+      if (!token) return;
+      const url = `/api/get-facade-images`;
+
+      fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(res => {
+          if (!res.ok) {
+            if (res.status === 401 || res.status === 403) {
+              console.warn("OAuth token invalid or unauthorized. Cleared from storage.");
+              localStorage.removeItem('g_access_token');
+              localStorage.removeItem('g_token_expiry');
+              showGoogleLoginButtonState(false);
+            }
+            throw new Error(`Google Sheets API returned status ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          const values = data.values || [];
+          const facadeMap = {};
+          values.forEach(row => {
+            if (row.length >= 1) {
+              const id = row[0];
+              const img = row[row.length - 1] || '';
+              if (id && img) {
+                facadeMap[id] = img;
+              }
+            }
+          });
+
+          // Merge facade images
+          DATA.forEach(p => {
+            if (facadeMap[p.id]) {
+              p.img_mat_tien = facadeMap[p.id];
+            }
+          });
+
+          console.log("Securely fetched and merged", Object.keys(facadeMap).length, "facade images.");
+          render();
+        })
+        .catch(err => {
+          console.error("Error fetching facade images from private sheet:", err);
+        });
+    }
     // ⚡ REAL-TIME POOL CURATION & PULL UTILITIES
     // ============================================================
     function searchPoolRows(query) {
