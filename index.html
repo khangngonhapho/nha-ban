@@ -643,6 +643,34 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       z-index: 5;
     }
+    .pool-badge-tag.on-air {
+      background: #27ae60 !important;
+      color: #ffffff !important;
+    }
+    .pool-badge-tag.raw {
+      background: #7f8c8d !important;
+      color: #ffffff !important;
+    }
+    
+    /* Toggle switch style (US-039.7) */
+    .admin-toggle-switch input:checked + .slider {
+      background-color: var(--red) !important;
+    }
+    .admin-toggle-switch input:checked + .slider:before {
+      transform: translateX(20px) !important;
+    }
+    .admin-toggle-switch .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
 
     /* Hide menus/header/stats when Admin security lock is active (US-039.5) */
     body.is-locked {
@@ -2356,14 +2384,16 @@
     <button onclick="exitCollectionView()">✕ Hủy xem</button>
   </div>
 
-  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer">
-    <div class="mode-segmented-control">
-      <button class="mode-btn active" id="modeSourceBtn" onclick="switchActiveMode('source')">
-        ĐÃ LÊN SÓNG (<span id="countOnAir">-</span>)
-      </button>
-      <button class="mode-btn" id="modePoolBtn" onclick="switchActiveMode('pool')">
-        KHO POOL THÔ (<span id="countPool">-</span>)
-      </button>
+  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px 16px; border-bottom: 1px solid var(--border);">
+    <div style="font-size: 13px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 6px;">
+      📦 KHO POOL THÔ (<span id="countPool">-</span> căn)
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 11px; font-weight: 700; color: #57606f;">CHỈ HIỆN CĂN PUBLIC</span>
+      <label class="admin-toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 22px; margin-bottom: 0;">
+        <input type="checkbox" id="onAirToggle" onchange="toggleShowOnAirOnly(this.checked)" style="opacity: 0; width: 0; height: 0;">
+        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 22px;"></span>
+      </label>
     </div>
   </div>
 
@@ -2639,13 +2669,39 @@
       el.href = el.href.replace(/0979841573/g, SDT);
     });
 
+    // Hàm dọn dẹp dòng trống thừa (US-039.7)
+    function cleanConsecutiveNewlines(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .replace(/\n\s*\n\s*\n+/g, '\n\n') // Thay thế từ 2 dòng trống liên tiếp trở lên bằng 1 dòng trống đơn
+        .trim();
+    }
+
     let DATA = [];
     let POOL_ROWS = [];
-    let activeMode = 'source'; // 'source' or 'pool'
+    let activeMode = isAdmin ? 'pool' : 'source'; // Mặc định Pool cho Admin khi vào trang (US-039.7)
+    let showOnAirOnly = false; // Trạng thái của nút gạt chỉ lọc căn Public (US-039.7)
     let MAPPED_POOL_DATA = [];
     let secureLoadAttempted = false;
     let isSecureLoaded = false;
     let isDataLoaded = false;
+    window.CURRENT_EDITING_LISTING = null;
+
+    window.autoFillCurationDetails = function() {
+      const editTieuDe = document.getElementById('editTieuDeBds');
+      const editMoTa = document.getElementById('editMoTaBds');
+      if (window.CURRENT_EDITING_LISTING) {
+        const p = window.CURRENT_EDITING_LISTING;
+        if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
+        if (editMoTa) editMoTa.value = p.m || p.raw_mo_ta_public || generateAutoDescription(p);
+        
+        // Kích hoạt event input để cập nhật live preview
+        if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
+        if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+      }
+    };
     const selDistricts = new Set();
     const selWards = new Set();
     const selDuongs = new Set();
@@ -2851,7 +2907,7 @@
           ngu_tang_tret: row[67] || '-',
           chdv: row[68] || '-',
           giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-          m: row[57] || '',
+          m: cleanConsecutiveNewlines(row[57] || ''),
           imgs: poolImgs,
           system_id: systemId,
           so_pn: row[63] || '-',
@@ -2861,7 +2917,7 @@
           raw_dt_dau_chu: row[74] || '',
           raw_link_fb: row[76] || '',
           raw_noi_dung_chinh: row[9] || '',
-          raw_mo_ta_chi_tiet: row[10] || '',
+          raw_mo_ta_chi_tiet: cleanConsecutiveNewlines(row[10] || ''),
           raw_sodo1: row[27] || '',
           raw_sodo2: row[28] || '',
           raw_so_nha: row[6] || '',
@@ -2890,6 +2946,15 @@
 
     function getFiltered() {
       let a = (isAdmin && activeMode === 'pool') ? getMappedPoolData() : DATA;
+      
+      // Lọc động: Chỉ hiện căn Public (US-039.7)
+      if (isAdmin && activeMode === 'pool' && showOnAirOnly) {
+        a = a.filter(p => DATA.some(x => 
+          (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
+          (x.id && p.id && String(x.id).trim() === String(p.id).trim())
+        ));
+      }
+      
       const sv = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
       if (sv) {
         a = a.filter(p => {
@@ -3183,7 +3248,7 @@
                 ngu_tang_tret: sr[17] || '-',
                 chdv: sr[18] || '-',
                 giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-                m: sr[19] || '',
+                m: cleanConsecutiveNewlines(sr[19] || ''),
                 imgs: uniqueImgs,
                 system_id: sr[37] || (index + 1).toString(),
                 so_pn: sr[32] || '-',
@@ -3199,7 +3264,7 @@
                 p.raw_dt_dau_chu = poolRow[74] || '';        // Điện thoại Đầu Chủ - Index 74, Column BW
                 p.raw_link_fb = poolRow[76] || '';           // Điểm Facebook / Link Facebook - Index 76, Column BY
                 p.raw_noi_dung_chinh = poolRow[9] || '';     // Nội dung chính - Index 9, Column J
-                p.raw_mo_ta_chi_tiet = poolRow[10] || '';    // Mô tả chi tiết - Index 10, Column K
+                p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
                 p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
                 p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
                 p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
@@ -3366,27 +3431,17 @@
       document.head.appendChild(s);
     }
 
-    window.switchActiveMode = function(mode) {
+    window.toggleShowOnAirOnly = function(isChecked) {
       if (!isAdmin) return;
-      activeMode = mode;
-      
-      const sBtn = document.getElementById('modeSourceBtn');
-      const pBtn = document.getElementById('modePoolBtn');
-      if (sBtn && pBtn) {
-        sBtn.classList.toggle('active', mode === 'source');
-        pBtn.classList.toggle('active', mode === 'pool');
-      }
-      
-      updateSwitcherCounts();
-      resetFilters();
-      
+      showOnAirOnly = isChecked;
+      updateStats();
+      applyFilter();
+      saveState();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     function updateSwitcherCounts() {
-      const onAirEl = document.getElementById('countOnAir');
       const poolEl = document.getElementById('countPool');
-      if (onAirEl) onAirEl.textContent = DATA ? DATA.length : '0';
       if (poolEl) poolEl.textContent = POOL_ROWS ? POOL_ROWS.length : '0';
     }
 
@@ -3460,6 +3515,7 @@
         danhGia: [...selDanhGia],
         selectedIds: [...SELECTED_IDS],
         favOnly: showFavOnly,
+        showOnAirOnly: showOnAirOnly,
         search: document.getElementById('searchInput')?.value || ''
       };
       localStorage.setItem('adminState', JSON.stringify(state));
@@ -3481,6 +3537,11 @@
         state.selectedIds?.forEach(x => SELECTED_IDS.add(x));
 
         if (state.favOnly !== undefined) showFavOnly = state.favOnly;
+        if (state.showOnAirOnly !== undefined) {
+          showOnAirOnly = state.showOnAirOnly;
+          const toggle = document.getElementById('onAirToggle');
+          if (toggle) toggle.checked = showOnAirOnly;
+        }
 
         const sInput = document.getElementById('searchInput');
         if (sInput && state.search) {
@@ -3799,10 +3860,16 @@
         const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
         let thumbUrl = (isAdmin && p.img_mat_tien) ? p.img_mat_tien : imgUrls[0];
         const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
+        const curatedListing = isAdmin ? DATA.find(x => 
+          (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
+          (x.id && p.id && String(x.id).trim() === String(p.id).trim())
+        ) : null;
+        const isOnAir = !!curatedListing;
+
         const c = document.createElement('div');
         c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
         c.dataset.pid = String(p.id);
-        c.setAttribute('onclick', p.isFromPoolOnly ? `openPoolS('${p.system_id}')` : `openS('${p.id}')`);
+        c.setAttribute('onclick', (p.isFromPoolOnly && !isOnAir) ? `openPoolS('${p.system_id}')` : `openS('${curatedListing ? curatedListing.id : p.id}')`);
 
         const cleanedT = p.t && p.t.includes('|') ? p.t.substring(p.t.indexOf('|') + 1).trim() : p.t;
         let adminTitle = '';
@@ -3822,7 +3889,7 @@
           c.innerHTML = `
         <div class="crow">
           <div class="ibox">
-            ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
+            ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
             <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
             ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(52, 152, 219, 0.9); color: white; text-align: center; font-size: 11px; font-weight: 700; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase;">
@@ -4221,6 +4288,7 @@
                       <div class="admin-carousel-dots"></div>
                     </div>
                   </div>
+                  ${(p.raw_sodo1 || p.raw_sodo2) ? `
                   <div>
                     <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sơ đồ thửa đất</div>
                     <div id="carouselSo" style="position: relative;">
@@ -4228,6 +4296,7 @@
                       <div class="admin-carousel-dots"></div>
                     </div>
                   </div>
+                  ` : ''}
                 </div>
 
                 <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
@@ -4343,13 +4412,16 @@
                   </div>
 
                   <div class="admin-edit-group">
-                    <label for="editTieuDeBds">Tiêu đề public (dưới 85 ký tự):</label>
-                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 11px; font-weight: 700; line-height: 1.4; resize: vertical;">${p.isFromPoolOnly ? (p.raw_tieu_de_public || generateAutoTitle(p)) : ((p.original_row_data && p.original_row_data[39]) || p.raw_tieu_de_public || '')}</textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                      <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+                      ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+                    </div>
+                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 11px; font-weight: 700; line-height: 1.4; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && p.original_row_data[39]) || p.raw_tieu_de_public || '')}</textarea>
                   </div>
 
                   <div class="admin-edit-group">
                     <label for="editMoTaBds">Mô tả public:</label>
-                    <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 11px; font-weight: 500; line-height: 1.5;">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || '')}</textarea>
+                    <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 11px; font-weight: 500; line-height: 1.5;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
                   </div>
 
                   ${renderImageEditorWidget(p)}
@@ -4532,6 +4604,7 @@
       }
 
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        window.CURRENT_EDITING_LISTING = p;
         setTimeout(() => {
           const editHuong = document.getElementById('editHuong');
           if (editHuong) editHuong.value = p.huong || '-';
@@ -4555,6 +4628,54 @@
           if (p.raw_sodo1) sImgs.push(p.raw_sodo1);
           if (p.raw_sodo2) sImgs.push(p.raw_sodo2);
           setupScrollCarousel('carouselSo', sImgs, true);
+
+          // Sự kiện input reactive Live Preview (US-039.7)
+          const editTieuDe = document.getElementById('editTieuDeBds');
+          const editMoTa = document.getElementById('editMoTaBds');
+          const accPreview = document.getElementById('accPreview');
+          const saveBtn = document.getElementById('saveBtn');
+
+          const updateLivePreview = () => {
+            const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
+            const moTaVal = (editMoTa ? editMoTa.value : '').trim();
+            const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
+
+            if (p.isFromPoolOnly) {
+              if (isFilled) {
+                if (accPreview) {
+                  accPreview.style.display = 'block';
+                  accPreview.classList.add('expanded');
+                  const content = accPreview.querySelector('.accordion-content');
+                  if (content) content.style.display = 'block';
+                  const arrow = accPreview.querySelector('.arrow');
+                  if (arrow) arrow.textContent = '▼';
+                }
+                if (saveBtn) saveBtn.style.display = 'block';
+                
+                const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
+                const previewDesc = accPreview.querySelector('.desc');
+                if (previewTitle) previewTitle.textContent = tieuDeVal;
+                if (previewDesc) previewDesc.textContent = moTaVal;
+              } else {
+                if (accPreview) accPreview.style.display = 'none';
+                if (saveBtn) saveBtn.style.display = 'none';
+              }
+            } else {
+              if (accPreview) accPreview.style.display = 'block';
+              if (saveBtn) saveBtn.style.display = 'block';
+              
+              const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
+              const previewDesc = accPreview.querySelector('.desc');
+              if (previewTitle) previewTitle.textContent = tieuDeVal || 'Chưa có tiêu đề public.';
+              if (previewDesc) previewDesc.textContent = moTaVal || 'Chưa có mô tả public.';
+            }
+          };
+
+          if (editTieuDe && editMoTa) {
+            editTieuDe.addEventListener('input', updateLivePreview);
+            editMoTa.addEventListener('input', updateLivePreview);
+            updateLivePreview();
+          }
         }, 50);
       }
 
@@ -5062,11 +5183,8 @@
 
     function renderImageEditorWidget(p) {
       let html = `
-        <div class="admin-edit-group" style="margin-top: 16px;">
-          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 8px;">🖼️ BIÊN TẬP HÌNH ẢNH (CHỌN HÌNH NỀN & PUBLIC)</label>
-          <div style="font-size: 11.5px; color: rgba(255,255,255,0.7); margin-bottom: 12px; line-height: 1.4;">
-            Chọn 1 hình làm <b>Hình Đại Diện</b> (Cover/Nền) và tích chọn các hình an toàn làm <b>Hình Public</b> để đăng công khai.
-          </div>
+        <div class="admin-edit-group" style="margin-top: 10px;">
+          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (VÀNG: NỀN | XANH: PUBLIC)</label>
           <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; max-height: 320px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
@@ -5256,6 +5374,14 @@
         showToast("Dữ liệu Pool chưa được nạp!", "error");
         return;
       }
+      
+      // Kiểm tra xem căn pool này đã lên sóng (ở Source) chưa (US-039.7)
+      const curatedListing = DATA.find(x => x.system_id && String(x.system_id).trim() === String(systemId).trim());
+      if (curatedListing) {
+        openS(curatedListing.id);
+        return;
+      }
+      
       const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
       if (!row) {
         showToast("Không tìm thấy căn nhà này trong Pool thô!", "error");
