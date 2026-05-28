@@ -3119,7 +3119,7 @@
       if (!title) return '';
       let s = String(title).trim();
       // Match "Quận [name/number]" or "Q.[name/number]" or "Q[number]"
-      const regex = /^(.*?\b(Quận\s+[A-Za-zÀ-ỹ0-9]+|Q\.\s*[A-Za-zÀ-ỹ0-9]+|Q\d+)\b)/i;
+      const regex = /^(.*?\b(Quận\s+[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ]+|Q\.\s*[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ]+|Q\d+)\b)/i;
       const match = s.match(regex);
       if (match) {
         return match[1].trim();
@@ -3130,10 +3130,15 @@
     function formatRawDescription(text) {
       if (!text) return '';
       let s = String(text).trim();
-      s = s.replace(/(\.|\!|\?)\s+(?=[A-ZÂĂĐÊÔƠƯÀ-ỹ0-9\-+*•👉✅⚡🔥])/g, '$1\n');
+      s = s.replace(/(\.|\!|\?)\s+(?=[A-ZÂĂĐÊÔƠƯàáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬĐÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ0-9\-+*•👉✅⚡🔥])/g, '$1\n');
       s = s.replace(/\s*([\-+*•👉✅⚡🔥])\s*/g, '\n$1 ');
-      s = s.replace(/\n+/g, '\n').trim();
-      return s;
+      
+      // Split into lines, trim and filter out lines that only contain punctuation/signs without text/digits
+      const lines = s.split('\n')
+        .map(line => line.trim())
+        .filter(line => /[a-zA-Z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬĐÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]/.test(line));
+        
+      return lines.join('\n');
     }
 
     function extractCommission(p) {
@@ -4558,7 +4563,7 @@
         if (lower.includes('nguồn đầu chủ') || lower.includes('nguon dau chu') || lower.includes('nguon u ch')) {
           return 'Đầu chủ';
         }
-        const match = text.match(/nguồn\s+([A-Za-zÀ-ỹ\s]+)/i);
+        const match = text.match(/nguồn\s+([a-zàáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ\s]+)/i);
         if (match) return match[1].trim();
         const matchNguon = text.match(/nguon\s+([A-Za-z\s]+)/i);
         if (matchNguon) return matchNguon[1].trim();
@@ -6174,7 +6179,7 @@
         // Xử lý Cú pháp (Lấy từ Nội dung chính thô)
         const noiDungChinh = matchedRow[9] || "";
         let cuPhap = noiDungChinh;
-        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[A-Za-zÀ-ỹ0-9\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
+        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
         if (matchCuPhap) {
           cuPhap = matchCuPhap[1].trim();
         }
@@ -7136,7 +7141,7 @@
         // Xử lý Cú pháp
         const noiDungChinh = matchedRow[9] || "";
         let cuPhap = noiDungChinh;
-        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[A-Za-zÀ-ỹ0-9\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
+        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
         if (matchCuPhap) {
           cuPhap = matchCuPhap[1].trim();
         }
