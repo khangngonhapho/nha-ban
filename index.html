@@ -2962,6 +2962,7 @@
                 p.raw_tieu_de_public = poolRow[56] || '';    // Tiêu đề Public - Index 56, Column BE
                 p.raw_mo_ta_public = poolRow[57] || '';      // Mô tả Public - Index 57, Column BF
                 p.pool_row_index = poolRows.indexOf(poolRow) + 2;
+                p.pool_row_data = poolRow;
               } else {
                 p.raw_ten_dau_chu = '';
                 p.raw_dt_dau_chu = '';
@@ -2983,6 +2984,7 @@
                 p.raw_tieu_de_public = '';
                 p.raw_mo_ta_public = '';
                 p.pool_row_index = null;
+                p.pool_row_data = null;
               }
 
               return p;
@@ -3987,6 +3989,8 @@
                     <textarea id="editMoTaBds" rows="6" placeholder="Nhập mô tả công khai cho khách hàng...">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || '')}</textarea>
                   </div>
 
+                  ${renderImageEditorWidget(p)}
+
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
                       <label for="editHuong">Hướng nhà:</label>
@@ -4690,6 +4694,197 @@
       SELECTED_IDS.add(String(id));
       updateShareUI();
       promptGenerateLink();
+    };
+
+    function renderImageEditorWidget(p) {
+      let html = `
+        <div class="admin-edit-group" style="margin-top: 16px;">
+          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 8px;">🖼️ BIÊN TẬP HÌNH ẢNH (CHỌN HÌNH NỀN & PUBLIC)</label>
+          <div style="font-size: 11.5px; color: rgba(255,255,255,0.7); margin-bottom: 12px; line-height: 1.4;">
+            Chọn 1 hình làm <b>Hình Đại Diện</b> (Cover/Nền) và tích chọn các hình an toàn làm <b>Hình Public</b> để đăng công khai.
+          </div>
+          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; max-height: 320px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+      `;
+
+      // 1. Facade photo (Hình Mặt tiền gốc thô)
+      const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
+      if (facadeUrl) {
+        html += renderImageCardForEdit("facade", 0, facadeUrl, p);
+      }
+
+      // 2. Interior clean photos (1 to 15)
+      for (let i = 1; i <= 15; i++) {
+        const url = p.pool_row_data ? p.pool_row_data[39 + i] : (p.imgs && p.imgs[i - 1]);
+        if (url) {
+          html += renderImageCardForEdit("interior", i, url, p);
+        }
+      }
+
+      // 3. Alley photos (1 to 10)
+      for (let i = 1; i <= 10; i++) {
+        const url = p.pool_row_data ? p.pool_row_data[29 + i] : null;
+        if (url) {
+          html += renderImageCardForEdit("alley", i, url, p);
+        }
+      }
+
+      // Recover current selected public interior/alley indices
+      let currentCover = p.img_mat_tien || '';
+      let currentInteriorIndices = '';
+      let currentAlleyIndices = '';
+
+      if (p.pool_row_data) {
+        currentInteriorIndices = String(p.pool_row_data[61] || '').trim();
+        currentAlleyIndices = String(p.pool_row_data[62] || '').trim();
+      } else {
+        const intIndices = [];
+        if (p.imgs) {
+          p.imgs.forEach((url, idx) => {
+            intIndices.push(idx + 1);
+          });
+        }
+        currentInteriorIndices = intIndices.join(',');
+      }
+
+      html += `
+          </div>
+          <!-- Hidden Inputs to hold current selections -->
+          <input type="hidden" id="editCoverImgUrl" value="${currentCover}">
+          <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
+          <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
+        </div>
+      `;
+
+      return html;
+    }
+
+    function renderImageCardForEdit(type, index, url, p) {
+      const isCover = String(p.img_mat_tien).trim() === String(url).trim();
+
+      let isPublic = false;
+      if (type === "facade") {
+        isPublic = true;
+      } else if (type === "interior") {
+        let publicIntStr = '';
+        if (p.pool_row_data) {
+          publicIntStr = String(p.pool_row_data[61] || '');
+        } else {
+          isPublic = p.imgs ? p.imgs.includes(url) : false;
+        }
+        if (publicIntStr) {
+          const indices = publicIntStr.split(',').map(s => s.trim());
+          isPublic = indices.includes(String(index));
+        }
+      } else if (type === "alley") {
+        let publicAlleyStr = '';
+        if (p.pool_row_data) {
+          publicAlleyStr = String(p.pool_row_data[62] || '');
+        }
+        if (publicAlleyStr) {
+          const indices = publicAlleyStr.split(',').map(s => s.trim());
+          isPublic = indices.includes(String(index));
+        }
+      }
+
+      const typeBadge = type === "facade" ? "Mặt Tiền" : (type === "interior" ? `Nội Thất ${index}` : `Hẻm ${index}`);
+      const badgeColor = type === "facade" ? "var(--red)" : (type === "interior" ? "var(--green)" : "var(--blue)");
+
+      return `
+        <div class="edit-img-card ${isCover ? 'is-cover' : ''} ${isPublic ? 'is-public' : ''}" 
+          data-type="${type}" data-index="${index}" data-url="${url}"
+          style="position: relative; background: #000; border: 2px solid ${isCover ? 'var(--gold)' : (isPublic ? 'rgba(39, 174, 96, 0.5)' : 'transparent')}; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
+          <div style="position: relative; padding-top: 75%; overflow: hidden;">
+            <img src="${fixImgUrl(url, 'w200')}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+            <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px;">
+              ${typeBadge}
+            </span>
+            ${isCover ? `
+              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 11px; background: rgba(0,0,0,0.75); padding: 2px; border-radius: 50%; color: var(--gold);">⭐</span>
+            ` : ''}
+          </div>
+          <div style="padding: 6px; background: rgba(0,0,0,0.6); display: flex; gap: 4px; justify-content: space-between; align-items: center;">
+            <button onclick="setImageAsCover(event, this)" class="edit-img-cover-btn" 
+              style="background: ${isCover ? 'var(--gold)' : 'rgba(255,255,255,0.15)'}; color: ${isCover ? '#000' : '#fff'}; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap;">
+              ${isCover ? '⭐ Nền' : 'Làm Nền'}
+            </button>
+            ${type !== "facade" ? `
+              <label style="display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; cursor: pointer; margin: 0;">
+                <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="toggleImagePublic(this)" 
+                  style="margin: 0; transform: scale(0.9); cursor: pointer;">
+                Hiện
+              </label>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    window.setImageAsCover = function(event, btn) {
+      if (event) event.stopPropagation();
+      const card = btn.closest('.edit-img-card');
+      const url = card.dataset.url;
+
+      document.querySelectorAll('.edit-img-card').forEach(c => {
+        c.classList.remove('is-cover');
+        c.style.borderColor = c.classList.contains('is-public') ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
+        const b = c.querySelector('.edit-img-cover-btn');
+        if (b) {
+          b.style.background = 'rgba(255, 255, 255, 0.15)';
+          b.style.color = '#fff';
+          b.innerHTML = 'Làm Nền';
+        }
+        const star = c.querySelector('.cover-star-badge');
+        if (star) star.remove();
+      });
+
+      card.classList.add('is-cover');
+      card.style.borderColor = 'var(--gold)';
+      btn.style.background = 'var(--gold)';
+      btn.style.color = '#000';
+      btn.innerHTML = '⭐ Nền';
+
+      const imgWrapper = card.firstElementChild;
+      const starSpan = document.createElement('span');
+      starSpan.className = 'cover-star-badge';
+      starSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 11px; background: rgba(0,0,0,0.75); padding: 2px; border-radius: 50%; color: var(--gold);';
+      starSpan.innerHTML = '⭐';
+      imgWrapper.appendChild(starSpan);
+
+      document.getElementById('editCoverImgUrl').value = url;
+    };
+
+    window.toggleImagePublic = function(cb) {
+      const card = cb.closest('.edit-img-card');
+      const type = card.dataset.type;
+      const index = card.dataset.index;
+      const isChecked = cb.checked;
+
+      card.classList.toggle('is-public', isChecked);
+      if (!card.classList.contains('is-cover')) {
+        card.style.borderColor = isChecked ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
+      }
+
+      if (type === "interior") {
+        const publicIntInput = document.getElementById('editPublicInteriorIndices');
+        let indices = publicIntInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (isChecked) {
+          if (!indices.includes(index)) indices.push(index);
+        } else {
+          indices = indices.filter(i => i !== index);
+        }
+        indices.sort((a, b) => parseInt(a) - parseInt(b));
+        publicIntInput.value = indices.join(',');
+      } else if (type === "alley") {
+        const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+        let indices = publicAlleyInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (isChecked) {
+          if (!indices.includes(index)) indices.push(index);
+        } else {
+          indices = indices.filter(i => i !== index);
+        }
+        indices.sort((a, b) => parseInt(a) - parseInt(b));
+        publicAlleyInput.value = indices.join(',');
+      }
     };
 
     window.openPoolS = function(systemId) {
@@ -5672,6 +5867,60 @@
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
         const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
 
+        // Đọc dữ liệu hình ảnh được chọn từ form biên tập hình ảnh trực quan
+        const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
+        const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+
+        // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
+        if (publicIntStr !== "" && p.pool_row_data) {
+          const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
+          const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+
+          const finalImages = [];
+          
+          let coverImgUrl = customCoverUrl || (p.pool_row_data[39 + noithatIndices[0]] || p.pool_row_data[29]);
+          if (coverImgUrl) {
+            finalImages.push(coverImgUrl);
+          }
+          
+          const maxHem = 2;
+          let addedHem = 0;
+          for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+            const hemIdx = hemIndices[i];
+            const hemUrl = p.pool_row_data[29 + hemIdx];
+            if (hemUrl) {
+              finalImages.push(hemUrl);
+              addedHem++;
+            }
+          }
+          
+          for (let i = 0; i < noithatIndices.length; i++) {
+            const imgIdx = noithatIndices[i];
+            const imgUrl = p.pool_row_data[39 + imgIdx];
+            // Tránh đẩy trùng hình cover/nền nếu đã có ở vị trí đầu
+            if (imgUrl && imgUrl !== coverImgUrl && finalImages.length < 10) {
+              finalImages.push(imgUrl);
+            }
+          }
+
+          while (finalImages.length < 10) finalImages.push("");
+
+          // Cập nhật lại 10 cột ảnh sạch trên Source Sheet
+          for (let i = 0; i < 10; i++) {
+            p.original_row_data[20 + i] = finalImages[i];
+          }
+          p.original_row_data[38] = coverImgUrl;
+          p.img_mat_tien = coverImgUrl;
+          
+          // Cập nhật mảng ảnh sạch client-side của đối tượng p
+          p.imgs = finalImages.filter(Boolean);
+        } else if (customCoverUrl) {
+          // Fallback chỉ cập nhật cover
+          p.original_row_data[38] = customCoverUrl;
+          p.img_mat_tien = customCoverUrl;
+        }
+
         p.original_row_data[2] = note;
         p.original_row_data[12] = huong;
         p.original_row_data[13] = duong;
@@ -5709,6 +5958,27 @@
 
         if (!writeRes.ok) {
           throw new Error(`Google Sheets API returned status ${writeRes.status}`);
+        }
+
+        // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
+        if (p.pool_row_index && p.pool_row_data && publicIntStr !== "") {
+          const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BJ${p.pool_row_index}:BK${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+            });
+            
+            // Cập nhật lại biến client-side để đồng bộ
+            p.pool_row_data[61] = publicIntStr;
+            p.pool_row_data[62] = publicAlleyStr;
+          } catch (e) {
+            console.warn("Không thể đồng bộ thay đổi hình ảnh sang Pool thô:", e);
+          }
         }
 
         showToast("Đã lưu thay đổi lên Google Sheets thành công!");
@@ -5803,70 +6073,53 @@
         const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
         const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
         
-        // Map 15 ảnh nội thất sạch và ảnh hẻm
-        const finalImages = [];
-        const anhDuocChon = (matchedRow[61] || "").toString().replace(/\s/g, '');
-        const anhHemDuocChon = (matchedRow[62] || "").toString().replace(/\s/g, '');
-        
-        if (anhDuocChon === "") {
-          alert("⚠️ Căn nhà này chưa được dán nhãn ảnh nội thất an toàn ở Curator App! Vui lòng nhờ Trang biên tập ảnh trước.");
+        // Map 15 ảnh nội thất sạch và ảnh hẻm từ biên tập viên hình ảnh trực quan
+        const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
+        const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+
+        if (publicIntStr === "") {
+          alert("⚠️ Vui lòng tích chọn ít nhất 1 ảnh nội thất công khai làm Hình Public!");
           if (btnElement) {
             btnElement.disabled = false;
             btnElement.innerHTML = oldText;
           }
           return;
         }
-        
-        const noithatIndices = anhDuocChon.split(',');
+
+        const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
+        const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+
+        const finalImages = [];
         
         // 1. Cover
-        const firstNoithatIdx = parseInt(noithatIndices[0]);
-        if (!isNaN(firstNoithatIdx) && firstNoithatIdx >= 1 && firstNoithatIdx <= 15) {
-          const coverImgUrl = matchedRow[39 + firstNoithatIdx];
-          if (coverImgUrl) finalImages.push(coverImgUrl);
+        let coverImgUrl = customCoverUrl || (matchedRow[39 + noithatIndices[0]] || matchedRow[29]);
+        if (coverImgUrl) {
+          finalImages.push(coverImgUrl);
         }
         
         // 2. Alley
         const maxHem = 2;
-        if (anhHemDuocChon !== "") {
-          const hemIndices = anhHemDuocChon.split(',');
-          let addedHem = 0;
-          for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
-            const hemIdx = parseInt(hemIndices[i]);
-            if (!isNaN(hemIdx) && hemIdx >= 1 && hemIdx <= 10) {
-              const hemUrl = matchedRow[29 + hemIdx];
-              if (hemUrl) {
-                finalImages.push(hemUrl);
-                addedHem++;
-              }
-            }
-          }
-        } else {
-          const availableHem = [];
-          for (let i = 1; i <= 10; i++) {
-            const hemUrl = matchedRow[29 + i];
-            if (hemUrl) availableHem.push(hemUrl);
-          }
-          for (let i = availableHem.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            const temp = availableHem[i];
-            availableHem[i] = availableHem[j];
-            availableHem[j] = temp;
-          }
-          for (let i = 0; i < Math.min(maxHem, availableHem.length); i++) {
-            finalImages.push(availableHem[i]);
+        let addedHem = 0;
+        for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+          const hemIdx = hemIndices[i];
+          const hemUrl = matchedRow[29 + hemIdx];
+          if (hemUrl) {
+            finalImages.push(hemUrl);
+            addedHem++;
           }
         }
         
         // 3. Nội thất khác
-        for (let i = 1; i < noithatIndices.length; i++) {
-          const imgIdx = parseInt(noithatIndices[i]);
-          if (!isNaN(imgIdx) && imgIdx >= 1 && imgIdx <= 15) {
-            const imgUrl = matchedRow[39 + imgIdx];
-            if (imgUrl) finalImages.push(imgUrl);
+        for (let i = 0; i < noithatIndices.length; i++) {
+          const imgIdx = noithatIndices[i];
+          const imgUrl = matchedRow[39 + imgIdx];
+          // Tránh đẩy trùng hình cover/nền nếu đã có ở vị trí đầu
+          if (imgUrl && imgUrl !== coverImgUrl && finalImages.length < 10) {
+            finalImages.push(imgUrl);
           }
         }
-        
+
         while (finalImages.length < 10) finalImages.push("");
         
         // Xử lý Cú pháp
@@ -5939,7 +6192,7 @@
           "",                            // 35: gio_dang (Cột AJ)
           "",                            // 36: trang_thai (Cột AK)
           sysIdMatched,                  // 37: System ID (Cột AL)
-          matchedRow[29],                // 38: Hình Mặt Tiền (Cột AM)
+          customCoverUrl || matchedRow[29], // 38: Hình Mặt Tiền (Cột AM)
           tieuDeBds,                     // 39: Tiêu đề BDS (Cột AN)
           false                          // 40: Đăng BDS (Cột AO)
         ];
@@ -5959,10 +6212,22 @@
           throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
         }
         
-        // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
+        // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
         try {
           const poolRowNumber = rows.indexOf(matchedRow) + 2;
           const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+          
+          // 1. Cập nhật anhDuocChon (BJ) và anhHemDuocChon (BK)
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BJ${poolRowNumber}:BK${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+          });
+          
+          // 2. Cập nhật Last Sync (BZ)
           await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BZ${poolRowNumber}:BZ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
             method: 'PUT',
             headers: {
@@ -5972,7 +6237,7 @@
             body: JSON.stringify({ values: [[syncDateStr]] })
           });
         } catch (e) {
-          console.warn("Không thể ghi nhận Last Sync vào Pool:", e);
+          console.warn("Không thể ghi nhận thay đổi hình ảnh hoặc Last Sync vào Pool:", e);
         }
         
         showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}!`);
