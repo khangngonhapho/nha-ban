@@ -5413,13 +5413,13 @@
           <!-- IMAGE EDITOR TOOLBAR -->
           <div class="image-editor-toolbar" style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap;">
             <span style="font-size: 10px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px;">Cọ Biên Tập:</span>
-            <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
+            <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
               🔒 Mặt Tiền (MT)
             </button>
-            <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
+            <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: inherit;">
               ⭐ Ảnh Nền
             </button>
-            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit;">
+            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit;">
               ✕ Hủy
             </button>
           </div>
@@ -5544,10 +5544,9 @@
               <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Ảnh Nền</span>
             ` : ''}
             ${type !== "facade" ? `
-              <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; background: rgba(0,0,0,0.65); padding: 2px 5px; border-radius: 4px; cursor: pointer; margin: 0; z-index: 10; font-family: inherit;">
+              <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; background: rgba(0,0,0,0.65); padding: 4px; border-radius: 6px; cursor: pointer; margin: 0; z-index: 10; line-height: 0;">
                 <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="window.toggleImagePublic(this)" 
-                  style="margin: 0; transform: scale(0.95); cursor: pointer;">
-                Hiện
+                  style="margin: 0; transform: scale(1.1); cursor: pointer;">
               </label>
             ` : ''}
           </div>
@@ -5562,15 +5561,15 @@
       const coverBtn = document.getElementById('toolCoverBtn');
       if (!facadeBtn || !coverBtn) return;
       
-      // Reset
-      facadeBtn.style.background = 'rgba(255,255,255,0.1)';
+      // Reset to dark transparent
+      facadeBtn.style.background = 'rgba(0,0,0,0.5)';
       facadeBtn.style.color = '#fff';
-      facadeBtn.style.borderColor = 'rgba(255,255,255,0.2)';
+      facadeBtn.style.borderColor = 'rgba(255,255,255,0.15)';
       facadeBtn.style.boxShadow = 'none';
       
-      coverBtn.style.background = 'rgba(255,255,255,0.1)';
+      coverBtn.style.background = 'rgba(0,0,0,0.5)';
       coverBtn.style.color = '#fff';
-      coverBtn.style.borderColor = 'rgba(255,255,255,0.2)';
+      coverBtn.style.borderColor = 'rgba(255,255,255,0.15)';
       coverBtn.style.boxShadow = 'none';
       
       if (tool === 'facade') {
