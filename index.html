@@ -1955,6 +1955,77 @@
       border-radius: 2.5px;
     }
 
+    /* Robust cross-device Image Editor Card */
+    .edit-img-card {
+      position: relative;
+      background: #000;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      overflow: hidden;
+      display: block; /* Change from flex to block to fix Safari flexbox aspect-ratio collapse */
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .edit-img-card.is-mattien {
+      border-color: var(--red) !important;
+    }
+
+    .edit-img-card.is-anhnen {
+      border-color: var(--gold) !important;
+    }
+
+    .edit-img-card.is-public:not(.is-mattien):not(.is-anhnen) {
+      border-color: rgba(39, 174, 96, 0.6) !important;
+    }
+
+    .edit-img-card-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .edit-img-card-wrap img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .edit-img-actions-bar {
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      gap: 4px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      /* Remove margin-top: auto; since parent is display: block */
+    }
+
+    /* Premium Gold Accordion Headers */
+    .accordion-header.is-gold {
+      background: linear-gradient(135deg, #f39c12, #f1c40f) !important;
+      color: #1c1c1e !important;
+      border-bottom: 1.5px solid #d4ac0d;
+      font-weight: 850;
+      letter-spacing: -0.2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .accordion-item.expanded .accordion-header.is-gold {
+      background: linear-gradient(135deg, #f39c12, #f1c40f) !important;
+      color: #1c1c1e !important;
+    }
+
     .admin-detail-section-title {
       font-size: 13px;
       font-weight: 800;
@@ -4549,8 +4620,8 @@
           <div class="admin-accordion">
             <!-- ACCORDION 2: BIÊN TẬP CUSTOM - SOURCE -->
             <div class="accordion-item" id="accSource">
-              <div class="accordion-header" onclick="toggleAdminAccordion(this)">
-                <span>BIÊN TẬP CUSTOM - SOURCE</span>
+              <div class="accordion-header is-gold" onclick="toggleAdminAccordion(this)">
+                <span>BIÊN TẬP</span>
                 <span class="arrow">▶</span>
               </div>
               <div class="accordion-content">
@@ -4653,7 +4724,7 @@
 
             <!-- ACCORDION 3: PREVIEW KHÁCH HÀNG -->
             <div class="accordion-item" id="accPreview">
-              <div class="accordion-header" onclick="toggleAdminAccordion(this)">
+              <div class="accordion-header is-gold" onclick="toggleAdminAccordion(this)">
                 <span>📄 PREVIEW KHÁCH HÀNG</span>
                 <span class="arrow">▶</span>
               </div>
@@ -5337,7 +5408,7 @@
       let html = `
         <div class="admin-edit-group" style="margin-top: 10px;">
           <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (ĐỎ: MẶT TIỀN 🔒 | VÀNG: ẢNH NỀN ⭐)</label>
-          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
       // 1. Facade photo (Hình Mặt tiền gốc thô)
@@ -5441,31 +5512,30 @@
 
       return `
         <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isPublic ? 'is-public' : ''}" 
-          data-type="${type}" data-index="${index}" data-url="${url}"
-          style="position: relative; background: #000; border: ${cardBorder}; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
-          <div style="position: relative; padding-top: 75%; overflow: hidden;">
-            <img src="${fixImgUrl(url, 'w200')}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-            <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px;">
+          data-type="${type}" data-index="${index}" data-url="${url}">
+          <div class="edit-img-card-wrap">
+            <img src="${fixImgUrl(url, 'w200')}" alt="Ảnh ${index}" loading="lazy">
+            <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px; z-index: 5;">
               ${typeBadge}
             </span>
             ${isMatTien ? `
-              <span class="mattien-lock-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white;">🔒 Mặt Tiền</span>
+              <span class="mattien-lock-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Mặt Tiền</span>
             ` : ''}
             ${isAnhNen && !isMatTien ? `
-              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold);">⭐ Ảnh Nền</span>
+              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Ảnh Nền</span>
             ` : ''}
           </div>
-          <div style="padding: 6px; background: rgba(0,0,0,0.6); display: flex; gap: 4px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div class="edit-img-actions-bar">
             <button onclick="setImageAsMatTien(event, this)" class="edit-img-mattien-btn" 
-              style="background: ${isMatTien ? 'var(--red)' : 'rgba(255,255,255,0.15)'}; color: #fff; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap;">
+              style="background: ${isMatTien ? 'var(--red)' : 'rgba(255,255,255,0.15)'}; color: #fff; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap; font-family: inherit;">
               ${isMatTien ? '🔒 Khóa' : 'Làm Mặt Tiền'}
             </button>
             <button onclick="setImageAsAnhNen(event, this)" class="edit-img-cover-btn" 
-              style="background: ${isAnhNen ? 'var(--gold)' : 'rgba(255,255,255,0.15)'}; color: ${isAnhNen ? '#000' : '#fff'}; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap;">
+              style="background: ${isAnhNen ? 'var(--gold)' : 'rgba(255,255,255,0.15)'}; color: ${isAnhNen ? '#000' : '#fff'}; border: none; font-size: 9.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; cursor: pointer; flex: 1; text-align: center; white-space: nowrap; font-family: inherit;">
               ${isAnhNen ? '⭐ Nền' : 'Làm Nền'}
             </button>
             ${type !== "facade" ? `
-              <label style="display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; cursor: pointer; margin: 0; width: 100%; justify-content: flex-end; margin-top: 4px;">
+              <label style="display: flex; align-items: center; gap: 2px; font-size: 9.5px; color: #fff; cursor: pointer; margin: 0; width: 100%; justify-content: flex-end; margin-top: 4px; font-family: inherit;">
                 <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="toggleImagePublic(this)" 
                   style="margin: 0; transform: scale(0.9); cursor: pointer;">
                 Hiện
