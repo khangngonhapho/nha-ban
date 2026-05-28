@@ -4577,11 +4577,11 @@
 
       const mID = document.getElementById('mID');
       const cleanTitle = cutTitleToDistrict(p.t);
+      const cleanAddressTitle = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}`.trim() || cleanTitle;
+      document.getElementById('mT').textContent = cleanAddressTitle;
+
       const floatActions = document.getElementById('adminDetailFloatActions');
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
-        const adminTitle = generateAdminTitleFromNộiDungChinh(p);
-        const finalAdminTitle = String(adminTitle).includes(p.gia + ' tỷ') ? adminTitle : `${adminTitle} ${p.gia} tỷ`;
-        document.getElementById('mT').textContent = finalAdminTitle;
         if (mID) mID.style.display = 'none';
         if (floatActions) {
           if (p.isFromPoolOnly) {
@@ -4598,8 +4598,6 @@
           }
         }
       } else {
-        const finalClientTitle = String(cleanTitle).includes(p.gia + ' tỷ') ? cleanTitle : `${cleanTitle} ${p.gia} tỷ`;
-        document.getElementById('mT').textContent = finalClientTitle;
         if (mID) {
           mID.style.display = 'block';
           mID.textContent = `#${p.id}`;
