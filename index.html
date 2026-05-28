@@ -2143,55 +2143,54 @@
 
     /* Action toolbar in header (US-039.7) */
     .admin-header-actions {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      margin-left: auto;
+      display: none !important;
     }
-    .admin-icon-btn {
-      background: #f1f2f6;
-      border: 1px solid #ced6e0;
+    
+    /* Floating action buttons in detail page (US-039.7 Revision) */
+    .admin-detail-float-actions {
+      position: absolute;
+      bottom: 25px;
+      right: 20px;
+      z-index: 150;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+    .admin-detail-float-actions .admin-icon-btn {
+      background: #1c1c1e;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 50%;
-      width: 32px;
-      height: 32px;
+      width: 48px;
+      height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 20px;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
       transition: all 0.2s;
       flex-shrink: 0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-    .admin-icon-btn:hover {
-      background: #e4e7eb;
+    .admin-detail-float-actions .admin-icon-btn:hover {
+      background: #2c2c2e;
+      transform: translateY(-2px);
     }
-    .admin-icon-btn:active {
+    .admin-detail-float-actions .admin-icon-btn:active {
       transform: scale(0.9);
     }
-    .admin-icon-btn.save-pool-btn {
-      background: rgba(39, 174, 96, 0.1);
-      border: 1px solid #27ae60;
-      color: #27ae60;
+    .admin-detail-float-actions .admin-icon-btn.save-pool-btn {
+      color: #2ecc71;
+      border-color: rgba(46, 204, 113, 0.4);
     }
-    .admin-icon-btn.save-pool-btn:hover {
-      background: rgba(39, 174, 96, 0.2);
+    .admin-detail-float-actions .admin-icon-btn.save-source-btn {
+      color: #2ecc71;
+      border-color: rgba(46, 204, 113, 0.4);
     }
-    .admin-icon-btn.save-source-btn {
-      background: rgba(39, 174, 96, 0.1);
-      border: 1px solid #27ae60;
-      color: #27ae60;
-    }
-    .admin-icon-btn.save-source-btn:hover {
-      background: rgba(39, 174, 96, 0.2);
-    }
-    .admin-icon-btn.zalo-btn {
-      background: rgba(52, 152, 219, 0.1);
-      border: 1px solid #3498db;
+    .admin-detail-float-actions .admin-icon-btn.zalo-btn {
       color: #3498db;
-    }
-    .admin-icon-btn.zalo-btn:hover {
-      background: rgba(52, 152, 219, 0.2);
+      border-color: rgba(52, 152, 219, 0.4);
     }
 
     /* Sticky Bottom Footer for Save Button */
@@ -2437,12 +2436,9 @@
     <button onclick="exitCollectionView()">✕ Hủy xem</button>
   </div>
 
-  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px 16px; border-bottom: 1px solid var(--border);">
-    <div style="font-size: 13px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 6px;">
-      📦 KHO POOL THÔ (<span id="countPool">-</span> căn)
-    </div>
+  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: flex; justify-content: flex-end; align-items: center; background: #f8f9fa; padding: 10px 16px; border-bottom: 1px solid var(--border);">
     <div style="display: flex; align-items: center; gap: 8px;">
-      <span style="font-size: 11px; font-weight: 700; color: #57606f;">CHỈ HIỆN CĂN PUBLIC</span>
+      <span style="font-size: 11px; font-weight: 700; color: #57606f;">CĂN LÊN SÓNG</span>
       <label class="admin-toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 22px; margin-bottom: 0;">
         <input type="checkbox" id="onAirToggle" onchange="toggleShowOnAirOnly(this.checked)" style="opacity: 0; width: 0; height: 0;">
         <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 22px;"></span>
@@ -2493,13 +2489,14 @@
   </div>
 
   <div class="overlay" id="ov" onclick="bgC(event)">
-    <div class="sheet">
+    <div class="sheet" style="position: relative;">
       <div class="dh"></div>
       <div class="shead">
         <div class="stitle" id="mT"></div>
         <div class="admin-header-actions" id="adminHeaderActions"></div>
         <button class="xbtn" onclick="closeS()">✕</button>
       </div>
+      <div class="admin-detail-float-actions" id="adminDetailFloatActions"></div>
       <div id="mID"
         style="padding: 0 20px 4px; font-size: 17px; color: var(--sub); font-weight: 800; text-align: right; word-break: break-all;">
       </div>
@@ -2766,7 +2763,7 @@
         const cleanedT = poolItem.t && poolItem.t.includes('|') ? poolItem.t.substring(poolItem.t.indexOf('|') + 1).trim() : poolItem.t;
         return `${poolItem.raw_so_nha ? poolItem.raw_so_nha + ' ' : ''}${poolItem.raw_ten_duong ? poolItem.raw_ten_duong : cleanedT}`;
       }
-      const priceRegex = /\b\d+(?:[\.,-]\d+)?\s*(?:tỷ|ty|tỉ)\b/i;
+      const priceRegex = /\b\d+(?:[\.,-]\d+)?\s*(?:tỷ|ty|tỉ)(?!\w)/i;
       const match = text.match(priceRegex);
       if (match) {
         return text.substring(0, match.index).trim().replace(/\s+/g, ' ');
@@ -4332,18 +4329,19 @@
 
       const mID = document.getElementById('mID');
       const cleanTitle = cutTitleToDistrict(p.t);
-      const headerActions = document.getElementById('adminHeaderActions');
+      const floatActions = document.getElementById('adminDetailFloatActions');
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         document.getElementById('mT').textContent = generateAdminTitleFromNộiDungChinh(p);
         if (mID) mID.style.display = 'none';
-        if (headerActions) {
-          headerActions.style.display = 'flex';
+        if (floatActions) {
           if (p.isFromPoolOnly) {
-            headerActions.innerHTML = `
+            floatActions.style.display = 'none'; // Will be shown dynamically in updateLivePreview
+            floatActions.innerHTML = `
               <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none;">⚡</button>
             `;
           } else {
-            headerActions.innerHTML = `
+            floatActions.style.display = 'flex';
+            floatActions.innerHTML = `
               <button class="admin-icon-btn save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi">💾</button>
               <button class="admin-icon-btn zalo-btn" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo">🔗</button>
             `;
@@ -4355,9 +4353,9 @@
           mID.style.display = 'block';
           mID.textContent = `#${p.id}`;
         }
-        if (headerActions) {
-          headerActions.style.display = 'none';
-          headerActions.innerHTML = '';
+        if (floatActions) {
+          floatActions.style.display = 'none';
+          floatActions.innerHTML = '';
         }
       }
       
@@ -4713,6 +4711,7 @@
             const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
             const moTaVal = (editMoTa ? editMoTa.value : '').trim();
             const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
+            const floatActions = document.getElementById('adminDetailFloatActions');
 
             if (p.isFromPoolOnly) {
               const savePoolBtn = document.getElementById('savePoolBtn');
@@ -4725,6 +4724,7 @@
                   const arrow = accPreview.querySelector('.arrow');
                   if (arrow) arrow.textContent = '▼';
                 }
+                if (floatActions) floatActions.style.display = 'flex';
                 if (savePoolBtn) savePoolBtn.style.display = 'flex';
                 
                 const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
@@ -4733,10 +4733,12 @@
                 if (previewDesc) previewDesc.textContent = moTaVal;
               } else {
                 if (accPreview) accPreview.style.display = 'none';
+                if (floatActions) floatActions.style.display = 'none';
                 if (savePoolBtn) savePoolBtn.style.display = 'none';
               }
             } else {
               if (accPreview) accPreview.style.display = 'block';
+              if (floatActions) floatActions.style.display = 'flex';
               const saveSourceBtn = document.getElementById('saveSourceBtn');
               if (saveSourceBtn) saveSourceBtn.style.display = 'flex';
               
