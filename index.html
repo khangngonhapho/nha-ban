@@ -2669,19 +2669,33 @@
               else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
               else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
               else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
-              else if (cleanQLower.includes('cần giờ') || cleanQLower === 'cg') cleanQ = 'cg';
-              else if (cleanQLower === '1' || cleanQLower === 'q1') cleanQ = '1';
-              else if (cleanQLower === '2' || cleanQLower === 'q2') cleanQ = '2';
-              else if (cleanQLower === '3' || cleanQLower === 'q3') cleanQ = '3';
-              else if (cleanQLower === '4' || cleanQLower === 'q4') cleanQ = '4';
-              else if (cleanQLower === '5' || cleanQLower === 'q5') cleanQ = '5';
-              else if (cleanQLower === '6' || cleanQLower === 'q6') cleanQ = '6';
-              else if (cleanQLower === '7' || cleanQLower === 'q7') cleanQ = '7';
-              else if (cleanQLower === '8' || cleanQLower === 'q8') cleanQ = '8';
-              else if (cleanQLower === '9' || cleanQLower === 'q9') cleanQ = '9';
-              else if (cleanQLower === '10' || cleanQLower === 'q10') cleanQ = '10';
-              else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
-              else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
+               const srSystemId = sr[37] || '';
+              const srId = sr[3] || '';
+
+              const poolRow = poolRows.find(pr => {
+                const prSystemId = pr[72] || ''; // System ID (Index 72, STT 73)
+                const prId = pr[55] || '';       // Mã Khang Ngô (ID) (Index 55, STT 56)
+                return (srSystemId && prSystemId === srSystemId) || 
+                       (srId && prId === srId) ||
+                       (srSystemId && prId === srSystemId);
+              });
+
+              const poolImgs = [];
+              if (poolRow) {
+                // Lấy Ảnh 1 đến Ảnh 15 từ Pool (chỉ số 40 đến 54)
+                for (let c = 40; c <= 54; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
+              }
+
+              const allImgs = [
+                ...[
+                  sr[20], sr[21], sr[22], sr[23], sr[24],
+                  sr[25], sr[26], sr[27], sr[28], sr[29]
+                ].filter(Boolean),
+                ...poolImgs
+              ];
+              const uniqueImgs = [...new Set(allImgs)];
 
               const p = {
                 temp_id: index + 1,
@@ -2707,10 +2721,7 @@
                 chdv: sr[18] || '-',
                 giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
                 m: sr[19] || '',
-                imgs: [
-                  sr[20], sr[21], sr[22], sr[23], sr[24],
-                  sr[25], sr[26], sr[27], sr[28], sr[29]
-                ].filter(Boolean),
+                imgs: uniqueImgs,
                 system_id: sr[37] || (index + 1).toString(),
                 so_pn: sr[32] || '-',
                 img_mat_tien: sr[38] || '',
@@ -2718,14 +2729,6 @@
                 original_row_data: sr,
                 source_row_index: targetRowNumber
               };
-
-              const poolRow = poolRows.find(pr => {
-                const prSystemId = pr[72] || ''; // System ID (Index 72, STT 73)
-                const prId = pr[55] || '';       // Mã Khang Ngô (ID) (Index 55, STT 56)
-                return (p.system_id && prSystemId === p.system_id) || 
-                       (p.id && prId === p.id) ||
-                       (p.system_id && prId === p.system_id);
-              });
 
               if (poolRow) {
                 p.raw_ten_dau_chu = poolRow[75] || '';       // Tên Đầu Chủ (Hợp đồng) - Index 75, Column BX
@@ -2745,6 +2748,8 @@
                 p.raw_do_rong_hem = poolRow[61] || '';       // Phân loại Hẻm - Index 61, Column BJ
                 p.raw_so_pn = poolRow[64] || '';             // Số phòng ngủ - Index 64, Column BM
                 p.raw_so_wc = poolRow[65] || '';             // Số nhà vệ sinh - Index 65, Column BN
+                p.raw_tieu_de_public = poolRow[56] || '';    // Tiêu đề Public - Index 56, Column BE
+                p.raw_mo_ta_public = poolRow[57] || '';      // Mô tả Public - Index 57, Column BF
                 p.pool_row_index = poolRows.indexOf(poolRow) + 2;
               } else {
                 p.raw_ten_dau_chu = '';
@@ -2764,6 +2769,8 @@
                 p.raw_do_rong_hem = p.rong_hem || '';
                 p.raw_so_pn = p.so_pn || '';
                 p.raw_so_wc = '';
+                p.raw_tieu_de_public = '';
+                p.raw_mo_ta_public = '';
                 p.pool_row_index = null;
               }
 
@@ -3634,7 +3641,12 @@
 
                   <div class="admin-edit-group">
                     <label for="editTieuDeBds">Tiêu đề public (dưới 85 ký tự):</label>
-                    <input type="text" id="editTieuDeBds" value="${p.original_row_data[39] || ''}" placeholder="Nhập tiêu đề BĐS ngắn gọn...">
+                    <input type="text" id="editTieuDeBds" value="${p.original_row_data[39] || p.raw_tieu_de_public || ''}" placeholder="Nhập tiêu đề BĐS ngắn gọn...">
+                  </div>
+
+                  <div class="admin-edit-group">
+                    <label for="editMoTaBds">Mô tả public:</label>
+                    <textarea id="editMoTaBds" rows="6" placeholder="Nhập mô tả công khai cho khách hàng...">${p.m || p.raw_mo_ta_public || ''}</textarea>
                   </div>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -3715,18 +3727,47 @@
                 <span class="arrow">▶</span>
               </div>
               <div class="accordion-content">
-                <div style="font-size:14.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t}</div>
-                <div class="ig" style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
-                  <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
-                  <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
-                  <div class="ib"><div class="il">Đơn giá</div><div class="iv" style="color:var(--gold);font-weight:800">${p.giabq}</div></div>
-                  <div class="ib"><div class="il">Quận/TP</div><div class="iv">${p.ql}</div></div>
-                  <div class="ib"><div class="il">Phường</div><div class="iv">${p.phuong}</div></div>
-                  <div class="ib"><div class="il">Loại</div><div class="iv">${p.loai_hinh}</div></div>
-                  <div class="ib"><div class="il">Đường trước</div><div class="iv">${p.duong_truoc_nha}</div></div>
-                  <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
+                <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
+                <div class="admin-raw-grid" style="margin-bottom: 12px;">
+                  <div class="admin-raw-cell">
+                    <span class="label">Giá bán:</span>
+                    <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Diện tích:</span>
+                    <span class="value dotted">${p.dt} m²</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Đơn giá:</span>
+                    <span class="value dotted" style="color:var(--gold); font-weight:800;">${p.giabq}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Quận/TP:</span>
+                    <span class="value dotted">${p.ql}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Phường:</span>
+                    <span class="value dotted">${p.phuong}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Loại:</span>
+                    <span class="value dotted">${p.loai_hinh}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Đường trước:</span>
+                    <span class="value dotted">${p.duong_truoc_nha}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Kết cấu:</span>
+                    <span class="value dotted">${p.tang} tầng</span>
+                  </div>
+                  ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
+                  <div class="admin-raw-cell">
+                    <span class="label">Tình trạng:</span>
+                    <span class="value dotted">${p.tinh_trang}</span>
+                  </div>` : ''}
                 </div>
-                <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:13.5px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px;">${p.m}</div>
+                <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
               </div>
             </div>
           </div>
@@ -5014,6 +5055,7 @@
       try {
         const note = document.getElementById('editNote').value.trim();
         const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+        const moTaBds = document.getElementById('editMoTaBds').value.trim();
         const huong = document.getElementById('editHuong').value;
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
@@ -5030,6 +5072,7 @@
         p.original_row_data[16] = danhGia;
         p.original_row_data[17] = nguTret;
         p.original_row_data[18] = chdv;
+        p.original_row_data[19] = moTaBds;
         p.original_row_data[30] = new Date().toISOString();
         p.original_row_data[32] = soPn || '-';
         p.original_row_data[33] = soWc || '-';
@@ -5043,6 +5086,7 @@
         p.ngu_tang_tret = nguTret;
         p.chdv = chdv;
         p.so_pn = soPn || '-';
+        p.m = moTaBds;
 
         const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
         const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AO${p.source_row_index}?valueInputOption=USER_ENTERED`;
