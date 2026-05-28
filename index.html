@@ -3517,6 +3517,8 @@
         c.dataset.pid = String(p.id);
         c.setAttribute('onclick', `openS('${p.id}')`);
 
+        const cleanedT = p.t && p.t.includes('|') ? p.t.substring(p.t.indexOf('|') + 1).trim() : p.t;
+
         if (isAdmin) {
           c.innerHTML = `
         <div class="crow">
@@ -3532,7 +3534,7 @@
           <div class="card-right">
             <div class="info">
               <div class="ititle" style="color: var(--red); font-weight: 850; font-size: 14.5px; line-height: 1.35; margin-bottom: 6px;">
-                ${p.raw_so_nha ? p.raw_so_nha + ' ' : ''}${p.raw_ten_duong ? p.raw_ten_duong : p.t} ${p.cu_phap ? '| ' + p.cu_phap : ''}
+                ${p.raw_so_nha ? p.raw_so_nha + ' ' : ''}${p.raw_ten_duong ? p.raw_ten_duong : cleanedT} ${p.cu_phap ? '| ' + p.cu_phap : ''}
               </div>
               <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                 <span>📍</span> P.${p.phuong}, Q.${p.ql}
