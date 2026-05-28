@@ -2141,6 +2141,59 @@
       cursor: pointer;
     }
 
+    /* Action toolbar in header (US-039.7) */
+    .admin-header-actions {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    .admin-icon-btn {
+      background: #f1f2f6;
+      border: 1px solid #ced6e0;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .admin-icon-btn:hover {
+      background: #e4e7eb;
+    }
+    .admin-icon-btn:active {
+      transform: scale(0.9);
+    }
+    .admin-icon-btn.save-pool-btn {
+      background: rgba(39, 174, 96, 0.1);
+      border: 1px solid #27ae60;
+      color: #27ae60;
+    }
+    .admin-icon-btn.save-pool-btn:hover {
+      background: rgba(39, 174, 96, 0.2);
+    }
+    .admin-icon-btn.save-source-btn {
+      background: rgba(39, 174, 96, 0.1);
+      border: 1px solid #27ae60;
+      color: #27ae60;
+    }
+    .admin-icon-btn.save-source-btn:hover {
+      background: rgba(39, 174, 96, 0.2);
+    }
+    .admin-icon-btn.zalo-btn {
+      background: rgba(52, 152, 219, 0.1);
+      border: 1px solid #3498db;
+      color: #3498db;
+    }
+    .admin-icon-btn.zalo-btn:hover {
+      background: rgba(52, 152, 219, 0.2);
+    }
+
     /* Sticky Bottom Footer for Save Button */
     .admin-sticky-footer {
       position: sticky;
@@ -2444,6 +2497,7 @@
       <div class="dh"></div>
       <div class="shead">
         <div class="stitle" id="mT"></div>
+        <div class="admin-header-actions" id="adminHeaderActions"></div>
         <button class="xbtn" onclick="closeS()">✕</button>
       </div>
       <div id="mID"
@@ -2679,6 +2733,47 @@
         .trim();
     }
 
+    // Hàm phân tích và định dạng giá tiền (US-039.7)
+    function parseGia(val) {
+      if (!val) return 0;
+      let s = String(val).trim();
+      if (s.includes(',')) {
+        s = s.replace(/,/g, '.');
+      }
+      let num = parseFloat(s);
+      if (isNaN(num)) return 0;
+      if (num > 100) num = num / 1000;
+      return Math.round(num * 1000) / 1000;
+    }
+
+    // Hàm sinh tiêu đề Admin thống nhất từ Nội dung chính (US-039.7)
+    function generateAdminTitleFromNộiDungChinh(p) {
+      if (!p) return '';
+      let poolItem = p;
+      if (!p.isFromPoolOnly && POOL_ROWS && POOL_ROWS.length && p.system_id) {
+        const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
+        if (row) {
+          poolItem = {
+            raw_noi_dung_chinh: row[9] || '',
+            raw_so_nha: row[6] || '',
+            raw_ten_duong: row[5] || '',
+            t: row[56] || row[55] || row[9] || ''
+          };
+        }
+      }
+      const text = (poolItem.raw_noi_dung_chinh || '').trim();
+      if (!text) {
+        const cleanedT = poolItem.t && poolItem.t.includes('|') ? poolItem.t.substring(poolItem.t.indexOf('|') + 1).trim() : poolItem.t;
+        return `${poolItem.raw_so_nha ? poolItem.raw_so_nha + ' ' : ''}${poolItem.raw_ten_duong ? poolItem.raw_ten_duong : cleanedT}`;
+      }
+      const priceRegex = /\b\d+(?:[\.,-]\d+)?\s*(?:tỷ|ty|tỉ)\b/i;
+      const match = text.match(priceRegex);
+      if (match) {
+        return text.substring(0, match.index).trim().replace(/\s+/g, ' ');
+      }
+      return text.replace(/\s+/g, ' ');
+    }
+
     let DATA = [];
     let POOL_ROWS = [];
     let activeMode = isAdmin ? 'pool' : 'source'; // Mặc định Pool cho Admin khi vào trang (US-039.7)
@@ -2861,7 +2956,7 @@
       MAPPED_POOL_DATA = POOL_ROWS.map(row => {
         const systemId = row[72] || row[71] || '';
         const dt = parseFloat(row[13] || row[14]) || 0;
-        const gia = parseFloat(row[11] || row[57]) || 0;
+        const gia = parseGia(row[11] || row[57]);
         const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
         let rawQ = row[3] || '';
@@ -2893,7 +2988,7 @@
           dt: row[13] || row[14] || '',
           tang: row[15] || '',
           mat: row[16] || '',
-          gia: row[11] || '',
+          gia: gia,
           q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
           ql: cleanQ.toUpperCase(),
           phuong: row[4] || '-',
@@ -3177,7 +3272,7 @@
               
               const targetRowNumber = index + 2;
               const dt = parseFloat(sr[5]) || 0;
-              const gia = parseFloat(sr[8]) || 0;
+              const gia = parseGia(sr[8]);
               const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
               
               let rawQ = sr[9] || '';
@@ -3232,7 +3327,7 @@
                 dt: sr[5] || '',
                 tang: sr[6] || '',
                 mat: sr[7] || '',
-                gia: sr[8] || '',
+                gia: gia,
                 q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
                 ql: cleanQ.toUpperCase(),
                 phuong: sr[10] || '-',
@@ -3871,19 +3966,7 @@
         c.dataset.pid = String(p.id);
         c.setAttribute('onclick', (p.isFromPoolOnly && !isOnAir) ? `openPoolS('${p.system_id}')` : `openS('${curatedListing ? curatedListing.id : p.id}')`);
 
-        const cleanedT = p.t && p.t.includes('|') ? p.t.substring(p.t.indexOf('|') + 1).trim() : p.t;
-        let adminTitle = '';
-        if (p.cu_phap) {
-          const parts = String(p.cu_phap).trim().split(/\s+/);
-          const idxTy = parts.findIndex(part => part.toLowerCase().includes('tỷ') || part.toLowerCase().includes('ty'));
-          if (idxTy !== -1) {
-            adminTitle = parts.slice(0, idxTy + 1).join(' ');
-          } else {
-            adminTitle = p.cu_phap;
-          }
-        } else {
-          adminTitle = `${p.raw_so_nha ? p.raw_so_nha + ' ' : ''}${p.raw_ten_duong ? p.raw_ten_duong : cleanedT}`;
-        }
+        const adminTitle = generateAdminTitleFromNộiDungChinh(p);
 
         if (isAdmin) {
           c.innerHTML = `
@@ -3891,10 +3974,6 @@
           <div class="ibox">
             ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
             <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
-            ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(52, 152, 219, 0.9); color: white; text-align: center; font-size: 11px; font-weight: 700; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase;">
-              ${p.tinh_trang}
-            </div>` : ''}
             <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>
             <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
           </div>
@@ -4253,14 +4332,32 @@
 
       const mID = document.getElementById('mID');
       const cleanTitle = cutTitleToDistrict(p.t);
+      const headerActions = document.getElementById('adminHeaderActions');
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
-        document.getElementById('mT').textContent = cleanTitle;
+        document.getElementById('mT').textContent = generateAdminTitleFromNộiDungChinh(p);
         if (mID) mID.style.display = 'none';
+        if (headerActions) {
+          headerActions.style.display = 'flex';
+          if (p.isFromPoolOnly) {
+            headerActions.innerHTML = `
+              <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none;">⚡</button>
+            `;
+          } else {
+            headerActions.innerHTML = `
+              <button class="admin-icon-btn save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi">💾</button>
+              <button class="admin-icon-btn zalo-btn" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo">🔗</button>
+            `;
+          }
+        }
       } else {
         document.getElementById('mT').textContent = cleanTitle;
         if (mID) {
           mID.style.display = 'block';
           mID.textContent = `#${p.id}`;
+        }
+        if (headerActions) {
+          headerActions.style.display = 'none';
+          headerActions.innerHTML = '';
         }
       }
       
@@ -4304,11 +4401,6 @@
                 <div class="admin-mota-box black-text" id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet || p.m) || 'Chưa có mô tả chi tiết.'}</div>
 
                 <!-- Technical Specs Dotted Grid -->
-                ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
-                <div class="admin-raw-header-row">
-                  <span>Tình trạng:</span>
-                  <span class="admin-status-badge">${p.tinh_trang}</span>
-                </div>` : ''}
                 <div class="admin-raw-section">
                   <div class="admin-raw-title">Thông tin</div>
                   <div class="admin-raw-grid">
@@ -4346,7 +4438,7 @@
                     </div>
                     <div class="admin-raw-cell">
                       <span class="label">Giá chào:</span>
-                      <span class="value dotted" style="color:var(--red); font-weight:800;">${p.raw_gia_chao || p.gia || '-'} tỷ</span>
+                      <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia || '-'} tỷ</span>
                     </div>
                     <div class="admin-raw-cell">
                       <span class="label">Trích thưởng:</span>
@@ -4403,7 +4495,7 @@
                 <form class="admin-edit-form" onsubmit="event.preventDefault()">
                   <div class="admin-edit-group">
                     <label for="editNote">Ghi chú riêng (Note - Chỉ Admin thấy):</label>
-                    <textarea id="editNote" rows="3" placeholder="Nhập ghi chú riêng...">${p.note || ''}</textarea>
+                    <textarea id="editNote" rows="3" placeholder="Nhập ghi chú riêng..." style="font-size: 10px; font-weight: 500; font-family: inherit; padding: 6px; line-height: 1.4;">${p.note || ''}</textarea>
                   </div>
 
                   <div class="admin-edit-group">
@@ -4416,12 +4508,12 @@
                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
                       ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
                     </div>
-                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 11px; font-weight: 700; line-height: 1.4; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && p.original_row_data[39]) || p.raw_tieu_de_public || '')}</textarea>
+                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && p.original_row_data[39]) || p.raw_tieu_de_public || '')}</textarea>
                   </div>
 
                   <div class="admin-edit-group">
                     <label for="editMoTaBds">Mô tả public:</label>
-                    <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 11px; font-weight: 500; line-height: 1.5;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+                    <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
                   </div>
 
                   ${renderImageEditorWidget(p)}
@@ -4538,25 +4630,10 @@
                     <span class="label">Kết cấu:</span>
                     <span class="value dotted">${p.tang} tầng</span>
                   </div>
-                  ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
-                  <div class="admin-raw-cell">
-                    <span class="label">Tình trạng:</span>
-                    <span class="value dotted">${p.tinh_trang}</span>
-                  </div>` : ''}
                 </div>
                 <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.')}</div>
               </div>
             </div>
-          </div>
-          <div class="admin-sticky-footer" style="display: flex; gap: 10px; width: 100%;">
-            ${p.isFromPoolOnly ? `
-              <button class="admin-save-btn" id="saveBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" style="background: #27ae60; flex: 1;">⚡ LÊN SÓNG & LƯU</button>
-            ` : `
-              <button class="admin-save-btn" id="saveBtn" onclick="saveSourceChanges('${p.id}')" style="flex: 1;">💾 LƯU THAY ĐỔI</button>
-              <button class="admin-save-btn" onclick="shareZaloFromAdminDetail('${p.id}')" style="background: var(--blue); flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <span>🔗</span> Gửi Zalo
-              </button>
-            `}
           </div>
         `;
       } else {
@@ -4587,8 +4664,6 @@
             <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
             <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat} m</div></div>
             <div class="ib"><div class="il">Hướng</div><div class="iv">${p.huong}</div></div>
-            ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
-            <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>` : ''}
             <div class="ib"><div class="il">Ngủ tầng trệt</div><div class="iv">${p.ngu_tang_tret}</div></div>
             <div class="ib"><div class="il">CHDV</div><div class="iv">${p.chdv}</div></div>
           </div>
@@ -4633,7 +4708,6 @@
           const editTieuDe = document.getElementById('editTieuDeBds');
           const editMoTa = document.getElementById('editMoTaBds');
           const accPreview = document.getElementById('accPreview');
-          const saveBtn = document.getElementById('saveBtn');
 
           const updateLivePreview = () => {
             const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
@@ -4641,6 +4715,7 @@
             const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
 
             if (p.isFromPoolOnly) {
+              const savePoolBtn = document.getElementById('savePoolBtn');
               if (isFilled) {
                 if (accPreview) {
                   accPreview.style.display = 'block';
@@ -4650,7 +4725,7 @@
                   const arrow = accPreview.querySelector('.arrow');
                   if (arrow) arrow.textContent = '▼';
                 }
-                if (saveBtn) saveBtn.style.display = 'block';
+                if (savePoolBtn) savePoolBtn.style.display = 'flex';
                 
                 const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
                 const previewDesc = accPreview.querySelector('.desc');
@@ -4658,11 +4733,12 @@
                 if (previewDesc) previewDesc.textContent = moTaVal;
               } else {
                 if (accPreview) accPreview.style.display = 'none';
-                if (saveBtn) saveBtn.style.display = 'none';
+                if (savePoolBtn) savePoolBtn.style.display = 'none';
               }
             } else {
               if (accPreview) accPreview.style.display = 'block';
-              if (saveBtn) saveBtn.style.display = 'block';
+              const saveSourceBtn = document.getElementById('saveSourceBtn');
+              if (saveSourceBtn) saveSourceBtn.style.display = 'flex';
               
               const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
               const previewDesc = accPreview.querySelector('.desc');
@@ -5390,7 +5466,7 @@
 
       // Map row to p structure
       const dt = parseFloat(row[13] || row[14]) || 0;
-      const gia = parseFloat(row[11] || row[57]) || 0;
+      const gia = parseGia(row[11] || row[57]);
       const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
       let rawQ = row[3] || '';
@@ -5422,7 +5498,7 @@
         dt: row[13] || row[14] || '',
         tang: row[15] || '',
         mat: row[16] || '',
-        gia: row[11] || '',
+        gia: gia,
         q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
         ql: cleanQ.toUpperCase(),
         phuong: row[4] || '-',
@@ -6339,10 +6415,10 @@
         return;
       }
 
-      const saveBtn = document.getElementById('saveBtn');
+      const saveBtn = document.getElementById('saveSourceBtn') || document.getElementById('saveBtn');
       if (saveBtn) {
         saveBtn.disabled = true;
-        saveBtn.innerHTML = '⌛ Đang lưu...';
+        saveBtn.innerHTML = '⌛';
       }
 
       try {
@@ -6481,7 +6557,7 @@
       } finally {
         if (saveBtn) {
           saveBtn.disabled = false;
-          saveBtn.innerHTML = '💾 LƯU THAY ĐỔI';
+          saveBtn.innerHTML = '💾';
         }
       }
     };
