@@ -2435,6 +2435,9 @@
     });
 
     let DATA = [];
+    let secureLoadAttempted = false;
+    let isSecureLoaded = false;
+    let isDataLoaded = false;
     const selDistricts = new Set();
     const selWards = new Set();
     const selDuongs = new Set();
@@ -2597,8 +2600,9 @@
       const now = Date.now();
       const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
 
-      if (isAdmin && isTokenValid) {
+      if (isAdmin && isTokenValid && !secureLoadAttempted) {
         console.log("Loading parallel Admin data...");
+        secureLoadAttempted = true;
         const listContainer = document.getElementById('list');
         if (listContainer) {
           listContainer.innerHTML = '<div style="text-align:center; padding: 40px; font-weight: 700; color: var(--red);">🏠 ĐANG NẠP DỮ LIỆU BẢO MẬT ADMIN SONG SONG...</div>';
@@ -2608,16 +2612,29 @@
         const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
 
         try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
+
           const [sourceRes, poolRes] = await Promise.all([
             fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`, {
-              headers: { 'Authorization': `Bearer ${token}` }
+              headers: { 'Authorization': `Bearer ${token}` },
+              signal: controller.signal
             }),
             fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`, {
-              headers: { 'Authorization': `Bearer ${token}` }
+              headers: { 'Authorization': `Bearer ${token}` },
+              signal: controller.signal
             })
           ]);
 
+          clearTimeout(timeoutId);
+
           if (!sourceRes.ok || !poolRes.ok) {
+            if (sourceRes.status === 401 || sourceRes.status === 403 || poolRes.status === 401 || poolRes.status === 403) {
+              console.warn("OAuth token invalid or unauthorized. Cleared from storage.");
+              localStorage.removeItem('g_access_token');
+              localStorage.removeItem('g_token_expiry');
+              showGoogleLoginButtonState(false);
+            }
             throw new Error(`Lỗi tải API Google Sheets (Source: ${sourceRes.status}, Pool: ${poolRes.status})`);
           }
 
@@ -2754,12 +2771,24 @@
             })
             .filter(Boolean);
 
+          isSecureLoaded = true;
           finalizeData(fullList);
         } catch (err) {
           console.error("Error loading secure admin data, falling back to public:", err);
+          if (err.name === 'AbortError') {
+            console.warn("Secure fetch timed out after 8s. Falling back to public.");
+          }
           loadPublicDataFallback();
         }
       } else {
+        if (isSecureLoaded) {
+          console.log("Secure admin data already loaded, skipping public fallback.");
+          return;
+        }
+        if (isDataLoaded) {
+          console.log("Data already loaded, skipping public reload.");
+          return;
+        }
         loadPublicDataFallback();
       }
     }
@@ -2862,6 +2891,7 @@
     }
 
     function finalizeData(fullList) {
+      isDataLoaded = true;
       if (shareBitmask) {
         const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
         sharedIds = decodeBitmask(shareBitmask, allIds);
@@ -4058,6 +4088,9 @@
             localStorage.setItem('g_access_token', token);
             localStorage.setItem('g_token_expiry', expiry);
             showGoogleLoginButtonState(true);
+            secureLoadAttempted = false;
+            isSecureLoaded = false;
+            isDataLoaded = false;
             loadData();
           }
         });
@@ -4458,6 +4491,9 @@
         document.getElementById('pullDuong').value = '';
         
         // Tải lại dữ liệu web
+        secureLoadAttempted = false;
+        isSecureLoaded = false;
+        isDataLoaded = false;
         loadData();
         
       } catch (err) {
