@@ -1844,12 +1844,12 @@
       border: 1px solid #dfe4ea;
       border-radius: 8px;
       padding: 10px 12px;
-      font-size: 12.5px;
+      font-size: 12px;
       line-height: 1.6;
       margin-bottom: 10px;
       white-space: pre-wrap;
       word-break: break-word;
-      background: #fff;
+      background: #f8f9fa;
     }
 
     .admin-mota-box.red-text {
@@ -2616,11 +2616,11 @@
           const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
 
           const [sourceRes, poolRes] = await Promise.all([
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`, {
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:ZZ`, {
               headers: { 'Authorization': `Bearer ${token}` },
               signal: controller.signal
             }),
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`, {
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:ZZ`, {
               headers: { 'Authorization': `Bearer ${token}` },
               signal: controller.signal
             })
@@ -2720,31 +2720,31 @@
               };
 
               const poolRow = poolRows.find(pr => {
-                const prSystemId = pr[71] || '';
-                const prId = pr[54] || '';
+                const prSystemId = pr[72] || ''; // System ID (Index 72, STT 73)
+                const prId = pr[55] || '';       // Mã Khang Ngô (ID) (Index 55, STT 56)
                 return (p.system_id && prSystemId === p.system_id) || 
                        (p.id && prId === p.id) ||
                        (p.system_id && prId === p.system_id);
               });
 
               if (poolRow) {
-                p.raw_ten_dau_chu = poolRow[74] || '';
-                p.raw_dt_dau_chu = poolRow[73] || '';
-                p.raw_link_fb = poolRow[75] || '';
-                p.raw_noi_dung_chinh = poolRow[9] || '';
-                p.raw_mo_ta_chi_tiet = poolRow[56] || '';
-                p.raw_sodo1 = poolRow[27] || '';
-                p.raw_sodo2 = poolRow[28] || '';
-                p.raw_so_nha = poolRow[6] || '';
-                p.raw_ten_duong = poolRow[5] || '';
-                p.raw_dt_tren_so = poolRow[13] || '';
-                p.raw_gia_chao = poolRow[57] || '';
-                p.raw_so_tang = poolRow[15] || '';
-                p.raw_mat_tien = poolRow[16] || '';
-                p.raw_duong_truoc_nha = poolRow[58] || '';
-                p.raw_do_rong_hem = poolRow[59] || '';
-                p.raw_so_pn = poolRow[63] || '';
-                p.raw_so_wc = poolRow[64] || '';
+                p.raw_ten_dau_chu = poolRow[75] || '';       // Tên Đầu Chủ (Hợp đồng) - Index 75, Column BX
+                p.raw_dt_dau_chu = poolRow[74] || '';        // Điện thoại Đầu Chủ - Index 74, Column BW
+                p.raw_link_fb = poolRow[76] || '';           // Điểm Facebook / Link Facebook - Index 76, Column BY
+                p.raw_noi_dung_chinh = poolRow[9] || '';     // Nội dung chính - Index 9, Column J
+                p.raw_mo_ta_chi_tiet = poolRow[10] || '';    // Mô tả chi tiết - Index 10, Column K
+                p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
+                p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
+                p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
+                p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
+                p.raw_dt_tren_so = poolRow[14] || '';        // DT Trên sổ - Index 14, Column O
+                p.raw_gia_chao = poolRow[11] || '';          // Giá chào - Index 11, Column L
+                p.raw_so_tang = poolRow[15] || '';           // Số Tầng - Index 15, Column P
+                p.raw_mat_tien = poolRow[16] || '';          // Mặt Tiền - Index 16, Column Q
+                p.raw_duong_truoc_nha = poolRow[60] || '';   // Đường trước nhà (m) - Index 60, Column BI
+                p.raw_do_rong_hem = poolRow[61] || '';       // Phân loại Hẻm - Index 61, Column BJ
+                p.raw_so_pn = poolRow[64] || '';             // Số phòng ngủ - Index 64, Column BM
+                p.raw_so_wc = poolRow[65] || '';             // Số nhà vệ sinh - Index 65, Column BN
                 p.pool_row_index = poolRows.indexOf(poolRow) + 2;
               } else {
                 p.raw_ten_dau_chu = '';
@@ -3281,9 +3281,10 @@
         <div class="crow">
           <div class="ibox">
             <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+            ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(52, 152, 219, 0.9); color: white; text-align: center; font-size: 11px; font-weight: 700; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase;">
-              ${p.tinh_trang || 'Bình thường'}
-            </div>
+              ${p.tinh_trang}
+            </div>` : ''}
             <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>
             <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
           </div>
@@ -3502,8 +3503,17 @@
       // Tracking: Xem chi tiết căn nhà
       trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
 
-      document.getElementById('mT').textContent = p.t;
-      document.getElementById('mID').textContent = `#${p.id}`;
+      const mID = document.getElementById('mID');
+      if (isAdmin && p.original_row_data) {
+        document.getElementById('mT').textContent = p.raw_noi_dung_chinh || p.t;
+        if (mID) mID.style.display = 'none';
+      } else {
+        document.getElementById('mT').textContent = p.t;
+        if (mID) {
+          mID.style.display = 'block';
+          mID.textContent = `#${p.id}`;
+        }
+      }
       
       const sbody = document.getElementById('sbody');
       const scta = document.querySelector('.scta');
@@ -3539,10 +3549,11 @@
                 </div>
 
                 <!-- Technical Specs Dotted Grid -->
+                ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
                 <div class="admin-raw-header-row">
-                  <span class="admin-ma-hang">#${p.id}</span>
-                  <span class="admin-status-badge">${p.tinh_trang || 'Bình thường'}</span>
-                </div>
+                  <span>Tình trạng:</span>
+                  <span class="admin-status-badge">${p.tinh_trang}</span>
+                </div>` : ''}
                 <div class="admin-raw-section">
                   <div class="admin-raw-title">📊 THÔNG SỐ KỸ THUẬT THÔ</div>
                   <div class="admin-raw-grid">
@@ -3600,12 +3611,11 @@
                 <div class="admin-map-container"></div>
 
                 <!-- Mô tả boxed -->
-                <div class="admin-mota-title">NỘI DUNG CHÍNH (THÔ)</div>
+                <div class="admin-raw-title" style="margin-top:16px;">📝 NỘI DUNG CHÍNH (THÔ)</div>
                 <div class="admin-mota-box red-text">${p.raw_noi_dung_chinh || 'Chưa có nội dung chính.'}</div>
 
-                <div class="admin-mota-title">MÔ TẢ CHI TIẾT (THÔ)</div>
-                <div class="admin-mota-box black-text collapsible-box" id="adminMotaGocBox">${p.raw_mo_ta_chi_tiet || p.m || 'Chưa có mô tả chi tiết.'}</div>
-                <button class="btn-show-more" id="btnExpandMotaGoc" onclick="toggleMotaGocCollapse()" style="display:none;">Xem thêm ▼</button>
+                <div class="admin-raw-title" style="margin-top:16px;">📝 MÔ TẢ CHI TIẾT (THÔ)</div>
+                <div class="admin-mota-box black-text" id="adminMotaGocBox">${p.raw_mo_ta_chi_tiet || p.m || 'Chưa có mô tả chi tiết.'}</div>
               </div>
             </div>
 
@@ -3752,7 +3762,8 @@
             <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
             <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat} m</div></div>
             <div class="ib"><div class="il">Hướng</div><div class="iv">${p.huong}</div></div>
-            <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>
+            ${(p.tinh_trang && p.tinh_trang !== '-' && p.tinh_trang.toLowerCase() !== 'bình thường') ? `
+            <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>` : ''}
             <div class="ib"><div class="il">Ngủ tầng trệt</div><div class="iv">${p.ngu_tang_tret}</div></div>
             <div class="ib"><div class="il">CHDV</div><div class="iv">${p.chdv}</div></div>
           </div>
@@ -3778,8 +3789,6 @@
           const editDanhGia = document.getElementById('editDanhGia');
           if (editDanhGia) editDanhGia.value = p.danh_gia || '';
 
-          checkMoTaCollapse();
-          
           const mapContainer = document.querySelector('.admin-map-container');
           if (mapContainer) {
             const fullAddress = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
