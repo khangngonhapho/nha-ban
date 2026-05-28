@@ -644,6 +644,14 @@
       z-index: 5;
     }
 
+    /* Hide menus/header/stats when Admin security lock is active (US-039.5) */
+    body.is-locked header,
+    body.is-locked .stats,
+    body.is-locked .mode-segmented-container,
+    body.is-locked .active-col-bar {
+      display: none !important;
+    }
+
     .stats {
       background: #fff;
       border-bottom: 1px solid var(--border);
@@ -2980,6 +2988,7 @@
 
       if (isAdmin && !isTokenValid) {
         console.log("Admin accessed without valid Google token. Displaying Auth Screen...");
+        document.body.classList.add('is-locked');
         showGoogleLoginButtonState(false);
         const listContainer = document.getElementById('list');
         if (listContainer) {
@@ -3004,6 +3013,7 @@
 
       if (isAdmin && isTokenValid && !secureLoadAttempted) {
         console.log("Loading parallel Admin data...");
+        document.body.classList.remove('is-locked');
         secureLoadAttempted = true;
         const listContainer = document.getElementById('list');
         if (listContainer) {
@@ -4741,6 +4751,7 @@
             localStorage.setItem('g_access_token', token);
             localStorage.setItem('g_token_expiry', expiry);
             showGoogleLoginButtonState(true);
+            document.body.classList.remove('is-locked');
             secureLoadAttempted = false;
             isSecureLoaded = false;
             isDataLoaded = false;
