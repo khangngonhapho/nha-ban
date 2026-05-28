@@ -2012,19 +2012,20 @@
       /* Remove margin-top: auto; since parent is display: block */
     }
 
-    /* Premium Gold Accordion Headers */
-    .accordion-header.is-gold {
-      background: linear-gradient(135deg, #f39c12, #f1c40f) !important;
-      color: #1c1c1e !important;
-      border-bottom: 1.5px solid #d4ac0d;
+    /* Premium Red Accordion Headers with reduced height */
+    .accordion-header.is-red {
+      background: var(--red) !important;
+      color: #fff !important;
+      border-bottom: 1.5px solid #a93224;
       font-weight: 850;
       letter-spacing: -0.2px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      padding: 9px 16px !important; /* Reduced height from 13px */
     }
 
-    .accordion-item.expanded .accordion-header.is-gold {
-      background: linear-gradient(135deg, #f39c12, #f1c40f) !important;
-      color: #1c1c1e !important;
+    .accordion-item.expanded .accordion-header.is-red {
+      background: var(--red) !important;
+      color: #fff !important;
     }
 
     .admin-detail-section-title {
@@ -4621,7 +4622,7 @@
           <div class="admin-accordion">
             <!-- ACCORDION 2: BIÊN TẬP CUSTOM - SOURCE -->
             <div class="accordion-item" id="accSource">
-              <div class="accordion-header is-gold" onclick="toggleAdminAccordion(this)">
+              <div class="accordion-header is-red" onclick="toggleAdminAccordion(this)">
                 <span>BIÊN TẬP</span>
                 <span class="arrow">▶</span>
               </div>
@@ -4725,7 +4726,7 @@
 
             <!-- ACCORDION 3: PREVIEW KHÁCH HÀNG -->
             <div class="accordion-item" id="accPreview">
-              <div class="accordion-header is-gold" onclick="toggleAdminAccordion(this)">
+              <div class="accordion-header is-red" onclick="toggleAdminAccordion(this)">
                 <span>📄 PREVIEW KHÁCH HÀNG</span>
                 <span class="arrow">▶</span>
               </div>
@@ -5406,20 +5407,28 @@
     };
 
     function renderImageEditorWidget(p) {
+      const renderedUrls = new Set();
+      
+      function renderUniqueCard(type, index, url, p) {
+        const cleanUrl = String(url || '').trim();
+        if (!cleanUrl || renderedUrls.has(cleanUrl)) return '';
+        renderedUrls.add(cleanUrl);
+        return renderImageCardForEdit(type, index, url, p);
+      }
+
       let html = `
         <div class="admin-edit-group" style="margin-top: 10px;">
           <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CỌ SƠN CHỌN NHANH 🎨)</label>
           
           <!-- IMAGE EDITOR TOOLBAR -->
-          <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: nowrap; overflow-x: auto; width: 100%; box-sizing: border-box;">
-            <span style="font-size: 9.5px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; margin-right: 4px;">Cọ Sơn:</span>
+          <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: nowrap; width: 100%; box-sizing: border-box;">
             <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
               🔒 Mặt Tiền
             </button>
             <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
               ⭐ Nền
             </button>
-            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center;">
+            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center; flex: 0.8;">
               ✕ Hủy
             </button>
           </div>
@@ -5427,20 +5436,20 @@
             💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Nền. Click ảnh bình thường để Ẩn/Hiện!
           </div>
 
-          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
       // 1. Facade photo (Hình Mặt tiền gốc thô)
       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
       if (facadeUrl) {
-        html += renderImageCardForEdit("facade", 0, facadeUrl, p);
+        html += renderUniqueCard("facade", 0, facadeUrl, p);
       }
 
       // 2. Interior clean photos (1 to 15)
       for (let i = 1; i <= 15; i++) {
         const url = p.pool_row_data ? p.pool_row_data[39 + i] : (p.imgs && p.imgs[i - 1]);
         if (url) {
-          html += renderImageCardForEdit("interior", i, url, p);
+          html += renderUniqueCard("interior", i, url, p);
         }
       }
 
@@ -5448,7 +5457,7 @@
       for (let i = 1; i <= 10; i++) {
         const url = p.pool_row_data ? p.pool_row_data[29 + i] : null;
         if (url) {
-          html += renderImageCardForEdit("alley", i, url, p);
+          html += renderUniqueCard("alley", i, url, p);
         }
       }
 
