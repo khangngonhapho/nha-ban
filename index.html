@@ -177,44 +177,69 @@
     /* ── Collapsible filter panel ── */
     .filter-panel {
       display: block;
-      background: #2a0a0a; /* Đỏ Burgundy Rượu Vang Thẫm */
+      background: #f9f8f6; /* Nền kem ngọc trai nhạt siêu sang */
       border-radius: 0 0 16px 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
       padding: 0 16px;
       margin: 0 -16px;
       max-height: 0;
       overflow-y: auto;
       transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
-      color: #fff;
+      color: #2c2c2e; /* Chữ màu xám than chì tối tương phản tốt */
     }
 
     .filter-panel.open {
       max-height: 75vh;
-      border-bottom: 1.5px solid rgba(255,255,255,0.15);
+      border-bottom: 1.5px solid #e2ded6;
       padding: 10px 16px;
     }
 
-    /* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Burgundy & Gold */
+    /* Nhãn phần mục trong filter panel đổi sang màu xám thẫm mờ */
+    .filter-panel .filter-section-lbl {
+      color: rgba(44, 44, 46, 0.6) !important;
+    }
+
+    /* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Warm Cream & Red */
     .filter-panel .tab {
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.85);
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: #ffffff;
+      color: #3a3a3c;
+      border: 1.5px solid #e2ded6;
     }
 
     .filter-panel .tab:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.35);
+      background: #f5f4f0;
+      border-color: #c5bfb2;
+      color: #1c1c1e;
     }
 
     .filter-panel .tab.on {
-      background: var(--gold);
-      color: #2a0a0a;
-      border-color: var(--gold);
+      background: var(--red); /* Nền Đỏ chủ đạo */
+      color: #ffffff; /* Chữ Trắng tinh */
+      border-color: var(--red);
     }
 
     .filter-panel .tab.on:hover {
-      background: #f1b709;
-      border-color: #f1b709;
+      background: #a93224; /* Đỏ sẫm hơn khi hover */
+      border-color: #a93224;
+    }
+
+    /* Các ô nhập thông số range-box đổi sang nền trắng viền xám kem chữ đen */
+    .filter-panel .range-box {
+      background: #ffffff;
+      border: 1.5px solid #e2ded6;
+    }
+
+    .filter-panel .range-box:focus-within {
+      border-color: var(--red);
+      background: #ffffff;
+    }
+
+    .filter-panel .range-box input {
+      color: #2c2c2e;
+    }
+
+    .filter-panel .range-box input::placeholder {
+      color: rgba(44, 44, 46, 0.35);
     }
 
     /* ── Detailed specs range filters ── */
@@ -289,20 +314,28 @@
       position: fixed;
       bottom: 155px;
       right: 20px;
-      background: #1c1c1e;
-      color: #2ecc71;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #27ae60;
       width: 50px;
       height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 24px rgba(192, 57, 43, 0.15);
       z-index: 100;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(192, 57, 43, 0.3);
       cursor: pointer;
       font-size: 20px;
-      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .share-btn-float:hover {
+      background: #ffffff;
+      border-color: rgba(192, 57, 43, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(192, 57, 43, 0.25);
     }
     .share-btn-float:active {
       transform: scale(0.9);
@@ -1272,20 +1305,28 @@
       position: fixed;
       bottom: 225px;
       right: 20px;
-      background: #1c1c1e;
-      color: #3498db;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #0068ff;
       width: 50px;
       height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 24px rgba(192, 57, 43, 0.15);
       z-index: 100;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(192, 57, 43, 0.3);
       cursor: pointer;
       font-size: 18px;
-      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .col-btn-float:hover {
+      background: #ffffff;
+      border-color: rgba(192, 57, 43, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(192, 57, 43, 0.25);
     }
     .col-btn-float:active {
       transform: scale(0.9);
@@ -2181,8 +2222,10 @@
       pointer-events: auto;
     }
     .admin-detail-float-actions .admin-icon-btn {
-      background: #1c1c1e;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(192, 57, 43, 0.3);
       border-radius: 50%;
       width: 48px;
       height: 48px;
@@ -2191,29 +2234,39 @@
       justify-content: center;
       cursor: pointer;
       font-size: 20px;
-      color: #ffffff;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
-      transition: all 0.2s;
+      box-shadow: 0 8px 24px rgba(192, 57, 43, 0.15);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       flex-shrink: 0;
     }
     .admin-detail-float-actions .admin-icon-btn:hover {
-      background: #2c2c2e;
+      background: #ffffff;
+      border-color: rgba(192, 57, 43, 0.6);
       transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(192, 57, 43, 0.25);
     }
     .admin-detail-float-actions .admin-icon-btn:active {
       transform: scale(0.9);
     }
     .admin-detail-float-actions .admin-icon-btn.save-pool-btn {
-      color: #2ecc71;
-      border-color: rgba(46, 204, 113, 0.4);
+      color: #27ae60;
+      border-color: rgba(46, 204, 113, 0.5);
+    }
+    .admin-detail-float-actions .admin-icon-btn.save-pool-btn:hover {
+      border-color: rgba(46, 204, 113, 0.8);
     }
     .admin-detail-float-actions .admin-icon-btn.save-source-btn {
-      color: #2ecc71;
-      border-color: rgba(46, 204, 113, 0.4);
+      color: #27ae60;
+      border-color: rgba(46, 204, 113, 0.5);
+    }
+    .admin-detail-float-actions .admin-icon-btn.save-source-btn:hover {
+      border-color: rgba(46, 204, 113, 0.8);
     }
     .admin-detail-float-actions .admin-icon-btn.zalo-btn {
-      color: #3498db;
-      border-color: rgba(52, 152, 219, 0.4);
+      color: #0068ff;
+      border-color: rgba(52, 152, 219, 0.5);
+    }
+    .admin-detail-float-actions .admin-icon-btn.zalo-btn:hover {
+      border-color: rgba(52, 152, 219, 0.8);
     }
 
     /* Sticky Bottom Footer for Save Button */
@@ -4379,10 +4432,6 @@
         sbody.innerHTML = `
           <!-- THÔNG TIN THÔ - POOL (HIỂN THỊ PHẲNG TRỰC TIẾP) -->
           <div id="accPool" style="margin-bottom: 24px; padding: 0 4px;">
-            <div style="font-size: 13px; font-weight: 800; color: var(--gold); margin-bottom: 16px; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-              <span>📄</span> THÔNG TIN THÔ - POOL
-            </div>
-
             <!-- Carousels -->
             <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
               <div>
@@ -5272,7 +5321,7 @@
       let html = `
         <div class="admin-edit-group" style="margin-top: 10px;">
           <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (VÀNG: NỀN | XANH: PUBLIC)</label>
-          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; max-height: 320px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; max-height: 460px; overflow-y: auto; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
       // 1. Facade photo (Hình Mặt tiền gốc thô)
