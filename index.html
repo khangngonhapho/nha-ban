@@ -5015,9 +5015,30 @@
       document.getElementById('ov').classList.add('open');
       document.getElementById('sbody').scrollTop = 0;
       document.body.style.overflow = 'hidden';
+
+      // Push history state so browser Back button closes the modal instead of exiting the page
+      if (!window.preventPushState) {
+        history.pushState({ detailOpen: true }, "");
+      }
+      window.preventPushState = false;
     }
-    function closeS() { document.getElementById('ov').classList.remove('open'); document.body.style.overflow = ''; }
-    function bgC(e) { if (e.target === document.getElementById('ov')) closeS(); }
+    function closeS(fromPopState = false) { 
+      document.getElementById('ov').classList.remove('open'); 
+      document.body.style.overflow = ''; 
+      
+      // If closed manually (fromPopState = false), pop history if state was pushed
+      if (!fromPopState && history.state && history.state.detailOpen) {
+        history.back();
+      }
+    }
+    function bgC(e) { if (e.target === document.getElementById('ov')) closeS(false); }
+
+    // Listen to popstate event (e.g. Back button pressed)
+    window.addEventListener('popstate', function(event) {
+      if (document.getElementById('ov').classList.contains('open')) {
+        closeS(true);
+      }
+    });
 
     // Admin Tools
     function toggleSelect(id, el) {
