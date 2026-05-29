@@ -5588,7 +5588,7 @@
       }
 
       // Recover current selected public interior/alley indices
-      let currentCover = p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+      let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
       let currentPublicCover = '';
       if (p.pool_row_data) {
         currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
@@ -5627,7 +5627,7 @@
 
     function renderImageCardForEdit(type, index, url, p) {
       let isMatTien = false;
-      if (p.pool_row_data) {
+      if (p.isFromPoolOnly && p.pool_row_data) {
         isMatTien = String(p.pool_row_data[29] || '').trim() === String(url).trim();
       } else {
         isMatTien = String(p.img_mat_tien || '').trim() === String(url).trim();
