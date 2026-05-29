@@ -3194,7 +3194,7 @@
       MAPPED_POOL_DATA = POOL_ROWS.map(row => {
         const systemId = row[72] || row[71] || '';
         const dt = parseFloat(row[13] || row[14]) || 0;
-        const gia = parseGia(row[11] || row[57]);
+        const gia = parseGia(row[11] || row[58]);
         const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
         let rawQ = row[3] || '';
@@ -3257,7 +3257,7 @@
           raw_ten_duong: row[5] || '',
           raw_dt_thuc_te: row[13] || '',
           raw_dt_tren_so: row[14] || '',
-          raw_gia_chao: row[11] || '',
+          raw_gia_chao: row[11] || row[58] || '',
           raw_so_tang: row[15] || '',
           raw_mat_tien: row[16] || '',
           raw_duong_truoc_nha: row[60] || '',
@@ -3587,7 +3587,7 @@
                 p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
                 p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
                 p.raw_dt_tren_so = poolRow[14] || '';        // DT Trên sổ - Index 14, Column O
-                p.raw_gia_chao = poolRow[11] || '';          // Giá chào - Index 11, Column L
+                p.raw_gia_chao = poolRow[11] || poolRow[58] || '';          // Giá chào - Index 11, Column L
                 p.raw_so_tang = poolRow[15] || '';           // Số Tầng - Index 15, Column P
                 p.raw_mat_tien = poolRow[16] || '';          // Mặt Tiền - Index 16, Column Q
                 p.raw_duong_truoc_nha = poolRow[60] || '';   // Đường trước nhà (m) - Index 60, Column BI
@@ -4371,7 +4371,7 @@
         const id = row[55] || row[54] || '';
         const soNha = row[6] || '';
         const duong = row[5] || '';
-        const gia = row[11] || '';
+        const gia = row[11] || row[58] || '';
         const dt = row[14] || '';
         const dauChu = row[75] || '';
         const sdt = row[74] || '';
@@ -5889,7 +5889,7 @@
 
       // Map row to p structure
       const dt = parseFloat(row[13] || row[14]) || 0;
-      const gia = parseGia(row[11] || row[57]);
+      const gia = parseGia(row[11] || row[58]);
       const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
       let rawQ = row[3] || '';
@@ -5952,7 +5952,7 @@
         raw_ten_duong: row[5] || '',
         raw_dt_thuc_te: row[13] || '',
         raw_dt_tren_so: row[14] || '',
-        raw_gia_chao: row[11] || '',
+        raw_gia_chao: row[11] || row[58] || '',
         raw_so_tang: row[15] || '',
         raw_mat_tien: row[16] || '',
         raw_duong_truoc_nha: row[60] || '',
@@ -6012,7 +6012,7 @@
         const id = row[55] || row[54] || '';
         const soNha = row[6] || '';
         const duong = row[5] || '';
-        const gia = row[11] || '';
+        const gia = row[11] || row[58] || '';
         const dt = row[14] || '';
         const dauChu = row[75] || '';
         const sdt = row[74] || '';
@@ -6256,7 +6256,7 @@
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
-          formatGia(matchedRow[11]),     // 8: gia (Cột I)
+          formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
           formatQuan(matchedRow[3]),     // 9: quan (Cột J)
           matchedRow[4],                 // 10: phuong (Cột K)
           loaiHinh,                      // 11: loai_hinh (Cột L)
@@ -7218,7 +7218,7 @@
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
-          formatGia(matchedRow[11]),     // 8: gia (Cột I)
+          formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
           formatQuan(matchedRow[3]),     // 9: quan (Cột J)
           matchedRow[4],                 // 10: phuong (Cột K)
           loaiHinh,                      // 11: loai_hinh (Cột L)
