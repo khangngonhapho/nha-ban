@@ -4858,8 +4858,14 @@
                     </div>
 
                     <div class="admin-edit-group">
-                      <label for="editRongHem">Rộng hẻm (m):</label>
-                      <input type="number" id="editRongHem" step="0.1" value="${p.rong_hem !== '-' ? p.rong_hem : ''}" placeholder="Độ rộng (m)...">
+                      <label for="editTinhTrang">Tình trạng:</label>
+                      <select id="editTinhTrang">
+                        <option value="Bình thường">Bình thường</option>
+                        <option value="Mới">Mới</option>
+                        <option value="Nát">Nát</option>
+                        <option value="Đã bán">Đã bán</option>
+                        <option value="Ẩn">Ẩn</option>
+                      </select>
                     </div>
                   </div>
 
@@ -5013,6 +5019,9 @@
 
           const editDanhGia = document.getElementById('editDanhGia');
           if (editDanhGia) editDanhGia.value = p.danh_gia || '';
+
+          const editTinhTrang = document.getElementById('editTinhTrang');
+          if (editTinhTrang) editTinhTrang.value = p.tinh_trang || 'Bình thường';
 
           const mapContainer = document.querySelector('.admin-map-container');
           if (mapContainer) {
@@ -7013,7 +7022,8 @@
         const huong = document.getElementById('editHuong').value;
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
-        const rongHem = document.getElementById('editRongHem').value.trim();
+        const tinhTrang = document.getElementById('editTinhTrang').value;
+        const rongHem = p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
@@ -7087,6 +7097,7 @@
         p.original_row_data[12] = huong;
         p.original_row_data[13] = duong;
         p.original_row_data[14] = rongHem || '-';
+        p.original_row_data[15] = tinhTrang;
         p.original_row_data[16] = danhGia;
         p.original_row_data[17] = nguTret;
         p.original_row_data[18] = chdv;
@@ -7100,6 +7111,7 @@
         p.huong = huong;
         p.duong_truoc_nha = duong;
         p.rong_hem = rongHem || '-';
+        p.tinh_trang = tinhTrang;
         p.danh_gia = danhGia;
         p.ngu_tang_tret = nguTret;
         p.chdv = chdv;
@@ -7204,7 +7216,8 @@
         const huong = document.getElementById('editHuong').value;
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
-        const rongHem = document.getElementById('editRongHem').value.trim();
+        const tinhTrang = document.getElementById('editTinhTrang').value;
+        const rongHem = matchedRow[59] || '';
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
@@ -7332,7 +7345,7 @@
           huong,                         // 12: huong_nha (Cột M)
           duong,                         // 13: duong_truoc_nha (Cột N)
           rongHem || '-',                // 14: do_rong_hem (Cột O)
-          matchedRow[60] || '-',         // 15: tinh_trang_nha (Cột P)
+          tinhTrang,                     // 15: tinh_trang_nha (Cột P)
           danhGia,                       // 16: danh_gia (Cột Q)
           nguTret,                       // 17: ngu_tang_tret (Cột R)
           chdv,                          // 18: chdv (Cột S)
