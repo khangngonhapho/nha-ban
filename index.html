@@ -4586,7 +4586,7 @@
           if (p.isFromPoolOnly) {
             floatActions.style.display = 'none'; // Will be shown dynamically in updateLivePreview
             floatActions.innerHTML = `
-              <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none;">⚡</button>
+              <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none;">💾</button>
             `;
           } else {
             floatActions.style.display = 'flex';
@@ -4781,9 +4781,9 @@
                       <select id="editDuong">
                         <option value="-">Chưa xác định</option>
                         <option value="Hẻm ba gác">Hẻm ba gác</option>
-                        <option value="Hẻm xe tải lý thuyết">Hẻm xe tải lý thuyết</option>
-                        <option value="Hẻm xe tải">Hẻm xe tải</option>
-                        <option value="Mặt tiền">Mặt tiền</option>
+                        <option value="Hẻm ô tô lý thuyết">Hẻm ô tô lý thuyết</option>
+                        <option value="Hẻm ô tô">Hẻm ô tô</option>
+                        <option value="Mặt tiền đường">Mặt tiền đường</option>
                       </select>
                     </div>
                   </div>
@@ -6256,7 +6256,7 @@
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
-          formatGia(matchedRow[57]),     // 8: gia (Cột I)
+          formatGia(matchedRow[11]),     // 8: gia (Cột I)
           formatQuan(matchedRow[3]),     // 9: quan (Cột J)
           matchedRow[4],                 // 10: phuong (Cột K)
           loaiHinh,                      // 11: loai_hinh (Cột L)
@@ -7064,7 +7064,7 @@
       if (btnElement) {
         oldText = btnElement.innerHTML;
         btnElement.disabled = true;
-        btnElement.innerHTML = '⌛ Đang lên sóng...';
+        btnElement.innerHTML = '⌛';
       }
       
       const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
@@ -7218,7 +7218,7 @@
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
-          formatGia(matchedRow[57]),     // 8: gia (Cột I)
+          formatGia(matchedRow[11]),     // 8: gia (Cột I)
           formatQuan(matchedRow[3]),     // 9: quan (Cột J)
           matchedRow[4],                 // 10: phuong (Cột K)
           loaiHinh,                      // 11: loai_hinh (Cột L)
