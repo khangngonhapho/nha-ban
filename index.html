@@ -4756,6 +4756,8 @@
                     <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
                   </div>
 
+                  ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+
                   ${renderImageEditorWidget(p)}
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -4966,6 +4968,7 @@
 
             if (p.isFromPoolOnly) {
               const savePoolBtn = document.getElementById('savePoolBtn');
+              const poolSaveNotice = document.getElementById('poolSaveNotice');
               if (isFilled) {
                 if (accPreview) {
                   accPreview.style.display = 'block';
@@ -4977,6 +4980,13 @@
                 }
                 if (floatActions) floatActions.style.display = 'flex';
                 if (savePoolBtn) savePoolBtn.style.display = 'flex';
+
+                if (poolSaveNotice) {
+                  poolSaveNotice.style.color = '#27ae60';
+                  poolSaveNotice.style.background = 'rgba(39,174,96,0.08)';
+                  poolSaveNotice.style.borderColor = 'rgba(39,174,96,0.3)';
+                  poolSaveNotice.innerHTML = '✅ Đã đủ điều kiện! Nút Lên sóng ⚡ đã sẵn sàng ở góc dưới bên phải.';
+                }
                 
                 const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
                 const previewDesc = accPreview.querySelector('.desc');
@@ -4986,6 +4996,13 @@
                 if (accPreview) accPreview.style.display = 'none';
                 if (floatActions) floatActions.style.display = 'none';
                 if (savePoolBtn) savePoolBtn.style.display = 'none';
+
+                if (poolSaveNotice) {
+                  poolSaveNotice.style.color = '#e74c3c';
+                  poolSaveNotice.style.background = 'rgba(231,76,60,0.08)';
+                  poolSaveNotice.style.borderColor = 'rgba(231,76,60,0.3)';
+                  poolSaveNotice.innerHTML = '⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡';
+                }
               }
             } else {
               if (accPreview) accPreview.style.display = 'block';
