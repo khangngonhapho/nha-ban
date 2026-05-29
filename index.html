@@ -3808,6 +3808,20 @@
       if (isAdmin) {
         autoLoginOrSilentRefresh();
       }
+
+      // US-049: Tự động mở modal Curation Pool thô nếu Admin mở link của căn chưa public
+      if (isAdmin && shareToken && shareToken.startsWith('SYS-')) {
+        const isOnAir = fullList.some(h => h.system_id === shareToken);
+        if (!isOnAir && POOL_ROWS && POOL_ROWS.length) {
+          const poolRow = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(shareToken).trim());
+          if (poolRow) {
+            setTimeout(() => {
+              openPoolS(shareToken);
+            }, 800);
+            return;
+          }
+        }
+      }
     }
 
     window.triggerAdminAuthPrompt = function() {
@@ -4614,6 +4628,20 @@
         if (scta) scta.style.display = 'none';
         
         sbody.innerHTML = `
+          <!-- QUICK LINK COPY BAR (US-049) -->
+          <div style="background: rgba(255, 191, 36, 0.08); border: 1.5px dashed rgba(255, 191, 36, 0.3); border-radius: 14px; padding: 12px 14px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-sizing: border-box; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 20px; filter: drop-shadow(0 0 4px rgba(255, 191, 36, 0.2));">🔗</span>
+              <div style="text-align: left;">
+                <div style="font-size: 11.5px; font-weight: 850; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px;">Link Gửi Khách Nhanh</div>
+                <div style="font-size: 9.5px; color: rgba(255,255,255,0.65); margin-top: 2px; font-weight: 500; line-height: 1.3;">Copy nhanh link sạch, bypass qua nhập thông tin tracking.</div>
+              </div>
+            </div>
+            <button type="button" onclick="copyQuickClientLink('${p.system_id}')" style="background: var(--gold); color: #1c1c1e; border: none; padding: 9px 15px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255, 191, 36, 0.2); flex-shrink: 0;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+              <span>⚡ Sao Chép</span>
+            </button>
+          </div>
+
           <!-- THÔNG TIN THÔ - POOL (HIỂN THỊ PHẲNG TRỰC TIẾP) -->
           <div id="accPool" style="margin-bottom: 24px; padding: 0 4px;">
             <!-- Carousels -->
@@ -4893,26 +4921,46 @@
         });
         
         sbody.innerHTML = `
+          <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
           <div id="carouselClientDetail" style="position: relative; margin-bottom: 12px;">
             <div class="admin-scroll-carousel"></div>
             <div class="admin-carousel-dots"></div>
           </div>
-          <div class="ig" id="mG">
-            <div class="ib"><div class="il">Giá bán</div><div class="iv hi">${p.gia} tỷ</div></div>
-            <div class="ib"><div class="il">Diện tích</div><div class="iv">${p.dt} m²</div></div>
-            <div class="ib"><div class="il">Đơn giá</div><div class="iv" style="color:var(--gold);font-weight:800">${p.giabq}</div></div>
-            <div class="ib"><div class="il">Quận/TP</div><div class="iv">${p.ql}</div></div>
-            <div class="ib"><div class="il">Phường</div><div class="iv">${p.phuong}</div></div>
-            <div class="ib"><div class="il">Loại</div><div class="iv">${p.loai_hinh}</div></div>
-            <div class="ib"><div class="il">Đường trước</div><div class="iv">${p.duong_truoc_nha}</div></div>
-            <div class="ib"><div class="il">Rộng hẻm</div><div class="iv">${p.rong_hem} m</div></div>
-            <div class="ib"><div class="il">Số tầng</div><div class="iv">${p.tang}</div></div>
-            <div class="ib"><div class="il">Mặt tiền</div><div class="iv">${p.mat} m</div></div>
-            <div class="ib"><div class="il">Hướng</div><div class="iv">${p.huong}</div></div>
-            <div class="ib"><div class="il">Ngủ tầng trệt</div><div class="iv">${p.ngu_tang_tret}</div></div>
-            <div class="ib"><div class="il">CHDV</div><div class="iv">${p.chdv}</div></div>
+          <div class="admin-raw-grid" style="margin-bottom: 12px;">
+            <div class="admin-raw-cell">
+              <span class="label">Giá bán:</span>
+              <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Diện tích:</span>
+              <span class="value dotted">${p.dt} m²</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Đơn giá:</span>
+              <span class="value dotted" style="color:var(--gold); font-weight:800;">${p.giabq}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Quận/TP:</span>
+              <span class="value dotted">${p.ql}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Phường:</span>
+              <span class="value dotted">${p.phuong}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Loại:</span>
+              <span class="value dotted">${p.loai_hinh}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Đường trước:</span>
+              <span class="value dotted">${p.duong_truoc_nha}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Kết cấu:</span>
+              <span class="value dotted">${p.tang} tầng</span>
+            </div>
           </div>
-          <div class="desc" id="mD">${p.m}</div>
+          <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
         `;
         setupScrollCarousel('carouselClientDetail', sortedImgs, false);
       }
@@ -5541,6 +5589,29 @@
 
       return `🔥 CHÍNH CHỦ CẦN BÁN GẤP CĂN NHÀ SIÊU ĐẸP - VỊ TRÍ ĐẮC ĐỊA 🔥\n\n📍 Vị trí: ${typeStr}, thuộc Phường ${phuong}, Quận ${quan}.\n📐 Thông số vàng: Diện tích ${dt}m² (Ngang ${ngang}m x Dài ${dai}m).\n🏗️ Kết cấu: ${ketCau} tầng kiên cố, công năng đầy đủ, nhà sạch dọn vào ở ngay.\n🧭 Hướng: ${huong}.\n💎 Pháp lý: Sổ hồng chính chủ, hoàn công đầy đủ, sang tên công chứng trong ngày.\n💰 Giá bán chỉ: ${gia} tỷ (Thương lượng chính chủ).\n\n📞 Liên hệ ngay Khang Ngô Nhà Phố để xem nhà thực tế và sở hữu bất động sản tốt nhất Quận ${quan}!`;
     }
+
+    window.copyQuickClientLink = function(systemId) {
+      if (!systemId) {
+        showToast("Không tìm thấy System ID của căn nhà này!", "error");
+        return;
+      }
+      const baseUrl = window.location.origin + window.location.pathname;
+      const shareUrl = `${baseUrl}?s=${systemId}`;
+      
+      const ta = document.createElement('textarea');
+      ta.value = shareUrl;
+      ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast("Đã sao chép link gửi nhanh!", "success");
+      } catch (err) {
+        showToast("Không thể tự động sao chép link!", "error");
+      }
+      document.body.removeChild(ta);
+    };
 
     window.shareZaloFromAdminDetail = function(id) {
       SELECTED_IDS.clear();
