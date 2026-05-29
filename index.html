@@ -5588,7 +5588,7 @@
       }
 
       // Recover current selected public interior/alley indices
-      let currentCover = p.img_mat_tien || '';
+      let currentCover = p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
       let currentPublicCover = '';
       if (p.pool_row_data) {
         currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
@@ -5626,7 +5626,12 @@
     }
 
     function renderImageCardForEdit(type, index, url, p) {
-      const isMatTien = String(p.img_mat_tien || '').trim() === String(url).trim();
+      let isMatTien = false;
+      if (p.pool_row_data) {
+        isMatTien = String(p.pool_row_data[29] || '').trim() === String(url).trim();
+      } else {
+        isMatTien = String(p.img_mat_tien || '').trim() === String(url).trim();
+      }
       let isAnhNen = false;
       if (p.pool_row_data) {
         isAnhNen = String(p.pool_row_data[40] || '').trim() === String(url).trim();
@@ -5668,7 +5673,7 @@
         <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isPublic ? 'is-public' : ''}" 
           data-type="${type}" data-index="${index}" data-url="${url}"
           style="position: relative; background: #000; border: ${cardBorder}; border-radius: 8px; overflow: hidden; display: block; width: 100%; box-sizing: border-box;">
-          <div style="position: relative; width: 100%; height: 0; padding-top: 75%; overflow: hidden; cursor: pointer;" 
+          <div class="edit-img-card-wrap" style="position: relative; width: 100%; height: 0; padding-top: 75%; overflow: hidden; cursor: pointer;" 
             onclick="window.onImageCardClick(event, this.closest('.edit-img-card'))">
             <img src="${fixImgUrl(url, 'w200')}" alt="Ảnh ${index}" loading="lazy"
               style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
