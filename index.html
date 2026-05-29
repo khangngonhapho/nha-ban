@@ -4515,6 +4515,25 @@
       });
     }
 
+    // Global keyboard listener for Lightbox navigation (US-050)
+    document.addEventListener('keydown', (e) => {
+      const lb = document.getElementById('lbOverlay');
+      if (lb && lb.classList.contains('open') && currentImgs && currentImgs.length > 0) {
+        if (e.key === 'ArrowRight') {
+          lbMove(1);
+        } else if (e.key === 'ArrowLeft') {
+          lbMove(-1);
+        } else if (e.key === 'Escape') {
+          closeLb();
+        }
+      }
+    });
+
+    window.openLightboxForCarousel = function(imageUrls, index) {
+      currentImgs = imageUrls;
+      openLb(index);
+    };
+
     // ── Gallery ──
     let gI = 0, gN = 0, tx = 0;
     function buildG(imgs) {
@@ -6767,7 +6786,9 @@
         const cleanUrl = fixImgUrl(url, 'w800');
         const item = document.createElement('div');
         item.className = 'admin-carousel-item';
-        item.setAttribute('onclick', `openZoomOverlay('${cleanUrl.replace(/'/g, "\\'")}')`);
+        item.onclick = () => {
+          window.openLightboxForCarousel(imageUrls, idx);
+        };
         item.style.cursor = 'zoom-in';
         item.innerHTML = `<img src="${cleanUrl}" alt="Hình ${idx + 1}" loading="lazy">`;
         track.appendChild(item);
