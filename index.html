@@ -3559,13 +3559,16 @@
                 }
               }
 
-              const allImgs = [
+              const allImgs = poolRow ? [
+                ...poolImgs,
                 ...[
                   sr[20], sr[21], sr[22], sr[23], sr[24],
                   sr[25], sr[26], sr[27], sr[28], sr[29]
-                ].filter(Boolean),
-                ...poolImgs
-              ];
+                ].filter(Boolean)
+              ] : [
+                sr[20], sr[21], sr[22], sr[23], sr[24],
+                sr[25], sr[26], sr[27], sr[28], sr[29]
+              ].filter(Boolean);
               const uniqueImgs = [...new Set(allImgs)];
 
               const p = {
