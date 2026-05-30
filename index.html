@@ -5870,6 +5870,27 @@
       if (p.isFromPoolOnly && p.pool_row_data) {
         currentInteriorIndices = String(p.pool_row_data[61] || '').trim();
         currentAlleyIndices = String(p.pool_row_data[62] || '').trim();
+      } else if (p.pool_row_data) {
+        // Already curated listing with pool row data matched.
+        // We find which raw pool images are currently in the public p.imgs array.
+        const intIndices = [];
+        const normImgs = (p.imgs || []).map(url => normalizeImgUrl(url));
+        for (let i = 1; i <= 15; i++) {
+          const url = p.pool_row_data[39 + i];
+          if (url && normImgs.includes(normalizeImgUrl(url))) {
+            intIndices.push(i);
+          }
+        }
+        currentInteriorIndices = intIndices.join(',');
+
+        const alleyIndices = [];
+        for (let i = 1; i <= 10; i++) {
+          const url = p.pool_row_data[29 + i];
+          if (url && normImgs.includes(normalizeImgUrl(url))) {
+            alleyIndices.push(i);
+          }
+        }
+        currentAlleyIndices = alleyIndices.join(',');
       } else {
         const intIndices = [];
         if (p.imgs) {
@@ -7006,8 +7027,29 @@
         const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
 
         const finalImages = [];
-        let publicCover = publicCoverUrl || (p.pool_row_data[40] || p.pool_row_data[39 + noithatIndices[0]] || p.pool_row_data[29]);
-        if (publicCover) {
+        let publicCover = publicCoverUrl;
+        if (publicCover && window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) {
+          publicCover = '';
+        }
+        if (!publicCover) {
+          const candidates = [];
+          if (p.pool_row_data[40] && (!window.isListingSodoUrl || !window.isListingSodoUrl(p.pool_row_data[40], p))) {
+            candidates.push(p.pool_row_data[40]);
+          }
+          if (p.pool_row_data[29] && (!window.isListingSodoUrl || !window.isListingSodoUrl(p.pool_row_data[29], p))) {
+            candidates.push(p.pool_row_data[29]);
+          }
+          for (let i = 0; i < noithatIndices.length; i++) {
+            const url = p.pool_row_data[39 + noithatIndices[i]];
+            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p))) {
+              candidates.push(url);
+              break;
+            }
+          }
+          publicCover = candidates[0] || '';
+        }
+
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p))) {
           finalImages.push(publicCover);
         }
         
@@ -7016,7 +7058,7 @@
         for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
           const hemIdx = hemIndices[i];
           const hemUrl = p.pool_row_data[29 + hemIdx];
-          if (hemUrl) {
+          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p))) {
             finalImages.push(hemUrl);
             addedHem++;
           }
@@ -7025,7 +7067,7 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = p.pool_row_data[39 + imgIdx];
-          if (imgUrl && imgUrl !== publicCover && finalImages.length < 10) {
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && finalImages.length < 10) {
             finalImages.push(imgUrl);
           }
         }
@@ -7033,13 +7075,13 @@
       } else {
         const finalImages = [];
         const publicCover = publicCoverUrl || (p.imgs && p.imgs[0]);
-        if (publicCover) {
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p))) {
           finalImages.push(publicCover);
         }
         
         if (p.imgs) {
           p.imgs.forEach(url => {
-            if (url && url !== publicCover && !finalImages.includes(url)) {
+            if (url && url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p))) {
               finalImages.push(url);
             }
           });
@@ -7540,11 +7582,26 @@
           }
         }
 
-        showToast("Đã lưu thay đổi lên Google Sheets thành công! Đang tải lại trang...");
-        localStorage.setItem('auto_preview_listing_id', id);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        showToast("Đã lưu thay đổi lên Google Sheets thành công!", "success");
+        
+        // Re-render list cards in the background to reflect changes in-place
+        if (typeof render === 'function') {
+          render();
+        }
+
+        // Focus and expand the Customer Preview section in-place without page reload (US-046.4)
+        const accPreview = document.getElementById('accPreview');
+        if (accPreview) {
+          accPreview.classList.add('expanded');
+          const content = accPreview.querySelector('.accordion-content');
+          if (content) content.style.maxHeight = content.scrollHeight + 'px';
+          const arrow = accPreview.querySelector('.arrow');
+          if (arrow) arrow.style.transform = 'rotate(180deg)';
+          
+          setTimeout(() => {
+            accPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 300);
+        }
       } catch (err) {
         console.error("Lỗi lưu dữ liệu:", err);
         showToast(`Lỗi lưu thay đổi: ${err.message}`, "error");
