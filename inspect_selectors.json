@@ -1,0 +1,414 @@
+[
+  {
+    "tag": "input",
+    "id": "txtNumberTab",
+    "name": null,
+    "value": "0"
+  },
+  {
+    "tag": "input",
+    "id": "app",
+    "name": null,
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sTenTinh",
+    "name": null,
+    "value": "Tp. Hồ Chí Minh"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sTenQuan",
+    "name": null,
+    "value": "Gò Vấp"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sTenPhuongXa",
+    "name": null,
+    "value": "Hạnh Thông"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sDiaChi",
+    "name": "Detail_sDiaChi",
+    "value": "165"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sDuongPho",
+    "name": "Detail_sDuongPho",
+    "value": "Nguyễn Văn Công"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iTrangThai",
+    "name": null,
+    "value": "Chuẩn"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_bCamKetChuan",
+    "name": "Detail_bCamKetChuan",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_bCamKetChuan_Kem_",
+    "name": "Detail_bCamKetChuan_Kem_",
+    "value": "1"
+  },
+  {
+    "tag": "textarea",
+    "id": "Detail_sNoiDung",
+    "name": "Detail_sNoiDung",
+    "value": ""
+  },
+  {
+    "tag": "select",
+    "id": "Detail_sLoaiHang",
+    "name": "Detail_sLoaiHang",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDienTichSo_show",
+    "name": "Detail_iDienTichSo_show",
+    "value": "126.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDienTichSo",
+    "name": "Detail_iDienTichSo",
+    "value": "126.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDienTich_show",
+    "name": "Detail_iDienTich_show",
+    "value": "126.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDienTich",
+    "name": "Detail_iDienTich",
+    "value": "126.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iMatTien_show",
+    "name": "Detail_iMatTien_show",
+    "value": "6.5"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iMatTien",
+    "name": "Detail_iMatTien",
+    "value": "6.5"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDai_show",
+    "name": "Detail_iDai_show",
+    "value": "18.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDai",
+    "name": "Detail_iDai",
+    "value": "18.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDuongVao_show",
+    "name": "Detail_iDuongVao_show",
+    "value": "10.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iDuongVao",
+    "name": "Detail_iDuongVao",
+    "value": "10.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoTang_show",
+    "name": "Detail_iSoTang_show",
+    "value": "6.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoTang",
+    "name": "Detail_iSoTang",
+    "value": "6.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoPhongNgu_show",
+    "name": "Detail_iSoPhongNgu_show",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoPhongNgu",
+    "name": "Detail_iSoPhongNgu",
+    "value": "0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoToilet_show",
+    "name": "Detail_iSoToilet_show",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoToilet",
+    "name": "Detail_iSoToilet",
+    "value": "0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoBanCong_show",
+    "name": "Detail_iSoBanCong_show",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iSoBanCong",
+    "name": "Detail_iSoBanCong",
+    "value": "0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iGiaChaoHopDong_show",
+    "name": "Detail_iGiaChaoHopDong_show",
+    "value": "28,000"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iGiaChaoHopDong",
+    "name": "Detail_iGiaChaoHopDong",
+    "value": "28000"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iPhanTramHoaHong_show",
+    "name": "Detail_iPhanTramHoaHong_show",
+    "value": "3.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iPhanTramHoaHong",
+    "name": "Detail_iPhanTramHoaHong",
+    "value": "3.0"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iTienHoaHong_show",
+    "name": "Detail_iTienHoaHong_show",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iTienHoaHong",
+    "name": "Detail_iTienHoaHong",
+    "value": "0"
+  },
+  {
+    "tag": "select",
+    "id": "Detail_iID_HuongNha",
+    "name": "Detail_iID_HuongNha",
+    "value": "-- Chọn Hướng --"
+  },
+  {
+    "tag": "select",
+    "id": "Detail_iID_Nguon",
+    "name": "Detail_iID_Nguon",
+    "value": "Đối tác"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sDienThoaiNguonHang",
+    "name": "Detail_sDienThoaiNguonHang",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sDienThoaiDauChu",
+    "name": "Detail_sDienThoaiDauChu",
+    "value": "0325319777"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sHopDongDauChu",
+    "name": "Detail_sHopDongDauChu",
+    "value": "Nguyễn Văn Chuyền"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iLat_show",
+    "name": "Detail_iLat_show",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iLat",
+    "name": "Detail_iLat",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iLng_show",
+    "name": "Detail_iLng_show",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iLng",
+    "name": "Detail_iLng",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_sSoSoDo",
+    "name": "Detail_sSoSoDo",
+    "value": "*"
+  },
+  {
+    "tag": "input",
+    "id": "PublicFile-4655706",
+    "name": "PublicFile",
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "PublicFile-4655707",
+    "name": "PublicFile",
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "PublicFile-4655708",
+    "name": "PublicFile",
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "PublicFile-4655709",
+    "name": "PublicFile",
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "PublicFile-4655710",
+    "name": "PublicFile",
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "PublicFile-4655711",
+    "name": "PublicFile",
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "PublicFile-4655712",
+    "name": "PublicFile",
+    "value": "False"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iID_Hang",
+    "name": "Detail_iID_Hang",
+    "value": "5doqch-mpm2927m-9293a611"
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iID_Hang",
+    "name": "Detail_iID_Hang",
+    "value": "5doqch-mpm2927m-9293a611"
+  },
+  {
+    "tag": "input",
+    "id": "actionDC",
+    "name": "Detail_actionDC",
+    "value": ""
+  },
+  {
+    "tag": "textarea",
+    "id": "",
+    "name": "Detail_sLydoDinhChi",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "txtid",
+    "name": "txtid",
+    "value": "5doqch-mpm2927m-9293a611"
+  },
+  {
+    "tag": "textarea",
+    "id": "txtGhiChu",
+    "name": "txtGhiChu",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "bkhobank",
+    "name": "bkhobank",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "bid",
+    "name": "bid",
+    "value": "5doqch-mpm2927m-9293a611"
+  },
+  {
+    "tag": "input",
+    "id": "bowner",
+    "name": "bowner",
+    "value": "0908130555"
+  },
+  {
+    "tag": "textarea",
+    "id": "bGhiChu",
+    "name": "bGhiChu",
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "Detail_iID_Hang",
+    "name": "Detail_iID_Hang",
+    "value": "5doqch-mpm2927m-9293a611"
+  },
+  {
+    "tag": "input",
+    "id": "hId",
+    "name": null,
+    "value": ""
+  },
+  {
+    "tag": "input",
+    "id": "hCheckManHinh",
+    "name": null,
+    "value": "0"
+  },
+  {
+    "tag": "input",
+    "id": "hUserName",
+    "name": null,
+    "value": "0908130555"
+  },
+  {
+    "tag": "span",
+    "id": "Detail_Nội dung-error",
+    "text": ""
+  },
+  {
+    "tag": "span",
+    "id": "Detail_sDienThoaiNguonHang-error",
+    "text": ""
+  }
+]

@@ -1,0 +1,3 @@
+98:                      "- Vị trí: Quận, Phường (mới). Mô tả hẻm (Ví dụ: \"Hẻm Xe Hơi 5m\", \"Hẻm rộng thoáng\") kèm cụm từ \"gần mặt tiền\".\n" +
+205:                      "   - Nếu nhà là Mặt tiền hoặc hẻm dưới 4.0m và không thuộc phân loại trên, TUYỆT ĐỐI KHÔNG thêm chữ `HXH ` mà chỉ để tên đường thông thường (Ví dụ: `Đường CMT8`).\n" +
+428:     "Hẻm xe hơi", "Mặt tiền", "Cần bán", "Gấp"

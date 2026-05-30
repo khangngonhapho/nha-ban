@@ -1,0 +1,264 @@
+Line 22: /* ======= PASTE SHEET ID CỦA BẠN VÀO ĐÂY (xem hướng dẫn bên dưới) ======= */
+Line 43: body.is-admin .tabs,
+Line 44: body.is-admin .stats {
+Line 53: body.is-admin #wardTabs.has-wards {
+Line 61: body.is-admin #duongTabs.has-duong {
+Line 69: body.is-admin #huongTabs.has-huong {
+Line 73: body:not(.is-admin) header {
+Line 77: .admin-only {
+Line 81: body.is-admin .admin-only {
+Line 85: body.is-admin #gLoginBtn {
+Line 89: body.is-admin #modeSwitcherContainer {
+Line 177: body.is-admin .sort-icon-btn.admin-only {
+Line 722: .admin-toggle-switch input:checked + .slider {
+Line 725: .admin-toggle-switch input:checked + .slider:before {
+Line 728: .admin-toggle-switch .slider:before {
+Line 741: /* Hide menus/header/stats when Admin security lock is active (US-039.5) */
+Line 869: /* Biến Bottom Sheet thành Modal giữa màn hình */
+Line 875: .sheet {
+Line 1356: .sheet {
+Line 1730: /* ADMIN VIEW & US-039 STYLES                                  */
+Line 1732: body.is-admin .card {
+Line 1741: .admin-card-inner {
+Line 1747: .admin-card-left {
+Line 1754: .admin-img-wrapper {
+Line 1762: .admin-img-wrapper img {
+Line 1771: .admin-img-wrapper img.loaded {
+Line 1775: .admin-status-tag {
+Line 1789: .admin-card-right {
+Line 1799: .admin-card-title {
+Line 1812: .admin-card-details {
+Line 1819: .admin-card-line {
+Line 1828: .admin-card-line.phone-line {
+Line 1832: .admin-card-line.phone-line a {
+Line 1839: .admin-card-right .heart {
+Line 1856: .admin-card-right .heart.on {
+Line 1860: /* Admin Accordion details view */
+Line 1861: .admin-accordion {
+Line 1907: .admin-scroll-carousel {
+Line 1919: .admin-scroll-carousel::-webkit-scrollbar {
+Line 1923: .admin-carousel-item {
+Line 1934: .admin-carousel-item img {
+Line 1940: .admin-carousel-dots {
+Line 1947: .admin-dot {
+Line 1955: .admin-dot.on {
+Line 2034: .admin-detail-section-title {
+Line 2045: .admin-raw-header-row {
+Line 2056: .admin-status-badge {
+Line 2065: .admin-ma-hang {
+Line 2070: .admin-raw-section {
+Line 2074: .admin-raw-title {
+Line 2082: .admin-raw-grid {
+Line 2089: .admin-raw-cell {
+Line 2096: .admin-raw-cell .label {
+Line 2102: .admin-raw-cell .value {
+Line 2114: .admin-raw-price-row {
+Line 2123: .admin-raw-price-row .label {
+Line 2127: .admin-raw-price-row .value {
+Line 2134: .admin-raw-source {
+Line 2153: .admin-mota-title {
+Line 2164: .admin-mota-box {
+Line 2176: .admin-mota-box.red-text {
+Line 2181: .admin-mota-box.black-text {
+Line 2228: .admin-map-container {
+Line 2239: /* Admin Editable Form Elements */
+Line 2240: .admin-edit-form {
+Line 2246: .admin-edit-group {
+Line 2252: .admin-edit-group.row-group {
+Line 2258: .admin-edit-group.row-group label {
+Line 2263: .admin-edit-group label {
+Line 2269: .admin-edit-group input[type="text"],
+Line 2270: .admin-edit-group input[type="number"],
+Line 2271: .admin-edit-group select,
+Line 2272: .admin-edit-group textarea {
+Line 2284: .admin-edit-group input[type="text"]:focus,
+Line 2285: .admin-edit-group input[type="number"]:focus,
+Line 2286: .admin-edit-group select:focus,
+Line 2287: .admin-edit-group textarea:focus {
+Line 2291: .admin-edit-group input[type="checkbox"] {
+Line 2299: .admin-header-actions {
+Line 2304: .admin-detail-float-actions {
+Line 2314: .admin-detail-float-actions .admin-icon-btn {
+Line 2330: .admin-detail-float-actions .admin-icon-btn:hover {
+Line 2335: .admin-detail-float-actions .admin-icon-btn:active {
+Line 2338: .admin-detail-float-actions .admin-icon-btn.save-pool-btn {
+Line 2342: .admin-detail-float-actions .admin-icon-btn.save-source-btn {
+Line 2346: .admin-detail-float-actions .admin-icon-btn.zalo-btn {
+Line 2351: /* Sticky Bottom Footer for Save Button */
+Line 2352: .admin-sticky-footer {
+Line 2365: .admin-save-btn {
+Line 2385: .admin-save-btn:disabled {
+Line 2449: .admin-detail-section-title {
+Line 2452: .admin-raw-title {
+Line 2455: .admin-raw-cell .label {
+Line 2458: .admin-raw-cell .value {
+Line 2461: .admin-raw-source {
+Line 2464: .admin-raw-header-row {
+Line 2467: .admin-mota-box {
+Line 2473: #carouselClientPreview .admin-raw-cell .value,
+Line 2474: #carouselClientDetail .admin-raw-cell .value {
+Line 2495: /* Collections / Favorites / Zalo Sheet Share display text overrides */
+Line 2496: .fav-title, .fav-count, .save-list-item, .collection-chip {
+Line 2510: <button class="sort-icon-btn admin-only" id="sortNewBtn" onclick="toggleSortNew()"
+Line 2512: <button class="sort-icon-btn admin-only" id="sortPriceBtn" onclick="toggleSortPrice()"
+Line 2516: <button class="admin-only" id="gLoginBtn" onclick="handleGoogleLoginClick()"
+Line 2558: <!-- Admin: thông tin bộ lọc hiện tại -->
+Line 2645: <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
+Line 2646: <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(0,0,0,0.03); border: 1.5px solid #e2ded6; border-radius: 12px; 
+Line 2648: <div class="filter-section-lbl admin-only">Cấu hình Google Admin</div>
+Line 2649: <div class="admin-only"
+Line 2679: <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: none; justify-content: flex-end; align-items: center; back
+Line 2682: <label class="admin-toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 22px; margin-bottom: 0;">
+Line 2732: <div class="sheet" style="position: relative;">
+Line 2736: <div class="admin-header-actions" id="adminHeaderActions"></div>
+Line 2739: <div class="admin-detail-float-actions" id="adminDetailFloatActions"></div>
+Line 2762: <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+Line 2804: <!-- Modal Xem Bộ sưu tập (Admin) -->
+Line 2806: <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+Line 2818: <!-- Modal Lưu các căn đã chọn vào BST (Admin) -->
+Line 2820: <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+Line 2845: // [Latest Update / User Story]
+Line 2846: // - US-029: Sắp xếp theo Sản phẩm mới thêm mặc định trên danh sách, thêm nút xếp thời gian ⏱️ kế bên xếp giá 💰 trên thanh điều khiển của Admin (Cập n
+Line 2847: // - US-028: Đồng bộ cơ chế nén Bitmask gửi khách nhiều căn (?b=...) siêu ngắn cho cả hai luồng Admin, giữ URL cực ngắn tránh bị Zalo/Messenger cắt ng
+Line 2854: // Auto-detect admin from active valid Google token in localStorage (US-049.2)
+Line 2860: // Check persistent admin session flag in localStorage (US-049.2 Refinement)
+Line 2908: if (isAdmin || !trackingCustomerName) return; // Không track Admin
+Line 2932: document.body.classList.add('is-admin');
+Line 3001: // Hàm sinh tiêu đề Admin thống nhất từ Nội dung chính (US-039.7)
+Line 3031: let activeMode = isAdmin ? 'pool' : 'source'; // Mặc định Pool cho Admin khi vào trang (US-039.7)
+Line 3396: // LỌC THEO BỘ SƯU TẬP HOẶC DANH SÁCH YÊU THÍCH CỦA ADMIN
+Line 3440: console.log("Admin accessed without valid Google token. Displaying Auth Screen...");
+Line 3446: <div class="admin-auth-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text
+Line 3456: <span>⚡ ĐĂNG NHẬP GOOGLE ADMIN</span>
+Line 3465: console.log("Loading parallel Admin data...");
+Line 3470: listContainer.innerHTML = '<div style="text-align:center; padding: 40px; font-weight: 700; color: var(--red);">🏠 ĐANG NẠP DỮ LIỆU BẢO MẬT ADMIN SONG S
+Line 3651: console.error("Error loading secure admin data, falling back to public:", err);
+Line 3659: console.log("Secure admin data already loaded, skipping public fallback.");
+Line 3759: // Securely load frontage images via serverless API proxy in the background if Admin is logged in (US-024)
+Line 3765: console.log("Admin session detected in public fallback. Initiating background facade images retrieval...");
+Line 3841: // US-049: Tự động mở modal Curation Pool thô nếu Admin mở link của căn chưa public
+Line 3878: const pw = prompt("Nhập mật khẩu Admin để đăng nhập:");
+Line 3888: alert("Sai mật khẩu Admin!");
+Line 3899: 🔒 Đăng nhập Admin
+Line 4692: <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="d
+Line 4697: <button class="admin-icon-btn save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi">💾</button>
+Line 4698: <button class="admin-icon-btn zalo-btn" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo">🔗</button>
+Line 4732: <div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
+Line 4734: <div class="admin-scroll-carousel"></div>
+Line 4735: <div class="admin-carousel-dots"></div>
+Line 4740: <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
+Line 4742: <div class="admin-scroll-carousel"></div>
+Line 4743: <div class="admin-carousel-dots"></div>
+Line 4750: <div class="admin-mota-box red-text" style="margin-top:14px; margin-bottom:8px; font-size:12px;">${formatRawDescription(cleanedNoiDungChinh) || 'Chưa 
+Line 4751: <div class="admin-mota-box black-text" id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet ||
+Line 4754: <div class="admin-raw-section">
+Line 4755: <div class="admin-raw-title">Thông tin</div>
+Line 4756: <div class="admin-raw-grid">
+Line 4757: <div class="admin-raw-cell">
+Line 4761: <div class="admin-raw-cell">
+Line 4765: <div class="admin-raw-cell">
+Line 4769: <div class="admin-raw-cell">
+Line 4773: <div class="admin-raw-cell">
+Line 4777: <div class="admin-raw-cell">
+Line 4781: <div class="admin-raw-cell">
+Line 4785: <div class="admin-raw-cell">
+Line 4789: <div class="admin-raw-cell">
+Line 4793: <div class="admin-raw-cell">
+Line 4800: <div class="admin-raw-section" style="margin-top: 14px;">
+Line 4801: <div class="admin-raw-title">Thông tin nguồn</div>
+Line 4802: <div class="admin-raw-source">
+Line 4816: <div class="admin-raw-section" style="margin-top: 14px;">
+Line 4817: <div class="admin-raw-title">Thông tin đầu chủ</div>
+Line 4818: <div class="admin-raw-source">
+Line 4833: <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
+Line 4834: <div class="admin-map-container"></div>
+Line 4837: <div class="admin-accordion">
+Line 4845: <form class="admin-edit-form" onsubmit="event.preventDefault()">
+Line 4846: <div class="admin-edit-group">
+Line 4847: <label for="editNote">Ghi chú riêng (Note - Chỉ Admin thấy):</label>
+Line 4851: <div class="admin-edit-group">
+Line 4856: <div class="admin-edit-group">
+Line 4864: <div class="admin-edit-group">
+Line 4874: <div class="admin-edit-group">
+Line 4889: <div class="admin-edit-group">
+Line 4902: <div class="admin-edit-group">
+Line 4911: <div class="admin-edit-group">
+Line 4924: <div class="admin-edit-group">
+Line 4929: <div class="admin-edit-group">
+Line 4936: <div class="admin-edit-group row-group">
+Line 4941: <div class="admin-edit-group row-group">
+Line 4960: <div class="admin-scroll-carousel"></div>
+Line 4961: <div class="admin-carousel-dots"></div>
+Line 4963: <div class="admin-raw-grid" style="margin-bottom: 12px;">
+Line 4964: <div class="admin-raw-cell">
+Line 4968: <div class="admin-raw-cell">
+Line 4972: <div class="admin-raw-cell">
+Line 4976: <div class="admin-raw-cell">
+Line 4980: <div class="admin-raw-cell">
+Line 4984: <div class="admin-raw-cell">
+Line 4988: <div class="admin-raw-cell">
+Line 4992: <div class="admin-raw-cell">
+Line 5014: <div class="admin-scroll-carousel"></div>
+Line 5015: <div class="admin-carousel-dots"></div>
+Line 5017: <div class="admin-raw-grid" style="margin-bottom: 12px;">
+Line 5018: <div class="admin-raw-cell">
+Line 5022: <div class="admin-raw-cell">
+Line 5026: <div class="admin-raw-cell">
+Line 5030: <div class="admin-raw-cell">
+Line 5034: <div class="admin-raw-cell">
+Line 5038: <div class="admin-raw-cell">
+Line 5042: <div class="admin-raw-cell">
+Line 5046: <div class="admin-raw-cell">
+Line 5077: const mapContainer = document.querySelector('.admin-map-container');
+Line 5105: // Update the preview carousel dynamically
+Line 5221: // Admin Tools
+Line 5369: // Thêm nút tạo link nếu là admin
+Line 5465: //  🔑 GOOGLE OAUTH2 & SECURE FACADE IMAGE FETCHING (US-024)
+Line 5505: localStorage.setItem('isAdminSession', 'true'); // Save admin session flag (US-049.2 Refinement)
+Line 5515: // Auto silent refresh on initialization if Admin (US-049.2 Refinement)
+Line 5525: alert("Vui lòng nhập Google OAuth Client ID của bạn ở mục 'Cấu hình Google Admin' trong Bộ lọc trước!");
+Line 5602: const url = `/api/get-facade-images`;
+Line 5634: // Merge facade images
+Line 5641: console.log("Securely fetched and merged", Object.keys(facadeMap).length, "facade images.");
+Line 5645: console.error("Error fetching facade images from private sheet:", err);
+Line 5794: if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
+Line 5818: // - Role slots (interior 1 (cover), sodo 1, sodo 2, facade 0) are evaluated last.
+Line 5822: ...cards.filter(c => (c.type === 'interior' && c.index === 1) || c.type === 'sodo' || c.type === 'facade')
+Line 5849: <div class="admin-edit-group" style="margin-top: 10px;">
+Line 5854: <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,
+Line 5987: if (type === "facade" || type === "sodo") {
+Line 6027: const typeBadge = type === "facade" ? "Mặt Tiền" : (type === "sodo" ? `Sổ ${index}` : (type === "interior" ? `Nội Thất ${index}` : `Hẻm ${index}`));
+Line 6028: const badgeColor = type === "facade" ? "var(--red)" : (type === "sodo" ? "#8e44ad" : (type === "interior" ? "var(--green)" : "var(--blue)"));
+Line 6055: ${type !== "facade" && type !== "sodo" ? `
+Line 6093: if (tool === 'facade') {
+Line 6120: if (tool === 'facade') {
+Line 6535: // Step 1: Đọc toàn bộ Sheet Pool
+Line 6542: throw new Error(`Không thể kết nối Sheet Pool (Mã: ${poolRes.status}). Kiểm tra quyền truy cập Sheet!`);
+Line 6579: // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp
+Line 6586: throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}). Kiểm tra quyền truy cập Sheet!`);
+Line 6696: // Xây dựng publicRowData 41 cột cho Sheet Source
+Line 6741: // Step 4: Ghi đè/Thêm mới vào Sheet Source
+Line 6753: throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
+Line 6756: // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
+Line 7041: //  ⚡ ADMIN CURATION DASHBOARD EXTRA HELPERS (US-039)
+Line 7096: // p.pool_row_data[29] (raw facade) is completely excluded!
+Line 7152: const track = container.querySelector('.admin-scroll-carousel');
+Line 7153: const dotsContainer = container.querySelector('.admin-carousel-dots');
+Line 7167: item.className = 'admin-carousel-item';
+Line 7176: dot.className = 'admin-dot' + (idx === 0 ? ' on' : '');
+Line 7184: const dots = dotsContainer.querySelectorAll('.admin-dot');
+Line 7443: // p.pool_row_data[29] is completely removed here as it is the raw Facade image!
+Line 7480: // Cập nhật lại 10 cột ảnh sạch trên Source Sheet
+Line 7491: // If custom cover URL is a Sổ or Facade, clear it
+Line 7499: // If the cover image in original_row_data[20] is a Sổ or Facade, replace it!
+Line 7511: // Gather all non-sổ and non-facade public images
+Line 7520: // Re-update public cover if editPublicCoverUrl was set and valid
+Line 7705: // Step 1: Đọc Sheet Pool để lấy dòng gốc
+Line 7712: throw new Error(`Không thể kết nối Sheet Pool (Mã: ${poolRes.status}).`);
+Line 7742: // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
+Line 7749: throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}).`);
+Line 7812: // matchedRow[29] (raw facade) is completely removed here as it is the raw Facade image!
+Line 7886: // Xây dựng publicRowData 41 cột cho Sheet Source
+Line 7931: // Step 4: Ghi đè/Thêm mới vào Sheet Source
+Line 7943: throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
+Line 7946: // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool

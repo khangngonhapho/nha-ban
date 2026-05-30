@@ -1,0 +1,12 @@
+
+=== Matches for 'showToast' ===
+Line 5873: showToast("Dữ liệu Pool chưa được nạp!", "error");
+Line 5886: showToast("Không tìm thấy căn nhà này trong Pool thô!", "error");
+Line 6823: window.showToast = function(msg, type = 'success') {
+Line 6883: showToast("Không tìm thấy thông tin căn nhà!", "error");
+Line 6892: showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+Line 7039: showToast("Đã lưu thay đổi lên Google Sheets thành công!");
+Line 7044: showToast(`Lỗi lưu thay đổi: ${err.message}`, "error");
+Line 7059: showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+Line 7299: showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}!`);
+Line 7324: showToast(`❌ Lỗi đồng bộ: ${err.message}`, "error");

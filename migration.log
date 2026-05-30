@@ -1,0 +1,518 @@
+======================================================================
+🚀 BẮT ĐẦU QUY TRÌNH SỬA LỖI NÉN ẢNH SƠ ĐỒ THỬA ĐẤT CHO 5000 CĂN ĐÃ DI CƯ
+⚡ [KÍCH HOẠT US-040] Hệ thống sẽ tự động xuất bản (Publish) lên Google Sheets Pool!
+======================================================================
+[i] Tìm thấy 3997 căn đã di cư có chứa ảnh sơ đồ.
+[1/3997] Căn 5doqch-mpm2927m-9293a611: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (93KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155382/BDS-KhangNgo/5doqch-mpm2927m-9293a611/nedyfgzbuzqtuvbn8dlg.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn 5doqch-mpm2927m-9293a611!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 165 Nguyễn Văn Công, Quận Gò Vấp                   │
+  │    - Tiêu đề: 165 Nguyễn Văn Công 126 6 6.5 18 28 tỷ Hạnh Thôn  ... │
+  │    - Mã TK  : 5doqch-mpm2927m-9293a611                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155382/BDS-KhangNgo/5doqch-mpm2927m-9293a611/nedyfgzbuzqtuvbn8dlg.jpg
+  [🌐 Trình duyệt] Đang tự động mở sơ đồ siêu nét của căn trên trình duyệt...
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn 5doqch-mpm2927m-9293a611 lên Google Sheets...
+[22:33:41] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:33:47] [ℹ] Phát hiện Mã Hàng TK-93A611 đã tồn tại ở dòng 160 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:33:48] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 160)...
+[22:33:50] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn 5doqch-mpm2927m-9293a611!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn 5doqch-mpm2927m-9293a611 lên Google Sheets Pool!
+[2/3997] Căn fjc7ue-mpm1br97-ebeb9de: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (150KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155403/BDS-KhangNgo/fjc7ue-mpm1br97-ebeb9de/m3k4kqfesrfggxja4hsh.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn fjc7ue-mpm1br97-ebeb9de!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 45.2D Nhiêu Tứ, Quận Phú Nhuận                     │
+  │    - Tiêu đề: 45.2D Nhiêu Tứ 14 3 3.4 4 4.2 tỷ Cầu Kiệu Phú Nh  ... │
+  │    - Mã TK  : fjc7ue-mpm1br97-ebeb9de                            │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155403/BDS-KhangNgo/fjc7ue-mpm1br97-ebeb9de/m3k4kqfesrfggxja4hsh.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn fjc7ue-mpm1br97-ebeb9de lên Google Sheets...
+[22:34:04] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:34:10] [ℹ] Phát hiện Mã Hàng TK-BEB9DE đã tồn tại ở dòng 161 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:34:10] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 161)...
+[22:34:11] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn fjc7ue-mpm1br97-ebeb9de!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn fjc7ue-mpm1br97-ebeb9de lên Google Sheets Pool!
+[3/3997] Căn exh94s-mplycn0g-1f6767ba: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (165KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155425/BDS-KhangNgo/exh94s-mplycn0g-1f6767ba/xpomabstt2ovx25rq1tk.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn exh94s-mplycn0g-1f6767ba!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 419.5.6A Phan Xích Long, Quận Phú Nhuận            │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : exh94s-mplycn0g-1f6767ba                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155425/BDS-KhangNgo/exh94s-mplycn0g-1f6767ba/xpomabstt2ovx25rq1tk.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn exh94s-mplycn0g-1f6767ba lên Google Sheets...
+[22:34:27] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:34:31] [ℹ] Phát hiện Mã Hàng TK-6767BA đã tồn tại ở dòng 165 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:34:31] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 165)...
+[22:34:32] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn exh94s-mplycn0g-1f6767ba!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn exh94s-mplycn0g-1f6767ba lên Google Sheets Pool!
+[4/3997] Căn f0u113-mpkxx412-a27c0976: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (109KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155445/BDS-KhangNgo/f0u113-mpkxx412-a27c0976/cjam5wzrhfgutn9ppstj.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn f0u113-mpkxx412-a27c0976!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 127.103.18.4.10 Ni Sư Huỳnh Liên, Quận Tân Bình    │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : f0u113-mpkxx412-a27c0976                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155445/BDS-KhangNgo/f0u113-mpkxx412-a27c0976/cjam5wzrhfgutn9ppstj.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn f0u113-mpkxx412-a27c0976 lên Google Sheets...
+[22:34:44] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:34:48] [ℹ] Phát hiện Mã Hàng TK-7C0976 đã tồn tại ở dòng 4875 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:34:49] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4875)...
+[22:34:50] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn f0u113-mpkxx412-a27c0976!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn f0u113-mpkxx412-a27c0976 lên Google Sheets Pool!
+[5/3997] Căn fedr9f-mpkltmex-3e43b18b: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (109KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155462/BDS-KhangNgo/fedr9f-mpkltmex-3e43b18b/l4uplkved778zgsj9rtv.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn fedr9f-mpkltmex-3e43b18b!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 87.117.1 Nguyễn Sỹ Sách, Quận Tân Bình             │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : fedr9f-mpkltmex-3e43b18b                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155462/BDS-KhangNgo/fedr9f-mpkltmex-3e43b18b/l4uplkved778zgsj9rtv.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn fedr9f-mpkltmex-3e43b18b lên Google Sheets...
+[22:35:05] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:35:11] [ℹ] Phát hiện Mã Hàng TK-43B18B đã tồn tại ở dòng 4874 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:35:11] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4874)...
+[22:35:12] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn fedr9f-mpkltmex-3e43b18b!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn fedr9f-mpkltmex-3e43b18b lên Google Sheets Pool!
+[6/3997] Căn cw9oss-mpkl9wb0-ece0be38: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (85KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155485/BDS-KhangNgo/cw9oss-mpkl9wb0-ece0be38/ebejuvdvnjqyjnyav8of.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn cw9oss-mpkl9wb0-ece0be38!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 544.51 Lý Thường Kiệt, Quận Tân Bình               │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : cw9oss-mpkl9wb0-ece0be38                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155485/BDS-KhangNgo/cw9oss-mpkl9wb0-ece0be38/ebejuvdvnjqyjnyav8of.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn cw9oss-mpkl9wb0-ece0be38 lên Google Sheets...
+[22:35:29] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:35:34] [ℹ] Phát hiện Mã Hàng TK-E0BE38 đã tồn tại ở dòng 4873 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:35:35] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4873)...
+[22:35:35] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn cw9oss-mpkl9wb0-ece0be38!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn cw9oss-mpkl9wb0-ece0be38 lên Google Sheets Pool!
+[7/3997] Căn 5s2ng8-mpj9ipat-f247e542: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (154KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155509/BDS-KhangNgo/5s2ng8-mpj9ipat-f247e542/z1wvhmu8pvvx5bbn1wqm.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn 5s2ng8-mpj9ipat-f247e542!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 496.1.74G Dương Quảng Hàm, Quận Gò Vấp             │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : 5s2ng8-mpj9ipat-f247e542                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155509/BDS-KhangNgo/5s2ng8-mpj9ipat-f247e542/z1wvhmu8pvvx5bbn1wqm.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn 5s2ng8-mpj9ipat-f247e542 lên Google Sheets...
+[22:35:48] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:35:53] [ℹ] Phát hiện Mã Hàng TK-47E542 đã tồn tại ở dòng 4872 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:35:54] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4872)...
+[22:35:55] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn 5s2ng8-mpj9ipat-f247e542!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn 5s2ng8-mpj9ipat-f247e542 lên Google Sheets Pool!
+[8/3997] Căn f1ncbs-mpj5hhzz-f6111915: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (76KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155528/BDS-KhangNgo/f1ncbs-mpj5hhzz-f6111915/fpqpcmyfyvhyr68mkd8p.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn f1ncbs-mpj5hhzz-f6111915!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 125.45 Nguyễn Công Hoan, Quận Phú Nhuận            │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : f1ncbs-mpj5hhzz-f6111915                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155528/BDS-KhangNgo/f1ncbs-mpj5hhzz-f6111915/fpqpcmyfyvhyr68mkd8p.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn f1ncbs-mpj5hhzz-f6111915 lên Google Sheets...
+[22:36:10] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:36:16] [ℹ] Phát hiện Mã Hàng TK-111915 đã tồn tại ở dòng 4871 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:36:17] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4871)...
+[22:36:17] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn f1ncbs-mpj5hhzz-f6111915!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn f1ncbs-mpj5hhzz-f6111915 lên Google Sheets Pool!
+[9/3997] Căn d4iov9-mphr5qnz-96df1097: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (110KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155551/BDS-KhangNgo/d4iov9-mphr5qnz-96df1097/eqepgwohirdsh35sdab7.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn d4iov9-mphr5qnz-96df1097!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 37.X bùi thế mỹ, Quận Tân Bình                     │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : d4iov9-mphr5qnz-96df1097                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155551/BDS-KhangNgo/d4iov9-mphr5qnz-96df1097/eqepgwohirdsh35sdab7.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn d4iov9-mphr5qnz-96df1097 lên Google Sheets...
+[22:36:31] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:36:36] [ℹ] Phát hiện Mã Hàng TK-DF1097 đã tồn tại ở dòng 4870 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:36:37] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4870)...
+[22:36:38] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn d4iov9-mphr5qnz-96df1097!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn d4iov9-mphr5qnz-96df1097 lên Google Sheets Pool!
+[10/3997] Căn f6uixx-mpgycrka-a00dc8b8: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (80KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155570/BDS-KhangNgo/f6uixx-mpgycrka-a00dc8b8/qgt4r14t49azzxqcaiev.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn f6uixx-mpgycrka-a00dc8b8!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 41 Nguyễn Hồng Đào, Quận Tân Bình                  │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : f6uixx-mpgycrka-a00dc8b8                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155570/BDS-KhangNgo/f6uixx-mpgycrka-a00dc8b8/qgt4r14t49azzxqcaiev.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn f6uixx-mpgycrka-a00dc8b8 lên Google Sheets...
+[22:36:50] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:36:56] [ℹ] Phát hiện Mã Hàng TK-0DC8B8 đã tồn tại ở dòng 4869 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:36:57] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4869)...
+[22:36:58] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn f6uixx-mpgycrka-a00dc8b8!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn f6uixx-mpgycrka-a00dc8b8 lên Google Sheets Pool!
+[11/3997] Căn gayxn2-mpfojrxf-3f93d9b8: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (161KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155591/BDS-KhangNgo/gayxn2-mpfojrxf-3f93d9b8/xdj2jes3w3bytsfhaqlu.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn gayxn2-mpfojrxf-3f93d9b8!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 266.78.8 Tô Hiến Thành, Quận Quận 10               │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : gayxn2-mpfojrxf-3f93d9b8                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155591/BDS-KhangNgo/gayxn2-mpfojrxf-3f93d9b8/xdj2jes3w3bytsfhaqlu.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn gayxn2-mpfojrxf-3f93d9b8 lên Google Sheets...
+[22:37:12] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:37:18] [ℹ] Phát hiện Mã Hàng TK-93D9B8 đã tồn tại ở dòng 4868 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:37:19] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4868)...
+[22:37:19] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn gayxn2-mpfojrxf-3f93d9b8!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn gayxn2-mpfojrxf-3f93d9b8 lên Google Sheets Pool!
+[12/3997] Căn fiihb2-mpf3iyta-d6e67ded: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (171KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155616/BDS-KhangNgo/fiihb2-mpf3iyta-d6e67ded/hxonpmdltgjcvqysiunk.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn fiihb2-mpf3iyta-d6e67ded!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 68.18 Hoàng Diệu, Quận Quận 4                      │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : fiihb2-mpf3iyta-d6e67ded                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155616/BDS-KhangNgo/fiihb2-mpf3iyta-d6e67ded/hxonpmdltgjcvqysiunk.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn fiihb2-mpf3iyta-d6e67ded lên Google Sheets...
+[22:37:36] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:37:42] [ℹ] Phát hiện Mã Hàng TK-E67DED đã tồn tại ở dòng 4867 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:37:43] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4867)...
+[22:37:45] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn fiihb2-mpf3iyta-d6e67ded!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn fiihb2-mpf3iyta-d6e67ded lên Google Sheets Pool!
+[13/3997] Căn fiihb2-mpdxrj2q-96e180ee: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (48KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155638/BDS-KhangNgo/fiihb2-mpdxrj2q-96e180ee/wjek42niwbnrh57dpj1s.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn fiihb2-mpdxrj2q-96e180ee!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 52.29.18 Nguyễn Sỹ Sách, Quận Tân Bình             │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : fiihb2-mpdxrj2q-96e180ee                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155638/BDS-KhangNgo/fiihb2-mpdxrj2q-96e180ee/wjek42niwbnrh57dpj1s.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn fiihb2-mpdxrj2q-96e180ee lên Google Sheets...
+[22:37:57] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:38:02] [ℹ] Phát hiện Mã Hàng TK-E180EE đã tồn tại ở dòng 4866 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:38:02] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4866)...
+[22:38:04] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn fiihb2-mpdxrj2q-96e180ee!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn fiihb2-mpdxrj2q-96e180ee lên Google Sheets Pool!
+[14/3997] Căn f1p3q4-mpdx0r2w-c8912b3: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (92KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155656/BDS-KhangNgo/f1p3q4-mpdx0r2w-c8912b3/wchfa4bdylooq4o6mwn2.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn f1p3q4-mpdx0r2w-c8912b3!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 128 Huỳnh Văn Nghệ, Quận Tân Bình                  │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : f1p3q4-mpdx0r2w-c8912b3                            │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155656/BDS-KhangNgo/f1p3q4-mpdx0r2w-c8912b3/wchfa4bdylooq4o6mwn2.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn f1p3q4-mpdx0r2w-c8912b3 lên Google Sheets...
+[22:38:15] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:38:20] [ℹ] Phát hiện Mã Hàng TK-8912B3 đã tồn tại ở dòng 4865 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:38:21] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4865)...
+[22:38:22] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn f1p3q4-mpdx0r2w-c8912b3!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn f1p3q4-mpdx0r2w-c8912b3 lên Google Sheets Pool!
+[15/3997] Căn 5doqch-mpcdvltg-811e4303: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (169KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155678/BDS-KhangNgo/5doqch-mpcdvltg-811e4303/ul9xbz312fvx87qzsepf.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn 5doqch-mpcdvltg-811e4303!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 159.7N1 Hoà Hưng, Quận Quận 10                     │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : 5doqch-mpcdvltg-811e4303                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155678/BDS-KhangNgo/5doqch-mpcdvltg-811e4303/ul9xbz312fvx87qzsepf.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn 5doqch-mpcdvltg-811e4303 lên Google Sheets...
+[22:38:50] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:38:57] [ℹ] Phát hiện Mã Hàng TK-1E4303 đã tồn tại ở dòng 4864 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:38:58] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4864)...
+[22:38:59] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn 5doqch-mpcdvltg-811e4303!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn 5doqch-mpcdvltg-811e4303 lên Google Sheets Pool!
+[16/3997] Căn ezjpg1-mpayswy9-1a94a384: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (150KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155716/BDS-KhangNgo/ezjpg1-mpayswy9-1a94a384/z0hfq965jodchnyox2a2.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn ezjpg1-mpayswy9-1a94a384!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 304.4G Trường Chinh, Quận Tân Bình                 │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : ezjpg1-mpayswy9-1a94a384                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155716/BDS-KhangNgo/ezjpg1-mpayswy9-1a94a384/z0hfq965jodchnyox2a2.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn ezjpg1-mpayswy9-1a94a384 lên Google Sheets...
+[22:40:23] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:40:41] [ℹ] Phát hiện Mã Hàng TK-94A384 đã tồn tại ở dòng 4863 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:40:41] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4863)...
+[22:40:42] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn ezjpg1-mpayswy9-1a94a384!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn ezjpg1-mpayswy9-1a94a384 lên Google Sheets Pool!
+[17/3997] Căn gayxn2-mpawjv3u-e23c4a8f: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (92KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155815/BDS-KhangNgo/gayxn2-mpawjv3u-e23c4a8f/zsenea4pespbzog3maxg.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn gayxn2-mpawjv3u-e23c4a8f!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 37.21 Hồ Thị Kỷ, Quận Quận 10                      │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : gayxn2-mpawjv3u-e23c4a8f                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155815/BDS-KhangNgo/gayxn2-mpawjv3u-e23c4a8f/zsenea4pespbzog3maxg.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn gayxn2-mpawjv3u-e23c4a8f lên Google Sheets...
+[22:40:49] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:40:52] [ℹ] Phát hiện Mã Hàng TK-3C4A8F đã tồn tại ở dòng 4862 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:40:52] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4862)...
+[22:40:53] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn gayxn2-mpawjv3u-e23c4a8f!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn gayxn2-mpawjv3u-e23c4a8f lên Google Sheets Pool!
+[18/3997] Căn d4iov9-mpajsafj-9677a3e1: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (93KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155826/BDS-KhangNgo/d4iov9-mpajsafj-9677a3e1/j9dt3gprwlkdvrmjfhza.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn d4iov9-mpajsafj-9677a3e1!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 33.47 tứ hải, Quận Tân Bình                        │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : d4iov9-mpajsafj-9677a3e1                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155826/BDS-KhangNgo/d4iov9-mpajsafj-9677a3e1/j9dt3gprwlkdvrmjfhza.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn d4iov9-mpajsafj-9677a3e1 lên Google Sheets...
+[22:41:00] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:41:02] [ℹ] Phát hiện Mã Hàng TK-77A3E1 đã tồn tại ở dòng 4861 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:41:03] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4861)...
+[22:41:03] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn d4iov9-mpajsafj-9677a3e1!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn d4iov9-mpajsafj-9677a3e1 lên Google Sheets Pool!
+[19/3997] Căn d4iov9-mpajo31a-81a8a303: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (64KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155836/BDS-KhangNgo/d4iov9-mpajo31a-81a8a303/j1dulnzgp5z3iqxxhihc.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn d4iov9-mpajo31a-81a8a303!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 127.103.X ni sư huỳnh liên, Quận Tân Bình          │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : d4iov9-mpajo31a-81a8a303                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155836/BDS-KhangNgo/d4iov9-mpajo31a-81a8a303/j1dulnzgp5z3iqxxhihc.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn d4iov9-mpajo31a-81a8a303 lên Google Sheets...
+[22:41:10] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:41:13] [ℹ] Phát hiện Mã Hàng TK-A8A303 đã tồn tại ở dòng 4860 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:41:13] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4860)...
+[22:41:14] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn d4iov9-mpajo31a-81a8a303!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn d4iov9-mpajo31a-81a8a303 lên Google Sheets Pool!
+[20/3997] Căn fedr9f-mpaj0ozz-243e13fb: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (123KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155847/BDS-KhangNgo/fedr9f-mpaj0ozz-243e13fb/qe2met4rl94wppc6gnht.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn fedr9f-mpaj0ozz-243e13fb!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 100.41 Thiên Phước, Quận Tân Bình                  │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : fedr9f-mpaj0ozz-243e13fb                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155847/BDS-KhangNgo/fedr9f-mpaj0ozz-243e13fb/qe2met4rl94wppc6gnht.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn fedr9f-mpaj0ozz-243e13fb lên Google Sheets...
+[22:41:21] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:41:23] [ℹ] Phát hiện Mã Hàng TK-3E13FB đã tồn tại ở dòng 4859 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:41:24] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4859)...
+[22:41:24] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn fedr9f-mpaj0ozz-243e13fb!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn fedr9f-mpaj0ozz-243e13fb lên Google Sheets Pool!
+[21/3997] Căn fjc7ue-mp9793qa-c11d5807: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (98KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155856/BDS-KhangNgo/fjc7ue-mp9793qa-c11d5807/eikiy1bvfjuf8pfzmk6g.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn fjc7ue-mp9793qa-c11d5807!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 56.91 Thích Quảng Đức, Quận Phú Nhuận              │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : fjc7ue-mp9793qa-c11d5807                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155856/BDS-KhangNgo/fjc7ue-mp9793qa-c11d5807/eikiy1bvfjuf8pfzmk6g.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn fjc7ue-mp9793qa-c11d5807 lên Google Sheets...
+[22:41:34] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:41:36] [ℹ] Phát hiện Mã Hàng TK-1D5807 đã tồn tại ở dòng 157 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:41:37] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 157)...
+[22:41:37] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn fjc7ue-mp9793qa-c11d5807!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn fjc7ue-mp9793qa-c11d5807 lên Google Sheets Pool!
+[22/3997] Căn f1flw6-mp93nv78-9238becf: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (135KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155870/BDS-KhangNgo/f1flw6-mp93nv78-9238becf/qbet4tzitgk7ou1rfvtz.jpg
+[22/3997] Căn f1flw6-mp93nv78-9238becf: Đang làm mới Sơ đồ 2...
+  [🛡️ Sơ đồ 2] Thành công! Đã đẩy sơ đồ nguyên bản (145KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155873/BDS-KhangNgo/f1flw6-mp93nv78-9238becf/nowergkpsxybpc9jzftc.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn f1flw6-mp93nv78-9238becf!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 453KA.71A Lê Văn Sỹ, Quận Quận 3                   │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : f1flw6-mp93nv78-9238becf                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155870/BDS-KhangNgo/f1flw6-mp93nv78-9238becf/qbet4tzitgk7ou1rfvtz.jpg
+     LINK 2: https://res.cloudinary.com/deru9p712/image/upload/v1780155873/BDS-KhangNgo/f1flw6-mp93nv78-9238becf/nowergkpsxybpc9jzftc.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn f1flw6-mp93nv78-9238becf lên Google Sheets...
+[22:41:47] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:41:50] [ℹ] Phát hiện Mã Hàng TK-38BECF đã tồn tại ở dòng 91 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:41:50] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 91)...
+[22:41:51] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn f1flw6-mp93nv78-9238becf!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn f1flw6-mp93nv78-9238becf lên Google Sheets Pool!
+[23/3997] Căn 5y6thz-mp93h0y3-6d7eb7be: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (120KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155884/BDS-KhangNgo/5y6thz-mp93h0y3-6d7eb7be/ymualhtuamwuahakto8f.jpg
+[23/3997] Căn 5y6thz-mp93h0y3-6d7eb7be: Đang làm mới Sơ đồ 2...
+  [🛡️ Sơ đồ 2] Thành công! Đã đẩy sơ đồ nguyên bản (125KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155886/BDS-KhangNgo/5y6thz-mp93h0y3-6d7eb7be/ncdarpsfqkykcwn4bpfg.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn 5y6thz-mp93h0y3-6d7eb7be!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 66.86 Trần Văn Quang, Quận Tân Bình                │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : 5y6thz-mp93h0y3-6d7eb7be                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155884/BDS-KhangNgo/5y6thz-mp93h0y3-6d7eb7be/ymualhtuamwuahakto8f.jpg
+     LINK 2: https://res.cloudinary.com/deru9p712/image/upload/v1780155886/BDS-KhangNgo/5y6thz-mp93h0y3-6d7eb7be/ncdarpsfqkykcwn4bpfg.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn 5y6thz-mp93h0y3-6d7eb7be lên Google Sheets...
+[22:42:00] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:42:03] [ℹ] Phát hiện Mã Hàng TK-7EB7BE đã tồn tại ở dòng 4858 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:42:03] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4858)...
+[22:42:04] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn 5y6thz-mp93h0y3-6d7eb7be!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn 5y6thz-mp93h0y3-6d7eb7be lên Google Sheets Pool!
+[24/3997] Căn gc1o1k-mp91dbiq-b9bc66dc: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (43KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155896/BDS-KhangNgo/gc1o1k-mp91dbiq-b9bc66dc/ckowaohdv2syda47lnft.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn gc1o1k-mp91dbiq-b9bc66dc!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 64 Đặng Minh Trứ, Quận Tân Bình                    │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : gc1o1k-mp91dbiq-b9bc66dc                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155896/BDS-KhangNgo/gc1o1k-mp91dbiq-b9bc66dc/ckowaohdv2syda47lnft.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn gc1o1k-mp91dbiq-b9bc66dc lên Google Sheets...
+[22:42:10] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:42:13] [ℹ] Phát hiện Mã Hàng TK-BC66DC đã tồn tại ở dòng 4857 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:42:13] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4857)...
+[22:42:14] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn gc1o1k-mp91dbiq-b9bc66dc!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn gc1o1k-mp91dbiq-b9bc66dc lên Google Sheets Pool!
+[25/3997] Căn f6uixx-mp911shu-af3b9817: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (55KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155906/BDS-KhangNgo/f6uixx-mp911shu-af3b9817/ynk1d0kurtmawgsabxzz.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn f6uixx-mp911shu-af3b9817!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 374.6.7 Âu Cơ, Quận Tân Bình                       │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : f6uixx-mp911shu-af3b9817                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155906/BDS-KhangNgo/f6uixx-mp911shu-af3b9817/ynk1d0kurtmawgsabxzz.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn f6uixx-mp911shu-af3b9817 lên Google Sheets...
+[22:42:20] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:42:23] [ℹ] Phát hiện Mã Hàng TK-3B9817 đã tồn tại ở dòng 4856 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:42:23] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4856)...
+[22:42:24] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn f6uixx-mp911shu-af3b9817!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn f6uixx-mp911shu-af3b9817 lên Google Sheets Pool!
+[26/3997] Căn ewr4fd-mp7wcj15-feaa033a: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (160KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155916/BDS-KhangNgo/ewr4fd-mp7wcj15-feaa033a/ddqv5tf5kcezrflmd08r.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn ewr4fd-mp7wcj15-feaa033a!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 295.3 Ba Tháng Hai, Quận Quận 10                   │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : ewr4fd-mp7wcj15-feaa033a                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155916/BDS-KhangNgo/ewr4fd-mp7wcj15-feaa033a/ddqv5tf5kcezrflmd08r.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn ewr4fd-mp7wcj15-feaa033a lên Google Sheets...
+[22:42:30] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:42:32] [ℹ] Phát hiện Mã Hàng TK-AA033A đã tồn tại ở dòng 4855 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:42:33] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4855)...
+[22:42:33] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn ewr4fd-mp7wcj15-feaa033a!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn ewr4fd-mp7wcj15-feaa033a lên Google Sheets Pool!
+[27/3997] Căn d82g3w-mp7opaen-5f6312f0: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (107KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155925/BDS-KhangNgo/d82g3w-mp7opaen-5f6312f0/lrlbodu9syielfrah0i1.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn d82g3w-mp7opaen-5f6312f0!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 56.11.1 Gò Ô Môi, Quận Quận 7                      │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : d82g3w-mp7opaen-5f6312f0                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155925/BDS-KhangNgo/d82g3w-mp7opaen-5f6312f0/lrlbodu9syielfrah0i1.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn d82g3w-mp7opaen-5f6312f0 lên Google Sheets...
+[22:42:40] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:42:42] [ℹ] Phát hiện Mã Hàng TK-6312F0 đã tồn tại ở dòng 4854 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:42:43] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4854)...
+[22:42:43] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn d82g3w-mp7opaen-5f6312f0!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn d82g3w-mp7opaen-5f6312f0 lên Google Sheets Pool!
+[28/3997] Căn d82g3w-mp7okmv7-a23993c8: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (123KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155935/BDS-KhangNgo/d82g3w-mp7okmv7-a23993c8/qkdo9qslcawm3rwsbw9j.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn d82g3w-mp7okmv7-a23993c8!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 56 Gò Ô Môi, Quận Quận 7                           │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : d82g3w-mp7okmv7-a23993c8                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155935/BDS-KhangNgo/d82g3w-mp7okmv7-a23993c8/qkdo9qslcawm3rwsbw9j.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn d82g3w-mp7okmv7-a23993c8 lên Google Sheets...
+[22:42:49] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:42:52] [ℹ] Phát hiện Mã Hàng TK-3993C8 đã tồn tại ở dòng 4853 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:42:52] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4853)...
+[22:42:53] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn d82g3w-mp7okmv7-a23993c8!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn d82g3w-mp7okmv7-a23993c8 lên Google Sheets Pool!
+[29/3997] Căn gayxn2-mp73x86t-1ffca4e1: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (153KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155946/BDS-KhangNgo/gayxn2-mp73x86t-1ffca4e1/ruckziqfhytrbobweo3d.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn gayxn2-mp73x86t-1ffca4e1!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 330.12C Lê Hồng Phong, Quận Quận 10                │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : gayxn2-mp73x86t-1ffca4e1                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155946/BDS-KhangNgo/gayxn2-mp73x86t-1ffca4e1/ruckziqfhytrbobweo3d.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn gayxn2-mp73x86t-1ffca4e1 lên Google Sheets...
+[22:43:00] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+[22:43:03] [ℹ] Phát hiện Mã Hàng TK-FCA4E1 đã tồn tại ở dòng 4852 trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.
+[22:43:03] [⚡] Đang chép đè dòng dữ liệu lên Sheet 'Pool' (dòng 4852)...
+[22:43:04] [✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn gayxn2-mp73x86t-1ffca4e1!
+     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn gayxn2-mp73x86t-1ffca4e1 lên Google Sheets Pool!
+[30/3997] Căn ewr4fd-mp6t0h0h-a4abc265: Đang làm mới Sơ đồ 1...
+  [🛡️ Sơ đồ 1] Thành công! Đã đẩy sơ đồ nguyên bản (68KB) -> https://res.cloudinary.com/deru9p712/image/upload/v1780155957/BDS-KhangNgo/ewr4fd-mp6t0h0h-a4abc265/ol7bvzm0ritii10xbf5a.jpg
+  [💾 SQLite] Đã cập nhật thành công link Sơ đồ nguyên bản vào Database cho căn ewr4fd-mp6t0h0h-a4abc265!
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ 🏡 THÔNG TIN CĂN NHÀ ĐANG SỬA:                                    │
+  │    - Địa chỉ: 9A Trần Thị Trọng, Quận Tân Bình                   │
+  │    - Tiêu đề:                                                   ... │
+  │    - Mã TK  : ewr4fd-mp6t0h0h-a4abc265                           │
+  └──────────────────────────────────────────────────────────────────┘
+  👉 LINK SƠ ĐỒ THỨA ĐẤT SIÊU NÉT (Dùng tổ hợp phím Ctrl + Click vào link dưới để xem):
+     LINK 1: https://res.cloudinary.com/deru9p712/image/upload/v1780155957/BDS-KhangNgo/ewr4fd-mp6t0h0h-a4abc265/ol7bvzm0ritii10xbf5a.jpg
+  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn ewr4fd-mp6t0h0h-a4abc265 lên Google Sheets...
+[22:43:11] [🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'

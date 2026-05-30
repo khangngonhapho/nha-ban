@@ -738,7 +738,7 @@ def start_auto_migration_scheduler():
                 
                 # 2. Kiểm tra xem có database và có căn nào status = 'raw_text' không
                 if os.path.exists(DB_FILE):
-                    conn = sqlite3.connect(DB_FILE)
+                    conn = sqlite3.connect(DB_FILE, timeout=30.0)
                     cursor = conn.cursor()
                     count = cursor.execute("SELECT COUNT(*) FROM listings WHERE status = 'raw_text'").fetchone()[0]
                     conn.close()
@@ -781,7 +781,7 @@ def run_image_migration_thread(limit, cookie):
         add_log_message("[❌] Chưa có file Database SQLite raw_archive.db. Vui lòng cào tin trước.")
         return
         
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     rows = cursor.execute("SELECT * FROM listings WHERE status = 'raw_text'").fetchall()
@@ -1041,7 +1041,7 @@ def run_image_migration_thread(limit, cookie):
             anh_hem_pub = row[col_anh_hem_pub] if col_anh_hem_pub in row.keys() else ""
             
             # 3. Ghi thông tin vào SQLite ở trạng thái 'raw_complete' trước
-            conn = sqlite3.connect(DB_FILE)
+            conn = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor = conn.cursor()
             
             update_fields = {}
@@ -1607,7 +1607,7 @@ def get_crawl_sessions():
         })
         
     try:
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
@@ -1661,7 +1661,7 @@ def clear_all_listings():
         return jsonify({"status": "success", "message": "Database đã trống."})
         
     try:
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
         cursor = conn.cursor()
         cursor.execute("DELETE FROM listings")
         # Reset autoincrement
@@ -1701,7 +1701,7 @@ def get_listings():
     duong_filter = request.args.get("duong")
     so_nha_filter = request.args.get("so_nha")
     
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     # Trả về kết quả dạng Dict
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -1757,7 +1757,7 @@ def get_listings():
     counts = {"raw_text": 0, "raw_complete": 0, "published": 0}
     if os.path.exists(DB_FILE):
         try:
-            conn_count = sqlite3.connect(DB_FILE)
+            conn_count = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor_count = conn_count.cursor()
             for s in ["raw_text", "raw_complete", "published"]:
                 c = cursor_count.execute("SELECT COUNT(*) FROM listings WHERE status = ?", (s,)).fetchone()[0]
@@ -1777,7 +1777,7 @@ def handle_listing_detail(tk_id):
     if not os.path.exists(DB_FILE):
         return jsonify({"status": "error", "message": "Database không tồn tại"}), 404
         
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -1886,7 +1886,7 @@ def recrawl_single_listing(tk_id):
         return jsonify({"status": "error", "message": "Database không tồn tại"}), 404
         
     try:
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
@@ -2027,7 +2027,7 @@ def recrawl_single_listing(tk_id):
         add_log_message(f"[✅] ĐÃ CÀO LẠI THÀNH CÔNG DUY NHẤT CĂN: {tk_id}")
         
         # Lấy lại dòng vừa cập nhật
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         updated_row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
@@ -2125,7 +2125,7 @@ def execute_publish_listing(tk_id):
     if not os.path.exists(DB_FILE):
         return {"status": "error", "message": "Database không tồn tại"}
         
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
@@ -2290,7 +2290,7 @@ def execute_publish_listing(tk_id):
                 sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED')
             
             # Cập nhật trạng thái trong SQLite -> published
-            conn = sqlite3.connect(DB_FILE)
+            conn = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor = conn.cursor()
             cursor.execute(
                 "UPDATE listings SET status = 'published', `Last_Sync` = ? WHERE tk_id = ?",

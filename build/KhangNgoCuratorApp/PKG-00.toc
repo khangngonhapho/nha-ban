@@ -1,0 +1,423 @@
+('D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\KhangNgoCuratorApp.pkg',
+ {'BINARY': True,
+  'DATA': True,
+  'EXECUTABLE': True,
+  'EXTENSION': True,
+  'PYMODULE': True,
+  'PYSOURCE': True,
+  'PYZ': False,
+  'SPLASH': True,
+  'SYMLINK': False},
+ [('pyi-contents-directory _internal', '', 'OPTION'),
+  ('PYZ-00.pyz',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\PYZ-00.pyz',
+   'PYZ'),
+  ('struct',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\localpycs\\struct.pyc',
+   'PYMODULE'),
+  ('pyimod01_archive',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\localpycs\\pyimod01_archive.pyc',
+   'PYMODULE'),
+  ('pyimod02_importers',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\localpycs\\pyimod02_importers.pyc',
+   'PYMODULE'),
+  ('pyimod03_ctypes',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\localpycs\\pyimod03_ctypes.pyc',
+   'PYMODULE'),
+  ('pyimod04_pywin32',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\localpycs\\pyimod04_pywin32.pyc',
+   'PYMODULE'),
+  ('pyiboot01_bootstrap',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
+   'PYSOURCE'),
+  ('pyi_rth_inspect',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
+   'PYSOURCE'),
+  ('pyi_rth_pkgutil',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
+   'PYSOURCE'),
+  ('pyi_rth_cryptography_openssl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks\\pyi_rth_cryptography_openssl.py',
+   'PYSOURCE'),
+  ('pyi_rth_setuptools',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_setuptools.py',
+   'PYSOURCE'),
+  ('pyi_rth_multiprocessing',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
+   'PYSOURCE'),
+  ('curator_server',
+   'I:\\Other computers\\My '
+   'Laptop\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\curator_server.py',
+   'PYSOURCE'),
+  ('python314.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\python314.dll',
+   'BINARY'),
+  ('_multiprocessing.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_multiprocessing.pyd',
+   'EXTENSION'),
+  ('_zstd.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_zstd.pyd',
+   'EXTENSION'),
+  ('_lzma.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_lzma.pyd',
+   'EXTENSION'),
+  ('_bz2.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_bz2.pyd',
+   'EXTENSION'),
+  ('_ssl.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_ssl.pyd',
+   'EXTENSION'),
+  ('pyexpat.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\pyexpat.pyd',
+   'EXTENSION'),
+  ('unicodedata.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\unicodedata.pyd',
+   'EXTENSION'),
+  ('_decimal.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_decimal.pyd',
+   'EXTENSION'),
+  ('_hashlib.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_hashlib.pyd',
+   'EXTENSION'),
+  ('_socket.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_socket.pyd',
+   'EXTENSION'),
+  ('select.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\select.pyd',
+   'EXTENSION'),
+  ('_ctypes.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_ctypes.pyd',
+   'EXTENSION'),
+  ('_queue.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_queue.pyd',
+   'EXTENSION'),
+  ('_overlapped.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_overlapped.pyd',
+   'EXTENSION'),
+  ('_asyncio.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_asyncio.pyd',
+   'EXTENSION'),
+  ('_wmi.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_wmi.pyd',
+   'EXTENSION'),
+  ('_cffi_backend.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\_cffi_backend.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('cryptography\\hazmat\\bindings\\_rust.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\_rust.pyd',
+   'EXTENSION'),
+  ('81d243bd2c585b0f4821__mypyc.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\81d243bd2c585b0f4821__mypyc.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('charset_normalizer\\cd.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\charset_normalizer\\cd.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('charset_normalizer\\md.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\charset_normalizer\\md.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('winsound.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\winsound.pyd',
+   'EXTENSION'),
+  ('PIL\\_webp.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PIL\\_webp.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_imagingtk.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PIL\\_imagingtk.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_avif.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PIL\\_avif.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_imagingcms.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PIL\\_imagingcms.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_imagingmath.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PIL\\_imagingmath.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('_elementtree.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_elementtree.pyd',
+   'EXTENSION'),
+  ('PIL\\_imaging.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PIL\\_imaging.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('_uuid.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_uuid.pyd',
+   'EXTENSION'),
+  ('markupsafe\\_speedups.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe\\_speedups.cp314-win_amd64.pyd',
+   'EXTENSION'),
+  ('_sqlite3.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_sqlite3.pyd',
+   'EXTENSION'),
+  ('VCRUNTIME140.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\VCRUNTIME140.dll',
+   'BINARY'),
+  ('libcrypto-3.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\libcrypto-3.dll',
+   'BINARY'),
+  ('libssl-3.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\libssl-3.dll',
+   'BINARY'),
+  ('libffi-8.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\libffi-8.dll',
+   'BINARY'),
+  ('VCRUNTIME140_1.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\VCRUNTIME140_1.dll',
+   'BINARY'),
+  ('python3.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\python3.dll',
+   'BINARY'),
+  ('sqlite3.dll',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\sqlite3.dll',
+   'BINARY'),
+  ('curator.html',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\curator.html',
+   'DATA'),
+  ('thienkhoi_cookie.txt',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\thienkhoi_cookie.txt',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\METADATA',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\WHEEL',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\licenses\\LICENSE.BSD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\licenses\\LICENSE.BSD',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\sboms\\sbom.json',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\sboms\\sbom.json',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\RECORD',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\licenses\\LICENSE',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\licenses\\LICENSE',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\sboms\\cryptography-rust.cyclonedx.json',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\sboms\\cryptography-rust.cyclonedx.json',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\licenses\\LICENSE.APACHE',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\licenses\\LICENSE.APACHE',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\WHEEL',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
+   'DATA'),
+  ('setuptools\\_vendor\\jaraco\\text\\Lorem ipsum.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\jaraco\\text\\Lorem '
+   'ipsum.txt',
+   'DATA'),
+  ('certifi\\cacert.pem',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\certifi\\cacert.pem',
+   'DATA'),
+  ('certifi\\py.typed',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\certifi\\py.typed',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\RECORD',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\WHEEL',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('click-8.3.3.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\WHEEL',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\RECORD',
+   'DATA'),
+  ('click-8.3.3.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\METADATA',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\entry_points.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\entry_points.txt',
+   'DATA'),
+  ('click-8.3.3.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('click-8.3.3.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\INSTALLER',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\WHEEL',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\WHEEL',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\RECORD',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\LICENSE.txt',
+   'DATA'),
+  ('click-8.3.3.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\RECORD',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\RECORD',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\METADATA',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\INSTALLER',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\WHEEL',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\top_level.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\top_level.txt',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\INSTALLER',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\METADATA',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\INSTALLER',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\METADATA',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\REQUESTED',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\REQUESTED',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\METADATA',
+   'DATA'),
+  ('base_library.zip',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCuratorApp\\base_library.zip',
+   'DATA')],
+ 'python314.dll',
+ False,
+ False,
+ False,
+ [],
+ None,
+ None,
+ None)

@@ -65,7 +65,7 @@ def run_repair_diagrams(limit=None, do_publish=False):
     }
 
     # 2. Truy vấn các căn đã di cư cần sửa đổi
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -176,7 +176,7 @@ def run_repair_diagrams(limit=None, do_publish=False):
 
         # 4. Ghi nhận cập nhật vào SQLite nếu có thay đổi
         if need_update:
-            conn = sqlite3.connect(DB_FILE)
+            conn = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor = conn.cursor()
             
             cursor.execute(

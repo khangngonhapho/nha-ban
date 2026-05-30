@@ -1,0 +1,42 @@
+Line 237: "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+Line 366: duplicate_keywords = [
+Line 372: for kw in duplicate_keywords:
+Line 457: 'https://www.googleapis.com/auth/spreadsheets'
+Line 849: # TIẾN TRÌNH DI CƯ ẢNH SONG SONG ĐA LUỒNG (PARALLEL WORKER POOL - SPEEDUP 700% - 1000%)
+Line 925: with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+Line 934: # Cập nhật SQLite, phân loại sơ đồ/ảnh thô và tự động đẩy Sheets Pool (US-040)
+Line 1011: # 5. Tự động xuất bản trực tiếp lên Google Sheets Pool
+Line 1012: add_log_message(f"[⚡ AUTO-SHEETS] Đang tự động đẩy dòng dữ liệu 79 cột lên tab Pool của Google Sheets...")
+Line 1015: add_log_message(f"[✅ AUTO-SHEETS SUCCESS] Tự động xuất bản thành công căn {tk_id} lên Google Sheets Pool! Trạng thái SQLite -> published")
+Line 1967: # XUẤT BẢN LÊN GOOGLE SHEETS POOL (79 CỘT HOÀN CHỈNH)
+Line 1969: POOL_HEADERS = [
+Line 1990: def get_table_end_row_index(sheet_id, creds):
+Line 1992: Truy vấn API Google Sheets để lấy endRowIndex của Table trên sheet tên 'Pool' (hoặc sheet đầu tiên).
+Line 2006: url = f"https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}"
+Line 2011: spreadsheet = r.json()
+Line 2012: for sheet in spreadsheet.get('sheets', []):
+Line 2013: properties = sheet.get('properties', {})
+Line 2014: if properties.get('title') == 'Pool' or properties.get('sheetId') == 0:
+Line 2015: tables = sheet.get('tables', [])
+Line 2061: sheet_id = cfg.get("sheet_id")
+Line 2064: sheet = None
+Line 2067: if creds and sheet_id:
+Line 2071: spreadsheet = client.open_by_key(sheet_id)
+Line 2073: # Cố gắng mở tab tên "Pool" hoặc tab đầu tiên
+Line 2075: sheet = spreadsheet.worksheet("Pool")
+Line 2078: sheet = spreadsheet.worksheet("Source")
+Line 2080: sheet = spreadsheet.get_worksheet(0)
+Line 2085: col_a_values = sheet.col_values(1)
+Line 2098: table_end_row = get_table_end_row_index(sheet_id, creds)
+Line 2105: next_row = len(sheet.get_all_values()) + 1
+Line 2117: if existing_row_index and sheet:
+Line 2120: existing_row = sheet.row_values(existing_row_index)
+Line 2141: for idx, header in enumerate(POOL_HEADERS):
+Line 2157: for header in POOL_HEADERS:
+Line 2178: if sheet:
+Line 2181: add_log_message(f"[⚡] Đang chép đè dòng 79 cột lên Sheet '{sheet.title}' (dòng {existing_row_index})...")
+Line 2182: sheet.update(range_name=f"A{existing_row_index}:CA{existing_row_index}", values=[row_data], value_input_option='USER_ENTERED')
+Line 2184: add_log_message(f"[⚡] Đang chèn chốt dòng mới 79 cột lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
+Line 2185: sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED')
+Line 2230: """API đẩy hàng loạt danh sách các căn được chọn lên Google Sheets Pool"""
+Line 2237: add_log_message(f"[⚡] Bắt đầu đẩy hàng loạt {len(ids)} căn lên Google Sheets Pool...")

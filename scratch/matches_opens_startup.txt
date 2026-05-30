@@ -1,0 +1,12 @@
+
+=== Matches for 'openS' ===
+Line 4213: c.setAttribute('onclick', (p.isFromPoolOnly && !isOnAir) ? `openPoolS('${p.system_id}')` : `openS('${curatedListing ? curatedListing.id : p.id}')`);
+Line 4387: // If already on air, click card to open standard detail view (openS)
+Line 4388: div.onclick = () => openS(id);
+Line 4541: function openS(id, tempP = null) {
+Line 5880: openS(curatedListing.id);
+Line 5971: openS(null, p);
+Line 6027: // If already on air, click card to open standard detail view (openS)
+Line 6028: div.onclick = () => openS(id);
+Line 7041: openS(id);
+Line 7314: openS(maKhangNgo);

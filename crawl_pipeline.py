@@ -117,7 +117,7 @@ def get_safe_col_name(header):
     return cleaned
 
 def init_db():
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
 
     # Tạo bảng listings với 76 cột nghiệp vụ + các cột quản lý hệ thống
@@ -341,7 +341,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
         print(f"[⚠️ WARNING] Lỗi khi chuẩn hóa URL phân trang: {str(e)}")
     
     # Nạp danh sách tk_id đã có sẵn vào bộ nhớ RAM (set) để check trùng lập O(1)
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
     existing_ids = set(row[0] for row in cursor.execute("SELECT tk_id FROM listings"))
     conn.close()
@@ -395,7 +395,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
         
         # Ghi nhận lịch sử phiên cào vào SQLite
         try:
-            conn = sqlite3.connect(DB_FILE)
+            conn = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor = conn.cursor()
             end_time_iso = datetime.now().isoformat()
             cursor.execute("""
@@ -708,7 +708,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
 # HÀM LƯU DỮ LIỆU THÔ VÀO SQLITE
 # ==========================================
 def save_raw_to_sqlite(tk_id, metadata, images_tk_list):
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
     
     # Kiểm tra xem bản ghi đã tồn tại trong hệ thống chưa
@@ -752,7 +752,7 @@ def run_image_migration(limit=None):
     init_db()
     print("\n[+] KHỞI ĐỘNG LUỒNG DI CƯ HÌNH ẢNH: GOOGLE DRIVE UPLOAD (Throttled Mode)")
     
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
     rows = cursor.execute("SELECT id, tk_id, raw_images_tk_json FROM listings WHERE status = 'raw_text'").fetchall()
     conn.close()
@@ -791,7 +791,7 @@ def run_image_migration(limit=None):
                 drive_links.append(direct_link)
                 
             # Ghi đè mảng link Drive vào SQLite và đổi trạng thái
-            conn = sqlite3.connect(DB_FILE)
+            conn = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor = conn.cursor()
             cursor.execute(
                 "UPDATE listings SET raw_drive_images_json = ?, status = 'raw_complete' WHERE id = ?",
@@ -910,7 +910,7 @@ if __name__ == "__main__":
             print("[-] Chưa có file Database SQLite nào được tạo. Hãy chạy crawl trước.")
             sys.exit(0)
             
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
         cursor = conn.cursor()
         
         total = cursor.execute("SELECT COUNT(*) FROM listings").fetchone()[0]

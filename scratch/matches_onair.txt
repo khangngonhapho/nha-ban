@@ -1,0 +1,23 @@
+
+=== Matches for 'onAirToggle' ===
+Line 2679: <input type="checkbox" id="onAirToggle" onchange="toggleShowOnAirOnly(this.checked)" style="opacity: 0; width: 0; height: 0;">
+Line 3898: const toggle = document.getElementById('onAirToggle');
+
+=== Matches for 'lên sóng' ===
+Line 2677: <span style="font-size: 11px; font-weight: 700; color: #57606f;">CĂN LÊN SÓNG</span>
+Line 4235: ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
+Line 4358: Không tìm thấy căn nào đã lên sóng khớp với từ khóa <b>"${searchVal}"</b>.<br>Bạn có muốn quét và tìm kiếm trong kho <b>Pool thô</b> không?
+Line 4421: <span style="font-size: 10.5px; font-weight: 700; color: #2ecc71; background: rgba(46, 204, 113, 0.15); padding: 5px 10px; border-radius: 6px; white-space: nowrap;">✅ Đã lên sóng</span>
+Line 4425: ⚡ Lên sóng
+Line 4603: <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none;">💾</button>
+Line 4787: ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+Line 5036: poolSaveNotice.innerHTML = '✅ Đã đủ điều kiện! Nút Lên sóng ⚡ đã sẵn sàng ở góc dưới bên phải.';
+Line 5052: poolSaveNotice.innerHTML = '⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡';
+Line 5948: // Kiểm tra xem căn pool này đã lên sóng (ở Source) chưa (US-039.7)
+Line 6116: <span style="font-size: 10.5px; font-weight: 700; color: #2ecc71; background: rgba(46, 204, 113, 0.15); padding: 4px 8px; border-radius: 6px; white-space: nowrap;">✅ Đã lên sóng</span>
+Line 6120: ⚡ Lên sóng
+Line 6131: if (!confirm(`Bạn có chắc chắn muốn lên sóng căn nhà này từ Pool không?\nĐịa chỉ: ${soNha} ${duong}`)) {
+Line 6396: alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[54]} (${matchedRow[55]})!`);
+Line 7370: showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}!`);
+Line 7384: // Mở chi tiết của căn vừa lên sóng tại chỗ
+Line 7389: if (confirm(`🎉 Căn nhà #${maKhangNgo} đã LÊN SÓNG thành công và đang hiển thị trên Customer View!\n\nBạn có muốn tạo Link chia sẻ gửi Zalo cho khách hàng ngay bây giờ không?`)) {

@@ -1,0 +1,4 @@
+
+=== Matches for 'restoreState' ===
+Line 3798: restoreState();
+Line 3866: function restoreState() {

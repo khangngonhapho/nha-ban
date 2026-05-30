@@ -1,0 +1,16 @@
+thienkhoi_database_schema.md:75: - **ID File:** `1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0`
+index.html:2969:     const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+SOURCE_OF_TRUTH.md:96: * **Google Sheet rổ hàng tổng (Data gốc):** [Mở Sheet](https://docs.google.com/spreadsheets/d/1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0/edit?gid=0#gid=0)
+SOURCE_OF_TRUTH.md:121: | **Sheet ID**            | `1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0`                                                        |
+temp_script_1.js:106:     const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+api\index.js:4: const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+docs\stories\_inbox\US-020_autopost_bds_com_vn_inline_sheet.md:34: > SPREADSHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0'
+docs\stories\_inbox\US-027_vercel_deployment.md:38: >   ID: `1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0`
+docs\stories\_inbox\US-035_crawl_bulk_to_google_drive.md:52: >     "sheet_id": "1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0",
+scratch\search_sot.py:8:     "1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0",
+scratch\check_sheets.py:25:     "1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0",
+scratch\inspect_public_headers.py:20:     fid = "1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0"
+scratch\test_source_migration.py:27:     source_ss = client.open_by_key("1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0")
+scratch\find_mat_tien_col.py:14:     ss = client.open_by_key('1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0')
+scratch\inspect_tqd.py:15:     ss = client.open_by_key('1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0')
+scratch\inspect_formulas.py:15:     ss = client.open_by_key('1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0')

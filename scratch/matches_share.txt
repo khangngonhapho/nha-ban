@@ -1,0 +1,58 @@
+
+=== Matches for 'shareZaloFromAdminDetail' ===
+Line 4595: <button class="admin-icon-btn zalo-btn" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo">🔗</button>
+Line 5545: window.shareZaloFromAdminDetail = function(id) {
+Line 7319: shareZaloFromAdminDetail(maKhangNgo);
+
+=== Matches for 'share' ===
+Line  322: .share-btn-float {
+Line  341: .share-btn-float:hover {
+Line  346: .share-btn-float:active {
+Line  362: .share-count {
+Line  748: body.is-locked .share-btn-float {
+Line 2491: /* Collections / Favorites / Zalo Sheet Share display text overrides */
+Line 2850: const shareToken = urlParams.get('s');
+Line 2921: let sharedIds = null;
+Line 2922: const shareBitmask = urlParams.get('b'); // Format cũ: bitmask
+Line 2923: if (shareToken) {
+Line 2925: if (shareToken.includes(',') || !shareToken.includes('[')) {
+Line 2927: sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
+Line 2929: const decoded = atob(shareToken);
+Line 2931: if (Array.isArray(parsed)) sharedIds = parsed;
+Line 2934: sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
+Line 3767: if (shareBitmask) {
+Line 3769: sharedIds = decodeBitmask(shareBitmask, allIds);
+Line 3770: } else if (sharedIds) {
+Line 3771: sharedIds = sharedIds.map(tk => {
+Line 3784: if (sharedIds) {
+Line 3785: DATA = fullList.filter(p => sharedIds.map(String).includes(String(p.id)) && !p.is_invisible);
+Line 3850: if (!isAdmin || shareBitmask || shareToken) return;
+Line 3867: if (!isAdmin || shareBitmask || shareToken) return;
+Line 3901: const sc = document.getElementById('shareCount');
+Line 4463: main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+Line 4499: <iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+Line 4595: <button class="admin-icon-btn zalo-btn" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo">🔗</button>
+Line 5061: updateShareUI();
+Line 5065: async function generateShareLink() {
+Line 5074: let shareUrl = '';
+Line 5081: shareUrl = `${baseUrl}?s=${systemId}`;
+Line 5093: shareUrl = `${baseUrl}?b=${encoded}`;
+Line 5096: // Dùng Web Share API trên điện thoại
+Line 5097: if (navigator.share) {
+Line 5098: navigator.share({
+Line 5100: url: shareUrl
+Line 5107: ta.value = shareUrl;
+Line 5158: let shareUrl = '';
+Line 5165: shareUrl = `${baseUrl}?s=${systemId}&c=${encodeURIComponent(encodedName)}`;
+Line 5177: shareUrl = `${baseUrl}?b=${encodedBitmask}&c=${encodeURIComponent(encodedName)}`;
+Line 5183: // Dùng Web Share API trên điện thoại
+Line 5184: if (navigator.share) {
+Line 5185: navigator.share({
+Line 5187: url: shareUrl
+Line 5193: ta.value = shareUrl;
+Line 5210: <button class="share-btn-float" onclick="promptGenerateLink()">
+Line 5212: <span class="share-count" id="shareCount">0</span>
+Line 5233: updateShareUI();
+Line 5545: window.shareZaloFromAdminDetail = function(id) {
+Line 5548: updateShareUI();
+... truncated ...

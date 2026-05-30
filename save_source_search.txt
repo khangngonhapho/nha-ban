@@ -1,0 +1,2 @@
+4684:               <button class="admin-icon-btn save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi">💾</button>
+7420:     window.saveSourceChanges = async function(id) {

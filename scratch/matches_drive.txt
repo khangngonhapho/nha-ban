@@ -1,0 +1,11 @@
+Line 2651: <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Google OAuth Client ID:</div>
+Line 3412: // Tự động convert link Google Drive → ảnh có thể nhúng với kích thước tùy chỉnh
+Line 3419: const m1 = url.match(/drive\.google\.com\/file\/d\/([^/?\s]+)/);
+Line 3420: if (m1) return `https://drive.google.com/thumbnail?id=${m1[1]}&sz=${sz}`;
+Line 3422: if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=${sz}`;
+Line 3495: console.warn("OAuth token invalid or unauthorized. Cleared from storage.");
+Line 5493: client_id: clientId,
+Line 5525: alert("Vui lòng nhập Google OAuth Client ID của bạn ở mục 'Cấu hình Google Admin' trong Bộ lọc trước!");
+Line 5612: console.warn("OAuth token invalid or unauthorized. Cleared from storage.");
+Line 5746: // Google Drive ID match
+Line 5747: const m1 = cleanUrl.match(/drive\.google\.com\/file\/d\/([^/?\s&]+)/);

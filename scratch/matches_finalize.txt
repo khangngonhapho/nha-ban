@@ -1,0 +1,5 @@
+
+=== Matches for 'finalizeData' ===
+Line 3630: finalizeData(fullList);
+Line 3738: finalizeData(fullList);
+Line 3765: function finalizeData(fullList) {

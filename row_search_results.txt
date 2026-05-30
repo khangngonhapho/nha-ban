@@ -1,0 +1,2 @@
+5612:             if (row.length >= 1) {
+5614:               const img = row[row.length - 1] || '';
