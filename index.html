@@ -3270,10 +3270,13 @@
           raw_link_fb: row[76] || '',
           raw_noi_dung_chinh: row[9] || '',
           raw_mo_ta_chi_tiet: cleanConsecutiveNewlines(row[10] || ''),
-          raw_sodo1: row[27] || '',
-          raw_sodo2: row[28] || '',
-          raw_so_nha: row[6] || '',
-          raw_ten_duong: row[5] || '',
+           raw_sodo1: row[27] || '',
+           raw_sodo2: row[28] || '',
+           raw_sodo3: row[77] || '',
+           raw_sodo4: row[78] || '',
+           raw_sodo5: row[79] || '',
+           raw_so_nha: row[6] || '',
+           raw_ten_duong: row[5] || '',
           raw_dt_thuc_te: row[13] || '',
           raw_dt_tren_so: row[14] || '',
           raw_gia_chao: row[11] || row[58] || '',
@@ -3412,6 +3415,11 @@
     // Tự động convert link Google Drive → ảnh có thể nhúng với kích thước tùy chỉnh
     function fixImgUrl(url, sz = 'w800') {
       if (!url) return '';
+      if (url.includes('res.cloudinary.com')) {
+        const width = sz.replace('w', '');
+        // Tối ưu hóa Cloudinary: chất lượng tự động (q_auto), định dạng tự động (f_auto), và tự động xoay đúng chiều EXIF (a_auto)
+        return url.replace('/image/upload/', `/image/upload/q_auto,f_auto,a_auto,c_limit,w_${width}/`);
+      }
       if (url.includes('thumbnail') || url.includes('uc?export')) {
         // Nếu là link thumbnail cũ, cập nhật lại kích thước
         return url.replace(/sz=w\d+/, `sz=${sz}`);
@@ -3603,6 +3611,9 @@
                 p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
                 p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
                 p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
+                p.raw_sodo3 = poolRow[77] || '';             // Sơ đồ thửa đất 3 - Index 77, Column BZ
+                p.raw_sodo4 = poolRow[78] || '';             // Sơ đồ thửa đất 4 - Index 78, Column CA
+                p.raw_sodo5 = poolRow[79] || '';             // Sơ đồ thửa đất 5 - Index 79, Column CB
                 p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
                 p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
                 p.raw_dt_tren_so = poolRow[14] || '';        // DT Trên sổ - Index 14, Column O
@@ -3625,6 +3636,9 @@
                 p.raw_mo_ta_chi_tiet = '';
                 p.raw_sodo1 = '';
                 p.raw_sodo2 = '';
+                p.raw_sodo3 = '';
+                p.raw_sodo4 = '';
+                p.raw_sodo5 = '';
                 p.raw_so_nha = '';
                 p.raw_ten_duong = p.ten_duong || '';
                 p.raw_dt_tren_so = p.dt || '';
@@ -4546,7 +4560,7 @@
         const encoded = encodeURIComponent(s);
         main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
       } else {
-        main.innerHTML = `<img src="${s}" alt="Ảnh phóng to">`;
+        main.innerHTML = `<img src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to">`;
       }
     }
     function renderLbThumbs() {
@@ -4601,7 +4615,7 @@
         <div onclick="openLb(${i})" style="position:absolute; inset:0; z-index:10; cursor:pointer;"></div>
         <iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
         } else {
-          sl.innerHTML = `<img src="${s}" alt="Ảnh ${i + 1}" loading="${i === 0 ? 'eager' : 'lazy'}" onclick="openLb(${i})">`;
+          sl.innerHTML = `<img src="${fixImgUrl(s, 'w800')}" alt="Ảnh ${i + 1}" loading="${i === 0 ? 'eager' : 'lazy'}" onclick="openLb(${i})">`;
         }
         gt.appendChild(sl);
         const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' on' : '');
@@ -5769,13 +5783,27 @@
       const norm = normalizeImgUrl(url);
       if (norm === '') return false;
       
+      // 1. Nhận diện theo mẫu tên file Cloudinary được uploader tạo ra (cực kỳ tối ưu và nhanh)
+      const urlLower = String(url).toLowerCase();
+      if (urlLower.includes('/sodo1_') || urlLower.includes('/sodo2_') || 
+          urlLower.includes('/sodo3_') || urlLower.includes('/sodo4_') || urlLower.includes('/sodo5_')) {
+        return true;
+      }
+
+      // 2. Lấy 5 giá trị sodo hiện có của căn nhà
       const sodo1Val = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
       const sodo2Val = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
-      
+      const sodo3Val = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+      const sodo4Val = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+      const sodo5Val = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
+
       const normS1 = normalizeImgUrl(sodo1Val);
       const normS2 = normalizeImgUrl(sodo2Val);
-      
-      if (norm === normS1 || norm === normS2) {
+      const normS3 = normalizeImgUrl(sodo3Val);
+      const normS4 = normalizeImgUrl(sodo4Val);
+      const normS5 = normalizeImgUrl(sodo5Val);
+
+      if (norm === normS1 || norm === normS2 || norm === normS3 || norm === normS4 || norm === normS5) {
         return true;
       }
       return false;
@@ -5789,6 +5817,15 @@
       
       const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
       if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+
+      const sodo3Url = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+      if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
+
+      const sodo4Url = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+      if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
+
+      const sodo5Url = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
+      if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
       
       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
       if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
@@ -5803,19 +5840,13 @@
         if (url) cards.push({ type: "alley", index: i, url: url });
       }
 
-      const normS1 = normalizeImgUrl(sodo1Url);
-      const normS2 = normalizeImgUrl(sodo2Url);
-      
       const isSodoUrl = (url) => {
-        if (!url) return false;
-        const norm = normalizeImgUrl(url);
-        if (norm === '') return false;
-        return norm === normS1 || norm === normS2;
+        return window.isListingSodoUrl(url, p);
       };
 
       // Priority duplicate filtering:
       // - Original slots (interior 2-15, alley 1-10) take absolute priority.
-      // - Role slots (interior 1 (cover), sodo 1, sodo 2, facade 0) are evaluated last.
+      // - Role slots (interior 1 (cover), sodo 1-5, facade 0) are evaluated last.
       // If a role slot has the same URL as an already rendered slot, it is hidden.
       const priorityList = [
         ...cards.filter(c => (c.type === 'interior' && c.index > 1) || c.type === 'alley'),
@@ -5970,13 +6001,19 @@
       }
       isAnhNen = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
 
-      // Check if this image is Sổ 1 or Sổ 2
+      // Check if this image is Sổ 1 to Sổ 5
       let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
       let sodo2Val = document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '';
+      let sodo3Val = document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3) || '';
+      let sodo4Val = document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4) || '';
+      let sodo5Val = document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5) || '';
       
       let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
       let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
-      let isSodo = isSodo1 || isSodo2;
+      let isSodo3 = normUrl !== '' && normUrl === normalizeImgUrl(sodo3Val);
+      let isSodo4 = normUrl !== '' && normUrl === normalizeImgUrl(sodo4Val);
+      let isSodo5 = normUrl !== '' && normUrl === normalizeImgUrl(sodo5Val);
+      let isSodo = isSodo1 || isSodo2 || isSodo3 || isSodo4 || isSodo5;
       
       if (isSodo) {
         isAnhNen = false;
@@ -6046,12 +6083,11 @@
             ${isAnhNen && !isMatTien && !isSodo ? `
               <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Nền</span>
             ` : ''}
-            ${isSodo1 ? `
-              <span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 1</span>
-            ` : ''}
-            ${isSodo2 ? `
-              <span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 2</span>
-            ` : ''}
+            ${isSodo1 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 1</span>` : ''}
+            ${isSodo2 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 2</span>` : ''}
+            ${isSodo3 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 3</span>` : ''}
+            ${isSodo4 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 4</span>` : ''}
+            ${isSodo5 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 5</span>` : ''}
             ${type !== "facade" && type !== "sodo" ? `
               <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; background: rgba(0,0,0,0.65); padding: 4px; border-radius: 6px; cursor: pointer; margin: 0; z-index: 10; line-height: 0;">
                 <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="window.toggleImagePublic(this)" 

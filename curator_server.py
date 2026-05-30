@@ -2014,11 +2014,14 @@ def recrawl_single_listing(tk_id):
         
         if len(images_td) >= 1: crawled_data["Sơ đồ thửa đất 1"] = images_td[0]
         if len(images_td) >= 2: crawled_data["Sơ đồ thửa đất 2"] = images_td[1]
+        if len(images_td) >= 3: crawled_data["Sơ đồ thửa đất 3"] = images_td[2]
+        if len(images_td) >= 4: crawled_data["Sơ đồ thửa đất 4"] = images_td[3]
+        if len(images_td) >= 5: crawled_data["Sơ đồ thửa đất 5"] = images_td[4]
         
         # Đưa trạng thái về raw_text để dọn dẹp ảnh cũ hoặc up Drive lại
         combined_images = []
         seen_images = set()
-        for img in images_td + images_nd:
+        for img in images_nd: # Only product/interior images, exclude diagrams
             if img and img not in seen_images:
                 combined_images.append(img)
                 seen_images.add(img)

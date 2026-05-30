@@ -663,7 +663,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                     # Gom ảnh nội thất và sơ đồ lưu thô (GĐ2 sẽ di cư lên Google Drive/Cloudinary)
                     combined_images = []
                     seen_images = set()
-                    for img in images_td + images_nd:
+                    for img in images_nd: # Only product/interior images, exclude diagram (sodo) images
                         if img and img not in seen_images:
                             combined_images.append(img)
                             seen_images.add(img)
