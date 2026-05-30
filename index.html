@@ -5858,7 +5858,7 @@
       // Recover current selected public interior/alley indices
       let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
       let currentPublicCover = '';
-      if (p.pool_row_data) {
+      if (p.isFromPoolOnly && p.pool_row_data) {
         currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
       } else if (p.imgs && p.imgs.length > 0) {
         currentPublicCover = p.imgs[0]; // First public image
@@ -5867,7 +5867,7 @@
       let currentInteriorIndices = '';
       let currentAlleyIndices = '';
 
-      if (p.pool_row_data) {
+      if (p.isFromPoolOnly && p.pool_row_data) {
         currentInteriorIndices = String(p.pool_row_data[61] || '').trim();
         currentAlleyIndices = String(p.pool_row_data[62] || '').trim();
       } else {
@@ -5904,7 +5904,7 @@
 
       let isAnhNen = false;
       let targetNen = '';
-      if (p.pool_row_data) {
+      if (p.isFromPoolOnly && p.pool_row_data) {
         targetNen = p.pool_row_data[40] || '';
       } else if (p.imgs && p.imgs.length > 0) {
         targetNen = p.imgs[0] || '';
@@ -5944,7 +5944,7 @@
         isPublic = false; // Mặt tiền thô và ảnh sổ không hiển thị trong carousel công khai mặc định
       } else if (type === "interior") {
         let publicIntStr = '';
-        if (p.pool_row_data) {
+        if (p.isFromPoolOnly && p.pool_row_data) {
           publicIntStr = String(p.pool_row_data[61] || '').trim();
         } else {
           isPublic = p.imgs ? p.imgs.includes(url) : false;
@@ -5955,7 +5955,7 @@
         }
       } else if (type === "alley") {
         let publicAlleyStr = '';
-        if (p.pool_row_data) {
+        if (p.isFromPoolOnly && p.pool_row_data) {
           publicAlleyStr = String(p.pool_row_data[62] || '').trim();
         }
         if (publicAlleyStr) {
