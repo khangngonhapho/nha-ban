@@ -5782,65 +5782,46 @@
     };
 
     function renderImageEditorWidget(p) {
-      const renderedSodo = new Set();
-      const renderedInterior = new Set();
-      const renderedAlley = new Set();
+      const cards = [];
       
-      function renderUniqueCard(type, index, url, p) {
-        const normUrl = normalizeImgUrl(url);
-        if (!normUrl) return '';
-
-        // If it's interior index 1 (cover slot), check if the same URL is present in a higher slot (2 to 15).
-        // If so, skip rendering index 1 to let the original slot render instead.
-        if (type === 'interior' && parseInt(index) === 1 && p.pool_row_data) {
-          for (let c = 41; c <= 54; c++) {
-            if (p.pool_row_data[c] && normalizeImgUrl(p.pool_row_data[c]) === normUrl) {
-              return '';
-            }
-          }
-        }
-        
-        // Skip duplicate check for facade/interior-1 since they map to different database columns (US-046.6)
-        const isFacadeOrInterior1 = (type === 'facade') || (type === 'interior' && parseInt(index) === 1);
-        
-        if (!isFacadeOrInterior1) {
-          if (type === 'sodo' && renderedSodo.has(normUrl)) return '';
-          if (type === 'interior' && renderedInterior.has(normUrl)) return '';
-          if (type === 'alley' && renderedAlley.has(normUrl)) return '';
-        }
-        
-        // Anti-duplicate protection for Sổ images in already curated listings
-        if (p.pool_row_data) {
-          const sodo1Val = document.getElementById('editSodo1Url')?.value || p.pool_row_data[27] || '';
-          const sodo2Val = document.getElementById('editSodo2Url')?.value || p.pool_row_data[28] || '';
-          
-          if (sodo1Val !== '') {
-            const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
-            const s1Norm = normalizeImgUrl(sodo1Val);
-            const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
-            if (normUrl === raw1Norm || normUrl === s1Norm || (pub1Norm !== '' && normUrl === pub1Norm)) {
-              if (renderedSodo.has(raw1Norm) || renderedSodo.has(s1Norm) || (pub1Norm !== '' && renderedSodo.has(pub1Norm))) {
-                return '';
-              }
-            }
-          }
-          if (sodo2Val !== '') {
-            const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
-            const s2Norm = normalizeImgUrl(sodo2Val);
-            const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
-            if (normUrl === raw2Norm || normUrl === s2Norm || (pub2Norm !== '' && normUrl === pub2Norm)) {
-              if (renderedSodo.has(raw2Norm) || renderedSodo.has(s2Norm) || (pub2Norm !== '' && renderedSodo.has(pub2Norm))) {
-                return '';
-              }
-            }
-          }
-        }
-        
-        if (type === 'sodo') renderedSodo.add(normUrl);
-        if (type === 'interior') renderedInterior.add(normUrl);
-        if (type === 'alley') renderedAlley.add(normUrl);
-        return renderImageCardForEdit(type, index, url, p);
+      const sodo1Url = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+      if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url });
+      
+      const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+      if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+      
+      const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
+      if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
+      
+      for (let i = 1; i <= 15; i++) {
+        const url = p.pool_row_data ? p.pool_row_data[39 + i] : (p.imgs && p.imgs[i - 1]);
+        if (url) cards.push({ type: "interior", index: i, url: url });
       }
+      
+      for (let i = 1; i <= 10; i++) {
+        const url = p.pool_row_data ? p.pool_row_data[29 + i] : null;
+        if (url) cards.push({ type: "alley", index: i, url: url });
+      }
+
+      // Priority duplicate filtering:
+      // - Original slots (interior 2-15, alley 1-10) take absolute priority.
+      // - Role slots (interior 1 (cover), sodo 1, sodo 2, facade 0) are evaluated last.
+      // If a role slot has the same URL as an already rendered slot, it is hidden.
+      const priorityList = [
+        ...cards.filter(c => (c.type === 'interior' && c.index > 1) || c.type === 'alley'),
+        ...cards.filter(c => (c.type === 'interior' && c.index === 1) || c.type === 'sodo' || c.type === 'facade')
+      ];
+
+      const renderedUrls = new Set();
+      priorityList.forEach(c => {
+        const normUrl = normalizeImgUrl(c.url);
+        if (normUrl && !renderedUrls.has(normUrl)) {
+          c.shouldRender = true;
+          renderedUrls.add(normUrl);
+        } else {
+          c.shouldRender = false;
+        }
+      });
 
       let html = `
         <div class="admin-edit-group" style="margin-top: 10px;">
@@ -5868,37 +5849,11 @@
           <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
-      // 0. Sổ thửa đất 1 & 2 (Hình Sổ thô hoặc đã curation)
-      const sodo1Url = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
-      if (sodo1Url) {
-        html += renderUniqueCard("sodo", 1, sodo1Url, p);
-      }
-      const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
-      if (sodo2Url) {
-        html += renderUniqueCard("sodo", 2, sodo2Url, p);
-      }
-
-      // 1. Facade photo (Hình Mặt tiền gốc thô)
-      const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
-      if (facadeUrl) {
-        html += renderUniqueCard("facade", 0, facadeUrl, p);
-      }
-
-      // 2. Interior clean photos (1 to 15)
-      for (let i = 1; i <= 15; i++) {
-        const url = p.pool_row_data ? p.pool_row_data[39 + i] : (p.imgs && p.imgs[i - 1]);
-        if (url) {
-          html += renderUniqueCard("interior", i, url, p);
+      cards.forEach(c => {
+        if (c.shouldRender) {
+          html += renderImageCardForEdit(c.type, c.index, c.url, p);
         }
-      }
-
-      // 3. Alley photos (1 to 10)
-      for (let i = 1; i <= 10; i++) {
-        const url = p.pool_row_data ? p.pool_row_data[29 + i] : null;
-        if (url) {
-          html += renderUniqueCard("alley", i, url, p);
-        }
-      }
+      });
 
       // Recover current selected public interior/alley indices
       let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
