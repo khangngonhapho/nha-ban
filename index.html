@@ -5803,6 +5803,16 @@
         if (url) cards.push({ type: "alley", index: i, url: url });
       }
 
+      const normS1 = normalizeImgUrl(sodo1Url);
+      const normS2 = normalizeImgUrl(sodo2Url);
+      
+      const isSodoUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        if (norm === '') return false;
+        return norm === normS1 || norm === normS2;
+      };
+
       // Priority duplicate filtering:
       // - Original slots (interior 2-15, alley 1-10) take absolute priority.
       // - Role slots (interior 1 (cover), sodo 1, sodo 2, facade 0) are evaluated last.
@@ -5815,7 +5825,19 @@
       const renderedUrls = new Set();
       priorityList.forEach(c => {
         const normUrl = normalizeImgUrl(c.url);
-        if (normUrl && !renderedUrls.has(normUrl)) {
+        if (!normUrl) {
+          c.shouldRender = false;
+          return;
+        }
+
+        // If it is an interior or alley slot, but its URL is classified as a Sổ (diagram),
+        // we must NOT render it as an interior/alley card. It should only render as a Sổ card!
+        if ((c.type === 'interior' || c.type === 'alley') && isSodoUrl(c.url)) {
+          c.shouldRender = false;
+          return;
+        }
+
+        if (!renderedUrls.has(normUrl)) {
           c.shouldRender = true;
           renderedUrls.add(normUrl);
         } else {
