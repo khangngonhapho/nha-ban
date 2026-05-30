@@ -5951,14 +5951,6 @@
       let isMatTien = false;
       const targetMatTien = p.isFromPoolOnly && p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
       isMatTien = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
-      
-      // Fallback for Cloudinary double-upload Facade image in di cu listings
-      if (!isMatTien && type === 'facade' && p.original_row_data && p.original_row_data[38]) {
-        const srcUrl = p.original_row_data[38];
-        if (srcUrl.includes('cloudinary.com')) {
-          isMatTien = true;
-        }
-      }
 
       let isAnhNen = false;
       let targetNen = '';
@@ -5970,14 +5962,6 @@
         targetNen = p.imgs[0] || '';
       }
       isAnhNen = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
-
-      // Fallback for Cloudinary double-upload Cover image in di cu listings
-      if (!isAnhNen && type === 'interior' && parseInt(index) === 1 && p.original_row_data && p.original_row_data[20]) {
-        const srcUrl = p.original_row_data[20];
-        if (srcUrl.includes('cloudinary.com')) {
-          isAnhNen = true;
-        }
-      }
 
       // Check if this image is Sổ 1 or Sổ 2
       let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
@@ -6010,14 +5994,6 @@
           }
           const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
           isPublic = normPublic.includes(normUrl);
-
-          // Fallback for Cloudinary double-upload in di cu listings
-          if (!isPublic && p.original_row_data && p.original_row_data[19 + parseInt(index)]) {
-            const srcUrl = p.original_row_data[19 + parseInt(index)];
-            if (srcUrl.includes('cloudinary.com')) {
-              isPublic = true;
-            }
-          }
         }
         if (publicIntStr) {
           const indices = publicIntStr.split(',').map(s => s.trim());
@@ -6038,14 +6014,6 @@
           }
           const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
           isPublic = normPublic.includes(normUrl);
-
-          // Fallback for Cloudinary double-upload in di cu listings
-          if (!isPublic && p.original_row_data && p.original_row_data[29 + parseInt(index)]) {
-            const srcUrl = p.original_row_data[29 + parseInt(index)];
-            if (srcUrl.includes('cloudinary.com')) {
-              isPublic = true;
-            }
-          }
         }
         if (publicAlleyStr) {
           const indices = publicAlleyStr.split(',').map(s => s.trim());
