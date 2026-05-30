@@ -3755,6 +3755,16 @@
             });
 
           finalizeData(fullList);
+          
+          // Securely load frontage images via serverless API proxy in the background if Admin is logged in (US-024)
+          const token = localStorage.getItem('g_access_token');
+          const expiry = localStorage.getItem('g_token_expiry');
+          const now = Date.now();
+          const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+          if (isAdmin && isTokenValid) {
+            console.log("Admin session detected in public fallback. Initiating background facade images retrieval...");
+            fetchFacadeImages(token);
+          }
         } catch (e) {
           showError('Lỗi parse dữ liệu: ' + e.message);
         }
@@ -4255,19 +4265,22 @@
 
       const frag = document.createDocumentFragment();
       itemsToRender.forEach((p, i) => {
-        const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
-        const cleanImgUrls = imgUrls.filter(u => !isListingSodoUrl(u, p));
-        let thumbUrl = '';
-        if (p.img_mat_tien) {
-          thumbUrl = p.img_mat_tien;
-        } else {
-          thumbUrl = cleanImgUrls[0] || imgUrls[0];
-        }
-        const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
         const curatedListing = isAdmin ? DATA.find(x => 
           (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
           (x.id && p.id && String(x.id).trim() === String(p.id).trim())
         ) : null;
+
+        const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
+        const cleanImgUrls = imgUrls.filter(u => !isListingSodoUrl(u, p));
+        let thumbUrl = '';
+        
+        const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
+        if (effectiveImgMatTien) {
+          thumbUrl = effectiveImgMatTien;
+        } else {
+          thumbUrl = cleanImgUrls[0] || imgUrls[0];
+        }
+        const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
         const isOnAir = !!curatedListing;
 
         const c = document.createElement('div');
