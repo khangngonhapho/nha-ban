@@ -3841,6 +3841,27 @@
           }
         }
       }
+
+      // Check if there is an active auto-expand preview flag in localStorage (US-046.2)
+      if (isAdmin) {
+        const autoPreviewId = localStorage.getItem('auto_preview_listing_id');
+        if (autoPreviewId) {
+          localStorage.removeItem('auto_preview_listing_id');
+          setTimeout(() => {
+            openS(autoPreviewId, null, true);
+          }, 850);
+        }
+
+        const autoShareId = localStorage.getItem('auto_share_zalo_listing_id');
+        if (autoShareId) {
+          localStorage.removeItem('auto_share_zalo_listing_id');
+          setTimeout(() => {
+            if (confirm(`🎉 Căn nhà #${autoShareId} đã LÊN SÓNG thành công và đang hiển thị trên Customer View!\n\nBạn có muốn tạo Link chia sẻ gửi Zalo cho khách hàng ngay bây giờ không?`)) {
+              shareZaloFromAdminDetail(autoShareId);
+            }
+          }, 1250);
+        }
+      }
     }
 
     window.triggerAdminAuthPrompt = function() {
@@ -4590,7 +4611,7 @@
       document.getElementById('ar').style.display = gI === gN - 1 ? 'none' : 'flex';
     }
 
-    function openS(id, tempP = null) {
+    function openS(id, tempP = null, autoExpandPreview = false) {
       const p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
 
@@ -5110,6 +5131,31 @@
             editTieuDe.addEventListener('input', updateLivePreview);
             editMoTa.addEventListener('input', updateLivePreview);
             updateLivePreview();
+          }
+
+          // Auto expand preview accordion if flagged (US-046.2)
+          if (autoExpandPreview) {
+            const accPreview = document.getElementById('accPreview');
+            const accSource = document.getElementById('accSource');
+            if (accPreview) {
+              accPreview.classList.add('expanded');
+              const content = accPreview.querySelector('.accordion-content');
+              if (content) content.style.display = 'block';
+              const arrow = accPreview.querySelector('.arrow');
+              if (arrow) arrow.textContent = '▼';
+              
+              // Smooth scroll to the preview section
+              setTimeout(() => {
+                accPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 150);
+            }
+            if (accSource) {
+              accSource.classList.remove('expanded');
+              const content = accSource.querySelector('.accordion-content');
+              if (content) content.style.display = 'none';
+              const arrow = accSource.querySelector('.arrow');
+              if (arrow) arrow.textContent = '▶';
+            }
           }
         }, 50);
       }
@@ -7317,9 +7363,11 @@
           }
         }
 
-        showToast("Đã lưu thay đổi lên Google Sheets thành công!");
-        render();
-        openS(id);
+        showToast("Đã lưu thay đổi lên Google Sheets thành công! Đang tải lại trang...");
+        localStorage.setItem('auto_preview_listing_id', id);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } catch (err) {
         console.error("Lỗi lưu dữ liệu:", err);
         showToast(`Lỗi lưu thay đổi: ${err.message}`, "error");
@@ -7594,7 +7642,7 @@
           console.warn("Không thể ghi nhận thay đổi hình ảnh hoặc Last Sync vào Pool:", e);
         }
         
-        showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}!`);
+        showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}! Đang tải lại trang...`);
         
         // Reset các ô tìm kiếm Pool
         const pullInput = document.getElementById('poolSearchToolInput');
@@ -7602,21 +7650,11 @@
         const pullResults = document.getElementById('poolSearchToolResults');
         if (pullResults) pullResults.innerHTML = '';
 
-        // Tải lại dữ liệu web
-        secureLoadAttempted = false;
-        isSecureLoaded = false;
-        isDataLoaded = false;
-        await loadData();
-
-        // Mở chi tiết của căn vừa lên sóng tại chỗ
-        openS(maKhangNgo);
-
-        // Kích hoạt hỏi chia sẻ Zalo thông minh
+        localStorage.setItem('auto_preview_listing_id', maKhangNgo);
+        localStorage.setItem('auto_share_zalo_listing_id', maKhangNgo);
         setTimeout(() => {
-          if (confirm(`🎉 Căn nhà #${maKhangNgo} đã LÊN SÓNG thành công và đang hiển thị trên Customer View!\n\nBạn có muốn tạo Link chia sẻ gửi Zalo cho khách hàng ngay bây giờ không?`)) {
-            shareZaloFromAdminDetail(maKhangNgo);
-          }
-        }, 500);
+          window.location.reload();
+        }, 1200);
         
       } catch (err) {
         showToast(`❌ Lỗi đồng bộ: ${err.message}`, "error");
