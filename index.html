@@ -4225,8 +4225,11 @@
     function render() {
       const list = document.getElementById('list');
       list.innerHTML = '';
-      const sourceArr = (isAdmin && activeMode === 'pool') ? getMappedPoolData() : DATA;
-      const arr = sourceArr.slice().sort((a, b) => {
+      
+      // Sửa lỗi: Render dựa trên danh sách đã lọc (getFiltered()) thay vì danh sách thô (sourceArr)
+      // Điều này khắc phục triệt để việc tìm kiếm BĐS vượt quá 200 căn trong Kho Pool không hiển thị
+      const filteredArr = getFiltered();
+      const arr = filteredArr.slice().sort((a, b) => {
         if (currentSortType === 'newest') {
           const ta = parseInt(a.temp_id, 10) || 0;
           const tb = parseInt(b.temp_id, 10) || 0;
@@ -4355,32 +4358,40 @@
       applyFilter();
     }
 
-    // Lọc nhanh bằng ẩn/hiện card (không tạo lại DOM)
+    // Lọc bằng cách tạo lại DOM để giải quyết triệt để giới hạn hiển thị 200 căn trong Kho Pool
+    let inApplyFilter = false;
     function applyFilter() {
-      const filteredIds = new Set(getFiltered().map(p => String(p.id)));
-      const cards = document.querySelectorAll('#list .card');
-      let visibleCount = 0;
-      cards.forEach(c => {
-        const show = filteredIds.has(c.dataset.pid);
-        c.style.display = show ? '' : 'none';
-        if (show) visibleCount++;
-      });
-      // Hiện thông báo nếu không có kết quả
-      let noResult = document.getElementById('noResultMsg');
-      if (!visibleCount) {
-        if (!noResult) {
-          const d = document.createElement('div');
-          d.id = 'noResultMsg';
-          d.style.cssText = 'text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;';
-          d.textContent = 'Không tìm thấy căn nào phù hợp.';
-          document.getElementById('list').appendChild(d);
+      if (inApplyFilter) {
+        // Đây là cuộc gọi đệ quy từ render() -> applyFilter().
+        // Tại thời điểm này, DOM đã được vẽ sạch sẽ theo danh sách lọc.
+        // Chúng ta chỉ cần thực hiện kiểm tra trạng thái hiển thị, no-result và Smart Pool Fallback.
+        const cards = document.querySelectorAll('#list .card');
+        const visibleCount = cards.length;
+        
+        let noResult = document.getElementById('noResultMsg');
+        if (!visibleCount) {
+          if (!noResult) {
+            const d = document.createElement('div');
+            d.id = 'noResultMsg';
+            d.style.cssText = 'text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;';
+            d.textContent = 'Không tìm thấy căn nào phù hợp.';
+            document.getElementById('list').appendChild(d);
+          }
+        } else if (noResult) {
+          noResult.remove();
         }
-      } else if (noResult) {
-        noResult.remove();
+
+        // US-039.3: Smart Pool Fallback khi không có kết quả
+        checkPoolFallbackSearch(visibleCount);
+        return;
       }
 
-      // US-039.3: Smart Pool Fallback khi không có kết quả
-      checkPoolFallbackSearch(visibleCount);
+      inApplyFilter = true;
+      try {
+        render();
+      } finally {
+        inApplyFilter = false;
+      }
     }
 
     function checkPoolFallbackSearch(visibleCount) {
