@@ -5778,23 +5778,6 @@
       if (norm === normS1 || norm === normS2) {
         return true;
       }
-      
-      if (p.pool_row_data) {
-        if (normS1 !== '') {
-          const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
-          const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
-          if (norm === raw1Norm || (pub1Norm !== '' && norm === pub1Norm)) {
-            return true;
-          }
-        }
-        if (normS2 !== '') {
-          const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
-          const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
-          if (norm === raw2Norm || (pub2Norm !== '' && norm === pub2Norm)) {
-            return true;
-          }
-        }
-      }
       return false;
     };
 
@@ -5919,8 +5902,8 @@
       let currentAlleyIndices = '';
 
       if (p.isFromPoolOnly && p.pool_row_data) {
-        currentInteriorIndices = String(p.pool_row_data[61] || '').trim();
-        currentAlleyIndices = String(p.pool_row_data[62] || '').trim();
+        currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
+        currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
       } else if (p.pool_row_data) {
         // Already curated listing with pool row data matched.
         // We find which raw pool images are currently in the clean public images saved in Source sheet.
@@ -6049,7 +6032,7 @@
       } else if (type === "interior") {
         let publicIntStr = '';
         if (p.isFromPoolOnly && p.pool_row_data) {
-          publicIntStr = String(p.pool_row_data[61] || '').trim();
+          publicIntStr = String(p.pool_row_data[62] || '').trim();
         } else {
           const cleanPublicImages = [];
           if (p.original_row_data) {
@@ -6077,7 +6060,7 @@
       } else if (type === "alley") {
         let publicAlleyStr = '';
         if (p.isFromPoolOnly && p.pool_row_data) {
-          publicAlleyStr = String(p.pool_row_data[62] || '').trim();
+          publicAlleyStr = String(p.pool_row_data[63] || '').trim();
         } else {
           const cleanPublicImages = [];
           if (p.original_row_data) {
@@ -7478,27 +7461,7 @@
           if (!url) return false;
           const norm = normalizeImgUrl(url);
           if (norm === '') return false;
-          
-          if (norm === normSodo1 || norm === normSodo2) return true;
-          
-          // Index-based fallback for already curated listings
-          if (p.pool_row_data) {
-            if (normSodo1 !== '') {
-              const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
-              const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
-              if (norm === raw1Norm || (pub1Norm !== '' && norm === pub1Norm)) {
-                return true;
-              }
-            }
-            if (normSodo2 !== '') {
-              const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
-              const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
-              if (norm === raw2Norm || (pub2Norm !== '' && norm === pub2Norm)) {
-                return true;
-              }
-            }
-          }
-          return false;
+          return norm === normSodo1 || norm === normSodo2;
         };
 
         // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
@@ -7710,10 +7673,10 @@
             console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
           }
 
-          // 2. Đồng bộ chỉ số ảnh public (cột BJ:BK)
+          // 2. Đồng bộ chỉ số ảnh public (cột BK:BL)
           if (publicIntStr !== "") {
             try {
-              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BJ${p.pool_row_index}:BK${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${p.pool_row_index}:BL${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
                 method: 'PUT',
                 headers: {
                   'Authorization': `Bearer ${token}`,
@@ -7723,8 +7686,8 @@
               });
               
               // Cập nhật lại biến client-side để đồng bộ
-              p.pool_row_data[61] = publicIntStr;
-              p.pool_row_data[62] = publicAlleyStr;
+              p.pool_row_data[62] = publicIntStr;
+              p.pool_row_data[63] = publicAlleyStr;
             } catch (e) {
               console.warn("Không thể đồng bộ thay đổi hình ảnh sang Pool thô:", e);
             }
@@ -7868,19 +7831,7 @@
           if (!url) return false;
           const norm = normalizeImgUrl(url);
           if (norm === '') return false;
-          
-          if (norm === normSodo1 || norm === normSodo2) return true;
-          
-          // Index-based fallback for new imports
-          if (normSodo1 !== '') {
-            const raw1Norm = normalizeImgUrl(matchedRow[40]);
-            if (norm === raw1Norm) return true;
-          }
-          if (normSodo2 !== '') {
-            const raw2Norm = normalizeImgUrl(matchedRow[41]);
-            if (norm === raw2Norm) return true;
-          }
-          return false;
+          return norm === normSodo1 || norm === normSodo2;
         };
 
         const finalImages = [];
@@ -8077,8 +8028,8 @@
             console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
           }
 
-          // 1. Cập nhật anhDuocChon (BJ) và anhHemDuocChon (BK)
-          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BJ${poolRowNumber}:BK${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+          // 1. Cập nhật anhDuocChon (BK) và anhHemDuocChon (BL)
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${poolRowNumber}:BL${poolRowNumber}?valueInputOption=USER_ENTERED`, {
             method: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
