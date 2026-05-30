@@ -5994,7 +5994,7 @@
       // Fallback for Cloudinary double-upload Facade image in di cu listings
       if (!isMatTien && type === 'facade' && p.original_row_data && p.original_row_data[38]) {
         const srcUrl = p.original_row_data[38];
-        if (url.includes('cloudinary.com') && srcUrl.includes('cloudinary.com')) {
+        if (srcUrl.includes('cloudinary.com')) {
           isMatTien = true;
         }
       }
@@ -6013,7 +6013,7 @@
       // Fallback for Cloudinary double-upload Cover image in di cu listings
       if (!isAnhNen && type === 'interior' && parseInt(index) === 1 && p.original_row_data && p.original_row_data[20]) {
         const srcUrl = p.original_row_data[20];
-        if (url.includes('cloudinary.com') && srcUrl.includes('cloudinary.com')) {
+        if (srcUrl.includes('cloudinary.com')) {
           isAnhNen = true;
         }
       }
@@ -6068,7 +6068,7 @@
           // Fallback for Cloudinary double-upload in di cu listings
           if (!isPublic && p.original_row_data && p.original_row_data[19 + parseInt(index)]) {
             const srcUrl = p.original_row_data[19 + parseInt(index)];
-            if (url.includes('cloudinary.com') && srcUrl.includes('cloudinary.com')) {
+            if (srcUrl.includes('cloudinary.com')) {
               isPublic = true;
             }
           }
@@ -6096,7 +6096,7 @@
           // Fallback for Cloudinary double-upload in di cu listings
           if (!isPublic && p.original_row_data && p.original_row_data[29 + parseInt(index)]) {
             const srcUrl = p.original_row_data[29 + parseInt(index)];
-            if (url.includes('cloudinary.com') && srcUrl.includes('cloudinary.com')) {
+            if (srcUrl.includes('cloudinary.com')) {
               isPublic = true;
             }
           }
