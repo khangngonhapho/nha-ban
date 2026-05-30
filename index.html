@@ -4686,7 +4686,7 @@
               </div>
               ${(p.raw_sodo1 || p.raw_sodo2) ? `
               <div>
-                <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sơ đồ thửa đất</div>
+                <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
                 <div id="carouselSo" style="position: relative;">
                   <div class="admin-scroll-carousel"></div>
                   <div class="admin-carousel-dots"></div>
@@ -5685,16 +5685,29 @@
             <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
               ⭐ Nền
             </button>
+            <button type="button" id="toolSodoBtn" onclick="selectImageEditorTool('sodo')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              🔒 Sổ
+            </button>
             <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center; flex: 0.8;">
               ✕ Hủy
             </button>
           </div>
           <div style="font-size: 9.5px; color: var(--gold); text-align: center; margin-top: -6px; margin-bottom: 10px; font-weight: 600;">
-            💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Nền. Click ảnh bình thường để Ẩn/Hiện!
+            💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Nền/Sổ. Click ảnh bình thường để Ẩn/Hiện!
           </div>
 
           <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
+
+      // 0. Sổ thửa đất 1 & 2 (Hình Sổ thô hoặc đã curation)
+      const sodo1Url = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+      if (sodo1Url) {
+        html += renderUniqueCard("sodo", 1, sodo1Url, p);
+      }
+      const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+      if (sodo2Url) {
+        html += renderUniqueCard("sodo", 2, sodo2Url, p);
+      }
 
       // 1. Facade photo (Hình Mặt tiền gốc thô)
       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
@@ -5750,6 +5763,8 @@
           <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
           <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
           <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
+          <input type="hidden" id="editSodo1Url" value="${p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || '')}">
+          <input type="hidden" id="editSodo2Url" value="${p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || '')}">
         </div>
       `;
 
@@ -5770,9 +5785,16 @@
         isAnhNen = String(p.imgs[0]).trim() === String(url).trim();
       }
 
+      // Check if this image is Sổ 1 or Sổ 2
+      let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
+      let sodo2Val = document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '';
+      let isSodo1 = String(sodo1Val).trim() === String(url).trim() && String(url).trim() !== '';
+      let isSodo2 = String(sodo2Val).trim() === String(url).trim() && String(url).trim() !== '';
+      let isSodo = isSodo1 || isSodo2;
+
       let isPublic = false;
-      if (type === "facade") {
-        isPublic = true;
+      if (type === "facade" || type === "sodo") {
+        isPublic = false; // Mặt tiền thô và ảnh sổ không hiển thị trong carousel công khai mặc định
       } else if (type === "interior") {
         let publicIntStr = '';
         if (p.pool_row_data) {
@@ -5795,13 +5817,13 @@
         }
       }
 
-      const typeBadge = type === "facade" ? "Mặt Tiền" : (type === "interior" ? `Nội Thất ${index}` : `Hẻm ${index}`);
-      const badgeColor = type === "facade" ? "var(--red)" : (type === "interior" ? "var(--green)" : "var(--blue)");
+      const typeBadge = type === "facade" ? "Mặt Tiền" : (type === "sodo" ? `Sổ ${index}` : (type === "interior" ? `Nội Thất ${index}` : `Hẻm ${index}`));
+      const badgeColor = type === "facade" ? "var(--red)" : (type === "sodo" ? "#8e44ad" : (type === "interior" ? "var(--green)" : "var(--blue)"));
       
-      const cardBorder = isMatTien ? '2px solid var(--red)' : (isAnhNen ? '2px solid var(--gold)' : (isPublic ? 'rgba(39, 174, 96, 0.5)' : 'transparent'));
+      const cardBorder = isMatTien ? '2px solid var(--red)' : (isAnhNen ? '2px solid var(--gold)' : (isSodo ? '2px solid #8e44ad' : (isPublic ? 'rgba(39, 174, 96, 0.5)' : 'transparent')));
 
       return `
-        <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isPublic ? 'is-public' : ''}" 
+        <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isSodo ? 'is-sodo' : ''} ${isPublic ? 'is-public' : ''}" 
           data-type="${type}" data-index="${index}" data-url="${url}"
           style="position: relative; background: #000; border: ${cardBorder}; border-radius: 8px; overflow: hidden; display: block; width: 100%; box-sizing: border-box;">
           <div class="edit-img-card-wrap" style="position: relative; width: 100%; height: 0; padding-top: 75%; overflow: hidden; cursor: pointer;" 
@@ -5814,10 +5836,16 @@
             ${isMatTien ? `
               <span class="mattien-lock-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Mặt Tiền</span>
             ` : ''}
-            ${isAnhNen && !isMatTien ? `
+            ${isAnhNen && !isMatTien && !isSodo ? `
               <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Nền</span>
             ` : ''}
-            ${type !== "facade" ? `
+            ${isSodo1 ? `
+              <span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 1</span>
+            ` : ''}
+            ${isSodo2 ? `
+              <span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 2</span>
+            ` : ''}
+            ${type !== "facade" && type !== "sodo" ? `
               <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; background: rgba(0,0,0,0.65); padding: 4px; border-radius: 6px; cursor: pointer; margin: 0; z-index: 10; line-height: 0;">
                 <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="window.toggleImagePublic(this)" 
                   style="margin: 0; transform: scale(1.1); cursor: pointer;">
@@ -5833,6 +5861,7 @@
       window.currentImageEditorTool = tool;
       const facadeBtn = document.getElementById('toolFacadeBtn');
       const coverBtn = document.getElementById('toolCoverBtn');
+      const sodoBtn = document.getElementById('toolSodoBtn');
       const clearBtn = document.getElementById('toolClearBtn');
       if (!facadeBtn || !coverBtn || !clearBtn) return;
       
@@ -5846,6 +5875,13 @@
       coverBtn.style.color = '#fff';
       coverBtn.style.borderColor = 'rgba(255,255,255,0.15)';
       coverBtn.style.boxShadow = 'none';
+
+      if (sodoBtn) {
+        sodoBtn.style.background = 'rgba(0,0,0,0.5)';
+        sodoBtn.style.color = '#fff';
+        sodoBtn.style.borderColor = 'rgba(255,255,255,0.15)';
+        sodoBtn.style.boxShadow = 'none';
+      }
       
       if (tool === 'facade') {
         facadeBtn.style.background = 'var(--red)';
@@ -5857,6 +5893,13 @@
         coverBtn.style.borderColor = 'var(--gold)';
         coverBtn.style.color = '#000';
         coverBtn.style.boxShadow = '0 0 8px rgba(241, 196, 15, 0.6)';
+        clearBtn.style.display = 'flex'; // Show cancel button
+      } else if (tool === 'sodo') {
+        if (sodoBtn) {
+          sodoBtn.style.background = '#8e44ad';
+          sodoBtn.style.borderColor = '#8e44ad';
+          sodoBtn.style.boxShadow = '0 0 8px rgba(142, 68, 173, 0.6)';
+        }
         clearBtn.style.display = 'flex'; // Show cancel button
       } else {
         clearBtn.style.display = 'none'; // Hide cancel button
@@ -5871,6 +5914,8 @@
         window.setImageAsMatTien(event, card);
       } else if (tool === 'cover') {
         window.setImageAsAnhNen(event, card);
+      } else if (tool === 'sodo') {
+        window.setImageAsSodo(event, card);
       } else {
         // Toggle public visibility
         const cb = card.querySelector('.edit-img-pub-cb');
@@ -5945,6 +5990,83 @@
       }
     };
 
+    window.setImageAsSodo = function(event, card) {
+      if (event) event.stopPropagation();
+      const url = card.dataset.url;
+      const sodo1Input = document.getElementById('editSodo1Url');
+      const sodo2Input = document.getElementById('editSodo2Url');
+      if (!sodo1Input || !sodo2Input) return;
+
+      let s1 = sodo1Input.value.trim();
+      let s2 = sodo2Input.value.trim();
+
+      // If already marked as Sodo 1 or 2 on this card, toggle it off!
+      if (s1 === url) {
+        sodo1Input.value = "";
+        card.classList.remove('is-sodo', 'is-sodo1');
+        const badge = card.querySelector('.sodo-badge');
+        if (badge) badge.remove();
+        card.style.borderColor = 'transparent';
+      } else if (s2 === url) {
+        sodo2Input.value = "";
+        card.classList.remove('is-sodo', 'is-sodo2');
+        const badge = card.querySelector('.sodo-badge');
+        if (badge) badge.remove();
+        card.style.borderColor = 'transparent';
+      } else {
+        // Assign to an empty slot
+        let assigned = false;
+        let badgeNum = 1;
+        if (!s1) {
+          sodo1Input.value = url;
+          assigned = true;
+          badgeNum = 1;
+        } else if (!s2) {
+          sodo2Input.value = url;
+          assigned = true;
+          badgeNum = 2;
+        } else {
+          // Both filled, overwrite Sổ 1
+          sodo1Input.value = url;
+          assigned = true;
+          badgeNum = 1;
+          // Clear styling on the previous Sổ 1 card
+          document.querySelectorAll('.edit-img-card').forEach(c => {
+            if (c.dataset.url === s1) {
+              c.classList.remove('is-sodo', 'is-sodo1');
+              const badge = c.querySelector('.sodo-badge');
+              if (badge) badge.remove();
+              c.style.borderColor = 'transparent';
+            }
+          });
+        }
+
+        if (assigned) {
+          card.classList.add('is-sodo', `is-sodo${badgeNum}`);
+          card.style.borderColor = '#8e44ad';
+          const imgWrapper = card.querySelector('.edit-img-card-wrap');
+          if (imgWrapper) {
+            const badgeSpan = document.createElement('span');
+            badgeSpan.className = 'sodo-badge';
+            badgeSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;';
+            badgeSpan.innerHTML = `🔒 Sổ ${badgeNum}`;
+            imgWrapper.appendChild(badgeSpan);
+          }
+
+          // Sodo images are private, auto-uncheck public visibility check box
+          const cb = card.querySelector('.edit-img-pub-cb');
+          if (cb && cb.checked) {
+            cb.checked = false;
+            window.toggleImagePublic(cb);
+          }
+        }
+      }
+
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+    };
+
     window.toggleImagePublic = function(cb) {
       const card = cb.closest('.edit-img-card');
       const type = card.dataset.type;
@@ -5952,7 +6074,7 @@
       const isChecked = cb.checked;
 
       card.classList.toggle('is-public', isChecked);
-      if (!card.classList.contains('is-cover') && !card.classList.contains('is-mattien') && !card.classList.contains('is-anhnen')) {
+      if (!card.classList.contains('is-cover') && !card.classList.contains('is-mattien') && !card.classList.contains('is-anhnen') && !card.classList.contains('is-sodo')) {
         card.style.borderColor = isChecked ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
       }
 
@@ -7034,6 +7156,8 @@
         const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
         const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
         const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+        const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+        const sodo2Url = document.getElementById('editSodo2Url').value.trim();
 
         // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
         if (publicIntStr !== "" && p.pool_row_data) {
@@ -7135,23 +7259,45 @@
         }
 
         // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
-        if (p.pool_row_index && p.pool_row_data && publicIntStr !== "") {
+        if (p.pool_row_index && p.pool_row_data) {
           const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+          
+          // 1. Đồng bộ các ảnh Sổ thửa đất (cột AB:AC)
           try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BJ${p.pool_row_index}:BK${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${p.pool_row_index}:AC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+              body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
             });
-            
-            // Cập nhật lại biến client-side để đồng bộ
-            p.pool_row_data[61] = publicIntStr;
-            p.pool_row_data[62] = publicAlleyStr;
+            p.pool_row_data[27] = sodo1Url;
+            p.pool_row_data[28] = sodo2Url;
+            p.raw_sodo1 = sodo1Url;
+            p.raw_sodo2 = sodo2Url;
           } catch (e) {
-            console.warn("Không thể đồng bộ thay đổi hình ảnh sang Pool thô:", e);
+            console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
+          }
+
+          // 2. Đồng bộ chỉ số ảnh public (cột BJ:BK)
+          if (publicIntStr !== "") {
+            try {
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BJ${p.pool_row_index}:BK${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+              });
+              
+              // Cập nhật lại biến client-side để đồng bộ
+              p.pool_row_data[61] = publicIntStr;
+              p.pool_row_data[62] = publicAlleyStr;
+            } catch (e) {
+              console.warn("Không thể đồng bộ thay đổi hình ảnh sang Pool thô:", e);
+            }
           }
         }
 
@@ -7253,6 +7399,8 @@
         const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
         const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
         const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+        const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+        const sodo2Url = document.getElementById('editSodo2Url').value.trim();
 
         if (publicIntStr === "") {
           alert("⚠️ Vui lòng tích chọn ít nhất 1 ảnh nội thất công khai làm Hình Public!");
@@ -7393,6 +7541,20 @@
           const poolRowNumber = rows.indexOf(matchedRow) + 2;
           const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
           
+          // 0. Cập nhật Sổ 1 & 2 (AB:AC)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${poolRowNumber}:AC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
+          }
+
           // 1. Cập nhật anhDuocChon (BJ) và anhHemDuocChon (BK)
           await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BJ${poolRowNumber}:BK${poolRowNumber}?valueInputOption=USER_ENTERED`, {
             method: 'PUT',
