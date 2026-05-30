@@ -82,6 +82,7 @@ POOL_HEADERS = [
 "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)",
 "Duyệt Public", "Trạng thái Public", "System ID", "Link Gốc",
 "Điện thoại Đầu Chủ", "Tên Đầu Chủ (Hợp đồng)", "Điểm Facebook",
+"Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
 "Last Crawl", "Last Sync"
 ]
 
@@ -165,6 +166,18 @@ def init_db():
             print("[*] Bo sung cot `Chieu_dai` vao database SQLite...")
             cursor.execute("ALTER TABLE listings ADD COLUMN Chieu_dai TEXT")
             conn.commit()
+            
+        # Tự động bổ sung các cột missing trong POOL_HEADERS (ví dụ Sơ đồ thửa đất 3, 4, 5)
+        for header in POOL_HEADERS:
+            new_col = get_safe_col_name(header)
+            if new_col not in existing_cols and new_col != "Chieu_dai":
+                print(f"[*] Bo sung cot missing `{new_col}` vao database SQLite...")
+                try:
+                    cursor.execute(f"ALTER TABLE listings ADD COLUMN `{new_col}` TEXT")
+                    conn.commit()
+                except Exception as e:
+                    print(f"[⚠️ WARNING] Khong the bo sung cot `{new_col}`: {str(e)}")
+
             
         # Duyệt qua từng header để kiểm tra xem có cột kiểu cũ cần đổi tên không
         for header in POOL_HEADERS:
@@ -629,9 +642,12 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                         "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                     }
                     
-                    # Ghi nhận các liên kết ảnh sơ đồ (Cột 28 và 29)
+                    # Ghi nhận các liên kết ảnh sơ đồ (Cột 28 và 29 + Thêm 3 cột sơ đồ ở đáy)
                     if len(images_td) >= 1: crawled_data["Sơ đồ thửa đất 1"] = images_td[0]
                     if len(images_td) >= 2: crawled_data["Sơ đồ thửa đất 2"] = images_td[1]
+                    if len(images_td) >= 3: crawled_data["Sơ đồ thửa đất 3"] = images_td[2]
+                    if len(images_td) >= 4: crawled_data["Sơ đồ thửa đất 4"] = images_td[3]
+                    if len(images_td) >= 5: crawled_data["Sơ đồ thửa đất 5"] = images_td[4]
                     
                     # Kiểm tra lại chắc chắn ở trang chi tiết
                     if filter_district:

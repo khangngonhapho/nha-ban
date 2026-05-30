@@ -855,8 +855,14 @@ def run_image_migration_thread(limit, cookie):
         # Xác định URL ảnh sơ đồ thửa đất của căn này để bỏ qua nén
         col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
         col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+        col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
+        col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
+        col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
         original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
         original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
+        original_sodo3 = row[col_sodo3_key] if col_sodo3_key in row.keys() else None
+        original_sodo4 = row[col_sodo4_key] if col_sodo4_key in row.keys() else None
+        original_sodo5 = row[col_sodo5_key] if col_sodo5_key in row.keys() else None
         
         def process_single_image(args_tuple):
             idx, img_url = args_tuple
@@ -869,7 +875,7 @@ def run_image_migration_thread(limit, cookie):
                 # KIỂM TRA BỎ QUA NÉN CHO ẢNH SƠ ĐỒ ĐỂ BẢO TOÀN CHI TIẾT THU PHÓNG (US-042)
                 is_diagram = False
                 if img_url:
-                    is_diagram = (img_url == original_sodo1) or (img_url == original_sodo2)
+                    is_diagram = (img_url == original_sodo1) or (img_url == original_sodo2) or (img_url == original_sodo3) or (img_url == original_sodo4) or (img_url == original_sodo5)
                 
                 if is_diagram:
                     orig_kb = int(len(img_data) / 1024)
@@ -918,8 +924,8 @@ def run_image_migration_thread(limit, cookie):
                 add_log_message(f"  [❌ LỖI] Xử lý ảnh #{idx+1} thất bại cho {tk_id}: {str(e)}")
                 return idx, ""
 
-        # Chạy song song tối đa 5 luồng xử lý ảnh đồng thời cho căn nhà này để tối ưu băng thông
-        max_workers = min(5, len(raw_images_tk)) if raw_images_tk else 1
+        # Chạy song song tối đa 3 luồng xử lý ảnh đồng thời cho căn nhà này để tối ưu băng thông (Stealth Mode)
+        max_workers = min(3, len(raw_images_tk)) if raw_images_tk else 1
         tasks = list(enumerate(raw_images_tk))
         
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -936,14 +942,24 @@ def run_image_migration_thread(limit, cookie):
             # 1. Định vị và phân loại hình ảnh (Sơ đồ vs Ảnh sản phẩm/nội thất)
             col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
             col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+            col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
+            col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
+            col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
+            
             original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
             original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
+            original_sodo3 = row[col_sodo3_key] if col_sodo3_key in row.keys() else None
+            original_sodo4 = row[col_sodo4_key] if col_sodo4_key in row.keys() else None
+            original_sodo5 = row[col_sodo5_key] if col_sodo5_key in row.keys() else None
             
             clean_sodo1 = ""
             clean_sodo2 = ""
+            clean_sodo3 = ""
+            clean_sodo4 = ""
+            clean_sodo5 = ""
             house_links = []
             
-            # drive_links chứa các ảnh đã upload Drive theo đúng thứ tự của raw_images_tk
+            # drive_links chứa các ảnh đã upload theo đúng thứ tự của raw_images_tk
             for idx, img_url in enumerate(raw_images_tk):
                 if idx >= len(drive_links):
                     continue
@@ -955,58 +971,57 @@ def run_image_migration_thread(limit, cookie):
                     clean_sodo1 = migrated_url
                 elif img_url == original_sodo2:
                     clean_sodo2 = migrated_url
+                elif img_url == original_sodo3:
+                    clean_sodo3 = migrated_url
+                elif img_url == original_sodo4:
+                    clean_sodo4 = migrated_url
+                elif img_url == original_sodo5:
+                    clean_sodo5 = migrated_url
                 else:
                     house_links.append(migrated_url)
             
-            # Tự động di cư Sơ đồ thửa đất 1 & 2 lên Cloudinary/Drive nếu còn là link tk thô (ko nén) (US-046.6)
+            # Tự động di cư Sơ đồ thửa đất 1 đến 5 lên Cloudinary/Drive nếu còn là link tk thô (ko nén) (US-046.6 & US-054)
             headers_tk_sodo = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                 "Cookie": cookie or ""
             }
             
-            if original_sodo1 and original_sodo1.startswith("http") and not ("cloudinary.com" in clean_sodo1 or "google" in clean_sodo1):
-                try:
-                    add_log_message(f"  [🛡️ Sơ đồ 1] Đang di cư Ảnh Sơ đồ thửa đất 1 của {tk_id} lên Cloud (BỎ QUA NÉN)...")
-                    img_data = download_image_with_retry(original_sodo1, headers_tk_sodo)
-                    if img_data:
-                        filename = f"sodo1_{tk_id}.jpg"
-                        if use_cloudinary:
-                            cld_folder = f"BDS-KhangNgo/{tk_id}"
-                            clean_sodo1 = upload_image_to_cloudinary(
-                                img_data, 
-                                filename, 
-                                cld_cloud_name, 
-                                cld_api_key, 
-                                cld_api_secret, 
-                                folder=cld_folder
-                            )
-                        elif token:
-                            clean_sodo1 = upload_image_to_drive(img_data, filename, house_folder_id, token)
-                        add_log_message(f"  [🛡️ Sơ đồ 1] Di cư Sơ đồ 1 thành công: {clean_sodo1}")
-                except Exception as e:
-                    add_log_message(f"  [❌ LỖI] Di cư Sơ đồ 1 thất bại: {str(e)}")
-
-            if original_sodo2 and original_sodo2.startswith("http") and not ("cloudinary.com" in clean_sodo2 or "google" in clean_sodo2):
-                try:
-                    add_log_message(f"  [🛡️ Sơ đồ 2] Đang di cư Ảnh Sơ đồ thửa đất 2 của {tk_id} lên Cloud (BỎ QUA NÉN)...")
-                    img_data = download_image_with_retry(original_sodo2, headers_tk_sodo)
-                    if img_data:
-                        filename = f"sodo2_{tk_id}.jpg"
-                        if use_cloudinary:
-                            cld_folder = f"BDS-KhangNgo/{tk_id}"
-                            clean_sodo2 = upload_image_to_cloudinary(
-                                img_data, 
-                                filename, 
-                                cld_cloud_name, 
-                                cld_api_key, 
-                                cld_api_secret, 
-                                folder=cld_folder
-                            )
-                        elif token:
-                            clean_sodo2 = upload_image_to_drive(img_data, filename, house_folder_id, token)
-                        add_log_message(f"  [🛡️ Sơ đồ 2] Di cư Sơ đồ 2 thành công: {clean_sodo2}")
-                except Exception as e:
-                    add_log_message(f"  [❌ LỖI] Di cư Sơ đồ 2 thất bại: {str(e)}")
+            for sodo_num, (orig_sodo, clean_sodo) in enumerate([
+                (original_sodo1, clean_sodo1),
+                (original_sodo2, clean_sodo2),
+                (original_sodo3, clean_sodo3),
+                (original_sodo4, clean_sodo4),
+                (original_sodo5, clean_sodo5)
+            ], start=1):
+                if orig_sodo and orig_sodo.startswith("http") and not ("cloudinary.com" in clean_sodo or "google" in clean_sodo):
+                    try:
+                        add_log_message(f"  [🛡️ Sơ đồ {sodo_num}] Đang di cư Ảnh Sơ đồ thửa đất {sodo_num} của {tk_id} lên Cloud (BỎ QUA NÉN)...")
+                        img_data = download_image_with_retry(orig_sodo, headers_tk_sodo)
+                        if img_data:
+                            filename = f"sodo{sodo_num}_{tk_id}.jpg"
+                            migrated = ""
+                            if use_cloudinary:
+                                cld_folder = f"BDS-KhangNgo/{tk_id}"
+                                migrated = upload_image_to_cloudinary(
+                                    img_data, 
+                                    filename, 
+                                    cld_cloud_name, 
+                                    cld_api_key, 
+                                    cld_api_secret, 
+                                    folder=cld_folder
+                                )
+                            elif token:
+                                migrated = upload_image_to_drive(img_data, filename, house_folder_id, token)
+                            
+                            if migrated:
+                                if sodo_num == 1: clean_sodo1 = migrated
+                                elif sodo_num == 2: clean_sodo2 = migrated
+                                elif sodo_num == 3: clean_sodo3 = migrated
+                                elif sodo_num == 4: clean_sodo4 = migrated
+                                elif sodo_num == 5: clean_sodo5 = migrated
+                                add_log_message(f"  [🛡️ Sơ đồ {sodo_num}] Di cư Sơ đồ {sodo_num} thành công: {migrated}")
+                    except Exception as e:
+                        add_log_message(f"  [❌ LỖI] Di cư Sơ đồ {sodo_num} thất bại: {str(e)}")
             
             # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập (US-046.6)
             col_ma_kn = get_safe_col_name("Mã Khang Ngô (ID)")
@@ -1040,6 +1055,9 @@ def run_image_migration_thread(limit, cookie):
             # Diagram images
             update_fields[col_sodo1_key] = clean_sodo1
             update_fields[col_sodo2_key] = clean_sodo2
+            update_fields[col_sodo3_key] = clean_sodo3
+            update_fields[col_sodo4_key] = clean_sodo4
+            update_fields[col_sodo5_key] = clean_sodo5
             
             # Hẻm images (Bảo toàn dữ liệu cũ)
             for i in range(10):
@@ -2047,6 +2065,7 @@ POOL_HEADERS = [
     "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)",
     "Duyệt Public", "Trạng thái Public", "System ID", "Link Gốc",
     "Điện thoại Đầu Chủ", "Tên đầu chủ (BX)", "Điểm Facebook",
+    "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
     "Last Crawl", "Last Sync"
 ]
 
@@ -2122,8 +2141,8 @@ def execute_publish_listing(tk_id):
     if ma_hang_db:
         # Kiểm tra xem có trùng lặp Mã Hàng với tk_id khác trong database SQLite hay không
         collision_count = cursor.execute(
-            "SELECT COUNT(DISTINCT tk_id) FROM listings WHERE Ma_Hang = ? OR M__H_ng = ?",
-            (ma_hang_db, ma_hang_db)
+            "SELECT COUNT(DISTINCT tk_id) FROM listings WHERE Ma_Hang = ?",
+            (ma_hang_db,)
         ).fetchone()[0]
         if collision_count > 1:
             # Phát hiện va chạm! Giải quyết bằng cách sử dụng đuôi 8 ký tự của tk_id
@@ -2209,12 +2228,12 @@ def execute_publish_listing(tk_id):
             existing_row = []
             
         updated_row = list(existing_row)
-        while len(updated_row) < 79:
+        while len(updated_row) < len(POOL_HEADERS):
             updated_row.append("")
             
         IMAGE_HEADERS = [
             "Hình Nhận Diện",
-            "Sơ đồ thửa đất 1", "Sơ đồ thửa đất 2",
+            "Sơ đồ thửa đất 1", "Sơ đồ thửa đất 2", "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
             "Hình Mặt Tiền",
             "Hình Hẻm 1", "Hình Hẻm 2", "Hình Hẻm 3", "Hình Hẻm 4", "Hình Hẻm 5", 
             "Hình Hẻm 6", "Hình Hẻm 7", "Hình Hẻm 8", "Hình Hẻm 9", "Hình Hẻm 10",
@@ -2264,10 +2283,10 @@ def execute_publish_listing(tk_id):
     if sheet:
         try:
             if existing_row_index:
-                add_log_message(f"[⚡] Đang chép đè dòng 79 cột lên Sheet '{sheet.title}' (dòng {existing_row_index})...")
-                sheet.update(range_name=f"A{existing_row_index}:CA{existing_row_index}", values=[row_data], value_input_option='USER_ENTERED')
+                add_log_message(f"[⚡] Đang chép đè dòng dữ liệu lên Sheet '{sheet.title}' (dòng {existing_row_index})...")
+                sheet.update(range_name=f"A{existing_row_index}:DZ{existing_row_index}", values=[row_data], value_input_option='USER_ENTERED')
             else:
-                add_log_message(f"[⚡] Đang chèn chốt dòng mới 79 cột lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
+                add_log_message(f"[⚡] Đang chèn chốt dòng mới lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
                 sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED')
             
             # Cập nhật trạng thái trong SQLite -> published
