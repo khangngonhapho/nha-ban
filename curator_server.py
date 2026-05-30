@@ -1,0 +1,2376 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+==================================================
+KHANG NGÔ NHÀ PHỐ - LOCAL CURATOR SERVER (Flask)
+Phục vụ Mini-App Biên tập & Quản lý Rổ hàng 2000 Căn
+==================================================
+"""
+
+import os
+import sys
+import time
+import json
+import sqlite3
+import re
+import random
+import subprocess
+import threading
+from datetime import datetime
+import requests
+import hashlib
+from flask import Flask, jsonify, request, Response
+
+def safe_str(val):
+    if val is None:
+        return ""
+    return str(val).strip()
+
+# Lưu trữ sys.stdout gốc tại thời điểm khởi chạy để tránh vòng lặp đệ quy khi chuyển hướng stdout của thread cào
+ORIGINAL_STDOUT = sys.stdout
+
+# Xác định thư mục dự án gốc (PROJECT_ROOT) thông minh để luôn trỏ đúng SQLite có dữ liệu
+if getattr(sys, 'frozen', False):
+    exe_dir = os.path.dirname(sys.executable)
+    # Tìm kiếm file SQLite theo thứ tự ưu tiên tăng dần các cấp thư mục cha
+    c1 = os.path.join(exe_dir, "raw_archive.db")
+    c2 = os.path.join(os.path.dirname(exe_dir), "raw_archive.db")
+    c3 = os.path.join(os.path.dirname(os.path.dirname(exe_dir)), "raw_archive.db")
+    
+    if os.path.exists(c1):
+        PROJECT_ROOT = exe_dir
+    elif os.path.exists(c2):
+        PROJECT_ROOT = os.path.dirname(exe_dir)
+    elif os.path.exists(c3):
+        PROJECT_ROOT = os.path.dirname(os.path.dirname(exe_dir))
+    else:
+        # Nếu không thấy db ở đâu, tự động lùi về thư mục dự án gốc khi chạy trong dist\KhangNgoCurator\
+        if os.path.basename(exe_dir).lower() == 'khangngocurator' and os.path.basename(os.path.dirname(exe_dir)).lower() == 'dist':
+            PROJECT_ROOT = os.path.dirname(os.path.dirname(exe_dir))
+        else:
+            PROJECT_ROOT = exe_dir
+else:
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# Đảm bảo CWD luôn là PROJECT_ROOT để các tiến trình cào tin và lưu file hoạt động chính xác
+os.chdir(PROJECT_ROOT)
+
+# Chuẩn hóa thư mục static tuyệt đối động để tránh lỗi 404 khi chạy dưới dạng EXE đóng gói
+static_folder = os.path.join(PROJECT_ROOT, 'static')
+
+from curator_html_data import CURATOR_HTML_CONTENT
+
+# Khởi tạo Flask với static folder tuyệt đối
+app = Flask(__name__, static_folder=static_folder, static_url_path='/static')
+
+# File cấu hình & cơ sở dữ liệu (Dùng đường dẫn tuyệt đối dựa trên PROJECT_ROOT)
+DB_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "raw_archive.db"))
+CONFIG_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "curator_config.json"))
+COOKIE_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "thienkhoi_cookie.txt"))
+CREDENTIALS_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "credentials.json"))
+
+def remove_accents(input_str):
+    if not input_str:
+        return ""
+    s1 = u'ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯưẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỊịỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹ'
+    s0 = u'AAAAEEEIIOOOOUUYaaaaeeeiioooouuyAaDdIiUuOoUuAaAaAaAaAaAaAaAaAaAaAaAaEeEeEeEeEeEeEeEeIiOoOoOoOoOoOoOoOoOoOoOoOoUuUuUuUuUuUuUuYyYyYyYy'
+    res = []
+    for c in input_str:
+        idx = s1.find(c)
+        if idx != -1:
+            res.append(s0[idx])
+        else:
+            res.append(c)
+    return "".join(res)
+
+def get_safe_col_name(header):
+    if not header:
+        return ""
+    # 1. Loại bỏ dấu tiếng Việt
+    no_accent = remove_accents(header)
+    # 2. Thay thế các ký tự không phải chữ cái tiếng Anh, số, gạch dưới thành gạch dưới
+    cleaned = re.sub(r'[^a-zA-Z0-9_]', '_', no_accent)
+    # 3. Gộp nhiều dấu gạch dưới liên tục thành một gạch dưới duy nhất
+    cleaned = re.sub(r'_+', '_', cleaned)
+    # 4. Loại bỏ gạch dưới ở đầu và cuối
+    cleaned = cleaned.strip('_')
+    return cleaned
+
+def gen_id_khang_ngo_python(so_nha, duong, quan):
+    so_nha = str(so_nha or "").strip()
+    if '+' in so_nha:
+        so_nha = so_nha.split('+')[0].strip()
+    duong = str(duong or "").strip()
+    quan = str(quan or "").strip()
+    
+    # 1. Mã hóa số nhà (Số -> Chữ in hoa, Ký tự -> thường)
+    digit_map = {
+        '1': 'M', '2': 'H', '3': 'B', '4': 'A', '5': 'N',
+        '6': 'S', '7': 'Z', '8': 'T', '9': 'C', '0': 'O',
+        '/': 'I', '.': 'I'
+    }
+    ma_so_nha = ""
+    for char in so_nha:
+        if char in digit_map:
+            ma_so_nha += digit_map[char]
+        elif re.match(r'[a-zA-Z]', char):
+            ma_so_nha += char.lower()
+            
+    # 2. Normalization: Các tên đường có biến thể đặc biệt
+    normalized_duong = duong
+    if re.search(r'cách mạng tháng (tám|8)|cmt8', normalized_duong, re.I):
+        normalized_duong = "CMTT"
+    elif re.search(r'ba tháng hai|3 tháng 2|3/2|3-2', normalized_duong, re.I):
+        normalized_duong = "BTH"
+    elif re.search(r'đường số (\d+)', normalized_duong, re.I):
+        match = re.search(r'đường số (\d+)', normalized_duong, re.I)
+        normalized_duong = "DS" + match.group(1)
+        
+    # Viết tắt tên đường (Lấy chữ cái đầu của mỗi từ)
+    abbr_duong = ""
+    if normalized_duong in ["CMTT", "BTH"] or normalized_duong.startswith("DS"):
+        abbr_duong = normalized_duong
+    else:
+        no_tones = remove_accents(normalized_duong)
+        words = no_tones.split()
+        for word in words:
+            if len(word) > 0:
+                abbr_duong += word[0].upper()
+                
+    # 3. Đảo ngược chuỗi viết tắt
+    reversed_duong = abbr_duong[::-1]
+    
+    # 4. Ghép nối
+    combined = ma_so_nha + "I" + reversed_duong
+    
+    # 5. Ciphering: Chèn 'W' vào vị trí thứ 2
+    if len(combined) > 1:
+        combined = combined[0] + "W" + combined[1:]
+    else:
+        combined = combined + "W"
+        
+    return combined
+
+def normalize_listing_for_client(row):
+    if not row:
+        return {}
+    d = dict(row)
+    
+    # Map linh hoạt và an toàn các key từ SQLite sang Client format (hỗ trợ cả 2 định dạng)
+    mapping = {
+        "Tieu_de_Public": ["Tieu_de_Public", "Ti_u____Public"],
+        "Mo_ta_Public": ["Mo_ta_Public", "M__t__Public"],
+        "Noi_dung_chinh": ["Noi_dung_chinh", "N_i_dung_ch_nh"],
+        "Mo_ta_chi_tiet": ["Mo_ta_chi_tiet", "M__t__chi_ti_t"],
+        "Ngo_So_nha": ["Ngo_So_nha", "Ng__S__nh_"],
+        "Duong": ["Duong", "___ng"],
+        "Phuong": ["Phuong", "Ph__ng"],
+        "Quan": ["Quan", "Qu_n"],
+        "Phuong_cu_AI_": ["Phuong_cu_AI", "Phuong_cu_AI_", "Ph__ng_c___AI_"],
+        "Ma_Khang_Ngo_ID": ["Ma_Khang_Ngo_ID", "M__Khang_Ng___ID_"],
+        "DT_Thuc_te": ["DT_Thuc_te", "DT_Th_c_t_"],
+        "DT_Tren_so": ["DT_Tren_so", "DT_Tr_n_s_"],
+        "So_Tang": ["So_Tang", "S__T_ng"],
+        "Mat_Tien": ["Mat_Tien", "M_t_Ti_n"],
+        "So_phong_ngu": ["So_phong_ngu", "S__ph_ng_ng_"],
+        "So_nha_ve_sinh": ["So_nha_ve_sinh", "S__nh__v__sinh"],
+        "Gia_chao": ["Gia_chao", "Gi__ch_o"],
+        "Gia_Public": ["Gia_Public", "Gi__Public"],
+        "Phan_lo_i_Hem": ["Phan_loai_Hem", "Phan_lo_i_Hem", "Ph_n_lo_i_H_m"],
+        "Duong_truoc_nha_m": ["Duong_truoc_nha_m", "___ng_tr__c_nh___m_"],
+        "Tinh_trang_nha": ["Tinh_trang_nha", "T_nh_tr_ng_nh_"],
+        "Danh_gia_Admin": ["Danh_gia_Admin", "__nh_gi___Admin_"],
+        "Ngu_tret_Admin": ["Ngu_tret_Admin", "Ng__tr_t__Admin_"],
+        "CHDV_Admin": ["CHDV_Admin", "CHDV__Admin_"],
+        "Ten_Dau_Chu_Hop_dong": ["Ten_Dau_Chu_Hop_dong", "T_n___u_Ch___H_p___ng_"],
+        "Dien_thoai_Dau_Chu": ["Dien_thoai_Dau_Chu", "_i_n_tho_i___u_Ch_"],
+        "Diem_Facebook": ["Diem_Facebook", "_i_m_Facebook"],
+        "Ma_Hang": ["Ma_Hang", "M__H_ng"],
+        "Tinh": ["Tinh", "T_nh"]
+    }
+    
+    for client_key, db_keys in mapping.items():
+        val = ""
+        for db_key in db_keys:
+            if db_key in d:
+                if d[db_key] is not None:
+                    val = d[db_key]
+                    break
+        d[client_key] = val
+        
+    # Đồng bộ key Phuong_cu_AI không gạch dưới đề phòng client khác đọc
+    d["Phuong_cu_AI"] = d["Phuong_cu_AI_"]
+            
+    # Parse các chuỗi JSON ảnh cho an toàn
+    d["raw_images_tk"] = json.loads(d["raw_images_tk_json"]) if d.get("raw_images_tk_json") else []
+    d["raw_drive_images"] = json.loads(d["raw_drive_images_json"]) if d.get("raw_drive_images_json") else []
+    d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
+    
+    return d
+
+# Bộ đệm logs thời gian thực cho UI
+LOGS_BUFFER = []
+LOGS_LOCK = threading.Lock()
+
+def add_log_message(msg):
+    """Ghi log vào bộ đệm và in ra terminal thực tế"""
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    formatted_msg = f"[{timestamp}] {msg}"
+    
+    # In ra terminal gốc bằng cách write trực tiếp để tránh bị đệ quy xuyên qua LogStream
+    try:
+        ORIGINAL_STDOUT.write(formatted_msg + "\n")
+        ORIGINAL_STDOUT.flush()
+    except Exception:
+        # Fallback cực kỳ an toàn
+        pass
+        
+    with LOGS_LOCK:
+        LOGS_BUFFER.append(formatted_msg)
+        # Giữ tối đa 1000 dòng log gần nhất
+        if len(LOGS_BUFFER) > 1000:
+            LOGS_BUFFER.pop(0)
+
+# Cấu hình mặc định
+DEFAULT_CONFIG = {
+    "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+    "drive_folder_id": "10NcfOJ3_YBiPVc4FSK2uGGNs7MPmAFO8",
+    "target_district": "",
+    "search_url": "https://data.thienkhoi.com/Hang?iID_MaTinh=0&iID_HuongNha=0&iID_LoaiHang=0&iID_MaQuan=0&iID_MaPhuongXa=0&iTrangThai=0&iTuMatTien=0&iDenMatTien=0&iTuDienTich=0&iDenDienTich=0&iGiaChaoHopDong=0&iHeSoThanhTich=0&iGia=0&sGia=0&iTuGia=0&iDenGia=0&iPhanTramHoaHong=0&iDuongVao=0&iTuSoTang=0&iPhanTang=0&iDenSoTang=0&iSoPhongNgu=0&iSoToilet=0&iID_Nguon=0&sTaiKhoan=0908130555&iTaiKhoan=0&Menu=0&Page=1&PageSize=20&bCamKetChuan=False&bSigned=False&bHidden=0&iID_MaNguoiDungTao=0&iID_MaNguoiTuChoi=0&iDuAn=0&iTrangThaiSoDo=0&iBranch=0&blacklist=False&iKhoBank=0&iKhoHang=0&iID_MaNguoiDuyetBank=0&iID_MaNguoiBCDK=0&all=False&inside=False&tester=False",
+    "crawler_limit": 5,
+    "crawler_start_page": 1,
+    "cloudinary_cloud_name": "deru9p712",
+    "cloudinary_api_key": "127963624723617",
+    "cloudinary_api_secret": "5WyIQlmssDMR4Cu69g4114py6HU",
+    "delay_house_min": 3.0,
+    "delay_house_max": 6.0,
+    "delay_page_min": 5.0,
+    "delay_page_max": 10.0,
+    "openai_api_base": "https://api.openai.com/v1",
+    "openai_api_key": os.environ.get("OPENAI_API_KEY", ""),
+    "openai_system_prompt": (
+        "Bạn đóng vai một Chuyên gia môi giới nhà phố 15 năm kinh nghiệm tại trung tâm TP.HCM.\n"
+        "Nhiệm vụ của bạn là nhận thông tin của 1 căn nhà và sinh ra bài đăng chuyên nghiệp, đồng thời tìm ra 'Phường cũ' của địa chỉ nhà trước khi sáp nhập hành chính (nếu có).\n\n"
+        "🚨 LUẬT KHÔNG BỊA ĐẶT THÔNG SỐ VẬT LÝ (🚨 BẮT BUỘC - TUYỆT ĐỐI KHÔNG VI PHẠM):\n"
+        "1. Khoảng cách ra mặt tiền / Độ sâu hẻm: Tuyệt đối KHÔNG tự tiện ghi số mét cụ thể (như 5m, 10m) hoặc số bước chân cụ thể (như 2 bước chân, 5 bước chân) ra mặt tiền nếu dữ liệu gốc không ghi rõ. Thay vào đó, nếu hẻm lớn hoặc xe hơi thông thoáng, sử dụng các cụm từ ước lượng cực kỳ cuốn hút và an toàn của môi giới: 'sát mặt tiền đường lớn', 'vài bước chân ra mặt tiền', 'hẻm sạch sẽ thông thoáng sát đường lớn'.\n"
+        "2. Chi tiết danh sách nội thất: Tuyệt đối KHÔNG tự tiện liệt kê cụ thể từng thiết bị điện tử, gia dụng (như sofa, máy lạnh, tivi, tủ lạnh side by side, bộ bàn ăn, giường nệm...) nếu dữ liệu gốc không ghi chi tiết. Thay vào đó, hãy dùng các câu bao quát, cao cấp: 'tặng full nội thất cao cấp sang xịn mịn, khách dọn vào ở ngay' hoặc 'nội thất hoàn thiện tinh tế hiện đại'.\n"
+        "3. Dòng tiền thuê cụ thể: Tuyệt đối KHÔNG tự đoán số tiền thuê phòng hoặc tổng thu nhập cụ thể (như 8 triệu/phòng, thu nhập 30 triệu/tháng). Thay vào đó, hãy định vị tiềm năng khai thác: 'cực kỳ phù hợp làm CHDV cao cấp cho dòng tiền khủng/thu nhập thụ động cực tốt hằng tháng' hoặc 'khu vực nhu cầu thuê cực cao, thích hợp giữ tiền và khai thác dòng tiền ổn định'.\n"
+        "4. Lô góc / Nở hậu: Tuyệt đối KHÔNG ghi 'lô góc 2 mặt tiền' hoặc tự bịa số mét nở hậu (như nở hậu 7m) trừ khi dữ liệu thô hoặc mô tả chi tiết có nhắc đến chữ 'lô góc', '2 mặt thoáng', 'nở hậu' hoặc 'nở'. Nếu chỉ có chữ 'nở hậu' chung chung mà không ghi số mét cụ thể, chỉ được ghi 'nhà nở hậu tài lộc' hoặc 'sổ nở hậu đẹp', cấm tự bịa ra số mét nở hậu mặt sau.\n"
+        "5. Pháp lý / Quy hoạch mặc định: Nếu dữ liệu gốc không nhắc gì đến ngân hàng, thế chấp hoặc nợ, bắt buộc sử dụng câu mẫu chuẩn: 'Pháp lý sạch, hoàn công đầy đủ, sổ hồng riêng cất két, sẵn sàng công chứng ngay'. Về quy hoạch: mặc định ghi 'Khu dân cư hiện hữu ổn định, hoàn toàn không quy hoạch lộ giới' nếu tài sản ở khu vực xây dựng đồng bộ trung tâm.\n\n"
+        "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH TIÊU ĐỀ PUBLIC (tieuDe):\n"
+        "1. CẤU TRÚC TIÊU ĐỀ BẮT BUỘC: Tiêu đề phải tuân thủ nghiêm ngặt theo đúng cấu trúc và thứ tự sau:\n"
+        "   `[Prefix nếu có][Tên đường] - [Diện tích]m2 - [Kích thước] - [Số tầng] tầng - [Giá]T | [Ưu điểm nổi bật]`\n"
+        "   - [Prefix nếu có] (🚨 TÙY CHỌN - OPTIONAL): Bắt đầu tiêu đề trực tiếp bằng tiền tố được cung cấp ở yêu cầu (đã được tính toán sẵn từ hệ thống).\n"
+        "   - [Tên đường]: Tên con đường. Hãy LOẠI BỎ các từ 'Đường', 'Đ.' ở đầu tên đường (Ví dụ: `Trần Quang Diệu`).\n"
+        "   - [Diện tích]m2: Diện tích thực tế viết sát chữ m2 (Ví dụ: `38m2`).\n"
+        "   - [Kích thước]: Viết dưới dạng `[ngang]x[dài]` viết sát nhau, TUYỆT ĐỐO KHÔNG có dấu ngoặc đơn ở hai đầu (Ví dụ: `9x5` hoặc `4x12.5`). Hãy ĐỌC dòng đầu của 'Nội dung chính gốc' (dạng `[Số nhà] [Tên đường] [Diện tích m2] [Số tầng] [Chiều ngang] [Chiều dài] [Giá]`. Ví dụ: `40.78 trần quang diệu 38 3 9 5 8.75 tỷ` -> chiều ngang là 9m, chiều dài là 5m -> kích thước là `9x5`). 🚨 LƯU Ý QUAN TRỌNG: Ưu tiên hàng đầu là trích xuất trực tiếp chiều ngang và chiều dài nếu chúng xuất hiện rõ ràng kề nhau trong chuỗi thô. TUYỆT ĐỐI KHÔNG tự động tính toán lại dài = Diện tích / Ngang nếu đã có con số kích thước rõ ràng trong chuỗi.\n"
+        "   - [Số tầng] tầng: Số tầng của nhà (Ví dụ: `3 tầng`).\n"
+        "   - [Giá]T: Giá viết sát chữ T (chữ T viết hoa, KHÔNG dùng chữ 'Tỷ' hay 'tỷ' hay 't') (Ví dụ: `8.75T` hoặc `13T`).\n"
+        "   - \" | \" + [Ưu điểm nổi bật]: Dùng ký tự gạch đứng '|' có khoảng trắng hai bên để phân tách phần kỹ thuật và phần ưu điểm. Các ưu điểm siêu ngắn gọn lấy từ tag USP/Mô tả.\n"
+        "     🚨 QUY TẮC IN HOA & VIẾT TẮT USP (🚨 CỰC KỲ QUAN TRỌNG):\n"
+        "     + Các từ viết tắt chuyên ngành sau đây được phép viết in hoa toàn bộ: **`HXH`**, **`CHDV`**, **`HĐ`**, **`PN`**, **`CV`** (Ví dụ: `HĐ thuê`, `CHDV dòng tiền`, `3PN`, `gần CV`). Các từ khác quy về định dạng chữ thường, chỉ viết hoa chữ cái đầu tiên của từ đầu tiên ngay sau dấu '| '.\n"
+        "     + Nếu có số phòng ngủ: Bắt buộc viết tắt dạng `[Số]PN` (Ví dụ: `3PN`, `4PN`, TUYỆT ĐỐI KHÔNG ghi '3 phòng ngủ' hay '3 phòng').\n"
+        "     + Nếu có công viên: Bắt buộc viết tắt từ công viên thành `CV` (Ví dụ: `CV Lê Văn Tám`, `gần CV`).\n"
+        "     + TUYỆT ĐỐI KHÔNG đề cập đến 'hợp đồng điện tử' hoặc 'HĐĐT' trong USP.\n"
+        "     + TUYỆT ĐỐI KHÔNG đề cập đến 'lãi vốn' hoặc 'chính chủ' trong USP.\n"
+        "     + TUYỆT ĐỐI KHÔNG đề cập đến 'hẻm nhỏ' hoặc 'hẻm ba gác' hoặc 'hẻm' trong USP.\n"
+        "     + TUYỆT ĐỐI KHÔNG đề cập lại từ 'hẻm', 'hẻm xe hơi' hoặc 'HXH' trong phần USP nếu ở đầu tiêu đề đã có tiền tố 'HXH '.\n"
+        "     + Có thể đưa vào USP: Số phòng ngủ viết tắt (`3PN`), Chợ (ví dụ: `gần chợ Tân Định`), Công viên viết tắt (`gần CV Lê Văn Tám`), các địa điểm nổi tiếng lân cận (lấy từ mô tả chi tiết gốc).\n"
+        "     - *Ví dụ Tiêu đề chuẩn (>4m):* `HXH Trần Quang Diệu - 38m2 - 9x5 - 3 tầng - 8.75T | Lô góc 3PN gần chợ`\n"
+        "     - *Ví dụ Tiêu đề chuẩn (<=4m):* `Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp gần CV Lê Văn Tám`\n"
+        "     - *Ví dụ Tiêu đề chuẩn Mặt tiền:* `Mặt tiền Nguyễn Trọng Tuyển - 80m2 - 4x20 - 5 tầng - 22T | CHDV dòng tiền cao`\n"
+        "2. KHỐNG CHẾ ĐỘ DÀI VÀ TỐI ƯU KHÔNG GIAN: Tiêu đề sinh ra TUYỆT ĐỐI không vượt quá 99 ký tự tổng cộng. Đặc biệt, phần kỹ thuật từ đầu tiêu đề đến hết chữ \"T\" của giá (bao gồm cả chữ \"T\") TUYỆT ĐỐI không quá 65 ký tự. Nếu còn trống nhiều ký tự sau chữ \"T\" (đến giới hạn 99 ký tự), hãy chắt lọc các điểm nổi bật để chèn vào sau dấu '|'. Ngược lại, nếu gần hết chỗ, hãy cô đọng phần 'Ưu điểm nổi bật' hoặc cắt bớt để không bị quá 99 ký tự.\n\n"
+        "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH MÔ TẢ PUBLIC (moTa):\n"
+        "Mô tả Public phải có cấu trúc nghệ thuật chuyên nghiệp, bắt đầu bằng một dòng Tiêu đề thu hút viết IN HOA TOÀN BỘ để tạo điểm nhấn mạnh mẽ khi khách hàng mở xem chi tiết căn nhà:\n\n"
+        "1. DÒNG ĐẦU TIÊN (TIÊU ĐỀ THU HÚT - CATCHY BANNER):\n"
+        "   - Viết IN HOA TOÀN BỘ (UPPERCASE) và bắt đầu bằng emoji còi hú `🚨 `.\n"
+        "   - Cấu trúc: `🚨 [Cụm từ giật tít/Phân loại in hoa] [Tên đường in hoa] [Tên quận in hoa] - [Các ưu điểm nổi bật in hoa] - DT [Diện tích]M² [Kích thước in hoa] [Thông số phụ nếu có] - CHỈ [Giá nguyên].[Ký hiệu lẻ] TỶ.`\n"
+        "   - Giải thích chi tiết các thành phần của Banner:\n"
+        "     + [Cụm từ giật tít/Phân loại in hoa]: Tự sinh cụm từ giật tít mạnh mẽ (Ví dụ: `SIÊU VỊ TRÍ`, `BIỆT THỰ MINI`, `HẺM THÔNG`, `SIÊU PHẨM`, `KHU VIP`, `MẶT TIỀN`, `CẶP SONG SINH 2 CĂN`).\n"
+        "     + [Tên đường in hoa] [Tên quận in hoa]: Lược bỏ từ 'Đường', 'Đ.' (Ví dụ: `PHAN ĐÌNH PHÙNG PHÚ NHUẬN` hoặc `ĐƯỜNG 3 THÁNG 2 QUẬN 10` - chú ý chữ 'Đường' trong các đường số hoặc đường đặc biệt vẫn giữ).\n"
+        "     + [Các ưu điểm nổi bật in hoa]: Nêu 2-3 ưu điểm nổi bật nhất lấy từ mô tả chi tiết, phân cách bằng dấu ` - `. Các từ viết tắt chuyên ngành bắt buộc viết in hoa: **`HXH`**, **`CHDV`**, **`HĐ`**, **`PN`**, **`CV`**, **`BTCT`** (Ví dụ: `HĐ THUÊ`, `CHDV DÒNG TIỀN`, `4PN 5WC`, `BTCT`, `HXH VF3`). Được phép dùng emoji ngôi sao `⭐` khi mô tả chất lượng phòng VIP (Ví dụ: `4PN MASTER 5⭐`).\n"
+        "     + DT [Diện tích]M² [Kích thước in hoa] [Thông số phụ nếu có]: Viết dạng `DT [Diện tích]M² ([Ngang]x[Dài])` viết sát nhau. Có thể ghi thêm đặc trưng nở hậu/xây full nếu dữ liệu gốc xác nhận rõ ràng (Ví dụ: `(4x8) NỞ HẬU`, `(4.8x6.5)`, `6x7.5 XÂY FULL`).\n"
+        "       *Lưu ý Diện tích sử dụng (`SD [Sàn]M²`):* Nếu diện tích đất nhỏ (dưới 25m2) nhưng nhiều tầng, hãy tính diện tích sử dụng `SD = diện tích * số tầng` và bổ sung vào tiêu đề để tối ưu sức hút (Ví dụ: `SD 39M²` hoặc `SD 121M²`).\n"
+        "     + CHỈ [Giá nguyên].[Ký hiệu lẻ] TỶ.: Làm tròn xuống phần nguyên của giá và định vị ký hiệu lẻ `.x` hoặc `.xx` theo số chữ số thập phân của giá chào để tạo sự tò mò (Ví dụ: 7.5 tỷ hoặc 8.15 tỷ -> `CHỈ 7.x TỶ.`, nhưng 8.66 tỷ -> `CHỈ 8.xx TỶ.`).\n"
+        "   - Banner phải kết thúc bằng dấu chấm `.` và có thể kèm một emoji nhỏ xinh ở cuối nếu thích hợp (Ví dụ: `🚨 SIÊU PHẨM PHAN XÍCH LONG PHÚ NHUẬN - ... - CHỈ 8.xx TỶ 🌸`).\n\n"
+        "2. DÒNG THỨ 2: Để trống hoàn toàn 1 dòng.\n\n"
+        "3. DÒNG THỨ 3: Ghi chính xác chữ `Mô tả:`.\n\n"
+        "4. CÁC DÒNG TIẾP THEO (DANH SÁCH CHI TIẾT):\n"
+        "   - Viết thành một danh sách gồm từ 6 đến 10 dòng/đoạn ngắn, mỗi đoạn bắt đầu bằng ký tự `+ ` (dấu cộng và khoảng trắng), cách nhau bởi đúng 1 dòng trống.\n"
+        "   - HẠN CHẾ EMOJI TỐI ĐA: TUYỆT ĐỐI không dùng emoji (icon) tràn lan, chỉ được sử dụng tối thiểu trong trường hợp đặc biệt như ký hiệu 5-sao `5⭐` khi mô tả căn phòng đẳng cấp, còn lại giữ văn phong chữ viết truyền thống sạch sẽ.\n"
+        "   - Các dòng/đoạn cần bao trùm đầy đủ các thông tin hấp dẫn sau (sử dụng văn phong chuyên gia, giàu sức thuyết phục):\n"
+        "     + + Vị trí: Mô tả vị trí đắc địa thực tế, sầm uất, kết nối cực nhanh sang các quận trung tâm (Q1, Bình Thạnh...) hoặc sân bay qua các trục đường lớn cụ thể (nêu tên cụ thể như Võ Thị Sáu, CMT8, Điện Biên Phủ, Phan Đăng Lưu, Hai Bà Trưng...), gần các landmark quan trọng (bệnh viện Hoàn Mỹ, công viên Lê Văn Tám...). Tuyệt đối KHÔNG ghi số nhà thật. 🚨 RẤT QUAN TRỌNG: Nếu nhà trong hẻm (loai_hinh = Hẻm), tuyệt đối KHÔNG ghi 'Mặt tiền [Tên đường]' ở vị trí. Thay vào đó, dùng các cụm từ như 'Ngay khu [Tên đường]', 'Ngay trung tâm [Tên đường]', hoặc 'Sát mặt tiền [Tên đường]'. Chỉ ghi 'Mặt tiền [Tên đường]' nếu loai_hinh thực tế là 'Mặt tiền'.\n"
+        "     + + Đặc điểm hẻm/đường: Nêu rõ độ rộng hẻm thực tế từ thông số thô (ví dụ: hẻm rộng 4m, hẻm xe hơi rộng rãi) và khẳng định hẻm thông thoáng sạch sẽ, ô tô đỗ cửa đỗ bên ngoài. TUYỆT ĐỐI cấm bịa đặt số mét hoặc số bước chân cụ thể ra mặt tiền đường chính (chỉ dùng ước lượng 'sát mặt tiền', 'vài bước chân ra mặt tiền đường lớn').\n"
+        "     + + Khu dân cư/Môi trường sống: Dân trí cao, an ninh, yên tĩnh, hàng xóm hiền lành, thân thiện, khu vực thích hợp mua ở thực.\n"
+        "     + + Kết cấu: Nêu chi tiết kết cấu kiên cố (BTCT vững chắc, đúc kiên cố). BẮT BUỘC dịch chuẩn số tầng sang định dạng miền Nam: 2 tầng ➡️ 'Trệt, lầu đúc kiên cố'; 3 tầng ➡️ 'Trệt, 2 lầu BTCT'; 4 tầng ➡️ 'Trệt, 3 lầu BTCT'; 5 tầng ➡️ 'Trệt, 4 lầu BTCT'. Nêu chi tiết số phòng ngủ (PN) khép kín (kèm 5⭐ nếu có phòng master đẳng cấp), số WC, phòng khách rộng rãi, bếp mở thông thoáng, ban công bao quanh lấy gió trời và ánh sáng tự nhiên.\n"
+        "     + + Ưu điểm/Nội thất (nếu có): Nếu dữ liệu thô có nhắc đến nội thất, ghi chung chung nhưng cao cấp: 'Tặng full nội thất cao cấp sang xịn mịn, thiết kế đồng bộ hiện đại, khách mua chỉ việc xách vali vào ở ngay'. Nếu nhà ở vị trí góc, ghi 'Ưu điểm lô góc cực kỳ thoáng đãng đón gió mát tự nhiên cả ngày'. Tuyệt đối không tự bịa danh sách thiết bị gia dụng chi tiết.\n"
+        "     + + Diện tích: Nêu diện tích thực tế công nhận trên sổ `DT [Diện tích]m² ([Ngang]x[Dài])`, nở hậu tài lộc (nếu dữ liệu thô xác nhận rõ có nở hậu, tuyệt đối không bịa số mét nở cụ thể), diện tích sàn/sử dụng nếu có.\n"
+        "     + + Mục đích phù hợp/Lợi thế khai thác: Phù hợp khách mua ở thực hoặc khai thác căn hộ dịch vụ (CHDV) cho dòng tiền ổn định cực tốt hằng tháng. Tuyệt đối không bịa đặt số tiền thuê phòng hoặc tổng thu nhập cụ thể.\n"
+        "     + + Quy hoạch: Khẳng định thuộc khu dân cư hiện hữu ổn định, hoàn toàn không quy hoạch, không lộ giới.\n"
+        "     + + Pháp lý: Thực hiện đối chiếu nghiêm ngặt theo đúng thực tế: Mặc định (nếu thông tin gốc KHÔNG nhắc gì đến thế chấp/vay/ngân hàng) thì bắt buộc ghi 'Pháp lý sạch, hoàn công đầy đủ, sổ hồng riêng cất két, sẵn sàng công chứng ngay'. Chỉ khi thông tin gốc ghi rõ đang thế chấp/gửi ngân hàng thì tuyệt đối KHÔNG ghi 'sổ cất két' hay 'công chứng ngay' mà phải ghi đúng thực tế (Ví dụ: 'Sổ hồng gửi ngân hàng cực kỳ an toàn, sẵn sàng giải chấp công chứng nhanh').\n"
+        "     + + Giá: Dòng cuối cùng BẮT BUỘC là thông tin giá: `+ Giá: [Giá trị] tỷ [bớt lộc / thương lượng].` (ví dụ: `+ Giá: 8.66 tỷ.`).\n\n"
+        "🚨 TRÁNH LẶP TỪ VÀ THỪA THÔNG TIN: Đảm bảo các bullet points bổ trợ lẫn nhau và không lặp lại cùng một thông tin kỹ thuật (Ví dụ: Nếu ở mục 'Pháp lý' đã ghi 'hoàn công đầy đủ' thì ở mục 'Ưu điểm' không ghi lại nữa để bài viết cô đọng, sắc sảo).\n\n"
+        "🚨 CÁC QUY TẮC PHƯỜNG CŨ:\n"
+        "Suy luận tên Phường gốc của căn nhà dựa vào tên đường, địa chỉ trước đợt sáp nhập hành chính. Trả về trống nếu không đổi hoặc không chắc chắn.\n\n"
+        "TRẢ VỀ ĐÚNG FORMAT JSON DƯỚI ĐÂY, KHÔNG ĐƯỢC CHỨA BẤT KỲ VĂN BẢN NÀO KHÁC BÊN NGOÀI:\n"
+        "{\n"
+        "  \"tieuDe\": \"Nội dung tiêu đề\",\n"
+        "  \"moTa\": \"Nội dung mô tả\",\n"
+        "  \"phuongCu\": \"Tên phường cũ\"\n"
+        "}"
+    )
+}
+
+def load_config():
+    """Tải cấu hình từ file cục bộ, tự động fallback về mặc định nếu trường cấu hình trống rỗng"""
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+                user_cfg = json.load(f)
+                cfg = DEFAULT_CONFIG.copy()
+                for k, v in user_cfg.items():
+                    # Chỉ ghi đè nếu giá trị hợp lệ và không phải là chuỗi trống
+                    if v is not None:
+                        if isinstance(v, str) and not v.strip():
+                            # Trọc vào chuỗi trống thì bỏ qua để lấy giá trị mặc định của DEFAULT_CONFIG
+                            continue
+                        cfg[k] = v
+                return cfg
+        except Exception:
+            pass
+    return DEFAULT_CONFIG.copy()
+
+def save_config(cfg):
+    """Lưu cấu hình xuống file"""
+    try:
+        with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+            json.dump(cfg, f, indent=4, ensure_ascii=False)
+        return True
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Không thể lưu cấu hình: {str(e)}")
+        return False
+
+def trim_tieu_de_bds(tieu_de):
+    if not tieu_de:
+        return ""
+    tieu_de = tieu_de.strip()
+    
+    idx_bar = tieu_de.find(" | ")
+    
+    # A. BỘ LỌC PROGRAMMATIC SCRUBBER CHỐNG LẶP HẺM/XE HƠI KHI ĐẦU ĐÃ CÓ TIỀN TỐ HXH
+    if tieu_de.upper().startswith("HXH ") and idx_bar != -1:
+        tech_part = tieu_de[:idx_bar]
+        usp_part = tieu_de[idx_bar + 3:].strip()
+        
+        duplicate_keywords = [
+            r'hẻm\s+xe\s+hơi', r'hẻm\s+ô\s+tô', r'hẻm', r'ô\s+tô',
+            r'xe\s+hơi', r'oto', r'đỗ\s+cửa', r'đỗ', r'đậu'
+        ]
+        
+        cleaned_usp = usp_part
+        for kw in duplicate_keywords:
+            cleaned_usp = re.sub(rf'(?i){kw}', '', cleaned_usp)
+            
+        cleaned_usp = re.sub(r'\s+', ' ', cleaned_usp).strip()
+        
+        if cleaned_usp.lower().startswith("sat "):
+            cleaned_usp = "Sát " + cleaned_usp[4:]
+        elif cleaned_usp.lower().startswith("sát "):
+            cleaned_usp = "Sát " + cleaned_usp[4:]
+            
+        if cleaned_usp == "":
+            tieu_de = tech_part
+            idx_bar = -1
+        else:
+            cleaned_usp = cleaned_usp[0].upper() + cleaned_usp[1:]
+            tieu_de = tech_part + " | " + cleaned_usp
+            idx_bar = tieu_de.find(" | ")
+            
+    # 1. Tự động viết hoa chữ cái đầu tiên sau dấu " | "
+    if idx_bar != -1:
+        tech_part = tieu_de[:idx_bar]
+        usp_part = tieu_de[idx_bar + 3:].strip()
+        if len(usp_part) > 0:
+            usp_part = usp_part[0].upper() + usp_part[1:]
+        tieu_de = tech_part + " | " + usp_part
+        
+    # 2. Cắt tỉa nếu vượt quá 99 ký tự
+    if len(tieu_de) <= 99:
+        return tieu_de
+        
+    if idx_bar != -1:
+        tech_part = tieu_de[:idx_bar]
+        usp_part = tieu_de[idx_bar + 3:].strip()
+        if len(usp_part) > 0:
+            usp_part = usp_part[0].upper() + usp_part[1:]
+            
+        if len(tech_part) + 3 <= 65:
+            allowed_usp_len = 99 - (len(tech_part) + 3)
+            tieu_de = tech_part + " | " + usp_part[:allowed_usp_len].strip()
+        else:
+            tieu_de = tieu_de[:99].strip()
+    else:
+        tieu_de = tieu_de[:99].strip()
+        
+    return tieu_de
+
+# ==================================================
+# GOOGLE CLOUD SERVICE ACCOUNT CONNECTIVITY (DRIVE & SHEETS)
+# ==================================================
+def get_google_credentials():
+    """Tạo credentials từ credentials.json nếu tồn tại (Hỗ trợ định vị đa cấp US-043)"""
+    target_paths = [
+        CREDENTIALS_FILE,
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "credentials.json")),
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "..", "credentials.json")),
+        os.path.abspath(os.path.join(os.getcwd(), "credentials.json")),
+        os.path.abspath(os.path.join(os.getcwd(), "..", "credentials.json"))
+    ]
+    
+    # Nếu chạy dưới dạng EXE đóng gói (frozen), kiểm tra thêm các đường dẫn lân cận file thực thi
+    if getattr(sys, 'frozen', False):
+        exe_dir = os.path.dirname(sys.executable)
+        target_paths.insert(0, os.path.abspath(os.path.join(exe_dir, "credentials.json")))
+        target_paths.insert(1, os.path.abspath(os.path.join(os.path.dirname(exe_dir), "credentials.json")))
+        target_paths.insert(2, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(exe_dir)), "credentials.json")))
+        
+    resolved_path = None
+    for p in target_paths:
+        if os.path.exists(p):
+            resolved_path = p
+            break
+            
+    if not resolved_path:
+        # Loại bỏ các đường dẫn trùng lắp để log cho gọn
+        unique_paths = list(dict.fromkeys(target_paths))
+        paths_str = "\n  - ".join(f"'{p}'" for p in unique_paths)
+        add_log_message(f"[⚠️ API WARNING] Không tìm thấy credentials.json. Các vị trí hệ thống đã quét qua:\n  - {paths_str}")
+        return None
+        
+    add_log_message(f"[🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: '{resolved_path}'")
+    
+    try:
+        from google.oauth2 import service_account
+        scopes = [
+            'https://www.googleapis.com/auth/drive.file',
+            'https://www.googleapis.com/auth/spreadsheets'
+        ]
+        creds = service_account.Credentials.from_service_account_file(resolved_path, scopes=scopes)
+        return creds
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Cấu hình credentials.json tại '{resolved_path}' không hợp lệ: {str(e)}")
+        return None
+
+def get_google_access_token(creds):
+    """Lấy Access Token của Google Service Account phục vụ gọi REST API"""
+    if not creds:
+        return None
+    try:
+        import google.auth.transport.requests
+        auth_req = google.auth.transport.requests.Request()
+        creds.refresh(auth_req)
+        return creds.token
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Không thể tạo access token: {str(e)}")
+        return None
+
+# ==================================================
+# KHỞI CHẠY TIẾN TRÌNH CÀO (BACKGROUND THREAD - PACKAGED READY)
+# ==================================================
+import crawl_pipeline
+
+ACTIVE_CRAWLER_THREAD = None
+ACTIVE_CRAWLER_LOCK = threading.Lock()
+
+def run_crawler_thread(url, cookie, district, limit, start_page=None):
+    """
+    Chạy crawl_pipeline.scrape_district trực tiếp trong Thread.
+    Ghi đè hàm print() cục bộ bên trong crawl_pipeline để hứng logs an toàn,
+    tránh hoàn toàn việc monkeypatch sys.stdout/stderr toàn cục gây lỗi đệ quy (RecursionError).
+    """
+    add_log_message(f"[🚀] KHỞI ĐỘNG TIẾN TRÌNH CÀO TỰ ĐỘNG - Quận: '{district}' | Trang bắt đầu: '{start_page or 'Tự động'}'")
+    
+    # Định nghĩa hàm print() thay thế cục bộ cho module crawl_pipeline
+    def custom_print(*args, **kwargs):
+        msg = " ".join(str(arg) for arg in args)
+        add_log_message(msg)
+        
+    # Ghi đè cục bộ hàm print trong crawl_pipeline
+    old_print = getattr(crawl_pipeline, 'print', print)
+    crawl_pipeline.print = custom_print
+    
+    # Thiết lập bảo vệ ngắt tiến trình (sys.exit -> raise Exception)
+    old_exit = sys.exit
+    def safe_exit(code=0):
+        raise RuntimeError(f"Crawl pipeline yêu cầu dừng với mã code {code}")
+    sys.exit = safe_exit
+    
+    try:
+        # Gọi trực tiếp hàm trong crawl_pipeline
+        crawl_pipeline.scrape_district(url, cookie, limit, district, start_page)
+        add_log_message("[🏁] Tiến trình cào đã hoàn tất thành công!")
+    except RuntimeError as re_err:
+        add_log_message(f"[⚠️ DỪNG SỚM] {str(re_err)}")
+    except SystemExit:
+        add_log_message("[🏁] Tiến trình cào dừng (SystemExit).")
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Lỗi tiến trình cào: {str(e)}")
+    finally:
+        # Khôi phục nguyên trạng
+        crawl_pipeline.print = old_print
+        sys.exit = old_exit
+
+# ==================================================
+# TẢI HÌNH ẢNH CỤC BỘ / GOOGLE DRIVE UPLOAD CHẠY NGẦM
+# ==================================================
+def download_image_with_retry(url, headers, retries=3):
+    """Tải ảnh từ Thien Khoi với cơ chế thử lại"""
+    for attempt in range(retries):
+        try:
+            r = requests.get(url, headers=headers, timeout=15)
+            if r.status_code == 200:
+                return r.content
+            add_log_message(f"[⚠️ Thử lại] Tải ảnh thất bại HTTP {r.status_code}. Thử lại {attempt+1}/{retries}...")
+        except Exception as e:
+            add_log_message(f"[⚠️ Thử lại] Lỗi tải ảnh: {str(e)}. Thử lại {attempt+1}/{retries}...")
+        time.sleep(2)
+    return None
+
+from PIL import Image
+import io
+
+def compress_image(image_bytes, max_size=(1600, 1600), quality=75):
+    """Nén và resize ảnh JPEG để tối ưu dung lượng trước khi upload/lưu trữ"""
+    try:
+        img = Image.open(io.BytesIO(image_bytes))
+        
+        # Chuyển đổi sang RGB nếu là RGBA (tránh lỗi khi lưu JPEG)
+        if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+            # Tạo background trắng
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            mask = img.convert("RGBA").split()[3]
+            background.paste(img, mask=mask)
+            img = background
+        elif img.mode != 'RGB':
+            img = img.convert('RGB')
+            
+        # Resize giữ nguyên tỷ lệ (giới hạn chiều lớn nhất là 1600px)
+        resample_filter = getattr(Image, 'Resampling', None)
+        if resample_filter and hasattr(resample_filter, 'LANCZOS'):
+            img.thumbnail(max_size, resample_filter.LANCZOS)
+        else:
+            img.thumbnail(max_size, getattr(Image, 'ANTIALIAS', Image.BICUBIC))
+            
+        # Lưu ra bytes
+        out_bytes = io.BytesIO()
+        img.save(out_bytes, format='JPEG', quality=quality, optimize=True)
+        compressed_data = out_bytes.getvalue()
+        
+        # Chỉ lấy ảnh nén nếu dung lượng của nó nhỏ hơn ảnh gốc
+        if len(compressed_data) < len(image_bytes):
+            return compressed_data
+        return image_bytes
+    except Exception as e:
+        # Fallback an toàn: nếu lỗi thì trả về ảnh gốc
+        return image_bytes
+
+def upload_image_to_drive(file_content, filename, folder_id, token):
+    """Tải ảnh lên Google Drive thông qua REST API trực tiếp"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    # 1. Tạo Metadata file
+    metadata = {
+        "name": filename,
+        "parents": [folder_id] if folder_id else []
+    }
+    
+    files = {
+        "data": ("metadata", json.dumps(metadata), "application/json"),
+        "file": (filename, file_content, "image/jpeg")
+    }
+    
+    # 2. Multipart Upload
+    r = requests.post(
+        "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        headers=headers,
+        files=files,
+        timeout=30
+    )
+    
+    if r.status_code != 200:
+        raise Exception(f"Google Drive API returned status {r.status_code}: {r.text}")
+        
+    file_id = r.json().get("id")
+    
+    # 3. Chia sẻ tệp công khai (Anyone can read)
+    permission = {
+        "role": "reader",
+        "type": "anyone"
+    }
+    requests.post(
+        f"https://www.googleapis.com/drive/v3/files/{file_id}/permissions",
+        headers=headers,
+        json=permission,
+        timeout=10
+    )
+    
+    # Trả về link nhúng trực tiếp direct
+    return f"https://lh3.googleusercontent.com/d/{file_id}"
+
+def create_drive_folder(folder_name, parent_id, token):
+    """Tạo thư mục con trên Drive phục vụ gom ảnh theo mã căn"""
+    headers = {"Authorization": f"Bearer {token}"}
+    metadata = {
+        "name": folder_name,
+        "mimeType": "application/vnd.google-apps.folder",
+        "parents": [parent_id] if parent_id else []
+    }
+    
+    r = requests.post(
+        "https://www.googleapis.com/drive/v3/files",
+        headers=headers,
+        json=metadata,
+        timeout=20
+    )
+    if r.status_code != 200:
+        raise Exception(f"Không thể tạo thư mục Drive: {r.text}")
+        
+    return r.json().get("id")
+
+def upload_image_to_cloudinary(file_content, filename, cloud_name, api_key, api_secret, folder="BDS-KhangNgo"):
+    """Tải ảnh lên Cloudinary sử dụng Signed REST API trực tiếp bằng requests"""
+    timestamp = int(time.time())
+    
+    # Cloudinary yêu cầu các tham số để sign phải được sắp xếp theo thứ tự bảng chữ cái
+    params_to_sign = {
+        "folder": folder,
+        "timestamp": timestamp
+    }
+    
+    # Tạo signature
+    # Cú pháp: parameter1=value1&parameter2=value2<api_secret>
+    sorted_params = sorted([f"{k}={v}" for k, v in params_to_sign.items()])
+    sign_string = "&".join(sorted_params) + api_secret
+    signature = hashlib.sha1(sign_string.encode('utf-8')).hexdigest()
+    
+    # Gọi REST API của Cloudinary
+    url = f"https://api.cloudinary.com/v1_1/{cloud_name}/image/upload"
+    
+    data = {
+        "api_key": api_key,
+        "timestamp": timestamp,
+        "signature": signature,
+        "folder": folder
+    }
+    
+    files = {
+        "file": (filename, file_content, "image/jpeg")
+    }
+    
+    r = requests.post(url, data=data, files=files, timeout=30)
+    if r.status_code != 200:
+        raise Exception(f"Cloudinary API error {r.status_code}: {r.text}")
+        
+    res_data = r.json()
+    return res_data.get("secure_url") or res_data.get("url")
+
+def create_drive_folder(folder_name, parent_id, token):
+    """Tạo thư mục con trên Drive phục vụ gom ảnh theo mã căn"""
+    headers = {"Authorization": f"Bearer {token}"}
+    metadata = {
+        "name": folder_name,
+        "mimeType": "application/vnd.google-apps.folder",
+        "parents": [parent_id] if parent_id else []
+    }
+    
+    r = requests.post(
+        "https://www.googleapis.com/drive/v3/files",
+        headers=headers,
+        json=metadata,
+        timeout=20
+    )
+    if r.status_code != 200:
+        raise Exception(f"Không thể tạo thư mục Drive: {r.text}")
+        
+    return r.json().get("id")
+
+# ==================================================
+# TIẾN TRÌNH TỰ ĐỘNG DI CƯ HÌNH ẢNH CHẠY NGẦM (BACKGROUND AUTO-MIGRATION)
+# ==================================================
+IS_MIGRATION_ACTIVE = False
+MIGRATION_LOCK = threading.Lock()
+
+def run_auto_migration_wrapper(cookie):
+    global IS_MIGRATION_ACTIVE
+    try:
+        run_image_migration_thread(limit=None, cookie=cookie)
+    except Exception as e:
+        add_log_message(f"[❌ AUTO-MIGRATION ERROR] Lỗi trong tiến trình di cư tự động: {str(e)}")
+    finally:
+        with MIGRATION_LOCK:
+            IS_MIGRATION_ACTIVE = False
+
+def run_auto_migration_wrapper_with_limit(limit, cookie):
+    global IS_MIGRATION_ACTIVE
+    try:
+        run_image_migration_thread(limit=limit, cookie=cookie)
+    except Exception as e:
+        add_log_message(f"[❌ MIGRATION ERROR] Lỗi trong tiến trình di cư thủ công: {str(e)}")
+    finally:
+        with MIGRATION_LOCK:
+            IS_MIGRATION_ACTIVE = False
+
+def start_auto_migration_scheduler():
+    """Bắt đầu vòng lặp quét tự động di cư hình ảnh chạy ngầm"""
+    def scheduler_loop():
+        global IS_MIGRATION_ACTIVE
+        # Nghỉ 10 giây trước khi bắt đầu quét lần đầu tiên để server khởi động hoàn tất
+        time.sleep(10)
+        
+        while True:
+            try:
+                # 1. Kiểm tra xem có đang chạy di cư không
+                with MIGRATION_LOCK:
+                    if IS_MIGRATION_ACTIVE:
+                        time.sleep(15)
+                        continue
+                
+                # 2. Kiểm tra xem có database và có căn nào status = 'raw_text' không
+                if os.path.exists(DB_FILE):
+                    conn = sqlite3.connect(DB_FILE)
+                    cursor = conn.cursor()
+                    count = cursor.execute("SELECT COUNT(*) FROM listings WHERE status = 'raw_text'").fetchone()[0]
+                    conn.close()
+                    
+                    if count > 0:
+                        add_log_message(f"[⚡ AUTO-MIGRATION] Phát hiện {count} căn đang chờ di cư ảnh. Tự động kích hoạt luồng di cư...")
+                        
+                        cookie = ""
+                        if os.path.exists(COOKIE_FILE):
+                            try:
+                                with open(COOKIE_FILE, "r", encoding="utf-8") as f:
+                                    cookie = f.read().strip()
+                            except Exception:
+                                pass
+                        
+                        with MIGRATION_LOCK:
+                            IS_MIGRATION_ACTIVE = True
+                            
+                        # Khởi chạy luồng di cư
+                        t = threading.Thread(target=run_auto_migration_wrapper, args=(cookie,))
+                        t.daemon = True
+                        t.start()
+            except Exception as e:
+                # Thử lại thầm lặng
+                pass
+            
+            # Nghỉ 15 giây trước khi quét lần tiếp theo
+            time.sleep(15)
+
+    t = threading.Thread(target=scheduler_loop)
+    t.daemon = True
+    t.start()
+
+def run_image_migration_thread(limit, cookie):
+    """Tải và di cư hình ảnh chạy ngầm (Throttled Mode)"""
+    add_log_message("[🚀] KHỞI ĐỘNG TIẾN TRÌNH DI CƯ HÌNH ẢNH CHẠY NGẦM...")
+    
+    # 1. Truy vấn các căn chưa được xử lý ảnh
+    if not os.path.exists(DB_FILE):
+        add_log_message("[❌] Chưa có file Database SQLite raw_archive.db. Vui lòng cào tin trước.")
+        return
+        
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    rows = cursor.execute("SELECT * FROM listings WHERE status = 'raw_text'").fetchall()
+    conn.close()
+    
+    if not rows:
+        add_log_message("[✅] Tuyệt vời! Không có căn nào ở trạng thái chờ di cư ảnh (status='raw_text').")
+        return
+        
+    add_log_message(f"[i] Phát hiện {len(rows)} căn thô cần di cư hình ảnh.")
+    
+    # 2. Kiểm tra cấu hình Cloud (Cloudinary hoặc Google Drive)
+    cfg = load_config()
+    
+    cld_cloud_name = cfg.get("cloudinary_cloud_name")
+    cld_api_key = cfg.get("cloudinary_api_key")
+    cld_api_secret = cfg.get("cloudinary_api_secret")
+    
+    use_cloudinary = bool(cld_cloud_name and cld_api_key and cld_api_secret)
+    
+    creds = None
+    token = None
+    drive_parent_folder = None
+    
+    if use_cloudinary:
+        add_log_message(f"[🔒] Phát hiện cấu hình Cloudinary (Cloud: {cld_cloud_name}). Ảnh sẽ được upload trực tiếp lên Cloudinary CDN siêu tốc!")
+    else:
+        creds = get_google_credentials()
+        token = get_google_access_token(creds)
+        drive_parent_folder = cfg.get("drive_folder_id")
+        if creds and token:
+            add_log_message("[🔒] Google Service Account được phát hiện. Ảnh sẽ được upload lên Google Drive 5TB!")
+        else:
+            add_log_message("[⚠️] KHÔNG phát hiện file 'credentials.json' hoặc cấu hình Cloudinary. Hệ thống tự động kích hoạt chế độ tải ảnh CỤC BỘ (Local Storage) để lưu trữ tại static/images/[tk_id]/")
+        
+    headers_tk = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Cookie": cookie or ""
+    }
+    
+    processed = 0
+    for row in rows:
+        if limit and processed >= limit:
+            break
+            
+        row_db_id = row["id"]
+        tk_id = row["tk_id"]
+        d = normalize_listing_for_client(row)
+        raw_images_tk = d["raw_images_tk"]
+        
+        add_log_message(f"[+] Bắt đầu xử lý hình ảnh cho căn: {tk_id} ({len(raw_images_tk)} ảnh gốc)...")
+        
+        drive_links = []
+        house_folder_id = None
+        
+        # Nếu dùng Drive, tạo thư mục riêng cho căn nhà
+        if not use_cloudinary and token:
+            try:
+                house_folder_id = create_drive_folder(f"TK_{tk_id}", drive_parent_folder, token)
+            except Exception as e:
+                add_log_message(f"  [⚠️] Không tạo được folder Drive riêng cho {tk_id}: {str(e)}. Sẽ dùng folder cha.")
+                house_folder_id = drive_parent_folder
+                
+        # ==================================================
+        # TIẾN TRÌNH DI CƯ ẢNH SONG SONG ĐA LUỒNG (PARALLEL WORKER POOL - SPEEDUP 700% - 1000%)
+        # ==================================================
+        import concurrent.futures
+        
+        drive_links = ["" for _ in raw_images_tk]
+        
+        # Xác định URL ảnh sơ đồ thửa đất của căn này để bỏ qua nén
+        col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
+        col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+        original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
+        original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
+        
+        def process_single_image(args_tuple):
+            idx, img_url = args_tuple
+            try:
+                img_data = download_image_with_retry(img_url, headers_tk)
+                if not img_data:
+                    add_log_message(f"  [❌] Bỏ qua ảnh #{idx+1} của {tk_id} do lỗi tải file.")
+                    return idx, ""
+                    
+                # KIỂM TRA BỎ QUA NÉN CHO ẢNH SƠ ĐỒ ĐỂ BẢO TOÀN CHI TIẾT THU PHÓNG (US-042)
+                is_diagram = False
+                if img_url:
+                    is_diagram = (img_url == original_sodo1) or (img_url == original_sodo2)
+                
+                if is_diagram:
+                    orig_kb = int(len(img_data) / 1024)
+                    add_log_message(f"  [🛡️ Sơ đồ] Ảnh #{idx+1} của {tk_id} là ảnh Sơ đồ thửa đất ({orig_kb}KB). BỎ QUA NÉN để bảo toàn chi tiết.")
+                else:
+                    # TỰ ĐỘNG NÉN ẢNH TỐI ƯU HÓA DUNG LƯỢNG
+                    img_data_original_len = len(img_data)
+                    img_data = compress_image(img_data)
+                    img_data_compressed_len = len(img_data)
+                    
+                    saved_percent = 0
+                    if img_data_original_len > 0:
+                        saved_percent = int((img_data_original_len - img_data_compressed_len) / img_data_original_len * 100)
+                    
+                    orig_kb = int(img_data_original_len / 1024)
+                    comp_kb = int(img_data_compressed_len / 1024)
+                    add_log_message(f"  [⚡ Tối ưu] Ảnh #{idx+1} của {tk_id}: {orig_kb}KB -> {comp_kb}KB (Giảm {saved_percent}%)")
+                
+                filename = f"img_{tk_id}_{idx+1}.jpg"
+                
+                # GHI LÊN CLOUDINARY, DRIVE HOẶC CỤC BỘ
+                if use_cloudinary:
+                    cld_folder = f"BDS-KhangNgo/{tk_id}"
+                    img_link = upload_image_to_cloudinary(
+                        img_data, 
+                        filename, 
+                        cld_cloud_name, 
+                        cld_api_key, 
+                        cld_api_secret, 
+                        folder=cld_folder
+                    )
+                    return idx, img_link
+                elif token:
+                    drive_link = upload_image_to_drive(img_data, filename, house_folder_id, token)
+                    return idx, drive_link
+                else:
+                    # Lưu cục bộ
+                    local_dir = os.path.join("static", "images", tk_id)
+                    os.makedirs(local_dir, exist_ok=True)
+                    local_path = os.path.join(local_dir, filename)
+                    with open(local_path, "wb") as f:
+                        f.write(img_data)
+                    local_url = f"/static/images/{tk_id}/{filename}"
+                    return idx, local_url
+            except Exception as e:
+                add_log_message(f"  [❌ LỖI] Xử lý ảnh #{idx+1} thất bại cho {tk_id}: {str(e)}")
+                return idx, ""
+
+        # Chạy song song tối đa 5 luồng xử lý ảnh đồng thời cho căn nhà này để tối ưu băng thông
+        max_workers = min(5, len(raw_images_tk)) if raw_images_tk else 1
+        tasks = list(enumerate(raw_images_tk))
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            results = executor.map(process_single_image, tasks)
+            for idx, img_link in results:
+                if img_link:
+                    drive_links[idx] = img_link
+                    
+        # Lọc bỏ các ảnh bị lỗi/trống trong khi giữ nguyên thứ tự sắp xếp ảnh gốc thành công
+        drive_links = [link for link in drive_links if link]
+                    
+        # Cập nhật SQLite, phân loại sơ đồ/ảnh thô và tự động đẩy Sheets Pool (US-040)
+        try:
+            # 1. Định vị và phân loại hình ảnh (Sơ đồ vs Ảnh sản phẩm/nội thất)
+            col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
+            col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+            original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
+            original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
+            
+            clean_sodo1 = ""
+            clean_sodo2 = ""
+            house_links = []
+            
+            # drive_links chứa các ảnh đã upload Drive theo đúng thứ tự của raw_images_tk
+            for idx, img_url in enumerate(raw_images_tk):
+                if idx >= len(drive_links):
+                    continue
+                migrated_url = drive_links[idx]
+                if not migrated_url:
+                    continue
+                    
+                if img_url == original_sodo1:
+                    clean_sodo1 = migrated_url
+                elif img_url == original_sodo2:
+                    clean_sodo2 = migrated_url
+                else:
+                    house_links.append(migrated_url)
+            
+            # Tự động di cư Sơ đồ thửa đất 1 & 2 lên Cloudinary/Drive nếu còn là link tk thô (ko nén) (US-046.6)
+            headers_tk_sodo = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Cookie": cookie or ""
+            }
+            
+            if original_sodo1 and original_sodo1.startswith("http") and not ("cloudinary.com" in clean_sodo1 or "google" in clean_sodo1):
+                try:
+                    add_log_message(f"  [🛡️ Sơ đồ 1] Đang di cư Ảnh Sơ đồ thửa đất 1 của {tk_id} lên Cloud (BỎ QUA NÉN)...")
+                    img_data = download_image_with_retry(original_sodo1, headers_tk_sodo)
+                    if img_data:
+                        filename = f"sodo1_{tk_id}.jpg"
+                        if use_cloudinary:
+                            cld_folder = f"BDS-KhangNgo/{tk_id}"
+                            clean_sodo1 = upload_image_to_cloudinary(
+                                img_data, 
+                                filename, 
+                                cld_cloud_name, 
+                                cld_api_key, 
+                                cld_api_secret, 
+                                folder=cld_folder
+                            )
+                        elif token:
+                            clean_sodo1 = upload_image_to_drive(img_data, filename, house_folder_id, token)
+                        add_log_message(f"  [🛡️ Sơ đồ 1] Di cư Sơ đồ 1 thành công: {clean_sodo1}")
+                except Exception as e:
+                    add_log_message(f"  [❌ LỖI] Di cư Sơ đồ 1 thất bại: {str(e)}")
+
+            if original_sodo2 and original_sodo2.startswith("http") and not ("cloudinary.com" in clean_sodo2 or "google" in clean_sodo2):
+                try:
+                    add_log_message(f"  [🛡️ Sơ đồ 2] Đang di cư Ảnh Sơ đồ thửa đất 2 của {tk_id} lên Cloud (BỎ QUA NÉN)...")
+                    img_data = download_image_with_retry(original_sodo2, headers_tk_sodo)
+                    if img_data:
+                        filename = f"sodo2_{tk_id}.jpg"
+                        if use_cloudinary:
+                            cld_folder = f"BDS-KhangNgo/{tk_id}"
+                            clean_sodo2 = upload_image_to_cloudinary(
+                                img_data, 
+                                filename, 
+                                cld_cloud_name, 
+                                cld_api_key, 
+                                cld_api_secret, 
+                                folder=cld_folder
+                            )
+                        elif token:
+                            clean_sodo2 = upload_image_to_drive(img_data, filename, house_folder_id, token)
+                        add_log_message(f"  [🛡️ Sơ đồ 2] Di cư Sơ đồ 2 thành công: {clean_sodo2}")
+                except Exception as e:
+                    add_log_message(f"  [❌ LỖI] Di cư Sơ đồ 2 thất bại: {str(e)}")
+            
+            # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập (US-046.6)
+            col_ma_kn = get_safe_col_name("Mã Khang Ngô (ID)")
+            col_tieu_de = get_safe_col_name("Tiêu đề Public")
+            col_mo_ta = get_safe_col_name("Mô tả Public")
+            col_phuong_cu = get_safe_col_name("Phường cũ (AI)")
+            col_mat_tien = get_safe_col_name("Hình Mặt Tiền")
+            col_anh_pub = get_safe_col_name("Ảnh Public (VD: 1,3,5)")
+            col_anh_hem_pub = get_safe_col_name("Ảnh Hẻm Public (VD: 1,2)")
+            
+            ma_khang_ngo = row[col_ma_kn] if col_ma_kn in row.keys() else ""
+            tieu_de_public = row[col_tieu_de] if col_tieu_de in row.keys() else ""
+            mo_ta_public = row[col_mo_ta] if col_mo_ta in row.keys() else ""
+            phuong_cu_ai = row[col_phuong_cu] if col_phuong_cu in row.keys() else ""
+            hinh_mat_tien = row[col_mat_tien] if col_mat_tien in row.keys() else ""
+            anh_pub = row[col_anh_pub] if col_anh_pub in row.keys() else ""
+            anh_hem_pub = row[col_anh_hem_pub] if col_anh_hem_pub in row.keys() else ""
+            
+            # 3. Ghi thông tin vào SQLite ở trạng thái 'raw_complete' trước
+            conn = sqlite3.connect(DB_FILE)
+            cursor = conn.cursor()
+            
+            update_fields = {}
+            # Public/curated fields
+            update_fields[col_ma_kn] = ma_khang_ngo or ""
+            update_fields[col_tieu_de] = tieu_de_public or ""
+            update_fields[col_mo_ta] = mo_ta_public or ""
+            update_fields[col_phuong_cu] = phuong_cu_ai or ""
+            update_fields[col_mat_tien] = hinh_mat_tien or ""
+            
+            # Diagram images
+            update_fields[col_sodo1_key] = clean_sodo1
+            update_fields[col_sodo2_key] = clean_sodo2
+            
+            # Hẻm images (Bảo toàn dữ liệu cũ)
+            for i in range(10):
+                col_name = get_safe_col_name(f"Hình Hẻm {i+1}")
+                val = row[col_name] if col_name in row.keys() else None
+                update_fields[col_name] = val or ""
+            
+            # Ảnh 1 to Ảnh 15 (Chỉ chứa ảnh nội thất/ngoại thất thô)
+            for i in range(15):
+                col_name = get_safe_col_name(f"Ảnh {i+1}")
+                val = house_links[i] if i < len(house_links) else ""
+                update_fields[col_name] = val
+                
+            # Bảo toàn ảnh được chọn
+            update_fields[col_anh_pub] = anh_pub or ""
+            update_fields[col_anh_hem_pub] = anh_hem_pub or ""
+                
+            cols_sql = [f"`{k}` = ?" for k in update_fields.keys()]
+            vals = list(update_fields.values())
+            vals.extend([json.dumps(drive_links), row_db_id])
+            
+            cursor.execute(
+                f"UPDATE listings SET {', '.join(cols_sql)}, raw_drive_images_json = ?, status = 'raw_complete' WHERE id = ?",
+                vals
+            )
+            conn.commit()
+            conn.close()
+            
+            processed += 1
+            add_log_message(f"[✅ SQLite] Đã cập nhật SQLite cục bộ cho {tk_id}: Sơ đồ thửa đất và nội dung AI biên tập. Trạng thái -> raw_complete")
+            
+            # 5. Tự động xuất bản trực tiếp lên Google Sheets Pool
+            add_log_message(f"[⚡ AUTO-SHEETS] Đang tự động đẩy dòng dữ liệu 79 cột lên tab Pool của Google Sheets...")
+            res_publish = execute_publish_listing(tk_id)
+            if res_publish.get("status") == "success":
+                add_log_message(f"[✅ AUTO-SHEETS SUCCESS] Tự động xuất bản thành công căn {tk_id} lên Google Sheets Pool! Trạng thái SQLite -> published")
+            else:
+                add_log_message(f"[⚠️ AUTO-SHEETS FAILED] Tự động đẩy Sheets thất bại: {res_publish.get('message')}. Giữ trạng thái SQLite -> raw_complete để đẩy thủ công sau.")
+                
+        except Exception as e:
+            add_log_message(f"[❌ LỖI] Gặp sự cố trong quy trình tự động hóa Curation & Xuất bản cho {tk_id}: {str(e)}")
+            
+        # Throttling tối ưu bảo vệ IP: Cloudinary CDN cực nhanh (0.5 - 1.5s), Google Drive API (1.5 - 3.0s)
+        if use_cloudinary:
+            sleep_time = random.uniform(0.5, 1.5)
+        else:
+            sleep_time = random.uniform(1.5, 3.0)
+        time.sleep(sleep_time)
+        
+    add_log_message(f"[🏁] HOÀN TẤT LUỒNG DI CƯ: Đã xử lý {processed} căn.")
+
+# ==================================================
+# API ENDPOINTS
+# ==================================================
+
+@app.route('/')
+def index():
+    """Trả về giao diện web biên tập viên kèm headers chống cache trình duyệt cứng"""
+    if os.path.exists("curator.html"):
+        with open("curator.html", "r", encoding="utf-8") as f:
+            content = f.read()
+    else:
+        content = CURATOR_HTML_CONTENT
+    resp = Response(content, mimetype='text/html')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
+
+@app.route('/api/config', methods=['GET', 'POST'])
+def handle_config():
+    """API lấy và cập nhật cấu hình"""
+    if request.method == 'POST':
+        data = request.json
+        cfg = load_config()
+        for k in DEFAULT_CONFIG.keys():
+            if k in data:
+                # Bảo vệ chống ghi đè OpenAI API Key bằng chuỗi trống hoặc placeholder từ UI
+                if k == "openai_api_key":
+                    new_key = data[k].strip() if isinstance(data[k], str) else ""
+                    if new_key and not new_key.startswith("sk-proj-xxxx") and "xxxxxxxx" not in new_key:
+                        cfg[k] = new_key
+                else:
+                    cfg[k] = data[k]
+        save_config(cfg)
+        return jsonify({"status": "success", "config": cfg})
+    else:
+        cfg = load_config()
+        client_cfg = dict(cfg)
+        if "openai_api_key" in client_cfg and client_cfg["openai_api_key"]:
+            key = client_cfg["openai_api_key"]
+            if len(key) > 12:
+                client_cfg["openai_api_key"] = f"{key[:8]}...xxxx...{key[-4:]}"
+        return jsonify({"status": "success", "config": client_cfg})
+
+# ==================================================
+# BACKEND AUTO-CURATION & FALLBACK GENERATOR (US-040)
+# ==================================================
+def generate_fallback_content_python(d):
+    so_nha = safe_str(d.get("Ngo_So_nha"))
+    duong = safe_str(d.get("Duong"))
+    dt = safe_str(d.get("DT_Thuc_te"))
+    tang = safe_str(d.get("So_Tang"))
+    mat = safe_str(d.get("Mat_Tien"))
+    dai = safe_str(d.get("Chieu_dai"))
+    gia = safe_str(d.get("Gia_chao"))
+    
+    # Kích thước
+    kich_thuoc = f"{mat}x{dai}" if mat and dai else ""
+    
+    # Định dạng giá
+    try:
+        gia_ty = float(gia)
+        if gia_ty > 100:
+            gia_ty = gia_ty / 1000
+        gia_format = f"{gia_ty}T" if gia_ty > 0 else ""
+    except ValueError:
+        gia_format = gia
+        
+    title_parts = []
+    if duong:
+        title_parts.append(duong)
+    if dt:
+        title_parts.append(f"{dt}m2")
+    if kich_thuoc:
+        title_parts.append(kich_thuoc)
+    if tang:
+        title_parts.append(f"{tang} tầng")
+    if gia_format:
+        title_parts.append(gia_format)
+        
+    title = " - ".join(title_parts)
+    desc = d.get("Mo_ta_chi_tiet", "") or d.get("Noi_dung_chinh", "")
+    return {
+        "tieu_de_public": title,
+        "mo_ta_public": desc,
+        "phuong_cu": ""
+    }
+
+def generate_ai_curation_for_listing_backend(d, cfg):
+    """Gọi OpenAI gpt-4o-mini để tự động sinh Tiêu đề, Mô tả và tìm Phường cũ cho 1 căn"""
+    api_key = cfg.get("openai_api_key", "").strip()
+    if not api_key:
+        add_log_message("[⚠️ AUTO-AI] Chưa cấu hình OpenAI API Key. Bỏ qua gọi AI và dùng fallback format.")
+        return generate_fallback_content_python(d)
+        
+    api_base = cfg.get("openai_api_base", "https://api.openai.com/v1").strip().rstrip('/')
+    system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+    
+    # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
+    so_nha = safe_str(d.get("Ngo_So_nha"))
+    duong_truoc_nha = safe_str(d.get("Duong_truoc_nha_m"))
+    phan_loai_hem = safe_str(d.get("Phan_loai_Hem")).lower()
+    
+    is_mat_tien = False
+    if so_nha:
+        if "." not in so_nha:
+            is_mat_tien = True
+    elif "mặt tiền" in phan_loai_hem or "mặt phố" in phan_loai_hem:
+        is_mat_tien = True
+        
+    try:
+        width_val = float(duong_truoc_nha) if duong_truoc_nha else 0.0
+    except ValueError:
+        width_val = 0.0
+        
+    tien_to = ""
+    if is_mat_tien:
+        tien_to = "Mặt tiền "
+    elif width_val >= 4.0:
+        tien_to = "HXH "
+        
+    # 2. Xử lý định dạng Giá (tương thích Thiên Khôi)
+    gia_chao = d.get("Gia_chao", "")
+    try:
+        gia_ty = float(gia_chao)
+        if gia_ty > 100:
+            gia_ty = gia_ty / 1000
+        gia_format = f"{gia_ty} tỷ" if gia_ty > 0 else ""
+    except ValueError:
+        gia_format = gia_chao
+        
+    # 3. Tạo User Prompt
+    user_prompt = (
+        "THÔNG TIN CĂN NHÀ:\n"
+        f"- Địa chỉ: {d.get('Ngo_So_nha', '')} {d.get('Duong', '')}, Phường {d.get('Phuong', '')}, Quận {d.get('Quan', '')}\n"
+        f"- Nội dung chính gốc (chứa kích thước ở đầu): {d.get('Noi_dung_chinh', '')}\n"
+        f"- DT Thực tế: {d.get('DT_Thuc_te', '')}m2 | DT Trên sổ: {d.get('DT_Tren_so', '')}m2\n"
+        f"- Chiều ngang (mặt tiền): {d.get('Mat_Tien', '')}m\n"
+        f"- Hướng: {d.get('Huong', '')}\n"
+        f"- Kết cấu: {d.get('So_Tang', '')} tầng, {d.get('So_phong_ngu', '')} PN, {d.get('So_nha_ve_sinh', '')} WC\n"
+        f"- Hẻm: {d.get('Phan_loai_Hem', '')} (Rộng: {d.get('Duong_truoc_nha_m', '')}m)\n"
+        f"- Giá: {gia_format}\n"
+        f"- Phân loại / Tag USP: {d.get('Phan_loai', '')}\n"
+        f"- Điểm nổi bật của căn nhà (nguồn USP chính): {d.get('Mo_ta_chi_tiet', '')}\n\n"
+        "LƯU Ý QUAN TRỌNG: Đọc kỹ 'Nội dung chính gốc', 'Phân loại / Tag USP' và 'Điểm nổi bật' — bắt buộc phản ánh các thông số kỹ thuật và ưu điểm vào Tiêu đề và Mô tả. BẮT BUỘC bắt đầu phần tiêu đề trực tiếp bằng tiền tố '" + tien_to + "' kết hợp liền mạch với Tên đường (TUYỆT ĐỐI không chèn thêm bất kỳ dấu gạch ngang, dấu chấm hay ký tự đặc biệt nào giữa tiền tố này và tên đường, Ví dụ: " + (f"'{tien_to}Trần Quang Diệu - ...'" if tien_to else "'Trần Quang Diệu - ...'") + ").\n"
+        "🚨 YÊU CẦU ĐỊNH DẠNG: Bắt buộc phải trả về kết quả dưới định dạng JSON sạch (respond in json format) theo đúng cấu trúc yêu cầu trong System Prompt."
+    )
+    
+    payload = {
+        "model": "gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "temperature": 0.3,
+        "response_format": {"type": "json_object"}
+    }
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        response = requests.post(f"{api_base}/chat/completions", json=payload, headers=headers, timeout=30)
+        res_json = response.json()
+        
+        if response.status_code == 200:
+            ai_message = res_json["choices"][0]["message"]["content"]
+            add_log_message(f"[🤖 AUTO-AI] Nhận kết quả từ OpenAI: {ai_message}")
+            ai_data = json.loads(ai_message)
+            
+            tieu_de_raw = ""
+            for k in ["tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "tieu de", "Tiêu đề", "tiêu đề"]:
+                if k in ai_data and ai_data[k]:
+                    tieu_de_raw = ai_data[k]
+                    break
+            if not tieu_de_raw:
+                tieu_de_raw = next((v for k, v in ai_data.items() if "tieu" in k.lower()), "")
+
+            mo_ta_raw = ""
+            for k in ["moTa", "mo_ta", "moTaPublic", "mo_ta_public", "mo ta", "Mô tả", "mô tả"]:
+                if k in ai_data and ai_data[k]:
+                    mo_ta_raw = ai_data[k]
+                    break
+            if not mo_ta_raw:
+                mo_ta_raw = next((v for k, v in ai_data.items() if "mo" in k.lower() and "phuong" not in k.lower()), "")
+
+            phuong_cu_raw = ""
+            for k in ["phuongCu", "phuong_cu", "phuong cu", "Phường cũ", "phường cũ"]:
+                if k in ai_data and ai_data[k]:
+                    phuong_cu_raw = ai_data[k]
+                    break
+            if not phuong_cu_raw:
+                phuong_cu_raw = next((v for k, v in ai_data.items() if "phuong" in k.lower() or "old" in k.lower()), "")
+
+            tieu_de_clean = trim_tieu_de_bds(tieu_de_raw)
+            return {
+                "tieu_de_public": tieu_de_clean,
+                "mo_ta_public": mo_ta_raw,
+                "phuong_cu": phuong_cu_raw
+            }
+        else:
+            err_msg = res_json.get("error", {}).get("message", "Lỗi không xác định từ OpenAI.")
+            add_log_message(f"[❌ AUTO-AI ERROR] OpenAI API Error: {err_msg}. Dùng fallback format.")
+            return generate_fallback_content_python(d)
+    except Exception as e:
+        add_log_message(f"[❌ AUTO-AI ERROR] Lỗi khi gọi OpenAI API: {str(e)}. Dùng fallback format.")
+        return generate_fallback_content_python(d)
+
+@app.route('/api/ai/generate', methods=['POST'])
+def ai_generate():
+    """Gọi OpenAI gpt-4o-mini để sinh Tiêu đề, Mô tả và tìm Phường cũ"""
+    try:
+        data = request.json or {}
+        cfg = load_config()
+        
+        api_key = cfg.get("openai_api_key", "").strip()
+        if not api_key:
+            return jsonify({
+                "status": "error",
+                "message": "Chưa cấu hình OpenAI API Key. Vui lòng vào mục 'Cấu hình Hệ thống & API' để thiết lập."
+            }), 400
+            
+        system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+        
+        # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
+        so_nha = safe_str(data.get("soNha"))
+        duong_truoc_nha = safe_str(data.get("duongTruocNha"))
+        phan_loai_hem = safe_str(data.get("phanLoaiHem")).lower()
+        
+        is_mat_tien = False
+        if so_nha:
+            if "." not in so_nha:
+                is_mat_tien = True
+        elif "mặt tiền" in phan_loai_hem or "mặt phố" in phan_loai_hem:
+            is_mat_tien = True
+            
+        try:
+            width_val = float(duong_truoc_nha) if duong_truoc_nha else 0.0
+        except ValueError:
+            width_val = 0.0
+            
+        tien_to = ""
+        if is_mat_tien:
+            tien_to = "Mặt tiền "
+        elif width_val >= 4.0:
+            tien_to = "HXH "
+            
+        # 2. Xử lý định dạng Giá (tương thích Thiên Khôi)
+        gia_chao = data.get("giaChao", "")
+        try:
+            gia_ty = float(gia_chao)
+            if gia_ty > 100:
+                gia_ty = gia_ty / 1000
+            gia_format = f"{gia_ty} tỷ" if gia_ty > 0 else ""
+        except ValueError:
+            gia_format = gia_chao
+            
+        # 3. Tạo User Prompt
+        user_prompt = (
+            "THÔNG TIN CĂN NHÀ:\n"
+            f"- Địa chỉ: {data.get('soNha', '')} {data.get('duong', '')}, Phường {data.get('phuong', '')}, Quận {data.get('quan', '')}\n"
+            f"- Nội dung chính gốc (chứa kích thước ở đầu): {data.get('noiDungChinh', '')}\n"
+            f"- DT Thực tế: {data.get('dtThucTe', '')}m2 | DT Trên sổ: {data.get('dtTrenSo', '')}m2\n"
+            f"- Chiều ngang (mặt tiền): {data.get('matTien', '')}m\n"
+            f"- Hướng: {data.get('huong', '')}\n"
+            f"- Kết cấu: {data.get('soTang', '')} tầng, {data.get('soPhongNgu', '')} PN, {data.get('soToilet', '')} WC\n"
+            f"- Hẻm: {data.get('phanLoaiHem', '')} (Rộng: {data.get('duongTruocNha', '')}m)\n"
+            f"- Giá: {gia_format}\n"
+            f"- Phân loại / Tag USP: {data.get('phanLoai', '')}\n"
+            f"- Điểm nổi bật của căn nhà (nguồn USP chính): {data.get('moTaChiTiet', '')}\n\n"
+            "LƯU Ý QUAN TRỌNG: Đọc kỹ 'Nội dung chính gốc', 'Phân loại / Tag USP' và 'Điểm nổi bật' — bắt buộc phản ánh các thông số kỹ thuật và ưu điểm vào Tiêu đề và Mô tả. BẮT BUỘC bắt đầu phần tiêu đề trực tiếp bằng tiền tố '" + tien_to + "' kết hợp liền mạch với Tên đường (TUYỆT ĐỐI không chèn thêm bất kỳ dấu gạch ngang, dấu chấm hay ký tự đặc biệt nào giữa tiền tố này và tên đường, Ví dụ: " + (f"'{tien_to}Trần Quang Diệu - ...'" if tien_to else "'Trần Quang Diệu - ...'") + ").\n"
+            "🚨 YÊU CẦU ĐỊNH DẠNG: Bắt buộc phải trả về kết quả dưới định dạng JSON sạch (respond in json format) theo đúng cấu trúc yêu cầu trong System Prompt."
+        )
+        
+        payload = {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": 0.3,
+            "response_format": {"type": "json_object"}
+        }
+        
+        api_base = cfg.get("openai_api_base", "https://api.openai.com/v1").strip().rstrip('/')
+        
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(f"{api_base}/chat/completions", json=payload, headers=headers, timeout=30)
+        res_json = response.json()
+        
+        if response.status_code == 200:
+            ai_message = res_json["choices"][0]["message"]["content"]
+            add_log_message(f"[🤖 AI] Nhận kết quả từ OpenAI: {ai_message}")
+            ai_data = json.loads(ai_message)
+            
+            # Lấy key linh hoạt chống lỗi OpenAI tự đổi tên hoặc định dạng key
+            tieu_de_raw = ""
+            for k in ["tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "tieu de", "Tiêu đề", "tiêu đề"]:
+                if k in ai_data and ai_data[k]:
+                    tieu_de_raw = ai_data[k]
+                    break
+            if not tieu_de_raw:
+                tieu_de_raw = next((v for k, v in ai_data.items() if "tieu" in k.lower()), "")
+
+            mo_ta_raw = ""
+            for k in ["moTa", "mo_ta", "moTaPublic", "mo_ta_public", "mo ta", "Mô tả", "mô tả"]:
+                if k in ai_data and ai_data[k]:
+                    mo_ta_raw = ai_data[k]
+                    break
+            if not mo_ta_raw:
+                mo_ta_raw = next((v for k, v in ai_data.items() if "mo" in k.lower() and "phuong" not in k.lower()), "")
+
+            phuong_cu_raw = ""
+            for k in ["phuongCu", "phuong_cu", "phuong cu", "Phường cũ", "phường cũ"]:
+                if k in ai_data and ai_data[k]:
+                    phuong_cu_raw = ai_data[k]
+                    break
+            if not phuong_cu_raw:
+                phuong_cu_raw = next((v for k, v in ai_data.items() if "phuong" in k.lower() or "old" in k.lower()), "")
+
+            tieu_de_clean = trim_tieu_de_bds(tieu_de_raw)
+            
+            return jsonify({
+                "status": "success",
+                "tieu_de_public": tieu_de_clean,
+                "mo_ta_public": mo_ta_raw,
+                "phuong_cu": phuong_cu_raw
+            })
+        else:
+            err_msg = res_json.get("error", {}).get("message", "Lỗi không xác định từ OpenAI.")
+            return jsonify({"status": "error", "message": f"OpenAI API Error: {err_msg}"}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Lỗi gọi OpenAI API: {str(e)}"}), 500
+
+@app.route('/api/logs', methods=['GET'])
+def get_logs():
+    """API lấy logs thời gian thực cho giao diện"""
+    with LOGS_LOCK:
+        return jsonify({"logs": LOGS_BUFFER})
+
+@app.route('/api/logs/clear', methods=['POST'])
+def clear_logs():
+    """API xóa sạch logs buffer"""
+    with LOGS_LOCK:
+        LOGS_BUFFER.clear()
+    return jsonify({"status": "success"})
+
+@app.route('/api/cookie/save', methods=['POST'])
+def save_cookie_endpoint():
+    """API lưu Cookie đăng nhập mới từ frontend và lập tức ngắt luồng cào cũ"""
+    data = request.json or {}
+    cookie_payload = data.get("cookie") or data.get("crawler_cookie")
+    if not cookie_payload:
+        return jsonify({"status": "error", "message": "Thiếu dữ liệu cookie."}), 400
+        
+    try:
+        # Ngắt tiến trình cào cũ ngay lập tức bằng cách kích hoạt cờ dừng
+        import crawl_pipeline
+        crawl_pipeline.STOP_REQUESTED = True
+        
+        # Ghi cookie mới vào file COOKIE_FILE
+        with open(COOKIE_FILE, "w", encoding="utf-8") as f:
+            f.write(cookie_payload.strip())
+            
+        # Xóa sạch logs cũ tránh nhảy báo động hết hạn lặp lại ở UI
+        with LOGS_LOCK:
+            LOGS_BUFFER.clear()
+            
+        add_log_message("[🔑] ĐÃ LƯU COOKIE THIÊN KHÔI MỚI VÀ DỌN SẠCH LOGS HẾT HẠN CŨ!")
+        return jsonify({"status": "success", "message": "Đã lưu cookie thành công!"})
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Không thể ghi file cookie: {str(e)}")
+        return jsonify({"status": "error", "message": f"Không thể ghi file cookie: {str(e)}"}), 500
+
+@app.route('/api/crawl', methods=['POST'])
+def trigger_crawl():
+    """Kích hoạt tiến trình cào tin ngầm hoặc lưu Cookie"""
+    global ACTIVE_CRAWLER_THREAD
+    data = request.json or {}
+    url = data.get("url")
+    district = data.get("district")
+    limit = data.get("limit")
+    start_page = data.get("start_page")
+    
+    if not url:
+        return jsonify({"status": "error", "message": "Thiếu tham số URL danh sách quận."}), 400
+        
+    # XỬ LÝ LƯU COOKIE TỪ FRONTEND
+    if url == 'MOCK_SAVE_ONLY':
+        cookie_payload = data.get("cookie")
+        if cookie_payload:
+            try:
+                # Dừng luồng cũ ngay lập tức do cookie đã thay đổi
+                crawl_pipeline.STOP_REQUESTED = True
+                with open(COOKIE_FILE, "w", encoding="utf-8") as f:
+                    f.write(cookie_payload.strip())
+                # Xóa sạch logs cũ tránh nhảy báo động hết hạn lặp lại ở UI
+                with LOGS_LOCK:
+                    LOGS_BUFFER.clear()
+                add_log_message("[🔑] ĐÃ LƯU COOKIE THIÊN KHÔI MỚI VÀ DỌN SẠCH LOGS HẾT HẠN CŨ!")
+                return jsonify({"status": "success", "message": "Đã lưu cookie và gửi lệnh dừng tiến trình cũ thành công!"})
+            except Exception as e:
+                add_log_message(f"[❌ LỖI] Không thể ghi file cookie: {str(e)}")
+                return jsonify({"status": "error", "message": f"Không thể ghi file cookie: {str(e)}"}), 500
+        return jsonify({"status": "error", "message": "Thiếu dữ liệu cookie."}), 400
+        
+    # KIỂM TRA VÀ NGẮT TIẾN TRÌNH CŨ NẾU ĐANG CHẠY
+    with ACTIVE_CRAWLER_LOCK:
+        if ACTIVE_CRAWLER_THREAD and ACTIVE_CRAWLER_THREAD.is_alive():
+            add_log_message("[⚠️] Phát hiện tiến trình cào cũ đang chạy. Đang gửi lệnh dừng khẩn cấp...")
+            crawl_pipeline.STOP_REQUESTED = True
+            
+            # Đợi luồng cũ dừng tối đa 3 giây
+            stopped_successfully = False
+            for _ in range(30):
+                if not ACTIVE_CRAWLER_THREAD.is_alive():
+                    stopped_successfully = True
+                    break
+                time.sleep(0.1)
+                
+            if not stopped_successfully:
+                add_log_message("[❌] Luồng cũ vẫn chưa dừng hoàn toàn. Vui lòng nhấn nút dán Cookie hoặc tải lại Curator sau 5 giây.")
+                return jsonify({
+                    "status": "error", 
+                    "message": "Tiến trình cào cũ đang chạy và đang được ngắt. Vui lòng đợi 5 giây rồi nhấn Bắt đầu cào lại."
+                }), 400
+            else:
+                add_log_message("[✅] Đã ngắt tiến trình cào cũ thành công. Bắt đầu tiến trình mới...")
+                
+    # Lấy Cookie từ file cache
+    cookie = ""
+    if os.path.exists(COOKIE_FILE):
+        try:
+            with open(COOKIE_FILE, "r", encoding="utf-8") as f:
+                cookie = f.read().strip()
+        except Exception:
+            pass
+            
+    # Reset cờ STOP_REQUESTED về False và khởi chạy luồng cào mới
+    crawl_pipeline.STOP_REQUESTED = False
+    
+    t = threading.Thread(target=run_crawler_thread, args=(url, cookie, district, limit, start_page))
+    t.daemon = True
+    t.start()
+    
+    with ACTIVE_CRAWLER_LOCK:
+        ACTIVE_CRAWLER_THREAD = t
+        
+    return jsonify({"status": "success", "message": "Đã khởi động tiến trình cào ngầm mới!"})
+
+@app.route('/api/migrate', methods=['POST'])
+def trigger_migration():
+    """Kích hoạt tiến trình tải ảnh up Drive ngầm"""
+    global IS_MIGRATION_ACTIVE
+    data = request.json or {}
+    limit = data.get("limit")
+    
+    with MIGRATION_LOCK:
+        if IS_MIGRATION_ACTIVE:
+            return jsonify({"status": "warning", "message": "Tiến trình di cư hình ảnh hiện đang chạy ngầm rồi!"}), 409
+        IS_MIGRATION_ACTIVE = True
+    
+    cookie = ""
+    if os.path.exists(COOKIE_FILE):
+        try:
+            with open(COOKIE_FILE, "r", encoding="utf-8") as f:
+                cookie = f.read().strip()
+        except Exception:
+            pass
+            
+    t = threading.Thread(target=run_auto_migration_wrapper_with_limit, args=(limit, cookie))
+    t.daemon = True
+    t.start()
+    
+    return jsonify({"status": "success", "message": "Đã bắt đầu di cư hình ảnh lên Drive chạy ngầm!"})
+
+@app.route('/api/crawl/sessions', methods=['GET'])
+def get_crawl_sessions():
+    """Lấy danh sách lịch sử các phiên cào tin và tổng số thống kê tổng thể"""
+    if not os.path.exists(DB_FILE):
+        return jsonify({
+            "sessions": [],
+            "totals": {
+                "total_sessions": 0,
+                "total_crawled": 0,
+                "total_duration": 0,
+                "overall_avg_speed": "N/A"
+            }
+        })
+        
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        # Kiểm tra sự tồn tại của bảng crawl_sessions
+        table_exists = cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='crawl_sessions'"
+        ).fetchone()
+        
+        if not table_exists:
+            conn.close()
+            return jsonify({
+                "sessions": [],
+                "totals": {
+                    "total_sessions": 0,
+                    "total_crawled": 0,
+                    "total_duration": 0,
+                    "overall_avg_speed": "N/A"
+                }
+            })
+            
+        rows = cursor.execute("SELECT * FROM crawl_sessions ORDER BY id DESC").fetchall()
+        conn.close()
+        
+        sessions = [dict(r) for r in rows]
+        
+        # Tính toán các chỉ số tổng cộng
+        total_sessions = len(sessions)
+        total_crawled = sum(s["crawled_count"] for s in sessions if s["crawled_count"] is not None)
+        total_duration = sum(s["duration"] for s in sessions if s["duration"] is not None)
+        
+        overall_avg_speed = "N/A"
+        if total_crawled > 0:
+            overall_avg_speed = f"{total_duration / total_crawled:.1f} giây/căn"
+            
+        return jsonify({
+            "sessions": sessions,
+            "totals": {
+                "total_sessions": total_sessions,
+                "total_crawled": total_crawled,
+                "total_duration": total_duration,
+                "overall_avg_speed": overall_avg_speed
+            }
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Không thể lấy lịch sử phiên cào: {str(e)}"}), 500
+
+@app.route('/api/listings/clear', methods=['POST'])
+def clear_all_listings():
+    """Xóa toàn bộ listings khỏi SQLite và dọn dẹp thư mục ảnh cục bộ"""
+    if not os.path.exists(DB_FILE):
+        return jsonify({"status": "success", "message": "Database đã trống."})
+        
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM listings")
+        # Reset autoincrement
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name='listings'")
+        conn.commit()
+        conn.close()
+        
+        # Dọn dẹp thư mục ảnh static/images
+        images_dir = os.path.join("static", "images")
+        if os.path.exists(images_dir):
+            import shutil
+            for filename in os.listdir(images_dir):
+                filepath = os.path.join(images_dir, filename)
+                try:
+                    if os.path.isdir(filepath):
+                        shutil.rmtree(filepath)
+                    else:
+                        os.unlink(filepath)
+                except Exception:
+                    pass
+                    
+        add_log_message("[🧹] ĐÃ XÓA SẠCH TOÀN BỘ DỮ LIỆU CRAWL VÀ HÌNH ẢNH CỤC BỘ THÀNH CÔNG!")
+        return jsonify({"status": "success", "message": "Đã xóa sạch toàn bộ dữ liệu cào cũ và hình ảnh thành công!"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Không thể xóa dữ liệu: {str(e)}"}), 500
+
+@app.route('/api/listings', methods=['GET'])
+def get_listings():
+    """API lấy danh sách các căn từ SQLite với đầy đủ metadata"""
+    if not os.path.exists(DB_FILE):
+        return jsonify({"listings": []})
+        
+    status_filter = request.args.get("status")
+    search_q = request.args.get("search")
+    
+    quan_filter = request.args.get("quan")
+    duong_filter = request.args.get("duong")
+    so_nha_filter = request.args.get("so_nha")
+    
+    conn = sqlite3.connect(DB_FILE)
+    # Trả về kết quả dạng Dict
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # Lấy danh sách cột thực tế của bảng listings để chống lỗi lệch cột/font chữ gạch dưới
+    try:
+        cursor.execute("PRAGMA table_info(listings)")
+        db_cols = [r[1] for r in cursor.fetchall()]
+    except Exception:
+        db_cols = []
+        
+    quan_col = next((c for c in db_cols if c in ["Quan", "Qu_n"]), "Quan")
+    duong_col = next((c for c in db_cols if c in ["Duong", "___ng"]), "Duong")
+    so_nha_col = next((c for c in db_cols if c in ["Ngo_So_nha", "Ng__S__nh_"]), "Ngo_So_nha")
+    
+    sql = "SELECT * FROM listings"
+    conditions = []
+    params = []
+    
+    if status_filter:
+        conditions.append("status = ?")
+        params.append(status_filter)
+        
+    if search_q:
+        conditions.append(f"(tk_id LIKE ? OR Ma_Hang LIKE ? OR `{quan_col}` LIKE ? OR `{duong_col}` LIKE ? OR `{so_nha_col}` LIKE ?)")
+        search_like = f"%{search_q}%"
+        params.extend([search_like, search_like, search_like, search_like, search_like])
+        
+    if quan_filter:
+        conditions.append(f"`{quan_col}` LIKE ?")
+        params.append(f"%{quan_filter}%")
+        
+    if duong_filter:
+        conditions.append(f"`{duong_col}` LIKE ?")
+        params.append(f"%{duong_filter}%")
+        
+    if so_nha_filter:
+        conditions.append(f"`{so_nha_col}` LIKE ?")
+        params.append(f"%{so_nha_filter}%")
+        
+    if conditions:
+        sql += " WHERE " + " AND ".join(conditions)
+        
+    # Mặc định sắp xếp mới nhất lên trước
+    sql += " ORDER BY id DESC"
+    
+    rows = cursor.execute(sql, params).fetchall()
+    conn.close()
+    
+    listings = [normalize_listing_for_client(r) for r in rows]
+        
+    # Tính toán số lượng căn theo từng trạng thái (status) toàn cục
+    counts = {"raw_text": 0, "raw_complete": 0, "published": 0}
+    if os.path.exists(DB_FILE):
+        try:
+            conn_count = sqlite3.connect(DB_FILE)
+            cursor_count = conn_count.cursor()
+            for s in ["raw_text", "raw_complete", "published"]:
+                c = cursor_count.execute("SELECT COUNT(*) FROM listings WHERE status = ?", (s,)).fetchone()[0]
+                counts[s] = c
+            conn_count.close()
+        except Exception:
+            pass
+            
+    return jsonify({
+        "listings": listings,
+        "status_counts": counts
+    })
+
+@app.route('/api/listings/<tk_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_listing_detail(tk_id):
+    """Lấy chi tiết hoặc cập nhật cấu hình biên tập cho 1 căn"""
+    if not os.path.exists(DB_FILE):
+        return jsonify({"status": "error", "message": "Database không tồn tại"}), 404
+        
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+    
+    if not row:
+        conn.close()
+        return jsonify({"status": "error", "message": "Mã căn không tồn tại"}), 404
+        
+    if request.method == 'DELETE':
+        cursor.execute("DELETE FROM listings WHERE tk_id = ?", (tk_id,))
+        conn.commit()
+        conn.close()
+        
+        # Xóa folder ảnh cục bộ
+        local_dir = os.path.join("static", "images", tk_id)
+        if os.path.exists(local_dir):
+            import shutil
+            try:
+                shutil.rmtree(local_dir)
+            except Exception:
+                pass
+                
+        add_log_message(f"[🧹] Đã xóa thành công căn {tk_id} khỏi database SQLite cục bộ!")
+        return jsonify({"status": "success", "message": f"Đã xóa thành công căn {tk_id}"})
+        
+    if request.method == 'PUT':
+        # CẬP NHẬT CẤU HÌNH BIÊN TẬP
+        data = request.json
+        curated_config = data.get("curated_config")
+        
+        # Đồng thời cập nhật trực tiếp vào các cột nghiệp vụ SQLite
+        # Cập nhật cột curated_config_json trước
+        cursor.execute(
+            "UPDATE listings SET curated_config_json = ? WHERE tk_id = ?",
+            (json.dumps(curated_config), tk_id)
+        )
+        
+        # Cập nhật các trường chỉnh sửa của admin vào các cột tương ứng
+        fields_to_update = {
+            "Tiêu đề Public": trim_tieu_de_bds(data.get("tieu_de_public")),
+            "Mô tả Public": data.get("mo_ta_public"),
+            "Giá Public": data.get("gia_public"),
+            "Mã Khang Ngô (ID)": data.get("ma_khang_ngo"),
+            "Phân loại Hẻm": data.get("phan_loai_hem"),
+            "Đường trước nhà (m)": data.get("duong_truoc_nha"),
+            "Tình trạng nhà": data.get("tinh_trang_nha"),
+            "Số phòng ngủ": data.get("so_phong_ngu"),
+            "Số nhà vệ sinh": data.get("so_nha_ve_sinh"),
+            "Đánh giá (Admin)": data.get("danh_gia"),
+            "Ngủ trệt (Admin)": data.get("ngu_tret"),
+            "CHDV (Admin)": data.get("chdv"),
+            "Phường cũ (AI)": data.get("phuong_cu_ai"),
+            # Thực tế địa chỉ chỉnh sửa
+            "Ngõ/Số nhà": data.get("ngo_so_nha"),
+            "Quận": data.get("quan"),
+            "Phường": data.get("phuong"),
+            "Đường": data.get("duong"),
+            # Link ảnh chi tiết đã chọn nhãn
+            "Hình Nhận Diện": data.get("hinh_nhan_dien"),
+            "Hình Mặt Tiền": data.get("hinh_mat_tien"),
+            "Sơ đồ thửa đất 1": data.get("so_do_1"),
+            "Sơ đồ thửa đất 2": data.get("so_do_2"),
+            "Ảnh Public (VD: 1,3,5)": data.get("anh_public_vd_1_3_5"),
+            "Ảnh Hẻm Public (VD: 1,2)": data.get("anh_hem_public_vd_1_2")
+        }
+        
+        # Cập nhật các cột Hẻm 1-10
+        hem_imgs = data.get("hem_imgs", [])
+        for i in range(10):
+            col_name = f"Hình Hẻm {i+1}"
+            fields_to_update[col_name] = hem_imgs[i] if i < len(hem_imgs) else ""
+            
+        # Cập nhật các cột Ảnh 1-15
+        public_imgs = data.get("public_imgs", [])
+        for i in range(15):
+            col_name = f"Ảnh {i+1}"
+            fields_to_update[col_name] = public_imgs[i] if i < len(public_imgs) else ""
+            
+        # Xây dựng câu lệnh Update SQL động
+        update_cols = []
+        update_vals = []
+        for key, val in fields_to_update.items():
+            safe_col = get_safe_col_name(key)
+            update_cols.append(f"`{safe_col}` = ?")
+            update_vals.append(str(val) if val is not None else "")
+            
+        update_vals.append(tk_id)
+        update_sql = f"UPDATE listings SET {', '.join(update_cols)} WHERE tk_id = ?"
+        cursor.execute(update_sql, update_vals)
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"status": "success", "message": f"Đã lưu biên tập cục bộ cho căn {tk_id}"})
+    else:
+        # LẤY CHI TIẾT
+        d = normalize_listing_for_client(row)
+        conn.close()
+        return jsonify({"status": "success", "listing": d})
+
+@app.route('/api/listings/<tk_id>/recrawl', methods=['POST'])
+def recrawl_single_listing(tk_id):
+    """Cào lại duy nhất căn này bằng cookie Thiên Khôi hiện tại"""
+    if not os.path.exists(DB_FILE):
+        return jsonify({"status": "error", "message": "Database không tồn tại"}), 404
+        
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+        
+        if not row:
+            conn.close()
+            return jsonify({"status": "error", "message": f"Mã căn {tk_id} không tồn tại trong database để cào lại"}), 404
+            
+        d_row = dict(row)
+        detail_url = d_row.get("Link_Goc") or d_row.get("Link_Gốc") or f"https://data.thienkhoi.com/Hang/Detail/{tk_id}"
+        conn.close()
+        
+        # Lấy Cookie
+        cookie = ""
+        if os.path.exists(COOKIE_FILE):
+            try:
+                with open(COOKIE_FILE, "r", encoding="utf-8") as f:
+                    cookie = f.read().strip()
+            except Exception:
+                pass
+                
+        if not cookie:
+            return jsonify({"status": "error", "message": "Không tìm thấy Cookie Thiên Khôi. Vui lòng cập nhật Cookie trước."}), 400
+            
+        add_log_message(f"[🚀] CÀO LẠI DUY NHẤT CĂN: {tk_id} - URL: {detail_url}")
+        
+        # Thực hiện scrape chi tiết căn này trực tiếp trong Flask thread
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Cookie": cookie,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
+        }
+        
+        r = requests.get(detail_url, headers=headers, timeout=20)
+        if r.status_code != 200:
+            return jsonify({"status": "error", "message": f"Thiên Khôi phản hồi mã lỗi HTTP {r.status_code}"}), 500
+            
+        if "security.html" in r.url or "Account/Login" in r.url or "login" in r.url.lower():
+            try:
+                import winsound
+                winsound.Beep(1000, 250)
+                winsound.Beep(1000, 250)
+                winsound.Beep(800, 450)
+            except Exception:
+                pass
+            return jsonify({"status": "error", "message": "Cookie đã hết hạn hoặc bị chặn bảo mật bởi Thiên Khôi."}), 401
+            
+        from bs4 import BeautifulSoup
+        soup_detail = BeautifulSoup(r.text, "html.parser")
+        
+        # Kiểm tra tính hợp lệ của trang chi tiết để tránh ghi đè dữ liệu trống
+        if not soup_detail.select_one('#Detail_sNoiDung') and not soup_detail.select_one('#Detail_sDiaChi') and not soup_detail.select_one('#Detail_iGiaChaoHopDong_show'):
+            return jsonify({"status": "error", "message": "Không tìm thấy nội dung chi tiết căn nhà trên trang Thiên Khôi. Vui lòng cập nhật lại Cookie."}), 400
+            
+        # Bóc tách DOM bằng helper của crawl_pipeline
+        import crawl_pipeline
+        
+        ma_hang_scraped = crawl_pipeline.get_val_by_label(soup_detail, "mã hàng") or tk_id
+        
+        phan_loai_scraped = ""
+        btn_tieu_chi = soup_detail.select_one(".multiselect")
+        if btn_tieu_chi:
+            phan_loai_scraped = btn_tieu_chi.get("title", "").strip()
+            
+        mo_ta_scraped = crawl_pipeline.get_val_by_label(soup_detail, "mô tả")
+        if not mo_ta_scraped:
+            lbl_mota = soup_detail.find("label", text=re.compile(r'mô tả', re.I))
+            if lbl_mota and lbl_mota.find_next_sibling():
+                mo_ta_scraped = lbl_mota.find_next_sibling().text.strip()
+                
+        huong_scraped = ""
+        sel_huong = soup_detail.select_one("#Detail_iID_HuongNha option[selected]")
+        if sel_huong and sel_huong.get("value") != "0":
+            huong_scraped = sel_huong.text.strip()
+            
+        duong_truoc_nha = crawl_pipeline.safe_get_val(soup_detail, '#Detail_iDuongVao_show') or crawl_pipeline.safe_get_val(soup_detail, '#Detail_iDuongVao')
+        dt_dau_chu = crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDienThoaiDauChu') or crawl_pipeline.get_val_by_label(soup_detail, "điện thoại đầu chủ") or crawl_pipeline.get_val_by_label(soup_detail, "đt đầu chủ")
+        ten_dau_chu = crawl_pipeline.safe_get_val(soup_detail, '#Detail_sHopDongDauChu') or crawl_pipeline.get_val_by_label(soup_detail, "hợp đồng") or crawl_pipeline.get_val_by_label(soup_detail, "đầu chủ") or crawl_pipeline.get_val_by_label(soup_detail, "tên đầu chủ") or crawl_pipeline.get_val_by_label(soup_detail, "người ký")
+        
+        link_fb = crawl_pipeline.get_val_by_label(soup_detail, "facebook") or crawl_pipeline.get_val_by_label(soup_detail, "fb")
+        if not link_fb:
+            a_fb = soup_detail.find("a", href=re.compile(r'facebook\.com', re.I))
+            if a_fb:
+                link_fb = a_fb.get("href", "")
+                
+        img_els_td = soup_detail.select('#lightgalleryTD li')
+        images_td = [li.get('data-src', '') for li in img_els_td if li.get('data-src')]
+        
+        img_els_nd = soup_detail.select('#lightgalleryND li')
+        images_nd = [li.get('data-src', '') for li in img_els_nd if li.get('data-src')]
+        
+        crawled_data = {
+            "Mã Hàng": ma_hang_scraped,
+            "Tỉnh": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenTinh'),
+            "Quận": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenQuan'),
+            "Phường": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenPhuongXa'),
+            "Đường": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDuongPho'),
+            "Ngõ/Số nhà": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDiaChi'),
+            "Phân loại": phan_loai_scraped,
+            "Nội dung chính": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sNoiDung'),
+            "Mô tả chi tiết": mo_ta_scraped,
+            "Giá chào": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
+            "Giá Public": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
+            "DT Thực tế": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iDienTich_show'),
+            "DT Trên sổ": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iDienTichSo_show'),
+            "Mặt Tiền": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iMatTien_show'),
+            "Chieu_dai": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iDai_show') or crawl_pipeline.safe_get_val(soup_detail, '#Detail_iDai'),
+            "Số Tầng": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iSoTang_show'),
+            "Số phòng ngủ": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iSoPhongNgu_show'),
+            "Số nhà vệ sinh": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iSoToilet_show'),
+            "Hướng": huong_scraped,
+            "Đường trước nhà (m)": duong_truoc_nha,
+            "Tình trạng nhà": "Bình thường",
+            "Trạng thái": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iTrangThai'),
+            "Tên Chủ Nhà": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenChuNha'),
+            "Điện thoại 1": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDienThoaiChuNha'),
+            "Điện thoại Đầu Chủ": dt_dau_chu,
+            "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
+            "Điểm Facebook": link_fb,
+            "Link Gốc": detail_url,
+            "System ID": f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
+            "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        }
+        
+        if len(images_td) >= 1: crawled_data["Sơ đồ thửa đất 1"] = images_td[0]
+        if len(images_td) >= 2: crawled_data["Sơ đồ thửa đất 2"] = images_td[1]
+        
+        # Đưa trạng thái về raw_text để dọn dẹp ảnh cũ hoặc up Drive lại
+        combined_images = []
+        seen_images = set()
+        for img in images_td + images_nd:
+            if img and img not in seen_images:
+                combined_images.append(img)
+                seen_images.add(img)
+        crawl_pipeline.save_raw_to_sqlite(tk_id, crawled_data, combined_images)
+        
+        add_log_message(f"[✅] ĐÃ CÀO LẠI THÀNH CÔNG DUY NHẤT CĂN: {tk_id}")
+        
+        # Lấy lại dòng vừa cập nhật
+        conn = sqlite3.connect(DB_FILE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        updated_row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+        conn.close()
+        
+        d = dict(updated_row)
+        d["raw_images_tk"] = json.loads(d["raw_images_tk_json"]) if d.get("raw_images_tk_json") else []
+        d["raw_drive_images"] = json.loads(d["raw_drive_images_json"]) if d.get("raw_drive_images_json") else []
+        d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
+        
+        return jsonify({"status": "success", "message": "Đã cào lại thành công căn nhà!", "listing": d})
+        
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e)}")
+        return jsonify({"status": "error", "message": f"Gặp sự cố khi cào lại: {str(e)}"}), 500
+
+# ==================================================
+# XUẤT BẢN LÊN GOOGLE SHEETS POOL (79 CỘT HOÀN CHỈNH)
+# ==================================================
+POOL_HEADERS = [
+    "Mã Hàng", "Hình Nhận Diện", "Tỉnh", "Quận", "Phường", "Đường", "Ngõ/Số nhà", "Phân loại",
+    "Năm xây dựng", "Nội dung chính", "Mô tả chi tiết", "Giá chào", "Giá chốt",
+    "DT Thực tế", "DT Trên sổ", "Số Tầng", "Mặt Tiền", "Hướng", "Tên Chủ Nhà",
+    "Điện thoại 1", "Điện thoại 2", "Loại Hợp đồng", "Số ngày ký", "Ngày bắt đầu",
+    "Ngày kết thúc", "Người ký", "Trạng thái",
+    "Sơ đồ thửa đất 1", "Sơ đồ thửa đất 2",
+    "Hình Mặt Tiền",
+    "Hình Hẻm 1", "Hình Hẻm 2", "Hình Hẻm 3", "Hình Hẻm 4", "Hình Hẻm 5", 
+    "Hình Hẻm 6", "Hình Hẻm 7", "Hình Hẻm 8", "Hình Hẻm 9", "Hình Hẻm 10",
+    "Ảnh 1", "Ảnh 2", "Ảnh 3", "Ảnh 4", "Ảnh 5", "Ảnh 6", "Ảnh 7", "Ảnh 8",
+    "Ảnh 9", "Ảnh 10", "Ảnh 11", "Ảnh 12", "Ảnh 13", "Ảnh 14", "Ảnh 15",
+    "Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Giá Public", 
+    "Phân loại Hẻm", "Đường trước nhà (m)", "Tình trạng nhà", "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
+    "Số phòng ngủ", "Số nhà vệ sinh", "Phường cũ (AI)",
+    "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)",
+    "Duyệt Public", "Trạng thái Public", "System ID", "Link Gốc",
+    "Điện thoại Đầu Chủ", "Tên đầu chủ (BX)", "Điểm Facebook",
+    "Last Crawl", "Last Sync"
+]
+
+def get_table_end_row_index(sheet_id, creds):
+    """
+    Truy vấn API Google Sheets để lấy endRowIndex của Table trên sheet tên 'Pool' (hoặc sheet đầu tiên).
+    Trả về endRowIndex (int) hoặc None nếu không tìm thấy.
+    """
+    try:
+        import requests
+        # Lấy access token
+        import google.auth.transport.requests
+        auth_req = google.auth.transport.requests.Request()
+        creds.refresh(auth_req)
+        token = creds.token
+        
+        if not token:
+            return None
+            
+        url = f"https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}"
+        headers = {"Authorization": f"Bearer {token}"}
+        
+        r = requests.get(url, headers=headers, timeout=10)
+        if r.status_code == 200:
+            spreadsheet = r.json()
+            for sheet in spreadsheet.get('sheets', []):
+                properties = sheet.get('properties', {})
+                if properties.get('title') == 'Pool' or properties.get('sheetId') == 0:
+                    tables = sheet.get('tables', [])
+                    for t in tables:
+                        range_data = t.get('range', {})
+                        end_row = range_data.get('endRowIndex')
+                        if end_row is not None:
+                            return int(end_row)
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Không thể lấy Table endRowIndex: {str(e)}")
+    return None
+
+def escape_tsv_field(val):
+    """Bảo vệ và định dạng trường dữ liệu TSV chuẩn để copy-paste không bao giờ bị lệch cột, gãy dòng"""
+    if val is None:
+        return ""
+    val_str = str(val).strip()
+    # 1. Khử hoàn toàn dấu tab (\t) để tránh lệch cột nghiêm trọng
+    val_str = val_str.replace("\t", " ")
+    # 2. Nếu chứa dấu xuống dòng (\n, \r) hoặc dấu nháy kép, bọc toàn bộ ô trong nháy kép Excel chuẩn
+    if "\n" in val_str or "\r" in val_str or '"' in val_str:
+        # Nhân đôi dấu nháy kép bên trong theo chuẩn RFC-4180
+        val_str = val_str.replace('"', '""')
+        return f'"{val_str}"'
+    return val_str
+
+generate_ai_curation_for_listing = generate_ai_curation_for_listing_backend
+
+def execute_publish_listing(tk_id):
+    """Logic kết nối API Sheets, kiểm tra trùng Ma_Hang, insert/update dòng 79 cột."""
+    if not os.path.exists(DB_FILE):
+        return {"status": "error", "message": "Database không tồn tại"}
+        
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+    
+    if not row:
+        conn.close()
+        return {"status": "error", "message": "Mã căn không tồn tại"}
+        
+    d = dict(row)
+    
+    # TỰ ĐỘNG PHÁT HIỆN & KHỬ VA CHẠM MÃ HÀNG (COLLISION RESOLUTION LOGIC)
+    ma_hang_db = d.get("M__H_ng", "") or d.get("Ma_Hang", "")
+    if ma_hang_db:
+        # Kiểm tra xem có trùng lặp Mã Hàng với tk_id khác trong database SQLite hay không
+        collision_count = cursor.execute(
+            "SELECT COUNT(DISTINCT tk_id) FROM listings WHERE Ma_Hang = ? OR M__H_ng = ?",
+            (ma_hang_db, ma_hang_db)
+        ).fetchone()[0]
+        if collision_count > 1:
+            # Phát hiện va chạm! Giải quyết bằng cách sử dụng đuôi 8 ký tự của tk_id
+            parts = tk_id.split('-')
+            suffix = parts[-1].upper() if parts else ""
+            target_ma_hang = f"TK-{suffix}"
+            add_log_message(f"[🛡️ COLLISION RESOLUTION] Phát hiện mã hàng gốc '{ma_hang_db}' bị trùng lặp trong SQLite. Tự động chuyển đổi thành mã hàng 8 ký tự độc nhất: '{target_ma_hang}'")
+        else:
+            target_ma_hang = ma_hang_db
+    else:
+        # Fallback tạo mã hàng từ phần cuối của tk_id
+        parts = tk_id.split('-')
+        suffix = parts[-1].upper() if parts else ""
+        target_ma_hang = f"TK-{suffix}"
+        
+    conn.close() # Close read connection early
+    
+    # KẾT NỐI SHEETS BẰNG GSPREAD HOÀN CHỈNH
+    creds = get_google_credentials()
+    cfg = load_config()
+    sheet_id = cfg.get("sheet_id")
+    
+    next_row = 3 # default fallback
+    sheet = None
+    existing_row_index = None
+    
+    if creds and sheet_id:
+        try:
+            import gspread
+            client = gspread.authorize(creds)
+            spreadsheet = client.open_by_key(sheet_id)
+            
+            # Cố gắng mở tab tên "Pool" hoặc tab đầu tiên
+            try:
+                sheet = spreadsheet.worksheet("Pool")
+            except Exception:
+                try:
+                    sheet = spreadsheet.worksheet("Source")
+                except Exception:
+                    sheet = spreadsheet.get_worksheet(0)
+                    
+            # Kiểm tra trùng Mã Hàng ở cột A (Cột 1)
+            # target_ma_hang đã được khử trùng/xử lý va chạm ở đầu hàm
+            try:
+                col_a_values = sheet.col_values(1)
+                col_a_cleaned = [str(x).strip() for x in col_a_values]
+                target_stripped = target_ma_hang.strip()
+                if target_stripped in col_a_cleaned:
+                    existing_row_index = col_a_cleaned.index(target_stripped) + 1
+                    add_log_message(f"[ℹ] Phát hiện Mã Hàng {target_stripped} đã tồn tại ở dòng {existing_row_index} trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.")
+            except Exception as e:
+                add_log_message(f"[⚠️ WARNING] Không thể kiểm tra trùng Mã Hàng trong Sheets: {str(e)}")
+
+            if existing_row_index:
+                next_row = existing_row_index
+            else:
+                # Lấy endRowIndex của Table chính thức để chèn nhằm thừa hưởng định dạng
+                table_end_row = get_table_end_row_index(sheet_id, creds)
+                if table_end_row:
+                    next_row = table_end_row
+                    add_log_message(f"[ℹ] Phát hiện Table chính thức kết thúc ở dòng {table_end_row}. Thực hiện chèn tại dòng {next_row} để tự động mở rộng Table và kế thừa format.")
+                else:
+                    # Fallback lấy số dòng hiện tại để tính toán next_row chính xác
+                    try:
+                        next_row = len(sheet.get_all_values()) + 1
+                    except Exception as e:
+                        add_log_message(f"[⚠️ WARNING] Không lấy được số dòng hiện tại của Sheet, fallback về mặc định: {str(e)}")
+                        next_row = 3
+        except Exception as e:
+            add_log_message(f"[❌ LỖI] Lỗi kết nối API Google Sheets: {str(e)}")
+            
+    # Chuẩn bị dòng dữ liệu 79 cột đồng bộ
+    row_data = []
+    row_data_escaped = []
+    # target_ma_hang đã được khử trùng/xử lý va chạm ở đầu hàm
+    
+    if existing_row_index and sheet:
+        # CHẾ ĐỘ CHÉP ĐÈ DÒNG CŨ (Chỉ đè ảnh + Last Crawl)
+        try:
+            existing_row = sheet.row_values(existing_row_index)
+        except Exception as e:
+            add_log_message(f"[❌ LỖI] Lỗi khi đọc dữ liệu cũ của dòng {existing_row_index}: {str(e)}")
+            existing_row = []
+            
+        updated_row = list(existing_row)
+        while len(updated_row) < 79:
+            updated_row.append("")
+            
+        IMAGE_HEADERS = [
+            "Hình Nhận Diện",
+            "Sơ đồ thửa đất 1", "Sơ đồ thửa đất 2",
+            "Hình Mặt Tiền",
+            "Hình Hẻm 1", "Hình Hẻm 2", "Hình Hẻm 3", "Hình Hẻm 4", "Hình Hẻm 5", 
+            "Hình Hẻm 6", "Hình Hẻm 7", "Hình Hẻm 8", "Hình Hẻm 9", "Hình Hẻm 10",
+            "Ảnh 1", "Ảnh 2", "Ảnh 3", "Ảnh 4", "Ảnh 5", "Ảnh 6", "Ảnh 7", "Ảnh 8",
+            "Ảnh 9", "Ảnh 10", "Ảnh 11", "Ảnh 12", "Ảnh 13", "Ảnh 14", "Ảnh 15",
+            "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
+            "Last Crawl"
+        ]
+        
+        for idx, header in enumerate(POOL_HEADERS):
+            if header in IMAGE_HEADERS:
+                safe_col = get_safe_col_name(header)
+                val = d.get(safe_col, "")
+                if header == "Hình Nhận Diện":
+                    val = f"=IMAGE(AD{existing_row_index})"
+                elif header == "Last Crawl":
+                    val = d.get("Last_Crawl", "") or datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                
+                val_str = str(val) if val is not None else ""
+                updated_row[idx] = val_str
+                
+        row_data = updated_row
+        row_data_escaped = [escape_tsv_field(str(x)) for x in row_data]
+    else:
+        # CHẾ ĐỘ THÊM MỚI (Append)
+        for header in POOL_HEADERS:
+            safe_col = get_safe_col_name(header)
+            val = d.get(safe_col, "")
+            
+            # Ghi nhận các trường đặc biệt khi đẩy
+            if header == "Mã Hàng":
+                val = target_ma_hang
+            elif header == "Hình Nhận Diện":
+                val = f"=IMAGE(AD{next_row})"
+            elif header in ["Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Last Sync"]:
+                val = ""
+            elif header == "Tên đầu chủ (BX)":
+                val = d.get("Ten_Dau_Chu_Hop_dong", "")
+            elif header == "System ID" and not val:
+                # Tự động tạo System ID nếu trống
+                val = f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}"
+                
+            val_str = str(val) if val is not None else ""
+            row_data.append(val_str)
+            row_data_escaped.append(escape_tsv_field(val_str))
+        
+    if sheet:
+        try:
+            if existing_row_index:
+                add_log_message(f"[⚡] Đang chép đè dòng 79 cột lên Sheet '{sheet.title}' (dòng {existing_row_index})...")
+                sheet.update(range_name=f"A{existing_row_index}:CA{existing_row_index}", values=[row_data], value_input_option='USER_ENTERED')
+            else:
+                add_log_message(f"[⚡] Đang chèn chốt dòng mới 79 cột lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
+                sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED')
+            
+            # Cập nhật trạng thái trong SQLite -> published
+            conn = sqlite3.connect(DB_FILE)
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE listings SET status = 'published', `Last_Sync` = ? WHERE tk_id = ?",
+                (datetime.now().strftime("%d/%m/%Y %H:%M:%S"), tk_id)
+            )
+            conn.commit()
+            conn.close()
+            
+            add_log_message(f"[✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn {tk_id}!")
+            return {
+                "status": "success",
+                "published_to_cloud": True,
+                "message": "Đã xuất bản thành công trực tiếp lên Google Sheets!",
+                "row_data": row_data_escaped
+            }
+            
+        except Exception as e:
+            add_log_message(f"[❌ LỖI] Lỗi ghi dữ liệu lên Google Sheets: {str(e)}")
+            return {
+                "status": "warning",
+                "published_to_cloud": False,
+                "message": f"Lỗi Google API: {str(e)}. Tuy nhiên dữ liệu 79 cột đã được chuẩn bị bên dưới để bạn sao chép thủ công!",
+                "row_data": row_data_escaped
+            }
+    else:
+        add_log_message("[⚠️ COPIED] Google Sheets credentials không được tìm thấy hoặc lỗi kết nối. Bạn có thể sao chép dòng dữ liệu bên dưới.")
+        return {
+            "status": "warning",
+            "published_to_cloud": False,
+            "message": "Chưa cấu hình hoặc lỗi kết nối Google Sheets. Vui lòng sao chép mảng dữ liệu 79 cột bên dưới để paste thủ công vào Google Sheets!",
+            "row_data": row_data_escaped
+        }
+
+@app.route('/api/publish/<tk_id>', methods=['POST'])
+def publish_listing(tk_id):
+    """API đẩy dòng dữ liệu 79 cột chính thức lên Google Sheets"""
+    res = execute_publish_listing(tk_id)
+    return jsonify(res)
+
+@app.route('/api/listings/bulk-publish', methods=['POST'])
+def bulk_publish_listings():
+    """API đẩy hàng loạt danh sách các căn được chọn lên Google Sheets Pool"""
+    try:
+        data = request.get_json(force=True) or {}
+        ids = data.get("ids", [])
+        if not ids:
+            return jsonify({"status": "error", "message": "Không có mã căn nào được chọn để xuất bản."}), 400
+            
+        add_log_message(f"[⚡] Bắt đầu đẩy hàng loạt {len(ids)} căn lên Google Sheets Pool...")
+        
+        success_count = 0
+        for idx, tk_id in enumerate(ids):
+            add_log_message(f"📦 [{idx+1}/{len(ids)}] Đang đẩy căn {tk_id}...")
+            res = execute_publish_listing(tk_id)
+            if res.get("status") == "success":
+                success_count += 1
+            else:
+                add_log_message(f"[⚠️ WARNING] Căn {tk_id} đẩy không thành công: {res.get('message')}")
+            time.sleep(0.5)  # Throttling to prevent API quota exhaust
+            
+        add_log_message(f"[✅] Đã hoàn thành đẩy hàng loạt! Thành công: {success_count}/{len(ids)} căn.")
+        return jsonify({
+            "status": "success",
+            "success_count": success_count,
+            "total_count": len(ids)
+        })
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Lỗi trong quá trình xuất bản hàng loạt: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+if __name__ == '__main__':
+    # Tự động khởi tạo hoặc thực hiện di cư (migration) cột database SQLite cũ
+    try:
+        import crawl_pipeline
+        crawl_pipeline.init_db()
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Không thể khởi tạo database: {str(e)}")
+        
+    # Tự động khởi chạy tiến trình quét và di cư hình ảnh chạy ngầm nếu có căn chờ xử lý
+    try:
+        # Tắt tính năng tự động di cư hình ảnh chạy ngầm theo yêu cầu để tránh nghẽn IP khi cào tin
+        # start_auto_migration_scheduler()
+        add_log_message("[🚀] Tính năng tự động di cư hình ảnh chạy ngầm đang được TẮT (Bạn vẫn có thể bấm nút Di cư thủ công trên UI)...")
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Không thể cấu hình bộ quét di cư: {str(e)}")
+        
+    cfg = load_config()
+    port = int(os.environ.get("FLASK_PORT", 5000))
+    add_log_message(f"[*] Khởi chạy local server tại: http://localhost:{port}")
+    
+    # Tự động kích hoạt mở trình duyệt tab mới sau 1.5 giây
+    import webbrowser
+    def auto_open_browser():
+        time.sleep(1.5)
+        try:
+            webbrowser.open(f"http://localhost:{port}")
+        except Exception as e:
+            add_log_message(f"[⚠️] Không thể tự động mở trình duyệt: {str(e)}")
+            
+    threading.Thread(target=auto_open_browser, daemon=True).start()
+    
+    app.run(host='0.0.0.0', port=port, debug=False)

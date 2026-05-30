@@ -7686,6 +7686,36 @@
             console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
           }
 
+          // 1b. Đồng bộ Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${p.pool_row_index}:AD${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[customCoverUrl]] })
+            });
+            p.pool_row_data[29] = customCoverUrl;
+            p.img_mat_tien = customCoverUrl;
+          } catch (e) {
+            console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
+          }
+
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:AO${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[publicCoverUrl]] })
+            });
+            p.pool_row_data[40] = publicCoverUrl;
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
+          }
+
           // 2. Đồng bộ chỉ số ảnh public (cột BJ:BK)
           if (publicIntStr !== "") {
             try {
@@ -8024,6 +8054,33 @@
             });
           } catch (e) {
             console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
+          }
+
+          // 0b. Cập nhật Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${poolRowNumber}:AD${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[customCoverUrl]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
+          }
+
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:AO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[publicCoverUrl]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
           }
 
           // 1. Cập nhật anhDuocChon (BJ) và anhHemDuocChon (BK)
