@@ -3748,7 +3748,7 @@
                 ].filter(Boolean),
                 system_id: cv(r.c[34]) || (index + 1).toString(),
                 so_pn: cv(r.c[29]) || '-',
-                img_mat_tien: ''
+                img_mat_tien: cv(r.c[35]) || ''
               };
               p.dai_nha = getDaiNha(p);
               return p;
@@ -4258,7 +4258,7 @@
         const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
         const cleanImgUrls = imgUrls.filter(u => !isListingSodoUrl(u, p));
         let thumbUrl = '';
-        if (p.img_mat_tien && !isListingSodoUrl(p.img_mat_tien, p)) {
+        if (p.img_mat_tien) {
           thumbUrl = p.img_mat_tien;
         } else {
           thumbUrl = cleanImgUrls[0] || imgUrls[0];
@@ -5611,7 +5611,7 @@
           values.forEach(row => {
             if (row.length >= 1) {
               const id = row[0];
-              const img = row[row.length - 1] || '';
+              const img = row[35] || ''; // AM is the 36th column in D2:AM range (index 35)
               if (id && img) {
                 facadeMap[id] = img;
               }
