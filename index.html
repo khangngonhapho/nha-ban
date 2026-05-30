@@ -5725,6 +5725,34 @@
       function renderUniqueCard(type, index, url, p) {
         const normUrl = normalizeImgUrl(url);
         if (!normUrl || renderedUrls.has(normUrl)) return '';
+        
+        // Anti-duplicate protection for Sổ images in already curated listings
+        if (p.pool_row_data) {
+          const sodo1Val = document.getElementById('editSodo1Url')?.value || p.pool_row_data[27] || '';
+          const sodo2Val = document.getElementById('editSodo2Url')?.value || p.pool_row_data[28] || '';
+          
+          if (sodo1Val !== '') {
+            const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
+            const s1Norm = normalizeImgUrl(sodo1Val);
+            const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
+            if (normUrl === raw1Norm || normUrl === s1Norm || (pub1Norm !== '' && normUrl === pub1Norm)) {
+              if (renderedUrls.has(raw1Norm) || renderedUrls.has(s1Norm) || (pub1Norm !== '' && renderedUrls.has(pub1Norm))) {
+                return '';
+              }
+            }
+          }
+          if (sodo2Val !== '') {
+            const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
+            const s2Norm = normalizeImgUrl(sodo2Val);
+            const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
+            if (normUrl === raw2Norm || normUrl === s2Norm || (pub2Norm !== '' && normUrl === pub2Norm)) {
+              if (renderedUrls.has(raw2Norm) || renderedUrls.has(s2Norm) || (pub2Norm !== '' && renderedUrls.has(pub2Norm))) {
+                return '';
+              }
+            }
+          }
+        }
+        
         renderedUrls.add(normUrl);
         return renderImageCardForEdit(type, index, url, p);
       }
@@ -5846,9 +5874,30 @@
       // Check if this image is Sổ 1 or Sổ 2
       let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
       let sodo2Val = document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '';
+      
       let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
+      if (!isSodo1 && p.pool_row_data && sodo1Val !== '') {
+        const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
+        const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
+        if (normUrl === raw1Norm || (pub1Norm !== '' && normUrl === pub1Norm)) {
+          isSodo1 = true;
+        }
+      }
+      
       let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
+      if (!isSodo2 && p.pool_row_data && sodo2Val !== '') {
+        const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
+        const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
+        if (normUrl === raw2Norm || (pub2Norm !== '' && normUrl === pub2Norm)) {
+          isSodo2 = true;
+        }
+      }
       let isSodo = isSodo1 || isSodo2;
+      
+      if (isSodo) {
+        isAnhNen = false;
+        isMatTien = false;
+      }
 
       let isPublic = false;
       if (type === "facade" || type === "sodo") {
@@ -7221,6 +7270,36 @@
         const sodo1Url = document.getElementById('editSodo1Url').value.trim();
         const sodo2Url = document.getElementById('editSodo2Url').value.trim();
 
+        const normSodo1 = normalizeImgUrl(sodo1Url);
+        const normSodo2 = normalizeImgUrl(sodo2Url);
+        
+        const isSodoUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          if (norm === '') return false;
+          
+          if (norm === normSodo1 || norm === normSodo2) return true;
+          
+          // Index-based fallback for already curated listings
+          if (p.pool_row_data) {
+            if (normSodo1 !== '') {
+              const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
+              const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
+              if (norm === raw1Norm || (pub1Norm !== '' && norm === pub1Norm)) {
+                return true;
+              }
+            }
+            if (normSodo2 !== '') {
+              const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
+              const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
+              if (norm === raw2Norm || (pub2Norm !== '' && norm === pub2Norm)) {
+                return true;
+              }
+            }
+          }
+          return false;
+        };
+
         // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
         if (publicIntStr !== "" && p.pool_row_data) {
           const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
@@ -7228,8 +7307,29 @@
 
           const finalImages = [];
           
-          let publicCover = publicCoverUrl || (p.pool_row_data[40] || p.pool_row_data[39 + noithatIndices[0]] || p.pool_row_data[29]);
-          if (publicCover) {
+          let publicCover = publicCoverUrl;
+          if (isSodoUrl(publicCover)) {
+            publicCover = '';
+          }
+          if (!publicCover) {
+            const candidates = [];
+            if (p.pool_row_data[40] && !isSodoUrl(p.pool_row_data[40])) {
+              candidates.push(p.pool_row_data[40]);
+            }
+            if (p.pool_row_data[29] && !isSodoUrl(p.pool_row_data[29])) {
+              candidates.push(p.pool_row_data[29]);
+            }
+            for (let i = 0; i < noithatIndices.length; i++) {
+              const url = p.pool_row_data[39 + noithatIndices[i]];
+              if (url && !isSodoUrl(url)) {
+                candidates.push(url);
+                break;
+              }
+            }
+            publicCover = candidates[0] || '';
+          }
+
+          if (publicCover && !isSodoUrl(publicCover)) {
             finalImages.push(publicCover);
           }
           
@@ -7238,7 +7338,7 @@
           for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
             const hemIdx = hemIndices[i];
             const hemUrl = p.pool_row_data[29 + hemIdx];
-            if (hemUrl) {
+            if (hemUrl && !isSodoUrl(hemUrl)) {
               finalImages.push(hemUrl);
               addedHem++;
             }
@@ -7247,8 +7347,8 @@
           for (let i = 0; i < noithatIndices.length; i++) {
             const imgIdx = noithatIndices[i];
             const imgUrl = p.pool_row_data[39 + imgIdx];
-            // Tránh đẩy trùng hình cover/nền nếu đã có ở vị trí đầu
-            if (imgUrl && imgUrl !== publicCover && finalImages.length < 10) {
+            // Tránh đẩy trùng hình cover/nền và cấm ảnh Sổ
+            if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && finalImages.length < 10) {
               finalImages.push(imgUrl);
             }
           }
@@ -7259,24 +7359,61 @@
           for (let i = 0; i < 10; i++) {
             p.original_row_data[20 + i] = finalImages[i];
           }
-          p.original_row_data[38] = customCoverUrl;
-          p.img_mat_tien = customCoverUrl;
           
           // Cập nhật mảng ảnh sạch client-side của đối tượng p
           p.imgs = finalImages.filter(Boolean);
-        } else {
-          if (customCoverUrl) {
-            p.original_row_data[38] = customCoverUrl;
-            p.img_mat_tien = customCoverUrl;
+        }
+
+        // Universal Database Security Scrub: Clean up original_row_data 10 public image columns
+        if (p.original_row_data) {
+          // If custom cover URL is a Sổ, clear it
+          let cleanCoverUrl = customCoverUrl || p.original_row_data[38] || '';
+          if (isSodoUrl(cleanCoverUrl)) {
+            cleanCoverUrl = '';
           }
-          if (publicCoverUrl) {
-            p.original_row_data[20] = publicCoverUrl;
-            if (p.imgs) {
-              p.imgs[0] = publicCoverUrl;
-            } else {
-              p.imgs = [publicCoverUrl];
+          p.original_row_data[38] = cleanCoverUrl;
+          p.img_mat_tien = cleanCoverUrl;
+
+          // If the cover image in original_row_data[20] is a Sổ, replace it!
+          if (isSodoUrl(p.original_row_data[20])) {
+            let newCover = '';
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i])) {
+                newCover = p.original_row_data[i];
+                break;
+              }
+            }
+            p.original_row_data[20] = newCover;
+          }
+
+          // Gather all non-sổ public images
+          const cleanPublicImages = [];
+          for (let i = 20; i <= 29; i++) {
+            const url = p.original_row_data[i];
+            if (url && !isSodoUrl(url) && !cleanPublicImages.includes(url)) {
+              cleanPublicImages.push(url);
             }
           }
+          
+          // Re-update public cover if editPublicCoverUrl was set and valid
+          if (publicCoverUrl && !isSodoUrl(publicCoverUrl)) {
+            if (!cleanPublicImages.includes(publicCoverUrl)) {
+              cleanPublicImages.unshift(publicCoverUrl);
+            } else {
+              const idx = cleanPublicImages.indexOf(publicCoverUrl);
+              if (idx !== -1) cleanPublicImages.splice(idx, 1);
+              cleanPublicImages.unshift(publicCoverUrl);
+            }
+          }
+
+          while (cleanPublicImages.length < 10) {
+            cleanPublicImages.push("");
+          }
+          
+          for (let i = 0; i < 10; i++) {
+            p.original_row_data[20 + i] = cleanPublicImages[i];
+          }
+          p.imgs = cleanPublicImages.filter(Boolean);
         }
 
         p.original_row_data[2] = note;
@@ -7478,11 +7615,54 @@
         const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
         const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
 
+        const normSodo1 = normalizeImgUrl(sodo1Url);
+        const normSodo2 = normalizeImgUrl(sodo2Url);
+        
+        const isSodoUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          if (norm === '') return false;
+          
+          if (norm === normSodo1 || norm === normSodo2) return true;
+          
+          // Index-based fallback for new imports
+          if (normSodo1 !== '') {
+            const raw1Norm = normalizeImgUrl(matchedRow[40]);
+            if (norm === raw1Norm) return true;
+          }
+          if (normSodo2 !== '') {
+            const raw2Norm = normalizeImgUrl(matchedRow[41]);
+            if (norm === raw2Norm) return true;
+          }
+          return false;
+        };
+
         const finalImages = [];
         
         // 1. Cover (Public cover goes to index 0 of finalImages -> Ảnh 1 / Cột U)
-        let publicCover = publicCoverUrl || (matchedRow[40] || matchedRow[39 + noithatIndices[0]] || matchedRow[29]);
-        if (publicCover) {
+        let publicCover = publicCoverUrl;
+        if (isSodoUrl(publicCover)) {
+          publicCover = '';
+        }
+        if (!publicCover) {
+          const candidates = [];
+          if (matchedRow[40] && !isSodoUrl(matchedRow[40])) {
+            candidates.push(matchedRow[40]);
+          }
+          if (matchedRow[29] && !isSodoUrl(matchedRow[29])) {
+            candidates.push(matchedRow[29]);
+          }
+          for (let i = 0; i < noithatIndices.length; i++) {
+            const url = matchedRow[39 + noithatIndices[i]];
+            if (url && !isSodoUrl(url)) {
+              candidates.push(url);
+              break;
+            }
+          }
+          publicCover = candidates[0] || '';
+        }
+        
+        if (publicCover && !isSodoUrl(publicCover)) {
           finalImages.push(publicCover);
         }
         
@@ -7492,7 +7672,7 @@
         for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
           const hemIdx = hemIndices[i];
           const hemUrl = matchedRow[29 + hemIdx];
-          if (hemUrl) {
+          if (hemUrl && !isSodoUrl(hemUrl)) {
             finalImages.push(hemUrl);
             addedHem++;
           }
@@ -7502,8 +7682,8 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = matchedRow[39 + imgIdx];
-          // Tránh đẩy trùng hình publicCover nếu đã có ở vị trí đầu
-          if (imgUrl && imgUrl !== publicCover && finalImages.length < 10) {
+          // Tránh đẩy trùng hình publicCover và cấm ảnh Sổ
+          if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && finalImages.length < 10) {
             finalImages.push(imgUrl);
           }
         }
@@ -7540,6 +7720,11 @@
         
         const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
         
+        let finalCoverUrl = customCoverUrl || matchedRow[29] || '';
+        if (isSodoUrl(finalCoverUrl)) {
+          finalCoverUrl = '';
+        }
+
         // Xây dựng publicRowData 41 cột cho Sheet Source
         const publicRowData = [
           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
@@ -7580,7 +7765,7 @@
           "",                            // 35: gio_dang (Cột AJ)
           "",                            // 36: trang_thai (Cột AK)
           sysIdMatched,                  // 37: System ID (Cột AL)
-          customCoverUrl || matchedRow[29], // 38: Hình Mặt Tiền (Cột AM)
+          finalCoverUrl,                 // 38: Hình Mặt Tiền (Cột AM)
           tieuDeBds,                     // 39: Tiêu đề BDS (Cột AN)
           false                          // 40: Đăng BDS (Cột AO)
         ];
