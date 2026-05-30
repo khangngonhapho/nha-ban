@@ -4253,7 +4253,13 @@
       const frag = document.createDocumentFragment();
       itemsToRender.forEach((p, i) => {
         const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
-        let thumbUrl = (isAdmin && p.img_mat_tien) ? p.img_mat_tien : imgUrls[0];
+        const cleanImgUrls = imgUrls.filter(u => !isListingSodoUrl(u, p));
+        let thumbUrl = '';
+        if (p.img_mat_tien && !isListingSodoUrl(p.img_mat_tien, p)) {
+          thumbUrl = p.img_mat_tien;
+        } else {
+          thumbUrl = cleanImgUrls[0] || imgUrls[0];
+        }
         const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
         const curatedListing = isAdmin ? DATA.find(x => 
           (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
@@ -5718,6 +5724,40 @@
       if (m2) return m2[1];
       return cleanUrl;
     }
+
+    window.isListingSodoUrl = function(url, p) {
+      if (!url || !p) return false;
+      const norm = normalizeImgUrl(url);
+      if (norm === '') return false;
+      
+      const sodo1Val = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+      const sodo2Val = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+      
+      const normS1 = normalizeImgUrl(sodo1Val);
+      const normS2 = normalizeImgUrl(sodo2Val);
+      
+      if (norm === normS1 || norm === normS2) {
+        return true;
+      }
+      
+      if (p.pool_row_data) {
+        if (normS1 !== '') {
+          const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
+          const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
+          if (norm === raw1Norm || (pub1Norm !== '' && norm === pub1Norm)) {
+            return true;
+          }
+        }
+        if (normS2 !== '') {
+          const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
+          const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
+          if (norm === raw2Norm || (pub2Norm !== '' && norm === pub2Norm)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
 
     function renderImageEditorWidget(p) {
       const renderedUrls = new Set();
