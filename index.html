@@ -5799,14 +5799,21 @@
     };
 
     function renderImageEditorWidget(p) {
-      const renderedUrls = new Set();
+      const renderedSodo = new Set();
+      const renderedInterior = new Set();
+      const renderedAlley = new Set();
       
       function renderUniqueCard(type, index, url, p) {
         const normUrl = normalizeImgUrl(url);
         if (!normUrl) return '';
         // Skip duplicate check for facade/interior-1 since they map to different database columns (US-046.6)
         const isFacadeOrInterior1 = (type === 'facade') || (type === 'interior' && parseInt(index) === 1);
-        if (!isFacadeOrInterior1 && renderedUrls.has(normUrl)) return '';
+        
+        if (!isFacadeOrInterior1) {
+          if (type === 'sodo' && renderedSodo.has(normUrl)) return '';
+          if (type === 'interior' && renderedInterior.has(normUrl)) return '';
+          if (type === 'alley' && renderedAlley.has(normUrl)) return '';
+        }
         
         // Anti-duplicate protection for Sổ images in already curated listings
         if (p.pool_row_data) {
@@ -5818,7 +5825,7 @@
             const s1Norm = normalizeImgUrl(sodo1Val);
             const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
             if (normUrl === raw1Norm || normUrl === s1Norm || (pub1Norm !== '' && normUrl === pub1Norm)) {
-              if (renderedUrls.has(raw1Norm) || renderedUrls.has(s1Norm) || (pub1Norm !== '' && renderedUrls.has(pub1Norm))) {
+              if (renderedSodo.has(raw1Norm) || renderedSodo.has(s1Norm) || (pub1Norm !== '' && renderedSodo.has(pub1Norm))) {
                 return '';
               }
             }
@@ -5828,14 +5835,16 @@
             const s2Norm = normalizeImgUrl(sodo2Val);
             const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
             if (normUrl === raw2Norm || normUrl === s2Norm || (pub2Norm !== '' && normUrl === pub2Norm)) {
-              if (renderedUrls.has(raw2Norm) || renderedUrls.has(s2Norm) || (pub2Norm !== '' && renderedUrls.has(pub2Norm))) {
+              if (renderedSodo.has(raw2Norm) || renderedSodo.has(s2Norm) || (pub2Norm !== '' && renderedSodo.has(pub2Norm))) {
                 return '';
               }
             }
           }
         }
         
-        renderedUrls.add(normUrl);
+        if (type === 'sodo') renderedSodo.add(normUrl);
+        if (type === 'interior') renderedInterior.add(normUrl);
+        if (type === 'alley') renderedAlley.add(normUrl);
         return renderImageCardForEdit(type, index, url, p);
       }
 
