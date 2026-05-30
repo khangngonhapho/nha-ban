@@ -4659,6 +4659,14 @@
       const p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
 
+      const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
       const cleanRawNoiDungChinh = (text) => {
         if (!text) return '';
         const keyword = 'nguồn';
@@ -5016,7 +5024,10 @@
       } else {
         if (scta) scta.style.display = 'flex';
         
-        const sortedImgs = [...p.imgs].sort((a, b) => {
+        const cleanImgs = (p.imgs || []).filter(url => {
+          return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
+        });
+        const sortedImgs = cleanImgs.sort((a, b) => {
           const aVis = (a.includes('facebook.com') || a.includes('fb.watch') || a.includes('fb.gg')) ? 1 : 0;
           const bVis = (b.includes('facebook.com') || b.includes('fb.watch') || b.includes('fb.gg')) ? 1 : 0;
           return bVis - aVis;
@@ -5094,12 +5105,25 @@
             mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
           }
 
-          const nImgs = p.imgs || [];
-          setupScrollCarousel('carouselNha', nImgs, false);
-
           const sImgs = [];
-          if (p.raw_sodo1) sImgs.push(p.raw_sodo1);
-          if (p.raw_sodo2) sImgs.push(p.raw_sodo2);
+          const s1 = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+          const s2 = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+          const s3 = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+          const s4 = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+          const s5 = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
+          if (s1) sImgs.push(s1);
+          if (s2) sImgs.push(s2);
+          if (s3) sImgs.push(s3);
+          if (s4) sImgs.push(s4);
+          if (s5) sImgs.push(s5);
+
+          const sodoUrls = sImgs.map(url => normalizeImgUrl(url));
+          const nImgs = (p.imgs || []).filter(url => {
+            const norm = normalizeImgUrl(url);
+            return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+          });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
           setupScrollCarousel('carouselSo', sImgs, true);
 
           // Sự kiện input reactive Live Preview (US-039.7)
