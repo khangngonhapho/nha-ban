@@ -5872,12 +5872,21 @@
         currentAlleyIndices = String(p.pool_row_data[62] || '').trim();
       } else if (p.pool_row_data) {
         // Already curated listing with pool row data matched.
-        // We find which raw pool images are currently in the public p.imgs array.
+        // We find which raw pool images are currently in the clean public images saved in Source sheet.
+        const cleanPublicImages = [];
+        if (p.original_row_data) {
+          for (let i = 20; i <= 29; i++) {
+            if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+          }
+        } else {
+          cleanPublicImages.push(...(p.imgs || []));
+        }
+        const normPublic = cleanPublicImages.map(url => normalizeImgUrl(url));
+
         const intIndices = [];
-        const normImgs = (p.imgs || []).map(url => normalizeImgUrl(url));
         for (let i = 1; i <= 15; i++) {
           const url = p.pool_row_data[39 + i];
-          if (url && normImgs.includes(normalizeImgUrl(url))) {
+          if (url && normPublic.includes(normalizeImgUrl(url))) {
             intIndices.push(i);
           }
         }
@@ -5886,7 +5895,7 @@
         const alleyIndices = [];
         for (let i = 1; i <= 10; i++) {
           const url = p.pool_row_data[29 + i];
-          if (url && normImgs.includes(normalizeImgUrl(url))) {
+          if (url && normPublic.includes(normalizeImgUrl(url))) {
             alleyIndices.push(i);
           }
         }
@@ -5927,6 +5936,8 @@
       let targetNen = '';
       if (p.isFromPoolOnly && p.pool_row_data) {
         targetNen = p.pool_row_data[40] || '';
+      } else if (p.original_row_data) {
+        targetNen = p.original_row_data[20] || '';
       } else if (p.imgs && p.imgs.length > 0) {
         targetNen = p.imgs[0] || '';
       }
@@ -5968,7 +5979,16 @@
         if (p.isFromPoolOnly && p.pool_row_data) {
           publicIntStr = String(p.pool_row_data[61] || '').trim();
         } else {
-          isPublic = p.imgs ? p.imgs.includes(url) : false;
+          const cleanPublicImages = [];
+          if (p.original_row_data) {
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+            }
+          } else {
+            cleanPublicImages.push(...(p.imgs || []));
+          }
+          const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+          isPublic = normPublic.includes(normUrl);
         }
         if (publicIntStr) {
           const indices = publicIntStr.split(',').map(s => s.trim());
@@ -5978,6 +5998,17 @@
         let publicAlleyStr = '';
         if (p.isFromPoolOnly && p.pool_row_data) {
           publicAlleyStr = String(p.pool_row_data[62] || '').trim();
+        } else {
+          const cleanPublicImages = [];
+          if (p.original_row_data) {
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+            }
+          } else {
+            cleanPublicImages.push(...(p.imgs || []));
+          }
+          const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+          isPublic = normPublic.includes(normUrl);
         }
         if (publicAlleyStr) {
           const indices = publicAlleyStr.split(',').map(s => s.trim());
