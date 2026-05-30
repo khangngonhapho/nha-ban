@@ -5663,13 +5663,23 @@
       promptGenerateLink();
     };
 
+    function normalizeImgUrl(url) {
+      if (!url) return '';
+      const cleanUrl = String(url).trim();
+      const m1 = cleanUrl.match(/drive\.google\.com\/file\/d\/([^/?\s&]+)/);
+      if (m1) return m1[1];
+      const m2 = cleanUrl.match(/[?&]id=([^&\s]+)/);
+      if (m2) return m2[1];
+      return cleanUrl;
+    }
+
     function renderImageEditorWidget(p) {
       const renderedUrls = new Set();
       
       function renderUniqueCard(type, index, url, p) {
-        const cleanUrl = String(url || '').trim();
-        if (!cleanUrl || renderedUrls.has(cleanUrl)) return '';
-        renderedUrls.add(cleanUrl);
+        const normUrl = normalizeImgUrl(url);
+        if (!normUrl || renderedUrls.has(normUrl)) return '';
+        renderedUrls.add(normUrl);
         return renderImageCardForEdit(type, index, url, p);
       }
 
@@ -5772,24 +5782,26 @@
     }
 
     function renderImageCardForEdit(type, index, url, p) {
+      const normUrl = normalizeImgUrl(url);
+      
       let isMatTien = false;
-      if (p.isFromPoolOnly && p.pool_row_data) {
-        isMatTien = String(p.pool_row_data[29] || '').trim() === String(url).trim();
-      } else {
-        isMatTien = String(p.img_mat_tien || '').trim() === String(url).trim();
-      }
+      const targetMatTien = p.isFromPoolOnly && p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+      isMatTien = normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
+
       let isAnhNen = false;
+      let targetNen = '';
       if (p.pool_row_data) {
-        isAnhNen = String(p.pool_row_data[40] || '').trim() === String(url).trim();
+        targetNen = p.pool_row_data[40] || '';
       } else if (p.imgs && p.imgs.length > 0) {
-        isAnhNen = String(p.imgs[0]).trim() === String(url).trim();
+        targetNen = p.imgs[0] || '';
       }
+      isAnhNen = normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
 
       // Check if this image is Sổ 1 or Sổ 2
       let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
       let sodo2Val = document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '';
-      let isSodo1 = String(sodo1Val).trim() === String(url).trim() && String(url).trim() !== '';
-      let isSodo2 = String(sodo2Val).trim() === String(url).trim() && String(url).trim() !== '';
+      let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
+      let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
       let isSodo = isSodo1 || isSodo2;
 
       let isPublic = false;
@@ -6000,14 +6012,18 @@
       let s1 = sodo1Input.value.trim();
       let s2 = sodo2Input.value.trim();
 
+      const normUrl = normalizeImgUrl(url);
+      const normS1 = normalizeImgUrl(s1);
+      const normS2 = normalizeImgUrl(s2);
+
       // If already marked as Sodo 1 or 2 on this card, toggle it off!
-      if (s1 === url) {
+      if (normUrl !== '' && normUrl === normS1) {
         sodo1Input.value = "";
         card.classList.remove('is-sodo', 'is-sodo1');
         const badge = card.querySelector('.sodo-badge');
         if (badge) badge.remove();
         card.style.borderColor = 'transparent';
-      } else if (s2 === url) {
+      } else if (normUrl !== '' && normUrl === normS2) {
         sodo2Input.value = "";
         card.classList.remove('is-sodo', 'is-sodo2');
         const badge = card.querySelector('.sodo-badge');
@@ -6032,7 +6048,7 @@
           badgeNum = 1;
           // Clear styling on the previous Sổ 1 card
           document.querySelectorAll('.edit-img-card').forEach(c => {
-            if (c.dataset.url === s1) {
+            if (normalizeImgUrl(c.dataset.url) === normS1) {
               c.classList.remove('is-sodo', 'is-sodo1');
               const badge = c.querySelector('.sodo-badge');
               if (badge) badge.remove();
