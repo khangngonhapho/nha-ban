@@ -5803,7 +5803,10 @@
       
       function renderUniqueCard(type, index, url, p) {
         const normUrl = normalizeImgUrl(url);
-        if (!normUrl || renderedUrls.has(normUrl)) return '';
+        if (!normUrl) return '';
+        // Skip duplicate check for facade/interior-1 since they map to different database columns (US-046.6)
+        const isFacadeOrInterior1 = (type === 'facade') || (type === 'interior' && parseInt(index) === 1);
+        if (!isFacadeOrInterior1 && renderedUrls.has(normUrl)) return '';
         
         // Anti-duplicate protection for Sổ images in already curated listings
         if (p.pool_row_data) {
