@@ -6035,22 +6035,7 @@
       let sodo2Val = document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '';
       
       let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
-      if (!isSodo1 && p.pool_row_data && sodo1Val !== '') {
-        const raw1Norm = normalizeImgUrl(p.pool_row_data[40]);
-        const pub1Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[20]) : '';
-        if (normUrl === raw1Norm || (pub1Norm !== '' && normUrl === pub1Norm)) {
-          isSodo1 = true;
-        }
-      }
-      
       let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
-      if (!isSodo2 && p.pool_row_data && sodo2Val !== '') {
-        const raw2Norm = normalizeImgUrl(p.pool_row_data[41]);
-        const pub2Norm = p.original_row_data ? normalizeImgUrl(p.original_row_data[21]) : '';
-        if (normUrl === raw2Norm || (pub2Norm !== '' && normUrl === pub2Norm)) {
-          isSodo2 = true;
-        }
-      }
       let isSodo = isSodo1 || isSodo2;
       
       if (isSodo) {
