@@ -5832,7 +5832,7 @@
       
       let isMatTien = false;
       const targetMatTien = p.isFromPoolOnly && p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
-      isMatTien = normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
+      isMatTien = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
 
       let isAnhNen = false;
       let targetNen = '';
@@ -5841,7 +5841,7 @@
       } else if (p.imgs && p.imgs.length > 0) {
         targetNen = p.imgs[0] || '';
       }
-      isAnhNen = normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
+      isAnhNen = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
 
       // Check if this image is Sổ 1 or Sổ 2
       let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
