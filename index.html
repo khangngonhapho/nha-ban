@@ -3316,13 +3316,25 @@
           // Combined Multi-condition AND Search for Admin
           const subQueries = sv.split('+').map(s => s.trim()).filter(Boolean);
           
+          // Helper to remove accents / diacritics for Vietnamese search
+          function removeAccents(str) {
+            if (!str) return '';
+            return str
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/đ/g, 'd')
+              .replace(/Đ/g, 'D')
+              .toLowerCase()
+              .trim();
+          }
+
           // Helper to normalize street queries (Rule 1 of BDS-AGENTS.md)
           function normalizeStreetQuery(street) {
-            let s = String(street || '').trim().toLowerCase();
+            let s = removeAccents(street);
             if (!s) return '';
-            s = s.replace(/cách\s+mạng\s+tháng\s+8|cách\s+mạng\s+tháng\s+tám|cmt8/g, 'ttmc');
-            s = s.replace(/ba\s+tháng\s+hai|3\/2|3-2|3\s+tháng\s+2/g, 'htb');
-            s = s.replace(/đường\s+số\s+7/g, '7sd');
+            s = s.replace(/cach\s+mang\s+thang\s+8|cach\s+mang\s+thang\s+tam|cmt8/g, 'ttmc');
+            s = s.replace(/ba\s+thang\s+hai|3\/2|3-2|3\s+thang\s+2/g, 'htb');
+            s = s.replace(/duong\s+so\s+7/g, '7sd');
             return s;
           }
 
@@ -3347,7 +3359,7 @@
           
           a = a.filter(p => {
             return subQueries.every(sub => {
-              const subLower = sub.toLowerCase();
+              const subCleaned = removeAccents(sub);
               
               // 1. Match Price query: e.g. "25 tỷ", "25.5 tỷ"
               const priceMatch = sub.match(/^([\d,.]+)\s*tỷ$/i) || sub.match(/([\d,.]+)\s*tỷ/i);
@@ -3377,7 +3389,7 @@
                   const normStreetQ = normalizeStreetQuery(streetQuery);
                   const normRawDuong = normalizeStreetQuery(p.raw_ten_duong);
                   const normDuongTruoc = normalizeStreetQuery(p.duong_truoc_nha);
-                  const titleMatch = p.t.toLowerCase().includes(streetQuery.toLowerCase());
+                  const titleMatch = removeAccents(p.t).includes(removeAccents(streetQuery));
                   return normRawDuong.includes(normStreetQ) || normDuongTruoc.includes(normStreetQ) || titleMatch;
                 }
                 return true;
@@ -3387,26 +3399,26 @@
               const normSub = normalizeStreetQuery(sub);
               const streetMatch = normalizeStreetQuery(p.raw_ten_duong).includes(normSub) || 
                                   normalizeStreetQuery(p.duong_truoc_nha).includes(normSub);
-              const titleMatch = p.t.toLowerCase().includes(subLower);
-              const pMatch = p.phuong.toLowerCase().includes(subLower);
-              const idMatch = String(p.id).toLowerCase().includes(subLower);
-              const qMatch = p.q.toLowerCase().includes(subLower) ||
-                             p.ql.toLowerCase().includes(subLower) ||
-                             (subLower === 'phú nhuận' && p.q === 'pn') ||
-                             (subLower === 'tân bình' && p.q === 'tb') ||
-                             (subLower === 'bình thạnh' && p.q === 'bt') ||
-                             (subLower === 'gò vấp' && p.q === 'gv') ||
-                             (subLower === 'quận 3' && p.q === 'q3') ||
-                             (subLower === 'quận 10' && p.q === 'q10');
+              const titleMatch = removeAccents(p.t).includes(subCleaned);
+              const pMatch = removeAccents(p.phuong).includes(subCleaned);
+              const idMatch = removeAccents(p.id).includes(subCleaned);
+              const qMatch = removeAccents(p.q).includes(subCleaned) ||
+                             removeAccents(p.ql).includes(subCleaned) ||
+                             (subCleaned === 'phu nhuan' && p.q === 'pn') ||
+                             (subCleaned === 'tan binh' && p.q === 'tb') ||
+                             (subCleaned === 'binh thanh' && p.q === 'bt') ||
+                             (subCleaned === 'go vap' && p.q === 'gv') ||
+                             (subCleaned === 'quan 3' && p.q === 'q3') ||
+                             (subCleaned === 'quan 10' && p.q === 'q10');
                              
-              const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(subLower);
-              const dtMatch = (p.raw_dt_dau_chu || '').toLowerCase().includes(subLower);
-              const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(subLower);
-              const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(subLower);
-              const noteMatch = (p.note || '').toLowerCase().includes(subLower);
-              const cpMatch = (p.cu_phap || '').toLowerCase().includes(subLower);
-              const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(subLower);
-              const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(subLower);
+              const dauChuMatch = removeAccents(p.raw_ten_dau_chu).includes(subCleaned);
+              const dtMatch = removeAccents(p.raw_dt_dau_chu).includes(subCleaned);
+              const ndMatch = removeAccents(p.raw_noi_dung_chinh).includes(subCleaned);
+              const mtMatch = removeAccents(p.raw_mo_ta_chi_tiet).includes(subCleaned);
+              const noteMatch = removeAccents(p.note).includes(subCleaned);
+              const cpMatch = removeAccents(p.cu_phap).includes(subCleaned);
+              const soNhaMatch = removeAccents(p.raw_so_nha).includes(subCleaned);
+              const duongMatch = removeAccents(p.raw_ten_duong).includes(subCleaned);
               
               return idMatch || titleMatch || streetMatch || pMatch || qMatch ||
                      dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
