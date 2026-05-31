@@ -4062,7 +4062,7 @@
       if (selDistricts.size === 1) {
         const d = [...selDistricts][0];
         if (STATIC_WARD_MAP[d]) {
-          wards = [...STATIC_WARD_MAP[d]].sort();
+          wards = [...STATIC_WARD_MAP[d]];
         }
       }
       if (wards.length === 0) {
