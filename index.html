@@ -3382,15 +3382,22 @@
                 const houseNumQuery = houseStreetMatch[1];
                 const streetQuery = houseStreetMatch[2].trim();
                 
-                const hnMatch = matchHouseNumber(p.raw_so_nha, houseNumQuery);
+                let hnMatch = matchHouseNumber(p.raw_so_nha, houseNumQuery);
+                if (!hnMatch && p.cu_phap) {
+                  const cuPhapMatch = p.cu_phap.trim().match(/^(\d+[\d/a-zA-Z.]*)\s*(.*)$/);
+                  if (cuPhapMatch) {
+                    hnMatch = matchHouseNumber(cuPhapMatch[1], houseNumQuery);
+                  }
+                }
                 if (!hnMatch) return false;
                 
                 if (streetQuery) {
                   const normStreetQ = normalizeStreetQuery(streetQuery);
                   const normRawDuong = normalizeStreetQuery(p.raw_ten_duong);
                   const normDuongTruoc = normalizeStreetQuery(p.duong_truoc_nha);
+                  const normTenDuong = normalizeStreetQuery(p.ten_duong);
                   const titleMatch = removeAccents(p.t).includes(removeAccents(streetQuery));
-                  return normRawDuong.includes(normStreetQ) || normDuongTruoc.includes(normStreetQ) || titleMatch;
+                  return normRawDuong.includes(normStreetQ) || normDuongTruoc.includes(normStreetQ) || normTenDuong.includes(normStreetQ) || titleMatch;
                 }
                 return true;
               }
@@ -3398,7 +3405,8 @@
               // 3. Fallback: General text match
               const normSub = normalizeStreetQuery(sub);
               const streetMatch = normalizeStreetQuery(p.raw_ten_duong).includes(normSub) || 
-                                  normalizeStreetQuery(p.duong_truoc_nha).includes(normSub);
+                                  normalizeStreetQuery(p.duong_truoc_nha).includes(normSub) ||
+                                  normalizeStreetQuery(p.ten_duong).includes(normSub);
               const titleMatch = removeAccents(p.t).includes(subCleaned);
               const pMatch = removeAccents(p.phuong).includes(subCleaned);
               const idMatch = removeAccents(p.id).includes(subCleaned);
@@ -3417,8 +3425,8 @@
               const mtMatch = removeAccents(p.raw_mo_ta_chi_tiet).includes(subCleaned);
               const noteMatch = removeAccents(p.note).includes(subCleaned);
               const cpMatch = removeAccents(p.cu_phap).includes(subCleaned);
-              const soNhaMatch = removeAccents(p.raw_so_nha).includes(subCleaned);
-              const duongMatch = removeAccents(p.raw_ten_duong).includes(subCleaned);
+              const soNhaMatch = removeAccents(p.raw_so_nha).includes(subCleaned) || (p.cu_phap && removeAccents(p.cu_phap.split(' ')[0]).includes(subCleaned));
+              const duongMatch = removeAccents(p.raw_ten_duong).includes(subCleaned) || removeAccents(p.ten_duong).includes(subCleaned);
               
               return idMatch || titleMatch || streetMatch || pMatch || qMatch ||
                      dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
@@ -3430,7 +3438,9 @@
           a = a.filter(p => {
             const idMatch = removeAccents(p.id).includes(svCleaned);
             const tMatch = removeAccents(p.t).includes(svCleaned);
-            const dMatch = removeAccents(p.duong_truoc_nha).includes(svCleaned);
+            const dMatch = removeAccents(p.duong_truoc_nha).includes(svCleaned) || 
+                           removeAccents(p.ten_duong).includes(svCleaned) || 
+                           removeAccents(p.raw_ten_duong).includes(svCleaned);
             const pMatch = removeAccents(p.phuong).includes(svCleaned);
             const qMatch = removeAccents(p.q).includes(svCleaned) ||
               removeAccents(p.ql).includes(svCleaned) ||
@@ -3703,6 +3713,7 @@
                 system_id: sr[37] || (index + 1).toString(),
                 so_pn: sr[32] || '-',
                 img_mat_tien: sr[38] || '',
+                ten_duong: sr[34] || '',
                 
                 original_row_data: sr,
                 source_row_index: targetRowNumber
