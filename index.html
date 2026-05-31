@@ -3314,8 +3314,10 @@
       if (sv) {
         // Helper to remove accents / diacritics for Vietnamese search
         function removeAccents(str) {
-          if (!str) return '';
-          return str
+          if (str === null || str === undefined) return '';
+          const s = String(str);
+          if (!s) return '';
+          return s
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .replace(/đ/g, 'd')
