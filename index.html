@@ -3357,6 +3357,11 @@
             // Rule 2: compound numbers "1168.42+44" -> "1168.42"
             const normalizedRaw = cleanRaw.split('+')[0].trim();
             
+            // Nếu người dùng gõ prefix có dấu chấm ở cuối (e.g. "95.")
+            if (cleanQuery.endsWith('.')) {
+              if (normalizedRaw.startsWith(cleanQuery)) return true;
+            }
+            
             if (normalizedRaw === cleanQuery) return true;
             if (normalizedRaw.startsWith(cleanQuery + '/')) return true;
             
