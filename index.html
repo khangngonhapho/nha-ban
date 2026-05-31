@@ -4049,9 +4049,26 @@
     }
 
     // ── Build ward tabs dynamically ──
+    const STATIC_WARD_MAP = {
+      q3: ["Bàn Cờ", "Chợ Quán", "Nhiêu Lộc", "Vườn Lài", "Xuân Hòa"],
+      q10: ["Bàn Cờ", "Bình Hưng Hòa", "Diên Hồng", "Hòa Hưng", "Nhiêu Lộc", "Vườn Lài"],
+      bt: ["Bình Hòa", "Bình Lợi", "Bình Lợi Trung", "Bình Quới", "Bình Thạnh", "Gia Định", "Phú Mỹ", "Thạnh Mỹ Tây", "Trung Mỹ Tây", "Tân Định", "Đức Nhuận"],
+      tb: ["An Hội Tây", "Bảy Hiền", "Hòa Hưng", "Phú Thạnh", "Tân Bình", "Tân Hòa", "Tân Sơn", "Tân Sơn Hòa", "Tân Sơn Nhì", "Tân Sơn Nhất", "Tân Định"],
+      pn: ["Bình Thạnh", "Cầu Kiệu", "Phú Nhuận", "Đức Nhuận"]
+    };
+
     function buildWardTabs() {
-      const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
-      const wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
+      let wards = [];
+      if (selDistricts.size === 1) {
+        const d = [...selDistricts][0];
+        if (STATIC_WARD_MAP[d]) {
+          wards = [...STATIC_WARD_MAP[d]].sort();
+        }
+      }
+      if (wards.length === 0) {
+        const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+        wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
+      }
       const wt = document.getElementById('wardTabs');
       const wl = document.getElementById('wardLbl');
       if (!wards.length) { wt.classList.remove('has-wards'); wl.style.display = 'none'; return; }

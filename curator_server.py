@@ -537,13 +537,19 @@ def download_image_with_retry(url, headers, retries=3):
         time.sleep(2)
     return None
 
-from PIL import Image
+from PIL import Image, ImageOps
 import io
 
 def compress_image(image_bytes, max_size=(1600, 1600), quality=75):
     """Nén và resize ảnh JPEG để tối ưu dung lượng trước khi upload/lưu trữ"""
     try:
         img = Image.open(io.BytesIO(image_bytes))
+        
+        # Tự động xoay ảnh vật lý theo đúng tag EXIF trước khi nén để tránh lỗi quay ngang 90 độ
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception as exif_err:
+            pass
         
         # Chuyển đổi sang RGB nếu là RGBA (tránh lỗi khi lưu JPEG)
         if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
