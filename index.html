@@ -3312,22 +3312,22 @@
       
       const sv = (document.getElementById('searchInput')?.value || '').trim();
       if (sv) {
+        // Helper to remove accents / diacritics for Vietnamese search
+        function removeAccents(str) {
+          if (!str) return '';
+          return str
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D')
+            .toLowerCase()
+            .trim();
+        }
+
         if (isAdmin) {
           // Combined Multi-condition AND Search for Admin
           const subQueries = sv.split('+').map(s => s.trim()).filter(Boolean);
           
-          // Helper to remove accents / diacritics for Vietnamese search
-          function removeAccents(str) {
-            if (!str) return '';
-            return str
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .replace(/đ/g, 'd')
-              .replace(/Đ/g, 'D')
-              .toLowerCase()
-              .trim();
-          }
-
           // Helper to normalize street queries (Rule 1 of BDS-AGENTS.md)
           function normalizeStreetQuery(street) {
             let s = removeAccents(street);
@@ -3425,21 +3425,21 @@
             });
           });
         } else {
-          // Regular client search logic (remains unchanged)
-          const svLower = sv.toLowerCase();
+          // Regular client search logic with accent-free search support
+          const svCleaned = removeAccents(sv);
           a = a.filter(p => {
-            const idMatch = String(p.id).toLowerCase().includes(svLower);
-            const tMatch = p.t.toLowerCase().includes(svLower);
-            const dMatch = p.duong_truoc_nha.toLowerCase().includes(svLower);
-            const pMatch = p.phuong.toLowerCase().includes(svLower);
-            const qMatch = p.q.toLowerCase().includes(svLower) ||
-              p.ql.toLowerCase().includes(svLower) ||
-              (svLower === 'phú nhuận' && p.q === 'pn') ||
-              (svLower === 'tân bình' && p.q === 'tb') ||
-              (svLower === 'bình thạnh' && p.q === 'bt') ||
-              (svLower === 'gò vấp' && p.q === 'gv') ||
-              (svLower === 'quận 3' && p.q === 'q3') ||
-              (svLower === 'quận 10' && p.q === 'q10');
+            const idMatch = removeAccents(p.id).includes(svCleaned);
+            const tMatch = removeAccents(p.t).includes(svCleaned);
+            const dMatch = removeAccents(p.duong_truoc_nha).includes(svCleaned);
+            const pMatch = removeAccents(p.phuong).includes(svCleaned);
+            const qMatch = removeAccents(p.q).includes(svCleaned) ||
+              removeAccents(p.ql).includes(svCleaned) ||
+              (svCleaned === 'phu nhuan' && p.q === 'pn') ||
+              (svCleaned === 'tan binh' && p.q === 'tb') ||
+              (svCleaned === 'binh thanh' && p.q === 'bt') ||
+              (svCleaned === 'go vap' && p.q === 'gv') ||
+              (svCleaned === 'quan 3' && p.q === 'q3') ||
+              (svCleaned === 'quan 10' && p.q === 'q10');
             return idMatch || tMatch || dMatch || pMatch || qMatch;
           });
         }
