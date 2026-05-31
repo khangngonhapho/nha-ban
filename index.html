@@ -4114,24 +4114,47 @@
     function updateStats() {
       const arr = getFiltered();
       if (!arr.length) {
-        document.getElementById('totalBadge').textContent = '0 BĐS';
-        document.getElementById('sTong').textContent = '0';
-        document.getElementById('sTang').textContent = '-';
-        document.getElementById('sGia').textContent = '-';
-        document.getElementById('sDt').textContent = '-';
-        document.getElementById('sQuan').textContent = '-';
+        const totalBadge = document.getElementById('totalBadge');
+        if (totalBadge) totalBadge.textContent = '0 BĐS';
+        
+        const sTong = document.getElementById('sTong');
+        if (sTong) sTong.textContent = '0';
+        
+        const sTang = document.getElementById('sTang');
+        if (sTang) sTang.textContent = '-';
+        
+        const sGia = document.getElementById('sGia');
+        if (sGia) sGia.textContent = '-';
+        
+        const sDt = document.getElementById('sDt');
+        if (sDt) sDt.textContent = '-';
+        
+        const sQuan = document.getElementById('sQuan');
+        if (sQuan) sQuan.textContent = '-';
         return;
       }
       const gias = arr.map(p => parseFloat(p.gia)).filter(Boolean);
       const dts = arr.map(p => parseFloat(p.dt)).filter(Boolean);
       const tangs = arr.map(p => parseFloat(p.tang)).filter(Boolean);
       const quans = [...new Set(arr.map(p => p.q).filter(Boolean))].length;
-      document.getElementById('sTong').textContent = arr.length;
-      document.getElementById('sTang').textContent = tangs.length ? `${Math.min(...tangs)}–${Math.max(...tangs)}` : '-';
-      document.getElementById('sGia').textContent = gias.length ? `${Math.min(...gias).toFixed(1)}–${Math.max(...gias).toFixed(1)}` : '-';
-      document.getElementById('sDt').textContent = dts.length ? `${Math.min(...dts)}–${Math.max(...dts)}` : '-';
-      document.getElementById('sQuan').textContent = quans || '-';
-      document.getElementById('totalBadge').textContent = `${arr.length} BĐS`;
+      
+      const sTong = document.getElementById('sTong');
+      if (sTong) sTong.textContent = arr.length;
+      
+      const sTang = document.getElementById('sTang');
+      if (sTang) sTang.textContent = tangs.length ? `${Math.min(...tangs)}–${Math.max(...tangs)}` : '-';
+      
+      const sGia = document.getElementById('sGia');
+      if (sGia) sGia.textContent = gias.length ? `${Math.min(...gias).toFixed(1)}–${Math.max(...gias).toFixed(1)}` : '-';
+      
+      const sDt = document.getElementById('sDt');
+      if (sDt) sDt.textContent = dts.length ? `${Math.min(...dts)}–${Math.max(...dts)}` : '-';
+      
+      const sQuan = document.getElementById('sQuan');
+      if (sQuan) sQuan.textContent = quans || '-';
+      
+      const totalBadge = document.getElementById('totalBadge');
+      if (totalBadge) totalBadge.textContent = `${arr.length} BĐS`;
     }
 
     // ── Filter panel toggle ──
