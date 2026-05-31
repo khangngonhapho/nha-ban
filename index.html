@@ -2552,7 +2552,7 @@
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35" />
       </svg>
-      <input type="text" id="searchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()" autocomplete="off" spellcheck="false">
+      <input type="text" id="bdsSearchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()" autocomplete="off" spellcheck="false">
       <span class="search-clear" id="searchClear" onclick="clearSearchInput()" style="display:none">✕</span>
     </div>
     <!-- Admin: thông tin bộ lọc hiện tại -->
@@ -2651,7 +2651,7 @@
         <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Google OAuth Client ID:</div>
         <div style="display: flex; gap: 8px;">
           <input type="text" id="gClientIdInput" placeholder="Dán Client ID vào đây..."
-            style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; outline: none; font-family: inherit; -webkit-text-security: disc;">
+            style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; outline: none; font-family: inherit;">
           <button onclick="saveGoogleClientId()"
             style="padding: 8px 14px; border-radius: 8px; border: none; background: var(--gold); color: #fff; font-weight: 700; font-size: 12px; cursor: pointer; font-family: inherit;">Lưu</button>
         </div>
@@ -2930,7 +2930,7 @@
 
     if (isAdmin) {
       document.body.classList.add('is-admin');
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       if (sInput) {
         sInput.placeholder = "Tìm mã căn, đường, tên đầu chủ, ĐT...";
       }
@@ -3006,17 +3006,20 @@
         const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
         if (row) {
           poolItem = {
-            raw_noi_dung_chinh: row[9] || '',
-            raw_so_nha: row[6] || '',
-            raw_ten_duong: row[5] || '',
-            t: row[56] || row[55] || row[9] || ''
+            raw_noi_dung_chinh: String(row[9] || ''),
+            raw_so_nha: String(row[6] || ''),
+            raw_ten_duong: String(row[5] || ''),
+            t: String(row[56] || row[55] || row[9] || '')
           };
         }
       }
-      const text = (poolItem.raw_noi_dung_chinh || '').trim();
+      const text = String(poolItem.raw_noi_dung_chinh || '').trim();
+      const titleStr = String(poolItem.t || '');
       if (!text) {
-        const cleanedT = poolItem.t && poolItem.t.includes('|') ? poolItem.t.substring(poolItem.t.indexOf('|') + 1).trim() : poolItem.t;
-        return `${poolItem.raw_so_nha ? poolItem.raw_so_nha + ' ' : ''}${poolItem.raw_ten_duong ? poolItem.raw_ten_duong : cleanedT}`;
+        const cleanedT = titleStr.includes('|') ? titleStr.substring(titleStr.indexOf('|') + 1).trim() : titleStr;
+        const soNhaStr = String(poolItem.raw_so_nha || '');
+        const duongStr = String(poolItem.raw_ten_duong || '');
+        return `${soNhaStr ? soNhaStr + ' ' : ''}${duongStr ? duongStr : cleanedT}`;
       }
       const priceRegex = /\b\d+(?:[\.,-]\d+)?\s*(?:tỷ|ty|tỉ)(?!\w)/i;
       const match = text.match(priceRegex);
@@ -3089,30 +3092,34 @@
       });
     }
     function toggleSearchClearBtn() {
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       const clearBtn = document.getElementById('searchClear');
       if (sInput && clearBtn) {
         clearBtn.style.display = sInput.value.trim() ? 'flex' : 'none';
       }
     }
     function clearSearchInput() {
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       if (sInput) {
         sInput.value = '';
         onSearchInput();
       }
     }
+    let searchDebounceTimeout = null;
     function onSearchInput() {
       toggleSearchClearBtn();
-      updateStats();
-      applyFilter();
-      saveState();
+      if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout);
+      searchDebounceTimeout = setTimeout(() => {
+        updateStats();
+        applyFilter();
+        saveState();
+      }, 250);
     }
 
     function toggleSearchBar() {
       const bar = document.getElementById('searchBar');
       const btn = document.getElementById('searchToggleBtn');
-      const input = document.getElementById('searchInput');
+      const input = document.getElementById('bdsSearchInput');
       if (!bar || !btn || !input) return;
       const isOpen = bar.classList.toggle('open');
       btn.classList.toggle('active', isOpen);
@@ -3310,7 +3317,7 @@
         ));
       }
       
-      const sv = (document.getElementById('searchInput')?.value || '').trim();
+      const sv = (document.getElementById('bdsSearchInput')?.value || '').trim();
       if (sv) {
         // Helper to remove accents / diacritics for Vietnamese search
         function removeAccents(str) {
@@ -4055,7 +4062,7 @@
         selectedIds: [...SELECTED_IDS],
         favOnly: showFavOnly,
         showOnAirOnly: showOnAirOnly,
-        search: document.getElementById('searchInput')?.value || ''
+        search: document.getElementById('bdsSearchInput')?.value || ''
       };
       localStorage.setItem('adminState', JSON.stringify(state));
     }
@@ -4082,7 +4089,7 @@
           if (toggle) toggle.checked = showOnAirOnly;
         }
 
-        const sInput = document.getElementById('searchInput');
+        const sInput = document.getElementById('bdsSearchInput');
         if (sInput && state.search) {
           sInput.value = state.search;
           toggleSearchClearBtn();
@@ -4104,7 +4111,15 @@
 
     function updateStats() {
       const arr = getFiltered();
-      if (!arr.length) { document.getElementById('totalBadge').textContent = '0 BĐS'; return; }
+      if (!arr.length) {
+        document.getElementById('totalBadge').textContent = '0 BĐS';
+        document.getElementById('sTong').textContent = '0';
+        document.getElementById('sTang').textContent = '-';
+        document.getElementById('sGia').textContent = '-';
+        document.getElementById('sDt').textContent = '-';
+        document.getElementById('sQuan').textContent = '-';
+        return;
+      }
       const gias = arr.map(p => parseFloat(p.gia)).filter(Boolean);
       const dts = arr.map(p => parseFloat(p.dt)).filter(Boolean);
       const tangs = arr.map(p => parseFloat(p.tang)).filter(Boolean);
@@ -4289,7 +4304,7 @@
       syncTabUI('danhGiaTabs', selDanhGia);
 
       // Xóa ô tìm kiếm
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       if (sInput) sInput.value = '';
       toggleSearchClearBtn();
 
@@ -4421,7 +4436,7 @@
         ) : null;
 
         const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
-        const cleanImgUrls = imgUrls.filter(u => !isListingSodoUrl(u, p));
+        const cleanImgUrls = imgUrls.filter(u => !(window.isListingSodoUrl && window.isListingSodoUrl(u, p)));
         let thumbUrl = '';
         
         const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
@@ -4563,7 +4578,7 @@
       
       if (!isAdmin || activeMode === 'pool' || visibleCount > 0) return;
       
-      const searchVal = (document.getElementById('searchInput')?.value || '').trim();
+      const searchVal = (document.getElementById('bdsSearchInput')?.value || '').trim();
       
       if (!searchVal) return;
       
