@@ -3310,36 +3310,127 @@
         ));
       }
       
-      const sv = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+      const sv = (document.getElementById('searchInput')?.value || '').trim();
       if (sv) {
-        a = a.filter(p => {
-          const idMatch = String(p.id).toLowerCase().includes(sv);
-          const tMatch = p.t.toLowerCase().includes(sv);
-          const dMatch = p.duong_truoc_nha.toLowerCase().includes(sv);
-          const pMatch = p.phuong.toLowerCase().includes(sv);
-          const qMatch = p.q.toLowerCase().includes(sv) ||
-            p.ql.toLowerCase().includes(sv) ||
-            (sv === 'phú nhuận' && p.q === 'pn') ||
-            (sv === 'tân bình' && p.q === 'tb') ||
-            (sv === 'bình thạnh' && p.q === 'bt') ||
-            (sv === 'gò vấp' && p.q === 'gv') ||
-            (sv === 'quận 3' && p.q === 'q3') ||
-            (sv === 'quận 10' && p.q === 'q10');
+        if (isAdmin) {
+          // Combined Multi-condition AND Search for Admin
+          const subQueries = sv.split('+').map(s => s.trim()).filter(Boolean);
           
-          if (isAdmin) {
-            const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(sv);
-            const dtMatch = (p.raw_dt_dau_chu || '').toLowerCase().includes(sv);
-            const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(sv);
-            const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(sv);
-            const noteMatch = (p.note || '').toLowerCase().includes(sv);
-            const cpMatch = (p.cu_phap || '').toLowerCase().includes(sv);
-            const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(sv);
-            const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(sv);
-            return idMatch || tMatch || dMatch || pMatch || qMatch ||
-                   dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
+          // Helper to normalize street queries (Rule 1 of BDS-AGENTS.md)
+          function normalizeStreetQuery(street) {
+            let s = String(street || '').trim().toLowerCase();
+            if (!s) return '';
+            s = s.replace(/cách\s+mạng\s+tháng\s+8|cách\s+mạng\s+tháng\s+tám|cmt8/g, 'ttmc');
+            s = s.replace(/ba\s+tháng\s+hai|3\/2|3-2|3\s+tháng\s+2/g, 'htb');
+            s = s.replace(/đường\s+số\s+7/g, '7sd');
+            return s;
           }
-          return idMatch || tMatch || dMatch || pMatch || qMatch;
-        });
+
+          // Helper to match Vietnamese complex house numbers
+          function matchHouseNumber(rawSoNha, querySoNha) {
+            const cleanRaw = String(rawSoNha || '').trim().toLowerCase();
+            const cleanQuery = String(querySoNha || '').trim().toLowerCase();
+            if (!cleanQuery) return true;
+            if (!cleanRaw) return false;
+            
+            // Rule 2: compound numbers "1168.42+44" -> "1168.42"
+            const normalizedRaw = cleanRaw.split('+')[0].trim();
+            
+            if (normalizedRaw === cleanQuery) return true;
+            if (normalizedRaw.startsWith(cleanQuery + '/')) return true;
+            
+            const suffixRegex = new RegExp('^' + cleanQuery + '[a-z]$');
+            if (suffixRegex.test(normalizedRaw)) return true;
+            
+            return false;
+          }
+          
+          a = a.filter(p => {
+            return subQueries.every(sub => {
+              const subLower = sub.toLowerCase();
+              
+              // 1. Match Price query: e.g. "25 tỷ", "25.5 tỷ"
+              const priceMatch = sub.match(/^([\d,.]+)\s*tỷ$/i) || sub.match(/([\d,.]+)\s*tỷ/i);
+              if (priceMatch) {
+                const numStr = priceMatch[1].replace(',', '.');
+                const num = parseFloat(numStr);
+                const pGia = parseFloat(p.gia) || 0;
+                if (numStr.includes('.')) {
+                  // Decimal price: exact match
+                  return Math.abs(pGia - num) < 0.001;
+                } else {
+                  // Integer price: prefix match range [num, num+1)
+                  return pGia >= num && pGia < num + 1;
+                }
+              }
+              
+              // 2. Match House Number + Street: starts with a digit
+              const houseStreetMatch = sub.match(/^(\d+[\d/a-zA-Z.]*)\s*(.*)$/);
+              if (houseStreetMatch) {
+                const houseNumQuery = houseStreetMatch[1];
+                const streetQuery = houseStreetMatch[2].trim();
+                
+                const hnMatch = matchHouseNumber(p.raw_so_nha, houseNumQuery);
+                if (!hnMatch) return false;
+                
+                if (streetQuery) {
+                  const normStreetQ = normalizeStreetQuery(streetQuery);
+                  const normRawDuong = normalizeStreetQuery(p.raw_ten_duong);
+                  const normDuongTruoc = normalizeStreetQuery(p.duong_truoc_nha);
+                  const titleMatch = p.t.toLowerCase().includes(streetQuery.toLowerCase());
+                  return normRawDuong.includes(normStreetQ) || normDuongTruoc.includes(normStreetQ) || titleMatch;
+                }
+                return true;
+              }
+              
+              // 3. Fallback: General text match
+              const normSub = normalizeStreetQuery(sub);
+              const streetMatch = normalizeStreetQuery(p.raw_ten_duong).includes(normSub) || 
+                                  normalizeStreetQuery(p.duong_truoc_nha).includes(normSub);
+              const titleMatch = p.t.toLowerCase().includes(subLower);
+              const pMatch = p.phuong.toLowerCase().includes(subLower);
+              const idMatch = String(p.id).toLowerCase().includes(subLower);
+              const qMatch = p.q.toLowerCase().includes(subLower) ||
+                             p.ql.toLowerCase().includes(subLower) ||
+                             (subLower === 'phú nhuận' && p.q === 'pn') ||
+                             (subLower === 'tân bình' && p.q === 'tb') ||
+                             (subLower === 'bình thạnh' && p.q === 'bt') ||
+                             (subLower === 'gò vấp' && p.q === 'gv') ||
+                             (subLower === 'quận 3' && p.q === 'q3') ||
+                             (subLower === 'quận 10' && p.q === 'q10');
+                             
+              const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(subLower);
+              const dtMatch = (p.raw_dt_dau_chu || '').toLowerCase().includes(subLower);
+              const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(subLower);
+              const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(subLower);
+              const noteMatch = (p.note || '').toLowerCase().includes(subLower);
+              const cpMatch = (p.cu_phap || '').toLowerCase().includes(subLower);
+              const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(subLower);
+              const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(subLower);
+              
+              return idMatch || titleMatch || streetMatch || pMatch || qMatch ||
+                     dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
+            });
+          });
+        } else {
+          // Regular client search logic (remains unchanged)
+          const svLower = sv.toLowerCase();
+          a = a.filter(p => {
+            const idMatch = String(p.id).toLowerCase().includes(svLower);
+            const tMatch = p.t.toLowerCase().includes(svLower);
+            const dMatch = p.duong_truoc_nha.toLowerCase().includes(svLower);
+            const pMatch = p.phuong.toLowerCase().includes(svLower);
+            const qMatch = p.q.toLowerCase().includes(svLower) ||
+              p.ql.toLowerCase().includes(svLower) ||
+              (svLower === 'phú nhuận' && p.q === 'pn') ||
+              (svLower === 'tân bình' && p.q === 'tb') ||
+              (svLower === 'bình thạnh' && p.q === 'bt') ||
+              (svLower === 'gò vấp' && p.q === 'gv') ||
+              (svLower === 'quận 3' && p.q === 'q3') ||
+              (svLower === 'quận 10' && p.q === 'q10');
+            return idMatch || tMatch || dMatch || pMatch || qMatch;
+          });
+        }
       }
 
       // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT
