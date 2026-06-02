@@ -2647,6 +2647,119 @@
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(224, 168, 0, 0.3);
     }
+
+    /* Speed Dial Container */
+    .admin-speed-dial {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    /* Main Action Button (Gear icon) */
+    .dial-main-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #1c1c1e;
+      border: none;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s, color 0.25s;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dial-main-btn:hover {
+      transform: scale(1.06);
+    }
+    .dial-main-btn:active {
+      transform: scale(0.92);
+    }
+    .dial-main-btn.active {
+      transform: rotate(90deg);
+      background: #1c1c1e;
+      color: var(--gold);
+      border: 1.5px solid var(--gold);
+    }
+    
+    /* Actions list container */
+    .dial-actions {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.8);
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dial-actions.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+    
+    /* Override individual buttons inside the speed dial */
+    .dial-btn-item {
+      position: relative !important;
+      bottom: auto !important;
+      right: auto !important;
+      left: auto !important;
+      top: auto !important;
+      margin: 0 !important;
+      width: 48px !important;
+      height: 48px !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
+      border: 1.5px solid rgba(255,255,255,0.1) !important;
+      transition: transform 0.2s, background 0.2s !important;
+      outline: none;
+    }
+    .dial-btn-item:active {
+      transform: scale(0.9) !important;
+    }
+    
+    /* Specific classes for button overrides */
+    .admin-speed-dial .share-btn-float {
+      background: #f39c12 !important;
+      color: #1c1c1e !important;
+      font-size: 18px !important;
+    }
+    .admin-speed-dial .share-btn-float:hover {
+      background: #f5b041 !important;
+    }
+    
+    .admin-speed-dial .selall-btn-float {
+      background: #1c1c1e !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-size: 16px !important;
+    }
+    .admin-speed-dial .selall-btn-float.all-on {
+      color: #f1c40f !important;
+      border-color: #f1c40f !important;
+    }
+    
+    .admin-speed-dial .col-btn-float {
+      background: #e0a800 !important;
+      color: #1c1c1e !important;
+      font-size: 16px !important;
+    }
+    .admin-speed-dial .col-btn-float:hover {
+      background: #f4d03f !important;
+    }
   </style>
 </head>
 
@@ -4613,6 +4726,7 @@
 
         // US-039.3: Smart Pool Fallback khi không có kết quả
         checkPoolFallbackSearch(visibleCount);
+        updateShareUI();
         return;
       }
 
@@ -5650,40 +5764,62 @@
       }
     }
 
-    // Thêm nút tạo link nếu là admin
+    // Thêm Speed Dial Menu nếu là admin
     if (isAdmin) {
       document.body.insertAdjacentHTML('beforeend', `
-        <button class="selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
-        <button class="col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
-        <button class="share-btn-float" onclick="promptGenerateLink()">
-          🔗
-          <span class="share-count" id="shareCount">0</span>
-        </button>
+        <div class="admin-speed-dial" id="adminSpeedDial">
+          <button class="dial-main-btn" id="dialMainBtn" onclick="toggleSpeedDial()" title="Quản lý rổ hàng">⚙️</button>
+          <div class="dial-actions" id="dialActions">
+            <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+            <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+            <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+              🔗
+              <span class="share-count" id="shareCount">0</span>
+            </button>
+          </div>
+        </div>
       `);
     }
 
     function toggleSelectAll() {
       const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
       const visibleIds = visibleCards.map(c => c.dataset.pid);
-      const allSelected = visibleIds.every(id => SELECTED_IDS.has(id));
+      const allSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
 
-      visibleCards.forEach(c => {
-        const pid = c.dataset.pid;
-        const cb = c.querySelector('.card-sel');
-        if (allSelected) {
-          SELECTED_IDS.delete(pid);
-          if (cb) cb.checked = false;
-        } else {
-          SELECTED_IDS.add(pid);
+      if (allSelected || (visibleIds.length === 0 && SELECTED_IDS.size > 0)) {
+        // UNCHECK ALL: Clear everything globally
+        SELECTED_IDS.clear();
+        document.querySelectorAll('.card-sel').forEach(cb => cb.checked = false);
+      } else {
+        // CHECK ALL: Select all visible
+        visibleIds.forEach(id => SELECTED_IDS.add(id));
+        visibleCards.forEach(c => {
+          const cb = c.querySelector('.card-sel');
           if (cb) cb.checked = true;
-        }
-      });
+        });
+      }
       updateShareUI();
-      const btn = document.getElementById('selAllBtn');
-      btn.textContent = allSelected ? '☐' : '☑';
-      btn.classList.toggle('all-on', !allSelected);
       saveState();
     }
+
+    function toggleSpeedDial() {
+      const mainBtn = document.getElementById('dialMainBtn');
+      const actions = document.getElementById('dialActions');
+      if (mainBtn && actions) {
+        const isOpen = actions.classList.toggle('open');
+        mainBtn.classList.toggle('active', isOpen);
+      }
+    }
+
+    document.addEventListener('click', function(event) {
+      const dial = document.getElementById('adminSpeedDial');
+      const actions = document.getElementById('dialActions');
+      const mainBtn = document.getElementById('dialMainBtn');
+      if (dial && actions && mainBtn && !dial.contains(event.target)) {
+        actions.classList.remove('open');
+        mainBtn.classList.remove('active');
+      }
+    });
 
     // Xử lý hỏi Zalo thông minh
     function askZalo(id, title) {
@@ -7088,6 +7224,16 @@
       const colFloatBtn = document.getElementById('colFloatBtn');
       if (colFloatBtn) {
         colFloatBtn.style.display = SELECTED_IDS.size > 0 ? 'flex' : 'none';
+      }
+
+      // Cập nhật trạng thái nút Chọn tất cả (☐/☑) dựa trên các căn đang hiển thị
+      const btn = document.getElementById('selAllBtn');
+      if (btn) {
+        const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+        const visibleIds = visibleCards.map(c => c.dataset.pid);
+        const isNowAllSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
+        btn.textContent = isNowAllSelected ? '☑' : '☐';
+        btn.classList.toggle('all-on', isNowAllSelected);
       }
     }
 
