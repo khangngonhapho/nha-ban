@@ -1,0 +1,51 @@
+237:     "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+419: # GOOGLE CLOUD SERVICE ACCOUNT CONNECTIVITY (DRIVE & SHEETS)
+451:     add_log_message(f"[🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: '{resolved_path}'")
+457:             'https://www.googleapis.com/auth/spreadsheets'
+934:         # Cập nhật SQLite, phân loại sơ đồ/ảnh thô và tự động đẩy Sheets Pool (US-040)
+1011:             # 5. Tự động xuất bản trực tiếp lên Google Sheets Pool
+1012:             add_log_message(f"[⚡ AUTO-SHEETS] Đang tự động đẩy dòng dữ liệu 79 cột lên tab Pool của Google Sheets...")
+1015:                 add_log_message(f"[✅ AUTO-SHEETS SUCCESS] Tự động xuất bản thành công căn {tk_id} lên Google Sheets Pool! Trạng thái SQLite -> published")
+1017:                 add_log_message(f"[⚠️ AUTO-SHEETS FAILED] Tự động đẩy Sheets thất bại: {res_publish.get('message')}. Giữ trạng thái SQLite -> raw_complete để đẩy thủ công sau.")
+1967: # XUẤT BẢN LÊN GOOGLE SHEETS POOL (79 CỘT HOÀN CHỈNH)
+1990: def get_table_end_row_index(sheet_id, creds):
+1992:     Truy vấn API Google Sheets để lấy endRowIndex của Table trên sheet tên 'Pool' (hoặc sheet đầu tiên).
+2006:         url = f"https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}"
+2011:             spreadsheet = r.json()
+2012:             for sheet in spreadsheet.get('sheets', []):
+2013:                 properties = sheet.get('properties', {})
+2014:                 if properties.get('title') == 'Pool' or properties.get('sheetId') == 0:
+2015:                     tables = sheet.get('tables', [])
+2042:     """Logic kết nối API Sheets, kiểm tra trùng Ma_Hang, insert/update dòng 79 cột."""
+2081:     # KẾT NỐI SHEETS BẰNG GSPREAD HOÀN CHỈNH
+2084:     sheet_id = cfg.get("sheet_id")
+2087:     sheet = None
+2090:     if creds and sheet_id:
+2092:             import gspread
+2093:             client = gspread.authorize(creds)
+2094:             spreadsheet = client.open_by_key(sheet_id)
+2098:                 sheet = spreadsheet.worksheet("Pool")
+2101:                     sheet = spreadsheet.worksheet("Source")
+2103:                     sheet = spreadsheet.get_worksheet(0)
+2108:                 col_a_values = sheet.col_values(1)
+2113:                     add_log_message(f"[ℹ] Phát hiện Mã Hàng {target_stripped} đã tồn tại ở dòng {existing_row_index} trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.")
+2115:                 add_log_message(f"[⚠️ WARNING] Không thể kiểm tra trùng Mã Hàng trong Sheets: {str(e)}")
+2121:                 table_end_row = get_table_end_row_index(sheet_id, creds)
+2128:                         next_row = len(sheet.get_all_values()) + 1
+2130:                         add_log_message(f"[⚠️ WARNING] Không lấy được số dòng hiện tại của Sheet, fallback về mặc định: {str(e)}")
+2133:             add_log_message(f"[❌ LỖI] Lỗi kết nối API Google Sheets: {str(e)}")
+2140:     if existing_row_index and sheet:
+2143:             existing_row = sheet.row_values(existing_row_index)
+2201:     if sheet:
+2204:                 add_log_message(f"[⚡] Đang chép đè dòng 79 cột lên Sheet '{sheet.title}' (dòng {existing_row_index})...")
+2205:                 sheet.update(range_name=f"A{existing_row_index}:CA{existing_row_index}", values=[row_data], value_input_option='USER_ENTERED')
+2207:                 add_log_message(f"[⚡] Đang chèn chốt dòng mới 79 cột lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
+2208:                 sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED')
+2220:             add_log_message(f"[✅] ĐÃ XUẤT BẢN THÀNH CÔNG lên Google Sheets căn {tk_id}!")
+2224:                 "message": "Đã xuất bản thành công trực tiếp lên Google Sheets!",
+2229:             add_log_message(f"[❌ LỖI] Lỗi ghi dữ liệu lên Google Sheets: {str(e)}")
+2237:         add_log_message("[⚠️ COPIED] Google Sheets credentials không được tìm thấy hoặc lỗi kết nối. Bạn có thể sao chép dòng dữ liệu bên dưới.")
+2241:             "message": "Chưa cấu hình hoặc lỗi kết nối Google Sheets. Vui lòng sao chép mảng dữ liệu 79 cột bên dưới để paste thủ công vào Google Sheets!",
+2247:     """API đẩy dòng dữ liệu 79 cột chính thức lên Google Sheets"""
+2253:     """API đẩy hàng loạt danh sách các căn được chọn lên Google Sheets Pool"""
+2260:         add_log_message(f"[⚡] Bắt đầu đẩy hàng loạt {len(ids)} căn lên Google Sheets Pool...")

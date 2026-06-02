@@ -1,0 +1,641 @@
+﻿function turn(project) {
+    if (project && project > 0) {
+        $("#Create_HangInfo").hide();
+        $("#Create_HangAddress").hide();
+        $("#Create_Bank").hide();
+        $("#Create_TrangThaiSoDo").show();
+        $("#Create_HopDongDauChu").html("Hợp đồng");
+        $('#Create_sDienThoaiNguonHang').prop('readonly', true);
+        $("#Create_DienThoaiNguonHang").html("Hotline");
+    } else {
+        $("#Create_HangInfo").show();
+        $("#Create_HangAddress").show();
+        $("#Create_Bank").show();
+        $("#Create_TrangThaiSoDo").hide();
+        $("#Create_titleHuong").html("Hướng nhà");
+        $("#Create_titleTang").html("Số tầng");
+        $("#Create_titleAddress").html("Ngõ, số nhà");
+        $("#Create_titleZone").html("Đường phố");
+
+        $("#Create_HopDongDauChu").html("Người cấp nguồn");
+        $('#Create_sDienThoaiNguonHang').prop("readonly", false);
+        $("#Create_DienThoaiNguonHang").html("Điện thoại nguồn hàng");
+    }
+}
+function nguonOnchange() {
+    var v = $("#Create_iID_Nguon").val() == 4;
+    if (v) { $("#nguon_mota").text("(Chỉ chọn khi giá chào >= 20 tỷ)"); }
+    else { $("#nguon_mota").text(""); }
+    //var v = $("#Create_iID_Nguon").val() == 100;
+    //turn(v);
+    //$("#Create_iDuAn").prop("disabled", !v);
+    //if (!v) $("#Create_iDuAn").val(0);
+}
+function duanOnchange() {
+    var v = $("#Create_iDuAn").val();
+    turn(v);
+    if (v > 0) {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/Public/get_Auto_DuAn",
+            data: { iDuAn: v },
+            success: function (item) {
+                console.log(item.iID_MaTinh, item.iID_MaQuan, item.iID_MaPhuongXa)
+                $("#Create_iID_MaTinh").val(item.iID_MaTinh);
+                $("#Create_iID_MaQuan").val(item.iID_MaQuan);
+                $("#Create_iID_MaPhuongXa").val(item.iID_MaPhuongXa);
+                $("#Create_sDuongPho").val(item.sDiaChi);
+                $("#Create_sDienThoaiNguonHang").val(item.sHotline);
+                if (item.iPhanLoai == 1) {
+                    $("#Create_titleAddress").html("Địa chỉ");
+                    $("#Create_titleZone").html("Phân khu");
+                    $("#Create_titleHuong").html("Hướng nhà");
+                    $("#Create_titleTang").html("Số tầng");
+                } else {
+                    $("#Create_titleAddress").html("Căn");
+                    $("#Create_titleZone").html("Tòa");
+                    $("#Create_titleHuong").html("Hướng ban công");
+                    $("#Create_titleTang").html("Tầng");
+                }
+            }
+        });
+    }
+}
+function BinhLuanOnChange() {
+    var noidung = $("#slBinhLuan option:selected").text();
+    $("#txtNoiDung").val(noidung);   
+}
+function XuLyBinhLuan(id) {
+    var url = "/Hang/XuLyBinhLuan";
+    var bXuLy = $("#ck_" + id).is(':checked') ? 1 : 0;   
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id, xuly: bXuLy },
+        success: function (data) {           
+            $("#ck_" + id).attr("disabled", true);
+        },
+        error: function () {
+           
+        }
+    });
+}
+
+$(document).on('click', '#btnGuiKhoBank', function () {
+    var $this = $(this);
+    $this.attr('disabled', true);
+
+    var id = $(this).data('id');
+    var url = "/Hang/GuiKhoBank";
+    var sNoiDung = $('#Detail_sNoiDungBank').val();
+    var sMoTa = $('#Detail_sMoTaBank').val();
+    var sDienThoai = $('#Detail_sDienThoaiBank').val();
+    var kb = $('#bkhobank').val();
+    //console.log('khobank:' + kb + ';' + sNoiDung + ';' + sMoTa + ';' + sDienThoai);
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: JSON.stringify({ "id": id, "iKhoBank": kb, "sNoiDung": sNoiDung, "sMoTa": sMoTa, "sDienThoai": sDienThoai }),
+        contentType: 'application/json;charset=UTF-8',
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            } else {
+                toastr.success("Thực hiện thành công");
+            }
+            $this.attr('disabled', false);
+            $('#modal-GuiKhoBank').modal('hide');
+        }
+    });
+
+});
+
+$(document).on('submit', '#frmBinhLuan', function () {
+    var form = $("#frmBinhLuan");
+    var data = form.serialize();   
+    var url = "/Hang/BinhLuan";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function (data) {
+
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+
+                toastr.success(data.error);
+            }
+
+            $('#modal-GhiChu').modal('hide');
+        },
+        error: function () {
+            $('#modal-GhiChu').modal('hide');
+        }
+    });
+});
+$(document).on('click', '#btnDaCoc', function () {
+    
+    var id = $(this).data('id');   
+    var url = "/Hang/DaCoc";
+   $.ajax({
+       url: url,
+       type: 'POST',
+       data: {id:id},
+       success: function (data) {
+           $('#modal-success').modal('hide');
+           if (!data.success) {
+               toastr.error(data.error);
+           }
+           else {
+
+               toastr.success(data.error);
+           }
+      
+        }
+    });
+
+});
+
+$(document).on('submit', '#frmDaBan', function () {
+    var form = $("#frmDaBan");
+    var data = form.serialize();
+    var url = "/Hang/DaBan";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function (data) {
+
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+
+                toastr.success(data.error);
+            }
+
+            $('#modal-warning').modal('hide');
+        }
+    });
+});
+
+$(document).on('submit', '#frmDinhChiHang', function () {
+    var form = $("#frmDinhChiHang");
+    var data = form.serialize();
+    var actionDC = $("#actionDC").val();
+    //var url;
+    //if (actionDC == "DinhChiHang") {
+    //    url = "/Hang/DinhChiHang";
+    //} else {
+    //    url = "/Hang/GoDinhChi";
+    //}
+    $.ajax({
+        url: "/Hang/DinhChiHang",
+        type: 'POST',
+        data: data,
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+                toastr.success(data.error);
+                location.reload();
+            }
+            $('#modal-DinhChiHang').modal('hide');
+        }
+    });
+});
+
+$(document).on('click', '#btnDungBan', function () {
+    var id = $(this).data('id');
+    var url = "/Hang/TamDungBan";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id },
+        success: function (data) {
+            $('#modal-danger').modal('hide');
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+
+                toastr.success(data.error);
+            }
+            $('#modal-danger').modal('hide');
+        }
+    });
+
+});
+
+$(document).on('click', '#btnBanLai', function () {
+    var id = $(this).data('id');
+    var url = "/Hang/BanLai";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+
+                toastr.success(data.error);
+            }
+
+            $('#modal-banlai').modal('hide');
+        }
+    });
+
+});
+
+
+$(document).on('click', '#btnChimTroiCaBe', function () {
+    var id = $(this).data('id');
+    var url = "/Hang/ChimTroiCaBe";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+
+                toastr.success(data.error);
+            }
+            $('#modal-chimtroicabe').modal('hide');
+        }
+    });
+
+});
+
+$(document).on('click', '.likeAdd', function () {
+    var id = $(this).data('id');
+    var url = "/Hang/LikeAdd";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id },
+        success: function (data) {
+          
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+
+                toastr.success(data.error);
+            }
+
+        }
+    });
+
+});
+
+
+$(document).on('click', '.likeRemove', function () {
+    var id = $(this).data('id');
+    var url = "/Hang/LikeRemove";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+
+                toastr.success(data.error);
+                location.reload();
+            }
+
+        }
+    });
+});
+
+$(document).on('click', '.removeFile', function () {
+
+    const $li = $(this).closest('li');         // thẻ <li> chứa ảnh
+    const $ul = $li.closest('ul');             // thẻ <ul> cha
+
+    var id = $(this).data('id');
+    var iID_File = $(this).data('file');
+    var LoaiFile = $(this).data('loaifile');
+    var url = "/Hang/RemoveFile";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id, iID_File: iID_File, loaiFile: LoaiFile },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+                $("#" + iID_File + "_" + LoaiFile).remove();
+                toastr.success(data.error);
+            }
+        }
+    });
+    
+});
+
+$(document).on('click', '.removeTD', function () {
+    const iID_File = $(this).data('file').toString();
+    const LoaiFile = $(this).data('loaifile');
+    const deleteInput = $('#fileThuaDatDelete');
+    const deletedList = deleteInput.val()?.split(';').filter(Boolean) || [];
+    if (!deletedList.includes(iID_File)) {
+        deletedList.push(iID_File);
+    }
+    $('#fileThuaDatDelete').val(deletedList.join(';'));
+    $("#" + iID_File + "_" + LoaiFile).remove();
+
+});
+$(document).on('click', '.removeND', function () {
+    const iID_File = $(this).data('file').toString();
+    const LoaiFile = $(this).data('loaifile');
+    const deleteInput = $('#fileKhacDelete');
+    const deletedList = deleteInput.val()?.split(';').filter(Boolean) || [];
+    if (!deletedList.includes(iID_File)) {
+        deletedList.push(iID_File);
+    }
+    $('#fileKhacDelete').val(deletedList.join(';'));
+    $("#" + iID_File + "_" + LoaiFile).remove();
+
+});
+$(document).on('submit', '#submit_form', function (e) {
+    const keptIds = ($('#fileThuaDats').val() || '').split(';').filter(Boolean);
+    const deletedIds = ($('#fileThuaDatDelete').val() || '').split(';').filter(Boolean);
+    const remainingOld = keptIds.filter(id => !deletedIds.includes(id));
+
+    const hasNewFiles = $('#fileThuaDat')[0].files.length > 0;
+
+    if (remainingOld.length == 0 && !hasNewFiles) {
+        e.preventDefault();
+        toastr.error("Bạn phải thêm ít nhất một ảnh thửa đất.");
+    }
+});
+
+$(document).on('click', '.publicFile', function () {
+    var id = $(this).data('id');
+    var iID_File = $(this).data('file');
+    var LoaiFile = $(this).data('loaifile');
+    var url = "/Hang/PublicFile";
+    
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id, iID_File: iID_File, loaiFile: LoaiFile },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else
+            {
+                if (data.value == 1)
+                    toastr.success("Đã chấp nhận lựa chọn hình ảnh mã #" + iID_File);
+                else
+                    toastr.error("Bỏ lựa chọn hình ảnh mã #" + iID_File);
+            }
+            console.log(data)
+            $(this).prop('checked', data.value == 1);
+        }
+    });
+
+});
+
+$(document).on('click', '.openDeleteReason', function () {
+    //$('.removeHangBtn').attr('data-id', $(this).data('id'))
+    $('.removeHangBtn').data('id', $(this).data('id'));
+    $('.removeHangBtn').data('hidden', $(this).data('hidden'));
+    var id = $(this).data('id');
+    var hidden = $(this).data('hidden');
+});
+
+$(document).on('click', '.openSetTag', function () {
+    $('#btnSetTag').data('id', $(this).data('id'));
+    $('#btnSetTag').data('hidden', $(this).data('hidden'));
+    var action = $(this).data('action');
+    $('#btnSetTag').data('action', action);
+    $("#label_tag").text(action == 0 ? "gỡ hàng khỏi" : "hàng thuộc");
+});
+
+$(document).on('click', '.openConfirmReview', function () {
+    $('#btnConfirmReview').data('id', $(this).data('id'));
+    $('#btnConfirmReview').data('hidden', $(this).data('hidden'));
+});
+
+$(document).on('click', '#btnSetTag', function () {   
+    
+    var id = $(this).data('id');
+    var action = $(this).data('action');
+    var url = "/Hang/UpdateTag";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id, action: action },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }  else {
+                toastr.success("Thành công");
+                location.reload();
+
+            }
+        }
+    });
+    $("#modal-confirm").modal("hide");
+});
+$(document).on('click', '#btnConfirmReview', function () {   
+    
+    var id = $(this).data('id');
+    var url = "/Hang/ConfirmReview";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }  else {
+                toastr.success("Thành công");
+                location.reload();
+
+            }
+        }
+    });
+    $("#modal-confirm").modal("hide");
+});
+$(document).on('click', '.del', function () {
+    
+    var id = $(this).data('id');
+    var hidden = $(this).data('hidden');
+    var url = "/Hang/Delete";
+    var reason = $('#deleteReason').val()
+    if (hidden=="1" && reason.trim().length == 0) {
+        toastr.success("Đề nghị nhập lý do phù hợp");
+    } else {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { id: id, hidden: hidden, reason: reason },
+            success: function (data) {
+                if (!data.success) {
+                    toastr.error(data.error);
+                }  else {
+                    $("#tr_" + id).remove();
+                    toastr.success(data.error);
+                }
+            }
+        });
+        $("#modal-DeleteReason").modal("hide")
+    }
+    
+
+});
+$("body").ready(function () {
+   
+    $("#modal-DeleteReason").on("show.bs.modal", function () {
+        $('#deleteReason').val("")
+    });
+});
+//$(document).on('blur', '#Create_iGiaChaoHopDong_show,#Create_iPhanTramHoaHong_show,#Create_iTienHoaHong_show', function () {
+
+//    var Create_iGiaChaoHopDong = $("#Create_iGiaChaoHopDong").val();
+//    var Create_iPhanTramHoaHong = $("#Create_iPhanTramHoaHong").val();
+//    var Create_iTienHoaHong = $("#Create_iTienHoaHong").val();
+//    var iGiaChaoHopDong = 0;
+//    if (Create_iGiaChaoHopDong.length > 0) {
+//        iGiaChaoHopDong = parseFloat(Create_iGiaChaoHopDong);
+//    }
+
+//    var iPhanTramHoaHong = 0;
+//    if (Create_iPhanTramHoaHong.length > 0) {
+//        iPhanTramHoaHong = parseFloat(Create_iPhanTramHoaHong);
+//    }
+//    var iTienHoaHong = 0;
+//    if (Create_iTienHoaHong.length > 0) {
+//        iTienHoaHong = parseFloat(Create_iTienHoaHong);
+//    }
+
+//    if (iGiaChaoHopDong > 0) {
+//        if (iPhanTramHoaHong > 0) {
+//            iTienHoaHong = (iPhanTramHoaHong * iGiaChaoHopDong) / 100;
+//            $("#Create_iTienHoaHong").val(iTienHoaHong);
+//            $("#Create_iTienHoaHong_show").val(FormatNumber(iTienHoaHong));
+//        }
+//        else if (iTienHoaHong > 0) {
+//            iPhanTramHoaHong = iTienHoaHong * 100 / iGiaChaoHopDong;
+//            $("#Create_iPhanTramHoaHong").val(iPhanTramHoaHong);
+//            $("#Create_iPhanTramHoaHong_show").val(FormatNumber(iPhanTramHoaHong));
+//        }
+//    }
+
+
+//});
+
+
+$(document).on('click', '#btSaveLatLng', function () {
+    var id = $(this).data('id');
+    var Lat = $("#Lat").val();
+    var Lng = $("#Lng").val();
+    var url = "/Hang/SaveLatLng";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id, lat: Lat, lng: Lng },
+        success: function (data) {
+            if (!data.success) {
+                toastr.error(data.error);
+            }
+            else {
+                toastr.success(data.error);
+            }
+        }
+    });
+});
+    //Map//
+    let map;
+    var marker;
+    var markers = [];
+    var myLatLng = { lat: 21.0135057, lng: 105.8561912 };
+    function initMap() {
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 21.0135057, lng: 105.8561912 },
+            zoom: 15,
+
+        });
+
+        marker = new google.maps.Marker({
+            position: myLatLng,
+            map,
+            title: "Hello World!",
+        });
+        markers.push(marker);
+        google.maps.event.addListener(map, 'click', function (event) {
+
+            placeMarker(event.latLng);
+        });
+
+        function placeMarker(location) {
+
+            clearMarkers();
+
+            // if (marker == undefined) {
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                animation: google.maps.Animation.DROP,
+            });
+            //}
+            //else {
+            //    marker.setPosition(location);
+            //}
+            map.setCenter(location);
+            markers.push(marker);
+            var json = JSON.stringify(location.toJSON(), null, 2);
+            var obj = JSON.parse(json);
+            SelectLatLng(obj);
+            // alert(obj.lat);
+            //alert(json);
+
+        }
+
+
+        function clearMarkers() {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+        }
+    }
+    function SelectLatLng(obj) {
+
+        $("#Lat").val(obj.lat);
+        $("#Lng").val(obj.lng);
+        $("#Create_iLat").val(obj.lat);
+        $("#Create_iLng").val(obj.lng);
+        $("#Create_iLat_show").val(obj.lat);
+        $("#Create_iLng_show").val(obj.lng);
+    }
+    function SetCenter(location) {
+        marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            animation: google.maps.Animation.DROP,
+        });
+        //}
+        //else {
+        //    marker.setPosition(location);
+        //}
+        map.setCenter(location);
+        markers.push(marker);
+        SelectLatLng(location);
+    }

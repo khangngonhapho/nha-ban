@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de -->
+<html lang="en" style="height: auto;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý Kho</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/all.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/daterangepicker.css">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/icheck-bootstrap.min.css">
+    <!-- Bootstrap Color Picker -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bootstrap-colorpicker.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/tempusdominus-bootstrap-4.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/select2.min.css">
+    <link rel="stylesheet" href="./Quản lý Kho_files/select2-bootstrap4.min.css">
+    <!-- Bootstrap4 Duallistbox -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bootstrap-duallistbox.min.css">
+    <!-- BS Stepper -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bs-stepper.min.css">
+    <!-- dropzonejs -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/dropzone.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/toastr.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="./Quản lý Kho_files/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="./Quản lý Kho_files/buttons.bootstrap4.min.css">
+
+    <!-- Ion Slider -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/ion.rangeSlider.min.css">
+    <!-- bootstrap slider -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bootstrap-slider.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/daterangepicker.css">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/icheck-bootstrap.min.css">
+    <!-- Bootstrap Color Picker -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bootstrap-colorpicker.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/tempusdominus-bootstrap-4.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/select2.min.css">
+    <link rel="stylesheet" href="./Quản lý Kho_files/select2-bootstrap4.min.css">
+    <!-- Bootstrap4 Duallistbox -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bootstrap-duallistbox.min.css">
+    <!-- BS Stepper -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/bs-stepper.min.css">
+    <!-- dropzonejs -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/dropzone.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/adminlte.min.css">
+
+    <!-- summernote -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/summernote-bs4.min.css">
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="./Quản lý Kho_files/codemirror.css">
+    <link rel="stylesheet" href="./Quản lý Kho_files/monokai.css">
+
+    <link rel="stylesheet" href="./Quản lý Kho_files/bootstrap-multiselect.css">
+    <link href="./Quản lý Kho_files/typeahead.css" rel="stylesheet">
+    <link href="./Quản lý Kho_files/lightbox.min.css" rel="stylesheet">
+    <link href="./Quản lý Kho_files/note.css" rel="stylesheet">
+
+    <script src="./Quản lý Kho_files/jquery.min.js.tải xuống"></script><style id="streetview-css-tag"></style>
+    <script src="./Quản lý Kho_files/lightbox-plus-jquery.min.js.tải xuống"></script>
+
+<style data-custom-css-by-denis="">@media only screen and (max-width: 767px) {
+  /* Ẩn phần văn bản phụ trong tiêu đề */
+    #diff .card-title span {
+        display: none !important;
+    }
+  /* Tìm và ẩn nhãn (label) ngay phía trên ô textarea Nội dung */
+    #diff .form-group:has(#Detail_sNoiDung) label {
+        display: none !important;
+    }
+  /*Ẩn menu*/
+  nav.main-header.navbar.navbar-expand.navbar-white.navbar-light {
+    display: none;}
+  /*Chừa lề trên section*/  
+  section#diff {
+    padding-top: 10px;
+}
+  
+  
+  
+    /* 1. Sắp xếp thứ tự */
+    #diff .card-body {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 10px !important;
+    }
+
+    /* 2. Thanh tiêu đề đỏ */
+    #diff .card-header {
+        background-color: #d32f2f !important;
+        text-align: center !important;
+    }
+    #diff .card-title { color: #fff !important; font-weight: bold !important; }
+
+    /* 3. ẨN TẤT CẢ CÁC KHỐI THÔNG TIN CHI TIẾT VÀ NÚT CHỌN */
+    #diff .form-group:has(#Detail_sTenTinh),
+    #diff .form-group:has(#Detail_sDiaChi),
+    #diff .form-group:has(#Detail_iDienTichSo_show),
+    #diff .form-group:has(#Detail_iMatTien_show),
+    #diff .form-group:has(#Detail_iSoTang_show),
+    #diff .form-group:has(#Detail_iGiaChaoHopDong_show),
+    #diff .form-group:has(#Detail_iID_HuongNha),
+    #diff .form-group:has(#Detail_sTenChuNha),
+    #diff .form-group:has(#Detail_iLat_show),
+    #diff .form-group:has(#Detail_sSoSoDo),
+    /*#diff .form-group:has(ul.list-image),*/
+    /* Dòng dưới này dùng để ẩn phần "Tiêu chí BĐS" bị sót */
+    #diff .form-group:has(#Detail_sLoaiHang),
+    #diff .form-group:has(.btn-group),
+    #sTenLoaiHang,
+    .content-header, .card-danger {
+        display: none !important;
+    }
+
+    /* 4. HIỂN THỊ KHỐI NỘI DUNG (Vị trí 1) */
+    #diff .form-group:has(#Detail_sNoiDung) {
+        display: block !important;
+        order: 1 !important;
+        margin-bottom: 20px !important;
+    }
+
+    #Detail_sNoiDung {
+        color: #d32f2f !important;
+        font-weight: bold !important;
+        font-size: 16px !important;
+        border: 2px solid #d32f2f !important;
+        border-radius: 8px !important;
+        height: auto !important;
+        min-height: 90px;
+        padding: 10px !important;
+        background-color: #fff !important;
+    }
+
+    /* 5. HIỂN THỊ KHỐI MÔ TẢ (Vị trí 2) */
+    /* Khối không chứa các thẻ input/select/textarea nhập liệu sẽ được giữ lại */
+    #diff .form-group:not(:has(input)):not(:has(select)):not(:has(textarea)) {
+        display: block !important;
+        order: 2 !important;
+    }
+
+    /* Ẩn các phần phụ của theme */
+    .card-footer, #panelContentBank {
+        display: none !important;
+    }
+}
+
+
+
+/* xóa dòng tiêu chí bđs */
+@media only screen and (max-width: 767px) {
+    /* 1. Nhắm trực tiếp vào nhãn "Tiêu chí BĐS" và xóa nó */
+    #diff label[for="inputTinh"], 
+    #diff label[for="inputTinh"] + span,
+    #diff .field-validation-error {
+        display: none !important;
+    }
+
+    /* 2. Nhắm trực tiếp vào hộp chọn Multiselect và xóa nó */
+    #sTenLoaiHang,
+    .btn-group.w-100,
+    select#Detail_sLoaiHang {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* 3. Đảm bảo khối NỘI DUNG luôn hiện (Chống bị xóa nhầm) */
+    #diff .form-group:has(#Detail_sNoiDung) {
+        display: block !important;
+        visibility: visible !important;
+        order: 1 !important;
+    }
+
+    /* 4. Đảm bảo khối MÔ TẢ luôn hiện */
+    #diff .form-group:has(p) {
+        display: block !important;
+        visibility: visible !important;
+        order: 2 !important;
+    }
+}</style></head>
+<body class="sidebar-mini" style="height: auto;">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="https://data.thienkhoi.com/" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="https://data.thienkhoi.com/hang" class="nav-link">Kho hàng</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#" class="nav-link">Thông tin</a>
+        </li>
+    </ul>
+
+
+
+
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+
+                <!-- Messages Dropdown Menu -->
+                <!--<li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="far fa-comments"></i>
+                        <span class="badge badge-danger navbar-badge">3</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <a href="#" class="dropdown-item">-->
+                <!-- Message Start -->
+                <!--<div class="media">
+                    <img src="~/Content/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                    <div class="media-body">
+                        <h3 class="dropdown-item-title">
+                            Brad Diesel
+                            <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                        </h3>
+                        <p class="text-sm">Call me whenever you can...</p>
+                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                    </div>
+                </div>-->
+                <!-- Message End -->
+                <!--</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">-->
+                <!-- Message Start -->
+                <!--<div class="media">
+                    <img src="~/Content/dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                    <div class="media-body">
+                        <h3 class="dropdown-item-title">
+                            John Pierce
+                            <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                        </h3>
+                        <p class="text-sm">I got your message bro</p>
+                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                    </div>
+                </div>-->
+                <!-- Message End -->
+                <!--</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">-->
+                <!-- Message Start -->
+                <!--<div class="media">
+                    <img src="~/Content/dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                    <div class="media-body">
+                        <h3 class="dropdown-item-title">
+                            Nora Silvester
+                            <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                        </h3>
+                        <p class="text-sm">The subject goes here</p>
+                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                    </div>
+                </div>-->
+                <!-- Message End -->
+                <!--</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+                    </div>
+                </li>-->
+                <!-- Notifications Dropdown Menu -->
+                <li class="nav-item dropdown dropdown-user item-cus">
+                    <a class="nav-link notification" href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#">
+                        <i class="far fa-bell"></i>
+                        <span class="badge badge-warning navbar-badge" id="countNoti">0</span>
+                    </a>
+
+                    <style>
+                        .dropdown-menu-lg {
+                            max-width: 350px !important;
+                            min-width: 330px !important;
+                        }
+
+                        .scroll_y > .tab-pane {
+                            overflow-y: scroll;
+                            max-height: 200px;
+                        }
+                    </style>
+
+                    <div id="menu-rigt-noti" class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <div class="menu-b-notification">
+                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+
+                                <li class="nav-item">
+                                    <a class="nav-link btnLoadNoti active" data-type="1" data-toggle="pill" href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#allNoti" role="tab" aria-controls="allNoti" aria-selected="true">Thông báo</a>
+                                </li>
+                                
+                            </ul>
+                            
+
+                        </div>
+
+                        <span class="dropdown-item dropdown-header">15 Notifications</span>
+
+                        <div id="progress" style="display:none;text-align:center;">
+                            <h4>Loading...</h4>
+                        </div>
+                        <input type="hidden" value="0" id="txtNumberTab">
+                        <div class="dropdown-divider"></div>
+                       
+                    </div>
+
+
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="fullscreen" href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#" role="button">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <form action="https://data.thienkhoi.com/Account/LogOff" method="post" id="frmlogoff">
+                        
+                        <a class="nav-link" onclick="logoff()" href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#" role="button">
+                            <b>Đăng xuất</b>
+                        </a>
+                    </form>
+
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a href="https://data.thienkhoi.com/" class="brand-link" style="background-color:#fff">
+                <img src="./Quản lý Kho_files/logoadmin.png" alt="Thiên Khôi Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light" style="color:red!important;font-weight:bold!important; font-size:20px !important;">Thiên Khôi</span>
+            </a>
+
+            
+<!-- Sidebar -->
+<div class="sidebar">
+    <!-- Sidebar user (optional) -->
+    <div class="row user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+            <img src="./Quản lý Kho_files/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+            <form action="https://data.thienkhoi.com/Account/LogOff" method="post" id="frmlogoff">
+                <a onclick="logoff()" class="d-block">Ngô Thái Khang</a>
+            </form>
+            <a onclick="#" class="d-block">Đầu khách  #202372 </a>
+            <a onclick="#" class="d-block">HCMPCT0087853721 </a>
+        </div>
+
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+
+        <ul class="nav nav-pills nav-sidebar flex-column menu" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Kho Tổng<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/Hang/Index" class="nav-link ">
+                                        <i class="fa fa-cubes"></i>
+                                        <p>Kho Hàng</p>
+                                    </a>
+                                </li><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/Hang/Special" class="nav-link ">
+                                        <i class="fa fa-hand-holding-usd"></i>
+                                        <p>Độc quyền &amp; BL Hoa Hồng</p>
+                                    </a>
+                                </li><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/Hang/Like" class="nav-link ">
+                                        <i class="fas fa-heart"></i>
+                                        <p>Nhà yêu thích</p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/"><i class="icon-briefcase"></i><p>Nguồn xác thực<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/Hang/BankReview" class="nav-link ">
+                                        <i class="fa fa-pen"></i>
+                                        <p>Chờ duyệt</p>
+                                    </a>
+                                </li><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/Hang/Bank/5" class="nav-link ">
+                                        <i class="fa fa-tasks"></i>
+                                        <p>Đối tác MB</p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Nguồn HĐTĐ<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/HangHDTD/Mylist" class="nav-link ">
+                                        <i class="fa fa-home"></i>
+                                        <p>Nhà của tôi</p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Khách hàng<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/KhachHang" class="nav-link ">
+                                        <i class="fa fa-user"></i>
+                                        <p>Khách của tôi </p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Báo cáo dẫn khách<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/BaoCaoDanKhach/Index" class="nav-link ">
+                                        <i class="fa fa-bell"></i>
+                                        <p>Của tôi</p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Góp ý - Đề xuất<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/NguoiDungGopY/Index" class="nav-link ">
+                                        <i class="fa fa-bell"></i>
+                                        <p>Của tôi</p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Bình luận<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/BinhLuan/Index" class="nav-link ">
+                                        <i class="fa fa-pen"></i>
+                                        <p>Của tôi</p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Tài khoản<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/User/ChangePassWord" class="nav-link ">
+                                        <i class="fas fa-exchange-alt"></i>
+                                        <p>Đổi mật khẩu</p>
+                                    </a>
+                                </li></ul></li><li class="nav-item "><a class="nav-link" href="https://data.thienkhoi.com/#"><i class="icon-briefcase"></i><p>Quy định chung<i class="fas fa-angle-left right"></i><span class="badge badge-info right"></span></p></a><ul class="nav nav-treeview"><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/policy/1.pdf" class="nav-link ">
+                                        <i class="icon-briefcase"></i>
+                                        <p>Thông tin đơn vị</p>
+                                    </a>
+                                </li><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/policy/2.pdf" class="nav-link ">
+                                        <i class="icon-briefcase"></i>
+                                        <p>Quy chế hoạt động</p>
+                                    </a>
+                                </li><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/policy/3.pdf" class="nav-link ">
+                                        <i class="icon-briefcase"></i>
+                                        <p>Chính sách Bảo mật thông tin</p>
+                                    </a>
+                                </li><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/policy/4.pdf" class="nav-link ">
+                                        <i class="icon-briefcase"></i>
+                                        <p>Giải quyết khiếu nại, tranh chấp</p>
+                                    </a>
+                                </li><li class="nav-item">
+                                    <a href="https://data.thienkhoi.com/policy/5.pdf" class="nav-link ">
+                                        <i class="icon-briefcase"></i>
+                                        <p>Điều khoản, điều kiện giao dịch</p>
+                                    </a>
+                                </li></ul></li>
+
+        </ul>
+    </nav>
+    <div class="row footer  mt-3 pb-3 mb-3 d-flex">
+        <span class="version">Version 3.1.6</span>
+        
+    </div>
+    <!-- /.sidebar-menu -->
+</div>
+<!-- /.sidebar -->
+<style>
+
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .menu {
+        margin-bottom: 20px;
+    }
+
+    .footer {
+        padding: 16px;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        color: white;
+        border-top: 1px solid #4f5962;
+    }
+
+    .version {
+        text-align: center;
+        opacity: 0.8;
+        color: #c2c7d0;
+        margin-bottom: 8px;
+    }
+
+
+</style>
+        </aside>
+        
+
+
+<style>
+    .checked {
+        color: orange;
+    }
+
+    .list-image {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .list-image li {
+            margin-bottom: 10px;
+        }
+
+            .list-image li a {
+                display: block;
+            }
+
+                .list-image li a img {
+                    max-width: 100%;
+                    max-height: 300px;
+                    height: auto;
+                    width: auto;
+                    object-fit: contain;
+                }
+
+    .list-file {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .list-file li {
+            display: block;
+        }
+
+            .list-file li a {
+                color: #333;
+            }
+</style>
+<link href="./Quản lý Kho_files/lightgallery.min.css" rel="stylesheet">
+<input type="hidden" id="app" value="False">
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper" style="min-height: 884.551px;">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Thông tin chi tiết</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="https://data.thienkhoi.com/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="https://data.thienkhoi.com/hang">Kho hàng</a></li>
+                        <li class="breadcrumb-item active">Thông tin</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content" id="diff">
+        <div class="card-danger">
+        </div>
+        <div class="card card-warning">
+            <div class="card-header">
+
+
+                <h3 class="card-title">
+                    Thông tin
+                    
+                    
+                </h3>
+
+
+            </div>
+            <div class="form-horizontal">
+                <div class="card-body">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <label>Mã hàng</label><br>
+                                    <input value="TK-BEB9DE" type="text" readonly="readonly" autocomplete="off" class="form-control" aria-invalid="false">
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label for="inputTinh">Tỉnh thành</label>
+                                <input id="Detail_sTenTinh" class="form-control" value="Tp. Hồ Chí Minh">
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label for="inputQuan">Quận huyện</label>
+                                <input id="Detail_sTenQuan" class="form-control" value="Phú Nhuận">
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label for="inputPhuong">Phường xã</label>
+                                <input id="Detail_sTenPhuongXa" class="form-control" value="Cầu Kiệu">
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                        <label>Ngõ, số nhà</label>
+<input id="Detail_sDiaChi" name="Detail_sDiaChi" value="45.2D" type="text" class="form-control" aria-describedby="Detail_sDiaChi-error" aria-invalid="false">                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <label>Đường phố</label>
+                                <input id="Detail_sDuongPho" name="Detail_sDuongPho" value="Nhiêu Tứ" type="text" class="form-control" aria-describedby="Detail_sDiaChi-error" aria-invalid="false">
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Trạng thái</label><br>
+                                <input id="Detail_iTrangThai" class="form-control" value="Chuẩn">
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label id="diff_camketdatchuan" style="text-align: center">Cam kết đạt chuẩn</label>
+                                <div>
+                                    <input id="Detail_bCamKetChuan" name="Detail_bCamKetChuan" type="checkbox" checked="checked" style="zoom:2" onclick="return false"><input id="Detail_bCamKetChuan_Kem_" name="Detail_bCamKetChuan_Kem_" value="1" type="hidden" khong-nhap="-1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-12">
+                                <label>Nội dung</label>
+                                <textarea id="Detail_sNoiDung" name="Detail_sNoiDung" class="form-control" style="height:80px">45.2D Nhiêu Tứ 14 3 3.4 4 4.2 tỷ Cầu Kiệu Phú Nhuận &lt; 5 tỷ HĐ Lê Đình Việt_ĐC Minh Đăng 0939475382 H3GB nguồn Đầu chủ Lê Đình Việt_ĐC - Minh Đăng</textarea>
+
+                                <span id="Detail_Nội dung-error" class="error invalid-feedback" style="display: none;"></span>
+                            </div>
+                            <div class="col-md-6 col-xs-12">
+                                    <label for="inputTinh">Tiêu chí BĐS<span class="field-validation-error">&nbsp;*</span></label>
+                                    <select id="Detail_sLoaiHang" name="Detail_sLoaiHang" aria-describedby="Detail_sLoaiHang-error" aria-invalid="false" multiple="multiple" style="display: none;">
+                                        <option value="A">Triệu đô</option><option value="B">Dòng tiền ổn định</option><option value="C">Hiếm</option><option value="D">View hồ - công viên</option><option value="E">Nội thất đẹp - giá trị</option><option value="F">Để ở</option><option value="G">Để kinh doanh</option><option value="H">Lãi vốn (rẻ)</option><option value="J">Chủ cần bán gấp</option><option value="K">Hẻm ô tô</option><option value="L">Hẻm xe máy</option><option value="M">Đất - nhà cấp 4 - nhà cũ</option><option value="O">Chưa được cấp CNQSD</option><option value="X">Chính chủ</option><option value="T">Dân đầu tư</option><option value="U">Thế chấp ngân hàng</option><option value="I">Thang máy</option><option value="P">Mặt phố</option><option value="Y">Lô góc</option><option value="Z">Bảo lãnh hoa hồng</option><option value="W">Độc quyền bán</option><option value="Q">Chung cư</option>
+                                    </select><div class="btn-group w-100" id="sTenLoaiHang"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" title="Để ở, Lãi vốn (rẻ), Chủ cần bán gấp, Hẻm ô tô, Chính chủ"><span class="multiselect-selected-text">5 selected</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Search"><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all">  Select all</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="A"> Triệu đô</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="B"> Dòng tiền ổn định</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="C"> Hiếm</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="D"> View hồ - công viên</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="E"> Nội thất đẹp - giá trị</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="F"> Để ở</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="G"> Để kinh doanh</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="H"> Lãi vốn (rẻ)</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="J"> Chủ cần bán gấp</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="K"> Hẻm ô tô</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="L"> Hẻm xe máy</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="M"> Đất - nhà cấp 4 - nhà cũ</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="O"> Chưa được cấp CNQSD</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="X"> Chính chủ</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="T"> Dân đầu tư</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="U"> Thế chấp ngân hàng</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="I"> Thang máy</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="P"> Mặt phố</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="Y"> Lô góc</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="Z"> Bảo lãnh hoa hồng</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="W"> Độc quyền bán</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="Q"> Chung cư</label></a></li></ul></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3 col-xs-12">
+                                <label>Diện tích trên sổ (m)</label>
+                                <input id="Detail_iDienTichSo_show" name="Detail_iDienTichSo_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="14.0" type="text" readonly="readonly" class="form-control" placeholder="Diện tích" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iDienTichSo" name="Detail_iDienTichSo" value="14.0">
+
+                            </div>
+                            <div class="col-md-3 col-xs-12">
+                                <label>Diện tích thực tế (m)</label>
+                                <input id="Detail_iDienTich_show" name="Detail_iDienTich_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="14.0" type="text" readonly="readonly" class="form-control" placeholder="Diện tích" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iDienTich" name="Detail_iDienTich" value="14.0">
+
+                            </div>
+                            <div class="col-md-6 col-xs-12">
+
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <div class="row">
+
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <label>Mặt tiền (m)</label>
+                                    <input id="Detail_iMatTien_show" name="Detail_iMatTien_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="3.4" type="text" readonly="readonly" class="form-control" placeholder="Mặt tiền" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iMatTien" name="Detail_iMatTien" value="3.4">
+
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <label>Chiều dài (m)</label>
+                                    <input id="Detail_iDai_show" name="Detail_iDai_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="3.9" type="text" readonly="readonly" class="form-control" placeholder="Chiều dài" aria-describedby="Detail_iDai-error" aria-invalid="false"><input type="hidden" id="Detail_iDai" name="Detail_iDai" value="3.9">
+
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <label>Đường trước nhà (m)</label>
+                                    <input id="Detail_iDuongVao_show" name="Detail_iDuongVao_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="3.5" type="text" readonly="readonly" class="form-control" placeholder="Đường vào" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iDuongVao" name="Detail_iDuongVao" value="3.5">
+
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    <div class="form-group">
+                        <div class="row">
+
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <label>Số tầng</label>
+                                <input id="Detail_iSoTang_show" name="Detail_iSoTang_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="3.0" type="text" readonly="readonly" class="form-control" placeholder="Số tầng" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iSoTang" name="Detail_iSoTang" value="3.0">                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Số phòng ngủ</label>
+                                <input id="Detail_iSoPhongNgu_show" name="Detail_iSoPhongNgu_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="2" type="text" readonly="readonly" class="form-control" placeholder="Số phòng ngủ" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iSoPhongNgu" name="Detail_iSoPhongNgu" value="2">
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Số nhà vệ sinh</label>
+                                <input id="Detail_iSoToilet_show" name="Detail_iSoToilet_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="3" type="text" readonly="readonly" class="form-control" placeholder="Số toilet" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iSoToilet" name="Detail_iSoToilet" value="3">
+
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Số ban công</label>
+                                <input id="Detail_iSoBanCong_show" name="Detail_iSoBanCong_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="" type="text" readonly="readonly" class="form-control" placeholder="Số ban công" aria-describedby="Detail_iSoBanCong-error" aria-invalid="false"><input type="hidden" id="Detail_iSoBanCong" name="Detail_iSoBanCong" value="0">
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Giá chào hợp đồng (Triệu VNĐ)</label>
+                                <input id="Detail_iGiaChaoHopDong_show" name="Detail_iGiaChaoHopDong_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="4,200" type="text" readonly="readonly" class="form-control" placeholder="Giá chào hợp đồng" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iGiaChaoHopDong" name="Detail_iGiaChaoHopDong" value="4200">
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>% Hoa hồng</label>
+                                <input id="Detail_iPhanTramHoaHong_show" name="Detail_iPhanTramHoaHong_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="3.0" type="text" readonly="readonly" class="form-control" placeholder="% Hoa hồng" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iPhanTramHoaHong" name="Detail_iPhanTramHoaHong" value="3.0">
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Tiền hoa hồng (Triệu VNĐ)</label>
+                                <input id="Detail_iTienHoaHong_show" name="Detail_iTienHoaHong_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="" type="text" readonly="readonly" class="form-control" placeholder="Tiền hoa hồng" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iTienHoaHong" name="Detail_iTienHoaHong" value="0">
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <label>Hướng nhà</label>
+                                <select id="Detail_iID_HuongNha" name="Detail_iID_HuongNha" disabled="disabled" class="form-control"><option value="0" selected="selected">-- Chọn Hướng --</option><option value="1">Đông</option><option value="2">Tây</option><option value="3">Nam</option><option value="4">Bắc</option><option value="5">Đông-Bắc</option><option value="6">Tây-Bắc</option><option value="7">Tây-Nam</option><option value="8">Đông-Nam</option></select>
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Nguồn</label>
+                                <select id="Detail_iID_Nguon" name="Detail_iID_Nguon" disabled="disabled" class="form-control"><option value="0">--Nguồn hàng--</option><option value="1" selected="selected">Đầu chủ</option><option value="4">Đối tác</option><option value="2">Hội đồng thẩm định</option><option value="3">Chính chủ AI</option></select>
+
+                            </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                        <label>Điện thoại nguồn hàng</label>
+
+                                    <input id="Detail_sDienThoaiNguonHang" name="Detail_sDienThoaiNguonHang" value="" type="text" readonly="readonly" autocomplete="off" class="form-control" placeholder="Điện thoại nguồn hàng" aria-describedby="Detail_sDienThoaiNguonHang-error" aria-invalid="false">
+                                    <span id="Detail_sDienThoaiNguonHang-error" class="error invalid-feedback" style="display: none;"></span>
+
+                                </div>
+
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+
+
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Điện thoại đầu chủ</label>
+<input id="Detail_sDienThoaiDauChu" name="Detail_sDienThoaiDauChu" value="0939475382" type="text" readonly="readonly" class="form-control" placeholder="Điện thoại đầu chủ" aria-describedby="Detail_sDiaChi-error" aria-invalid="false">                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Hợp đồng</label>
+<input id="Detail_sHopDongDauChu" name="Detail_sHopDongDauChu" value="Lê Đình Việt_ĐC" type="text" readonly="readonly" class="form-control" placeholder="Hợp đồng đầu chủ" aria-describedby="Detail_sDiaChi-error" aria-invalid="false">                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-12">
+                                <label>Điểm</label>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                <label> Facebook</label>
+                                <a href="https://www.facebook.com/profile.php?id=100024686896771" target="_blank&#39;" class="form-control">https://www.facebook.com/profile.php?id=100024686896771</a>
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Lat</label>
+                                <input id="Detail_iLat_show" name="Detail_iLat_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="10.800360253405543" type="text" class="form-control" placeholder="Lat" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iLat" name="Detail_iLat" value="10.800360253405543">
+
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <label>Lng</label>
+                                <input id="Detail_iLng_show" name="Detail_iLng_show" nhap-so="1" loai-nhap="1" so-sau-dau-phay="-1" value="106.68929558247328" type="text" class="form-control" placeholder="Lng" aria-describedby="Detail_sDiaChi-error" aria-invalid="false"><input type="hidden" id="Detail_iLng" name="Detail_iLng" value="106.68929558247328">
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- /.form-group -->
+                    
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label>Mô tả</label>
+                        <div>
+                            <p>🍀 Nhà mới Phú Nhuận - Nhiêu Tứ - Hẻm 3m 1 Căn Ra HXH - Sát Mặt Tiền</p><p><br></p><p>+ Diện Tích : 3.4m x 3.9m 14m2 Nở Hậu</p><p><br></p><p>+ Kết Cấu : 3 Tầng Đúc 2Pn 3vs , Nhà cải tạo mới , 2 ban công</p><p><br></p><p>+ Vị trí trung tâm Phú nhuận ngay Phan Xích Long , hẻm sạch sẽ an ninh dân trí sát mặt tiền&nbsp;</p><p><br></p><p>+ Giá : 4.2 Tỷ TL</p>
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <div class="row">
+                                <div class="col-md-3 col-xs-12">
+                                    <label>Số seri sổ đỏ</label>
+
+                                    <input id="Detail_sSoSoDo" name="Detail_sSoSoDo" value="*" disabled="disabled" type="text" readonly="readonly" class="form-control" placeholder="Số seri sổ đỏ">
+
+                                </div>
+                            <div class="col-md-3 col-xs-12">
+
+
+
+                            </div>
+
+
+                            <div class="col-md-3 col-xs-12">
+                            </div>
+                            <div class="col-md-3 col-xs-12"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sơ đồ thửa đất</label>
+                        <ul class="list-image row" id="lightgalleryTD" lg-uid="lg1">
+                                    <li class="col-md-3 col-sm-6 col-12" data-src="https://tk-assets.spms2.com/2026/05/26/4lwh-A97B347F-mpm1cjau_329_7.jpg" id="4655705_5">
+                                        <a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de">
+                                            <img src="./Quản lý Kho_files/4lwh-A97B347F-mpm1cjau_329_7.jpg">
+                                        </a>
+                                    </li>
+                        </ul>
+                    </div>
+
+                    <!-- /.form-group -->
+
+                    <!-- /.form-group -->
+
+
+                    <div class="form-group">
+                        <label>Ảnh bất động sản</label>
+                        <ul class="list-image row" id="lightgalleryND" lg-uid="lg0">
+                                    <li class="col-md-3 col-sm-6 col-12" data-src="https://tk-assets.spms2.com/2026/05/26/4lwh-A97B347F-mpm1cjau_214_5.jpg" id="4655703_3" style="position: relative;">
+                                        <a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de">
+                                            <img src="./Quản lý Kho_files/4lwh-A97B347F-mpm1cjau_214_5.jpg" title="">
+                                        </a>
+                                    <div style="position: absolute; top: 5px; left: 5px; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 999; font-size: 12px; pointer-events: none;">Ảnh 1</div><div style="position: absolute; bottom: 5px; right: 5px; display: flex; gap: 4px; z-index: 9999;"><button class="btn-mt-tk" style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">MT</button><button class="btn-cover-tk" style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">NỀN</button><button style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">HẺM</button><button style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">PUBLIC</button></div></li>
+                                    <li class="col-md-3 col-sm-6 col-12" data-src="https://tk-assets.spms2.com/2026/05/26/4lwh-A97B347F-mpm1cjau_264_6.jpg" id="4655704_3" style="position: relative;">
+                                        <a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de">
+                                            <img src="./Quản lý Kho_files/4lwh-A97B347F-mpm1cjau_264_6.jpg" title="">
+                                        </a>
+                                    <div style="position: absolute; top: 5px; left: 5px; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 999; font-size: 12px; pointer-events: none;">Ảnh 2</div><div style="position: absolute; bottom: 5px; right: 5px; display: flex; gap: 4px; z-index: 9999;"><button class="btn-mt-tk" style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">MT</button><button class="btn-cover-tk" style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">NỀN</button><button style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">HẺM</button><button style="border: 1px solid rgb(204, 204, 204); padding: 3px 6px; background-color: rgba(255, 255, 255, 0.9); color: rgb(51, 51, 51); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">PUBLIC</button></div></li>
+                        </ul>
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+
+                <div class="card-footer text-center">
+                </div>
+                <!-- /.card-footer -->
+            </div>
+        </div>
+    </section>
+    <section class="content-header" id="panelContentBank" style="background: rgb(236, 236, 223); display: none;">
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-3 col-xs-12">
+                    <label>Trạng thái</label>
+                    <input class="form-control" readonly="" style="background: " value="Mới">
+                </div>
+                <div class="col-md-3 col-xs-12">
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <br>
+
+
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                        <label> Chú ý:</label><span style="color:red"> Hãy kiểm tra dữ liệu tọa độ và tối thiểu 3 hình ảnh cần được chọn để đủ tiêu chuẩn gửi Nguồn xác thực.</span>
+                </div>
+
+                <div class="col-md-6 col-xs-12">
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Chọn ảnh giới thiệu hàng</label>
+            <ul class="list-image row" id="lightgalleryBank">
+                        <li class="col-md-3 col-sm-6 col-12" data-src="https://tk-assets.spms2.com/2026/05/26/4lwh-A97B347F-mpm1cjau_214_5.jpg" id="4655703_3">
+                            <input type="checkbox" disabled="" class="publicFile" style="zoom: 2;" name="PublicFile" id="PublicFile-4655703" value="False" data-id="fjc7ue-mpm1br97-ebeb9de" data-file="4655703" data-loaifile="3">
+                            <a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de">
+                                <img src="./Quản lý Kho_files/4lwh-A97B347F-mpm1cjau_214_5.jpg" style="width: 50%; height: 50%">
+                            </a>
+                        </li>
+                        <li class="col-md-3 col-sm-6 col-12" data-src="https://tk-assets.spms2.com/2026/05/26/4lwh-A97B347F-mpm1cjau_264_6.jpg" id="4655704_3">
+                            <input type="checkbox" disabled="" class="publicFile" style="zoom: 2;" name="PublicFile" id="PublicFile-4655704" value="False" data-id="fjc7ue-mpm1br97-ebeb9de" data-file="4655704" data-loaifile="3">
+                            <a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de">
+                                <img src="./Quản lý Kho_files/4lwh-A97B347F-mpm1cjau_264_6.jpg" style="width: 50%; height: 50%">
+                            </a>
+                        </li>
+            </ul>
+        </div>
+    </section>
+
+    <!--<section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Báo cáo dẫn khách</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">-->
+    
+
+    <!--</ol>
+            </div>
+        </div>
+    </div>-->
+    <!-- /.container-fluid -->
+    <!--</section>
+    <section class="content">-->
+    <!-- Default box -->
+    <!--<div class="card">
+            Html.Action("Partial_Item", "BaoCaoDanKhach", new sBaoCaoDanKhachModels { iID_Hang = ViewBag.ID })
+
+        </div>
+    </section>-->
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+
+<div class="modal fade" id="modal-success">
+    <div class="modal-dialog">
+        <div class="modal-content bg-success">
+            <div class="modal-header">
+                <h4 class="modal-title">Đã cọc</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn chuyển trạng thái <strong>Đã cọc</strong> bản ghi này không?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                <button type="button" id="btnDaCoc" data-id="fjc7ue-mpm1br97-ebeb9de" class="btn btn-outline-light">Xác nhận</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal success-->
+<div class="modal fade" id="modal-warning">
+    <div class="modal-dialog">
+        <form id="frmDaBan" method="post">
+            <input type="hidden" id="Detail_iID_Hang" name="Detail_iID_Hang" value="fjc7ue-mpm1br97-ebeb9de">
+            <div class="modal-content bg-warning">
+                <div class="modal-header">
+                    <h4 class="modal-title">Quyết định</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc muốn chuyển trạng thái <strong>Đã bán</strong> bản ghi này không?</p>
+
+                    <!-- /. OPTIONS để set giá chốt là bắt buộc hay không bắt buộc -->
+                    <!--<div class="form-group">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <!--/. Trường bắt buộc -->
+                    <!--<label>Giá chốt</label>
+                                MvcHtmlString.Create(MyHtmlHelper.TextBox(new { ParentID = ParentID, data = data, TenTruong = "iGiaBanThucTe", LoaiTextBox = "0", Attributes = string.Format("type='text' class='form-control' autocomplete='off' placeholder='Giá chốt' aria-describedby='{0}_iGiaBanThucTe-error' aria-invalid='false'", ParentID) }))
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <label>Đầu khách</label>
+                                MvcHtmlString.Create(MyHtmlHelper.Autocomplete(ParentID, data, "sTaiKhoanDauKhach", "sHoTenDauKhach", "", "type=\"text\" class=\"typeahead form-control\" placeholder='Nhập CCCD/CMT'"))
+
+                            </div>
+                        </div>
+                    </div>-->
+                    <!-- /. Họ tên khách mua -->
+                    <!-- /. Số điện thoại khách mua -->
+                    <!-- /. CCCD khách mua -->
+                    <!-- /. D/c thường trú -->
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                    <button type="submit" id="btnDaBan" data-id="fjc7ue-mpm1br97-ebeb9de" class="btn btn-outline-light">Xác nhận</button>
+                </div>
+            </div>
+
+        </form>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal warning-->
+<div class="modal fade" id="modal-DinhChiHang">
+    <div class="modal-dialog">
+        <form class="form-horizontal" id="frmDinhChiHang" method="post">
+            <input type="hidden" id="Detail_iID_Hang" name="Detail_iID_Hang" value="fjc7ue-mpm1br97-ebeb9de">
+            <input type="hidden" id="actionDC" value="" name="Detail_actionDC">
+            <div class="modal-content bg-danger">
+                <div class="modal-header">
+                    <h4 class="modal-title">Lý do</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-2 col-xs-12">
+                                <textarea id="" name="Detail_sLydoDinhChi" rows="5" cols="60" maxlength="200"></textarea>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                    <button type="submit" id="btnDinhChiHang" data-id="fjc7ue-mpm1br97-ebeb9de" class="btn btn-outline-light">Xác nhận</button>
+                </div>
+            </div>
+        </form>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!--<div class="modal fade" id="modal-GoKhoBank">
+    <div class="modal-dialog">
+        <form class="form-horizontal" id="frmDinhChiHang" method="post">
+            <input type="hidden" id="Detail_iID_Hang" name="Detail_iID_Hang" value="fjc7ue-mpm1br97-ebeb9de" />
+            <input type="hidden" id="actionDC" value="" name="Detail_actionDC" />
+            <div class="modal-content bg-danger">
+                <div class="modal-header">
+                    <h4 class="modal-title">Lý do</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="bGhiChu" name="bGhiChu" rows="5" cols="60" maxlength="200">
+
+                </textarea>
+
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                    <button type="submit" id="btnOK" class="btn btn-outline-light">Xác nhận</button>
+                </div>
+            </div>
+            }
+<!-- /.modal-content -->
+<!--</form>
+</div>-->
+<!-- /.modal-dialog -->
+<!--</div>-->
+
+
+
+<div class="modal fade" id="modal-danger">
+    <div class="modal-dialog">
+        <div class="modal-content bg-danger">
+            <div class="modal-header">
+                <h4 class="modal-title">Quyết định</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn chuyển trạng thái <strong>Tạm dừng bán</strong> bản ghi này không?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                <button type="button" id="btnDungBan" data-id="fjc7ue-mpm1br97-ebeb9de" class="btn btn-outline-light">Xác nhận</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-banlai">
+    <div class="modal-dialog">
+        <div class="modal-content bg-danger">
+            <div class="modal-header">
+                <h4 class="modal-title">Quyết định</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn chuyển trạng thái <strong>Chuẩn</strong> bản ghi này không?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                <button type="button" id="btnBanLai" data-id="fjc7ue-mpm1br97-ebeb9de" class="btn btn-outline-light">Xác nhận</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- /.modal warning-->
+<div class="modal fade" id="modal-chimtroicabe">
+    <div class="modal-dialog">
+        <div class="modal-content bg-danger">
+            <div class="modal-header">
+                <h4 class="modal-title">Quyết định</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn chuyển trạng thái <strong>Chim trời cá bể</strong> bản ghi này không?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                <button type="button" id="btnChimTroiCaBe" data-id="fjc7ue-mpm1br97-ebeb9de" class="btn btn-outline-light">Xác nhận</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="modal-GhiChu">
+    <div class="modal-dialog">
+<form action="https://data.thienkhoi.com/Hang/GhiChu?Length=4" class="form-horizontal" data-ajax="true" data-ajax-failure="OnFailure" data-ajax-success="OnSuccess" id="form0" method="post">            <div class="modal-content bg-success">
+
+                <input type="hidden" id="txtid" name="txtid" value="fjc7ue-mpm1br97-ebeb9de">
+                <div class="modal-header">
+                    <h4 class="modal-title">Bình luận</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="txtGhiChu" name="txtGhiChu" rows="5" cols="60">
+                </textarea>
+
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                    <button type="submit" id="btnGhiChu" class="btn btn-outline-light">Xác nhận</button>
+                </div>
+            </div>
+</form>        <script>
+            function OnFailure() {
+
+                toastr.error("Lưu lỗi");
+            }
+
+            function OnBegin() {
+
+            }
+
+            function OnSuccess(data) {
+                $('#modal-GhiChu').modal('hide');
+                toastr.success("Lưu thành công");
+                $("#divGhiChu").html(data.value);
+                $('#divGhiChu').scrollTop($('#divGhiChu')[0].scrollHeight);
+            }
+        </script>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- /.modal warning-->
+<div class="modal fade" id="modal-GuiKhoBank">
+    <div class="modal-dialog">
+        <div class="modal-content bg-success">
+            <div class="modal-header">
+                <h4 class="modal-title">Gửi Nguồn xác thực</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body mbody">
+                <p>Bạn có chắc muốn <strong>Gửi Nguồn xác thực</strong> hàng này không?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                <button type="button" id="btnGuiKhoBank" data-id="fjc7ue-mpm1br97-ebeb9de" class="btn btn-outline-light">Xác nhận</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-GoKhoBank">
+    <div class="modal-dialog">
+<form action="https://data.thienkhoi.com/Hang/GoKhoBank?Length=4" class="form-horizontal" data-ajax="true" data-ajax-begin="OnBegin" data-ajax-failure="OnFailure" data-ajax-success="OnSuccess" id="form1" method="post">            <div class="modal-content bg-danger">
+                <input type="hidden" id="bkhobank" name="bkhobank" value="">
+                <input type="hidden" id="bid" name="bid" value="fjc7ue-mpm1br97-ebeb9de">
+                <input type="hidden" id="bowner" name="bowner" value="0908130555">
+                <div class="modal-header">
+                    <h4 class="modal-title">Lý do</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="bGhiChu" name="bGhiChu" rows="5" cols="60" maxlength="200">
+                </textarea>
+
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Đóng</button>
+                    <button type="submit" id="btnOK" class="btn btn-outline-light">Xác nhận</button>
+                </div>
+            </div>
+</form>        <script>
+            function OnFailure() {
+                toastr.success("Xuất hiện lỗi");
+            }
+
+            function OnBegin() {
+                console.log('iKhoBank=' + $('#bkhobank').val());
+                var r = $('#bGhiChu').val().length > 5;
+                if (!r) alert("Hãy nhập lý do hợp lý để xử lý hàng");
+                return r;
+            }
+
+            function OnSuccess(data) {
+                if (data.success) {
+                    $('#modal-GoKhoBank').modal('hide');
+                    $('#openGuiKhoBank').attr('disabled', false);
+                    toastr.success("Thực hiện thành công");
+                } else {
+                    toastr.success(data.error);
+                }
+            }
+        </script>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="modal_diff_seri">
+    <div class="modal-dialog">
+        <form class="form-horizontal" id="form_diff_seri" method="get">
+            <input type="hidden" id="Detail_iID_Hang" name="Detail_iID_Hang" value="fjc7ue-mpm1br97-ebeb9de">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Lịch sử</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body pb-0">
+                    <table id="lst_seri" class="mb-0 table table-striped">
+                    </table>
+                </div>
+            </div>
+        </form>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal warning-->
+<div class="modal fade" id="modal-confirm">
+    <div class="modal-dialog">
+        <div class="modal-content bg-success">
+            <div class="modal-header">
+                <h4 class="modal-title">Xác nhận</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body mbody">
+                <p>Xác nhận <strong>đã kiểm tra</strong> thông tin nguồn hàng?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light btn-danger" data-dismiss="modal">Hủy</button>
+                <button type="button" id="btnConfirmReview" data-id="" class="btn btn-outline-light">Xác nhận</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script src="./Quản lý Kho_files/jsHang.js.tải xuống"></script>
+<!-- /.modal warning-->
+
+
+
+        <footer class="main-footer">
+
+            Copyright © 2023 <strong><a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#">BẤT ĐỘNG SẢN THIÊN KHÔI</a>.</strong> All rights reserved.
+        </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        <div class="p-3 control-sidebar-content"><h5>Customize AdminLTE</h5><hr class="mb-2"><div class="mb-4"><input type="checkbox" value="1" class="mr-1"><span>Dark Mode</span></div><h6>Header Options</h6><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Fixed</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Dropdown Legacy Offset</span></div><div class="mb-4"><input type="checkbox" value="1" class="mr-1"><span>No border</span></div><h6>Sidebar Options</h6><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Collapsed</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Fixed</span></div><div class="mb-1"><input type="checkbox" value="1" checked="checked" class="mr-1"><span>Sidebar Mini</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Sidebar Mini MD</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Sidebar Mini XS</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Nav Flat Style</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Nav Legacy Style</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Nav Compact</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Nav Child Indent</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Nav Child Hide on Collapse</span></div><div class="mb-4"><input type="checkbox" value="1" class="mr-1"><span>Disable Hover/Focus Auto-Expand</span></div><h6>Footer Options</h6><div class="mb-4"><input type="checkbox" value="1" class="mr-1"><span>Fixed</span></div><h6>Small Text Options</h6><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Body</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Navbar</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Brand</span></div><div class="mb-1"><input type="checkbox" value="1" class="mr-1"><span>Sidebar Nav</span></div><div class="mb-4"><input type="checkbox" value="1" class="mr-1"><span>Footer</span></div><h6>Navbar Variants</h6><div class="d-flex"><select class="custom-select mb-3 text-light border-0 bg-white"><option class="bg-primary">Primary</option><option class="bg-secondary">Secondary</option><option class="bg-info">Info</option><option class="bg-success">Success</option><option class="bg-danger">Danger</option><option class="bg-indigo">Indigo</option><option class="bg-purple">Purple</option><option class="bg-pink">Pink</option><option class="bg-navy">Navy</option><option class="bg-lightblue">Lightblue</option><option class="bg-teal">Teal</option><option class="bg-cyan">Cyan</option><option class="bg-dark">Dark</option><option class="bg-gray-dark">Gray dark</option><option class="bg-gray">Gray</option><option class="bg-light">Light</option><option class="bg-warning">Warning</option><option class="bg-white">White</option><option class="bg-orange">Orange</option></select></div><h6>Accent Color Variants</h6><div class="d-flex"></div><select class="custom-select mb-3 border-0"><option>None Selected</option><option class="bg-primary">Primary</option><option class="bg-warning">Warning</option><option class="bg-info">Info</option><option class="bg-danger">Danger</option><option class="bg-success">Success</option><option class="bg-indigo">Indigo</option><option class="bg-lightblue">Lightblue</option><option class="bg-navy">Navy</option><option class="bg-purple">Purple</option><option class="bg-fuchsia">Fuchsia</option><option class="bg-pink">Pink</option><option class="bg-maroon">Maroon</option><option class="bg-orange">Orange</option><option class="bg-lime">Lime</option><option class="bg-teal">Teal</option><option class="bg-olive">Olive</option></select><h6>Dark Sidebar Variants</h6><div class="d-flex"></div><select class="custom-select mb-3 text-light border-0 bg-primary"><option>None Selected</option><option class="bg-primary">Primary</option><option class="bg-warning">Warning</option><option class="bg-info">Info</option><option class="bg-danger">Danger</option><option class="bg-success">Success</option><option class="bg-indigo">Indigo</option><option class="bg-lightblue">Lightblue</option><option class="bg-navy">Navy</option><option class="bg-purple">Purple</option><option class="bg-fuchsia">Fuchsia</option><option class="bg-pink">Pink</option><option class="bg-maroon">Maroon</option><option class="bg-orange">Orange</option><option class="bg-lime">Lime</option><option class="bg-teal">Teal</option><option class="bg-olive">Olive</option></select><h6>Light Sidebar Variants</h6><div class="d-flex"></div><select class="custom-select mb-3 border-0"><option>None Selected</option><option class="bg-primary">Primary</option><option class="bg-warning">Warning</option><option class="bg-info">Info</option><option class="bg-danger">Danger</option><option class="bg-success">Success</option><option class="bg-indigo">Indigo</option><option class="bg-lightblue">Lightblue</option><option class="bg-navy">Navy</option><option class="bg-purple">Purple</option><option class="bg-fuchsia">Fuchsia</option><option class="bg-pink">Pink</option><option class="bg-maroon">Maroon</option><option class="bg-orange">Orange</option><option class="bg-lime">Lime</option><option class="bg-teal">Teal</option><option class="bg-olive">Olive</option></select><h6>Brand Logo Variants</h6><div class="d-flex"></div><select class="custom-select mb-3 border-0"><option>None Selected</option><option class="bg-primary">Primary</option><option class="bg-secondary">Secondary</option><option class="bg-info">Info</option><option class="bg-success">Success</option><option class="bg-danger">Danger</option><option class="bg-indigo">Indigo</option><option class="bg-purple">Purple</option><option class="bg-pink">Pink</option><option class="bg-navy">Navy</option><option class="bg-lightblue">Lightblue</option><option class="bg-teal">Teal</option><option class="bg-cyan">Cyan</option><option class="bg-dark">Dark</option><option class="bg-gray-dark">Gray dark</option><option class="bg-gray">Gray</option><option class="bg-light">Light</option><option class="bg-warning">Warning</option><option class="bg-white">White</option><option class="bg-orange">Orange</option><a href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de#">clear</a></select></div></aside>
+        <!-- /.control-sidebar -->
+    <div id="sidebar-overlay"></div></div>
+    <!-- ./wrapper -->
+    <input type="hidden" value="" id="hId">
+    <input type="hidden" value="0" id="hCheckManHinh">
+    <input type="hidden" value="0908130555" id="hUserName">
+
+    <!-- Bootstrap 4 -->
+    <script src="./Quản lý Kho_files/bootstrap.bundle.min.js.tải xuống"></script>
+
+    <!-- DataTables  & Plugins -->
+    <script src="./Quản lý Kho_files/jquery.dataTables.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/dataTables.bootstrap4.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/dataTables.responsive.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/responsive.bootstrap4.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/dataTables.buttons.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/buttons.bootstrap4.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jszip.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/pdfmake.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/vfs_fonts.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/buttons.html5.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/buttons.print.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/buttons.colVis.min.js.tải xuống"></script>
+    <!-- SweetAlert2 -->
+    <script src="./Quản lý Kho_files/sweetalert2.min.js.tải xuống"></script>
+    <!-- Toastr -->
+    <script src="./Quản lý Kho_files/toastr.min.js.tải xuống"></script>
+    <!-- jquery-validation -->
+    <script src="./Quản lý Kho_files/jquery.validate.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/additional-methods.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jquery.validate.unobtrusive.js.tải xuống"></script>
+    <!-- Select2 -->
+    <script src="./Quản lý Kho_files/select2.full.min.js.tải xuống"></script>
+    <!-- Bootstrap4 Duallistbox -->
+    <script src="./Quản lý Kho_files/jquery.bootstrap-duallistbox.min.js.tải xuống"></script>
+    <!-- InputMask -->
+    <script src="./Quản lý Kho_files/moment.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jquery.inputmask.min.js.tải xuống"></script>
+    <!-- date-range-picker -->
+    <script src="./Quản lý Kho_files/daterangepicker.js.tải xuống"></script>
+    <!-- bootstrap color picker -->
+    <script src="./Quản lý Kho_files/bootstrap-colorpicker.min.js.tải xuống"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="./Quản lý Kho_files/tempusdominus-bootstrap-4.min.js.tải xuống"></script>
+    <!-- Bootstrap Switch -->
+    <script src="./Quản lý Kho_files/bootstrap-switch.min.js.tải xuống"></script>
+    <!-- BS-Stepper -->
+    <script src="./Quản lý Kho_files/bs-stepper.min.js.tải xuống"></script>
+    <!-- dropzonejs -->
+    <script src="./Quản lý Kho_files/dropzone.min.js.tải xuống"></script>
+    <!-- AdminLTE App -->
+    <script src="./Quản lý Kho_files/adminlte.min.js.tải xuống"></script>
+
+    <!-- Ion Slider -->
+    <script src="./Quản lý Kho_files/ion.rangeSlider.min.js.tải xuống"></script>
+    <!-- Bootstrap slider -->
+    <script src="./Quản lý Kho_files/bootstrap-slider.min.js.tải xuống"></script>
+    <!-- bs-custom-file-input -->
+    <script src="./Quản lý Kho_files/bs-custom-file-input.js.tải xuống"></script>
+    
+    <script src="./Quản lý Kho_files/bs-custom-file-input.min.js.tải xuống"></script>
+    <!-- Summernote -->
+    <script src="./Quản lý Kho_files/summernote-bs4.min.js.tải xuống"></script>
+    <!-- CodeMirror -->
+    <script src="./Quản lý Kho_files/codemirror.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/css.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/xml.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/htmlmixed.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/bootstrap.bundle.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/bootstrap-multiselect.js.tải xuống"></script>
+
+
+    <script src="./Quản lý Kho_files/jquery.validate.unobtrusive.js.tải xuống"></script>
+    <!--script autocomplete-->
+    <script src="./Quản lý Kho_files/typeahead.bundle.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jsInit.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jsControl.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jsNumber.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jsHamChung.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/jquery.unobtrusive-ajax.min.js.tải xuống"></script>
+
+
+    
+    
+    <!-- AdminLTE for demo purposes -->
+    <script src="./Quản lý Kho_files/demo.js.tải xuống"></script>
+
+    
+
+    
+    
+    <script src="./Quản lý Kho_files/lightgallery.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/lg-pager.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/lg-autoplay.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/lg-fullscreen.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/lg-zoom.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/lg-hash.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/lg-share.min.js.tải xuống"></script>
+    <script src="./Quản lý Kho_files/lg-rotate.min.js.tải xuống"></script>
+    <script>
+        lightGallery(document.getElementById('lightgallery'));
+        lightGallery(document.getElementById('lightgalleryHD'));
+        lightGallery(document.getElementById('lightgalleryND'));
+        lightGallery(document.getElementById('lightgalleryCCCD'));
+        lightGallery(document.getElementById('lightgalleryTD'));
+        var $dynamicGallery = document.getElementById('lightgalleryBank');
+        const dynamicGallery = lightGallery($dynamicGallery, {
+            dynamic: true,
+        });
+        $dynamicGallery.addEventListener('click', function () {
+            // Starts with third item.(Optional).
+            // This is useful if you want use dynamic mode with
+            // custom thumbnails (thumbnails outside gallery),
+            //dynamicGallery.openGallery(2);
+            //alert('khong biet gi')
+        });
+    </script>
+    <script>
+
+        $(document).ready(function () {
+            $("*").dblclick(function (e) {
+                e.preventDefault();
+            });
+
+            $('#panelContentBank').hide();
+           //Begin multiselect checkbox
+            $('#'+'Detail_sLoaiHang').multiselect({
+                includeSelectAllOption: true,
+                enableFiltering: true,
+                buttonContainer: '<div class="btn-group w-100" id="sTenLoaiHang" />'
+            });
+            var data = "J,X,K,F,H";
+            //Make an array
+
+            var dataarray = data.split(",");
+            $('#' + 'Detail_sLoaiHang').val(dataarray);
+
+            $('#' + 'Detail_sLoaiHang').multiselect("refresh");
+            //End multiselect checkbox
+            /*$('#divGhiChu').scrollTop($('#divGhiChu')[0].scrollHeight);*/
+            $('#openDaCoc').click(function () {
+                $('#modal-success').modal();
+            });
+            $('#openDaBan').click(function () {
+                $('#modal-warning').modal();
+            });
+            $('#openDinhChiHang').click(function () {
+                $('#modal-DinhChiHang').modal();
+                $('#actionDC').val("DinhChiHang");
+                $('#Detail_sLydoDinhChi').val("");
+            });
+            $('#openGoDinhChi').click(function () {
+                $('#modal-DinhChiHang').modal();
+                $('#actionDC').val("GoDinhChi");
+                $('#Detail_sLydoGoDinhChi').val("");
+            });
+            $('#openDungBan').click(function () {
+                $('#modal-danger').modal();
+            });
+            $('#openBanLai').click(function () {
+                $('#modal-banlai').modal();
+            });
+
+            $('#openChimTroiCaBe').click(function () {
+                $('#modal-chimtroicabe').modal();
+            });
+            //$('#openGhiChu').click(function () {
+            //    $('#modal-GhiChu').modal();
+            //});
+            $('#openGuiKhoBank').click(function () {
+                $('#bkhobank').val($(this).data('id'))
+                $('#modal-GuiKhoBank').modal();
+            });
+
+            $('#openGoKhoBank').click(function () {
+                $('#bkhobank').val($(this).data('id'))
+                $('#modal-GoKhoBank').modal();
+            });
+
+            $('#openDuyetGuiBank').click(function () {
+                $('#panelContentBank').toggle('slow');
+            });
+            $('#guiBDS').click(function () {
+                var id = $(this).data('id');
+                var url = "/Hang/GuiBDS";
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (data) {
+                        if (!data.success) {
+                            toastr.error("Không thực hiện được mã hàng " + id);
+                        }
+                        else {
+                            toastr.success("Thực hiện thành công mã hàng " + id);
+                        }
+
+                       /* location.reload();*/
+                    }
+                });
+            });
+            $('#xoaBDS').click(function () {
+                var id = $(this).data('id');
+                var url = "/Hang/XoaBDS";
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (data) {
+                        if (!data.success) {
+                            toastr.error("Không thực hiện được mã hàng " + id);
+                        }
+                        else {
+                            toastr.success("Thực hiện thành công mã hàng " + id);
+                        }
+
+                        /* location.reload();*/
+                    }
+                });
+            });
+            function formatDate(jsonDate) {
+                // Sử dụng Moment.js để phân tích và định dạng ngày giờ
+                var timestamp = parseInt(jsonDate.replace('/Date(', '').replace(')/', ''), 10);
+                var formattedDate = moment(timestamp).format('DD/MM/YYYY HH:mm');
+                return formattedDate;
+            }
+            $("#different_seri").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '/HangLog/Different_Seri/fjc7ue-mpm1br97-ebeb9de',
+                    success: function (data) {
+                        console.log(data);
+                        $('#modal_diff_seri').modal();
+                        $('#lst_seri').html("");
+                        $('#lst_seri').append("<tr><th class='HeaderTD'>STT</th><th class='HeaderTD  text-nowrap text-center'>Sổ seri sổ đỏ</th><th class='HeaderTD text-nowrap text-center'>Ngày sửa</th><th class='HeaderTD text-nowrap  text-center'>Chi tiết</th></tr>");
+                        if (data.dt_seri != null && data.dt_seri.length > 0) {
+                            $('#modal_diff_seri').modal();
+                            var count = 0;
+                            for (var i = data.dt_seri.length - 1; i >= 0; i--){
+                                count++;
+                                var link = "<td class='text-center'><a href='/HangLog/Index?sSoSoDo=" + data.dt_seri[i].sSoSoDo + "' title='Xem' target='_blank'>" + data.dt_seri[i].sSoSoDo + "</a></td>";
+                                if (i == 0) {
+                                    if ("AA03073884" == data.dt_seri[i].sSoSoDo) {
+                                        $('#lst_seri').append("<tr><td class='text-center'>" + count + "</td>" + link + " <td class='text-center'> " + formatDate(data.dt_seri[i].dNgaySua) + "</td><td class='text-center'>Hiện tại</td></tr> ");
+                                    } else {
+                                        $('#lst_seri').append("<tr><td class='text-center'>" + count + "</td>" + link + " <td class='text-center'> " + formatDate(data.dt_seri[i].dNgaySua) + "</td><td class='text-center'><a href='/HangLog/Detail/" + data.dt_seri[i].vId + "' title='Xem' target='_blank' class='btn btn-xs'><i class='fas fa-eye'></i></a></td></tr> ");
+                                    }
+                                } else {
+                                    $('#lst_seri').append("<tr><td class='text-center'>" + count + "</td>" + link + " <td class='text-center'> " + formatDate(data.dt_seri[i].dNgaySua) + "</td><td class='text-center'><a href='/HangLog/Detail/" + data.dt_seri[i].vId + "' title='Xem' target='_blank' class='btn btn-xs'><i class='fas fa-eye'></i></a></td></tr> ");
+                                }
+                            }
+                        } else {
+                            $('#lst_seri').append("<tr><td class='text-center'>1</td ><td class='text-center'>" + "AA03073884" + " </td><td class='text-center'>" + "26/05/2026 09:48" + "</td><td class='text-center'>Hiện tại</td></tr> ");
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra!");
+                    }
+                });
+            });
+            $("#different").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '/HangLog/Different/fjc7ue-mpm1br97-ebeb9de',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.isOnly == "1") {
+                            alert("Đây là bản ghi đầu tiên của Hàng, chưa có bản ghi nhật ký nào để so sánh!");
+                        } else {
+                            var item = data.data;
+                            // Duyệt qua từng trường và giá trị của đối tượng
+                            var count = 0;
+                            $.each(item, function (key, value) {
+                                if ($('#diff').find('#' + 'Detail_' + key).length > 0) {
+                                    switch (key) {
+                                        case "iTrangThai":
+                                            if ("5" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                var svalue = ["Mới tạo", "Chưa chứng thực", "Chờ duyệt", "Chưa đạt chuẩn", "Không đạt chuẩn", "Chuẩn", "Tạm dừng bán", "Đã cọc", "Đã bán", "Chim trời cá bể", "Đình chỉ"];
+
+                                                $('#' + 'Detail_' + key).attr('title', svalue[value]);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "5");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "5");
+                                            }
+                                            break;
+                                        case "sDienThoaiChuNha":
+                                            if ("" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', value);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "");
+                                            }
+                                            break;
+                                        case "sLoaiHang":
+                                            if ("J,X,K,F,H" != value) {
+                                                $('#sTenLoaiHang button').css({
+                                                    'color': '#000000',
+
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#sTenLoaiHang button').attr('title', data.sLoaiHang);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "J,X,K,F,H");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "J,X,K,F,H");
+                                            }
+                                            break;
+                                        case "bCamKetChuan":
+                                            if ("TRUE" != value.toString().toUpperCase()) {
+                                                $('#diff_camketdatchuan').css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', value.toString().toUpperCase() == "TRUE" ? "Có cam kết đạt chuẩn" : "Không cam kết đạt chuẩn");
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value.toString().toUpperCase() + " / " + "TRUE");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value.toString().toUpperCase() + " / " + "TRUE");
+                                            }
+                                            break;
+                                        case "dNgayChuan":
+                                            if ("5/26/2026 9:48:30 AM" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', value);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "5/26/2026 9:48:30 AM");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "5/26/2026 9:48:30 AM");
+                                            }
+                                            break;
+                                        case "dNgaySua":
+                                            if ("5/26/2026 9:48:07 AM" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', value);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "5/26/2026 9:48:07 AM");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "5/26/2026 9:48:07 AM");
+                                            }
+                                            break;
+                                        case "dNgayDatCoc":
+                                            if ("" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', value);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "");
+                                            }
+                                            break;
+                                        case "sFaceBook":
+                                            if ("https://www.facebook.com/profile.php?id=100024686896771" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', value);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "https://www.facebook.com/profile.php?id=100024686896771");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "https://www.facebook.com/profile.php?id=100024686896771");
+                                            }
+                                            break;
+                                        case "iDuAn":
+                                            if ("0" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', data.sDuAn);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "0");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "0");
+                                            }
+                                            break;
+                                        case "iDienTich":
+                                            if ("14.0" != value) {
+                                                $('#' + 'Detail_' + key + '_show').css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key + '_show').attr('title', data.data["iDienTich"].toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+                                                count++;
+                                                console.log("Không Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "14.0");
+                                            } else {
+                                                console.log("Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "14.0");
+                                            }
+                                            break;
+                                        case "iDienTichSo":
+                                            if ("14.0" != value) {
+                                                $('#' + 'Detail_' + key + '_show').css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key + '_show').attr('title', data.data["iDienTichSo"].toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+                                                count++;
+                                                console.log("Không Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "14.0");
+                                            } else {
+                                                console.log("Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "14.0");
+                                            }
+                                            break;
+                                        case "iGiaChaoHopDong":
+                                            if ("4200" != value) {
+                                                $('#' + 'Detail_' + key + '_show').css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key + '_show').attr('title', data.data["iGiaChaoHopDong"].toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+                                                count++;
+                                                console.log("Không Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "4200");
+                                            } else {
+                                                console.log("Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "4200");
+                                            }
+                                            break;
+                                        case "iTienHoaHong":
+                                            if ("0" != value) {
+                                                $('#' + 'Detail_' + key + '_show').css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key + '_show').attr('title', data.data["iTienHoaHong"].toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+                                                count++;
+                                                console.log("Không Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "0");
+                                            } else {
+                                                console.log("Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + "0");
+                                            }
+                                            break;
+                                        case "iID_HuongNha":
+                                            if ("0" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', data.sHuongNha);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "0");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "0");
+                                            }
+                                            break;
+                                        case "iTrangThaiSoDo":
+                                            if ("0" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                $('#' + 'Detail_' + key).attr('title', data.sTTSoDo);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "0");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "0");
+                                            }
+                                            break;
+                                        case "iID_Nguon":
+                                            if ("1" != value) {
+                                                $('#' + 'Detail_' + key).css({
+                                                    'color': '#000000',
+                                                    'border': '1px solid #ffe289',
+                                                    'background-color': '#fff6da',
+                                                });
+                                                switch (value) {
+                                                    case 1:
+                                                        {
+                                                            value = "Đầu chủ";
+                                                            break;
+                                                        }
+                                                    case 2:
+                                                        {
+                                                            value = "Hội đồng thẩm định";
+                                                            break;
+                                                        }
+                                                    case 3:
+                                                        {
+                                                            value = "Chính chủ AI";
+                                                            break;
+                                                        }
+                                                    case 4:
+                                                        {
+                                                            value = "Đối tác";
+                                                            break;
+                                                        }
+                                                }
+                                                $('#' + 'Detail_' + key).attr('title', value);
+                                                count++;
+                                                console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + "1");
+                                            } else {
+                                                console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + "1");
+                                            }
+                                            break;
+                                        default:
+                                            if ($('#' + 'Detail_' + key + '_show').length > 0) {
+                                                if ($('#' + 'Detail_' + key + '_show').val() != value) {
+                                                    $('#' + 'Detail_' + key + '_show').css({
+                                                        'color': '#000000',
+
+                                                        'border': '1px solid #ffe289',
+                                                        'background-color': '#fff6da',
+                                                    });
+                                                    $('#' + 'Detail_' + key + '_show').attr('title', value = "" ? "Không xác định" : value);
+                                                    count++;
+                                                    console.log("Không Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + $('#' + 'Detail_' + key + '_show').val());
+                                                } else {
+                                                    console.log("Trùng : " + key + '_show' + "(cũ/ mới) : " + value + " / " + $('#' + 'Detail_' + key).val());
+                                                }
+                                            } else if ($('#' + 'Detail_' + key).length > 0) {
+                                                if ($('#' + 'Detail_' + key).val() != value) {
+                                                    $('#' + 'Detail_' + key).css({
+                                                        'color': '#000000',
+                                                        'border': '1px solid #ffe289',
+                                                        'background-color': '#fff6da',
+                                                    });
+                                                    $('#' + 'Detail_' + key).attr('title', value = "" ? "Không xác định" : value);
+                                                    count++;
+                                                    console.log("Không Trùng : " + key + "(cũ/ mới) : " + value + " / " + $('#' + 'Detail_' + key).val());
+                                                } else {
+                                                    console.log("Trùng : " + key + "(cũ/ mới) : " + value + " / " + $('#' + 'Detail_' + key).val());
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                            });
+                            alert("So sánh thành công!\n" + "Có " + count + " giá trị thay đổi");
+                            $('html, body').animate({ scrollTop: 0 }, 'slow');
+                        }
+
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra!\n" + data.error + data);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+
+        function logoff() {
+            $("#frmlogoff").submit();
+        }
+        $(function () {
+
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
+
+
+        });
+
+
+        $(document).ready(function () {
+            $('body').on('click', '.showSearch', function (e) {
+                e.preventDefault();
+                var show = $('#ShowSearch').hasClass('openS');
+                if (show) {
+                    $('#ShowSearch').addClass('closeS');
+                    $('#ShowSearch').removeClass('openS');
+                } else {
+                    $('#ShowSearch').removeClass('closeS');
+                    $('#ShowSearch').addClass('openS');
+                }
+            });
+        });
+
+    </script>
+
+
+
+<div id="lightboxOverlay" tabindex="-1" class="lightboxOverlay" style="display: none;"></div><div id="lightbox" tabindex="-1" class="lightbox" style="display: none;"><div class="lb-outerContainer"><div class="lb-container"><img class="lb-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt=""><div class="lb-nav"><a class="lb-prev" aria-label="Previous image" href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de"></a><a class="lb-next" aria-label="Next image" href="https://data.thienkhoi.com/Hang/Detail/fjc7ue-mpm1br97-ebeb9de"></a></div><div class="lb-loader"><a class="lb-cancel"></a></div></div></div><div class="lb-dataContainer"><div class="lb-data"><div class="lb-details"><span class="lb-caption"></span><span class="lb-number"></span></div><div class="lb-closeContainer"><a class="lb-close"></a></div></div></div></div><button id="tk-crawl-btn" style="background-color: rgb(192, 57, 43);">💾 LƯU CĂN NÀY VỀ POOL</button></body></html>

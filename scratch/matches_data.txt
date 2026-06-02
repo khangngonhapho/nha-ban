@@ -1,0 +1,12 @@
+
+=== Matches for '__gsCallback' ===
+Line 3652: window.__gsCallback = function (response) {
+Line 3746: s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback`;
+
+=== Matches for 'loadData' ===
+Line 3408: async function loadData() {
+Line 5346: loadData();
+Line 5409: loadData();
+Line 6337: loadData();
+Line 7311: await loadData();
+Line 7341: loadData();

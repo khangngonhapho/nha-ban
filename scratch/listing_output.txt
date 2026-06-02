@@ -1,0 +1,330 @@
+Total rows found: 76
+
+--- Row 6 ---
+Row data length: 38
+  Col 0: NWMIMOAIMITC
+  Col 1: Cao Thắng - Bàn Cờ - Quận 3 - 32m2 - Hẻm ô tô, Chính chủ, Thế chấp ngân hàng - -8.5 tỷ
+  Col 2: 32.0
+  Col 3: 5.0
+  Col 4: 3.2
+  Col 5: 8.5
+  Col 6: 3.0
+  Col 7: Bàn Cờ
+  Col 8: Hẻm
+  Col 9: Đông
+  Col 10: None
+  Col 11: 4.0
+  Col 12: Bình thường
+  Col 13: None
+  Col 14: None
+  Col 15: None
+  Col 16: + Vị trí: Quận 3, Phường Bàn Cờ. Căn nhà nằm trong hẻm rộng 4m, thuận tiện cho xe ô tô ra vào, tạo không gian sống thoáng đãng và yên tĩnh. Hẻm thông thoáng, dễ dàng di chuyển đến các khu vực lân cận. 
+
++ Kết cấu: Căn nhà được thiết kế 5 tầng với 4 phòng ngủ và 5 nhà vệ sinh, đáp ứng đầy đủ nhu cầu sinh hoạt cho gia đình đông thành viên hoặc có thể cho thuê. Mặt tiền rộng 3.2m, tạo cảm giác thoải mái và dễ chịu. 
+
++ Kết nối & Tiện ích: Nằm gần các trục đường lớn như Nguyễn Thiện Thuật, Cao Thắng, khu vực này nổi tiếng với sự sầm uất, dân trí cao và an ninh tốt. Cách chợ chỉ 50m, thuận lợi cho việc kinh doanh buôn bán. Khu vực dân cư đông đúc, tạo điều kiện cho dòng tiền ổn định từ việc cho thuê. 
+
++ Pháp lý: Sổ đẹp, hoàn công chuẩn, hỗ trợ khách hàng vay ngân hàng dễ dàng.
+  Col 17: https://tk-assets.spms2.com/2025/10/07/36nm-756D1AB5-mggkbwqx_26_8.jpg
+  Col 18: https://tk-assets.spms2.com/2025/10/07/36nm-756D1AB5-mggkbwqx_32_11.jpg
+  Col 19: https://tk-assets.spms2.com/2025/10/07/36nm-756D1AB5-mggkbwqx_38_15.jpg
+  Col 20: https://tk-assets.spms2.com/2025/10/07/36nm-756D1AB5-mggkbwqx_39_16.jpg
+  Col 21: None
+  Col 22: None
+  Col 23: None
+  Col 24: None
+  Col 25: None
+  Col 26: None
+  Col 27: Date(2026,4,20)
+  Col 28: Phường 3
+  Col 29: 4.0
+  Col 30: 5.0
+  Col 31: Cao Thắng
+  Col 32: None
+  Col 33: None
+  Col 34: SYS-MP756P72-9B
+  Col 35: None
+  Col 36: None
+  Col 37: None
+
+--- Row 10 ---
+Row data length: 38
+  Col 0: MWSIAZIMCITTN
+  Col 1: Nguyễn Thiện Thuật - Bàn Cờ - Quận 3 - 30.7m2 - Vị trí đẹp, kinh doanh sầm uất, hẻm ô tô thông tứ tung - -8.2 tỷ
+  Col 2: 30.7
+  Col 3: 2.0
+  Col 4: 3.1
+  Col 5: 8.2
+  Col 6: 3.0
+  Col 7: Bàn Cờ
+  Col 8: Hẻm
+  Col 9: None
+  Col 10: None
+  Col 11: 8.0
+  Col 12: Bình thường
+  Col 13: None
+  Col 14: None
+  Col 15: None
+  Col 16: + Vị trí: Quận 3, Phường Bàn Cờ. Đặc điểm hẻm rộng 8m, thông tứ tung, rất thuận tiện cho việc di chuyển và kinh doanh. Vị trí an ninh, sạch sẽ, dân trí cao.  
+
++ Kết cấu: Nhà có kết cấu 2 tầng với 2 phòng ngủ và 1 WC, phù hợp để ở hoặc cho thuê. Nhà cũ, có thể sửa chữa theo ý thích.  
+
++ Kết nối & Tiện ích: Nằm trên con đường Nguyễn Thiện Thuật, khu vực này nổi tiếng với sự sầm uất và nhộn nhịp. Kết nối dễ dàng với các trục đường lớn như Đinh Tiên Hoàng, Võ Thị Sáu, Nguyễn Đình Chiểu, tạo điều kiện thuận lợi cho việc di chuyển.  
+
++ Pháp lý: Sổ hồng chính chủ, công chứng ngay, đảm bảo quyền lợi cho người mua.
+  Col 17: https://tk-assets.spms2.com/origin/2023/4/20/image_picker_F587CA22-BA0B-49A3-BF9E-98B1119A0246-476-000000258D2175E3.jpg
+  Col 18: https://tk-assets.spms2.com/origin/2023/4/20/image_picker_53BBFD2D-2024-4E42-A9DF-61A9291243AB-476-000000258D65FFA6.jpg
+  Col 19: https://tk-assets.spms2.com/origin/2023/4/20/image_picker_6A9A5370-D1DD-487E-94EF-1ED51D9AC84E-476-000000258CFD199B.jpg
+  Col 20: https://tk-assets.spms2.com/origin/2023/4/20/image_picker_81902761-8E33-496E-BBCB-1E8D97063F29-476-000000258D363FAC.jpg
+  Col 21: None
+  Col 22: None
+  Col 23: None
+  Col 24: None
+  Col 25: None
+  Col 26: None
+  Col 27: Date(2026,4,20)
+  Col 28: Phường 7
+  Col 29: None
+  Col 30: None
+  Col 31: Nguyễn Thiện Thuật
+  Col 32: None
+  Col 33: None
+  Col 34: SYS-MP759ZIK-MM
+  Col 35: None
+  Col 36: None
+  Col 37: None
+
+--- Row 22 ---
+Row data length: 38
+  Col 0: HWAHIMOCIMHITTN
+  Col 1: Nguyễn Thiện Thuật - Bàn Cờ - Quận 3 - 31.8m2 - Hẻm ô tô, nội thất mới 100% - -7.8 tỷ
+  Col 2: 31.8
+  Col 3: 2.0
+  Col 4: 3.0
+  Col 5: 7.8
+  Col 6: 3.0
+  Col 7: Bàn Cờ
+  Col 8: Hẻm
+  Col 9: Tây-Nam
+  Col 10: None
+  Col 11: 4.0
+  Col 12: Bình thường
+  Col 13: None
+  Col 14: None
+  Col 15: None
+  Col 16: + Vị trí: Quận 3, Phường Bàn Cờ. Căn nhà nằm trong hẻm rộng 4m, thông thoáng, thuận tiện di chuyển và an ninh tốt. Khu vực yên tĩnh, lý tưởng để sinh sống hoặc đầu tư kinh doanh. Hẻm thông ra các đường lớn, dễ dàng kết nối với các khu vực lân cận. 
+
++ Kết cấu: Căn nhà được xây dựng 2 tầng, với 2 phòng ngủ và 2 nhà vệ sinh, đáp ứng đầy đủ nhu cầu sinh hoạt cho gia đình. Nhà mới sửa chữa, chủ nhà tặng toàn bộ nội thất 100%, sẵn sàng vào ở ngay. 
+
++ Kết nối & Tiện ích: Nằm ngay khu vực trung tâm Quận 3, căn nhà kết nối dễ dàng với các trục đường lớn như Nguyễn Thiện Thuật, Bàn Cờ, tạo điều kiện thuận lợi cho việc di chuyển. Khu vực dân cư đông đúc, phù hợp cho việc sinh sống và kinh doanh. 
+
++ Pháp lý: Sổ hồng hoàn công đầy đủ, nhà đã được xóa thế chấp ngân hàng, đảm bảo tính pháp lý rõ ràng cho người mua. 
+  Col 17: https://tk-assets.spms2.com/2025/12/08/3e81-2A509C14-miwrfeh2_55_2.jpg
+  Col 18: https://tk-assets.spms2.com/2025/07/03/3e81-2A509C14-mcn8f9dm_36_12.jpg
+  Col 19: None
+  Col 20: None
+  Col 21: None
+  Col 22: None
+  Col 23: None
+  Col 24: None
+  Col 25: None
+  Col 26: None
+  Col 27: Date(2026,4,20)
+  Col 28: Phường 7
+  Col 29: 2.0
+  Col 30: 2.0
+  Col 31: Nguyễn Thiện Thuật
+  Col 32: None
+  Col 33: None
+  Col 34: SYS-MP7634YK-9F
+  Col 35: None
+  Col 36: None
+  Col 37: None
+
+--- Row 24 ---
+Row data length: 38
+  Col 0: MWZNINMITTN
+  Col 1: Nguyễn Thiện Thuật - Bàn Cờ - Quận 3 - 40m2 - Hẻm ô tô, dòng tiền ổn định, chính chủ - -7.3 tỷ
+  Col 2: 40.0
+  Col 3: 2.0
+  Col 4: 3.5
+  Col 5: 7.3
+  Col 6: 3.0
+  Col 7: Bàn Cờ
+  Col 8: Hẻm
+  Col 9: None
+  Col 10: None
+  Col 11: 8.0
+  Col 12: Bình thường
+  Col 13: None
+  Col 14: None
+  Col 15: None
+  Col 16: + Vị trí: Quận 3, Phường Bàn Cờ. Căn nhà nằm trong hẻm rộng 8m, thông thoáng, thuận tiện cho việc di chuyển và đậu xe hơi. Khu vực yên tĩnh, an ninh tốt, gần các trục đường lớn như Nguyễn Đình Chiểu và các tiện ích xung quanh. 
+
++ Kết cấu: Căn nhà được xây dựng 2 tầng kiên cố với diện tích thực tế 40m2, bao gồm 2 phòng ngủ và 2 nhà vệ sinh. Thiết kế hợp lý, không gian sống thoải mái cho gia đình. 
+
++ Kết nối & Tiện ích: Nằm trên con đường Nguyễn Thiện Thuật nổi tiếng, khu vực này có dân trí cao, gần gũi với các tiện ích thiết yếu. Kết nối dễ dàng đến các trục đường lớn, giúp di chuyển nhanh chóng đến các khu vực lân cận. 
+
++ Pháp lý: Sổ hồng riêng, hoàn công đầy đủ, hiện đang vay ngân hàng. Ngân hàng đã định giá căn nhà lên đến 10 tỷ, mang lại cơ hội đầu tư hấp dẫn cho khách hàng.
+  Col 17: https://tk-assets.spms2.com/2026/04/21/3fs7-1B5955C8-mo89ril0_300_9.jpg
+  Col 18: https://tk-assets.spms2.com/2026/04/21/3fs7-1B5955C8-mo89ril0_236_7.jpg
+  Col 19: https://tk-assets.spms2.com/2026/04/21/3fs7-1B5955C8-mo89ril0_385_12.jpg
+  Col 20: None
+  Col 21: None
+  Col 22: None
+  Col 23: None
+  Col 24: None
+  Col 25: None
+  Col 26: None
+  Col 27: Date(2026,4,20)
+  Col 28: Phường 7
+  Col 29: 2.0
+  Col 30: 2.0
+  Col 31: Nguyễn Thiện Thuật
+  Col 32: None
+  Col 33: None
+  Col 34: SYS-MP7637OS-RJ
+  Col 35: None
+  Col 36: None
+  Col 37: None
+
+--- Row 32 ---
+Row data length: 38
+  Col 0: MWANIBHITTN
+  Col 1: Nguyễn Thiện Thuật - Bàn Cờ - Quận 3 - 40m2 - Hẻm ô tô, Dòng tiền ổn định, Chính chủ - -9.3 tỷ
+  Col 2: 40.0
+  Col 3: 2.0
+  Col 4: 3.5
+  Col 5: 9.3
+  Col 6: 3.0
+  Col 7: Bàn Cờ
+  Col 8: Hẻm
+  Col 9: None
+  Col 10: None
+  Col 11: 5.0
+  Col 12: Bình thường
+  Col 13: None
+  Col 14: None
+  Col 15: None
+  Col 16: + Vị trí: Quận 3, Phường Bàn Cờ. Căn nhà nằm trong hẻm rộng 5m, thuận tiện cho xe hơi vào tận nơi, mang lại sự thoải mái và riêng tư cho cư dân. Khu vực an ninh tốt, dân trí cao, lý tưởng để sinh sống và làm việc. 
+
++ Kết cấu: Căn nhà được xây dựng 2 tầng với thiết kế hợp lý, bao gồm 2 phòng ngủ, 1 WC, phòng khách và bếp. Không gian thoáng đãng, phù hợp cho gia đình hoặc có thể sử dụng để kinh doanh. 
+
++ Kết nối & Tiện ích: Nằm gần các trục đường lớn như Nguyễn Đình Chiểu và Đinh Tiên Hoàng, khu vực này nổi tiếng với sự sầm uất và nhộn nhịp. Dễ dàng di chuyển đến các khu vực lân cận, thuận lợi cho việc sinh hoạt hàng ngày. 
+
++ Pháp lý: Sổ hồng chính chủ, pháp lý rõ ràng, công chứng nhanh chóng trong vòng 1 phút 30 giây.
+  Col 17: https://tk-assets.spms2.com/2025/11/06/jvn-506BEEE4-mhmvtctd_26_9.jpg
+  Col 18: https://tk-assets.spms2.com/2025/11/06/jvn-506BEEE4-mhmvw7b5_1_1.jpg
+  Col 19: https://tk-assets.spms2.com/2025/11/06/jvn-506BEEE4-mhmvtctd_31_10.jpg
+  Col 20: https://tk-assets.spms2.com/2025/11/06/jvn-506BEEE4-mhmvtctd_39_13.jpg
+  Col 21: https://tk-assets.spms2.com/2025/11/06/jvn-506BEEE4-mhmvtctd_41_14.jpg
+  Col 22: None
+  Col 23: None
+  Col 24: None
+  Col 25: None
+  Col 26: None
+  Col 27: Date(2026,4,20)
+  Col 28: Phường 7
+  Col 29: 2.0
+  Col 30: None
+  Col 31: Nguyễn Thiện Thuật
+  Col 32: None
+  Col 33: None
+  Col 34: SYS-MP766JN2-5
+  Col 35: None
+  Col 36: None
+  Col 37: None
+
+--- Row 34 ---
+Row data length: 38
+  Col 0: HWMHIBZITTN
+  Col 1: Mặt tiền chợ - Nguyễn Thiện Thuật - Bàn Cờ - Quận 3 - 30,1m2 - Dòng tiền ổn định, Hẻm ô tô, Chính chủ - -9.5 tỷ
+  Col 2: 30.1
+  Col 3: 5.0
+  Col 4: 3.0
+  Col 5: 9.5
+  Col 6: 3.0
+  Col 7: Bàn Cờ
+  Col 8: Hẻm
+  Col 9: None
+  Col 10: None
+  Col 11: 6.0
+  Col 12: Bình thường
+  Col 13: None
+  Col 14: None
+  Col 15: None
+  Col 16: + Vị trí: Quận 3, Phường Bàn Cờ. Căn nhà nằm trong hẻm rộng 6m, thuận tiện cho xe ô tô ra vào, tạo điều kiện lý tưởng cho việc kinh doanh và sinh sống. Vị trí đắc địa gần chợ, dễ dàng kết nối với các trục đường lớn xung quanh. 
+
++ Kết cấu: Căn nhà được xây dựng 5 tầng với thiết kế thông minh, bao gồm 4 phòng ngủ và 4 WC, phù hợp cho gia đình đông người hoặc cho thuê. Không gian phòng khách rộng rãi, tạo cảm giác thoải mái và tiện nghi. 
+
++ Kết nối & Tiện ích: Nằm trên con đường Nguyễn Thiện Thuật nổi tiếng, khu vực này sầm uất và nhộn nhịp, dân trí cao, an ninh tốt. Căn nhà dễ dàng kết nối với các trục đường lớn như Bàn Cờ, Nguyễn Đình Chiểu, Cao Thắng, Điện Biên Phủ, mang đến nhiều tiện ích cho cư dân. 
+
++ Pháp lý: Sổ hồng riêng, hoàn công đầy đủ, pháp lý rõ ràng, công chứng nhanh gọn, đảm bảo quyền lợi cho người mua.
+  Col 17: https://tk-assets.spms2.com/2025/10/26/3jd3-6EA20FD8-mh7kq2lk_41_13.jpg
+  Col 18: https://tk-assets.spms2.com/2025/10/26/3jd3-6EA20FD8-mh7kq2lk_30_8.jpg
+  Col 19: None
+  Col 20: None
+  Col 21: None
+  Col 22: None
+  Col 23: None
+  Col 24: None
+  Col 25: None
+  Col 26: None
+  Col 27: Date(2026,4,20)
+  Col 28: Phường 7
+  Col 29: 4.0
+  Col 30: 4.0
+  Col 31: Nguyễn Thiện Thuật
+  Col 32: None
+  Col 33: None
+  Col 34: SYS-MP768E8R-8M
+  Col 35: None
+  Col 36: None
+  Col 37: None
+
+--- Row 35 ---
+Row data length: 38
+  Col 0: MWSICTITTN
+  Col 1: Nguyễn Thiện Thuật - Bàn Cờ - Quận 3 - 34.9m2 - Hẻm ô tô, Ký trực tiếp với chủ sở hữu - -8.85 tỷ
+  Col 2: 34.9
+  Col 3: 4.0
+  Col 4: 3.3
+  Col 5: 8.85
+  Col 6: 3.0
+  Col 7: Bàn Cờ
+  Col 8: Hẻm
+  Col 9: None
+  Col 10: None
+  Col 11: 8.0
+  Col 12: Bình thường
+  Col 13: None
+  Col 14: None
+  Col 15: None
+  Col 16: + Vị trí: Quận 3, Phường Bàn Cờ. Hẻm nhựa 8m, rộng rãi, chỉ cách Quận 1 khoảng 200m, thuận tiện di chuyển đến các khu vực lân cận. Khu vực an ninh, dân trí cao, gần các tiện ích thiết yếu. 
+
++ Kết cấu: Nhà 4 tầng BTCT, bao gồm 1 trệt, 2 lầu và sân thượng. Diện tích thực tế 34.9m2, chiều ngang 3.3m, thiết kế thông minh với 2 phòng ngủ rộng rãi, 3 WC, không gian thoáng đãng, nhiều ánh sáng tự nhiên. Có thể cải tạo thêm phòng ngủ trên sân thượng. 
+
++ Kết nối & Tiện ích: Nằm gần các trục đường lớn như Nguyễn Đình Chiểu, thuận tiện cho việc di chuyển. Khu vực sầm uất, gần các trường học, bệnh viện, chợ, đáp ứng đầy đủ nhu cầu sinh hoạt. Hàng xóm thân thiện, môi trường sống lý tưởng cho gia đình hoặc kinh doanh. 
+
++ Pháp lý: Nhà chính chủ, có sổ hồng đầy đủ, công chứng ngay khi giao dịch.
+  Col 17: https://tk-assets.spms2.com/2025/08/23/3ica-FFED63F-menuoifl_27_11.jpg
+  Col 18: https://tk-assets.spms2.com/2025/08/23/3ica-FFED63F-menuoifl_30_13.jpg
+  Col 19: None
+  Col 20: None
+  Col 21: None
+  Col 22: None
+  Col 23: None
+  Col 24: None
+  Col 25: None
+  Col 26: None
+  Col 27: Date(2026,4,20)
+  Col 28: Phường 7
+  Col 29: None
+  Col 30: None
+  Col 31: Nguyễn Thiện Thuật
+  Col 32: None
+  Col 33: None
+  Col 34: SYS-MP768F9D-51
+  Col 35: None
+  Col 36: None
+  Col 37: None

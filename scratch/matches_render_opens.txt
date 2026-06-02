@@ -1,0 +1,33 @@
+
+=== Matches for 'render' ===
+Line 3806: render();
+Line 4131: render();
+Line 4143: render();
+Line 4171: function render() {
+Line 4196: const maxRender = isPool ? 200 : arr.length;
+Line 4197: const itemsToRender = arr.slice(0, maxRender);
+Line 4200: itemsToRender.forEach((p, i) => {
+Line 4286: if (isPool && arr.length > maxRender) {
+Line 4436: if (showFavOnly) { updateStats(); render(); }
+Line 4445: renderLbMain(); renderLbThumbs();
+Line 4453: renderLbMain(); updateLbThumbsUI();
+Line 4456: lbIdx = i; renderLbMain(); updateLbThumbsUI();
+Line 4458: function renderLbMain() {
+Line 4468: function renderLbThumbs() {
+Line 4761: ${renderImageEditorWidget(p)}
+Line 5475: render();
+Line 5552: function renderImageEditorWidget(p) {
+Line 5553: const renderedUrls = new Set();
+Line 5555: function renderUniqueCard(type, index, url, p) {
+Line 5557: if (!cleanUrl || renderedUrls.has(cleanUrl)) return '';
+Line 5558: renderedUrls.add(cleanUrl);
+Line 5559: return renderImageCardForEdit(type, index, url, p);
+Line 5588: html += renderUniqueCard("facade", 0, facadeUrl, p);
+Line 5595: html += renderUniqueCard("interior", i, url, p);
+Line 5603: html += renderUniqueCard("alley", i, url, p);
+Line 5645: function renderImageCardForEdit(type, index, url, p) {
+Line 6462: renderCollectionsManager();
+Line 6470: render();
+Line 6489: renderCollectionsManager();
+Line 6496: render();
+... truncated ...

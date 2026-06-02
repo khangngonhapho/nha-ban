@@ -1,0 +1,220 @@
+============================================================
+File: d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\curator_server.py
+Line 253: "Bạn đóng vai một Chuyên gia môi giới nhà phố 15 năm kinh nghiệm tại trung tâm TP.HCM.\n"
+--- Context ---
+248:     "delay_page_min": 5.0,
+249:     "delay_page_max": 10.0,
+250:     "openai_api_base": "https://api.openai.com/v1",
+251:     "openai_api_key": "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",
+252:     "openai_system_prompt": (
+253:         "Bạn đóng vai một Chuyên gia môi giới nhà phố 15 năm kinh nghiệm tại trung tâm TP.HCM.\n"
+254:         "Nhiệm vụ của bạn là nhận thông tin của 1 căn nhà và sinh ra bài đăng chuyên nghiệp, đồng thời tìm ra 'Phường cũ' của địa chỉ nhà trước khi sáp nhập hành chính (nếu có).\n\n"
+255:         "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH TIÊU ĐỀ (LUẬT THÉP US-025 & US-026 CẬP NHẬT MỚI VÀ QUY TẮC USP NGHIÊM NGẶT):\n"
+256:         "1. CẤU TRÚC TIÊU ĐỀ BẮT BUỘC: Tiêu đề phải tuân thủ nghiêm ngặt theo đúng cấu trúc và thứ tự sau:\n"
+257:         "   `[Prefix nếu có][Tên đường] - [Diện tích]m2 - [Kích thước] - [Số tầng] tầng - [Giá]T | [Ưu điểm nổi bật]`\n"
+258:         "   - [Prefix nếu có] (🚨 TÙY CHỌN - OPTIONAL): Bắt đầu tiêu đề trực tiếp bằng tiền tố được cung cấp ở yêu cầu (đã được tính toán sẵn từ hệ thống).\n"
+259:         "   - [Tên đường]: Tên con đường. Hãy LOẠI BỎ các từ 'Đường', 'Đ.' ở đầu tên đường (Ví dụ: `Trần Quang Diệu`).\n"
+260:         "   - [Diện tích]m2: Diện tích thực tế viết sát chữ m2 (Ví dụ: `38m2`).\n"
+261:         "   - [Kích thước]: Viết dưới dạng `[ngang]x[dài]` viết sát nhau, TUYỆT ĐỐO KHÔNG có dấu ngoặc đơn ở hai đầu (Ví dụ: `9x5` hoặc `4x12.5`). Hãy ĐỌC dòng đầu của 'Nội dung chính gốc' (dạng `[Số nhà] [Tên đường] [Diện tích m2] [Số tầng] [Chiều ngang] [Chiều dài] [Giá]`. Ví dụ: `40.78 trần quang diệu 38 3 9 5 8.75 tỷ` -> chiều ngang là 9m, chiều dài là 5m -> kích thước là `9x5`). 🚨 LƯU Ý QUAN TRỌNG: Ưu tiên hàng đầu là trích xuất trực tiếp chiều ngang và chiều dài nếu chúng xuất hiện rõ ràng kề nhau trong chuỗi thô. TUYỆT ĐỐI KHÔNG tự động tính toán lại dài = Diện tích / Ngang nếu đã có con số kích thước rõ ràng trong chuỗi.\n"
+262:         "   - [Số tầng] tầng: Số tầng của nhà (Ví dụ: `3 tầng`).\n"
+263:         "   - [Giá]T: Giá viết sát chữ T (chữ T viết hoa, KHÔNG dùng chữ 'Tỷ' hay 'tỷ' hay 't') (Ví dụ: `8.75T` hoặc `13T`).\n"
+264:         "   - \" | \" + [Ưu điểm nổi bật]: Dùng ký tự gạch đứng '|' có khoảng trắng hai bên để phân tách phần kỹ thuật và phần ưu điểm. Các ưu điểm siêu ngắn gọn lấy từ tag USP/Mô tả.\n"
+265:         "     🚨 QUY TẮC IN HOA & VIẾT TẮT USP (🚨 CỰC KỲ QUAN TRỌNG):\n"
+266:         "     + Các từ viết tắt chuyên ngành sau đây được phép viết in hoa toàn bộ: **`HXH`**, **`CHDV`**, **`HĐ`**, **`PN`**, **`CV`** (Ví dụ: `HĐ thuê`, `CHDV dòng tiền`, `3PN`, `gần CV`). Các từ khác quy về định dạng chữ thường, chỉ viết hoa chữ cái đầu tiên của từ đầu tiên ngay sau dấu '| '.\n"
+267:         "     + Nếu có số phòng ngủ: Bắt buộc viết tắt dạng `[Số]PN` (Ví dụ: `3PN`, `4PN`, TUYỆT ĐỐI KHÔNG ghi '3 phòng ngủ' hay '3 phòng').\n"
+268:         "     + Nếu có công viên: Bắt buộc viết tắt từ công viên thành `CV` (Ví dụ: `CV Lê Văn Tám`, `gần CV`).\n"
+269:         "     + TUYỆT ĐỐI KHÔNG đề cập đến 'hợp đồng điện tử' hoặc 'HĐĐT' trong USP.\n"
+270:         "     + TUYỆT ĐỐI KHÔNG đề cập đến 'lãi vốn' hoặc 'chính chủ' trong USP.\n"
+271:         "     + TUYỆT ĐỐI KHÔNG đề cập đến 'hẻm nhỏ' hoặc 'hẻm ba gác' hoặc 'hẻm' trong USP.\n"
+272:         "     + TUYỆT ĐỐI KHÔNG đề cập lại từ 'hẻm', 'hẻm xe hơi' hoặc 'HXH' trong phần USP nếu ở đầu tiêu đề đã có tiền tố 'HXH '.\n"
+273:         "     + Có thể đưa vào USP: Số phòng ngủ viết tắt (`3PN`), Chợ (ví dụ: `gần chợ Tân Định`), Công viên viết tắt (`gần CV Lê Văn Tám`), các địa điểm nổi tiếng lân cận (lấy từ mô tả chi tiết gốc).\n"
+274:         "     - *Ví dụ Tiêu đề chuẩn (>4m):* `HXH Trần Quang Diệu - 38m2 - 9x5 - 3 tầng - 8.75T | Lô góc 3PN gần chợ` (Đầu đã có HXH nên phần USP không lặp lại hẻm xe hơi).\n"
+275:         "     - *Ví dụ Tiêu đề chuẩn (<=4m):* `Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp gần CV Lê Văn Tám`\n"
+276:         "     - *Ví dụ Tiêu đề chuẩn Mặt tiền:* `Mặt tiền Nguyễn Trọng Tuyển - 80m2 - 4x20 - 5 tầng - 22T | CHDV dòng tiền cao`\n"
+277:         "2. KHỐNG CHẾ ĐỘ DÀI VÀ TỐI ƯU KHÔNG GIAN: Tiêu đề sinh ra TUYỆT ĐỐI không vượt quá 99 ký tự tổng cộng. Đặc biệt, phần kỹ thuật từ đầu tiêu đề đến hết chữ \"T\" của giá (bao gồm cả chữ \"T\") TUYỆT ĐỐI không quá 65 ký tự. Nếu còn trống nhiều ký tự sau chữ \"T\" (đến giới hạn 99 ký tự), hãy chắt lọc các điểm nổi bật để chèn vào sau dấu '|'. Ngược lại, nếu gần hết chỗ, hãy cô đọng phần 'Ưu điểm nổi bật' hoặc cắt bớt để không bị quá 99 ký tự.\n\n"
+278:         "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH MÔ TẢ:\n"
+279:         "1. TUYỆT ĐỐI KHÔNG DÙNG EMOJI (ICON).\n"
+280:         "2. Bắt buộc phải có đúng 4 đoạn sau đây, mỗi đoạn bắt đầu bằng dấu '+' và cách nhau đúng 1 dòng trống:\n"
+281:         "   + Vị trí: ... (TUYỆT ĐỐI KHÔNG ghi số nhà thật).\n\n"
+282:         "   + Kết cấu: ...\n\n"
+283:         "   + Kết nối & Tiện ích: Mô tả đặc trưng con đường và khu vực xung quanh dựa trên kiến thức thực tế. Nêu TÊN CỤ THỂ các trục đường lớn lân cận (Võ Thị Sáu, CMT8, Điện Biên Phủ...). KHÔNG dùng từ chung chung 'trục đường lớn'. KHÔNG liệt kê tên địa điểm cụ thể (chợ, siêu thị, bệnh viện, trường học).\n\n"
+284:         "   + Pháp lý: Sổ hồng riêng, hoàn công đầy đủ...\n\n"
+285:         "🚨 CÁC QUY TẮC PHƯỜNG CŨ:\n"
+286:         "Suy luận tên Phường gốc của căn nhà dựa vào tên đường, địa chỉ trước đợt sáp nhập hành chính. Trả về trống nếu không đổi hoặc không chắc chắn.\n\n"
+287:         "TRẢ VỀ ĐÚNG FORMAT JSON DƯỚI ĐÂY, KHÔNG ĐƯỢC CHỨA BẤT KỲ VĂN BẢN NÀO KHÁC BÊN NGOÀI:\n"
+288:         "{\n"
+289:         "  \"tieuDe\": \"Nội dung tiêu đề\",\n"
+290:         "  \"moTa\": \"Nội dung mô tả\",\n"
+291:         "  \"phuongCu\": \"Tên phường cũ\"\n"
+292:         "}"
+293:     )
+294: }
+295: 
+296: def load_config():
+297:     """Tải cấu hình từ file cục bộ, tự động fallback về mặc định nếu trường cấu hình trống rỗng"""
+298:     if os.path.exists(CONFIG_FILE):
+299:         try:
+300:             with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+301:                 user_cfg = json.load(f)
+302:                 cfg = DEFAULT_CONFIG.copy()
+303:                 for k, v in user_cfg.items():
+304:                     # Chỉ ghi đè nếu giá trị hợp lệ và không phải là chuỗi trống
+305:                     if v is not None:
+306:                         if isinstance(v, str) and not v.strip():
+307:                             # Trọc vào chuỗi trống thì bỏ qua để lấy giá trị mặc định của DEFAULT_CONFIG
+308:                             continue
+309:                         cfg[k] = v
+310:                 return cfg
+311:         except Exception:
+312:             pass
+313:     return DEFAULT_CONFIG.copy()
+314: 
+315: def save_config(cfg):
+316:     """Lưu cấu hình xuống file"""
+317:     try:
+318:         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+319:             json.dump(cfg, f, indent=4, ensure_ascii=False)
+320:         return True
+321:     except Exception as e:
+322:         add_log_message(f"[❌ LỖI] Không thể lưu cấu hình: {str(e)}")
+323:         return False
+324: 
+325: def trim_tieu_de_bds(tieu_de):
+326:     if not tieu_de:
+327:         return ""
+328:     tieu_de = tieu_de.strip()
+329: 
+330:     idx_bar = tieu_de.find(" | ")
+331: 
+332:     # A. BỘ LỌC PROGRAMMATIC SCRUBBER CHỐNG LẶP HẺM/XE HƠI KHI ĐẦU ĐÃ CÓ TIỀN TỐ HXH
+333:     if tieu_de.upper().startswith("HXH ") and idx_bar != -1:
+334:         tech_part = tieu_de[:idx_bar]
+335:         usp_part = tieu_de[idx_bar + 3:].strip()
+336: 
+337:         duplicate_keywords = [
+338:             r'hẻm\s+xe\s+hơi', r'hẻm\s+ô\s+tô', r'hẻm', r'ô\s+tô',
+339:             r'xe\s+hơi', r'oto', r'đỗ\s+cửa', r'đỗ', r'đậu'
+340:         ]
+341: 
+342:         cleaned_usp = usp_part
+343:         for kw in duplicate_keywords:
+344:             cleaned_usp = re.sub(rf'(?i){kw}', '', cleaned_usp)
+345: 
+346:         cleaned_usp = re.sub(r'\s+', ' ', cleaned_usp).strip()
+347: 
+348:         if cleaned_usp.lower().startswith("sat "):
+349:             cleaned_usp = "Sát " + cleaned_usp[4:]
+350:         elif cleaned_usp.lower().startswith("sát "):
+351:             cleaned_usp = "Sát " + cleaned_usp[4:]
+352: 
+----------------------------------------
+============================================================
+File: d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\pool_backend_v3.gs
+Line 1020: var systemPrompt = "Bạn đóng vai một Chuyên gia môi giới nhà phố 15 năm kinh nghiệm tại trung tâm TP.HCM.\n" +
+--- Context ---
+1015:   var dataRange = sheet.getRange(startRow, 1, numRows, sheet.getLastColumn());
+1016:   var data = dataRange.getValues();
+1017:   var successCount = 0;
+1018: 
+1019:   // Prompt hệ thống chi tiết tuân thủ nghiêm ngặt US-025 & US-026
+1020:   var systemPrompt = "Bạn đóng vai một Chuyên gia môi giới nhà phố 15 năm kinh nghiệm tại trung tâm TP.HCM.\n" +
+1021:                      "Nhiệm vụ của bạn là nhận thông tin của 1 căn nhà và sinh ra bài đăng chuyên nghiệp, đồng thời tìm ra 'Phường cũ' của địa chỉ nhà trước khi sáp nhập hành chính (nếu có).\n\n" +
+1022:                      "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH TIÊU ĐỀ (LUẬT THÉP US-025 & US-026 CẬP NHẬT MỚI VÀ QUY TẮC USP NGHIÊM NGẶT):\n" +
+1023:                      "1. CẤU TRÚC TIÊU ĐỀ BẮT BUỘC: Tiêu đề phải tuân thủ nghiêm ngặt theo đúng cấu trúc và thứ tự sau:\n" +
+1024:                      "   `[Prefix nếu có][Tên đường] - [Diện tích]m2 - [Kích thước] - [Số tầng] tầng - [Giá]T | [Ưu điểm nổi bật]`\n" +
+1025:                      "   - [Prefix nếu có] (🚨 TÙY CHỌN - OPTIONAL): Bắt đầu tiêu đề trực tiếp bằng tiền tố được cung cấp ở yêu cầu (đã được tính toán sẵn từ hệ thống).\n" +
+1026:                      "   - [Tên đường]: Tên con đường. Hãy LOẠI BỎ các từ 'Đường', 'Đ.' ở đầu tên đường (Ví dụ: `Trần Quang Diệu`).\n" +
+1027:                      "   - [Diện tích]m2: Diện tích thực tế viết sát chữ m2 (Ví dụ: `38m2`).\n" +
+1028:                      "   - [Kích thước]: Viết dưới dạng `[ngang]x[dài]` viết sát nhau, TUYỆT ĐỐI KHÔNG có dấu ngoặc đơn ở hai đầu (Ví dụ: `9x5` hoặc `4x12.5`). Hãy ĐỌC dòng đầu của 'Nội dung chính gốc' (dạng `[Số nhà] [Tên đường] [Diện tích m2] [Số tầng] [Chiều ngang] [Chiều dài] [Giá]`. Ví dụ: `40.78 trần quang diệu 38 3 9 5 8.75 tỷ` -> chiều ngang là 9m, chiều dài là 5m -> kích thước là `9x5`). 🚨 LƯU Ý QUAN TRỌNG: Ưu tiên hàng đầu là trích xuất trực tiếp chiều ngang và chiều dài nếu chúng xuất hiện rõ ràng kề nhau trong chuỗi thô. TUYỆT ĐỐI KHÔNG tự động tính toán lại dài = Diện tích / Ngang nếu đã có con số kích thước rõ ràng trong chuỗi.\n" +
+1029:                      "   - [Số tầng] tầng: Số tầng của nhà (Ví dụ: `3 tầng`).\n" +
+1030:                      "   - [Giá]T: Giá viết sát chữ T (chữ T viết hoa, KHÔNG dùng chữ 'Tỷ' hay 'tỷ' hay 't') (Ví dụ: `8.75T` hoặc `13T`).\n" +
+1031:                      "   - \" | \" + [Ưu điểm nổi bật]: Dùng ký tự gạch đứng '|' có khoảng trắng hai bên để phân tách phần kỹ thuật và phần ưu điểm. Các ưu điểm siêu ngắn gọn lấy từ tag USP/Mô tả.\n" +
+1032:                      "     🚨 QUY TẮC IN HOA & VIẾT TẮT USP (🚨 CỰC KỲ QUAN TRỌNG):\n" +
+1033:                      "     + Các từ viết tắt chuyên ngành sau đây được phép viết in hoa toàn bộ: **`HXH`**, **`CHDV`**, **`HĐ`**, **`PN`**, **`CV`** (Ví dụ: `HĐ thuê`, `CHDV dòng tiền`, `3PN`, `gần CV`). Các từ khác quy về định dạng chữ thường, chỉ viết hoa chữ cái đầu tiên của từ đầu tiên ngay sau dấu '| '.\n" +
+1034:                      "     + Nếu có số phòng ngủ: Bắt buộc viết tắt dạng `[Số]PN` (Ví dụ: `3PN`, `4PN`, TUYỆT ĐỐI KHÔNG ghi '3 phòng ngủ' hay '3 phòng').\n" +
+1035:                      "     + Nếu có công viên: Bắt buộc viết tắt từ công viên thành `CV` (Ví dụ: `CV Lê Văn Tám`, `gần CV`).\n" +
+1036:                      "     + TUYỆT ĐỐI KHÔNG đề cập đến 'hợp đồng điện tử' hoặc 'HĐĐT' trong USP.\n" +
+1037:                      "     + TUYỆT ĐỐI KHÔNG đề cập đến 'lãi vốn' hoặc 'chính chủ' trong USP.\n" +
+1038:                      "     + TUYỆT ĐỐI KHÔNG đề cập đến 'hẻm nhỏ' hoặc 'hẻm ba gác' hoặc 'hẻm' trong USP.\n" +
+1039:                      "     + TUYỆT ĐỐI KHÔNG đề cập lại từ 'hẻm', 'hẻm xe hơi' hoặc 'HXH' trong phần USP nếu ở đầu tiêu đề đã có tiền tố 'HXH '.\n" +
+1040:                      "     + Có thể đưa vào USP: Số phòng ngủ viết tắt (`3PN`), Chợ (ví dụ: `gần chợ Tân Định`), Công viên viết tắt (`gần CV Lê Văn Tám`), các địa điểm nổi tiếng lân cận (lấy từ mô tả chi tiết gốc).\n" +
+1041:                      "     - *Ví dụ Tiêu đề chuẩn (>4m):* `HXH Trần Quang Diệu - 38m2 - 9x5 - 3 tầng - 8.75T | Lô góc 3PN gần chợ` (Đầu đã có HXH nên phần USP không lặp lại hẻm xe hơi).\n" +
+1042:                      "     - *Ví dụ Tiêu đề chuẩn (<=4m):* `Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp gần CV Lê Văn Tám`\n" +
+1043:                      "     - *Ví dụ Tiêu đề chuẩn Mặt tiền:* `Mặt tiền Nguyễn Trọng Tuyển - 80m2 - 4x20 - 5 tầng - 22T | CHDV dòng tiền cao`\n" +
+1044:                      "2. KHỐNG CHẾ ĐỘ DÀI VÀ TỐI ƯU KHÔNG GIAN: Tiêu đề sinh ra TUYỆT ĐỐI không vượt quá 99 ký tự tổng cộng. Đặc biệt, phần kỹ thuật từ đầu tiêu đề đến hết chữ \"T\" của giá (bao gồm cả chữ \"T\") TUYỆT ĐỐI không quá 65 ký tự. Nếu còn trống nhiều ký tự sau chữ \"T\" (đến giới hạn 99 ký tự), hãy chắt lọc các điểm nổi bật để chèn vào sau dấu '|'. Ngược lại, nếu gần hết chỗ, hãy cô đọng phần 'Ưu điểm nổi bật' hoặc cắt bớt để không bị quá 99 ký tự.\n\n" +
+1045:                      "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH MÔ TẢ:\n" +
+1046:                      "1. TUYỆT ĐỐI KHÔNG DÙNG EMOJI (ICON).\n" +
+1047:                      "2. Bắt buộc phải có đúng 4 đoạn sau đây, mỗi đoạn bắt đầu bằng dấu '+' và cách nhau đúng 1 dòng trống:\n" +
+1048:                      "   + Vị trí: ... (TUYỆT ĐỐI KHÔNG ghi số nhà thật).\n\n" +
+1049:                      "   + Kết cấu: ...\n\n" +
+1050:                      "   + Kết nối & Tiện ích: Mô tả đặc trưng con đường và khu vực xung quanh dựa trên kiến thức thực tế. Nêu TÊN CỤ THỂ các trục đường lớn lân cận (Võ Thị Sáu, CMT8, Điện Biên Phủ...). KHÔNG dùng từ chung chung 'trục đường lớn'. KHÔNG liệt kê tên địa điểm cụ thể (chợ, siêu thị, bệnh viện, trường học).\n\n" +
+1051:                      "   + Pháp lý: Sổ hồng riêng, hoàn công đầy đủ...\n\n" +
+1052:                      "🚨 CÁC QUY TẮC PHƯỜNG CŨ:\n" +
+1053:                      "Suy luận tên Phường gốc của căn nhà dựa vào tên đường, địa chỉ trước đợt sáp nhập hành chính. Trả về trống nếu không đổi hoặc không chắc chắn.\n\n" +
+1054:                      "TRẢ VỀ ĐÚNG FORMAT JSON DƯỚI ĐÂY, KHÔNG ĐƯỢC CHỨA BẤT KỲ VĂN BẢN NÀO KHÁC BÊN NGOÀI:\n" +
+1055:                      "{\n" +
+1056:                      "  \"tieuDe\": \"Nội dung tiêu đề\",\n" +
+1057:                      "  \"moTa\": \"Nội dung mô tả\",\n" +
+1058:                      "  \"phuongCu\": \"Tên phường cũ\"\n" +
+1059:                      "}";
+1060: 
+1061:   for (var i = 0; i < data.length; i++) {
+1062:     var rowData = data[i];
+1063: 
+1064:     // Nếu cả 3 trường đều ĐÃ CÓ data thì bỏ qua dòng này
+1065:     if (rowData[cols.tieuDeOut] && rowData[cols.moTaOut] && rowData[cols.phuongCuOut]) {
+1066:       continue;
+1067:     }
+1068: 
+1069:     // Xử lý Giá
+1070:     var giaGoc = rowData[cols.gia] || 0;
+1071:     var giaTy = parseFloat(giaGoc);
+1072:     if (!isNaN(giaTy) && giaTy > 100) giaTy = giaTy / 1000;
+1073:     var giaFormat = (giaTy > 0) ? giaTy + " tỷ" : "";
+1074: 
+1075:     // Xác định Tiền tố (Prefix) theo Luật mới của người dùng (Mặt tiền / HXH / rỗng)
+1076:     var soNhaRaw = (rowData[cols.soNha] || "").toString().trim();
+1077:     var rongHemRaw = (rowData[cols.rongHem] || "").toString().trim();
+1078:     var widthVal = parseFloat(rongHemRaw);
+1079:     var loaiHem = (rowData[cols.hem] || "").toString().toLowerCase().trim();
+1080: 
+1081:     var isMatTien = false;
+1082:     if (soNhaRaw !== "") {
+1083:       if (!soNhaRaw.includes(".")) {
+1084:         isMatTien = true;
+1085:       }
+1086:     } else if (loaiHem.includes("mặt tiền") || loaiHem.includes("mặt phố")) {
+1087:       isMatTien = true;
+1088:     }
+1089: 
+1090:     var tienTo = "";
+1091:     if (isMatTien) {
+1092:       tienTo = "Mặt tiền ";
+1093:     } else if (!isNaN(widthVal) && widthVal >= 4.0) {
+1094:       tienTo = "HXH ";
+1095:     }
+1096: 
+1097:     var userPrompt = "THÔNG TIN CĂN NHÀ:\n" +
+1098:       "- Địa chỉ: " + (rowData[cols.soNha]||"") + " " + (rowData[cols.duong]||"") + ", Phường " + (rowData[cols.phuong]||"") + ", Quận " + (rowData[cols.quan]||"") + "\n" +
+1099:       "- Nội dung chính gốc (chứa kích thước ở đầu): " + (rowData[cols.noiDungChinh]||"") + "\n" +
+1100:       "- DT Thực tế: " + (rowData[cols.dt]||"") + "m2 | DT Trên sổ: " + (rowData[cols.dtSo]||"") + "m2\n" +
+1101:       "- Chiều ngang (mặt tiền): " + (rowData[cols.ngang]||"") + "m\n" +
+1102:       "- Hướng: " + (rowData[cols.huong]||"") + "\n" +
+1103:       "- Kết cấu: " + (rowData[cols.tang]||"") + " tầng, " + (rowData[cols.phongNgu]||"") + " PN, " + (rowData[cols.wc]||"") + " WC\n" +
+1104:       "- Hẻm: " + (rowData[cols.hem]||"") + " (Rộng: " + (rowData[cols.rongHem]||"") + "m)\n" +
+1105:       "- Giá: " + giaFormat + "\n" +
+1106:       "- Phân loại / Tag USP: " + (rowData[cols.phanLoai]||"") + "\n" +
+1107:       "- Điểm nổi bật của căn nhà (nguồn USP chính): " + (rowData[cols.moTaGoc]||"") + "\n\n" +
+1108:       "LƯU Ý QUAN TRỌNG: Đọc kỹ 'Nội dung chính gốc', 'Phân loại / Tag USP' và 'Điểm nổi bật' — bắt buộc phản ánh các thông số kỹ thuật và ưu điểm vào Tiêu đề và Mô tả. BẮT BUỘC bắt đầu phần tiêu đề trực tiếp bằng tiền tố '" + tienTo + "' kết hợp liền mạch với Tên đường (TUYỆT ĐỐI không chèn thêm bất kỳ dấu gạch ngang, dấu chấm hay ký tự đặc biệt nào giữa tiền tố này và tên đường, Ví dụ: " + (tienTo ? "'" + tienTo + "Trần Quang Diệu - ...'" : "'Trần Quang Diệu - ...'") + ").";
+1109: 
+1110:     var resultObj = callOpenAI_Unified(systemPrompt, userPrompt);
+1111: 
+1112:     if (resultObj) {
+1113:       if (resultObj.tieuDe && !rowData[cols.tieuDeOut]) {
+1114:         // Áp dụng bộ lọc Auto-Trimmer JS khống chế nghiêm ngặt độ dài tối đa 99 ký tự
+1115:         var cleanTitle = trimTieuDeBds(resultObj.tieuDe);
+1116:         sheet.getRange(startRow + i, cols.tieuDeOut + 1).setValue(cleanTitle);
+1117:       }
+1118:       if (resultObj.moTa && !rowData[cols.moTaOut]) sheet.getRange(startRow + i, cols.moTaOut + 1).setValue(resultObj.moTa);
+1119:       if (resultObj.phuongCu && !rowData[cols.phuongCuOut]) sheet.getRange(startRow + i, cols.phuongCuOut + 1).setValue(resultObj.phuongCu);
+----------------------------------------

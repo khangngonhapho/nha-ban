@@ -1,0 +1,22 @@
+3266:           img_mat_tien: row[29] || '',
+3281:           raw_mat_tien: row[16] || '',
+3363:           const val = parseFloat(p.raw_mat_tien || p.mat) || 0;
+3591:                 img_mat_tien: sr[38] || '',
+3611:                 p.raw_mat_tien = poolRow[16] || '';          // Mặt Tiền - Index 16, Column Q
+3633:                 p.raw_mat_tien = p.mat || '';
+3751:                 img_mat_tien: cv(r.c[35]) || ''
+4261:         if (p.img_mat_tien && !isListingSodoUrl(p.img_mat_tien, p)) {
+4262:           thumbUrl = p.img_mat_tien;
+4754:                   <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
+5624:               p.img_mat_tien = facadeMap[p.id];
+5688:       const ngang = p.mat || p.raw_mat_tien || "-";
+5863:       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
+5885:       let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+5978:       const targetMatTien = p.isFromPoolOnly && p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+6459:         img_mat_tien: row[29] || '',
+6474:         raw_mat_tien: row[16] || '',
+6768:           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+6775:           matchedRow[16],                // 7: mat_tien (Cột H)
+7566:           p.img_mat_tien = cleanCoverUrl;
+7936:           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+7943:           matchedRow[16],                // 7: mat_tien (Cột H)

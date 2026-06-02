@@ -1,0 +1,18 @@
+
+=== Matches for '.admin-only' ===
+Line   77: .admin-only {
+Line   81: body.is-admin .admin-only {
+Line  173: body.is-admin .sort-icon-btn.admin-only {
+
+=== Matches for 'admin-only' ===
+Line   77: .admin-only {
+Line   81: body.is-admin .admin-only {
+Line  173: body.is-admin .sort-icon-btn.admin-only {
+Line 2506: <button class="sort-icon-btn admin-only" id="sortNewBtn" onclick="toggleSortNew()"
+Line 2508: <button class="sort-icon-btn admin-only" id="sortPriceBtn" onclick="toggleSortPrice()"
+Line 2512: <button class="admin-only" id="gLoginBtn" onclick="handleGoogleLoginClick()"
+Line 2641: <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
+Line 2642: <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(0,0,0,0.03); border: 1.5px solid #e2ded6; border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; align-items: center;"></div>
+Line 2644: <div class="filter-section-lbl admin-only">Cấu hình Google Admin</div>
+Line 2645: <div class="admin-only"
+Line 2675: <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: flex; justify-content: flex-end; align-items: center; background: #f8f9fa; padding: 10px 16px; border-bottom: 1px solid var(--border);">

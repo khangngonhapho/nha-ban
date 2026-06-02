@@ -1,0 +1,16 @@
+
+=== Matches for 'POOL_ROWS' ===
+Line 2986: if (!p.isFromPoolOnly && POOL_ROWS && POOL_ROWS.length && p.system_id) {
+Line 2987: const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
+Line 3011: let POOL_ROWS = [];
+Line 3189: if (MAPPED_POOL_DATA.length === POOL_ROWS.length && MAPPED_POOL_DATA.length > 0) {
+Line 3192: if (!POOL_ROWS || !POOL_ROWS.length) return [];
+Line 3194: MAPPED_POOL_DATA = POOL_ROWS.map(row => {
+Line 3269: pool_row_index: POOL_ROWS.indexOf(row) + 2,
+Line 3489: POOL_ROWS = poolRows;
+Line 3762: if (poolEl) poolEl.textContent = POOL_ROWS ? POOL_ROWS.length : '0';
+Line 5872: if (!POOL_ROWS || !POOL_ROWS.length) {
+Line 5884: const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+Line 5964: pool_row_index: POOL_ROWS.indexOf(row) + 2,
+Line 5975: if (!query || !POOL_ROWS.length) return [];
+Line 5977: return POOL_ROWS.filter(row => {

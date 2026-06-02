@@ -1,0 +1,5 @@
+
+=== Matches for 'promptGenerateLink' ===
+Line 5120: function promptGenerateLink() {
+Line 5210: <button class="share-btn-float" onclick="promptGenerateLink()">
+Line 5549: promptGenerateLink();

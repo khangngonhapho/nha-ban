@@ -1,0 +1,1957 @@
+1 ===
+id: 117
+tk_id: f1flw6-moqzm3x9-d1446348
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_576_17.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_599_18.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_226_8.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_247_9.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_276_10.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_305_11.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_331_12.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_375_13.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_436_14.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_484_15.jpg", "https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_526_16.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779835869/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/lxskpdafpaezyp2onapd.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835871/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/yzbxgumgkr8lssk6wn9m.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835874/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/txdkkbcrnoazjvdnen7l.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835876/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/vyxaaozp1aknaioy3rur.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835879/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/pqvsnbltvujbgv2zrkve.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835881/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/huum8cvqwomeo6k8vgs3.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835884/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/akk7mxgyp4so8hpx3vjz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835887/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/omw6v9zwjwkoyhz33z3d.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835890/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/c6bxxnqnvhoatypbqjn2.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835893/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/x85xf0johrcx2vgs8ngh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779835896/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/wwfmljmkbelmvsz5twqk.jpg"]
+curated_config_json: None
+Chieu_dai: 13.0
+Ma_Hang: TK-446348
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 108.41
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 108.41 Trần Quang Diệu 22 2 2 13 3.45 tỷ Nhiêu Lộc Quận 3 < 5 tỷ HĐ Hồ Thị Huỳnh Giao Thiên Hoàng 0909400470 H3GB nguồn Đầu chủ Hồ Thị Huỳnh Giao - Thiên Hoàng
+Mo_ta_chi_tiet: BÁN NHÀ HẺM XE HƠI THÔNG - PHÙ HỢP CHO THUÊ GIỮ TIỀN - TRUNG TÂM QUẬN 3 ✅Mô tả: +Kết cấu : 1 trệt 1 lầu, 2 phòng ngủ. 2 toilet. Đang cho thuê làm tiệm nail 7tr / tháng. + khu kinh doanh nhộn nhịp. Hẻm xe hơi thông các ngã. + phù hợp khách cho thuê giữ tài sản hoặc ở. + sổ nằm nhà. Ccmb nhanh.
+Gia_chao: 3,450
+Gia_chot: None
+DT_Thuc_te: 22.0
+DT_Tren_so: 22.0
+So_Tang: 2.0
+Mat_Tien: 2.0
+Huong: 
+Ten_Chu_Nha: xxx
+Dien_thoai_1: xxxxxx0000
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_576_17.jpg
+So_do_thua_dat_2: https://tk-assets.spms2.com/2026/05/04/bp7-C22F3961-moqzo2a8_599_18.jpg
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779835869/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/lxskpdafpaezyp2onapd.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779835871/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/yzbxgumgkr8lssk6wn9m.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779835874/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/txdkkbcrnoazjvdnen7l.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779835876/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/vyxaaozp1aknaioy3rur.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779835879/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/pqvsnbltvujbgv2zrkve.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779835881/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/huum8cvqwomeo6k8vgs3.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779835884/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/akk7mxgyp4so8hpx3vjz.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779835887/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/omw6v9zwjwkoyhz33z3d.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779835890/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/c6bxxnqnvhoatypbqjn2.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779835893/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/x85xf0johrcx2vgs8ngh.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779835896/BDS-KhangNgo/f1flw6-moqzm3x9-d1446348/wwfmljmkbelmvsz5twqk.jpg
+Anh_12: 
+Anh_13: 
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 3,450
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 4.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20261827-198
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/f1flw6-moqzm3x9-d1446348
+Dien_thoai_Dau_Chu: 0909400470
+Ten_Dau_Chu_Hop_dong: Hồ Thị Huỳnh Giao
+Diem_Facebook: https://www.facebook.com/quynhgiao.ho
+Last_Crawl: 27/05/2026 04:18:12
+Last_Sync: 30/05/2026 09:01:56
+
+
+2 ===
+id: 452
+tk_id: e3gsy4-mnsgqzuz-98fe542c
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1418_29.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1468_30.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_357_8.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_410_9.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_461_10.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_524_11.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_582_12.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_635_13.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_677_14.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_721_15.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_768_16.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_817_17.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_865_18.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_923_19.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_974_20.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1025_21.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1063_22.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1114_23.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1172_24.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1218_25.jpg", "https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1270_26.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779863623/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/uzywwufgyqdvqn709oew.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863626/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/wvywub89agf7nx2qlqxk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863629/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/rmh7kjmqoak5gtptuey9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863632/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/ltxazh6mqzqhevkxvuim.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863635/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/grzvo9smogkhvryr2nio.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863637/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/pvvnidjkb5hwlbxwztdh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863640/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/hbkrfmm9vywggieiaahw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863643/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/tigpbondbfaxcnl8he5e.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863646/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/tcwuh3ldnlllzetjyl9w.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863649/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/tbkyjq7odznc1f8pfeau.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863652/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/birpjowdfowqilovhalz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863656/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/qosvi3jkgqefnw0wg7d8.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863659/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/i7v6ftqnenkjuvfazk1j.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863662/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/rtkk78nlsac9ftorkgss.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863665/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/npkuzlajovkagjul5ilk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863667/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/doft0buo9i0kfz1nd3ep.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863670/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/d28zizqvlza8aeazuzuq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863673/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/hnfezuljtlkxfdmg2mdw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863676/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/v2hvgqtimni2ukpoavmw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863679/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/mcyjckx9wqwmuz9z5xva.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779863682/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/vrvcmsse2ynbuparprin.jpg"]
+curated_config_json: None
+Chieu_dai: 9.0
+Ma_Hang: TK-FE542C
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 8i
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 8i Trần Quang Diệu 36 5 4 9 11.4 tỷ Nhiêu Lộc Quận 3 10-15 tỷ HĐ Nguyễn Văn Thư_ĐC Cát Linh 0852349324 H3GB nguồn Đầu chủ Nguyễn Văn Thư_ĐC - Cát Linh
+Mo_ta_chi_tiet: 5 TẦNG MỚI KENG FULL NỘI THẤT CAO CẤP - MỞ LỘ GIỚI LÀ NHÀ THÀNH MẶT TIỀN TRẦN QUANG DIỆU - 4PN KHÉP KÍN - CHO THUÊ 30TR/THÁNG!8i Trần Quang Diệu 36 5 4 9 11.5 tỷ, phường 13 quận 3 (nay là phường Nhiêu Lộc), 10 đển 15, HĐ GĐ Thư khối Cát Linh, 0903624545, HH3GB, nguồn  GĐ Thư.Mô tả: + Kết cấu: Trệt lửng 3 lầu, sân thượng phía trước, 4PN khép kín full nội thất cao cấp, khách chỉ việc xách vali vào ở ngay.+ Nếu khách mua có nhu cầu cho thuê lại thì có khách sẵn sàng thuê lại 30tr/tháng.+ Điểm mạnh: Nhà này xây chuẩn lộ giới, khi Nhà nước thực hiện mở đường thì nhà mình trở thành nhà mặt tiền đườngTrần Quang Diệu.+ Sổ nở hậu nhẹ tài lộc, vào nhà thoáng mát sạch đẹp.+ Vị trí Trung tâm Quận 3 ngay giữa Trường Sa và Lê Văn Sỹ, khu vực VIP.+ Hẻm trước nhà 5m rộng rãi, sát
+Gia_chao: 11,400
+Gia_chot: None
+DT_Thuc_te: 36.0
+DT_Tren_so: 36.0
+So_Tang: 5.0
+Mat_Tien: 4.0
+Huong: 
+Ten_Chu_Nha: A Duy
+Dien_thoai_1: xxxxxx8773
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1418_29.jpg
+So_do_thua_dat_2: https://tk-assets.spms2.com/2026/04/10/2hcm-EC0BDF87-mnsgtt2y_1468_30.jpg
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779863623/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/uzywwufgyqdvqn709oew.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779863626/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/wvywub89agf7nx2qlqxk.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779863629/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/rmh7kjmqoak5gtptuey9.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779863632/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/ltxazh6mqzqhevkxvuim.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779863635/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/grzvo9smogkhvryr2nio.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779863637/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/pvvnidjkb5hwlbxwztdh.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779863640/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/hbkrfmm9vywggieiaahw.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779863643/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/tigpbondbfaxcnl8he5e.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779863646/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/tcwuh3ldnlllzetjyl9w.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779863649/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/tbkyjq7odznc1f8pfeau.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779863652/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/birpjowdfowqilovhalz.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779863656/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/qosvi3jkgqefnw0wg7d8.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779863659/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/i7v6ftqnenkjuvfazk1j.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779863662/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/rtkk78nlsac9ftorkgss.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779863665/BDS-KhangNgo/e3gsy4-mnsgqzuz-98fe542c/npkuzlajovkagjul5ilk.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 11,400
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 5.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 4
+So_nha_ve_sinh: 5
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20262827-506
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/e3gsy4-mnsgqzuz-98fe542c
+Dien_thoai_Dau_Chu: 0852349324
+Ten_Dau_Chu_Hop_dong: Nguyễn Văn Thư_ĐC
+Diem_Facebook: https://www.facebook.com/profile.php?id=100034387034691
+Last_Crawl: 27/05/2026 07:28:44
+Last_Sync: 30/05/2026 08:35:20
+
+
+4 ===
+id: 579
+tk_id: fgr59l-mnioeztn-f35eed91
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_695_18.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_331_8.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_361_9.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_403_10.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_448_11.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_481_12.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_517_13.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_554_14.jpg", "https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_590_15.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779869990/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/mfuw1niyf7qzukmphdyg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779869993/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/yxpqsez5m1lego0sajyt.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779869996/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/xbmk0yipetgyfqav3phu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779869999/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/gmsbpj3m98azplesvygr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779870002/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/jlm3aueryhh14ccm5axg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779870005/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/twtgvhnzyt5reurueocc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779870008/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/of4kngc4jbwfqk3w3hvq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779870011/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/mwshiusjthdxjksadw0k.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779870014/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/wriaywsh9zaks2yc8tjo.jpg"]
+curated_config_json: None
+Chieu_dai: 17.3
+Ma_Hang: TK-5EED91
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 80.96
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 80.96 Trần Quang Diệu 130.4 5 6.2 17 15 tỷ Nhiêu Lộc Quận 3 15-25 tỷ HĐ Đoàn Khắc Châu Sang Bảo Tín 0906077072 H3GB nguồn Đầu chủ Đoàn Khắc Châu Sang - Bảo Tín
+Mo_ta_chi_tiet: 💥💥 NHÀ 5 TẦNG THANG MÁY - TRUNG TÂM Q3 CŨ✅ CHÍNH CHỦ BÁN NHÀ 5 TẦNG - TRẦN QUANG DIỆU✅ DT: 6.5 X 17.3. NỞ HẬU TÀI LỘC 8.1m. CN 130 M2✅ KẾT CẤU:TRỆT 3 LẦU + SÂN THƯỢNG THANG MÁY✅ NHÀ ĐANG ĐỂ TRỐNG. THÍCH HỢP LÀM CHDV✅ SHR. SẴN SÀNG CC NGAY✅ GIÁ BÁN 15 TỶ✍️✍️✍️ LƯU Ý: ACE ĐI KHẢO SÁT NHỚ ĐI HẺM 40 TRẦN QUANG DIỆU, ĐI THẲNG CUỐI HẺM 40 SẼ THẤY NHÀ BÁN. ĐI THEO HẺM 80 SẼ KO THẤY NHÀ🇻🇳🇻🇳🇻🇳 ACE DẪN KHÁCH ĐÚNG QUY TRÌNH CỦA TẬP ĐOÀN. CHÚC ACE THU NHẬP TỶ PHÚ
+Gia_chao: 15,000
+Gia_chot: None
+DT_Thuc_te: 130.4
+DT_Tren_so: 130.4
+So_Tang: 5.0
+Mat_Tien: 6.2
+Huong: 
+Ten_Chu_Nha: Chị Hương
+Dien_thoai_1: xxxxxx1309
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2026/04/03/11wv-EE9BE78F-mniommm0_695_18.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779869990/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/mfuw1niyf7qzukmphdyg.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779869993/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/yxpqsez5m1lego0sajyt.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779869996/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/xbmk0yipetgyfqav3phu.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779869999/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/gmsbpj3m98azplesvygr.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779870002/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/jlm3aueryhh14ccm5axg.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779870005/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/twtgvhnzyt5reurueocc.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779870008/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/of4kngc4jbwfqk3w3hvq.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779870011/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/mwshiusjthdxjksadw0k.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779870014/BDS-KhangNgo/fgr59l-mnioeztn-f35eed91/wriaywsh9zaks2yc8tjo.jpg
+Anh_10: 
+Anh_11: 
+Anh_12: 
+Anh_13: 
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 15,000
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 3.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20265527-609
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/fgr59l-mnioeztn-f35eed91
+Dien_thoai_Dau_Chu: 0906077072
+Ten_Dau_Chu_Hop_dong: Đoàn Khắc Châu Sang
+Diem_Facebook: https://www.facebook.com/profile.php?id=100074042075445
+Last_Crawl: 27/05/2026 07:55:25
+Last_Sync: 30/05/2026 08:25:18
+
+
+7 ===
+id: 813
+tk_id: ex3ta8-mmx364t3-d9bd6236
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_1096_23.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_253_6.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_307_7.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_373_8.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_433_9.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_474_10.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_529_11.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_578_12.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_625_13.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_667_14.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_705_15.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_760_16.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_809_17.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_868_18.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_919_19.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_945_20.jpg", "https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3d1xn_2_1.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779894853/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/g6efugzaquzoe5iavbsb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894856/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/fkme01fwhao5rvwepuwm.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894859/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/ngloskgrhw45xvyubbrf.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894863/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/vpegzriqdgtswjchotae.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894866/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/hwpiqbobvy3c1njowp9s.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894869/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/e1saiuediw2gwb2dsmoc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894872/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/hivdcrczxkkq4cq2zmlc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894875/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/ziobsnezg5qkbot3skvi.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894878/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/qwho4nacveacp26ky2eh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894880/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/djhrpttuudfux6ceeagr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894884/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/mntttp1tiwyy7zlof81g.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894888/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/pa1tz4fqepcytbizsihf.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894890/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/drfalpagolv2x0vpfahz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894893/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/e8cfpjyqsekc4we2wyi6.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894896/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/ewh4pcg9rtac2gdavzi0.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894899/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/jaqbwrfrunf62hijrspn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779894902/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/shjov9niepuzvopjrmlu.jpg"]
+curated_config_json: None
+Chieu_dai: 200.0
+Ma_Hang: TK-BD6236
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 40.55A
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 40.55A Trần Quang Diệu 66.3 5 3.5 200 15.99 tỷ Nhiêu Lộc Quận 3 15-25 tỷ HĐ Nguyễn Trọng Khoa Vạn Gia 0896689914 H3GB nguồn Đầu chủ Nguyễn Trọng Khoa - Vạn Gia
+Mo_ta_chi_tiet: https://www.facebook.com/share/17mY6KPcb1/?mibextid=wwXIfr
+Gia_chao: 15,990
+Gia_chot: None
+DT_Thuc_te: 66.3
+DT_Tren_so: 66.3
+So_Tang: 5.0
+Mat_Tien: 3.5
+Huong: 
+Ten_Chu_Nha: cô Phương
+Dien_thoai_1: xxxxxx1266
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2026/03/19/35r4-12AE9706-mmx3bkk0_1096_23.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779894853/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/g6efugzaquzoe5iavbsb.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779894856/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/fkme01fwhao5rvwepuwm.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779894859/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/ngloskgrhw45xvyubbrf.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779894863/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/vpegzriqdgtswjchotae.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779894866/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/hwpiqbobvy3c1njowp9s.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779894869/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/e1saiuediw2gwb2dsmoc.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779894872/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/hivdcrczxkkq4cq2zmlc.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779894875/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/ziobsnezg5qkbot3skvi.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779894878/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/qwho4nacveacp26ky2eh.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779894880/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/djhrpttuudfux6ceeagr.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779894884/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/mntttp1tiwyy7zlof81g.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779894888/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/pa1tz4fqepcytbizsihf.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779894890/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/drfalpagolv2x0vpfahz.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779894893/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/e8cfpjyqsekc4we2wyi6.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779894896/BDS-KhangNgo/ex3ta8-mmx364t3-d9bd6236/ewh4pcg9rtac2gdavzi0.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 15,990
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 3.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 8
+So_nha_ve_sinh: 8
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20264627-351
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/ex3ta8-mmx364t3-d9bd6236
+Dien_thoai_Dau_Chu: 0896689914
+Ten_Dau_Chu_Hop_dong: Nguyễn Trọng Khoa
+Diem_Facebook: https://www.facebook.com/profile.php?id=100060391581416
+Last_Crawl: 27/05/2026 08:46:16
+Last_Sync: 30/05/2026 08:06:39
+
+
+12 ===
+id: 1118
+tk_id: f06c2q-mm1m14v6-2c83451d
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_1223_26.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_319_7.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_377_8.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_421_9.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_459_10.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_509_11.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_556_12.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_601_13.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_650_14.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_701_15.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_749_16.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_798_17.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_842_18.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_902_19.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_954_20.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_1006_21.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_1052_22.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_1103_23.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m39ho_1_1.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m39ho_55_2.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m39ho_108_3.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m39ho_167_4.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m39ho_202_5.jpg", "https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m39ho_252_6.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779910512/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/zhl5hdhtwulk6hgu2v7j.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/wcuuhlhqdg3ylc2krdpa.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/jwkclnvjedjtygt9xk8d.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/p9bjrlle3r7rcgrwwwxu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/kqwwuwjia0rzgnaaopb2.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910514/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/glenx2lza18g6qwmkzyu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910515/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/rnzszkuxkg9xlvkooynu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910515/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/y8d00lzc4xbt3dongxxi.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910515/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/gddulqitkry21eeihyed.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910516/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/wpdbq4y4zpeunjcc8az4.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/xptvcazdojnilct0qyup.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/pfb1ea0bkd8we2dj1pil.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/yqqpouteug1r1373n9ru.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/fwdu6eqm09p1rmnb1p8m.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910520/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/y7wdbdwlrqdjgyq83g5d.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910521/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/y64i4kmghgzeuxszh9kh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910521/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/p7upvvupvnc76zstoljb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910522/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/ds8wit2bh6dmpgguzlnr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910522/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/uixkdppwsyusoxpildxt.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910524/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/vxxkl0ioetduzqynabor.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910524/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/pa8mdqpz6nzcurrglphq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910524/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/ajvbtm16zvx22bxyvdjb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910525/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/cgzaadijcke7jbad8pth.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779910525/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/s9ebrnvndumkcf9zv57s.jpg"]
+curated_config_json: None
+Chieu_dai: 8.0
+Ma_Hang: TK-83451D
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 136.11B
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 136.11B Trần Quang Diệu 24 4 3 8 6.85 tỷ Nhiêu Lộc Quận 3 5-10 tỷ HĐ Trần Văn Kiều Thiên Hà 0907288226 H3GB nguồn Đầu chủ Trần Văn Kiều - Thiên Hà
+Mo_ta_chi_tiet: https://maps.app.goo.gl/Buqnhc8Dd8fPSW23A?g_st=ic
+Gia_chao: 6,850
+Gia_chot: None
+DT_Thuc_te: 24.0
+DT_Tren_so: 24.0
+So_Tang: 4.0
+Mat_Tien: 3.0
+Huong: 
+Ten_Chu_Nha: Lê Thế Bảo
+Dien_thoai_1: xxxxxx3373
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2026/02/25/14b5-CCB17CE1-mm1m2jfz_1223_26.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779910512/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/zhl5hdhtwulk6hgu2v7j.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/wcuuhlhqdg3ylc2krdpa.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/jwkclnvjedjtygt9xk8d.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/p9bjrlle3r7rcgrwwwxu.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779910511/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/kqwwuwjia0rzgnaaopb2.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779910514/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/glenx2lza18g6qwmkzyu.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779910515/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/rnzszkuxkg9xlvkooynu.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779910515/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/y8d00lzc4xbt3dongxxi.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779910515/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/gddulqitkry21eeihyed.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779910516/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/wpdbq4y4zpeunjcc8az4.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/xptvcazdojnilct0qyup.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/pfb1ea0bkd8we2dj1pil.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/yqqpouteug1r1373n9ru.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779910518/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/fwdu6eqm09p1rmnb1p8m.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779910520/BDS-KhangNgo/f06c2q-mm1m14v6-2c83451d/y7wdbdwlrqdjgyq83g5d.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 6,850
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 2.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20261727-162
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/f06c2q-mm1m14v6-2c83451d
+Dien_thoai_Dau_Chu: 0907288226
+Ten_Dau_Chu_Hop_dong: Trần Văn Kiều
+Diem_Facebook: https://www.facebook.com/anhkieu6868
+Last_Crawl: 27/05/2026 10:17:36
+Last_Sync: 30/05/2026 07:42:25
+
+
+14 ===
+id: 1386
+tk_id: d5a118-mkb1rrwr-de67faf0
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_691_16.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_301_7.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_343_8.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_385_9.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_432_10.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_482_11.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_522_12.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_571_13.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_612_14.jpg", "https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_648_15.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/mtkh8vg8faftkdwolnje.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/zrpz3dffztaohukrmr6o.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/pzqcawzwarrtb8vq8xsy.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/cxvpkagh019msqynosxc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/kxhyxk0chgvmbyvexj3m.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913913/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/sr6nxxsmy53qnsgcjvf6.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913913/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/c5zak9qyefz7rhfuoyvl.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913913/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/pjlye6a9sc8ezxpmwjrx.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913914/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/kkh9nzp21wiqfxc8di53.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779913914/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/jf0gd2n6fsmdf69sqg96.jpg"]
+curated_config_json: None
+Chieu_dai: 17.0
+Ma_Hang: TK-67FAF0
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 80.22B
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 80.22B Trần Quang Diệu 58.3 4 3.4 17 14.5 tỷ Nhiêu Lộc Quận 3 10-15 tỷ HĐ Nguyễn Mạnh Sinh Vạn Gia 0794926268 H3GB nguồn Đầu chủ Nguyễn Mạnh Sinh - Vạn Gia
+Mo_ta_chi_tiet: 24/01/26 : giá chào mới 14,5 tỷHẺM 6M THẲNG TRỤC - TRẦN QUANG DIỆU - 4 TẦNG - 58M2 - LÔ GÓC 2 MẶT HẺM - GẦN MẶT TIỀN - HẺM THÔNG - ĐANG CÓ DÒNG TIỀN - SỔ NỞ HẬU - NHỈNH 16 TỶ80.22B Trần Quang Diệu 58.3 4 3.4/3.7 17 16.3 tỷ Phường Nhiêu Lộc ( P14 cũ ) Quận 3 15 - 25 tỷ HĐ Đầu chủ Sinh Vạn Gia 0794926268 H3GB nguồn Đầu chủ Sinh Mô tả :- Kết cấu : trệt lửng 1 lầu Sân thượng gồm 4 Phòng, P. Khách, bếp, sân để xe. Nhà hơi cũ nhưng cứng cáp, tiện cải tạo hoặc xây mới- Nhà đang cho thuê 2 phòng giá 7tr/tháng- Hẻm 6m thẳng trục, cách mặt tiền 50m. Lô góc 2 mặt hẻm, thông tứ tung. Gần Lê Văn Sỹ, giáp Phú Nhuận, Tân Bình, thuận tiện di chuyển- Sổ hồng riêng, nở hậu tài lộc, cất két, công chứng ngayACE dẫn khách đúng chuẩn quy trình, ký phiếu YCCCDV và chụp hình. Báo Đầu chủ Sinh trước 60' để được hỗ trợ tốt nhất. Chúc ACE chốt bùng nổ 💥🌹https://www.facebook.com/nguyen.sinh.59155?mibextid=ZbWKwL
+Gia_chao: 14,500
+Gia_chot: None
+DT_Thuc_te: 58.3
+DT_Tren_so: 58.3
+So_Tang: 4.0
+Mat_Tien: 3.4
+Huong: 
+Ten_Chu_Nha: Vĩnh
+Dien_thoai_1: xxxxxxxxxx
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2026/01/12/3gj3-22FF9E6D-mkb1sn59_691_16.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/mtkh8vg8faftkdwolnje.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/zrpz3dffztaohukrmr6o.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/pzqcawzwarrtb8vq8xsy.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/cxvpkagh019msqynosxc.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779913910/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/kxhyxk0chgvmbyvexj3m.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779913913/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/sr6nxxsmy53qnsgcjvf6.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779913913/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/c5zak9qyefz7rhfuoyvl.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779913913/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/pjlye6a9sc8ezxpmwjrx.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779913914/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/kkh9nzp21wiqfxc8di53.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779913914/BDS-KhangNgo/d5a118-mkb1rrwr-de67faf0/jf0gd2n6fsmdf69sqg96.jpg
+Anh_11: 
+Anh_12: 
+Anh_13: 
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 14,500
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 6.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20263127-978
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/d5a118-mkb1rrwr-de67faf0
+Dien_thoai_Dau_Chu: 0794926268
+Ten_Dau_Chu_Hop_dong: Nguyễn Mạnh Sinh
+Diem_Facebook: https://www.facebook.com/profile.php?id=100085907053232
+Last_Crawl: 27/05/2026 12:31:04
+Last_Sync: 30/05/2026 07:20:57
+
+
+16 ===
+id: 1549
+tk_id: f6qyr7-mjmn14k6-b15b1203
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1370_29.jpg", "https://tk-assets.spms2.com/2025/12/31/2hb0-A3D9E8DF-mjtgewm0_7_1.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_280_7.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_332_8.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_393_9.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_445_10.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_507_11.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_558_12.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_613_13.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_662_14.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_712_15.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_777_16.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_814_17.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_857_18.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_902_19.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_945_20.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1000_21.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1048_22.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1094_23.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1144_24.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1203_25.jpg", "https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1245_26.jpg", "https://tk-assets.spms2.com/2025/12/31/2hb0-A3D9E8DF-mjthsz1e_3_1.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/hqgwtrp7qzcy4bpdfz7q.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/rgyrlojoxcqb4kuuejwi.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/vfgqoggf7khqxcbjkyik.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/wrubruaqei6jkw9nl3fo.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/esv41rwgjvkjgpelksgp.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915975/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/shzvk7hvrmaiy9oeuazo.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915975/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/yfhcqthuhbjktlgm7jiw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915976/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/cw2uznxcybgtvfv8vxes.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915976/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/ltapwko58y9c2a9ghwmo.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915977/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/tdgtdh9ghs8mnahihiqk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915978/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/xplvu60al6329edvuj1z.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915978/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/x1cxrqd1taluzkhrp12p.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915978/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/w0zqdam1i9vo3xnd2pzb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915979/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/gtsdbdugbqikoanovjdv.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915980/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/xkvv6plluyxgdrwdwo0m.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915981/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/bcah5ejrsw7k7othvi2n.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915982/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/qrq4rxdzl9bwuoucv0sn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915982/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/n4ntkzgbwouqk3mpuha1.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915982/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/imjshgtrrypr7yl37nze.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915983/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/iu2gk9fnrweunbsrpern.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915984/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/a4entue7h3clbt3xgl3j.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915985/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/fgvai2xx0ecgdoz2wstw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779915985/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/ehh39ojn3lyssqywbdty.jpg"]
+curated_config_json: None
+Chieu_dai: 16.0
+Ma_Hang: TK-5B1203
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 80.111D
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 80.111D Trần Quang Diệu 60.2 3 3.8 16 10.9 tỷ Nhiêu Lộc Quận 3 10-15 tỷ HĐ Nguyễn Minh Triều Tây Đô 0918328435 H3GB nguồn Đầu chủ Nguyễn Minh Triều - Tây Đô
+Mo_ta_chi_tiet: 💥💥 BÁN GẤP TRƯỚC TẾT , CHỦ GIẢM MẠNH 1,1 TỶ - GIÁ CHÀO MỚI CHỈ CÒN 10,9 TỶ💥TRUNG TÂM QUẬN 3 -  XH 3 TẦNG - NHÀ ĐẸP ĐẲNG CẤP - TẶNG FULL NỘI THẤT .80.111D Trần Quang Diệu 60.2 3 3.8 16 12 tỷ , Phường Nhiêu Lộc ( Phường 14 cũ ) , Hồ Chí Minh ,  9 đến 15, HĐ ĐC Triều , Khối Tây Đô , 0918.328.435, hoa hồng 3% , Nguồn ĐC Triều .💥 Mô tả : + Nhà hướng Tây Bắc và Tây Nam + Kết cấu nhà HXH ,  thuộc khu vực dân trí , an ninh , yên tĩnh , đúc 3 tầng BTCT , 4PN , 3WC . Nhà đẹp lung được chủ chăm chút rẩt tỉ mỉ .- Nội thất cao cấp tặng full làm cho ngôi nhà một không gian sống ấm cúng và sang trọng đầy tiện nghi .+ Tiện ích liền kề xung quanh đầy đủ như chợ , trường học các cấp , siêu thị + Gần các tuyến đường Lê Văn Sỹ , Huỳnh Văn Bánh , Lê Quí Đôn , v.v. di chuyển đi đâu cũng thuận tiện .+ SHR chính chủ , pháp lý chuẩn, công chứng sang tên nhanh .💥💥 ACE dẫn khách theo đúng qui trình Cty , ký phiếu YCCCDV .Vui lòng liên hệ ĐC Triều trước 45 phút để hỗ trợ tốt nhất .
+Gia_chao: 10,900
+Gia_chot: None
+DT_Thuc_te: 60.2
+DT_Tren_so: 60.2
+So_Tang: 3.0
+Mat_Tien: 3.8
+Huong: 
+Ten_Chu_Nha: Nguyễn Thị Tuyết
+Dien_thoai_1: xxxxxx8226
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/12/26/2hb0-A3D9E8DF-mjmn7bx9_1370_29.jpg
+So_do_thua_dat_2: https://tk-assets.spms2.com/2025/12/31/2hb0-A3D9E8DF-mjtgewm0_7_1.jpg
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/hqgwtrp7qzcy4bpdfz7q.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/rgyrlojoxcqb4kuuejwi.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/vfgqoggf7khqxcbjkyik.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/wrubruaqei6jkw9nl3fo.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779915972/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/esv41rwgjvkjgpelksgp.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779915975/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/shzvk7hvrmaiy9oeuazo.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779915975/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/yfhcqthuhbjktlgm7jiw.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779915976/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/cw2uznxcybgtvfv8vxes.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779915976/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/ltapwko58y9c2a9ghwmo.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779915977/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/tdgtdh9ghs8mnahihiqk.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779915978/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/xplvu60al6329edvuj1z.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779915978/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/x1cxrqd1taluzkhrp12p.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779915978/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/w0zqdam1i9vo3xnd2pzb.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779915979/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/gtsdbdugbqikoanovjdv.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779915980/BDS-KhangNgo/f6qyr7-mjmn14k6-b15b1203/xkvv6plluyxgdrwdwo0m.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 10,900
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 4.5
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 4
+So_nha_ve_sinh: 3
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20264727-899
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/f6qyr7-mjmn14k6-b15b1203
+Dien_thoai_Dau_Chu: 0918328435
+Ten_Dau_Chu_Hop_dong: Nguyễn Minh Triều
+Diem_Facebook: https://www.facebook.com/profile.php?id=100068465381644
+Last_Crawl: 27/05/2026 12:47:07
+Last_Sync: 30/05/2026 07:07:49
+
+
+18 ===
+id: 1610
+tk_id: fihx7t-mje3mfrc-f8534b8b
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_914_22.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_343_8.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_374_9.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_427_10.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_492_11.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_571_12.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_606_13.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_641_14.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_672_15.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_721_16.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_755_17.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_791_18.jpg", "https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_829_19.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/o6rwcszp39zeiaxvym4z.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916712/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/r488yyawhdd8riairaw5.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/cstalqecbmiickn4unxn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/wdf5lwxdevzbw266b4ma.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/vjofyvb94drdc90ft5nb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916716/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/k47xuyhkqo50k9inv0wl.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916717/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/nbahrg8kindmtj7svxyn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916716/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/bi9tl7icpkzg307iqcss.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916717/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/hh8nn68iymflaxf5vbfe.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916716/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/o1f63xfyadxtq2fq6kyd.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916719/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/p9ab1p0iaixnmkbqhvdu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916720/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/pwqcbipldymfs7eil4ey.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779916720/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/ju4bwggazvwjur7ltetm.jpg"]
+curated_config_json: None
+Chieu_dai: 4.7
+Ma_Hang: TK-534B8B
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: trần quang diệu
+Ngo_So_nha: 40.78
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 40.78 trần quang diệu 38 3 9 5 8.75 tỷ Nhiêu Lộc Quận 3 5-10 tỷ HĐ Nguyễn Văn Sang Thiên Thạch 0938061929 H3GB nguồn Đầu chủ Nguyễn Văn Sang - Thiên Thạch
+Mo_ta_chi_tiet: 🏡 LÔ GÓC 2 MẶT HẺM – TRẦN QUANG DIỆU – QUẬN 3 – NHÀ MỚI ĐẸP – Ở NGAY.📍 Vị trí: Hẻm 4m thông Trần Quang Diệu, Quận 3.✨ Lợi thế: Lô góc 2 mặt thoáng, ánh sáng tự nhiên, hẻm thông, khu dân trí cao.🔹 Thông tin nhà: • 🏗️ Kết cấu: 1 trệt 2 lầu, nhà xây kiên cố. • 🛏️ Công năng: 2 phòng ngủ lớn, 3 WC. • 🛋️ Nội thất: Nhà mới đẹp, tặng full nội thất theo nhà. • 📄 Pháp lý: Sổ hồng chính chủ, hoàn công đầy đủ. • ✍️ Giao dịch: Công chứng trong ngày.🎯 Phù hợp: • Gia đình trẻ cần nhà đẹp vào ở ngay. • Khách mua giữ tiền khu trung tâm Quận 3. • Khách thích nhà lô góc, hẻm thông, thanh khoản tốt.
+Gia_chao: 8,750
+Gia_chot: None
+DT_Thuc_te: 38.0
+DT_Tren_so: 38.0
+So_Tang: 3.0
+Mat_Tien: 9.0
+Huong: 
+Ten_Chu_Nha: như
+Dien_thoai_1: xxxxxx8118
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/12/20/kf9-72749D82-mje3pw0i_914_22.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/o6rwcszp39zeiaxvym4z.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779916712/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/r488yyawhdd8riairaw5.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/cstalqecbmiickn4unxn.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/wdf5lwxdevzbw266b4ma.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779916713/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/vjofyvb94drdc90ft5nb.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779916716/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/k47xuyhkqo50k9inv0wl.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779916717/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/nbahrg8kindmtj7svxyn.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779916716/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/bi9tl7icpkzg307iqcss.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779916717/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/hh8nn68iymflaxf5vbfe.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779916716/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/o1f63xfyadxtq2fq6kyd.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779916719/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/p9ab1p0iaixnmkbqhvdu.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779916720/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/pwqcbipldymfs7eil4ey.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779916720/BDS-KhangNgo/fihx7t-mje3mfrc-f8534b8b/ju4bwggazvwjur7ltetm.jpg
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 8,750
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 5.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 3
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20265327-994
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/fihx7t-mje3mfrc-f8534b8b
+Dien_thoai_Dau_Chu: 0938061929
+Ten_Dau_Chu_Hop_dong: Nguyễn Văn Sang
+Diem_Facebook: https://www.facebook.com/profile.php?id=100009058063912
+Last_Crawl: 27/05/2026 12:53:07
+Last_Sync: 30/05/2026 07:02:19
+
+
+24 ===
+id: 1771
+tk_id: fiihb2-mirez5wm-12034d2b
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_741_18.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_258_7.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_311_8.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_358_9.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_400_10.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_439_11.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_483_12.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_533_13.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_587_14.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_639_15.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_681_16.jpg", "https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_715_17.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/v1ogp17kjyralnkyxuz8.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/xr5nkud5oljbtwpacdkq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/kjdedrfshsbowu75o9lg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/aqsnv2lehycrazvet3pe.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/zunvwiuc4lnrtlkkwz9z.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918763/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/byfqasnvwzlqk3tqriwx.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/mwclcfoarmk5mvhvkaeq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/srrtjp5mb1fbztkorn1x.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/d2i52cgbqt6dh0oq8iq6.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/o6ndpbnac7bw1zuxibeh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918766/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/j4coxg1wxti2jlyjfs0h.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779918767/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/ynqaljhqn4ztfgo0rpdu.jpg"]
+curated_config_json: None
+Chieu_dai: 18.0
+Ma_Hang: TK-034D2B
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 18.16
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 18.16 Trần Quang Diệu 80/92 4 5.3 18 18.5 tỷ Nhiêu Lộc Quận 3 15-25 tỷ HĐ Hà Chí Thiện Khôi Việt 0938087966 H3GB nguồn Hội đồng thẩm định
+Mo_ta_chi_tiet: NHÀ 4 TẦNG ĐƯỜNG TRẦN QUANG DIỆU / NGANG 5.3M - 5PN - 4 TẦNG BTCT - HẺM XE TẢI - GIÁ 18.5 TỶ TL.18.16 Trần Quang Diệu 80/92 4 5.3 17.7 18.5 tỷ Phường 14 Quận 3 + Kết cấu 1 trệt 3 lầu, có phòng ngủ tầng trệt, 2 bếp lớn, 1 phòng khách, 5PN, 1 phòng thờ, 1 phòng kho.+ Vị trí trung tâm, gần cầu Lê Văn Sỹ, bờ kè Trường Sa, Hoàng Sa, giáp Q1, tiện ra sân bay.+ Khu vực an ninh, dân trí cao.+ Hẻm xe hơi tránh, ô tô vào nhà. Có thể kinh doanh, mở văn phòng, xây chdv cho thuê...+ Pháp lý sẵn sàng công chứng trong ngày, hoàn công đủ, không quy hoạch.FB : Hà Chí Thiện.https://www.facebook.com/hachithien79
+Gia_chao: 18,500
+Gia_chot: None
+DT_Thuc_te: 92.0
+DT_Tren_so: 80.0
+So_Tang: 4.0
+Mat_Tien: 5.3
+Huong: 
+Ten_Chu_Nha: An
+Dien_thoai_1: xxxxxx9504
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/12/04/2g4v-2AA8352-mirf1g46_741_18.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/v1ogp17kjyralnkyxuz8.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/xr5nkud5oljbtwpacdkq.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/kjdedrfshsbowu75o9lg.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/aqsnv2lehycrazvet3pe.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779918760/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/zunvwiuc4lnrtlkkwz9z.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779918763/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/byfqasnvwzlqk3tqriwx.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/mwclcfoarmk5mvhvkaeq.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/srrtjp5mb1fbztkorn1x.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/d2i52cgbqt6dh0oq8iq6.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779918764/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/o6ndpbnac7bw1zuxibeh.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779918766/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/j4coxg1wxti2jlyjfs0h.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779918767/BDS-KhangNgo/fiihb2-mirez5wm-12034d2b/ynqaljhqn4ztfgo0rpdu.jpg
+Anh_13: 
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 18,500
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 4.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20260927-836
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/fiihb2-mirez5wm-12034d2b
+Dien_thoai_Dau_Chu: 0938087966
+Ten_Dau_Chu_Hop_dong: Hà Chí Thiện
+Diem_Facebook: https://www.facebook.com/hachithien79
+Last_Crawl: 27/05/2026 13:09:06
+Last_Sync: 30/05/2026 06:49:13
+
+
+26 ===
+id: 1908
+tk_id: f1fc71-mi2y8rtz-f4138ec6
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_46_14.jpg", "https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_23_6.jpg", "https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_25_7.jpg", "https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_27_8.jpg", "https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_29_9.jpg", "https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_32_10.jpg", "https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_39_11.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779920435/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/swjwmrvaupgublddtmgr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920435/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/naw2sxnzhbemzzqmuzbj.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920436/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/n8blbzwjdz0izjbaheo7.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920436/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/nibxittxkmnwpfd6lvys.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920436/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/pxngdnp6m2kv2osgrp8s.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920440/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/fzy5olkv4qjcajalyv5i.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920440/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/hogfwhzfojbkegjw437g.jpg"]
+curated_config_json: None
+Chieu_dai: 12.5
+Ma_Hang: TK-138EC6
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 80.89
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 80.89 Trần Quang Diệu 46/58 2 3.4 13 7.2 tỷ Nhiêu Lộc Quận 3 5-10 tỷ HĐ Hoàng Đình Chương Thiên Hoàng 0909387901 H3GB nguồn Đầu chủ Hoàng Đình Chương - Thiên Hoàng
+Mo_ta_chi_tiet: 80.89 Trần Quang Diệu 46/58 3.4/6.5 12.5 7.2 tỷ, Phường Nhiêu Lộc, 5 - 10 tỷ , HĐĐC Hoàng Chương P. Thiên Hoàng 0909387901, hoa hồng 3%GB, nguồn ĐC Hoàng Chương.💥💥💥 TRẦN QUANG DIỆU - PHƯỜNG NHIÊU LỘC, SÁT HẺM Ô TÔ - BÁN ĐẤT TẶNG NHÀ TIỆN XÂY MỚI - CHỈ HƠN 7 TỶ - 58M2MÔ TẢ:☘️ Khu sầm uất nhất Trần Quang Diệu, hẻm ô tô thông tứ tung.☘️ Nhà nát tiện xây mới, Chủ thiện chí bán nhanh chia tài sản.☘️ Khu phố thời trang, bán kính 500m đầy đủ tiện ích; Bệnh viện, Trường học, Cửa hàng tiện lợi, Nhà thờ, UBND... ☘️ Sổ hồng chính chủ, pháp lý chuẩn.👉 Anh em dẫn khách ký phiếu YCCCDV đầy đủ, chuẩn. Báo trước Đầu chủ 39 phút để được hỗ trợ tốt nhất. Chúc anh chị em chốt nhà bùng nổ. 💥💥💥
+Gia_chao: 7,200
+Gia_chot: None
+DT_Thuc_te: 58.0
+DT_Tren_so: 46.0
+So_Tang: 2.0
+Mat_Tien: 3.4
+Huong: 
+Ten_Chu_Nha: anh Mỹ
+Dien_thoai_1: xxxxxx4479
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/11/17/bgb-99D4365C-mi2ycnv8_46_14.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779920435/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/swjwmrvaupgublddtmgr.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779920435/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/naw2sxnzhbemzzqmuzbj.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779920436/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/n8blbzwjdz0izjbaheo7.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779920436/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/nibxittxkmnwpfd6lvys.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779920436/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/pxngdnp6m2kv2osgrp8s.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779920440/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/fzy5olkv4qjcajalyv5i.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779920440/BDS-KhangNgo/f1fc71-mi2y8rtz-f4138ec6/hogfwhzfojbkegjw437g.jpg
+Anh_8: 
+Anh_9: 
+Anh_10: 
+Anh_11: 
+Anh_12: 
+Anh_13: 
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 7,200
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 4.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20262627-600
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/f1fc71-mi2y8rtz-f4138ec6
+Dien_thoai_Dau_Chu: 0909387901
+Ten_Dau_Chu_Hop_dong: Hoàng Đình Chương
+Diem_Facebook: https://www.facebook.com/chuonghoang.tk
+Last_Crawl: 27/05/2026 13:26:30
+Last_Sync: 30/05/2026 06:38:00
+
+
+27 ===
+id: 1920
+tk_id: f1flw6-mi19vcdy-d9909c64
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_49_18.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_18_6.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_21_7.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_26_8.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_27_9.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_29_10.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_32_11.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_34_12.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_37_13.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_40_14.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_43_15.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_45_16.jpg", "https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_47_17.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/mwx8lzwrfogomophpai5.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/ui6du46o3ahxjrpwl7pq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/s4ornyxyu1aytwmgtyo7.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/zjh1xa8crnsvahvnbhvw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/ekgic2viaszxbpwjwlqi.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/avij9hizvqr0zxoldpg5.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/mutjztnc1xck2aygwuz6.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/k7nu4burwqmvoeosi5km.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/oequdjoorwdxumtwt6ps.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/kdaa1ygedonxaveqbh3d.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920587/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/smlcq9fh9f4wxwlzyxru.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920587/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/u8bidhhhlbcdj3vh6lmq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779920588/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/kzvzrnlzep4rdbnftt56.jpg"]
+curated_config_json: None
+Chieu_dai: 8.3
+Ma_Hang: TK-909C64
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu (nối dài)
+Ngo_So_nha: 11
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 11 Trần Quang Diệu (nối dài) 28 4 3.5 8 8.9 tỷ Nhiêu Lộc Quận 3 5-10 tỷ HĐ Hồ Thị Huỳnh Giao Thiên Hoàng 0909400470 H3GB nguồn Đầu chủ Hồ Thị Huỳnh Giao - Thiên Hoàng
+Mo_ta_chi_tiet: GIẢM 600Tr. GIÁ MỚI 8.9 TỶHKDC. KÍ HDDT MẶT TIỀN KINH DOANH SẦM UẤT - VIP 4 TẦNG NGAY LÊ VĂN SỸ - TRẦN QUANG DIỆU - HOÀN CÔNG ĐỦ - 9.5 TỶ 🌺🌺✅Mô tả: +Kết cấu : 1 trệt 1 lửng 2  lầu. 3 toilet 2 phòng ngủ. Nhà hiện trống tiện giao dịch, trước cho thuê 40tr/ tháng. +mặt tiền trung tâm thuận tiện qua Phú Nhuận , Q1, Tân Bình,…+Pháp lý sạch,  hoàn công - sổ nằm nhà. giao dịch nhanh gọn.
+Gia_chao: 8,900
+Gia_chot: None
+DT_Thuc_te: 28.0
+DT_Tren_so: 28.0
+So_Tang: 4.0
+Mat_Tien: 3.5
+Huong: 
+Ten_Chu_Nha: a Toan
+Dien_thoai_1: xxxxxx5532
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/11/16/bp7-B987E129-mi19x3y8_49_18.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/mwx8lzwrfogomophpai5.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/ui6du46o3ahxjrpwl7pq.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/s4ornyxyu1aytwmgtyo7.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/zjh1xa8crnsvahvnbhvw.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779920581/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/ekgic2viaszxbpwjwlqi.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/avij9hizvqr0zxoldpg5.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/mutjztnc1xck2aygwuz6.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/k7nu4burwqmvoeosi5km.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/oequdjoorwdxumtwt6ps.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779920584/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/kdaa1ygedonxaveqbh3d.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779920587/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/smlcq9fh9f4wxwlzyxru.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779920587/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/u8bidhhhlbcdj3vh6lmq.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779920588/BDS-KhangNgo/f1flw6-mi19vcdy-d9909c64/kzvzrnlzep4rdbnftt56.jpg
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 8,900
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 8.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20262727-949
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/f1flw6-mi19vcdy-d9909c64
+Dien_thoai_Dau_Chu: 0909400470
+Ten_Dau_Chu_Hop_dong: Hồ Thị Huỳnh Giao
+Diem_Facebook: https://www.facebook.com/quynhgiao.ho
+Last_Crawl: 27/05/2026 13:27:35
+Last_Sync: 30/05/2026 06:37:01
+
+
+28 ===
+id: 1974
+tk_id: exfxc7-mhrh4s4i-790e1fa3
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_56_20.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_14_8.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_17_9.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_20_11.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_22_12.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_29_13.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_33_14.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_35_15.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_37_16.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_44_17.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_50_18.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_52_19.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrhhlbn_1_1.jpg", "https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrhhlbn_4_2.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/sjzakjvidted9qai1uzi.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921211/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/hrcuxp6rk9wih8qixp7r.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/zdq9qttgpo3jgc4o6bjz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/xulxpsjcp3lktqganidt.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/ypmr7wdnzxctibbczais.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921213/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/xy9wgkd77wynb1hjgb5b.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921213/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/armubjaydzjk2gy4thrw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921214/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/ik93egvr3lpv4kxniee8.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921214/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/dhpzwq02gpsex6spenwj.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921214/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/pab3ztkpbyfvqlohxrhc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921216/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/acgoeeujywkhepzbzky7.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921217/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/esg1g96fbaag1xvzv4dw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921217/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/mk7kwxg0f6thxvbianaz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779921217/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/vlvnktvunkfpxa2avzws.jpg"]
+curated_config_json: None
+Chieu_dai: 18.8
+Ma_Hang: TK-0E1FA3
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 136.13
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 136.13 Trần Quang Diệu 70 3 5.2 19 14 tỷ Nhiêu Lộc Quận 3 10-15 tỷ HĐ Nguyễn Tiến Hùng Tâm Đức 0902696839 H3GB nguồn Đầu chủ Nguyễn Tiến Hùng - Tâm Đức
+Mo_ta_chi_tiet: ❌ CHỦ HẠ 500 TRIỆU - GIA MỚI 14 TỶ136.13 Trần Quang Diệu 95/70 4 5.2/6.6 18.8 14.5 Tỷ Phường 14 Quận 3 10 đến 20 HĐĐC Hùng Phòng Tâm Đức 0902696839 HH 3% GB 🌹🌹🌹❌ KHU VỰC CỰC ĐẮC ĐỊA - LÔ GÓC🧱 Kết cấu: 3 tầng , Sân thượng rộng rãi , PK , Bếp , công năng 3 PN master , 4 vệ sinh. Nhà HXH ô tô ngủ  trong nhà . 📍Khu vực tiện ích , di chuyển nhanh sang các Quận Trung tâm liền kề , giáp HVB , Lê Văn sỹ Kinh đô thời trang . 📙Shr , Hcđ , nở hậu đẹp - Công chứng sang tên nhanh .🎯Nhà hướng TÂY ( TTT)ACE khảo sát selfie có mặt . Báo trước ĐC HÙNG 60 Phút để hỗ trợ kịp thời . Chúc ACE thu bông rực rỡ 🌹🌹🌹https://www.facebook.com/share/1CvkTugxPZ/?mibextid=wwXIfr
+Gia_chao: 14,000
+Gia_chot: None
+DT_Thuc_te: 70.0
+DT_Tren_so: 70.0
+So_Tang: 3.0
+Mat_Tien: 5.2
+Huong: Tây-Bắc
+Ten_Chu_Nha: Trần Tuấn Phượng Nga
+Dien_thoai_1: xxxxxx9757
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/11/09/2w7o-E50BBBB3-mhrh5vp9_56_20.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/sjzakjvidted9qai1uzi.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779921211/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/hrcuxp6rk9wih8qixp7r.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/zdq9qttgpo3jgc4o6bjz.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/xulxpsjcp3lktqganidt.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779921210/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/ypmr7wdnzxctibbczais.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779921213/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/xy9wgkd77wynb1hjgb5b.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779921213/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/armubjaydzjk2gy4thrw.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779921214/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/ik93egvr3lpv4kxniee8.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779921214/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/dhpzwq02gpsex6spenwj.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779921214/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/pab3ztkpbyfvqlohxrhc.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779921216/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/acgoeeujywkhepzbzky7.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779921217/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/esg1g96fbaag1xvzv4dw.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779921217/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/mk7kwxg0f6thxvbianaz.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779921217/BDS-KhangNgo/exfxc7-mhrh4s4i-790e1fa3/vlvnktvunkfpxa2avzws.jpg
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 14,000
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 5.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 4
+So_nha_ve_sinh: 3
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20263327-507
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/exfxc7-mhrh4s4i-790e1fa3
+Dien_thoai_Dau_Chu: 0902696839
+Ten_Dau_Chu_Hop_dong: Nguyễn Tiến Hùng
+Diem_Facebook: https://www.facebook.com/profile.php?id=100058280035127
+Last_Crawl: 27/05/2026 13:33:01
+Last_Sync: 30/05/2026 06:32:40
+
+
+32 ===
+id: 2254
+tk_id: cv5xsr-mg8zmb96-557aeb07
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_60_28.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_63_29.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_17_7.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_21_8.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_25_9.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_28_10.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_31_11.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_33_12.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_35_13.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_37_14.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_38_15.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_40_16.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_42_17.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_44_18.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_45_19.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_47_20.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_49_21.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_51_22.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_53_23.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_54_24.jpg", "https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_55_25.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/yt1gqyrk63fevb4pwqze.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/pdpzighn6yaobfcxssrv.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/uotpidgdf5dbe6bb2pfd.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/h5b1fmfngxcwca9qativ.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/thlic4uhtdd7dycciawe.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/a6ebsqj8r8l7zvoog80z.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/jvsthvyscfrzgr8phzkv.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/hgg0vwnvwn9bupkecvyc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/ne2vuvee1o1rszvbvchs.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/i8c2hz2xau7qfmr3zpab.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/rjcfcz8aueycmgu4qfyd.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/fcvtrzv9isqeoi8yqpej.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/p8hu29cel2buc5hbcjoz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/mz8vrlyecswigpavqtye.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/b00dljpookg7cruh7zvg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924538/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/pen5jtl6tf8kvd0dvwnb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924538/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/k8cz7upe7d9prrzyqkua.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924538/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/s2tbch9fsc5tvohp5zln.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924539/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/prld74oqvnppgejaefy9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924539/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/qxa48rla2izcz96vhsah.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779924541/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/v8qy8mtxvz7rgooedl5s.jpg"]
+curated_config_json: None
+Chieu_dai: 7.5
+Ma_Hang: TK-7AEB07
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 113.9A
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 113.9A Trần Quang Diệu 36 4 4.8 8 10.68 tỷ Nhiêu Lộc Quận 3 10-15 tỷ HĐ Lê Tấn Phát_ĐC Nhật Phát 0777939291 H3GB nguồn Đầu chủ Lê Tấn Phát_ĐC - Nhật Phát
+Mo_ta_chi_tiet: 💎 NHÀ ĐẸP Ở NGAY TRUNG TÂM QUẬN 3 – VỊ TRÍ ĐẮC ĐỊA,✨ THÔNG TIN : • Nằm ngay trung tâm Quận 3, khu vực sầm uất, kết nối nhanh chóng đến Quận 1, Quận 10, Phú Nhuận. • Tiện ích xung quanh đầy đủ: gần chợ, siêu thị, trường học, ngân hàng, nhà hàng – café… cực kỳ thuận tiện cho cuộc sống hiện đại. • Nhà vuông vức, kết cấu chắc chắn, phù hợp để ở, cho thuê hoặc đầu tư lâu dài. 📐 Diện tích sàn: 124m²🚪 Kết cấu: 1 trệt – 2 lầu – 1 sân thượng🏠 Công năng: 5 phòng ngủ, 6 WC – thiết kế tiện nghi, tối ưu không gian • Sân thượng rộng rãi, có thể thiết kế thành không gian xanh, khu BBQ hoặc thư giãn.👉 Căn nhà phù hợp để ở ĐẠI gia đình, cho thuê hoặc đầu tư cho thuê.🎯 ACE dẫn khách báo cáo đúng quy trình, gọi trước cho DC để được hỗ trợ tốt nhất.🎉 CHÚC ANH CHỊ EM THU BÔNG SỚM NHẤT https://www.facebook.com/phatlerealACE tìm từ khoá : Lê Tấn Phát hoặc 0777939291
+Gia_chao: 10,680
+Gia_chot: None
+DT_Thuc_te: 36.0
+DT_Tren_so: 36.0
+So_Tang: 4.0
+Mat_Tien: 4.8
+Huong: 
+Ten_Chu_Nha: chị Yến
+Dien_thoai_1: xxxxxx8898
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_60_28.jpg
+So_do_thua_dat_2: https://tk-assets.spms2.com/2025/10/02/3oeu-FFB58B86-mg8zqccb_63_29.jpg
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/yt1gqyrk63fevb4pwqze.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/pdpzighn6yaobfcxssrv.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/uotpidgdf5dbe6bb2pfd.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/h5b1fmfngxcwca9qativ.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779924529/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/thlic4uhtdd7dycciawe.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/a6ebsqj8r8l7zvoog80z.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/jvsthvyscfrzgr8phzkv.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/hgg0vwnvwn9bupkecvyc.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/ne2vuvee1o1rszvbvchs.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779924532/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/i8c2hz2xau7qfmr3zpab.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/rjcfcz8aueycmgu4qfyd.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/fcvtrzv9isqeoi8yqpej.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/p8hu29cel2buc5hbcjoz.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/mz8vrlyecswigpavqtye.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779924535/BDS-KhangNgo/cv5xsr-mg8zmb96-557aeb07/b00dljpookg7cruh7zvg.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 10,680
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 3.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 5
+So_nha_ve_sinh: 6
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20260027-517
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/cv5xsr-mg8zmb96-557aeb07
+Dien_thoai_Dau_Chu: 0777939291
+Ten_Dau_Chu_Hop_dong: Lê Tấn Phát_ĐC
+Diem_Facebook: https://www.facebook.com/phatlereal/
+Last_Crawl: 27/05/2026 14:00:33
+Last_Sync: 30/05/2026 06:10:20
+
+
+34 ===
+id: 2558
+tk_id: ff7wrz-mee221cc-29135ade
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_62_23.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_17_7.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_20_8.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_23_9.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_27_10.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_30_11.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_33_12.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_35_13.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_39_14.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_43_15.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_45_16.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_46_17.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_50_18.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_52_19.jpg", "https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_55_20.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/jdnqcf7ssvmd8zz54bks.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/ecstw2ca6q22yot19en0.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/s5n1fibxldty1vpx6zsg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/ddwb8lklp9ghhngdryyo.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/wzgjosbwtgqe1nfldsds.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928172/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/vn6m6wpprsn8uhkacnqk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/zpsmlx7zd5mzy0akq3kw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/sdwhwq3a7dubtma3jafj.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/wkpzmkc4cfrjsgjoirs1.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/fsp6whp0z3qqt2czvoit.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928175/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/tfyftfrbxocz2de6vad9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928176/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/titwrr69fluwlglprbr3.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928176/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/fpkefglepx1dhkdwllyr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928177/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/khcszpj6m6z5irdqbrxa.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779928177/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/c9zqso6y7yirlcxyna4d.jpg"]
+curated_config_json: None
+Chieu_dai: 18.0
+Ma_Hang: TK-135ADE
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 108.44B
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 108.44B Trần Quang Diệu 74/75.2 3 4.9 18 15 tỷ Phường 14 Quận 3 15-25 tỷ HĐ Trương Xuân Danh _ĐC Đồng Khởi 0932555951 H3GB nguồn Đầu chủ Trương Xuân Danh _ĐC - Đồng Khởi
+Mo_ta_chi_tiet: Anh chị em chủ động liên hệ Zalo: 0932.555.951 nhé!CHÍNH CHỦ LÂU ĐỜI - HẺM XE HƠI THÔNG TRƯỜNG SA - TRẦN QUANG DIỆU PHƯỜNG 14 QUẬN 3 - 3 TẦNG 75M2 - CHỈ 15T - Diện tích: 4.9x18m. - Nhà chính chủ lâu đời chưa qua đầu tư. - Kết cấu 1 trệt 2 lầu, 6pn 3wc, ban công.- Có sân để xe máy gần 10 chiếc. - Hẻm xe hơi, trước nhà rộng 5m, khu dân trí. - Thông Lê Quý Đôn, Huỳnh Văn Bánh Trường Sa.- Pháp lí chuẩn sổ hồng riêng.✍️Chú ý: Anh chị em đi Huỳnh Văn Bánh -> Lê Quý Đôn tới Hủ tiếu mì ASAM rẻ trái - Nhà bên tay trái.Anh chị em dẫn khách báo TP Danh 0932.555.951 45p. FB "Xuân Danh"
+Gia_chao: 15,000
+Gia_chot: None
+DT_Thuc_te: 75.2
+DT_Tren_so: 74.0
+So_Tang: 3.0
+Mat_Tien: 4.9
+Huong: 
+Ten_Chu_Nha: C Anh
+Dien_thoai_1: xxxxxx7644
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/08/16/2hb6-35B43295-mee234fu_62_23.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/jdnqcf7ssvmd8zz54bks.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/ecstw2ca6q22yot19en0.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/s5n1fibxldty1vpx6zsg.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/ddwb8lklp9ghhngdryyo.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779928169/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/wzgjosbwtgqe1nfldsds.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779928172/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/vn6m6wpprsn8uhkacnqk.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/zpsmlx7zd5mzy0akq3kw.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/sdwhwq3a7dubtma3jafj.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/wkpzmkc4cfrjsgjoirs1.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779928173/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/fsp6whp0z3qqt2czvoit.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779928175/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/tfyftfrbxocz2de6vad9.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779928176/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/titwrr69fluwlglprbr3.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779928176/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/fpkefglepx1dhkdwllyr.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779928177/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/khcszpj6m6z5irdqbrxa.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779928177/BDS-KhangNgo/ff7wrz-mee221cc-29135ade/c9zqso6y7yirlcxyna4d.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 15,000
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 5.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20263527-330
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/ff7wrz-mee221cc-29135ade
+Dien_thoai_Dau_Chu: 0932555951
+Ten_Dau_Chu_Hop_dong: Trương Xuân Danh _ĐC
+Diem_Facebook: https://www.facebook.com/profile.php?id=61561988667657
+Last_Crawl: 27/05/2026 14:35:41
+Last_Sync: 30/05/2026 05:45:38
+
+
+36 ===
+id: 2663
+tk_id: f11wg2-mdod4wll-6f1876ca
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_63_24.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_21_7.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_24_8.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_26_9.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_28_10.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_29_11.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_33_12.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_34_13.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_36_14.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_38_15.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_43_16.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_50_17.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_52_18.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_53_19.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_55_20.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_57_21.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_59_22.jpg", "https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_61_23.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/qvck9jmplfne0k24gmuy.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/ipmkqf99kuxnzj8yv3sh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/rh1hqfgkpmtyyqguotnz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/ynbpixj2dywynn62lvr0.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/os6ok0gzlx4eldgmsmzk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/aednpcfokybe11dagkyk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/qbbth2tya9pqsoeqjwlp.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/raxtlfem6izjtt0mlfto.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/hijbo6qkayo5fkswxwuo.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/nlvhd2zwyxpfhsbpxesu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/sibqw4mm3fzixzkrfxvr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/dkhkvladtnc7yfk4cvfp.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/x9nszrveun3byle2jdxk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/gy6l4gvbmfeltvanvom1.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929498/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/v9othwnqzfb7djhwjwhk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929500/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/d0p5fm9xpzcnfrig2id9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929500/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/egoa0okwewpxgwklwwpt.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779929500/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/cwkhejnzqj0irbbnhzkb.jpg"]
+curated_config_json: None
+Chieu_dai: 8.0
+Ma_Hang: TK-1876CA
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 113.21A1
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 113.21A1 Trần Quang Diệu 38/56 5 6.3 8 8.4 tỷ Nhiêu Lộc Quận 3 5-10 tỷ HĐ Trần Thanh Chương Đại Nam 0931938649 H3GB nguồn Đầu chủ Trần Thanh Chương - Đại Nam
+Mo_ta_chi_tiet: + Hạ chào thêm 200, giá mới 8,4 tỷ + Hạ chào 300 triệu, giá mới 8,6 tỷ bớt lộc !🏘️🤘 VIP LÊ VĂN SỸ QUẬN 3- 5 TẦNG- NGANG 6M- NHÀ MỚI Ở NGAY- SỔ A4- 8.xx TỶ 🔥🔥🔥✅ Vị trí VIP ngay TRẦN QUANG DIỆU và Lê Văn Sỹ, khi VIP.✅ Lô góc thoáng mát, hẻm gần 4M thông, 30m ra hẻm xe hơi.✅ Kết cấu : 1 trệt 1 lửng 2 lầu sân thượng - 5 tầng NTCT cứng. 3 phòng ngủ có wc riêng.✅ Sổ đang chờ làm hoàn công mới.✅ Tổng dt sử dụng 56m2 tính luôn sân phía trước, sân rất rộng để đc 5,6 chiếc xe máy.+ AE ks và dẫn khách theo địa chỉ  386/57K Lê Văn Sỹ, ae chạy thẳng vào tới ngã 3, quẹo phải là thấy nhà.HKDC - kí với em, đầu tư chung, quyết giá.
+Gia_chao: 8,400
+Gia_chot: None
+DT_Thuc_te: 56.0
+DT_Tren_so: 38.0
+So_Tang: 5.0
+Mat_Tien: 6.3
+Huong: 
+Ten_Chu_Nha: Nguyễn Thanh Xuân
+Dien_thoai_1: xxxxxx3149
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/07/29/zrk-EB36EE53-mdod61eq_63_24.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/qvck9jmplfne0k24gmuy.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/ipmkqf99kuxnzj8yv3sh.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/rh1hqfgkpmtyyqguotnz.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/ynbpixj2dywynn62lvr0.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779929491/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/os6ok0gzlx4eldgmsmzk.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/aednpcfokybe11dagkyk.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/qbbth2tya9pqsoeqjwlp.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/raxtlfem6izjtt0mlfto.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/hijbo6qkayo5fkswxwuo.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779929494/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/nlvhd2zwyxpfhsbpxesu.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/sibqw4mm3fzixzkrfxvr.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/dkhkvladtnc7yfk4cvfp.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/x9nszrveun3byle2jdxk.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779929497/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/gy6l4gvbmfeltvanvom1.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779929498/BDS-KhangNgo/f11wg2-mdod4wll-6f1876ca/v9othwnqzfb7djhwjwhk.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 8,400
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 4.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 3
+So_nha_ve_sinh: 4
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20264627-136
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/f11wg2-mdod4wll-6f1876ca
+Dien_thoai_Dau_Chu: 0931938649
+Ten_Dau_Chu_Hop_dong: Trần Thanh Chương
+Diem_Facebook: https://www.facebook.com/chuong.cook
+Last_Crawl: 27/05/2026 14:46:16
+Last_Sync: 30/05/2026 05:37:07
+
+
+37 ===
+id: 2923
+tk_id: ect2vv-mc0qpv3z-47780c3
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/08/06/3nlk-E18FFBF-mdzib3kp_1_1.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_45_14.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_47_15.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_49_16.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_51_17.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_53_18.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_55_19.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_57_20.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_58_21.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_60_22.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_62_23.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_63_24.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_65_25.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_67_26.jpg", "https://tk-assets.spms2.com/2025/06/17/3nlk-E18FFBF-mc0qs61c_69_27.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/ba03phbuvgksmuhmdbin.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/bukvsvdlv9yt89kyyod5.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/cqmxgs0d3x3dqxb8excg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/ohkzr13sjmqr0zemxqw7.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/domwsvfmii46yxbz1ucu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933478/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/fqycu6faciej1f0leg9t.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933478/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/aqsastomjtxduw6hohg4.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933480/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/ppwh1u5eqvbzkvppkeo9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933481/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/jp1p6xipkfocj6qz8tia.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933479/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/mgpdfxaj0oipnzglaev9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933481/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/uarpm3hjelgwafudr7g3.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933482/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/g8abjgjkmdhdhqllxxlm.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933482/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/f80rtcus4wwtz11ujjyt.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933483/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/mfqdge23sotinayybxyl.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779933484/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/lvnrintpyttwxyzfludy.jpg"]
+curated_config_json: None
+Chieu_dai: 12.0
+Ma_Hang: TK-7780C3
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Cư Xá Trần Quang Diệu
+Ngo_So_nha: 42 ( số cũ: 48)
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 42 ( số cũ: 48) Cư Xá Trần Quang Diệu 100.3 2 8 12 13.4 tỷ Nhiêu Lộc Quận 3 10-15 tỷ HĐ Nguyễn Thị Thu Thảo Trí Phát 0868038619 H3GB nguồn Hội đồng thẩm định
+Mo_ta_chi_tiet: Ngày 27/01 Giảm Chào còn 13,4 Tỷ🌹Ngày 16/08 Giảm Chào còn 13,6 Tỷ🌹Ngày 06/08 giảm chào còn 13,8 tỷ🌹🔥 NGAY TRẦN QUANG DIỆU -  TRUNG TÂM QUẬN 3 - SD GẦN 200m2 - XE TẢI VI VU - CHỈ 14 TỎI🌹42 (Số cũ 48) Cư Xá Trần Quang Diệu 100 2 8.2 12 14 Tỷ, Phường 14, Quận 3,  5-10 tỷ HĐ Nguyễn Thị Thu Thảo P.Minh Phúc 0868038619 hh3% Nguồn Đc Nguyễn Thảo🌹Kết cấu: Tầng trệt đang cho thuê quán cà phê có 1 WC, Tầng 1 đang ở gồm có 3 PN, 1 WC, Khách, Bếp, Ban công bao thoáng mát,….🌹Vị Trí: Ngay góc 2 Mặt Tiền đường, Thông tứ hướng, Thuận tiện di chuyển sang quận 1, Bình Thạnh, Các quận Trung Tâm,…🌹Pháp lý: sổ hồng riêng, công chứng trong ngày.🔥ACE KHẢO SÁT - DẪN KHÁCH - KÝ PHIẾU YCCCDV - CHỤP HÌNH KHÁCH ĐÚNG QUY TRÌNH CÔNG TY. BÁO TRƯỚC ĐẦU CHỦ NGUYỄN THẢO 39p ĐỂ ĐƯỢC HỖ TRỢ TỐT NHẤT NHÉ Ạ😘
+Gia_chao: 13,400
+Gia_chot: None
+DT_Thuc_te: 100.3
+DT_Tren_so: 100.3
+So_Tang: 2.0
+Mat_Tien: 8.0
+Huong: 
+Ten_Chu_Nha: Huỳnh Thị Mỹ Linh
+Dien_thoai_1: xxxxxx1674
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/08/06/3nlk-E18FFBF-mdzib3kp_1_1.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/ba03phbuvgksmuhmdbin.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/bukvsvdlv9yt89kyyod5.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/cqmxgs0d3x3dqxb8excg.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/ohkzr13sjmqr0zemxqw7.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779933475/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/domwsvfmii46yxbz1ucu.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779933478/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/fqycu6faciej1f0leg9t.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779933478/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/aqsastomjtxduw6hohg4.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779933480/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/ppwh1u5eqvbzkvppkeo9.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779933481/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/jp1p6xipkfocj6qz8tia.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779933479/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/mgpdfxaj0oipnzglaev9.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779933481/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/uarpm3hjelgwafudr7g3.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779933482/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/g8abjgjkmdhdhqllxxlm.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779933482/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/f80rtcus4wwtz11ujjyt.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779933483/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/mfqdge23sotinayybxyl.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779933484/BDS-KhangNgo/ect2vv-mc0qpv3z-47780c3/lvnrintpyttwxyzfludy.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 13,400
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 8.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 4
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20261127-693
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/ect2vv-mc0qpv3z-47780c3
+Dien_thoai_Dau_Chu: 0868038619
+Ten_Dau_Chu_Hop_dong: Nguyễn Thị Thu Thảo
+Diem_Facebook: https://www.facebook.com/profile.php?id=100011140757974
+Last_Crawl: 27/05/2026 15:11:38
+Last_Sync: 30/05/2026 05:15:59
+
+
+39 ===
+id: 3033
+tk_id: f1fc71-mbampg31-f315c1b4
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/06/17/bgb-E330FA6E-mc0ce3m8_3_1.jpg", "https://tk-assets.spms2.com/2025/05/30/bgb-E330FA6E-mbamrew7_16_6.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_3_1.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_8_2.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_11_3.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_13_4.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_16_5.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_18_6.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_22_7.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_25_8.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_28_9.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_30_10.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_37_11.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_38_12.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_43_13.jpg", "https://tk-assets.spms2.com/2025/06/08/bgb-E330FA6E-mbmxv0bo_45_14.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/luvjqhq12wo1zfqs7puk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/db3ly8eia8ugmqsppckx.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/joifouai6yts9v1d08x1.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/kea5ajg88ohs9cwldx2h.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/o3i3c0wvbmzgvpt8hgp9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/lcvv7cfiqzfth7bq0nsm.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/pch32m7enio4e5r8sylh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/setzjkwvuvkkm0hquayb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/bopbho5xq89nszim807j.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938707/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/yqwcy4xomg0unfopzx8l.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/ryrl4ohzukptfbxtvuku.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/h1nmw7gmoge3v2kavnh9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/jq8mfb3yx9thl3522p0y.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/xoremqkaudwa7fg6dftr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938712/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/ykua46kastlrk6fyze3h.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779938715/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/wjqlrfq14ezcin5ghygs.jpg"]
+curated_config_json: None
+Chieu_dai: 11.0
+Ma_Hang: TK-15C1B4
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 49.1B
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 49.1B Trần Quang Diệu 41/42 5 3.6 11 9 tỷ Nhiêu Lộc Quận 3 5-10 tỷ HĐ Hoàng Đình Chương Thiên Hoàng 0909387901 H3GB nguồn Đầu chủ Hoàng Đình Chương - Thiên Hoàng
+Mo_ta_chi_tiet: Tổng giảm 3.5 tỷ, giá chào chỉ còn 9 tỷGiảm chào 10.490 tỷ05/07 Giảm chào 10.6 tỷ16/06 Giảm chào 11.6 tỷGiảm chào 12.2 tỷ💥💥💥 SÁT MẶT TIỀN TRẦN QUANG DIỆU P.13, QUẬN 3 - NHÀ 5 TẦNG - 42 M2 | CHỈ 12 TỶ HƠN49.1B Trần Quang Diệu 42 5 3.6/4.3 11 12.5 tỷ, P. Nhiêu Lộc, 10-15 Tỷ, HĐĐC Hoàng Chương K. Thiên Hoàng 0909387901, hoa hồng 3%GB, nguồn ĐC Hoàng Chương🍀 Kết cấu: Trệt, 3 lầu, sân thượng với 4PN, 4WC thích hợp gia đình đông người.🍀 1 bước chân mặt tiền đường Trần Quang Diệu sầm uất, suốt ngày đêm. Cách chợ Nguyễn Văn Trỗi 3p xe máy.🍀 Vị trí trung tâm giao Quận 1, Phú Nhuận, Quận 10, Tân Bình sát Trường Sa thông Lê Văn Sỹ, thuận tiện đi muôn nơi.🍀 Sổ vuông A4, chính chủ công chứng ngay.👉 Anh em dẫn khách ký phiếu YCCCDV đầy đủ, chuẩn quy trình. Báo trước Đầu chủ 39 phút để được hỗ trợ tốt nhất. Chúc anh chị em chốt nhà bùng nổ. 💥💥💥👉 Facebook Đầu chủ: https://www.facebook.com/chuonghoang.tk
+Gia_chao: 9,000
+Gia_chot: None
+DT_Thuc_te: 42.0
+DT_Tren_so: 41.0
+So_Tang: 5.0
+Mat_Tien: 3.6
+Huong: 
+Ten_Chu_Nha: anh Trung
+Dien_thoai_1: xxxxxx7768
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/06/17/bgb-E330FA6E-mc0ce3m8_3_1.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/luvjqhq12wo1zfqs7puk.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/db3ly8eia8ugmqsppckx.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/joifouai6yts9v1d08x1.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/kea5ajg88ohs9cwldx2h.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779938701/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/o3i3c0wvbmzgvpt8hgp9.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/lcvv7cfiqzfth7bq0nsm.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/pch32m7enio4e5r8sylh.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/setzjkwvuvkkm0hquayb.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779938706/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/bopbho5xq89nszim807j.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779938707/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/yqwcy4xomg0unfopzx8l.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/ryrl4ohzukptfbxtvuku.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/h1nmw7gmoge3v2kavnh9.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/jq8mfb3yx9thl3522p0y.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779938711/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/xoremqkaudwa7fg6dftr.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779938712/BDS-KhangNgo/f1fc71-mbampg31-f315c1b4/ykua46kastlrk6fyze3h.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 9,000
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 3.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 4
+So_nha_ve_sinh: 4
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20263627-885
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/f1fc71-mbampg31-f315c1b4
+Dien_thoai_Dau_Chu: 0909387901
+Ten_Dau_Chu_Hop_dong: Hoàng Đình Chương
+Diem_Facebook: https://www.facebook.com/chuonghoang.tk
+Last_Crawl: 27/05/2026 15:36:29
+Last_Sync: 30/05/2026 05:07:01
+
+
+47 ===
+id: 3423
+tk_id: g8oyo7-m8dwde9n-6a9dbe6f
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/10/12/11pn-2D2075B2-mgn4el5b_5_1.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_386_10.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_389_11.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_391_12.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_393_13.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_396_14.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_397_15.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_401_16.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_403_17.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_405_18.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_409_19.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_418_20.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_429_21.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_437_22.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_441_23.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_444_24.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_451_25.jpg", "https://tk-assets.spms2.com/2025/03/18/11pn-2D2075B2-m8dwdf2q_455_26.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/hsne66ueay2dgcm4cobe.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/bqxecw3ojw1eqi4latdd.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/aphw52bkjmq89havyzqe.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/ksycygpa16mbta55i9uz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/vctn9etmuy6ms4onpgjr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947091/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/cs5pru2wtat6htupuurj.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/sy5acda5lqzeyj4vvxfz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/xjmmhz6bdsp4r9oncdaz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/htg7uuflogedpo9ulqlr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/sixuz6esn0su1nbpmcvh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947094/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/mg4bsc2vkjbkywyntlff.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/nrhbagmf4kqafwn7lkjn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/dzggverqi0ip4vhlqhm1.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/iey2ri3ztws6xeufuao6.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/f2odzpyyl2pzlfuo1oq0.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947098/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/v62jgtgic8s2jmwykbuc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947098/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/e1zzf24kmblpcrkigi51.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779947098/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/id5cfxjqzyecvsjlaphg.jpg"]
+curated_config_json: None
+Chieu_dai: 14.5
+Ma_Hang: TK-9DBE6F
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 59.3A
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 59.3A Trần Quang Diệu 58 4 4 15 15.5 tỷ Nhiêu Lộc Quận 3 15-25 tỷ HĐ Phan Thị Hương Tinh Anh 0934632268 H3GB nguồn Đầu chủ Phan Thị Hương - Tinh Anh
+Mo_ta_chi_tiet: https://www.facebook.com/thanhhuong.meow?mibextid=LQQJ4d
+Gia_chao: 15,500
+Gia_chot: None
+DT_Thuc_te: 58.0
+DT_Tren_so: 58.0
+So_Tang: 4.0
+Mat_Tien: 4.0
+Huong: 
+Ten_Chu_Nha: anh Hùng
+Dien_thoai_1: xxxxxx5402
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/10/12/11pn-2D2075B2-mgn4el5b_5_1.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/hsne66ueay2dgcm4cobe.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/bqxecw3ojw1eqi4latdd.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/aphw52bkjmq89havyzqe.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/ksycygpa16mbta55i9uz.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779947088/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/vctn9etmuy6ms4onpgjr.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779947091/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/cs5pru2wtat6htupuurj.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/sy5acda5lqzeyj4vvxfz.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/xjmmhz6bdsp4r9oncdaz.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/htg7uuflogedpo9ulqlr.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779947092/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/sixuz6esn0su1nbpmcvh.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779947094/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/mg4bsc2vkjbkywyntlff.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/nrhbagmf4kqafwn7lkjn.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/dzggverqi0ip4vhlqhm1.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/iey2ri3ztws6xeufuao6.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779947095/BDS-KhangNgo/g8oyo7-m8dwde9n-6a9dbe6f/f2odzpyyl2pzlfuo1oq0.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 15,500
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 12.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20261527-681
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/g8oyo7-m8dwde9n-6a9dbe6f
+Dien_thoai_Dau_Chu: 0934632268
+Ten_Dau_Chu_Hop_dong: Phan Thị Hương
+Diem_Facebook: https://www.facebook.com/thanhhuong.meow
+Last_Crawl: 27/05/2026 16:15:25
+Last_Sync: 30/05/2026 04:35:24
+
+
+50 ===
+id: 3709
+tk_id: exfxc7-m3xun0j8-8f0f1f5c
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2024/11/26/2w7o-3FB3154B-m3xun17u_37_6.jpg", "https://tk-assets.spms2.com/2024/11/26/2w7o-3FB3154B-m3xun17u_41_7.jpg", "https://tk-assets.spms2.com/2024/11/26/2w7o-3FB3154B-m3xun17u_42_8.jpg", "https://tk-assets.spms2.com/2024/11/26/2w7o-3FB3154B-m3xzj5jp_6_1.jpg", "https://tk-assets.spms2.com/2024/11/26/2w7o-3FB3154B-m3xzj5jp_12_2.jpg", "https://tk-assets.spms2.com/2024/11/26/2w7o-3FB3154B-m3xzj5jp_22_3.jpg", "https://tk-assets.spms2.com/2024/11/26/2w7o-3FB3154B-m3xzj5jp_28_4.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779951347/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/lqgqircnc82xv3nulxfn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779951347/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/u0ifrhmhd2xvvierwkkh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779951348/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/fkpglr3dftxboe5tdjyg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779951348/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/rottgyqwlcun1ufkxtyj.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779951348/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/ydu4ghx9yowabztixiba.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779951351/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/t6zrtcti41vfqppmifpe.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779951351/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/gvirmphzu1v0h7ppgdy7.jpg"]
+curated_config_json: None
+Chieu_dai: 14.0
+Ma_Hang: TK-0F1F5C
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần quang Diệu
+Ngo_So_nha: 18.62
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 18.62 Trần quang Diệu 53 2 3.8 14 8.3 tỷ Phường 14 Quận 3 5-10 tỷ HĐ Nguyễn Tiến Hùng Tâm Đức 0902696839 H3GB nguồn Đầu chủ Nguyễn Tiến Hùng - Tâm Đức
+Mo_ta_chi_tiet: https://www.facebook.com/profile.php?id=100058280035127&mibextid=LQQJ4d
+Gia_chao: 8,300
+Gia_chot: None
+DT_Thuc_te: 53.0
+DT_Tren_so: 53.0
+So_Tang: 2.0
+Mat_Tien: 3.8
+Huong: Bắc
+Ten_Chu_Nha: Trần anh Tuấn
+Dien_thoai_1: xxxxxx6838
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: None
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779951347/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/lqgqircnc82xv3nulxfn.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779951347/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/u0ifrhmhd2xvvierwkkh.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779951348/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/fkpglr3dftxboe5tdjyg.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779951348/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/rottgyqwlcun1ufkxtyj.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779951348/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/ydu4ghx9yowabztixiba.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779951351/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/t6zrtcti41vfqppmifpe.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779951351/BDS-KhangNgo/exfxc7-m3xun0j8-8f0f1f5c/gvirmphzu1v0h7ppgdy7.jpg
+Anh_8: 
+Anh_9: 
+Anh_10: 
+Anh_11: 
+Anh_12: 
+Anh_13: 
+Anh_14: 
+Anh_15: 
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 8,300
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 2.5
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 3
+So_nha_ve_sinh: 1
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20264427-514
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/exfxc7-m3xun0j8-8f0f1f5c
+Dien_thoai_Dau_Chu: 0902696839
+Ten_Dau_Chu_Hop_dong: Nguyễn Tiến Hùng
+Diem_Facebook: https://www.facebook.com/profile.php?id=100058280035127
+Last_Crawl: 27/05/2026 16:44:35
+Last_Sync: 30/05/2026 04:12:25
+
+
+51 ===
+id: 4171
+tk_id: ewwsrg-lwnab42w-f22bf0b1
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_5_lwnab5cv.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_6_lwnab5dl.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_7_lwnab5e9.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_8_lwnab5ex.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_9_lwnab5fl.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_10_lwnab5gg.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_11_lwnab5hm.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_12_lwnab5il.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_13_lwnab5jf.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_14_lwnab5kt.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_15_lwnab5lf.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_16_lwnab5m4.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_17_lwnab5my.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_18_lwnab5ol.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_19_lwnab5pw.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_20_lwnab5qv.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_21_lwnab5rq.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_22_lwnab5t9.jpg", "https://tk-assets.spms2.com/origin/2024/5/26/2h9s-631490FD-lwnab594_23_lwnab5u1.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779957907/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/hm1sxv0m3tcooxjy01no.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957907/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/j0wnspp8eggnrihy5nwi.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957908/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/orvz3o0ylgwihoqqjsxq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957908/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/dcwj8gighrqex2b2xwye.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957908/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/auai4zkioosfouuzf7mk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957910/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/j57hdb8mjo2zncada9ju.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957912/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/wlhs8ti0p9phuvybopnn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957911/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/ifxoodfal5izpo6dwbel.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957912/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/sis5qylafezxnav52lok.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957912/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/jbytavy1bkygosmt6j3t.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957914/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/sh7rjnpxd1ku7uzm5ipv.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957916/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/fn6taspa5dycuu5uqtji.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957915/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/i0vtcyyq5abe7dyra0zv.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957917/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/tj9cjv6hdpekfnrvzg5l.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957924/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/s3aprqvdxhmoef9gnfat.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957922/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/x36x7wbmdf9hu8hoscgw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957923/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/m46s6mhnvlduwilodjem.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957925/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/usqp6klzylzoisuoklxz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779957924/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/g330f4wyx58uxcw87a6p.jpg"]
+curated_config_json: None
+Chieu_dai: 18.5
+Ma_Hang: TK-2BF0B1
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 108.47A
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 108.47A Trần Quang Diệu 77.8 2 4.2 19 11.8 tỷ Phường 14 Quận 3 10-15 tỷ HĐ Hoàng Mạnh Quân_ĐC Hoàng Hà 0901804444 H3GB nguồn Hội đồng thẩm định
+Mo_ta_chi_tiet: Chủ gấp bán, giảm chào 200 triệu. Giá chào mới 11.8 tỷTRUNG TÂM QUẬN 3, CHỦ BÁN ĐẤT TẶNG NHÀ 3 MẶT HẺM, XE HƠI ĐẬU CỬA. CHỦ GẤP BÁN. ,,108.47A Trần Quang Diệu 77.8 2 4.2 18.5 12 tỷ Phường 14 Quận 3 9 đến 15 tỷ HĐ TP Hoàng Quân - phòng Hoàng Hà 090.180.4444, hoa hồng 3% giá bán, nguồn HĐTĐ. ,,- Kết cấu: Nhà xây đã lâu năm cũ với 4 PN, 2WC, phòng khách, bếp, sân trước rộng thoáng. ,- Vị trí trung tâm Quận 3, cách trường Trung học cơ sở Đào Duy Anh  150m, 200m ra MT đường Trần Quang Diệu, Huỳnh Văn Bánh.,- ACE dẫn khách đi hẻm 129 Huỳnh Văn Bánh, Xe hơi đậu trước cửa nhà, sát bên nhà là Chùa Kim Cương..,- Sổ đang cất két, Chủ hợp tác và rất gấp bán.,- Anh chị em dẫn khách ký phiếu YCCCDV, chụp hình/video khách xem nhà đúng quy trình và báo TP Hoàng Quân (FB: https://www.facebook.com/hoangquanbdsthienkhoi?mibextid=LQQJ4d) trước 60 phút để được hỗ trợ tốt nhất. Chúc anh chị em sớm Chốt thu bông.🌺,,HQ63.
+Gia_chao: 11,800
+Gia_chot: None
+DT_Thuc_te: 77.8
+DT_Tren_so: 77.8
+So_Tang: 2.0
+Mat_Tien: 4.2
+Huong: 
+Ten_Chu_Nha: Chu Thị Ánh Mai
+Dien_thoai_1: xxxxxx2111
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: None
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779957907/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/hm1sxv0m3tcooxjy01no.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779957907/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/j0wnspp8eggnrihy5nwi.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779957908/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/orvz3o0ylgwihoqqjsxq.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779957908/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/dcwj8gighrqex2b2xwye.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779957908/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/auai4zkioosfouuzf7mk.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779957910/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/j57hdb8mjo2zncada9ju.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779957912/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/wlhs8ti0p9phuvybopnn.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779957911/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/ifxoodfal5izpo6dwbel.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779957912/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/sis5qylafezxnav52lok.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779957912/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/jbytavy1bkygosmt6j3t.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779957914/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/sh7rjnpxd1ku7uzm5ipv.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779957916/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/fn6taspa5dycuu5uqtji.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779957915/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/i0vtcyyq5abe7dyra0zv.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779957917/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/tj9cjv6hdpekfnrvzg5l.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779957924/BDS-KhangNgo/ewwsrg-lwnab42w-f22bf0b1/s3aprqvdxhmoef9gnfat.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 11,800
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 4.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 4
+So_nha_ve_sinh: 2
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20263127-837
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/ewwsrg-lwnab42w-f22bf0b1
+Dien_thoai_Dau_Chu: 0901804444
+Ten_Dau_Chu_Hop_dong: Hoàng Mạnh Quân_ĐC
+Diem_Facebook: https://www.facebook.com/hoangquanbdsthienkhoi?mibextid=LQQJ4d
+Last_Crawl: 27/05/2026 17:31:00
+Last_Sync: 30/05/2026 03:35:27
+
+
+52 ===
+id: 4410
+tk_id: 0902294507-1700635890861-19d8ba2
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/09/30/2tsb-DA07404E-mg6gmkeg_1_1.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_Screenshot_20231122_134436_Zalo.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_Screenshot_20231122_134454_Zalo.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_IMG_1700624655709_1700625041257.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_142750.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_142811.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_142939.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_142731.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_144449.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_144513.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_144506.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_144548.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_145135.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_144629.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_144844.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_145211.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_144937.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_145001.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_150935.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_145626.jpg", "https://tk-assets.spms2.com/origin/2023/11/22/scaled_20231122_145417.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779961907/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/atxyy7a6djhhem7uvhnm.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961903/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/z44gamlnvjo8tdfzzqbg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961903/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/vswl0e6s0x0zkofrjw23.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961918/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/gi0byl3qnyo3y7uchy7w.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961904/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/cp0zcopkxoqedyculuzq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961908/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/nmul831p5krqfskugr2s.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961908/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/wquuvjx6mzacyspm4wuz.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961910/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/tg70ebnvigtwbcl4i6ot.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961910/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/ezoeflpepzoxi8fbjrdx.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961912/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/fpcdmc23g7ab8zmngcqo.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961913/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/mtm7hrxazapqhwgq8oty.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961914/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/uyfomnxwnqefdwayoivr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961915/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/phonkmemr43xzchiq14b.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961918/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/tm6jgzrv3wqvebvypqd8.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961918/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/dceh1npsw7xbumwisv0n.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961919/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/czjcpsoc2ecmcazwbpcg.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961920/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/kt9aion0o2rgayglfgqu.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961922/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/rjgxkm2wf21de24yege1.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961922/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/gsj1svd0qh3gy5esiulc.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961922/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/cj7ollqxinyfy7o5wnjm.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779961923/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/zdbblv4krea5yebm1fq7.jpg"]
+curated_config_json: None
+Chieu_dai: 19.0
+Ma_Hang: TK-9D8BA2
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 18.52.34 (số cũ 18.82a)
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 18.52.34 (số cũ 18.82a) Trần Quang Diệu 77/85 5 4.3 19 13.7 tỷ Phường 14 Quận 3 10-15 tỷ HĐ Lê Văn Đáp_ĐC Đồng Phát 0902294507 H3GB nguồn Đầu chủ Lê Văn Đáp_ĐC - Đồng Phát
+Mo_ta_chi_tiet: https://goo.gl/maps/kBU7hCnCJSTTw3YSA*HĐĐT*,🌹HIỆU SUẤT CHO THUÊ RẤT CAO ~5%- CHDV 17P 5 TẦNG CHO THUÊ HƠN 60TR 🌹 ,18.52.34( số cũ 18.82A) Trần Quang Diệu 77/85 5 4.3/4.8 19 13.7 tỷ Phường 14 Quận 3, 9 đến 15 HĐ Lê văn Đáp 0902294507 H3GB.,# Ngay chợ Nguyễn Văn Trỗi, chợ ẩm thực Lê Văn Sỹ.,# Kết cấu 1 trệt 1 lửng 3 lầu sân thượng trước.,Thiết kế thoáng với giếng trời, thang thoát hiểm, bình chữa cháy.,# Hiệu suất cho thuê cực cao ~ 5%. Cho thuê full 17 phòng hơn 60 triệu.,# Sổ nở hậu xíu xiu, pháp lí chuẩn.,+++ Anh em khảo sát nhớ “SÉO PHÌ” để nhận sổ của căn nhà trước khi chào khách, dẫn Khách theo quy trình chuẩn của Công ty. Zalo 0333191579,+++ Cảm ơn Anh Chị Em, Chúc Anh Chị Em Chốt nhanh.
+Gia_chao: 13,700
+Gia_chot: None
+DT_Thuc_te: 85.0
+DT_Tren_so: 77.0
+So_Tang: 5.0
+Mat_Tien: 4.3
+Huong: 
+Ten_Chu_Nha: c Quỳnh
+Dien_thoai_1: xxxxxx0534
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/09/30/2tsb-DA07404E-mg6gmkeg_1_1.jpg
+So_do_thua_dat_2: None
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779961907/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/atxyy7a6djhhem7uvhnm.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779961903/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/z44gamlnvjo8tdfzzqbg.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779961903/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/vswl0e6s0x0zkofrjw23.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779961918/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/gi0byl3qnyo3y7uchy7w.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779961904/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/cp0zcopkxoqedyculuzq.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779961908/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/nmul831p5krqfskugr2s.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779961908/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/wquuvjx6mzacyspm4wuz.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779961910/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/tg70ebnvigtwbcl4i6ot.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779961910/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/ezoeflpepzoxi8fbjrdx.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779961912/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/fpcdmc23g7ab8zmngcqo.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779961913/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/mtm7hrxazapqhwgq8oty.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779961914/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/uyfomnxwnqefdwayoivr.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779961915/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/phonkmemr43xzchiq14b.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779961918/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/tm6jgzrv3wqvebvypqd8.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779961918/BDS-KhangNgo/0902294507-1700635890861-19d8ba2/dceh1npsw7xbumwisv0n.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 13,700
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 3.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 
+So_nha_ve_sinh: 
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20265427-525
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/0902294507-1700635890861-19d8ba2
+Dien_thoai_Dau_Chu: 0902294507
+Ten_Dau_Chu_Hop_dong: Lê Văn Đáp
+Diem_Facebook: https://www.facebook.com/dap.le.14/
+Last_Crawl: 27/05/2026 17:54:05
+Last_Sync: 30/05/2026 03:16:26
+
+
+53 ===
+id: 4844
+tk_id: 7b9f7137-b2be-411f-8b35-e5348f27c185
+status: published
+raw_images_tk_json: ["https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_44_14.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdo285oo_1_1.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdo285oo_4_2.jpg", "https://tk-assets.spms2.com/large/2022/04/07/6236c470-b06d-4353-9edd-04c02a56ad98_233027611.jpg", "https://tk-assets.spms2.com/large/2022/04/07/b18ad8dd-4912-4e05-b511-af36c88770ea_233027689.jpg", "https://tk-assets.spms2.com/large/2022/04/07/c44c9906-07dd-46d1-9433-fca13aa36c23_233027751.jpg", "https://tk-assets.spms2.com/large/2022/04/07/8c0d24ae-6715-477a-a42d-fc0934ae298a_233027814.jpg", "https://tk-assets.spms2.com/large/2022/04/07/6a7b66ec-6081-4ea1-b6fd-4fd8b11f5b9a_233027892.jpg", "https://tk-assets.spms2.com/large/2022/04/07/bf1888a8-e6ae-44bf-adc1-089b2983e6a0_233027954.jpg", "https://tk-assets.spms2.com/large/2022/04/07/2770de94-5057-4734-8b35-e73b982e7a49_233028017.jpg", "https://tk-assets.spms2.com/large/2022/04/07/09b51088-c58c-4104-8520-4a85c6b30d61_233028096.jpg", "https://tk-assets.spms2.com/large/2022/04/07/07e3184b-3851-4d72-a157-b35b07a8db6d_233028158.jpg", "https://tk-assets.spms2.com/large/2022/04/07/8de7206d-2987-476f-8265-86c41f667079_233028236.jpg", "https://tk-assets.spms2.com/large/2022/04/07/01cc5a14-4860-4d68-977a-6aec0ffbfee6_233028314.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_9_3.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_15_4.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_20_5.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_22_6.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_25_7.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_28_8.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_32_9.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_34_10.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_37_11.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_40_12.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_41_13.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdo266k0_1_1.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdo266k0_5_2.jpg", "https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdo266k0_8_3.jpg"]
+raw_drive_images_json: ["https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/itzgrlth8kyel0d4vp3a.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/cg3vzoe2svupx1o7yuld.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/dqq2hp9rp5iuwrmgefrs.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/xflcboz9h2bazufao6i1.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/lnuuz6ymlqef3xinbtns.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/vrgq4mglz7izgvi6uxuw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/lyyitymcgppfjgrowbn9.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/zp2gq8tra6z3yxs9uwtb.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/htov6bmirwdjhipxyetn.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967344/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/am0nzq33mpojzys1jaic.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967346/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/rkage3l95rnmxw6drdmw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967346/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/ldaggnb1tfa8pme6dbqr.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967347/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/bd3hgzqotrckouygqnte.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967346/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/sckvhux982hfzbowsiiw.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967347/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/hgf9rjoahh0yu0ve4u1o.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967349/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/ahpnxz5zr4ea4p7vlhrh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967349/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/pxa3uhzpmxptu5yqgal5.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967350/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/nivttyx4keaex8uyjde3.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967350/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/e7vrva8tngo0pp3dit2h.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967350/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/bhobqwzq77c75nlx00pk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967352/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/d94ixoydrzlfhaxrifvk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967353/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/fsdnur7t45e2swtax5ya.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967353/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/lbina7byr8mdonx2doqq.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967353/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/bpwtte8tgp7m2ygzdgkh.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967354/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/vryzo5zxwtkecbk87438.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967355/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/ucdsumy3vfmi1k839wiy.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967357/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/xjvzwazbe2npowqirhrk.jpg", "https://res.cloudinary.com/deru9p712/image/upload/v1779967357/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/w4mvzgksfuj1lcargcth.jpg"]
+curated_config_json: None
+Chieu_dai: 10.0
+Ma_Hang: TK-27C185
+Hinh_Nhan_Dien: None
+T_nh: Tp. Hồ Chí Minh
+Quan: Quận 3
+Phuong: Nhiêu Lộc
+Duong: Trần Quang Diệu
+Ngo_So_nha: 46.6 +46.6A
+Phan_loai: 
+Nam_xay_dung: None
+Noi_dung_chinh: 46.6 +46.6A Trần Quang Diệu 75 3 8 10 24 tỷ Nhiêu Lộc Quận 3 15-25 tỷ HĐ Trần Tuyết Tâm_ĐC Tâm Phát 0907772932 H3GB nguồn Đầu chủ Trần Tuyết Tâm_ĐC - Tâm Phát
+Mo_ta_chi_tiet: giá mới: 24 tỷ, hoa Hồng 3%/ giá chốt thực tế 46.6 + 46.6A Trần Quang Diệu 75 3  8 10 19.9 tỷ Phường 13,Quận 3, 15 đến 20, HĐ QTP Tâm, Phòng Tâm Phát, 0907772932, hoa hồng 600 triệu,,nguồn QTP Tâm. Mô tả:+ mặt tiền thụt đường Trường sa rất thoáng mát, 6 PN, hiện,đang cho thuê 25 triệu/tháng.+ 2 căn đôi liền kề, chủ bán 2 căn, không bán riêng từng,căn.  + Anh em dẫn khách theo quy trình Công ty, báo trước 60 phút,để được hỗ trợ tốt nhất. Chúc anh chị em chốt nhà bùng nổ!🌹🌹🌹,,,,,,,,,,,,,,,,
+Gia_chao: 24,000
+Gia_chot: None
+DT_Thuc_te: 75.0
+DT_Tren_so: 75.0
+So_Tang: 3.0
+Mat_Tien: 8.0
+Huong: 
+Ten_Chu_Nha: anh minh
+Dien_thoai_1: xxxxxx6789
+Dien_thoai_2: None
+Loai_Hop_dong: None
+So_ngay_ky: None
+Ngay_bat_dau: None
+Ngay_ket_thuc: None
+Nguoi_ky: None
+Trang_thai: Chuẩn
+So_do_thua_dat_1: https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdny7m4q_44_14.jpg
+So_do_thua_dat_2: https://tk-assets.spms2.com/2025/07/29/2djt-894D13B8-mdo285oo_1_1.jpg
+Hinh_Mat_Tien: None
+Hinh_Hem_1: None
+Hinh_Hem_2: None
+Hinh_Hem_3: None
+Hinh_Hem_4: None
+Hinh_Hem_5: None
+Hinh_Hem_6: None
+Hinh_Hem_7: None
+Hinh_Hem_8: None
+Hinh_Hem_9: None
+Hinh_Hem_10: None
+Anh_1: https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/itzgrlth8kyel0d4vp3a.jpg
+Anh_2: https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/cg3vzoe2svupx1o7yuld.jpg
+Anh_3: https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/dqq2hp9rp5iuwrmgefrs.jpg
+Anh_4: https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/xflcboz9h2bazufao6i1.jpg
+Anh_5: https://res.cloudinary.com/deru9p712/image/upload/v1779967340/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/lnuuz6ymlqef3xinbtns.jpg
+Anh_6: https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/vrgq4mglz7izgvi6uxuw.jpg
+Anh_7: https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/lyyitymcgppfjgrowbn9.jpg
+Anh_8: https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/zp2gq8tra6z3yxs9uwtb.jpg
+Anh_9: https://res.cloudinary.com/deru9p712/image/upload/v1779967343/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/htov6bmirwdjhipxyetn.jpg
+Anh_10: https://res.cloudinary.com/deru9p712/image/upload/v1779967344/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/am0nzq33mpojzys1jaic.jpg
+Anh_11: https://res.cloudinary.com/deru9p712/image/upload/v1779967346/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/rkage3l95rnmxw6drdmw.jpg
+Anh_12: https://res.cloudinary.com/deru9p712/image/upload/v1779967346/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/ldaggnb1tfa8pme6dbqr.jpg
+Anh_13: https://res.cloudinary.com/deru9p712/image/upload/v1779967347/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/bd3hgzqotrckouygqnte.jpg
+Anh_14: https://res.cloudinary.com/deru9p712/image/upload/v1779967346/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/sckvhux982hfzbowsiiw.jpg
+Anh_15: https://res.cloudinary.com/deru9p712/image/upload/v1779967347/BDS-KhangNgo/7b9f7137-b2be-411f-8b35-e5348f27c185/hgf9rjoahh0yu0ve4u1o.jpg
+Ma_Khang_Ngo_ID: None
+Tieu_de_Public: None
+Mo_ta_Public: None
+Gia_Public: 24,000
+Phan_loai_Hem: None
+Duong_truoc_nha_m: 8.0
+Tinh_trang_nha: Bình thường
+Anh_Public_VD_1_3_5: None
+Anh_Hem_Public_VD_1_2: None
+So_phong_ngu: 6
+So_nha_ve_sinh: 6
+Phuong_cu_AI: None
+Danh_gia_Admin: None
+Ngu_tret_Admin: None
+CHDV_Admin: None
+Duyet_Public: None
+Trang_thai_Public: None
+System_ID: SYS-20263727-734
+Link_Goc: https://data.thienkhoi.com/Hang/Detail/7b9f7137-b2be-411f-8b35-e5348f27c185
+Dien_thoai_Dau_Chu: 0907772932
+Ten_Dau_Chu_Hop_dong: QTP Tâm
+Diem_Facebook: https://www.facebook.com/tam.trantuyet.9
+Last_Crawl: 27/05/2026 18:37:30
+Last_Sync: 30/05/2026 02:40:38
+

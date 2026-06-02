@@ -1,0 +1,4 @@
+4260:         let thumbUrl = '';
+4262:           thumbUrl = p.img_mat_tien;
+4264:           thumbUrl = cleanImgUrls[0] || imgUrls[0];
+4266:         const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';

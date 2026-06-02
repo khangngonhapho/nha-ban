@@ -1,0 +1,2879 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biên Tập Viên Rổ Hàng - Khang Ngô Nhà Phố</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(22, 28, 45, 0.7);
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --border-color: rgba(148, 163, 184, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            /* Accents */
+            --accent-gold: #fbbf24;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-slate: #64748b;
+            
+            /* Shadows & Blur */
+            --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --glass-blur: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at 10% 20%, rgba(26, 32, 60, 0.5) 0%, rgba(10, 12, 25, 0.5) 90%);
+        }
+
+        /* Top Header */
+        header {
+            height: 70px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-section span {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .status-widgets {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .widget-item {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .dot-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-green { background-color: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+        .dot-yellow { background-color: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold); }
+        .dot-red { background-color: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+
+        /* Main Layout */
+        .workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            height: calc(100vh - 70px);
+        }
+
+        /* Sidebar: List */
+        .sidebar {
+            width: 380px;
+            border-right: 1px solid var(--border-color);
+            background: var(--panel-bg);
+            backdrop-filter: var(--glass-blur);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .search-box {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.15);
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .sidebar-tab {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .sidebar-tab:hover {
+            color: var(--text-main);
+        }
+
+        .sidebar-tab.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+            background: rgba(30, 41, 59, 0.2);
+        }
+
+        .listing-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .listing-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .listing-scroll::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .house-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .house-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            transition: 0.2s;
+        }
+
+        .house-card:hover {
+            transform: translateY(-2px);
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(251, 191, 36, 0.4);
+            box-shadow: var(--shadow-premium);
+        }
+
+        .house-card.active {
+            background: rgba(24, 37, 66, 0.9);
+            border-color: var(--accent-gold);
+            box-shadow: 0 4px 20px rgba(251, 191, 36, 0.08);
+        }
+
+        .house-card.active::before {
+            background: var(--accent-gold);
+        }
+
+        .house-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .house-id {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-raw_text { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-raw_complete { background: rgba(59, 82, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 82, 246, 0.3); }
+        .badge-published { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .house-title {
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .house-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .house-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        /* Mode Selector Tab */
+        .mode-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .mode-tab {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-tab:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .mode-tab.active {
+            color: var(--accent-gold);
+            background: rgba(251, 191, 36, 0.08);
+            border-color: rgba(251, 191, 36, 0.25);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* 1. CRAWL TAB */
+        .panel-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .panel-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            outline: none;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #d97706 100%);
+            color: #0b0f19;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.25);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.35);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #047857 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-green:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+        }
+
+        /* Terminal Console */
+        .terminal-container {
+            margin-top: 20px;
+            background: #05070c;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .terminal-header {
+            background: #111827;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .terminal-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #38bdf8;
+            text-shadow: 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .terminal-line {
+            margin-bottom: 5px;
+            white-space: pre-wrap;
+        }
+
+        /* Image Station */
+        .image-station {
+            margin-bottom: 25px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .image-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .image-wrapper {
+            position: relative;
+            padding-top: 68%;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .image-card:hover .image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .image-role-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 4px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .image-controls {
+            padding: 8px;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .role-btn-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+
+        .role-btn {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 2px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        .role-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        /* Role Active styling */
+        .role-bia.active { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: var(--accent-green); }
+        .role-mt.active { background: rgba(239, 68, 68, 0.2); border-color: var(--accent-red); color: var(--accent-red); }
+        .role-sodo.active { background: rgba(251, 191, 36, 0.2); border-color: var(--accent-gold); color: var(--accent-gold); }
+        .role-hem.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
+        .role-public.active { background: rgba(6, 182, 212, 0.2); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+        .role-an.active { background: rgba(100, 116, 139, 0.2); border-color: var(--accent-slate); color: var(--accent-slate); }
+
+        .order-btn-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2px;
+        }
+
+        .order-btn {
+            font-size: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .order-btn:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* 3. EDITOR VIEW */
+        .editor-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .editor-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .editor-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 7, 12, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--accent-gold);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
+            position: relative;
+        }
+
+        .modal-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .raw-data-textarea {
+            width: 100%;
+            height: 250px;
+            background: #05070c;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: #38bdf8;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 15px;
+            resize: none;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        /* Progress Bar */
+        .progress-bar-wrapper {
+            margin-top: 15px;
+            width: 100%;
+            height: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-gold) 0%, var(--accent-green) 100%);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Dropdown custom */
+        .alert-box {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .alert-box svg {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* CSS for prompt-cache cookie dialog on frontend */
+        .cookie-modal-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Toast Notifications Container */
+        #toast-container {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+        
+        .toast-item {
+            pointer-events: auto;
+            background: rgba(11, 15, 25, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            backdrop-filter: blur(16px);
+            padding: 14px 22px;
+            border-radius: 10px;
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(130%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            opacity: 0;
+            min-width: 320px;
+            max-width: 450px;
+        }
+        
+        .toast-item.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .toast-success {
+            border-left: 5px solid var(--accent-green);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15), 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+        
+        .toast-warning {
+            border-left: 5px solid var(--accent-gold);
+            box-shadow: 0 8px 30px rgba(251, 191, 36, 0.15), 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+        
+        .toast-error {
+            border-left: 5px solid var(--accent-red);
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.15), 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner-small {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Premium Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- Top Header -->
+    <header>
+        <div class="logo-section">
+            <h1>KHANG NGÔ NHÀ PHỐ</h1>
+            <span>Curator Dashboard</span>
+        </div>
+        <div class="status-widgets">
+            <div class="widget-item">
+                <span class="dot-indicator dot-green" id="db-indicator"></span>
+                <span>SQLite Database: <strong>raw_archive.db</strong></span>
+            </div>
+            <div class="widget-item">
+                <span class="dot-indicator dot-green" id="cookie-indicator"></span>
+                <span>Cookie Thiên Khôi: <strong id="cookie-status">Hoạt động</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="workspace">
+
+        <!-- Sidebar: List of Houses -->
+        <div class="sidebar">
+            <div class="search-box" style="position: relative;">
+                <input type="text" id="sidebar-search" placeholder="Tìm theo Mã căn, Quận, Đường..." oninput="fetchListings()" style="margin-bottom: 10px; padding-right: 35px;">
+                <div id="search-spinner" class="spinner-small" style="display: none; position: absolute; right: 25px; top: 25px; border-color: var(--accent-gold); border-top-color: transparent;"></div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="filter-quan" placeholder="Quận (VD: 3, 10)" oninput="fetchListings()" style="flex: 1; padding: 8px 10px; font-size: 12px; border-radius: 6px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); color: var(--text-main); outline: none;">
+                    <input type="text" id="filter-duong" placeholder="Đường (VD: Lê Văn Sỹ)" oninput="fetchListings()" style="flex: 1.5; padding: 8px 10px; font-size: 12px; border-radius: 6px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); color: var(--text-main); outline: none;">
+                    <input type="text" id="filter-sonha" placeholder="Số nhà (VD: 120)" oninput="fetchListings()" style="flex: 1; padding: 8px 10px; font-size: 12px; border-radius: 6px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); color: var(--text-main); outline: none;">
+                </div>
+            </div>
+            <div class="sidebar-tabs">
+                <div class="sidebar-tab active" data-status="raw_text" onclick="setSidebarStatus('raw_text')">Chờ di cư ảnh</div>
+                <div class="sidebar-tab" data-status="raw_complete" onclick="setSidebarStatus('raw_complete')">Chờ biên tập</div>
+                <div class="sidebar-tab" data-status="published" onclick="setSidebarStatus('published')">Đã xuất bản</div>
+            </div>
+            <!-- Khung chọn lọc đẩy thô Pool hàng loạt (US-040) -->
+            <div class="sidebar-actions" id="sidebar-bulk-actions" style="display: none; padding: 10px 12px; background: rgba(251, 191, 36, 0.05); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <label style="font-size: 11px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none;">
+                    <input type="checkbox" id="chk-select-all-filtered" onclick="toggleSelectAllFiltered(this)" style="cursor: pointer; width: 14px; height: 14px;">
+                    <span>Chọn tất cả</span>
+                </label>
+                <button class="btn btn-gold" id="btn-bulk-publish" onclick="bulkPublishSelected()" style="font-size: 11px; padding: 5px 12px; border-radius: 6px; height: auto; font-family: 'Outfit', sans-serif; font-weight: bold; background: linear-gradient(135deg, var(--accent-gold) 0%, #d97706 100%); border: none; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);">⚡ ĐẨY POOL (<span id="bulk-select-count">0</span>)</button>
+            </div>
+            <div class="listing-scroll" id="listings-list">
+                <!-- House cards will render dynamically here -->
+            </div>
+        </div>
+
+        <!-- Detail & Operations Panel -->
+        <div class="detail-panel">
+            <div class="mode-tabs">
+                <div class="mode-tab active" data-tab="crawl-tab" onclick="switchTab('crawl-tab')">
+                    ⚡ Bắt đầu Cào tin
+                </div>
+                <div class="mode-tab" data-tab="migrate-tab" onclick="switchTab('migrate-tab')">
+                    🖼️ Di cư hình ảnh
+                </div>
+                <div class="mode-tab" data-tab="edit-tab" id="curate-tab-trigger" onclick="switchTab('edit-tab')">
+                    ✍️ Biên tập & Xuất bản
+                </div>
+                <div class="mode-tab" data-tab="history-tab" onclick="switchTab('history-tab')">
+                    📊 Lịch sử cào
+                </div>
+            </div>
+
+            <!-- TAB 1: CRAWL SYSTEM -->
+            <div class="content-section active" id="crawl-tab">
+                <div class="panel-row">
+                    <div class="panel-card">
+                        <div class="panel-title">📡 Stealth Crawler Controller</div>
+                        
+                        <div class="form-group">
+                            <label>1. URL DANH SÁCH QUẬN THIÊN KHÔI</label>
+                            <input type="text" id="crawl-url" placeholder="https://data.thienkhoi.com/Hang/List?Page=1&pID_Quan=..." value="">
+                        </div>
+
+                        <div class="panel-row" style="margin-bottom: 12px; grid-template-columns: 1.5fr 1fr;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>⚡ CHỌN NHANH TỐC ĐỘ CÀO TIN (PRESET)</label>
+                                <select id="crawl-speed-preset" onchange="onSpeedPresetChange(this.value)">
+                                    <option value="safe">🟢 An toàn (Stealth Mode) - Nghỉ 8-15s / 20-40s</option>
+                                    <option value="optimal" selected>🟡 Tối ưu (Fast & Safe) - Nghỉ 3-6s / 5-10s</option>
+                                    <option value="turbo">🔴 Siêu tốc (Turbo Mode) - Nghỉ 1.5-3s / 3-5s</option>
+                                    <option value="custom">⚙️ Tùy chỉnh (Độ trễ do bạn tự đặt bên phải)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>2. TÊN QUẬN MỤC TIÊU (LỌC TRƯỚC)</label>
+                                <select id="crawl-district">
+                                    <option value="" selected>Tất cả (Không lọc quận)</option>
+                                    <option value="Quận 1">Quận 1</option>
+                                    <option value="Quận 3">Quận 3</option>
+                                    <option value="Quận 4">Quận 4</option>
+                                    <option value="Quận 5">Quận 5</option>
+                                    <option value="Quận 6">Quận 6</option>
+                                    <option value="Quận 7">Quận 7</option>
+                                    <option value="Quận 8">Quận 8</option>
+                                    <option value="Quận 10">Quận 10</option>
+                                    <option value="Quận 11">Quận 11</option>
+                                    <option value="Quận 12">Quận 12</option>
+                                    <option value="Bình Thạnh">Bình Thạnh</option>
+                                    <option value="Phú Nhuận">Phú Nhuận</option>
+                                    <option value="Gò Vấp">Gò Vấp</option>
+                                    <option value="Tân Bình">Tân Bình</option>
+                                    <option value="Tân Phú">Tân Phú</option>
+                                    <option value="Bình Tân">Bình Tân</option>
+                                    <option value="Thủ Đức">Thủ Đức</option>
+                                    <option value="Hóc Môn">Hóc Môn</option>
+                                    <option value="Nhà Bè">Nhà Bè</option>
+                                    <option value="Bình Chánh">Bình Chánh</option>
+                                    <option value="Củ Chi">Củ Chi</option>
+                                    <option value="Cần Giờ">Cần Giờ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="panel-row" style="margin-bottom: 0; grid-template-columns: 1fr 1fr;">
+                            <div class="form-group">
+                                <label>3. GIỚI HẠN CĂN <span style="font-size: 0.8em; opacity: 0.7;">(Để trống/0 để cào không giới hạn)</span></label>
+                                <input type="number" id="crawl-limit" value="5" min="0" placeholder="Không giới hạn">
+                            </div>
+                            <div class="form-group">
+                                <label>4. TRANG BẮT ĐẦU</label>
+                                <input type="number" id="crawl-start-page" value="1" min="1">
+                            </div>
+                        </div>
+
+                        <div class="alert-box" id="speed-preset-alert">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            <div id="speed-preset-alert-text">
+                                <strong>🟡 Chế độ Tối ưu (Fast & Safe) đang bật:</strong> Nghỉ ngẫu nhiên 3 - 6 giây giữa các căn và 5 - 10 giây khi chuyển trang. Tăng tốc độ cào ~2.5 lần nhưng vẫn bảo đảm an toàn chống chặn Cookie.
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <button class="btn btn-gold" id="btn-start-crawl" onclick="startCrawl()">👉 BẮT ĐẦU CÀO TIN</button>
+                            <button class="btn btn-outline" onclick="openCookieModal()">🔑 Cập nhật Cookie</button>
+                            <button class="btn" style="background: linear-gradient(135deg, var(--accent-red) 0%, #b91c1c 100%); color: white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);" onclick="clearAllListings()">🧹 Xóa Sạch Dữ Liệu Cũ</button>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display: flex; flex-direction: column;">
+                        <div class="panel-title">📋 Cấu hình Hệ thống & API</div>
+                        <div class="form-group">
+                            <label>ID GOOGLE SHEETS POOL</label>
+                            <input type="text" id="cfg-sheet-id" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>ID THƯ MỤC GOOGLE DRIVE 5TB</label>
+                            <input type="text" id="cfg-drive-folder" placeholder="Nhập Folder ID để upload ảnh..." value="">
+                        </div>
+                        <!-- Ẩn OpenAI API Key trên giao diện theo yêu cầu (đọc cố định từ cấu hình hệ thống) -->
+                        <div style="display: none;">
+                            <div class="form-group">
+                                <label>🔑 OPENAI API KEY</label>
+                                <input type="password" id="cfg-openai-key" placeholder="sk-proj-..." value="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>🤖 OPENAI SYSTEM PROMPT (LUẬT THÉP VÀ CẤU TRÚC AI BIÊN TẬP)</label>
+                            <textarea id="cfg-openai-prompt" rows="8" style="resize: vertical; font-family: monospace; font-size: 11px; color: var(--text-main); background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px;" placeholder="Nhập System Prompt..."></textarea>
+                        </div>
+                        
+                        <div style="border-top: 1px solid var(--border-color); margin: 15px 0; padding-top: 15px;">
+                            <label style="font-size: 12px; font-weight: 600; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 10px; display: block;">⏱️ Tùy chỉnh Độ trễ Cào tin (Giây)</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 10px;">Nghỉ Căn Min (s)</label>
+                                    <input type="number" step="0.1" id="cfg-delay-house-min" value="3.0" oninput="detectAndSetPresetDropdown()">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 10px;">Nghỉ Căn Max (s)</label>
+                                    <input type="number" step="0.1" id="cfg-delay-house-max" value="6.0" oninput="detectAndSetPresetDropdown()">
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 10px;">Nghỉ Trang Min (s)</label>
+                                    <input type="number" step="0.1" id="cfg-delay-page-min" value="5.0" oninput="detectAndSetPresetDropdown()">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 10px;">Nghỉ Trang Max (s)</label>
+                                    <input type="number" step="0.1" id="cfg-delay-page-max" value="10.0" oninput="detectAndSetPresetDropdown()">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-outline" style="align-self: flex-start; width: 100%; margin-top: auto;" onclick="saveConfig()">💾 Lưu Cấu Hình Hệ Thống</button>
+                    </div>
+                </div>
+
+                <!-- Terminal -->
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="terminal-dot" style="background:#ef4444;"></span>
+                            <span class="terminal-dot" style="background:#fbbf24;"></span>
+                            <span class="terminal-dot" style="background:#10b981;"></span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); font-family: monospace;">crawl_pipeline.log</div>
+                        <button onclick="clearLogs()" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:11px; font-family:monospace;">Xóa màn hình</button>
+                    </div>
+                    <div class="terminal-body" id="terminal-log">
+                        <!-- Terminal lines here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: IMAGE MIGRATION -->
+            <div class="content-section" id="migrate-tab">
+                <div class="panel-card" style="max-width: 700px; margin: 0 auto;">
+                    <div class="panel-title">🖼️ Di cư Hình ảnh lên Google Drive / Cục bộ</div>
+                    <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+                        Luồng này quét cơ sở dữ liệu SQLite raw_archive.db để tìm các căn ở trạng thái thô (status = 'raw_text'). Sau đó tải tất cả ảnh về, đẩy lên thư mục Google Drive đã cấu hình (hoặc lưu cục bộ nếu không có credentials) và tự động đổi link ảnh thành đường dẫn trực tiếp.
+                    </p>
+                    
+                    <div class="form-group" style="max-width: 200px;">
+                        <label>GIỚI HẠN SỐ CĂN DI CƯ</label>
+                        <input type="number" id="migrate-limit" value="10">
+                    </div>
+
+                    <div class="alert-box">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <div>
+                            <strong>Nghỉ Throttling ngẫu nhiên 3-5 giây mỗi căn</strong> được áp dụng tự động để tránh nghẽn băng thông và bảo vệ địa chỉ IP của bạn trước CDN đối tác.
+                        </div>
+                    </div>
+
+                    <button class="btn btn-gold" style="width: 100%;" onclick="startMigration()">🖼️ BẮT ĐẦU DI CƯ HÌNH ẢNH</button>
+                    
+                    <div class="progress-bar-wrapper" id="migrate-progress-wrapper" style="display: none;">
+                        <div class="progress-bar-fill" id="migrate-progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: CURATOR & EDITOR VIEW -->
+            <div class="content-section" id="edit-tab">
+                <div id="no-listing-selected" style="text-align: center; padding: 50px 0; color: var(--text-muted);">
+                    <h3>👈 Vui lòng chọn 1 căn nhà từ danh sách bên trái để bắt đầu Biên tập & Xuất bản!</h3>
+                </div>
+
+                <div id="editor-active" style="display: none;">
+                    <div class="editor-container">
+                        <!-- Left Panel: Images and classification -->
+                        <div>
+                            <div class="panel-card image-station">
+                                <div class="panel-title">🖼️ Trạm Phân Loại & Dán Nhãn Hình Ảnh</div>
+                                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+                                    Gán vai trò cho ảnh bằng mắt. Ảnh bìa (Cover) và Mặt tiền cực kỳ quan trọng. Thứ tự ảnh sẽ được lưu lại chuẩn xác khi chuyển cột.
+                                </p>
+                                <div class="image-grid" id="curator-image-grid">
+                                    <!-- Dynamic images cards here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Data values editor -->
+                        <div class="panel-card editor-form" style="max-height: calc(100vh - 120px); overflow-y: auto;">
+                            
+
+
+                            <!-- PHẦN 1: BIÊN TẬP THÔNG TIN (KHANG NGÔ) -->
+                            <div class="panel-title" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px;">
+                                ✍️ BIÊN TẬP ĐỊA CHỈ THỰC TẾ
+                            </div>
+
+                            <div class="editor-grid-2">
+                                <div class="form-group">
+                                    <label>Số nhà</label>
+                                    <input type="text" id="edit-ngo-so-nha" placeholder="VD: 123/45" oninput="updateMaKhangNgoLive()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Đường</label>
+                                    <input type="text" id="edit-duong" placeholder="VD: Sư Vạn Hạnh" oninput="updateMaKhangNgoLive()">
+                                </div>
+                            </div>
+
+                            <div class="editor-grid-2">
+                                <div class="form-group">
+                                    <label>Phường</label>
+                                    <input type="text" id="edit-phuong" placeholder="VD: Phường 12">
+                                </div>
+                                <div class="form-group">
+                                    <label>Quận</label>
+                                    <input type="text" id="edit-quan" placeholder="VD: Quận 10" oninput="updateMaKhangNgoLive()">
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 12px;">
+                                <div class="form-group" style="margin-bottom: 0; width: 100%;">
+                                    <label style="color: var(--accent-gold); font-weight: bold;">🔑 MÃ KHANG NGÔ (ID)</label>
+                                    <input type="text" id="edit-ma-khang-ngo" style="width: 100%; background: rgba(251, 191, 36, 0.08); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-weight: bold; font-family: monospace; font-size: 16px; letter-spacing: 1px; padding: 10px 12px; box-sizing: border-box;" placeholder="Tự động sinh...">
+                                </div>
+                                <button class="btn btn-gold" id="btn-run-ai" style="width: 100%; height: 42px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; margin-top: 4px;" onclick="runAiCuration()">
+                                    <span id="ai-btn-text">🤖 BIÊN TẬP AI</span>
+                                    <div class="spinner-small" id="ai-spinner" style="display: none;"></div>
+                                </button>
+                            </div>
+
+                            <!-- PHẦN 1.5: BIÊN TẬP BÀI ĐĂNG PUBLIC (DÀNH CHO AI & PUBLIC FIELDS) -->
+                            <div class="panel-title" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; color: var(--accent-gold);">
+                                🤖 THÔNG TIN BIÊN TẬP PUBLIC (LÊN SHEET SOURCE)
+                            </div>
+                            
+                            <div style="font-size: 11px; color: var(--accent-gold); margin-top: -5px; margin-bottom: 15px; opacity: 0.9; display: flex; align-items: flex-start; gap: 6px; background: rgba(251, 191, 36, 0.05); padding: 8px 12px; border-left: 3px solid var(--accent-gold); border-radius: 4px;">
+                                <span style="font-size: 14px; line-height: 1;">💡</span>
+                                <span style="line-height: 1.4;"><i>Mẹo: Hệ thống tự động chạy AI Biên tập thầm lặng (Silent Auto-AI) khi Trang chọn căn thô mới mà Tiêu đề/Mô tả Public đang trống. Bấm nút 🤖 BIÊN TẬP AI ở trên nếu muốn sinh lại.</i></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Tiêu đề Public (SEO v5)</label>
+                                <input type="text" id="edit-tieu-de-public" placeholder="Tiêu đề chuẩn SEO xuất bản..." style="font-weight: 500;">
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label>Mô tả Public (Sạch sẽ, Không Emoji)</label>
+                                <textarea id="edit-mo-ta-public" rows="6" placeholder="Mô tả bài viết sạch sẽ..." style="resize: vertical; font-family: monospace; font-size: 12px; color: var(--text-main); background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; width: 100%; box-sizing: border-box;"></textarea>
+                            </div>
+                            
+                            <div class="editor-grid-2" style="margin-top: 10px;">
+                                <div class="form-group">
+                                    <label>Giá Public (Tỷ)</label>
+                                    <input type="text" id="edit-gia-public" placeholder="Giá chào công khai...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phân loại Hẻm</label>
+                                    <select id="edit-phan-loai-hem">
+                                        <option value="Mặt tiền">Mặt tiền</option>
+                                        <option value="Hẻm xe hơi">Hẻm xe hơi</option>
+                                        <option value="Hẻm ba gác">Hẻm ba gác</option>
+                                        <option value="Hẻm thông">Hẻm thông</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="editor-grid-2" style="margin-top: 10px;">
+                                <div class="form-group">
+                                    <label>Độ rộng hẻm/đường (m)</label>
+                                    <input type="text" id="edit-duong-truoc-nha" placeholder="Độ rộng...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tình trạng nhà</label>
+                                    <select id="edit-tinh-trang-nha">
+                                        <option value="Bình thường">Bình thường</option>
+                                        <option value="Mới">Mới</option>
+                                        <option value="Nát">Nát</option>
+                                        <option value="Đã bán">Đã bán (Ẩn)</option>
+                                        <option value="Ẩn">Ẩn</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="editor-grid-2" style="margin-top: 10px;">
+                                <div class="form-group">
+                                    <label>Số phòng ngủ</label>
+                                    <input type="text" id="edit-so-phong-ngu" placeholder="Số PN...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Số toilet</label>
+                                    <input type="text" id="edit-so-nha-ve-sinh" placeholder="Số WC...">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label>Phường cũ (AI - Lịch sử sáp nhập)</label>
+                                <input type="text" id="edit-phuong-cu-ai" placeholder="Phường cũ trước sáp nhập...">
+                            </div>
+                            
+                            <div class="editor-grid-3" style="margin-top: 10px;">
+                                <div class="form-group">
+                                    <label>Đánh giá</label>
+                                    <select id="edit-danh-gia">
+                                        <option value="">(Trống - Bình thường)</option>
+                                        <option value="Hàng Ngon">💎 Hàng Ngon</option>
+                                        <option value="Hàng Lỗi">⚠️ Hàng Lỗi</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ngủ trệt</label>
+                                    <select id="edit-ngu-tret">
+                                        <option value="">Không</option>
+                                        <option value="Có">Có</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>CHDV</label>
+                                    <select id="edit-chdv">
+                                        <option value="">Không</option>
+                                        <option value="Có">Có</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- PHẦN 2: THÔNG TIN GỐC CÀO ĐƯỢC (THIÊN KHÔI) -->
+                            <div class="panel-title" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 20px; margin-bottom: 15px; color: var(--accent-cyan);">
+                                📡 THÔNG TIN GỐC CÀO ĐƯỢC (THIÊN KHÔI)
+                            </div>
+
+                            <div style="background: rgba(15, 23, 42, 0.4); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); font-size: 13px; line-height: 1.6; display: flex; flex-direction: column; gap: 12px;">
+                                
+                                <!-- Nhóm 1: Địa lý & Tổng quan -->
+                                <div style="font-weight: bold; color: var(--accent-gold); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 3px;">
+                                    📍 Địa Lý & Tổng Quan
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>Mã hàng: <strong id="raw-ma-hang" style="color: var(--text-main);"></strong></div>
+                                    <div>Giá chào: <strong id="raw-gia-chao" style="color: var(--accent-gold);"></strong> tỷ</div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>Tỉnh thành: <strong id="raw-tinh-thanh" style="color: var(--text-main);"></strong></div>
+                                    <div>Quận huyện: <strong id="raw-quan-huyen" style="color: var(--text-main);"></strong></div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>Phường xã: <strong id="raw-phuong-xa" style="color: var(--text-main);"></strong></div>
+                                    <div>Hướng nhà: <strong id="raw-huong" style="color: var(--text-main);"></strong></div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>Số nhà: <strong id="raw-so-nha" style="color: var(--text-main);"></strong></div>
+                                    <div>Đường: <strong id="raw-duong-pho" style="color: var(--text-main);"></strong></div>
+                                </div>
+                                
+                                <!-- Nhóm 2: Diện tích & Kết cấu -->
+                                <div style="font-weight: bold; color: var(--accent-gold); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 3px; margin-top: 5px;">
+                                    📐 Diện Tích & Kết Cấu
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>DT Thực tế: <strong id="raw-dt-thuc-te" style="color: var(--text-main);"></strong> m²</div>
+                                    <div>DT Trên sổ: <strong id="raw-dt-tren-so" style="color: var(--text-main);"></strong> m²</div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>Mặt tiền: <strong id="raw-mat-tien" style="color: var(--text-main);"></strong> m</div>
+                                    <div>Chiều dài: <strong id="raw-chieu-dai" style="color: var(--text-main);"></strong></div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>Đường trước nhà: <strong id="raw-duong-truoc-nha" style="color: var(--text-main);"></strong> m</div>
+                                    <div>Số tầng: <strong id="raw-so-tang" style="color: var(--text-main);"></strong> tầng</div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>Số phòng ngủ: <strong id="raw-so-phong-ngu" style="color: var(--text-main);"></strong></div>
+                                    <div>Số vệ sinh: <strong id="raw-so-nha-ve-sinh" style="color: var(--text-main);"></strong></div>
+                                </div>
+
+                                <!-- Nhóm 3: Đầu chủ & Hợp đồng -->
+                                <div style="font-weight: bold; color: var(--accent-gold); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 3px; margin-top: 5px;">
+                                    🤝 Đầu Chủ & Hợp Đồng
+                                </div>
+                                <div>Tên đầu chủ: <strong id="raw-ten-dau-chu" style="color: var(--text-main);"></strong></div>
+                                <div>ĐT đầu chủ: <strong id="raw-dt-dau-chu" style="color: var(--text-main);"></strong></div>
+                                <div>
+                                    Điểm Facebook: <a id="raw-link-fb" href="#" target="_blank" style="color: var(--accent-cyan); font-weight: bold; text-decoration: underline; display: none;">Mở Facebook đầu chủ ➔</a>
+                                    <span id="raw-no-fb" style="color: var(--text-muted); display: inline;">Không có link Facebook</span>
+                                </div>
+
+
+
+                                <!-- Nhóm 5: Nội dung & Mô tả -->
+                                <div style="font-weight: bold; color: var(--accent-gold); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 3px; margin-top: 5px;">
+                                    📝 Nội Dung & Mô Tả
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-muted); margin-bottom: 4px;">Nội dung chính:</div>
+                                    <div id="raw-noi-dung-chinh" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; color: var(--text-muted);"></div>
+                                </div>
+
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-muted); margin-bottom: 4px;">Mô tả chi tiết:</div>
+                                    <div id="raw-mo-ta-chi-tiet" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; color: var(--text-muted);"></div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                                <button class="btn btn-outline" style="width: 100%;" onclick="saveListingEdits()">💾 LƯU THAY ĐỔI CỤC BỘ</button>
+                                <button class="btn btn-green" style="width: 100%;" onclick="publishToSheets()">🚀 XUẤT BẢN THẲNG LÊN GOOGLE SHEET</button>
+                                <button class="btn" style="width: 100%; background: rgba(251, 191, 36, 0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); margin-top: 5px;" onclick="recrawlActiveListing()">🔄 CÀO LẠI CĂN NÀY (ĐÈ DỮ LIỆU)</button>
+                                <button class="btn" style="width: 100%; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); margin-top: 5px;" onclick="deleteActiveListing()">🗑️ XÓA CĂN NÀY KHỎI SQLite</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CRAWL SESSION HISTORY -->
+            <div class="content-section" id="history-tab">
+                <div class="panel-row" style="margin-bottom: 20px;">
+                    <div class="panel-card" style="width: 100%;">
+                        <div class="panel-title">📊 Tổng quan Lịch sử cào (Analytics)</div>
+                        <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <div class="metric-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 15px; text-align: center;">
+                                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Tổng số phiên cào</div>
+                                <div id="total-sessions-val" style="font-size: 24px; font-weight: bold; color: var(--accent-cyan);">0</div>
+                            </div>
+                            <div class="metric-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 15px; text-align: center;">
+                                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Căn cào thành công</div>
+                                <div id="total-crawled-val" style="font-size: 24px; font-weight: bold; color: var(--text-green);">0</div>
+                            </div>
+                            <div class="metric-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 15px; text-align: center;">
+                                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Tổng thời gian cào</div>
+                                <div id="total-duration-val" style="font-size: 24px; font-weight: bold; color: var(--accent-gold);">0s</div>
+                            </div>
+                            <div class="metric-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 15px; text-align: center;">
+                                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Tốc độ trung bình</div>
+                                <div id="overall-speed-val" style="font-size: 24px; font-weight: bold; color: var(--text-main);">N/A</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-row">
+                    <div class="panel-card" style="width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div class="panel-title" style="margin-bottom: 0;">📜 Danh sách các phiên cào</div>
+                            <button class="btn btn-outline" style="padding: 5px 12px; font-size: 11px;" onclick="loadCrawlSessions()">🔄 Tải lại</button>
+                        </div>
+                        <div class="table-container" style="overflow-x: auto; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 12px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); color: var(--text-muted);">
+                                        <th style="padding: 12px 15px;">Bắt đầu</th>
+                                        <th style="padding: 12px 15px;">Cookie ID</th>
+                                        <th style="padding: 12px 15px;">Thời lượng</th>
+                                        <th style="padding: 12px 15px;">Số căn</th>
+                                        <th style="padding: 12px 15px;">Tốc độ</th>
+                                        <th style="padding: 12px 15px;">Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sessions-table-body">
+                                    <!-- Rendered dynamically -->
+                                    <tr>
+                                        <td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">Đang tải lịch sử...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Modal: Paste & Cache Cookie -->
+    <div class="modal-overlay" id="cookie-modal">
+        <div class="modal-box" style="max-width: 500px;">
+            <div class="modal-title">
+                <span>🔑 Cập Nhật Cookie Thiên Khôi</span>
+                <span class="modal-close" onclick="closeCookieModal()">&times;</span>
+            </div>
+            <div class="cookie-modal-inner">
+                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                    Do cơ chế bảo mật nghiêm ngặt của Chrome 120+ (App-Bound encryption v20), Python không thể trực tiếp bóc tách cookie đăng nhập của bạn từ ổ cứng Windows khi Chrome đang mở.
+                </p>
+                <div class="alert-box" style="background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.2); color: #60a5fa;">
+                    <strong>Hướng dẫn lấy Cookie 1-Click:</strong>
+                    <ol style="margin-left: 15px; margin-top: 5px;">
+                        <li>Cài đặt extension Chrome "Copy All Cookies".</li>
+                        <li>Mở tab Thiên Khôi (data.thienkhoi.com) đã đăng nhập.</li>
+                        <li>Click biểu tượng extension sao chép.</li>
+                        <li>Dán (Ctrl + V) chuỗi đó vào khung bên dưới.</li>
+                    </ol>
+                </div>
+                <div class="form-group">
+                    <label>Chuỗi Cookie đăng nhập</label>
+                    <textarea id="user-cookie-input" rows="5" placeholder="deviceid=af696161...; .AspNet.ApplicationCookie=yfFsOs..."></textarea>
+                </div>
+                <button class="btn btn-gold" onclick="saveCookieCache()">💾 Lưu Cookie & Đồng Bộ Cục Bộ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Sheet Row Copier (Fallback khi không có credentials) -->
+    <div class="modal-overlay" id="copier-modal">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span>📋 Dòng Dữ Liệu 79 Cột Pool Sẵn Sàng</span>
+                <span class="modal-close" onclick="closeCopierModal()">&times;</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px;">
+                Do chưa cấu hình file xác thực tài khoản dịch vụ <strong style="color: var(--accent-gold);">credentials.json</strong> lên local server, hệ thống không thể tự ghi dữ liệu lên Google Sheets. Tuy nhiên, toàn bộ dữ liệu 79 cột đồng bộ chuẩn đã được biên dịch hoàn chỉnh dưới đây:
+            </p>
+            <textarea class="raw-data-textarea" id="copy-table-data" readonly></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-gold" onclick="copyRowToClipboard()">📋 SAO CHÉP DÒNG DỮ LIỆU</button>
+                <button class="btn btn-outline" onclick="closeCopierModal()">Đóng cửa sổ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Trạng thái cục bộ của UI
+        let sidebarStatus = 'raw_text';
+        let activeListingId = null;
+        let activeListingData = null;
+        let imagesConfig = []; // Mảng chứa ảnh và vai trò
+        let logsInterval = null;
+        let cookieExpiredAlerted = false;
+        let lastLogsSignature = "";
+
+        // ==========================================
+        // KHANG NGÔ REAL-TIME ID & AI CURATION CORE
+        // ==========================================
+        function updateMaKhangNgoLive() {
+            const soNha = document.getElementById('edit-ngo-so-nha').value;
+            const duong = document.getElementById('edit-duong').value;
+            const quan = document.getElementById('edit-quan').value;
+            
+            const newId = genIdKhangNgo(soNha, duong, quan);
+            document.getElementById('edit-ma-khang-ngo').value = newId;
+            if (activeListingData) {
+                activeListingData.Ma_Khang_Ngo_ID = newId;
+            }
+        }
+
+        function genIdKhangNgo(soNha, duong, quan) {
+            soNha = (soNha || "").toString().trim();
+            if (soNha.includes('+')) {
+                soNha = soNha.split('+')[0].trim();
+            }
+            
+            duong = (duong || "").toString().trim();
+            quan = (quan || "").toString().trim();
+            
+            // 1. Mã hóa số nhà (Số -> Chữ in hoa, Ký tự -> thường)
+            const digitMap = {
+                '1': 'M', '2': 'H', '3': 'B', '4': 'A', '5': 'N',
+                '6': 'S', '7': 'Z', '8': 'T', '9': 'C', '0': 'O',
+                '/': 'I', '.': 'I'
+            };
+            let maSoNha = "";
+            for (let i = 0; i < soNha.length; i++) {
+                const char = soNha[i];
+                if (digitMap[char]) {
+                    maSoNha += digitMap[char];
+                } else if (char.match(/[a-zA-Z]/)) {
+                    maSoNha += char.toLowerCase();
+                }
+            }
+            
+            // 2. Normalization: Các tên đường có biến thể đặc biệt
+            let normalizedDuong = duong;
+            if (normalizedDuong.match(/cách mạng tháng (tám|8)|cmt8/i)) {
+                normalizedDuong = "CMTT";
+            } else if (normalizedDuong.match(/ba tháng hai|3 tháng 2|3\/2|3\-2/i)) {
+                normalizedDuong = "BTH";
+            } else if (normalizedDuong.match(/đường số (\d+)/i)) {
+                const match = normalizedDuong.match(/đường số (\d+)/i);
+                normalizedDuong = "DS" + match[1];
+            }
+            
+            // Viết tắt tên đường (Lấy chữ cái đầu của mỗi từ)
+            let abbrDuong = "";
+            if (normalizedDuong === "CMTT" || normalizedDuong === "BTH") {
+                abbrDuong = normalizedDuong;
+            } else if (normalizedDuong.startsWith("DS")) {
+                abbrDuong = normalizedDuong;
+            } else {
+                const noTones = removeVietnameseTones(normalizedDuong);
+                const words = noTones.split(/\s+/);
+                for (let k = 0; k < words.length; k++) {
+                    const word = words[k];
+                    if (word.length > 0) {
+                        const firstChar = word[0].toUpperCase();
+                        abbrDuong += firstChar;
+                    }
+                }
+            }
+            
+            // 3. Đảo ngược chuỗi viết tắt (Reversed)
+            const reversedDuong = abbrDuong.split('').reverse().join('');
+            
+            // 4. Ghép nối: [Mã Số Nhà] + 'I' + [Tên Đường Viết Tắt Đảo Ngược]
+            let combined = maSoNha + "I" + reversedDuong;
+            
+            // 5. Ciphering: Chèn 'W' vào vị trí thứ 2
+            if (combined.length > 1) {
+                combined = combined.substring(0, 1) + "W" + combined.substring(1);
+            } else {
+                combined = combined + "W";
+            }
+            
+            return combined;
+        }
+        
+        function removeVietnameseTones(str) {
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+            str = str.replace(/đ/g, "d");
+            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+            str = str.replace(/Đ/g, "D");
+            return str;
+        }
+
+        function runAiCuration() {
+            if (!activeListingData) {
+                alert("Vui lòng chọn 1 căn nhà từ danh sách bên trái để chạy AI biên tập!");
+                return;
+            }
+            
+            const btn = document.getElementById('btn-run-ai');
+            const spinner = document.getElementById('ai-spinner');
+            const btnText = document.getElementById('ai-btn-text');
+            
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnText.innerText = 'ĐANG CHẠY AI...';
+            
+            const payload = {
+                soNha: document.getElementById('edit-ngo-so-nha').value,
+                duong: document.getElementById('edit-duong').value,
+                phuong: document.getElementById('edit-phuong').value,
+                quan: document.getElementById('edit-quan').value,
+                noiDungChinh: activeListingData.Noi_dung_chinh || '',
+                moTaChiTiet: activeListingData.Mo_ta_chi_tiet || '',
+                dtThucTe: activeListingData.DT_Thuc_te || '',
+                dtTrenSo: activeListingData.DT_Tren_so || '',
+                matTien: activeListingData.Mat_Tien || '',
+                soTang: activeListingData.So_Tang || '',
+                soPhongNgu: document.getElementById('edit-so-phong-ngu').value || activeListingData.So_phong_ngu || '',
+                soToilet: document.getElementById('edit-so-nha-ve-sinh').value || activeListingData.So_nha_ve_sinh || '',
+                giaChao: activeListingData.Gia_chao || '',
+                duongTruocNha: document.getElementById('edit-duong-truoc-nha').value || activeListingData.Duong_truoc_nha_m || '',
+                phanLoaiHem: document.getElementById('edit-phan-loai-hem').value || activeListingData.Phan_loai_Hem || '',
+                phanLoai: activeListingData.Phan_loai || ''
+            };
+            
+            fetch('/api/ai/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(errData => {
+                        throw new Error(errData.message || "Lỗi khi gọi API OpenAI.");
+                    });
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // Điền kết quả vào visual form fields
+                    document.getElementById('edit-tieu-de-public').value = data.tieu_de_public || '';
+                    document.getElementById('edit-mo-ta-public').value = data.mo_ta_public || '';
+                    document.getElementById('edit-phuong-cu-ai').value = data.phuong_cu || '';
+                    
+                    // Cập nhật local activeListingData
+                    activeListingData.Tieu_de_Public = data.tieu_de_public || '';
+                    activeListingData.Mo_ta_Public = data.mo_ta_public || '';
+                    activeListingData.Phuong_cu_AI_ = data.phuong_cu || '';
+                    
+                    showBannerNotification('🤖 AI đã biên tập Tiêu đề, Mô tả và tra Phường cũ thành công!', 'green');
+                } else {
+                    alert('Lỗi biên tập AI: ' + data.message);
+                }
+            })
+            .catch(err => {
+                showBannerNotification('⚠️ ' + err.message, 'error');
+                playWarningSound();
+            })
+            .finally(() => {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                btnText.innerText = '🤖 BIÊN TẬP AI';
+            });
+        }
+        
+        function playWarningSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Phát âm thanh bíp cảnh báo kép (Double-Beep) chất lượng cao
+                const playBeep = (freq, duration, delay) => {
+                    setTimeout(() => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                        
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                        
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + duration);
+                    }, delay);
+                };
+                
+                playBeep(880, 0.15, 0);       // Nốt cao 1
+                playBeep(880, 0.15, 200);     // Nốt cao 2
+                playBeep(440, 0.4, 400);      // Nốt trầm cảnh báo
+            } catch (e) {
+                console.error("Lỗi phát âm thanh cảnh báo:", e);
+            }
+        }
+        
+        function triggerCookieExpiredAlert() {
+            if (cookieExpiredAlerted) return;
+            cookieExpiredAlerted = true;
+            
+            // Phát âm thanh cảnh báo
+            playWarningSound();
+            
+            // Hiển thị Toast nổi cảnh báo trực quan
+            showToast("🚨 CẢNH BÁO: Phiên đăng nhập (Cookie) Thiên Khôi đã hết hạn! Vui lòng cập nhật Cookie mới.", "error");
+
+            // Tự động mở Modal Cập nhật Cookie để anh Khang tiện dán ngay lập tức
+            openCookieModal();
+            const textarea = document.getElementById('user-cookie-input');
+            if (textarea) {
+                textarea.value = ""; // Xóa dữ liệu cũ để sẵn sàng dán
+                textarea.focus();
+            }
+        }
+
+        // Bật polling lấy logs console
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchConfig();
+            fetchListings();
+            logsInterval = setInterval(fetchLogs, 2000);
+            
+            // Tự động phân tích trang bắt đầu từ URL khi dán/nhập
+            document.getElementById('crawl-url').addEventListener('input', (e) => {
+                const val = e.target.value.trim();
+                if (!val) return;
+                try {
+                    const urlObj = new URL(val);
+                    const page = urlObj.searchParams.get('Page') || urlObj.searchParams.get('page') || urlObj.searchParams.get('p');
+                    if (page) {
+                        const pageNum = parseInt(page);
+                        if (!isNaN(pageNum) && pageNum > 0) {
+                            document.getElementById('crawl-start-page').value = pageNum;
+                            showBannerNotification(`💡 Tự động phát hiện Trang bắt đầu: ${pageNum}`, 'gold');
+                        }
+                    }
+                } catch (err) {}
+            });
+        });
+
+        // ==========================================
+        // CẤU HÌNH & TRẠNG THÁI
+        // ==========================================
+        function onSpeedPresetChange(preset) {
+            const houseMinInput = document.getElementById('cfg-delay-house-min');
+            const houseMaxInput = document.getElementById('cfg-delay-house-max');
+            const pageMinInput = document.getElementById('cfg-delay-page-min');
+            const pageMaxInput = document.getElementById('cfg-delay-page-max');
+            const alertDiv = document.getElementById('speed-preset-alert-text');
+
+            if (preset === 'safe') {
+                houseMinInput.value = 8.0;
+                houseMaxInput.value = 15.0;
+                pageMinInput.value = 20.0;
+                pageMaxInput.value = 40.0;
+                alertDiv.innerHTML = `<strong>🟢 Chế độ An toàn (Stealth Mode) đang bật:</strong> Nghỉ ngẫu nhiên 8 - 15 giây giữa các căn và 20 - 40 giây khi chuyển trang. An toàn tuyệt đối, giả lập 100% người dùng thực tế.`;
+            } else if (preset === 'optimal') {
+                houseMinInput.value = 3.0;
+                houseMaxInput.value = 6.0;
+                pageMinInput.value = 5.0;
+                pageMaxInput.value = 10.0;
+                alertDiv.innerHTML = `<strong>🟡 Chế độ Tối ưu (Fast & Safe) đang bật:</strong> Nghỉ ngẫu nhiên 3 - 6 giây giữa các căn và 5 - 10 giây khi chuyển trang. Tăng tốc độ cào ~2.5 lần nhưng vẫn bảo đảm an toàn chống chặn Cookie.`;
+            } else if (preset === 'turbo') {
+                houseMinInput.value = 1.5;
+                houseMaxInput.value = 3.0;
+                pageMinInput.value = 3.0;
+                pageMaxInput.value = 5.0;
+                alertDiv.innerHTML = `<strong>🔴 Chế độ Siêu tốc (Turbo Mode) đang bật:</strong> Nghỉ ngẫu nhiên 1.5 - 3 giây giữa các căn và 3 - 5 giây khi chuyển trang. Tốc độ cào cực nhanh (~6 lần) nhưng hãy lưu ý IP hoặc Cookie có thể nhanh hết hạn hơn.`;
+            } else if (preset === 'custom') {
+                alertDiv.innerHTML = `<strong>⚙️ Chế độ Tùy chỉnh đang bật:</strong> Thời gian chờ sẽ dựa trên các thông số cấu hình cụ thể do bạn thiết lập ở bảng bên phải.`;
+            }
+            
+            // Tự động lưu cấu hình mới
+            saveConfig();
+        }
+
+        function detectAndSetPresetDropdown() {
+            const houseMin = parseFloat(document.getElementById('cfg-delay-house-min').value);
+            const houseMax = parseFloat(document.getElementById('cfg-delay-house-max').value);
+            const pageMin = parseFloat(document.getElementById('cfg-delay-page-min').value);
+            const pageMax = parseFloat(document.getElementById('cfg-delay-page-max').value);
+            const presetSelect = document.getElementById('crawl-speed-preset');
+            const alertDiv = document.getElementById('speed-preset-alert-text');
+
+            if (houseMin === 8.0 && houseMax === 15.0 && pageMin === 20.0 && pageMax === 40.0) {
+                presetSelect.value = 'safe';
+                alertDiv.innerHTML = `<strong>🟢 Chế độ An toàn (Stealth Mode) đang bật:</strong> Nghỉ ngẫu nhiên 8 - 15 giây giữa các căn và 20 - 40 giây khi chuyển trang. An toàn tuyệt đối, giả lập 100% người dùng thực tế.`;
+            } else if (houseMin === 3.0 && houseMax === 6.0 && pageMin === 5.0 && pageMax === 10.0) {
+                presetSelect.value = 'optimal';
+                alertDiv.innerHTML = `<strong>🟡 Chế độ Tối ưu (Fast & Safe) đang bật:</strong> Nghỉ ngẫu nhiên 3 - 6 giây giữa các căn và 5 - 10 giây khi chuyển trang. Tăng tốc độ cào ~2.5 lần nhưng vẫn bảo đảm an toàn chống chặn Cookie.`;
+            } else if (houseMin === 1.5 && houseMax === 3.0 && pageMin === 3.0 && pageMax === 5.0) {
+                presetSelect.value = 'turbo';
+                alertDiv.innerHTML = `<strong>🔴 Chế độ Siêu tốc (Turbo Mode) đang bật:</strong> Nghỉ ngẫu nhiên 1.5 - 3 giây giữa các căn và 3 - 5 giây khi chuyển trang. Tốc độ cào cực nhanh (~6 lần) nhưng hãy lưu ý IP hoặc Cookie có thể nhanh hết hạn hơn.`;
+            } else {
+                presetSelect.value = 'custom';
+                alertDiv.innerHTML = `<strong>⚙️ Chế độ Tùy chỉnh đang bật:</strong> Thời gian chờ sẽ dựa trên các thông số cấu hình cụ thể do bạn thiết lập ở bảng bên phải.`;
+            }
+        }
+
+        function fetchConfig() {
+            fetch('/api/config')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const cfg = data.config;
+                        document.getElementById('cfg-sheet-id').value = cfg.sheet_id || '';
+                        document.getElementById('cfg-drive-folder').value = cfg.drive_folder_id || '';
+                        document.getElementById('cfg-openai-key').value = cfg.openai_api_key || '';
+                        document.getElementById('cfg-openai-prompt').value = cfg.openai_system_prompt || '';
+                        document.getElementById('crawl-url').value = cfg.search_url || '';
+                        document.getElementById('crawl-district').value = cfg.target_district !== undefined ? cfg.target_district : '';
+                        document.getElementById('crawl-limit').value = cfg.crawler_limit !== undefined ? cfg.crawler_limit : 5;
+                        document.getElementById('crawl-start-page').value = cfg.crawler_start_page || 1;
+                        
+                        document.getElementById('cfg-delay-house-min').value = cfg.delay_house_min !== undefined ? cfg.delay_house_min : 3.0;
+                        document.getElementById('cfg-delay-house-max').value = cfg.delay_house_max !== undefined ? cfg.delay_house_max : 6.0;
+                        document.getElementById('cfg-delay-page-min').value = cfg.delay_page_min !== undefined ? cfg.delay_page_min : 5.0;
+                        document.getElementById('cfg-delay-page-max').value = cfg.delay_page_max !== undefined ? cfg.delay_page_max : 10.0;
+                        
+                        detectAndSetPresetDropdown();
+                    }
+                });
+        }
+
+        function saveConfig() {
+            const payload = {
+                sheet_id: document.getElementById('cfg-sheet-id').value.stripOrEmpty(),
+                drive_folder_id: document.getElementById('cfg-drive-folder').value.stripOrEmpty(),
+                openai_api_key: document.getElementById('cfg-openai-key').value.stripOrEmpty(),
+                openai_system_prompt: document.getElementById('cfg-openai-prompt').value.trim(),
+                search_url: document.getElementById('crawl-url').value.stripOrEmpty(),
+                target_district: document.getElementById('crawl-district').value,
+                crawler_limit: document.getElementById('crawl-limit').value.trim() === "" ? 0 : (parseInt(document.getElementById('crawl-limit').value) || 0),
+                crawler_start_page: parseInt(document.getElementById('crawl-start-page').value) || 1,
+                delay_house_min: parseFloat(document.getElementById('cfg-delay-house-min').value) || 3.0,
+                delay_house_max: parseFloat(document.getElementById('cfg-delay-house-max').value) || 6.0,
+                delay_page_min: parseFloat(document.getElementById('cfg-delay-page-min').value) || 5.0,
+                delay_page_max: parseFloat(document.getElementById('cfg-delay-page-max').value) || 10.0
+            };
+
+            fetch('/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('✅ Đã lưu cấu hình hệ thống thành công!', 'green');
+                }
+            });
+        }
+
+        String.prototype.stripOrEmpty = function() {
+            return this.trim();
+        };
+
+        // ==========================================
+        // SIDEBAR LISTING
+        // ==========================================
+        let selectedListingIds = [];
+
+        function setSidebarStatus(status) {
+            sidebarStatus = status;
+            // Active UI tabs
+            document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-status') === status) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Clear selection when switching tabs
+            selectedListingIds = [];
+            updateBulkActionVisibility();
+            
+            fetchListings();
+        }
+
+        function toggleListingSelect(tkId, element) {
+            if (element.checked) {
+                if (!selectedListingIds.includes(tkId)) {
+                    selectedListingIds.push(tkId);
+                }
+            } else {
+                selectedListingIds = selectedListingIds.filter(id => id !== tkId);
+            }
+            updateBulkSelectCount();
+        }
+
+        function updateBulkSelectCount() {
+            const countSpan = document.getElementById('bulk-select-count');
+            if (countSpan) {
+                countSpan.innerText = selectedListingIds.length;
+            }
+            
+            // Update master checkbox state
+            const chkAll = document.getElementById('chk-select-all-filtered');
+            if (chkAll) {
+                const visibleChks = document.querySelectorAll('.house-select-chk');
+                if (visibleChks.length > 0) {
+                    const allChecked = Array.from(visibleChks).every(chk => chk.checked);
+                    chkAll.checked = allChecked;
+                } else {
+                    chkAll.checked = false;
+                }
+            }
+        }
+
+        function updateBulkActionVisibility() {
+            const bulkPanel = document.getElementById('sidebar-bulk-actions');
+            if (bulkPanel) {
+                if (sidebarStatus === 'raw_complete') {
+                    bulkPanel.style.display = 'flex';
+                } else {
+                    bulkPanel.style.display = 'none';
+                }
+            }
+            updateBulkSelectCount();
+        }
+
+        function toggleSelectAllFiltered(masterChk) {
+            const visibleChks = document.querySelectorAll('.house-select-chk');
+            visibleChks.forEach(chk => {
+                chk.checked = masterChk.checked;
+                const tkId = chk.getAttribute('data-id');
+                if (masterChk.checked) {
+                    if (!selectedListingIds.includes(tkId)) {
+                        selectedListingIds.push(tkId);
+                    }
+                } else {
+                    selectedListingIds = selectedListingIds.filter(id => id !== tkId);
+                }
+            });
+            updateBulkSelectCount();
+        }
+
+        function bulkPublishSelected() {
+            if (selectedListingIds.length === 0) {
+                alert("Vui lòng chọn ít nhất 1 căn nhà để xuất bản!");
+                return;
+            }
+            
+            if (!confirm(`Bạn có chắc chắn muốn đẩy hàng loạt ${selectedListingIds.length} căn đã chọn lên Google Sheets Pool?`)) {
+                return;
+            }
+            
+            showBannerNotification(`⏳ Đang bắt đầu đẩy hàng loạt ${selectedListingIds.length} căn lên Sheets Pool...`, 'gold');
+            
+            // Disable bulk publish button
+            const btn = document.getElementById('btn-bulk-publish');
+            if (btn) btn.disabled = true;
+            
+            // Call API bulk-publish
+            fetch('/api/listings/bulk-publish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selectedListingIds })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (btn) btn.disabled = false;
+                if (data.status === 'success') {
+                    const successCount = data.success_count;
+                    const totalCount = data.total_count;
+                    showBannerNotification(`🎉 ĐÃ ĐẨY THÀNH CÔNG ${successCount}/${totalCount} căn lên Sheets Pool!`, 'green');
+                    
+                    // Reset selection
+                    selectedListingIds = [];
+                    fetchListings();
+                } else {
+                    alert('Lỗi xuất bản hàng loạt: ' + data.message);
+                }
+            })
+            .catch(err => {
+                if (btn) btn.disabled = false;
+                alert('Không thể kết nối máy chủ để xuất bản hàng loạt: ' + err);
+            });
+        }
+
+        function fetchListings() {
+            const search = document.getElementById('sidebar-search').value;
+            const quan = document.getElementById('filter-quan').value;
+            const duong = document.getElementById('filter-duong').value;
+            const sonha = document.getElementById('filter-sonha').value;
+            
+            // Show loading spinner
+            const spinner = document.getElementById('search-spinner');
+            if (spinner) spinner.style.display = 'inline-block';
+            
+            let url = `/api/listings?status=${sidebarStatus}`;
+            if (search) {
+                url += `&search=${encodeURIComponent(search)}`;
+            }
+            if (quan) {
+                url += `&quan=${encodeURIComponent(quan)}`;
+            }
+            if (duong) {
+                url += `&duong=${encodeURIComponent(duong)}`;
+            }
+            if (sonha) {
+                url += `&so_nha=${encodeURIComponent(sonha)}`;
+            }
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (spinner) spinner.style.display = 'none';
+                    const listContainer = document.getElementById('listings-list');
+                    listContainer.innerHTML = '';
+                    const listings = data.listings || [];
+                    
+                    // Cập nhật số lượng đếm trên các Tab trạng thái ở Sidebar
+                    const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0 };
+                    const tabTextMap = {
+                        raw_text: `Chờ di cư ảnh (${counts.raw_text})`,
+                        raw_complete: `Chờ biên tập (${counts.raw_complete})`,
+                        published: `Đã xuất bản (${counts.published})`
+                    };
+                    document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                        const status = tab.getAttribute('data-status');
+                        if (tabTextMap[status]) {
+                            tab.innerText = tabTextMap[status];
+                        }
+                    });
+
+                    // Update bulk actions visibility in case counts changed
+                    updateBulkActionVisibility();
+
+                    if (listings.length === 0) {
+                        listContainer.innerHTML = `<div style="text-align:center; padding:30px; font-size:12px; color:var(--text-muted);">Không tìm thấy căn nào...</div>`;
+                        return;
+                    }
+
+                    listings.forEach(house => {
+                        const countImages = house.raw_images_tk ? house.raw_images_tk.length : 0;
+                        const isCurated = house.curated_config ? '✓ Đã tag' : 'Chưa tag';
+                        const address = `${house.Ngo_So_nha || ''} ${house.Duong || ''}, P.${house.Phuong || ''}, Q.${house.Quan || ''}`;
+
+                        const card = document.createElement('div');
+                        card.className = `house-card ${activeListingId === house.tk_id ? 'active' : ''}`;
+                        card.onclick = () => selectListing(house.tk_id);
+
+                        const isChecked = selectedListingIds.includes(house.tk_id) ? 'checked' : '';
+                        const checkboxHTML = sidebarStatus === 'raw_complete' ? `
+                            <input type="checkbox" class="house-select-chk" data-id="${house.tk_id}" ${isChecked} onclick="event.stopPropagation(); toggleListingSelect('${house.tk_id}', this)" style="cursor: pointer; width: 14px; height: 14px; margin-right: 6px;">
+                        ` : '';
+
+                        card.innerHTML = `
+                            <div class="house-card-header" style="display: flex; align-items: center;">
+                                ${checkboxHTML}
+                                <span class="house-id" style="${sidebarStatus === 'raw_complete' ? 'margin-left: 2px;' : ''}">${house.tk_id}</span>
+                                <span class="status-badge badge-${house.status}">${house.status === 'raw_text' ? 'Chờ Drive' : (house.status === 'raw_complete' ? 'Chờ biên tập' : 'Published')}</span>
+                            </div>
+                            <div class="house-title">${house.Mo_ta_chi_tiet || house.Noi_dung_chinh || 'Không có mô tả'}</div>
+                            <div class="house-meta">
+                                <span>📍 Q.${house.Quan}</span>
+                                <span>🖼️ ${countImages} ảnh</span>
+                                <span style="margin-left:auto; color:${house.curated_config ? 'var(--accent-green)' : 'var(--text-muted)'}">${isCurated}</span>
+                            </div>
+                        `;
+                        listContainer.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tải danh sách:", err);
+                    if (spinner) spinner.style.display = 'none';
+                });
+        }
+
+        function selectListing(tkId) {
+            activeListingId = tkId;
+            // Highlight card
+            document.querySelectorAll('.house-card').forEach(card => card.classList.remove('active'));
+            fetchListings(); // Cập nhật class active trong render lại
+
+            // Tải chi tiết
+            fetch(`/api/listings/${tkId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        activeListingData = data.listing;
+                        renderEditor();
+                        // Tự chuyển sang tab Edit
+                        switchTab('edit-tab');
+                    }
+                });
+        }
+
+        // ==========================================
+        // CRAWL LOGS POLLING & TRIGGER
+        // ==========================================
+        function fetchLogs() {
+            fetch('/api/logs')
+                .then(res => res.json())
+                .then(data => {
+                    const term = document.getElementById('terminal-log');
+                    let lines = data.logs || [];
+                    
+                    // Nếu không có log nào, hiển thị lời chào sẵn sàng để giao diện không bị trống
+                    if (lines.length === 0) {
+                        lines = [
+                            "[i] HỆ THỐNG CRAWLER ĐÃ SẴN SÀNG.",
+                            "[i] Vui lòng cập nhật Cookie Thiên Khôi và bấm 'BẮT ĐẦU CÀO TIN' để bắt đầu..."
+                        ];
+                    }
+                    
+                    const logsSignature = lines.join('\n');
+                    // Sử dụng so sánh chữ ký chuỗi (signature) để phát hiện chính xác mọi thay đổi về nội dung log
+                    if (logsSignature !== lastLogsSignature) {
+                        lastLogsSignature = logsSignature;
+                        let html = '';
+                        let hasProgressUpdate = false;
+                        lines.forEach(line => {
+                            if (!line) return;
+                            let style = '';
+                            if (line.includes('[❌ LỖI]')) style = 'color: var(--accent-red);';
+                            else if (line.includes('[✅') || line.includes('thành công')) style = 'color: var(--accent-green);';
+                            else if (line.includes('[⚠️') || line.includes('hết hạn')) style = 'color: var(--accent-gold);';
+                            else if (line.includes('Nghỉ tàng hình')) style = 'color: #a855f7;'; // Tím cho delay tàng hình
+                            
+                            // Tự động kích hoạt còi cảnh báo âm thanh bíp khi phát hiện cookie hết hạn cào tin
+                            if (line.includes('hết hạn') || line.includes('security.html')) {
+                                triggerCookieExpiredAlert();
+                            }
+                            
+                            if (line.includes('lưu trang tiếp theo')) {
+                                hasProgressUpdate = true;
+                            }
+                            
+                            html += `<div class="terminal-line" style="${style}">${escapeHtml(line)}</div>`;
+                        });
+                        term.innerHTML = html;
+                        term.scrollTop = term.scrollHeight;
+                        
+                        if (hasProgressUpdate) {
+                            fetchConfig();
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi đồng bộ console logs:", err);
+                });
+        }
+
+        function clearLogs() {
+            fetch('/api/logs/clear', { method: 'POST' })
+                .then(() => {
+                    document.getElementById('terminal-log').innerHTML = '';
+                });
+        }
+
+        function startCrawl() {
+            const url = document.getElementById('crawl-url').value.stripOrEmpty();
+            const district = document.getElementById('crawl-district').value;
+            const limitVal = document.getElementById('crawl-limit').value.trim();
+            const limit = limitVal === "" ? 0 : (parseInt(limitVal) || 0);
+            const start_page = parseInt(document.getElementById('crawl-start-page').value) || 1;
+
+            if (!url) {
+                alert('Vui lòng điền URL danh sách Quận Thiên Khôi để cào.');
+                return;
+            }
+
+            // Xóa logs cũ
+            clearLogs();
+            
+            // Lưu lại cấu hình hiện tại trước khi cào
+            saveConfig();
+
+            fetch('/api/crawl', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, district, limit, start_page })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🚀 Tiến trình cào ngầm đã được kích hoạt! Hãy theo dõi terminal bên dưới.', 'gold');
+                } else {
+                    alert('Không khởi động được tiến trình: ' + data.message);
+                }
+            });
+        }
+
+        function startMigration() {
+            const limit = parseInt(document.getElementById('migrate-limit').value) || 10;
+            const fill = document.getElementById('migrate-progress-fill');
+            const wrapper = document.getElementById('migrate-progress-wrapper');
+            
+            wrapper.style.display = 'block';
+            fill.style.width = '10%'; // Mock loading start
+
+            fetch('/api/migrate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ limit })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🖼️ Tiến trình di cư Drive đang chạy ngầm. Vui lòng xem logs cào tin ở Tab Cào.', 'gold');
+                    // Mock loop check
+                    let w = 10;
+                    const interval = setInterval(() => {
+                        w += 15;
+                        if (w > 100) {
+                            w = 100;
+                            clearInterval(interval);
+                            setTimeout(() => { wrapper.style.display = 'none'; }, 2000);
+                        }
+                        fill.style.width = `${w}%`;
+                    }, 3000);
+                }
+            });
+        }
+
+        // ==========================================
+        // COOKIE CACHE DIALOG
+        // ==========================================
+        function openCookieModal() {
+            document.getElementById('cookie-modal').style.display = 'flex';
+        }
+
+        function closeCookieModal() {
+            document.getElementById('cookie-modal').style.display = 'none';
+        }
+
+        function saveCookieCache() {
+            const cookieVal = document.getElementById('user-cookie-input').value.stripOrEmpty();
+            if (!cookieVal) {
+                alert('Vui lòng dán chuỗi cookie hợp lệ.');
+                return;
+            }
+
+            showBannerNotification('⏳ Đang lưu và đồng bộ Cookie mới...', 'gold');
+
+            fetch('/api/cookie/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cookie: cookieVal })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    cookieExpiredAlerted = false; // Reset warning state!
+                    lastLogsSignature = ""; // Xóa chữ ký log cũ để không bị nhận dạng nhầm
+                    document.getElementById('terminal-log').innerHTML = ""; // Xóa trắng log hiển thị cũ tránh lặp alert
+                    showBannerNotification('🔑 Đã lưu và đồng bộ Cookie thành công!', 'green');
+                    closeCookieModal();
+                } else {
+                    alert('Lỗi lưu cookie: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối lưu cookie: ' + err);
+            });
+        }
+
+        // ==========================================
+        // CURATOR IMAGE STATION & ROLE ASSIGNMENT
+        // ==========================================
+        function renderEditor() {
+            document.getElementById('no-listing-selected').style.display = 'none';
+            document.getElementById('editor-active').style.display = 'block';
+
+            const house = activeListingData;
+            
+            // Text fields
+            document.getElementById('edit-tieu-de-public').value = house.Tieu_de_Public || '';
+            document.getElementById('edit-mo-ta-public').value = house.Mo_ta_Public || '';
+            document.getElementById('edit-ma-khang-ngo').value = house.Ma_Khang_Ngo_ID || house.tk_id || '';
+            document.getElementById('edit-gia-public').value = house.Gia_Public || house.Gia_chao || '';
+            document.getElementById('edit-phan-loai-hem').value = house.Phan_loai_Hem || 'Hẻm xe hơi';
+            document.getElementById('edit-duong-truoc-nha').value = house.Duong_truoc_nha_m || '';
+            document.getElementById('edit-so-phong-ngu').value = house.So_phong_ngu || '';
+            document.getElementById('edit-so-nha-ve-sinh').value = house.So_nha_ve_sinh || '';
+            document.getElementById('edit-danh-gia').value = house.Danh_gia_Admin || '';
+            document.getElementById('edit-ngu-tret').value = house.Ngu_tret_Admin || '';
+            document.getElementById('edit-chdv').value = house.CHDV_Admin || '';
+            document.getElementById('edit-tinh-trang-nha').value = house.Tinh_trang_nha || 'Bình thường';
+            document.getElementById('edit-phuong-cu-ai').value = house.Phuong_cu_AI_ || '';
+            
+            // Địa chỉ thực tế
+            document.getElementById('edit-ngo-so-nha').value = house.Ngo_So_nha || '';
+            document.getElementById('edit-quan').value = house.Quan || '';
+            document.getElementById('edit-phuong').value = house.Phuong || '';
+            document.getElementById('edit-duong').value = house.Duong || '';
+            
+            // Tự động tính toán Mã Khang Ngô tức thời khi tải thông tin căn nhà
+            updateMaKhangNgoLive();
+            
+            // Tự động kích hoạt AI Biên tập nếu chưa có Tiêu đề hoặc Mô tả Public
+            // Đảm bảo có debouncing 300ms để Trang click nhanh danh sách không bị lặp request gọi API
+            if (window.autoAiTimeoutId) {
+                clearTimeout(window.autoAiTimeoutId);
+            }
+            
+            const tieuDePublicVal = (house.Tieu_de_Public || "").toString().trim();
+            const moTaPublicVal = (house.Mo_ta_Public || "").toString().trim();
+            
+            if (tieuDePublicVal === "" || moTaPublicVal === "") {
+                window.autoAiTimeoutId = setTimeout(() => {
+                    addLogMessage(`[🤖 AUTO-AI] Phát hiện căn ${house.tk_id} chưa được biên dịch Public. Tự động chạy AI Biên tập...`);
+                    runAiCuration();
+                }, 300);
+            }
+
+            // Gán dữ liệu cào gốc chỉ đọc
+            document.getElementById('raw-ma-hang').innerText = house.tk_id || 'Trống';
+            document.getElementById('raw-gia-chao').innerText = house.Gia_chao || 'Trống';
+            document.getElementById('raw-tinh-thanh').innerText = house.T_nh || house.Tinh || 'Trống';
+            document.getElementById('raw-quan-huyen').innerText = house.Quan || 'Trống';
+            document.getElementById('raw-phuong-xa').innerText = house.Phuong || 'Trống';
+            document.getElementById('raw-so-nha').innerText = house.Ngo_So_nha || 'Trống';
+            document.getElementById('raw-duong-pho').innerText = house.Duong || 'Trống';
+            
+            document.getElementById('raw-dt-thuc-te').innerText = house.DT_Thuc_te || 'Trống';
+            document.getElementById('raw-dt-tren-so').innerText = house.DT_Tren_so || 'Trống';
+            document.getElementById('raw-mat-tien').innerText = house.Mat_Tien || 'Trống';
+            // Hiển thị chiều dài cào được, để trống nếu không có
+            document.getElementById('raw-chieu-dai').innerText = house.Chieu_dai || '';
+            
+            document.getElementById('raw-duong-truoc-nha').innerText = house.Duong_truoc_nha_m || 'Trống';
+            document.getElementById('raw-so-tang').innerText = house.So_Tang || 'Trống';
+            document.getElementById('raw-so-phong-ngu').innerText = house.So_phong_ngu || 'Trống';
+            document.getElementById('raw-so-nha-ve-sinh').innerText = house.So_nha_ve_sinh || 'Trống';
+            document.getElementById('raw-huong').innerText = house.Huong || 'Trống';
+            
+            document.getElementById('raw-ten-dau-chu').innerText = house.Ten_Dau_Chu_Hop_dong || 'Trống';
+            document.getElementById('raw-dt-dau-chu').innerText = house.Dien_thoai_Dau_Chu || 'Trống';
+            
+            // Link Facebook Đầu Chủ
+            const fbLink = document.getElementById('raw-link-fb');
+            const noFb = document.getElementById('raw-no-fb');
+            if (house.Diem_Facebook) {
+                fbLink.href = house.Diem_Facebook;
+                fbLink.style.display = 'inline-block';
+                noFb.style.display = 'none';
+            } else {
+                fbLink.href = "#";
+                fbLink.style.display = 'none';
+                noFb.style.display = 'inline';
+            }
+            
+            document.getElementById('raw-noi-dung-chinh').innerText = house.Noi_dung_chinh || 'Không có dữ liệu';
+            document.getElementById('raw-mo-ta-chi-tiet').innerText = house.Mo_ta_chi_tiet || 'Không có dữ liệu';
+
+            // Xử lý hình ảnh
+            // Nếu có curated_config thì dùng, nếu không thì tự tạo mảng mặc định từ raw_drive_images
+            const rawImgs = house.raw_drive_images && house.raw_drive_images.length > 0 ? house.raw_drive_images : house.raw_images_tk;
+            const originalImgs = house.raw_images_tk || [];
+            
+            if (house.curated_config && house.curated_config.images && house.curated_config.images.length > 0) {
+                imagesConfig = house.curated_config.images;
+                // Merge thêm ảnh mới nếu có phát sinh cào thêm
+                rawImgs.forEach((url, i) => {
+                    if (!imagesConfig.some(item => item.url === url)) {
+                        const origUrl = originalImgs[i] || '';
+                        let role = 'Ẩn';
+                        if (origUrl) {
+                            if (origUrl === house.So_do_thua_dat_1 || origUrl === house.So_do_thua_dat_2) {
+                                role = 'Sơ đồ';
+                            } else if (origUrl === house.Hinh_Mat_Tien) {
+                                role = 'Mặt tiền';
+                            } else if (origUrl === house.Hinh_Nhan_Dien) {
+                                role = 'Bìa';
+                            }
+                        }
+                        imagesConfig.push({ url: url, role: role });
+                    }
+                });
+            } else {
+                // Tạo config mặc định và tự động phát hiện vai trò dựa trên so sánh link gốc!
+                imagesConfig = rawImgs.map((url, i) => {
+                    const origUrl = originalImgs[i] || '';
+                    let role = 'Ẩn';
+                    
+                    if (origUrl) {
+                        if (origUrl === house.So_do_thua_dat_1 || origUrl === house.So_do_thua_dat_2) {
+                            role = 'Sơ đồ';
+                        } else if (origUrl === house.Hinh_Mat_Tien) {
+                            role = 'Mặt tiền';
+                        } else if (origUrl === house.Hinh_Nhan_Dien) {
+                            role = 'Bìa';
+                        }
+                    }
+                    
+                    return { url: url, role: role };
+                });
+            }
+
+            renderImageGrid();
+        }
+
+        function sortImagesConfig() {
+            // Sắp xếp: Không phải 'Ẩn' lên trên đầu, 'Ẩn' xuống dưới cùng
+            imagesConfig.sort((a, b) => {
+                const aIsHidden = a.role === 'Ẩn';
+                const bIsHidden = b.role === 'Ẩn';
+                if (aIsHidden && !bIsHidden) return 1;
+                if (!aIsHidden && bIsHidden) return -1;
+                return 0; // Giữ nguyên thứ tự tương đối
+            });
+        }
+
+        function renderImageGrid() {
+            // Sắp xếp tự động trước khi render
+            sortImagesConfig();
+            
+            const grid = document.getElementById('curator-image-grid');
+            grid.innerHTML = '';
+
+            imagesConfig.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+
+                // Display role text
+                const roleLabels = {
+                    'Bìa': 'Nền',
+                    'Mặt tiền': 'Mặt tiền',
+                    'Sơ đồ': 'Sơ đồ',
+                    'Hẻm': 'Hẻm',
+                    'Nội thất': 'Nội thất',
+                    'Ẩn': 'Ẩn/Bỏ qua'
+                };
+
+                const labelStyle = {
+                    'Bìa': 'background: var(--accent-green); color:#000;',
+                    'Mặt tiền': 'background: var(--accent-red); color:#fff;',
+                    'Sơ đồ': 'background: var(--accent-gold); color:#000;',
+                    'Hẻm': 'background: var(--accent-blue); color:#fff;',
+                    'Nội thất': 'background: var(--accent-cyan); color:#000;',
+                    'Ẩn': 'background: var(--accent-slate); color:#fff;'
+                };
+
+                const cardStyle = item.role === 'Ẩn' ? 'opacity: 0.5;' : '';
+
+                card.innerHTML = `
+                    <div class="image-wrapper" style="${cardStyle}">
+                        <img src="${item.url}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'100%\' height=\'100%\' fill=\'%231e293b\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'sans-serif\' font-size=\'14\' fill=\'%2394a3b8\'>Ảnh lỗi hoặc Đang di cư...</text></svg>';">
+                        <span class="image-role-badge" style="${labelStyle[item.role]}">${roleLabels[item.role]}</span>
+                    </div>
+                    <div class="image-controls">
+                        <div class="role-btn-group">
+                            <span class="role-btn role-bia ${item.role === 'Bìa' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Bìa')">Nền</span>
+                            <span class="role-btn role-mt ${item.role === 'Mặt tiền' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Mặt tiền')">MT</span>
+                            <span class="role-btn role-sodo ${item.role === 'Sơ đồ' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Sơ đồ')">Sơ đồ</span>
+                        </div>
+                        <div class="role-btn-group">
+                            <span class="role-btn role-hem ${item.role === 'Hẻm' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Hẻm')">Hẻm</span>
+                            <span class="role-btn role-public ${item.role === 'Nội thất' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Nội thất')">N.Thất</span>
+                            <span class="role-btn role-an ${item.role === 'Ẩn' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Ẩn')">Ẩn</span>
+                        </div>
+                        <div class="order-btn-group">
+                            <button class="order-btn" onclick="moveImage(${index}, -1)" ${index === 0 ? 'disabled' : ''}>◀ Trái</button>
+                            <span style="font-size:10px; color:var(--text-muted)">#${index+1}</span>
+                            <button class="order-btn" onclick="moveImage(${index}, 1)" ${index === imagesConfig.length - 1 ? 'disabled' : ''}>Phải ▶</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function assignImageRole(idx, role) {
+            // Nếu đổi thành Bìa (Nền)
+            if (role === 'Bìa') {
+                // Reset Bìa (Nền) cũ về Ẩn
+                imagesConfig.forEach(item => {
+                    if (item.role === 'Bìa') item.role = 'Ẩn';
+                });
+                
+                // Gán vai trò Bìa cho ảnh được chọn
+                imagesConfig[idx].role = 'Bìa';
+                
+                // Đổi vị trí (swap) với index 0 (Ảnh 1)
+                if (idx > 0) {
+                    const temp = imagesConfig[0];
+                    imagesConfig[0] = imagesConfig[idx];
+                    imagesConfig[idx] = temp;
+                }
+            } else if (role === 'Mặt tiền') {
+                // Reset Mặt tiền cũ về Ẩn
+                imagesConfig.forEach(item => {
+                    if (item.role === 'Mặt tiền') item.role = 'Ẩn';
+                });
+                imagesConfig[idx].role = role;
+            } else {
+                imagesConfig[idx].role = role;
+            }
+            renderImageGrid();
+        }
+
+        function moveImage(idx, dir) {
+            const targetIdx = idx + dir;
+            if (targetIdx < 0 || targetIdx >= imagesConfig.length) return;
+            
+            // Swap
+            const temp = imagesConfig[idx];
+            imagesConfig[idx] = imagesConfig[targetIdx];
+            imagesConfig[targetIdx] = temp;
+            
+            renderImageGrid();
+        }
+
+        // ==========================================
+        // SAVE & PUBLISH CORE LOGIC
+        // ==========================================
+        function compileListingPayload() {
+            // Lọc ra các liên kết theo nhãn vai trò
+            const hinhNhanDien = imagesConfig.find(img => img.role === 'Bìa')?.url || '';
+            const hinhMatTien = imagesConfig.find(img => img.role === 'Mặt tiền')?.url || '';
+            const soDoImgs = imagesConfig.filter(img => img.role === 'Sơ đồ').map(img => img.url);
+            
+            // Lọc ảnh Hẻm tuần tự đưa vào Hình Hẻm 1-10
+            const hemImgs = imagesConfig.filter(img => img.role === 'Hẻm').map(img => img.url).slice(0, 10);
+            
+            // Điền tuần tự toàn bộ ảnh vào Ảnh 1 - Ảnh 15 bất kể role (giữ order)
+            const publicImgs = imagesConfig.map(img => img.url).slice(0, 15);
+
+            // Tìm vị trí 1-based của ảnh Nội thất và ảnh Hẻm trong chuỗi Ảnh 1-15
+            const publicIndices = [];
+            const hemIndices = [];
+            imagesConfig.slice(0, 15).forEach((img, i) => {
+                if (img.role === 'Nội thất') {
+                    publicIndices.push(i + 1);
+                }
+                if (img.role === 'Hẻm') {
+                    hemIndices.push(i + 1);
+                }
+            });
+
+            const anhPublicField = publicIndices.join(',');
+            const anhHemPublicField = hemIndices.join(',');
+
+            return {
+                tieu_de_public: document.getElementById('edit-tieu-de-public').value,
+                mo_ta_public: document.getElementById('edit-mo-ta-public').value,
+                ngo_so_nha: document.getElementById('edit-ngo-so-nha').value,
+                quan: document.getElementById('edit-quan').value,
+                phuong: document.getElementById('edit-phuong').value,
+                duong: document.getElementById('edit-duong').value,
+                ma_khang_ngo: document.getElementById('edit-ma-khang-ngo').value,
+                gia_public: document.getElementById('edit-gia-public').value,
+                phan_loai_hem: document.getElementById('edit-phan-loai-hem').value,
+                duong_truoc_nha: document.getElementById('edit-duong-truoc-nha').value,
+                so_phong_ngu: document.getElementById('edit-so-phong-ngu').value,
+                so_nha_ve_sinh: document.getElementById('edit-so-nha-ve-sinh').value,
+                danh_gia: document.getElementById('edit-danh-gia').value,
+                ngu_tret: document.getElementById('edit-ngu-tret').value,
+                chdv: document.getElementById('edit-chdv').value,
+                tinh_trang_nha: document.getElementById('edit-tinh-trang-nha').value,
+                phuong_cu_ai: document.getElementById('edit-phuong-cu-ai').value,
+                
+                // Trạm ảnh
+                hinh_nhan_dien: hinhNhanDien,
+                hinh_mat_tien: hinhMatTien,
+                so_do_1: soDoImgs[0] || '',
+                so_do_2: soDoImgs[1] || '',
+                hem_imgs: hemImgs,
+                public_imgs: publicImgs,
+                anh_public_vd_1_3_5: anhPublicField,
+                anh_hem_public_vd_1_2: anhHemPublicField,
+                
+                // Save nguyên trạng cấu hình ảnh
+                curated_config: {
+                    images: imagesConfig,
+                    Mã_Khang_Ngô__ID_: document.getElementById('edit-ma-khang-ngo').value
+                }
+            };
+        }
+
+        function saveListingEdits(showNotification = true) {
+            const payload = compileListingPayload();
+            
+            return fetch(`/api/listings/${activeListingId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    if (showNotification) {
+                        showBannerNotification('💾 Đã lưu cấu hình biên tập cục bộ thành công vào SQLite!', 'green');
+                        
+                        // TỰ ĐỘNG XUẤT BẢN LÊN GOOGLE SHEETS POOL KHI BẤM LƯU CỤC BỘ
+                        setTimeout(() => {
+                            publishToSheets();
+                        }, 500);
+                    }
+                    // Refresh listing data
+                    fetchListings();
+                }
+            });
+        }
+
+        function publishToSheets() {
+            // Bước 1: Lưu thay đổi cục bộ trước
+            saveListingEdits(false).then(() => {
+                // Bước 2: Trigger publish lên Sheets
+                showBannerNotification('🚀 Đang kết nối Google Sheets Cloud và đẩy 79 cột...', 'gold');
+                
+                fetch(`/api/publish/${activeListingId}`, {
+                    method: 'POST'
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showBannerNotification('🎉 XUẤT BẢN THÀNH CÔNG trực tiếp lên Google Sheets!', 'green');
+                        fetchListings(); // Load lại list để đổi status badge
+                        selectListing(activeListingId); // Tải lại chi tiết
+                    } else if (data.status === 'warning') {
+                        // Fallback show copy text
+                        showBannerNotification('⚠️ Lỗi Cloud. Hãy copy dòng 79 cột bên dưới để paste thủ công!', 'yellow');
+                        openCopierModal(data.row_data);
+                    }
+                });
+            });
+        }
+
+        function clearAllListings() {
+            if (!confirm("⚠️ CẢNH BÁO QUAN TRỌNG:\nHành động này sẽ XÓA TOÀN BỘ tin đã cào trong SQLite và toàn bộ thư mục ảnh cục bộ!\n\nBạn có chắc chắn muốn xóa sạch dữ liệu cũ không?")) {
+                return;
+            }
+            if (!confirm("❗ BẠN CÓ CHẮC CHẮN 100%?\nDữ liệu đã xóa sẽ KHÔNG THỂ KHÔI PHỤC lại được.")) {
+                return;
+            }
+            
+            showBannerNotification('🧹 Đang tiến hành xóa toàn bộ dữ liệu cào cũ...', 'gold');
+            
+            fetch('/api/listings/clear', {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('✅ Đã xóa sạch dữ liệu cũ và hình ảnh thành công!', 'green');
+                    // Reset active listing view
+                    activeListingId = null;
+                    activeListingData = null;
+                    document.getElementById('no-listing-selected').style.display = 'block';
+                    document.getElementById('editor-active').style.display = 'none';
+                    fetchListings();
+                } else {
+                    alert('Lỗi khi xóa dữ liệu: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Không thể kết nối máy chủ để xóa dữ liệu: ' + err);
+            });
+        }
+
+        function deleteActiveListing() {
+            if (!activeListingId) return;
+            
+            if (!confirm(`🗑️ Bạn có chắc chắn muốn XÓA căn nhà [${activeListingId}] này khỏi cơ sở dữ liệu SQLite cục bộ không?\n\nẢnh cục bộ của căn này cũng sẽ bị xóa.`)) {
+                return;
+            }
+            
+            showBannerNotification(`🧹 Đang xóa căn ${activeListingId}...`, 'gold');
+            
+            fetch(`/api/listings/${activeListingId}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification(`✅ Đã xóa thành công căn ${activeListingId}!`, 'green');
+                    // Reset active listing view
+                    activeListingId = null;
+                    activeListingData = null;
+                    document.getElementById('no-listing-selected').style.display = 'block';
+                    document.getElementById('editor-active').style.display = 'none';
+                    fetchListings();
+                } else {
+                    alert('Lỗi khi xóa căn: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Không thể kết nối máy chủ để xóa căn: ' + err);
+            });
+        }
+
+        function recrawlActiveListing() {
+            if (!activeListingId) return;
+            
+            if (!confirm(`🔄 Bạn có chắc chắn muốn CÀO LẠI căn nhà [${activeListingId}] này không?\n\nHành động này sẽ tải lại dữ liệu mới nhất từ Thiên Khôi và GHI ĐÈ lên các trường dữ liệu hiện tại.`)) {
+                return;
+            }
+            
+            showBannerNotification(`🔄 Đang cào lại dữ liệu căn ${activeListingId}...`, 'gold');
+            
+            fetch(`/api/listings/${activeListingId}/recrawl`, {
+                method: 'POST'
+            })
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    let errMsg = `HTTP ${res.status}`;
+                    try {
+                        const errJson = JSON.parse(text);
+                        if (errJson && errJson.message) {
+                            errMsg = errJson.message;
+                        }
+                    } catch (e) {
+                        // Response is not JSON, might be a 500 error page
+                        if (text && text.length < 200) {
+                            errMsg += `: ${text}`;
+                        } else {
+                            errMsg += ` (Lỗi hệ thống phía Server)`;
+                        }
+                    }
+                    throw new Error(errMsg);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification(`✅ Đã cào lại thành công căn nhà ${activeListingId}!`, 'green');
+                    // Tải lại dữ liệu chi tiết và cập nhật giao diện
+                    activeListingData = data.listing;
+                    renderEditor();
+                } else {
+                    alert('Lỗi khi cào lại căn nhà: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Không thể kết nối máy chủ để cào lại căn nhà: ' + err.message);
+            });
+        }
+
+        // ==========================================
+        // FALLBACK COPIER MODAL
+        // ==========================================
+        function openCopierModal(rowData) {
+            const modal = document.getElementById('copier-modal');
+            const textarea = document.getElementById('copy-table-data');
+            
+            // Biến mảng thành định dạng phân tách bằng tab (\t) để paste trực tiếp vào Excel/Sheets
+            const formattedRow = rowData.join('\t');
+            
+            textarea.value = formattedRow;
+            modal.style.display = 'flex';
+        }
+
+        function closeCopierModal() {
+            document.getElementById('copier-modal').style.display = 'none';
+        }
+
+        function copyRowToClipboard() {
+            const textarea = document.getElementById('copy-table-data');
+            textarea.select();
+            document.execCommand('copy');
+            showBannerNotification('📋 Đã sao chép dòng dữ liệu! Giờ bạn chỉ cần bôi đen dòng trống ở Google Sheets và nhấn Ctrl + V.', 'green');
+            closeCopierModal();
+        }
+
+        // ==========================================
+        // UI HELPERS
+        // ==========================================
+        function switchTab(tabId) {
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === tabId) tab.classList.add('active');
+            });
+
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'history-tab') {
+                loadCrawlSessions();
+            }
+        }
+
+        function loadCrawlSessions() {
+            const tableBody = document.getElementById('sessions-table-body');
+            if (!tableBody) return;
+
+            tableBody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">Đang tải lịch sử cào...</td></tr>`;
+
+            fetch('/api/crawl/sessions')
+                .then(res => res.json())
+                .then(data => {
+                    // Cập nhật các thẻ metrics
+                    const totals = data.totals || {};
+                    document.getElementById('total-sessions-val').innerText = totals.total_sessions || 0;
+                    document.getElementById('total-crawled-val').innerText = totals.total_crawled || 0;
+                    
+                    // Format tổng thời gian cào
+                    const totalDurSec = totals.total_duration || 0;
+                    if (totalDurSec >= 3600) {
+                        const h = Math.floor(totalDurSec / 3600);
+                        const m = Math.floor((totalDurSec % 3600) / 60);
+                        document.getElementById('total-duration-val').innerText = `${h} giờ ${m} phút`;
+                    } else if (totalDurSec >= 60) {
+                        const m = Math.floor(totalDurSec / 60);
+                        const s = Math.floor(totalDurSec % 60);
+                        document.getElementById('total-duration-val').innerText = `${m} phút ${s} giây`;
+                    } else {
+                        document.getElementById('total-duration-val').innerText = `${Math.floor(totalDurSec)} giây`;
+                    }
+                    
+                    document.getElementById('overall-speed-val').innerText = totals.overall_avg_speed || 'N/A';
+
+                    // Cập nhật bảng
+                    const sessions = data.sessions || [];
+                    if (sessions.length === 0) {
+                        tableBody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">Chưa có phiên cào nào được ghi nhận.</td></tr>`;
+                        return;
+                    }
+
+                    tableBody.innerHTML = '';
+                    sessions.forEach(sess => {
+                        const startTime = sess.start_time ? new Date(sess.start_time).toLocaleString('vi-VN') : 'N/A';
+                        
+                        // Định dạng thời lượng
+                        const dur = sess.duration || 0;
+                        let durStr = '';
+                        if (dur >= 60) {
+                            durStr = `${Math.floor(dur / 60)} phút ${Math.floor(dur % 60)} giây`;
+                        } else {
+                            durStr = `${Math.floor(dur)} giây`;
+                        }
+
+                        // Định dạng tốc độ
+                        const count = sess.crawled_count || 0;
+                        const speedStr = count > 0 ? `${(dur / count).toFixed(1)} giây/căn` : 'N/A';
+
+                        // Định dạng trạng thái badge
+                        let badgeHtml = '';
+                        const status = sess.status || 'stopped';
+                        if (status === 'completed') {
+                            badgeHtml = `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid var(--text-green); color: var(--text-green); padding: 2px 6px; border-radius: 4px; font-size: 10px;">Thành công</span>`;
+                        } else if (status === 'limit_reached') {
+                            badgeHtml = `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 2px 6px; border-radius: 4px; font-size: 10px;">Đạt giới hạn</span>`;
+                        } else if (status === 'cookie_expired') {
+                            badgeHtml = `<span style="background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 6px; border-radius: 4px; font-size: 10px;">Hết hạn Cookie</span>`;
+                        } else {
+                            badgeHtml = `<span style="background: rgba(251, 191, 36, 0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 2px 6px; border-radius: 4px; font-size: 10px;">Đã ngắt</span>`;
+                        }
+
+                        const tr = document.createElement('tr');
+                        tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+                        tr.innerHTML = `
+                            <td style="padding: 10px 15px;">${startTime}</td>
+                            <td style="padding: 10px 15px; font-family: monospace; color: var(--text-muted);">${sess.cookie_sig || 'N/A'}</td>
+                            <td style="padding: 10px 15px;">${durStr}</td>
+                            <td style="padding: 10px 15px; font-weight: bold; color: var(--accent-gold);">${count}</td>
+                            <td style="padding: 10px 15px;">${speedStr}</td>
+                            <td style="padding: 10px 15px;">${badgeHtml}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                })
+                .catch(err => {
+                    tableBody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--accent-red);">Lỗi tải lịch sử: ${err}</td></tr>`;
+                });
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-item toast-${type}`;
+            
+            let icon = '💡';
+            if (type === 'success') icon = '✅';
+            else if (type === 'warning') icon = '⚠️';
+            else if (type === 'error') icon = '❌';
+            
+            toast.innerHTML = `<span style="font-size: 18px;">${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            // Kích hoạt animation slide-in
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 50);
+            
+            // Tự động ẩn sau 4 giây
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 4000);
+        }
+
+        function showBannerNotification(message, colorClass) {
+            // 1. Ghi log vào Terminal
+            let color = 'var(--accent-gold)';
+            let type = 'warning';
+            
+            if (colorClass === 'green') {
+                color = 'var(--accent-green)';
+                type = 'success';
+            } else if (colorClass === 'red') {
+                color = 'var(--accent-red)';
+                type = 'error';
+            } else if (colorClass === 'yellow' || colorClass === 'gold') {
+                color = 'var(--accent-gold)';
+                type = 'warning';
+            }
+            
+            addLogConsoleLine(`*** ${message.toUpperCase()} ***`, color);
+            
+            // 2. Kích hoạt Toast hiển thị nổi bật trực quan trên màn hình
+            showToast(message, type);
+        }
+
+        function addLogConsoleLine(text, color) {
+            const term = document.getElementById('terminal-log');
+            const timestamp = new Date().toLocaleTimeString();
+            term.innerHTML += `<div class="terminal-line" style="color: ${color}; font-weight: bold;">[${timestamp}] ${escapeHtml(text)}</div>`;
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

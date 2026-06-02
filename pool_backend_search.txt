@@ -1,0 +1,123 @@
+3: // Hỗ trợ Tự động Mã hóa ID & Trigger Đẩy sang Public
+6: // - US-040.2: Cải tiến Prompt sinh Tiêu đề Public & Mô tả Public theo đợt 2 (Cập nhật ngày 2026-05-29)
+9: const PUBLIC_FILE_ID = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"; // File BDS_KhangNgo_Source
+10: const PUBLIC_TAB_NAME = "Source"; // Tên tab Source
+23:   if (e.parameter && e.parameter.id) {
+24:     var searchId = e.parameter.id.toString().trim();
+87:     var hemPublicIndices = data.ndHemPublicIndices || "";
+88:     var noithatPublicIndices = data.ndNoithatPublicIndices || "";
+106:       data.maHang || "", hinhNhanDien, data.tinh || "", data.quan || "", data.phuong || "", data.duong || "", data.ngoSoNha || "", data.phanLoai || "", data.namXayDung || "",
+119:       "",                 // Tiêu đề Public (Admin tự điền)
+120:       "",                 // Mô tả Public (Admin tự điền)
+121:       data.giaChao || "", // Giá Public (Mặc định lấy giá chào)
+125:       noithatPublicIndices, // Ảnh Public (VD: 1,3,5)
+126:       hemPublicIndices,   // Ảnh Hẻm Public (VD: 1,2)
+133:       false,                 // Duyệt Public (Checkbox)
+134:       "Chờ duyệt",           // Trạng thái Public
+136:       data.sourceUrl || "",  // Link gốc
+141:       ""                     // Last Sync (sẽ được ghi khi Admin đẩy sang Source)
+166:         var colsToKeep = ["Tiêu đề Public", "Mô tả Public", "Giá Public", "Phường cũ (AI)", "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)", "System ID", "Trạng thái Public", "Duyệt Public"];
+168:         var hasNewImages = (matTienImg !== "" || hemImgs.length > 0 || hemPublicIndices !== "" || noithatPublicIndices !== "");
+174:           "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)", "Hình Nhận Diện"
+179:            var hName = headers[c];
+182:            if (colsToKeep.includes(hName)) {
+184:            } else if (!hasNewImages && imgCols.includes(hName)) {
+187:               if (hName === "Hình Nhận Diện") {
+257:     // Set format Checkbox cho cột "Duyệt Public"
+258:     // Tự động quét để tìm đúng cột "Duyệt Public" đề phòng thứ tự thay đổi
+260:     var checkColIndex = headers.indexOf("Duyệt Public") + 1;
+280:   var sheet = e.source.getActiveSheet();
+288:   var checkColIndex = headers.indexOf("Duyệt Public") + 1;
+289:   var statusColIndex = headers.indexOf("Trạng thái Public") + 1;
+306:   // B. XỬ LÝ ĐỒNG BỘ PUBLIC
+310:     // Nếu chưa cấu hình ID file public thì báo lỗi
+311:     if (PUBLIC_FILE_ID === "ĐIỀN_ID_FILE_PUBLIC_CỦA_BẠN_VÀO_ĐÂY") {
+312:       statusCell.setValue("Lỗi: Chưa cấu hình PUBLIC_FILE_ID");
+320:       var publicSpreadsheet = SpreadsheetApp.openById(PUBLIC_FILE_ID);
+321:       var publicSheet = publicSpreadsheet.getSheetByName(PUBLIC_TAB_NAME) || publicSpreadsheet.getSheets()[0];
+326:       function getVal(colName) {
+327:         var idx = headers.indexOf(colName);
+364:       var anhDuocChon = getVal("Ảnh Public (VD: 1,3,5)").toString().replace(/\s/g, '');
+365:       var anhHemDuocChon = getVal("Ảnh Hẻm Public (VD: 1,2)").toString().replace(/\s/g, '');
+424:       // Đảm bảo đủ 10 slot ảnh cho Public
+441:       // MAPPING VÀO FILE SOURCE THEO ĐÚNG SCHEMA MỚI 39 CỘT
+442:       var publicRowData = [
+447:         getVal("Tiêu đề Public"),    // 4: tieu_de (Cột E)
+451:         formatGia(getVal("Giá Public")), // 8: gia (Cột I)
+462:         getVal("Mô tả Public"),      // 19: mo_ta (Cột T)
+481:         getVal("Hình Mặt Tiền"),     // 38: Link Hình Mặt Tiền gốc (Cột AM)
+487:       var lastRowPublic = publicSheet.getLastRow();
+490:       if (systemId && systemId.toString().trim() !== "" && lastRowPublic >= 2) {
+492:         var systemIds = publicSheet.getRange(2, 38, lastRowPublic - 1, 1).getValues();
+507:           publicSheet.getRange(foundRow, 1, 1, publicRowData.length).setValues([publicRowData]);
+510:           // Lấy dữ liệu cũ đang có ở Source
+511:           var existingRowData = publicSheet.getRange(foundRow, 1, 1, publicRowData.length).getValues()[0];
+513:           // Danh sách các cột được bảo vệ (index 0-indexed của publicRowData):
+514:           // 1: Cú pháp (Cột B), 2: Note (Cột C), 4: Tiêu đề Public (Cột E), 
+516:           // 15: Tình trạng nhà (Cột P), 16: Đánh giá (Cột Q), 17: Ngủ trệt (Cột R), 18: CHDV (Cột S), 19: Mô tả Public (Cột T),
+521:           for (var c = 0; c < publicRowData.length; c++) {
+523:               // Cột được bảo vệ: Giữ nguyên nếu ở Source đang có dữ liệu và khác rỗng
+528:                 mergedRowData.push(publicRowData[c]);
+532:               mergedRowData.push(publicRowData[c]);
+536:           publicSheet.getRange(foundRow, 1, 1, mergedRowData.length).setValues([mergedRowData]);
+540:         publicSheet.appendRow(publicRowData);
+541:         foundRow = lastRowPublic + 1; // Xác định dòng để gán công thức hiển thị hình ảnh
+544:       publicSheet.getRange(foundRow, 1).setFormula('=IMAGE(AM' + foundRow + ')');
+546:         publicSheet.getRange(foundRow, 41).insertCheckboxes();
+580:     "Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Giá Public", 
+581:     "Phân loại Hẻm", "Đường trước nhà (m)", "Tình trạng nhà", "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
+584:     "Duyệt Public", "Trạng thái Public", "System ID", "Link Gốc",
+608:       .addItem('Chỉ đồng bộ Tiêu đề sang Source (hàng loạt)', 'batchSyncTitleToSource')
+609:       .addItem('Đồng bộ System ID sang Source', 'syncSystemIdToSource')
+614: function syncSystemIdToSource() {
+615:   var poolSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Pool");
+616:   var sourceSpreadsheet = SpreadsheetApp.openById(PUBLIC_FILE_ID);
+617:   var sourceSheet = sourceSpreadsheet.getSheetByName(PUBLIC_TAB_NAME);
+619:   if (!poolSheet || !sourceSheet) {
+620:     SpreadsheetApp.getUi().alert("Không tìm thấy sheet Pool hoặc Source (tab: " + PUBLIC_TAB_NAME + ")!");
+645:   var sourceData = sourceSheet.getDataRange().getValues();
+646:   // 2. Map sang Source (Cột D là Mã Khang Ngô [index 3], Cột AL là System ID [index 37])
+647:   var idSourceCol = 3;
+648:   var sysIdSourceCol = 37; 
+651:   for (var j = 1; j < sourceData.length; j++) {
+652:     var maKNSource = sourceData[j][idSourceCol];
+653:     var currentSysIdSource = sourceData[j][sysIdSourceCol];
+655:     if (maKNSource) {
+656:       maKNSource = maKNSource.toString().trim();
+657:       var matchingSysId = idMap[maKNSource];
+659:       // Nếu tìm thấy map và ô System ID bên Source đang trống
+660:       if (matchingSysId && (!currentSysIdSource || currentSysIdSource.toString().trim() === "")) {
+661:         sourceSheet.getRange(j + 1, sysIdSourceCol + 1).setValue(matchingSysId);
+667:   SpreadsheetApp.getUi().alert("✅ Đã quét và đồng bộ thành công " + updateCount + " System ID từ Pool sang Source!");
+671:  * US-030: Chỉ đồng bộ cột "Tiêu đề Public" sang cột "tieu_de" (Cột E) bên Source hàng loạt theo dòng chọn.
+674: function batchSyncTitleToSource() {
+675:   var poolSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Pool") || SpreadsheetApp.getActiveSheet();
+685:   if (PUBLIC_FILE_ID === "ĐIỀN_ID_FILE_PUBLIC_CỦA_BẠN_VÀO_ĐÂY" || PUBLIC_FILE_ID.indexOf("xxxxxxxx") !== -1) {
+686:     SpreadsheetApp.getUi().alert("Lỗi: Chưa cấu hình PUBLIC_FILE_ID thực tế!");
+694:   var tieuDePoolCol = headers.indexOf("Tiêu đề Public");
+697:     SpreadsheetApp.getUi().alert("Lỗi: Không tìm thấy cột 'System ID' hoặc 'Tiêu đề Public' trong Pool!");
+704:     var sourceSpreadsheet = SpreadsheetApp.openById(PUBLIC_FILE_ID);
+705:     var sourceSheet = sourceSpreadsheet.getSheetByName(PUBLIC_TAB_NAME) || sourceSpreadsheet.getSheets()[0];
+706:     var lastRowPublic = sourceSheet.getLastRow();
+708:     if (lastRowPublic < 2) {
+709:       SpreadsheetApp.getUi().alert("File Source hiện tại trống rỗng hoặc không có dữ liệu!");
+713:     // Đọc toàn bộ System ID bên Source để tối ưu hóa tốc độ
+714:     var sourceSysIds = sourceSheet.getRange(2, 38, lastRowPublic - 1, 1).getValues().map(function(r) {
+728:       var matchIdx = sourceSysIds.indexOf(sysId);
+731:         // Ghi duy nhất cột E (Cột thứ 5 - tieu_de) bên Source
+732:         sourceSheet.getRange(foundRow, 5).setValue(tieuDeVal);
+740:     SpreadsheetApp.getUi().alert("✅ Đã đồng bộ thành công " + successCount + " tiêu đề sang Source!\n" +
+741:                                  (notFoundCount > 0 ? "⚠️ Có " + notFoundCount + " dòng không tìm thấy khớp bên Source (chưa đồng bộ lần nào)." : ""));
+880:   var noTones = removeVietnameseTones(streetStr);
+901: function removeVietnameseTones(str) {
+938:  * @param {string} systemPrompt 
+939:  * @param {string} userPrompt 
+995:   function getIdx(name) { return headers.indexOf(name); }
+999:     dt: getIdx("DT Thực tế"), ngang: getIdx("Mặt Tiền"), tang: getIdx("Số Tầng"), gia: getIdx("Giá Public"),
+1005:     phuongCuOut: getIdx("Phường cũ (AI)"), tieuDeOut: getIdx("Tiêu đề Public"), moTaOut: getIdx("Mô tả Public")
+1009:     SpreadsheetApp.getUi().alert("Không tìm thấy đủ các cột: Tiêu đề Public, Mô tả Public, Phường cũ (AI).");
+1026:                      "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH TIÊU ĐỀ PUBLIC (tieuDe):\n" +
+1049:                      "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH MÔ TẢ PUBLIC (moTa):\n" +
+1050:                      "Mô tả Public phải có cấu trúc nghệ thuật chuyên nghiệp, bắt đầu bằng một dòng Tiêu đề thu hút viết IN HOA TOÀN BỘ để tạo điểm nhấn mạnh mẽ khi khách hàng mở xem chi tiết căn nhà:\n\n" +
+1071:                      "     + + Kết cấu: Nêu chi tiết kết cấu kiên cố (BTCT vững chắc, đúc kiên cố). BẮT BUỘC dịch chuẩn số tầng sang định dạng miền Nam: 2 tầng ➡️ 'Trệt, lầu đúc kiên cố'; 3 tầng ➡️ 'Trệt, 2 lầu BTCT'; 4 tầng ➡️ 'Trệt, 3 lầu BTCT'; 5 tầng ➡️ 'Trệt, 4 lầu BTCT'. Nêu chi tiết số phòng ngủ (PN) khép kín (kèm 5⭐ nếu có phòng master đẳng cấp), số WC, phòng khách rộng rãi, bếp mở thông thoáng, ban công bao quanh lấy gió trời và ánh sáng tự nhiên.\n" +
+1164:   // A. BỘ LỌC PROGRAMMATIC SCRUBBER CHỐNG LẶP HẺM/XE HƠI KHI ĐẦU ĐÃ CÓ TIỀN TỐ HXH

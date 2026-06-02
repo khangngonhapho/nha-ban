@@ -1,0 +1,7 @@
+
+=== Matches for 'window.openS' ===
+
+=== Matches for 'function openS' ===
+Line 4541: function openS(id, tempP = null) {
+
+=== Matches for 'openS = ' ===
