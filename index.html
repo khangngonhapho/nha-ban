@@ -6878,6 +6878,24 @@
       }
     };
 
+    window.sortCurationImageGrid = function() {
+      const grid = document.getElementById('imageEditorGrid');
+      if (!grid) return;
+
+      const cards = Array.from(grid.querySelectorAll('.edit-img-card'));
+
+      const getCardWeight = (card) => {
+        if (card.classList.contains('is-sodo')) return 1;
+        if (card.classList.contains('is-mattien')) return 2;
+        if (card.classList.contains('is-anhnen')) return 3;
+        if (card.classList.contains('is-public')) return 4;
+        return 5;
+      };
+
+      cards.sort((a, b) => getCardWeight(a) - getCardWeight(b));
+      cards.forEach(card => grid.appendChild(card));
+    };
+
     window.setImageAsMatTien = function(event, card) {
       if (event) event.stopPropagation();
       const url = card.dataset.url;
@@ -6914,6 +6932,7 @@
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
+      window.sortCurationImageGrid();
     };
 
     window.setImageAsAnhNen = function(event, card) {
@@ -6947,6 +6966,7 @@
         cb.checked = true;
         window.toggleImagePublic(cb);
       }
+      window.sortCurationImageGrid();
     };
 
     window.setImageAsSodo = function(event, card) {
@@ -7028,6 +7048,7 @@
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
+      window.sortCurationImageGrid();
     };
 
     window.toggleImagePublic = function(cb) {
@@ -7065,6 +7086,7 @@
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
+      window.sortCurationImageGrid();
     };
 
     window.uncheckAllCurationImages = function() {
@@ -7104,6 +7126,7 @@
       }
 
       showToast("Đã bỏ chọn toàn bộ hình ảnh!", "success");
+      window.sortCurationImageGrid();
     };
 
     window.openPoolS = function(systemId) {
