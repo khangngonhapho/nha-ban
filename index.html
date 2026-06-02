@@ -6882,6 +6882,24 @@
       const grid = document.getElementById('imageEditorGrid');
       if (!grid) return;
 
+      // Save scroll positions of all scrollable ancestors
+      const scrollStates = [];
+      let parent = grid.parentElement;
+      while (parent) {
+        scrollStates.push({
+          element: parent,
+          scrollTop: parent.scrollTop,
+          scrollLeft: parent.scrollLeft
+        });
+        parent = parent.parentElement;
+      }
+      const windowScrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowScrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+      // Track active element to prevent auto-scrolling on re-focus
+      const activeEl = document.activeElement;
+      const activeIsInside = grid.contains(activeEl);
+
       const cards = Array.from(grid.querySelectorAll('.edit-img-card'));
 
       const getCardWeight = (card) => {
@@ -6893,7 +6911,25 @@
       };
 
       cards.sort((a, b) => getCardWeight(a) - getCardWeight(b));
+
+      // Temporarily blur active element inside grid to block browser auto-scroll-to-focus
+      if (activeIsInside && activeEl && typeof activeEl.blur === 'function') {
+        activeEl.blur();
+      }
+
       cards.forEach(card => grid.appendChild(card));
+
+      // Restore active element focus without scrolling
+      if (activeIsInside && activeEl && typeof activeEl.focus === 'function') {
+        activeEl.focus({ preventScroll: true });
+      }
+
+      // Restore all ancestor scroll positions
+      scrollStates.forEach(state => {
+        state.element.scrollTop = state.scrollTop;
+        state.element.scrollLeft = state.scrollLeft;
+      });
+      window.scrollTo(windowScrollLeft, windowScrollTop);
     };
 
     window.setImageAsMatTien = function(event, card) {
