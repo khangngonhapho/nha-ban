@@ -5514,7 +5514,7 @@
           </div>
         `;
       } else {
-        if (scta) scta.style.display = 'flex';
+        if (scta) scta.style.display = 'none';
         
         const cleanImgs = (p.imgs || []).filter(url => {
           return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
