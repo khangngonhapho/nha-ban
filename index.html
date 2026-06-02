@@ -6545,6 +6545,11 @@
             <button type="button" id="toolSodoBtn" onclick="selectImageEditorTool('sodo')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
               🔒 Sổ
             </button>
+            ${!p.isFromPoolOnly ? `
+            <button type="button" id="toolUncheckAllBtn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.2); border: 1px solid var(--red); color: var(--red); padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              ✕ Bỏ All
+            </button>
+            ` : ''}
             <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center; flex: 0.8;">
               ✕ Hủy
             </button>
@@ -6556,28 +6561,24 @@
           <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
-      cards.forEach(c => {
-        if (c.shouldRender) {
-          html += renderImageCardForEdit(c.type, c.index, c.url, p);
-        }
-      });
-
       // Recover current selected public interior/alley indices
-      let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+      let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || '');
       let currentPublicCover = '';
-      if (p.isFromPoolOnly && p.pool_row_data) {
-        currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
-      } else if (p.imgs && p.imgs.length > 0) {
-        currentPublicCover = p.imgs[0]; // First public image
+      if (!p.isFromPoolOnly) {
+        if (p.pool_row_data) {
+          currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
+        } else if (p.imgs && p.imgs.length > 0) {
+          currentPublicCover = p.imgs[0]; // First public image
+        }
       }
       
       let currentInteriorIndices = '';
       let currentAlleyIndices = '';
 
-      if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+      if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
         currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
         currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
-      } else if (p.pool_row_data) {
+      } else if (!p.isFromPoolOnly && p.pool_row_data) {
         // Fallback for legacy listings without saved indices: reconstruct from Source URLs
         const cleanPublicImages = [];
         if (p.original_row_data) {
@@ -6612,7 +6613,7 @@
           }
         }
         currentAlleyIndices = alleyIndices.join(',');
-      } else {
+      } else if (!p.isFromPoolOnly) {
         const intIndices = [];
         if (p.imgs) {
           p.imgs.forEach((url, idx) => {
@@ -6622,6 +6623,56 @@
         currentInteriorIndices = intIndices.join(',');
       }
 
+      // Sort cards: Sổ (1) -> Mặt tiền (2) -> Nền (3) -> Public Checked (4) -> Unchecked (5)
+      const renderedCards = cards.filter(c => c.shouldRender);
+      
+      const getCardSortWeight = (c) => {
+        const normUrl = normalizeImgUrl(c.url);
+        if (!normUrl) return 99;
+
+        // 1. Sổ
+        if (isSodoUrl(c.url)) return 1;
+
+        // 2. Mặt tiền
+        const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+        if (targetMatTien && normUrl === normalizeImgUrl(targetMatTien)) return 2;
+
+        // 3. Nền
+        let targetNen = '';
+        if (!p.isFromPoolOnly) {
+          if (p.pool_row_data) {
+            targetNen = p.pool_row_data[40] || '';
+          } else if (p.original_row_data) {
+            targetNen = p.original_row_data[20] || '';
+          } else if (p.imgs && p.imgs.length > 0) {
+            targetNen = p.imgs[0] || '';
+          }
+        }
+        if (targetNen && normUrl === normalizeImgUrl(targetNen)) return 3;
+
+        // 4. Các hình chọn public khác
+        let isPublic = false;
+        if (!p.isFromPoolOnly) {
+          if (c.type === "interior") {
+            const indices = currentInteriorIndices.split(',').map(s => s.trim());
+            isPublic = indices.includes(String(c.index));
+          } else if (c.type === "alley") {
+            const indices = currentAlleyIndices.split(',').map(s => s.trim());
+            isPublic = indices.includes(String(c.index));
+          }
+        }
+        if (isPublic) return 4;
+
+        // 5. Các hình còn lại
+        return 5;
+      };
+
+      renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+
+      renderedCards.forEach(c => {
+        html += renderImageCardForEdit(c.type, c.index, c.url, p);
+      });
+
       html += `
           </div>
           <!-- Hidden Inputs to hold current selections -->
@@ -6629,8 +6680,8 @@
           <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
           <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
           <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
-          <input type="hidden" id="editSodo1Url" value="${p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || '')}">
-          <input type="hidden" id="editSodo2Url" value="${p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || '')}">
+          <input type="hidden" id="editSodo1Url" value="${p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || ''))}">
+          <input type="hidden" id="editSodo2Url" value="${p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || ''))}">
         </div>
       `;
 
@@ -6641,26 +6692,28 @@
       const normUrl = normalizeImgUrl(url);
       
       let isMatTien = false;
-      const targetMatTien = p.isFromPoolOnly && p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+      const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
       isMatTien = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
 
       let isAnhNen = false;
       let targetNen = '';
-      if (p.isFromPoolOnly && p.pool_row_data) {
-        targetNen = p.pool_row_data[40] || '';
-      } else if (p.original_row_data) {
-        targetNen = p.original_row_data[20] || '';
-      } else if (p.imgs && p.imgs.length > 0) {
-        targetNen = p.imgs[0] || '';
+      if (!p.isFromPoolOnly) {
+        if (p.pool_row_data) {
+          targetNen = p.pool_row_data[40] || '';
+        } else if (p.original_row_data) {
+          targetNen = p.original_row_data[20] || '';
+        } else if (p.imgs && p.imgs.length > 0) {
+          targetNen = p.imgs[0] || '';
+        }
       }
       isAnhNen = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
 
       // Check if this image is Sổ 1 to Sổ 5
-      let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
-      let sodo2Val = document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '';
-      let sodo3Val = document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3) || '';
-      let sodo4Val = document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4) || '';
-      let sodo5Val = document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5) || '';
+      let sodo1Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '');
+      let sodo2Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '');
+      let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3) || '');
+      let sodo4Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4) || '');
+      let sodo5Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5) || '');
       
       let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
       let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
@@ -6675,7 +6728,9 @@
       }
 
       let isPublic = false;
-      if (type === "facade" || type === "sodo") {
+      if (p.isFromPoolOnly) {
+        isPublic = false;
+      } else if (type === "facade" || type === "sodo") {
         isPublic = false; // Mặt tiền thô và ảnh sổ không hiển thị trong carousel công khai mặc định
       } else if (type === "interior") {
         if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
@@ -6848,6 +6903,13 @@
       const star = card.querySelector('.cover-star-badge');
       if (star) star.remove();
 
+      // Auto-uncheck "Hiện" checkbox for facade image
+      const cb = card.querySelector('.edit-img-pub-cb');
+      if (cb && cb.checked) {
+        cb.checked = false;
+        window.toggleImagePublic(cb);
+      }
+
       document.getElementById('editCoverImgUrl').value = url;
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
@@ -7003,6 +7065,45 @@
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
+    };
+
+    window.uncheckAllCurationImages = function() {
+      const agree = confirm("Bạn có đồng ý xóa hết tất cả các hình đã chọn (bao gồm hình mặt tiền, hình sổ, hình nền và các hình public) để chọn lại từ đầu không?");
+      if (!agree) return;
+
+      const coverInput = document.getElementById('editCoverImgUrl');
+      const publicCoverInput = document.getElementById('editPublicCoverUrl');
+      const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
+      const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+      const sodo1Input = document.getElementById('editSodo1Url');
+      const sodo2Input = document.getElementById('editSodo2Url');
+
+      if (coverInput) coverInput.value = '';
+      if (publicCoverInput) publicCoverInput.value = '';
+      if (publicInteriorInput) publicInteriorInput.value = '';
+      if (publicAlleyInput) publicAlleyInput.value = '';
+      if (sodo1Input) sodo1Input.value = '';
+      if (sodo2Input) sodo2Input.value = '';
+
+      document.querySelectorAll('.edit-img-card').forEach(card => {
+        card.classList.remove('is-mattien', 'is-anhnen', 'is-sodo', 'is-sodo1', 'is-sodo2', 'is-sodo3', 'is-sodo4', 'is-sodo5', 'is-public');
+        card.style.borderColor = 'transparent';
+
+        const badges = card.querySelectorAll('.mattien-lock-badge, .cover-star-badge, .sodo-badge');
+        badges.forEach(b => b.remove());
+
+        const cb = card.querySelector('.edit-img-pub-cb');
+        if (cb) cb.checked = false;
+      });
+
+      if (typeof window.selectImageEditorTool === 'function') {
+        window.selectImageEditorTool('none');
+      }
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+
+      showToast("Đã bỏ chọn toàn bộ hình ảnh!", "success");
     };
 
     window.openPoolS = function(systemId) {
