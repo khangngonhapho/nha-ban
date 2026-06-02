@@ -3511,7 +3511,7 @@
       }
       if (!POOL_ROWS || !POOL_ROWS.length) return [];
       
-      MAPPED_POOL_DATA = POOL_ROWS.map(row => {
+      MAPPED_POOL_DATA = POOL_ROWS.map((row, index) => {
         const systemId = row[72] || row[71] || '';
         const dt = parseFloat(row[13] || row[14]) || 0;
         const gia = parseGia(row[11] || row[58]);
@@ -3539,7 +3539,7 @@
         }
 
         const p = {
-          temp_id: "pool_" + systemId,
+          temp_id: index + 1,
           id: row[55] || row[54] || systemId || '',
           cu_phap: "",
           t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
@@ -4750,8 +4750,22 @@
       const filteredArr = getFiltered();
       const arr = filteredArr.slice().sort((a, b) => {
         if (currentSortType === 'newest') {
-          const ta = parseInt(a.temp_id, 10) || 0;
-          const tb = parseInt(b.temp_id, 10) || 0;
+          let ta, tb;
+          if (isAdmin && activeMode === 'pool' && showOnAirOnly) {
+            const ma = DATA.find(x => 
+              (x.system_id && a.system_id && String(x.system_id).trim() === String(a.system_id).trim()) ||
+              (x.id && a.id && String(x.id).trim() === String(a.id).trim())
+            );
+            const mb = DATA.find(x => 
+              (x.system_id && b.system_id && String(x.system_id).trim() === String(b.system_id).trim()) ||
+              (x.id && b.id && String(x.id).trim() === String(b.id).trim())
+            );
+            ta = ma ? parseInt(ma.temp_id, 10) || 0 : 0;
+            tb = mb ? parseInt(mb.temp_id, 10) || 0 : 0;
+          } else {
+            ta = parseInt(a.temp_id, 10) || 0;
+            tb = parseInt(b.temp_id, 10) || 0;
+          }
           return currentSortDir === 'asc' ? ta - tb : tb - ta;
         } else {
           const ga = parseFloat(a.gia) || 0, gb = parseFloat(b.gia) || 0;
