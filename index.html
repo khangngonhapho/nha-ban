@@ -4193,13 +4193,9 @@
           finalizeData(fullList);
           
           // Securely load frontage images via serverless API proxy in the background if Admin is logged in (US-024)
-          const token = localStorage.getItem('g_access_token');
-          const expiry = localStorage.getItem('g_token_expiry');
-          const now = Date.now();
-          const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
-          if (isAdmin && isTokenValid) {
+          if (isAdmin) {
             console.log("Admin session detected in public fallback. Initiating background facade images retrieval...");
-            fetchFacadeImages(token);
+            fetchFacadeImages();
           }
         } catch (e) {
           showError('Lỗi parse dữ liệu: ' + e.message);
@@ -6147,6 +6143,9 @@
       initGoogleAuth();
     }
 
+    // Hàng đợi lưu các resolver đang chờ token hợp lệ (US-061)
+    window.tokenResolvers = window.tokenResolvers || [];
+
     function initGoogleAuth() {
       let clientId = localStorage.getItem('gClientId');
       if (!clientId) {
@@ -6164,6 +6163,11 @@
             if (tokenResponse.error !== undefined) {
               console.error("OAuth2 error:", tokenResponse.error);
               showGoogleLoginButtonState(false);
+              
+              // Nếu đang có tác vụ chờ token (Save/Pull), hiển thị đăng nhập popup thay vì thất bại âm thầm
+              if (window.tokenResolvers && window.tokenResolvers.length > 0) {
+                promptInteractiveLogin();
+              }
               return;
             }
             const token = tokenResponse.access_token;
@@ -6174,9 +6178,20 @@
             showGoogleLoginButtonState(true);
             document.body.classList.remove('is-locked');
             secureLoadAttempted = false;
-            isSecureLoaded = false;
-            isDataLoaded = false;
-            loadData();
+            
+            // Xử lý và giải phóng các resolvers đang đợi token (US-061)
+            const resolvers = window.tokenResolvers || [];
+            window.tokenResolvers = [];
+            
+            if (resolvers.length > 0) {
+              console.log("Đã tự động gia hạn token ngầm thành công cho tác vụ đang chờ.");
+              resolvers.forEach(r => r.resolve(token));
+            } else {
+              // Chỉ reload dữ liệu nếu không có tác vụ nào đang đợi token ghi sheets (tránh reset form admin)
+              isSecureLoaded = false;
+              isDataLoaded = false;
+              loadData();
+            }
           }
         });
         console.log("Google Auth GSI Client initialized successfully.");
@@ -6265,7 +6280,100 @@
       }
     }
 
-    function fetchFacadeImages(token) {
+    // Kiểm tra thời hạn token, làm mới ngầm hoặc hỏi popup đăng nhập lại nếu mất phiên (US-061)
+    window.ensureValidGoogleToken = function() {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem('g_access_token');
+        const expiry = localStorage.getItem('g_token_expiry');
+        const now = Date.now();
+
+        // Nếu token còn hạn trên 5 phút, trả về ngay lập tức
+        if (token && expiry && parseInt(expiry, 10) > now + 300 * 1000) {
+          return resolve(token);
+        }
+
+        window.tokenResolvers = window.tokenResolvers || [];
+        window.tokenResolvers.push({ resolve, reject });
+
+        // Nếu đã có một tiến trình refresh token đang chạy, chỉ cần đợi callback
+        if (window.tokenResolvers.length > 1) {
+          return;
+        }
+
+        const clientId = localStorage.getItem('gClientId');
+        if (!clientId) {
+          window.tokenResolvers = [];
+          reject(new Error("Chưa cấu hình Google Client ID trong Bộ lọc!"));
+          return;
+        }
+
+        if (!gTokenClient) {
+          initGoogleAuth();
+        }
+
+        if (gTokenClient) {
+          console.log("Token đã hết hạn hoặc sắp hết hạn. Đang tự động làm mới ngầm...");
+          try {
+            gTokenClient.requestAccessToken({ prompt: 'none' }); // Silent refresh
+          } catch (e) {
+            console.warn("Silent refresh failed synchronously, calling fallback:", e);
+            promptInteractiveLogin();
+          }
+        } else {
+          window.tokenResolvers = [];
+          reject(new Error("Không thể khởi tạo client xác thực Google!"));
+        }
+      });
+    };
+
+    function promptInteractiveLogin() {
+      if (confirm("Phiên đăng nhập Google đã hết hiệu lực. Nhấp OK để liên kết lại tài khoản Gmail và tự động hoàn thành lưu dữ liệu!")) {
+        try {
+          gTokenClient.requestAccessToken(); // Mở popup đăng nhập tương tác
+        } catch (e) {
+          console.error("Interactive login request failed:", e);
+          const resolvers = window.tokenResolvers || [];
+          window.tokenResolvers = [];
+          resolvers.forEach(r => r.reject(e));
+        }
+      } else {
+        const resolvers = window.tokenResolvers || [];
+        window.tokenResolvers = [];
+        resolvers.forEach(r => r.reject(new Error("Người dùng từ chối đăng nhập lại")));
+      }
+    }
+
+    // Thiết lập timer chạy ngầm kiểm tra và làm mới token ngầm định kỳ (US-061)
+    setInterval(() => {
+      if (!isAdmin) return;
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (token && expiry) {
+        const timeRemaining = parseInt(expiry, 10) - now;
+        // Nếu token sắp hết hạn trong dưới 15 phút, kích hoạt silent refresh ngầm
+        if (timeRemaining > 0 && timeRemaining < 15 * 60 * 1000) {
+          console.log("Token sắp hết hạn trong", Math.round(timeRemaining / 1000), "giây. Đang làm mới ngầm định kỳ...");
+          if (gTokenClient) {
+            try {
+              gTokenClient.requestAccessToken({ prompt: 'none' });
+            } catch (e) {
+              console.warn("Background silent refresh failed:", e);
+            }
+          }
+        }
+      }
+    }, 5 * 60 * 1000); // Kiểm tra mỗi 5 phút
+
+    async function fetchFacadeImages() {
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        console.warn("Could not retrieve valid Google token for background facade images:", err);
+        return;
+      }
       if (!token) return;
       const url = `/api/get-facade-images`;
 
@@ -7362,12 +7470,11 @@
     };
 
     async function executePullFromPool(systemId, id, soNha, duong, btnElement) {
-      const token = localStorage.getItem('g_access_token');
-      const expiry = localStorage.getItem('g_token_expiry');
-      const now = Date.now();
-      
-      if (!token || !expiry || parseInt(expiry, 10) <= now) {
-        alert("Phiên đăng nhập Google đã hết hạn hoặc chưa liên kết Gmail. Vui lòng bấm 'Đăng nhập / Liên kết Gmail' trước!");
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        alert("Không thể xác thực Google. Lên sóng thất bại: " + err.message);
         return;
       }
       
@@ -8230,12 +8337,11 @@
         return;
       }
 
-      const token = localStorage.getItem('g_access_token');
-      const expiry = localStorage.getItem('g_token_expiry');
-      const now = Date.now();
-
-      if (!token || !expiry || parseInt(expiry, 10) <= now) {
-        showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
         return;
       }
 
@@ -8542,12 +8648,11 @@
     };
 
     window.saveNewListingFromPool = async function(systemId, btnElement) {
-      const token = localStorage.getItem('g_access_token');
-      const expiry = localStorage.getItem('g_token_expiry');
-      const now = Date.now();
-      
-      if (!token || !expiry || parseInt(expiry, 10) <= now) {
-        showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
         return;
       }
       
