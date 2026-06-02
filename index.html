@@ -2302,14 +2302,7 @@
     
     /* Floating action buttons in detail page (US-039.7 Revision) */
     .admin-detail-float-actions {
-      position: absolute;
-      bottom: 25px;
-      right: 20px;
-      z-index: 150;
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      pointer-events: auto;
+      display: none !important;
     }
     .admin-detail-float-actions .admin-icon-btn {
       background: #f39c12; /* Nền Vàng rực rỡ */
@@ -5215,19 +5208,11 @@
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         if (mID) mID.style.display = 'none';
         if (floatActions) {
-          if (p.isFromPoolOnly) {
-            floatActions.style.display = 'none'; // Will be shown dynamically in updateLivePreview
-            floatActions.innerHTML = `
-              <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none;">💾</button>
-            `;
-          } else {
-            floatActions.style.display = 'flex';
-            floatActions.innerHTML = `
-              <button class="admin-icon-btn save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi">💾</button>
-              <button class="admin-icon-btn zalo-btn" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo">🔗</button>
-            `;
-          }
+          floatActions.style.display = 'none';
+          floatActions.innerHTML = ''; // Keep empty to avoid duplicate IDs
         }
+        // Gọi hàm cấu hình lại các nút Speed Dial hành động chi tiết
+        renderSpeedDialActions('detail', p);
       } else {
         if (mID) {
           mID.style.display = 'block';
@@ -5775,6 +5760,11 @@
       if (!fromPopState && history.state && history.state.detailOpen) {
         history.back();
       }
+
+      // Khôi phục lại các nút chính của danh sách rổ hàng trên Speed Dial
+      if (isAdmin) {
+        renderSpeedDialActions('list');
+      }
     }
     function bgC(e) { if (e.target === document.getElementById('ov')) closeS(false); }
 
@@ -6034,6 +6024,50 @@
         mainBtn.classList.remove('active');
       }
     });
+
+    let activeDetailListing = null;
+
+    function renderSpeedDialActions(mode, p = null) {
+      const actionsEl = document.getElementById('dialActions');
+      if (!actionsEl) return;
+
+      if (mode === 'detail' && p) {
+        activeDetailListing = p;
+        // Đóng menu nếu đang mở để người dùng chủ động mở rộng
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình chi tiết
+        if (p.isFromPoolOnly) {
+          actionsEl.innerHTML = `
+            <button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+          `;
+        } else {
+          actionsEl.innerHTML = `
+            <button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+            <button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>
+          `;
+        }
+      } else {
+        activeDetailListing = null;
+        // Đóng menu nếu đang mở
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình danh sách chính
+        actionsEl.innerHTML = `
+          <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+          <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+          <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+            🔗
+            <span class="share-count" id="shareCount">0</span>
+          </button>
+        `;
+        updateShareUI();
+      }
+    }
 
     // Xử lý hỏi Zalo thông minh
     function askZalo(id, title) {
