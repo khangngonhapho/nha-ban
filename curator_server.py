@@ -59,6 +59,22 @@ os.chdir(PROJECT_ROOT)
 # Chuẩn hóa thư mục static tuyệt đối động để tránh lỗi 404 khi chạy dưới dạng EXE đóng gói
 static_folder = os.path.join(PROJECT_ROOT, 'static')
 
+# Giải phóng port 5000 nếu bị kẹt
+def free_port_5000():
+    try:
+        import subprocess
+        output = subprocess.check_output("netstat -aon", shell=True).decode('utf-8', errors='ignore')
+        for line in output.strip().split('\n'):
+            if "LISTENING" in line and ":5000" in line:
+                parts = line.strip().split()
+                if len(parts) >= 5:
+                    pid = parts[-1]
+                    subprocess.run(f"taskkill /f /pid {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
+free_port_5000()
+
 from curator_html_data import CURATOR_HTML_CONTENT
 
 # Khởi tạo Flask với static folder tuyệt đối
