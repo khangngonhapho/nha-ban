@@ -778,9 +778,12 @@ def start_auto_migration_scheduler():
     t.daemon = True
     t.start()
 
-def run_image_migration_thread(limit, cookie):
-    """Tải và di cư hình ảnh chạy ngầm (Throttled Mode)"""
-    add_log_message("[🚀] KHỞI ĐỘNG TIẾN TRÌNH DI CƯ HÌNH ẢNH CHẠY NGẦM...")
+def run_image_migration_thread(limit, cookie, target_tk_id=None):
+    """Tải và di cư hình ảnh chạy ngầm hoặc đồng bộ căn cụ thể (Throttled Mode)"""
+    if target_tk_id:
+        add_log_message(f"[🚀] KHỞI ĐỘNG TIẾN TRÌNH DI CƯ HÌNH ẢNH CHO CĂN: {target_tk_id}...")
+    else:
+        add_log_message("[🚀] KHỞI ĐỘNG TIẾN TRÌNH DI CƯ HÌNH ẢNH CHẠY NGẦM...")
     
     # 1. Truy vấn các căn chưa được xử lý ảnh
     if not os.path.exists(DB_FILE):
@@ -790,14 +793,23 @@ def run_image_migration_thread(limit, cookie):
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    rows = cursor.execute("SELECT * FROM listings WHERE status = 'raw_text'").fetchall()
+    if target_tk_id:
+        rows = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (target_tk_id,)).fetchall()
+    else:
+        rows = cursor.execute("SELECT * FROM listings WHERE status = 'raw_text'").fetchall()
     conn.close()
     
     if not rows:
-        add_log_message("[✅] Tuyệt vời! Không có căn nào ở trạng thái chờ di cư ảnh (status='raw_text').")
+        if target_tk_id:
+            add_log_message(f"[⚠️] Không tìm thấy thông tin căn {target_tk_id} để di cư ảnh.")
+        else:
+            add_log_message("[✅] Tuyệt vời! Không có căn nào ở trạng thái chờ di cư ảnh (status='raw_text').")
         return
         
-    add_log_message(f"[i] Phát hiện {len(rows)} căn thô cần di cư hình ảnh.")
+    if target_tk_id:
+        add_log_message(f"[i] Bắt đầu di cư hình ảnh cho căn mục tiêu: {target_tk_id}")
+    else:
+        add_log_message(f"[i] Phát hiện {len(rows)} căn thô cần di cư hình ảnh.")
     
     # 2. Kiểm tra cấu hình Cloud (Cloudinary hoặc Google Drive)
     cfg = load_config()
@@ -1887,7 +1899,7 @@ def handle_listing_detail(tk_id):
 
 @app.route('/api/listings/<tk_id>/recrawl', methods=['POST'])
 def recrawl_single_listing(tk_id):
-    """Cào lại duy nhất căn này bằng cookie Thiên Khôi hiện tại"""
+    """Cào lại hoặc cào mới duy nhất căn này bằng cookie Thiên Khôi hiện tại"""
     if not os.path.exists(DB_FILE):
         return jsonify({"status": "error", "message": "Database không tồn tại"}), 404
         
@@ -1897,12 +1909,20 @@ def recrawl_single_listing(tk_id):
         cursor = conn.cursor()
         row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
         
-        if not row:
-            conn.close()
-            return jsonify({"status": "error", "message": f"Mã căn {tk_id} không tồn tại trong database để cào lại"}), 404
+        d_row = {}
+        if row:
+            d_row = dict(row)
             
-        d_row = dict(row)
-        detail_url = d_row.get("Link_Goc") or d_row.get("Link_Gốc") or f"https://data.thienkhoi.com/Hang/Detail/{tk_id}"
+        detail_url = ""
+        if row:
+            detail_url = d_row.get("Link_Goc") or d_row.get("Link_Gốc")
+            
+        if not detail_url:
+            if len(tk_id) == 36:
+                detail_url = f"https://proptech.thienkhoi.com/warehouse/sources/{tk_id}"
+            else:
+                detail_url = f"https://data.thienkhoi.com/Hang/Detail/{tk_id}"
+                
         conn.close()
         
         # Lấy Cookie
@@ -1917,7 +1937,7 @@ def recrawl_single_listing(tk_id):
         if not cookie:
             return jsonify({"status": "error", "message": "Không tìm thấy Cookie Thiên Khôi. Vui lòng cập nhật Cookie trước."}), 400
             
-        add_log_message(f"[🚀] CÀO LẠI DUY NHẤT CĂN: {tk_id} - URL: {detail_url}")
+        add_log_message(f"[🚀] BẮT ĐẦU TIẾN TRÌNH CÀO LẺ 1 CĂN: {tk_id} - URL: {detail_url}")
         
         is_proptech = "proptech.thienkhoi.com" in detail_url or "backend.thienkhoi.com" in detail_url or len(tk_id) == 36
         
@@ -2033,6 +2053,7 @@ def recrawl_single_listing(tk_id):
                 "Điểm Facebook": link_fb,
                 "Link Gốc": detail_url,
                 "System ID": d_row.get("System_ID") or f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
+                "Mã Khang Ngô (ID)": d_row.get("Ma_Khang_Ngo_ID") or gen_id_khang_ngo_python(ngo_so_nha, duong_name, quan_name),
                 "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             }
             
@@ -2041,8 +2062,14 @@ def recrawl_single_listing(tk_id):
                 
             crawl_pipeline.save_raw_to_sqlite(tk_id, crawled_data, property_images)
             
-            add_log_message(f"[✅] ĐÃ CÀO LẠI THÀNH CÔNG DUY NHẤT CĂN (PROPTECH): {tk_id}")
+            add_log_message(f"[✅] Đã cào thô thành công căn (Proptech): {tk_id}. Tiến hành di cư ảnh và xuất bản...")
             
+            # Gọi di cư ảnh & xuất bản đồng bộ
+            try:
+                run_image_migration_thread(limit=None, cookie=cookie, target_tk_id=tk_id)
+            except Exception as e_mig:
+                add_log_message(f"[⚠️ WARNING] Gặp lỗi khi tự động di cư ảnh hoặc xuất bản căn {tk_id}: {str(e_mig)}")
+                
             # Trả về kết quả dòng đã cập nhật
             conn = sqlite3.connect(DB_FILE, timeout=30.0)
             conn.row_factory = sqlite3.Row
@@ -2055,11 +2082,18 @@ def recrawl_single_listing(tk_id):
             d["raw_drive_images"] = json.loads(d["raw_drive_images_json"]) if d.get("raw_drive_images_json") else []
             d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
             
-            return jsonify({"status": "success", "message": "Đã cào lại thành công căn nhà proptech!", "listing": d})
+            status_text = d.get("status", "")
+            if status_text == "published":
+                msg = "Đã cào mới, di cư ảnh và xuất bản thành công trực tiếp lên Google Sheets Pool!"
+            elif status_text == "raw_complete":
+                msg = "Đã cào mới và di cư ảnh thành công (Gặp sự cố khi tự động đẩy lên Sheets Pool)."
+            else:
+                msg = "Đã cào mới thành công về SQLite (Gặp sự cố khi di cư ảnh hoặc đẩy lên Sheets)."
+                
+            return jsonify({"status": "success", "message": msg, "listing": d})
 
         # Thực hiện scrape chi tiết căn này trực tiếp trong Flask thread
         headers = {
-
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             "Cookie": cookie,
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
@@ -2124,13 +2158,18 @@ def recrawl_single_listing(tk_id):
         img_els_nd = soup_detail.select('#lightgalleryND li')
         images_nd = [li.get('data-src', '') for li in img_els_nd if li.get('data-src')]
         
+        so_nha = crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDiaChi')
+        duong_name = crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDuongPho')
+        quan_name = crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenQuan')
+        phuong_name = crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenPhuongXa')
+        
         crawled_data = {
             "Mã Hàng": ma_hang_scraped,
             "Tỉnh": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenTinh'),
-            "Quận": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenQuan'),
-            "Phường": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sTenPhuongXa'),
-            "Đường": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDuongPho'),
-            "Ngõ/Số nhà": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sDiaChi'),
+            "Quận": quan_name,
+            "Phường": phuong_name,
+            "Đường": duong_name,
+            "Ngõ/Số nhà": so_nha,
             "Phân loại": phan_loai_scraped,
             "Nội dung chính": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sNoiDung'),
             "Mô tả chi tiết": mo_ta_scraped,
@@ -2153,7 +2192,8 @@ def recrawl_single_listing(tk_id):
             "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
             "Điểm Facebook": link_fb,
             "Link Gốc": detail_url,
-            "System ID": f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
+            "System ID": d_row.get("System_ID") or f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
+            "Mã Khang Ngô (ID)": d_row.get("Ma_Khang_Ngo_ID") or gen_id_khang_ngo_python(so_nha, duong_name, quan_name),
             "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }
         
@@ -2172,8 +2212,14 @@ def recrawl_single_listing(tk_id):
                 seen_images.add(img)
         crawl_pipeline.save_raw_to_sqlite(tk_id, crawled_data, combined_images)
         
-        add_log_message(f"[✅] ĐÃ CÀO LẠI THÀNH CÔNG DUY NHẤT CĂN: {tk_id}")
+        add_log_message(f"[✅] Đã cào thô thành công căn: {tk_id}. Tiến hành di cư ảnh và xuất bản...")
         
+        # Gọi di cư ảnh & xuất bản đồng bộ
+        try:
+            run_image_migration_thread(limit=None, cookie=cookie, target_tk_id=tk_id)
+        except Exception as e_mig:
+            add_log_message(f"[⚠️ WARNING] Gặp lỗi khi tự động di cư ảnh hoặc xuất bản căn {tk_id}: {str(e_mig)}")
+            
         # Lấy lại dòng vừa cập nhật
         conn = sqlite3.connect(DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
@@ -2186,7 +2232,19 @@ def recrawl_single_listing(tk_id):
         d["raw_drive_images"] = json.loads(d["raw_drive_images_json"]) if d.get("raw_drive_images_json") else []
         d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
         
-        return jsonify({"status": "success", "message": "Đã cào lại thành công căn nhà!", "listing": d})
+        status_text = d.get("status", "")
+        if status_text == "published":
+            msg = "Đã cào mới, di cư ảnh và xuất bản thành công trực tiếp lên Google Sheets Pool!"
+        elif status_text == "raw_complete":
+            msg = "Đã cào mới và di cư ảnh thành công (Gặp sự cố khi tự động đẩy lên Sheets Pool)."
+        else:
+            msg = "Đã cào mới thành công về SQLite (Gặp sự cố khi di cư ảnh hoặc đẩy lên Sheets)."
+            
+        return jsonify({"status": "success", "message": msg, "listing": d})
+        
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e)}")
+        return jsonify({"status": "error", "message": f"Gặp sự cố khi cào lẻ: {str(e)}"}), 500
         
     except Exception as e:
         add_log_message(f"[❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e)}")
@@ -2417,11 +2475,12 @@ def execute_publish_listing(tk_id):
                 val = target_ma_hang
             elif header == "Hình Nhận Diện":
                 val = f"=IMAGE(AD{next_row})"
-            elif header == "Mã Khang Ngô (ID)":
+            elif header == "Mã Khang Ngô (ID)" and not val:
                 so_nha = d.get("Ngo_So_nha", "") or d.get("Ng__S__nh_", "")
                 duong = d.get("Duong", "") or d.get("___ng", "")
                 quan = d.get("Quan", "") or d.get("Qu_n", "")
                 val = gen_id_khang_ngo_python(so_nha, duong, quan)
+                d["Ma_Khang_Ngo_ID"] = val
                 try:
                     conn_db = sqlite3.connect(DB_FILE, timeout=30.0)
                     cursor_db = conn_db.cursor()
@@ -2438,6 +2497,16 @@ def execute_publish_listing(tk_id):
             elif header == "System ID" and not val:
                 # Tự động tạo System ID nếu trống
                 val = f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}"
+                d["System_ID"] = val
+                try:
+                    conn_db = sqlite3.connect(DB_FILE, timeout=30.0)
+                    cursor_db = conn_db.cursor()
+                    col_sys_safe = get_safe_col_name("System ID")
+                    cursor_db.execute(f"UPDATE listings SET `{col_sys_safe}` = ? WHERE tk_id = ?", (val, tk_id))
+                    conn_db.commit()
+                    conn_db.close()
+                except Exception as e_db:
+                    add_log_message(f"[⚠️ WARNING] Không thể lưu System ID mới vào SQLite: {str(e_db)}")
                 
             val_str = str(val) if val is not None else ""
             row_data.append(val_str)

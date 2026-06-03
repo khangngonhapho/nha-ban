@@ -1925,6 +1925,30 @@
             });
         }
 
+        function getTkIdFromSearch(query) {
+            if (!query) return null;
+            query = query.trim();
+            
+            // Nếu là URL đầy đủ từ Thiên Khôi
+            if (query.includes('thienkhoi.com')) {
+                const parts = query.split('/');
+                const lastPart = parts[parts.length - 1].split('?')[0].trim();
+                if (lastPart) return lastPart;
+            }
+            
+            // Nếu là UUID (dài 36 ký tự)
+            if (query.length === 36 && query.includes('-')) {
+                return query;
+            }
+            
+            // Nếu là mã hàng truyền thống (chỉ số, độ dài từ 5 đến 12)
+            if (/^\d+$/.test(query) && query.length >= 5 && query.length <= 12) {
+                return query;
+            }
+            
+            return null;
+        }
+
         function fetchListings() {
             const search = document.getElementById('sidebar-search').value;
             const quan = document.getElementById('filter-quan').value;
@@ -1975,7 +1999,44 @@
                     updateBulkActionVisibility();
 
                     if (listings.length === 0) {
-                        listContainer.innerHTML = `<div style="text-align:center; padding:30px; font-size:12px; color:var(--text-muted);">Không tìm thấy căn nào...</div>`;
+                        const tkId = getTkIdFromSearch(search);
+                        if (tkId) {
+                            listContainer.innerHTML = `<div style="text-align:center; padding:20px; font-size:12px; color:var(--text-muted);"><p>Đang kiểm tra căn [${tkId}]...</p></div>`;
+                            fetch(`/api/listings/${tkId}`)
+                                .then(res => {
+                                    if (res.status === 404) {
+                                        listContainer.innerHTML = `
+                                            <div style="text-align:center; padding:20px 10px; font-size:12px; color:var(--text-muted);">
+                                                <p>Căn này chưa có trong database cục bộ.</p>
+                                                <button class="btn" style="width:100%; background:var(--accent-gold); color:#000; font-weight:bold; margin-top:10px; padding: 8px;" onclick="recrawlNewListing('${tkId}')">
+                                                    ➕ Cào mới căn [${tkId}]
+                                                </button>
+                                            </div>
+                                        `;
+                                    } else if (res.ok) {
+                                        return res.json();
+                                    }
+                                })
+                                .then(detailData => {
+                                    if (detailData && detailData.status === 'success') {
+                                        const house = detailData.listing;
+                                        const statusLabel = house.status === 'raw_text' ? 'Chờ di cư ảnh' : (house.status === 'raw_complete' ? 'Chờ biên tập' : 'Đã xuất bản');
+                                        listContainer.innerHTML = `
+                                            <div style="text-align:center; padding:20px 10px; font-size:12px; color:var(--text-muted);">
+                                                <p>Căn [${tkId}] đã tồn tại trong danh mục <b>${statusLabel}</b>.</p>
+                                                <button class="btn" style="width:100%; background:rgba(59, 130, 246, 0.2); border:1px solid #3b82f6; color:#60a5fa; font-weight:bold; margin-top:10px; padding: 8px;" onclick="setSidebarStatus('${house.status}'); selectListing('${tkId}');">
+                                                    👁️ Xem căn này
+                                                </button>
+                                            </div>
+                                        `;
+                                    }
+                                })
+                                .catch(err => {
+                                    listContainer.innerHTML = `<div style="text-align:center; padding:30px; font-size:12px; color:var(--text-muted);">Không tìm thấy căn nào...</div>`;
+                                });
+                        } else {
+                            listContainer.innerHTML = `<div style="text-align:center; padding:30px; font-size:12px; color:var(--text-muted);">Không tìm thấy căn nào...</div>`;
+                        }
                         return;
                     }
 
@@ -2675,6 +2736,60 @@
             })
             .catch(err => {
                 alert('Không thể kết nối máy chủ để cào lại căn nhà: ' + err.message);
+            });
+        }
+
+        function recrawlNewListing(tkId) {
+            showBannerNotification(`🔄 Đang cào mới căn nhà [${tkId}] từ Thiên Khôi...`, 'gold');
+            
+            fetch(`/api/listings/${tkId}/recrawl`, {
+                method: 'POST'
+            })
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    let errMsg = `HTTP ${res.status}`;
+                    try {
+                        const errJson = JSON.parse(text);
+                        if (errJson && errJson.message) {
+                            errMsg = errJson.message;
+                        }
+                    } catch (e) {
+                        if (text && text.length < 200) {
+                            errMsg += `: ${text}`;
+                        } else {
+                            errMsg += ` (Lỗi hệ thống phía Server)`;
+                        }
+                    }
+                    throw new Error(errMsg);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification(`✅ ${data.message || 'Cào mới thành công!'}`, 'green');
+                    
+                    // Chuyển tab sidebar sang trạng thái của căn vừa cào
+                    const listingStatus = data.listing.status || 'raw_text';
+                    sidebarStatus = listingStatus;
+                    document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                        tab.classList.remove('active');
+                        if (tab.getAttribute('data-status') === listingStatus) {
+                            tab.classList.add('active');
+                        }
+                    });
+                    
+                    selectedListingIds = [];
+                    updateBulkActionVisibility();
+                    
+                    // Chọn và hiển thị căn nhà vừa cào
+                    selectListing(tkId);
+                } else {
+                    alert('Lỗi khi cào mới căn nhà: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Không thể kết nối máy chủ để cào mới căn nhà: ' + err.message);
             });
         }
 
