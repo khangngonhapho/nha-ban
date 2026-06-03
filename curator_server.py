@@ -2389,7 +2389,7 @@ def execute_publish_listing(tk_id):
             "Ảnh 9", "Ảnh 10", "Ảnh 11", "Ảnh 12", "Ảnh 13", "Ảnh 14", "Ảnh 15",
             "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
             "Last Crawl",
-            "Mã Khang Ngô (ID)", "System ID"
+            "Mã Khang Ngô (ID)"
         ]
         
         for idx, header in enumerate(POOL_HEADERS):
