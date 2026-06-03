@@ -2416,7 +2416,21 @@ def execute_publish_listing(tk_id):
                 val = target_ma_hang
             elif header == "Hình Nhận Diện":
                 val = f"=IMAGE(AD{next_row})"
-            elif header in ["Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Last Sync"]:
+            elif header == "Mã Khang Ngô (ID)":
+                so_nha = d.get("Ngo_So_nha", "") or d.get("Ng__S__nh_", "")
+                duong = d.get("Duong", "") or d.get("___ng", "")
+                quan = d.get("Quan", "") or d.get("Qu_n", "")
+                val = gen_id_khang_ngo_python(so_nha, duong, quan)
+                try:
+                    conn_db = sqlite3.connect(DB_FILE, timeout=30.0)
+                    cursor_db = conn_db.cursor()
+                    col_ma_kn_safe = get_safe_col_name("Mã Khang Ngô (ID)")
+                    cursor_db.execute(f"UPDATE listings SET `{col_ma_kn_safe}` = ? WHERE tk_id = ?", (val, tk_id))
+                    conn_db.commit()
+                    conn_db.close()
+                except Exception as e_db:
+                    add_log_message(f"[⚠️ WARNING] Không thể lưu Mã Khang Ngô mới vào SQLite: {str(e_db)}")
+            elif header in ["Tiêu đề Public", "Mô tả Public", "Last Sync"]:
                 val = ""
             elif header == "Tên đầu chủ (BX)":
                 val = d.get("Ten_Dau_Chu_Hop_dong", "")
