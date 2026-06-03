@@ -306,6 +306,9 @@ def update_config_start_page(next_page):
 # LUỒNG 1: CÀO TEXT THÔ VÀ LINK ẢNH DÙNG DOM SELECTOR THẬT
 # ==========================================
 def scrape_district(base_list_url, session_cookie, limit=None, filter_district=None, start_page=None):
+    if "proptech.thienkhoi.com" in base_list_url or "backend.thienkhoi.com" in base_list_url:
+        return scrape_district_proptech(base_list_url, session_cookie, limit, filter_district, start_page)
+
     global DELAY_HOUSE_MIN, DELAY_HOUSE_MAX, DELAY_PAGE_MIN, DELAY_PAGE_MAX
     init_db()
 
@@ -703,10 +706,341 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
         session_status = 'completed'
     finally:
         print_report()
-    
+
+def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_district=None, start_page=None):
+    global DELAY_HOUSE_MIN, DELAY_HOUSE_MAX, DELAY_PAGE_MIN, DELAY_PAGE_MAX
+    init_db()
+
+    try:
+        config_file = "curator_config.json"
+        if os.path.exists(config_file):
+            with open(config_file, 'r', encoding='utf-8') as f:
+                cfg = json.load(f)
+                if "delay_house_min" in cfg: DELAY_HOUSE_MIN = float(cfg["delay_house_min"])
+                if "delay_house_max" in cfg: DELAY_HOUSE_MAX = float(cfg["delay_house_max"])
+                if "delay_page_min" in cfg: DELAY_PAGE_MIN = float(cfg["delay_page_min"])
+                if "delay_page_max" in cfg: DELAY_PAGE_MAX = float(cfg["delay_page_max"])
+                print(f"[*] Áp dụng tốc độ cào: Căn ({DELAY_HOUSE_MIN}s - {DELAY_HOUSE_MAX}s) | Trang ({DELAY_PAGE_MIN}s - {DELAY_PAGE_MAX}s)")
+    except Exception as e:
+        print(f"[⚠️ WARNING] Không thể đọc cấu hình tốc độ cào, sử dụng mặc định: {str(e)}")
+
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
+    cursor = conn.cursor()
+    existing_ids = set(row[0] for row in cursor.execute("SELECT tk_id FROM listings"))
+    conn.close()
+    print(f"[*] Đã tải {len(existing_ids)} căn có sẵn từ SQLite vào bộ nhớ đệm RAM.")
+
+    if filter_district:
+        print(f"[*] Chế độ lọc Quận được kích hoạt: Chỉ cào các căn thuộc '{filter_district}'")
+
+    if start_page is None:
+        start_page = 1
+        try:
+            parsed_url = urlparse(base_list_url)
+            qd = parse_qs(parsed_url.query)
+            for k, v in qd.items():
+                if k.lower() in ['page', 'p'] and v:
+                    start_page = int(v[0])
+                    break
+        except Exception:
+            pass
+
+    print(f"[*] Trang bắt đầu cào: Trang {start_page}")
+
+    parsed_url = urlparse(base_list_url)
+    query_params = parse_qs(parsed_url.query)
+    api_params = {k: v[0] for k, v in query_params.items()}
+    api_params["limit"] = api_params.get("limit", "20")
+    api_params["searchBy"] = api_params.get("searchBy", "address")
+
+    crawled_count = 0
+    session_start_time = time.time()
+    session_start_time_iso = datetime.now().isoformat()
+    cookie_sig = hashlib.md5((session_cookie or "").encode('utf-8')).hexdigest()[:8].upper()
+    session_status = 'stopped'
+
+    def print_report():
+        nonlocal session_status
+        duration = time.time() - session_start_time
+        mins = int(duration // 60)
+        secs = int(duration % 60)
+        avg = f"{duration / crawled_count:.1f} giây/căn" if crawled_count > 0 else "N/A"
+        print("\n" + "="*50)
+        print("📊 BÁO CÁO PHIÊN CÀO TIN (CRAWL SESSION REPORT - PROPTECH)")
+        print(f"🔑 Cookie ID (MD5): {cookie_sig}")
+        print(f"⏱️ Tổng thời gian cào: {mins} phút {secs} giây")
+        print(f"🏠 Số căn cào thành công: {crawled_count} căn")
+        print(f"⚡ Tốc độ trung bình: {avg}")
+        print("="*50 + "\n")
+        
+        try:
+            conn = sqlite3.connect(DB_FILE, timeout=30.0)
+            cursor = conn.cursor()
+            end_time_iso = datetime.now().isoformat()
+            cursor.execute("""
+                INSERT INTO crawl_sessions (cookie_sig, start_time, end_time, duration, crawled_count, status)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (cookie_sig, session_start_time_iso, end_time_iso, duration, crawled_count, session_status))
+            conn.commit()
+            conn.close()
+            print("[*] Đã tự động lưu lịch sử phiên cào vào database SQLite.")
+        except Exception as err:
+            print(f"[⚠️ WARNING] Không thể lưu lịch sử phiên cào: {str(err)}")
+
+    print(f"\n[+] KHỞI ĐỘNG CÀO DỮ LIỆU THẬT (proptech.thienkhoi.com - Chế độ Siêu Tàng Hình)")
+
+    max_pages_to_crawl = 1000 if not limit else 5
+    end_page = start_page + max_pages_to_crawl
+
+    current_cookie = session_cookie
+    access_token, _, _ = extract_tokens(current_cookie)
+
+    try:
+        for page in range(start_page, end_page):
+            if STOP_REQUESTED:
+                print("[*] Nhận lệnh dừng từ hệ thống. Đang dừng cào...")
+                session_status = 'stopped'
+                break
+            if limit and crawled_count >= limit:
+                session_status = 'limit_reached'
+                break
+
+            api_params["page"] = str(page)
+            list_api_url = "https://backend.thienkhoi.com/product/v1/property"
+            print(f"\n--- Đang mở danh sách Trang {page}/{end_page - 1} via backend API ---")
+
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json, text/plain, */*",
+                "Origin": "https://proptech.thienkhoi.com",
+                "Referer": "https://proptech.thienkhoi.com/"
+            }
+
+            try:
+                r = requests.get(list_api_url, headers=headers, params=api_params, timeout=20)
+                if r.status_code in [401, 403]:
+                    print("[*] Access token expired or invalid (HTTP 401/403). Attempting silent refresh...")
+                    refreshed_cookie = try_refresh_tokens()
+                    if refreshed_cookie:
+                        current_cookie = refreshed_cookie
+                        _, access_token, _ = extract_tokens(current_cookie)
+                        headers["Authorization"] = f"Bearer {access_token}"
+                        r = requests.get(list_api_url, headers=headers, params=api_params, timeout=20)
+                    else:
+                        print("[❌ LỖI] Không thể refresh token. Dừng cào. Vui lòng cập nhật Cookie mới.")
+                        session_status = 'cookie_expired'
+                        sys.exit(1)
+
+                if r.status_code != 200:
+                    print(f"[❌ LỖI] Lỗi kết nối đến trang danh sách: HTTP {r.status_code}")
+                    sleep_interruptible(10)
+                    continue
+
+                res_json = r.json()
+                listings = (res_json.get("data") or {}).get("data", [])
+                if not listings:
+                    print("[-] Không tìm thấy hàng dữ liệu nào trên trang này. Dừng cào quận này hoặc hoàn thành.")
+                    break
+
+                print(f"[*] Quét thấy {len(listings)} căn nhà trên trang danh sách API.")
+
+                new_listings_on_page = []
+                for item in listings:
+                    tk_id_item = item.get("id")
+                    if not tk_id_item:
+                        continue
+                    
+                    if tk_id_item in existing_ids:
+                        continue
+
+                    if filter_district:
+                        item_dist = (item.get("district") or {}).get("name", "").lower().strip()
+                        target = filter_district.lower().strip()
+                        target_short = target.replace("quận", "q").replace(" ", "")
+                        target_dot = target.replace("quận", "q.").replace(" ", "")
+                        if (target not in item_dist) and (target_short not in item_dist) and (target_dot not in item_dist):
+                            continue
+
+                    new_listings_on_page.append(tk_id_item)
+
+                if not new_listings_on_page:
+                    print("[*] Không phát hiện căn mới nào trên trang này. Chuyển trang tiếp theo.")
+                else:
+                    print(f"[+] Phát hiện {len(new_listings_on_page)} căn mới tinh. Bắt đầu cào chi tiết...")
+
+                for tk_id_crawling in new_listings_on_page:
+                    if STOP_REQUESTED:
+                        print("[*] Nhận lệnh dừng từ hệ thống. Đang dừng cào...")
+                        session_status = 'stopped'
+                        break
+                    if limit and crawled_count >= limit:
+                        session_status = 'limit_reached'
+                        break
+
+                    house_delay = random.uniform(DELAY_HOUSE_MIN, DELAY_HOUSE_MAX)
+                    print(f"  -> Nghỉ tàng hình {house_delay:.2f} giây trước khi mở căn mới...")
+                    sleep_interruptible(house_delay)
+
+                    if STOP_REQUESTED:
+                        break
+
+                    print(f"  [+] Đang cào chi tiết mã căn UUID: {tk_id_crawling}...")
+                    detail_api_url = f"https://backend.thienkhoi.com/product/v1/property/{tk_id_crawling}"
+
+                    r_detail = requests.get(detail_api_url, headers=headers, timeout=20)
+                    if r_detail.status_code in [401, 403]:
+                        print("  [*] Detail request token expired (HTTP 401/403). Attempting silent refresh...")
+                        refreshed_cookie = try_refresh_tokens()
+                        if refreshed_cookie:
+                            current_cookie = refreshed_cookie
+                            _, access_token, _ = extract_tokens(current_cookie)
+                            headers["Authorization"] = f"Bearer {access_token}"
+                            r_detail = requests.get(detail_api_url, headers=headers, timeout=20)
+                        else:
+                            print("  [❌ LỖI] Không thể refresh token. Dừng cào.")
+                            session_status = 'cookie_expired'
+                            sys.exit(1)
+
+                    if r_detail.status_code != 200:
+                        print(f"  [❌ LỖI] Lỗi HTTP {r_detail.status_code} khi tải chi tiết căn {tk_id_crawling}.")
+                        continue
+
+                    detail_json = r_detail.json()
+                    detail_data = detail_json.get("data") or {}
+                    if not detail_data:
+                        print("  [⚠️ WARNING] Detail data is empty.")
+                        continue
+
+                    ma_hang = detail_data.get("code") or tk_id_crawling
+                    tinh = (detail_data.get("district") or {}).get("provinceName", "TP Hồ Chí Minh")
+                    quan_name = (detail_data.get("district") or {}).get("name", "")
+                    phuong_name = (detail_data.get("ward") or {}).get("name", "")
+                    duong_name = (detail_data.get("street") or {}).get("name") if detail_data.get("street") else detail_data.get("streetName", "")
+                    ngo_so_nha = detail_data.get("address", "")
+                    
+                    phan_loai_names = [c.get("name") for c in (detail_data.get("criteria") or []) if c and c.get("name")]
+                    phan_loai = ", ".join(phan_loai_names)
+
+                    if filter_district:
+                        quan_chi_tiet = quan_name.lower().strip()
+                        target = filter_district.lower().strip()
+                        target_short = target.replace("quận", "q").replace(" ", "")
+                        target_dot = target.replace("quận", "q.").replace(" ", "")
+                        if (target not in quan_chi_tiet) and (target_short not in quan_chi_tiet) and (target_dot not in quan_chi_tiet):
+                            print(f"  [-] Căn {ma_hang} thuộc quận {quan_name}, không phải '{filter_district}'. Bỏ qua.")
+                            continue
+
+                    noi_dung_chinh = f"{ngo_so_nha} {duong_name}, {detail_data.get('area', '')}m2, {detail_data.get('floors', '')} tầng, mt {detail_data.get('wide', '')}m, sâu {detail_data.get('depth', '')}m, giá {detail_data.get('offeringPrice', '')} tỷ, Phường {phuong_name} {quan_name}"
+
+                    mo_ta_chi_tiet = detail_data.get("description", "")
+                    gia_chao = str(detail_data.get("offeringPrice", ""))
+                    dt_thuc_te = str(detail_data.get("actualArea", ""))
+                    dt_tren_so = str(detail_data.get("area", ""))
+                    so_tang = str(detail_data.get("floors", ""))
+                    mat_tien = str(detail_data.get("wide", ""))
+                    chieu_dai = str(detail_data.get("depth", ""))
+                    so_phong_ngu = str(detail_data.get("bedrooms") or "")
+                    so_nha_ve_sinh = str(detail_data.get("restrooms") or "")
+                    
+                    huong = detail_data.get("direction", "")
+                    duong_truoc_nha = str(detail_data.get("minimumRoadWidth") or "")
+                    trang_thai = detail_data.get("status", "")
+                    loai_hop_dong = detail_data.get("contractType", "")
+
+                    ten_chu_nha = ", ".join([o.get("name") for o in (detail_data.get("homeOwner") or []) if o and o.get("name")])
+                    dien_thoai_1 = detail_data.get("contactPhoneNumber", "")
+                    dt_dau_chu = (detail_data.get("ownerSideUser") or {}).get("phone", "")
+                    ten_dau_chu = (detail_data.get("ownerSideUser") or {}).get("name", "")
+                    link_fb = (detail_data.get("ownerSideUser") or {}).get("fbLink", "")
+
+
+                    media = detail_data.get("media", [])
+                    property_images = []
+                    sodo_images = []
+
+                    for m in media:
+                        m_type = m.get("type")
+                        m_url = m.get("url")
+                        if not m_url:
+                            continue
+                        if m_type in ["parcel_map", "certificate_image"]:
+                            sodo_images.append(m_url)
+                        elif m_type in ["property_image"]:
+                            property_images.append(m_url)
+
+                    if not property_images:
+                        for m in media:
+                            if m.get("type") == "checkin_image" and m.get("url"):
+                                property_images.append(m.get("url"))
+
+                    crawled_data = {
+                        "Mã Hàng": ma_hang,
+                        "Tỉnh": tinh,
+                        "Quận": quan_name,
+                        "Phường": phuong_name,
+                        "Đường": duong_name,
+                        "Ngõ/Số nhà": ngo_so_nha,
+                        "Phân loại": phan_loai,
+                        "Nội dung chính": noi_dung_chinh,
+                        "Mô tả chi tiết": mo_ta_chi_tiet,
+                        "Giá chào": gia_chao,
+                        "Giá Public": gia_chao,
+                        "DT Thực tế": dt_thuc_te,
+                        "DT Trên sổ": dt_tren_so,
+                        "Số Tầng": so_tang,
+                        "Mặt Tiền": mat_tien,
+                        "Chieu_dai": chieu_dai,
+                        "Số phòng ngủ": so_phong_ngu,
+                        "Số nhà vệ sinh": so_nha_ve_sinh,
+                        "Hướng": huong,
+                        "Đường trước nhà (m)": duong_truoc_nha,
+                        "Tình trạng nhà": "Bình thường",
+                        "Trạng thái": trang_thai,
+                        "Tên Chủ Nhà": ten_chu_nha,
+                        "Điện thoại 1": dien_thoai_1,
+                        "Điện thoại Đầu Chủ": dt_dau_chu,
+                        "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
+                        "Điểm Facebook": link_fb,
+                        "Link Gốc": f"https://proptech.thienkhoi.com/warehouse/sources/{tk_id_crawling}",
+                        "System ID": f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
+                        "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    }
+
+                    for idx, url in enumerate(sodo_images[:5]):
+                        crawled_data[f"Sơ đồ thửa đất {idx+1}"] = url
+
+                    save_raw_to_sqlite(tk_id_crawling, crawled_data, property_images)
+                    existing_ids.add(tk_id_crawling)
+                    crawled_count += 1
+                    print(f"  => Đã cào và lưu thành công mã căn {ma_hang} vào SQLite (UUID: {tk_id_crawling}) (Tổng: {crawled_count})")
+
+                update_config_start_page(page + 1)
+                if limit and crawled_count >= limit:
+                    session_status = 'limit_reached'
+                    break
+
+                if page < 20:
+                    page_delay = random.uniform(DELAY_PAGE_MIN, DELAY_PAGE_MAX)
+                    print(f"\n[*] Đã hoàn tất Trang {page}. Nghỉ tàng hình chuyển trang {page_delay/60:.2f} phút...")
+                    sleep_interruptible(page_delay)
+
+            except RuntimeError as re_err:
+                raise re_err
+            except Exception as e:
+                print(f"[❌ LỖI] Gặp sự cố khi quét trang {page}: {str(e)}")
+                sleep_interruptible(10)
+
+        print(f"\n[🏁 HOÀN TẤT] Đã cào tổng cộng {crawled_count} căn thô về SQLite từ Proptech.")
+        session_status = 'completed'
+
+    finally:
+        print_report()
+
 # ==========================================
 # HÀM LƯU DỮ LIỆU THÔ VÀO SQLITE
 # ==========================================
+
 def save_raw_to_sqlite(tk_id, metadata, images_tk_list):
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
@@ -812,21 +1146,87 @@ def run_image_migration(limit=None):
             
     print(f"\n[🏁 HOÀN TẤT] Đã di cư thành công ảnh của {migrated_count} căn lên Google Drive.")
 
-def check_cookie_valid(cookie_str):
-    """Kiểm tra nhanh xem cookie có hoạt động không (không bị redirect về security.html)"""
+def extract_tokens(cookie_str):
+    access_token = None
+    refresh_token = None
+    cookies_dict = {}
+    for part in cookie_str.split(";"):
+        part = part.strip()
+        if not part:
+            continue
+        if "=" in part:
+            k, v = part.split("=", 1)
+            cookies_dict[k.strip()] = v.strip()
+    
+    access_token = cookies_dict.get("TKG_accessToken")
+    refresh_token = cookies_dict.get("TKG_refreshToken")
+    return access_token, refresh_token, cookies_dict
+
+def try_refresh_tokens(cookie_path="thienkhoi_cookie.txt"):
+    if not os.path.exists(cookie_path):
+        return None
     try:
-        url = "https://data.thienkhoi.com/"
+        with open(cookie_path, 'r', encoding='utf-8') as f:
+            cookie_str = f.read().strip()
+        access_token, refresh_token, cookies_dict = extract_tokens(cookie_str)
+        if not refresh_token:
+            return None
+        
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Cookie": cookie_str
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Origin": "https://proptech.thienkhoi.com",
+            "Referer": "https://proptech.thienkhoi.com/",
+            "Authorization": f"Bearer {access_token}" if access_token else ""
         }
-        r = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
-        # Nếu bị redirect về trang bảo mật hoặc trang đăng nhập, tức là cookie hết hạn
-        if "security.html" in r.url or "account/login" in r.url or len(r.text) < 1000:
-            return False
-        return True
-    except Exception:
+        payload = {
+            "refresh_token": refresh_token,
+            "appLogin": "nguonhang",
+            "platform": "web"
+        }
+        r = requests.post("https://backend.thienkhoi.com/auth/v1/auth/refresh-token", headers=headers, json=payload, timeout=10)
+        if r.status_code in [200, 201]:
+            data = r.json()
+            new_access_token = data.get("data", {}).get("accessToken")
+            new_refresh_token = data.get("data", {}).get("refreshToken")
+            if new_access_token:
+                cookies_dict["TKG_accessToken"] = new_access_token
+            if new_refresh_token:
+                cookies_dict["TKG_refreshToken"] = new_refresh_token
+            
+            new_cookie_str = "; ".join([f"{k}={v}" for k, v in cookies_dict.items()]) + ";"
+            with open(cookie_path, 'w', encoding='utf-8') as f:
+                f.write(new_cookie_str)
+            print("[🎉 SUCCESS] Token refreshed programmatically and saved to thienkhoi_cookie.txt.")
+            return new_cookie_str
+    except Exception as e:
+        print(f"[⚠️ WARNING] Failed to refresh token: {e}")
+    return None
+
+def check_cookie_valid(cookie_str):
+    """Kiểm tra nhanh xem cookie/token có hoạt động không (dùng users/me hoặc refresh)"""
+    access_token, _, _ = extract_tokens(cookie_str)
+    if not access_token:
         return False
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Authorization": f"Bearer {access_token}"
+        }
+        r = requests.get("https://backend.thienkhoi.com/auth/v1/users/me", headers=headers, timeout=10)
+        if r.status_code == 200:
+            return True
+    except Exception:
+        pass
+        
+    # Thử refresh xem có hoạt động không
+    new_cookie = try_refresh_tokens()
+    if new_cookie:
+        return True
+        
+    return False
+
 
 def get_thienkhoi_cookie_from_chrome():
     cache_file = "thienkhoi_cookie.txt"

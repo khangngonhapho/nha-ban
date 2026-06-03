@@ -1919,8 +1919,147 @@ def recrawl_single_listing(tk_id):
             
         add_log_message(f"[🚀] CÀO LẠI DUY NHẤT CĂN: {tk_id} - URL: {detail_url}")
         
+        is_proptech = "proptech.thienkhoi.com" in detail_url or "backend.thienkhoi.com" in detail_url or len(tk_id) == 36
+        
+        if is_proptech:
+            # Proptech detail API crawl
+            access_token, _, _ = crawl_pipeline.extract_tokens(cookie)
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json, text/plain, */*",
+                "Origin": "https://proptech.thienkhoi.com",
+                "Referer": "https://proptech.thienkhoi.com/"
+            }
+            detail_api_url = f"https://backend.thienkhoi.com/product/v1/property/{tk_id}"
+            r = requests.get(detail_api_url, headers=headers, timeout=20)
+            if r.status_code in [401, 403]:
+                refreshed_cookie = crawl_pipeline.try_refresh_tokens(COOKIE_FILE)
+                if refreshed_cookie:
+                    cookie = refreshed_cookie
+                    _, access_token, _ = crawl_pipeline.extract_tokens(cookie)
+                    headers["Authorization"] = f"Bearer {access_token}"
+                    r = requests.get(detail_api_url, headers=headers, timeout=20)
+                else:
+                    return jsonify({"status": "error", "message": "Access token hết hạn và không thể refresh."}), 401
+                    
+            if r.status_code != 200:
+                return jsonify({"status": "error", "message": f"Thiên Khôi API phản hồi mã lỗi {r.status_code}"}), 500
+                
+            detail_json = r.json()
+            detail_data = detail_json.get("data") or {}
+            if not detail_data:
+                return jsonify({"status": "error", "message": "Nội dung phản hồi API trống."}), 400
+                
+            ma_hang = detail_data.get("code") or tk_id
+            tinh = (detail_data.get("district") or {}).get("provinceName", "TP Hồ Chí Minh")
+            quan_name = (detail_data.get("district") or {}).get("name", "")
+            phuong_name = (detail_data.get("ward") or {}).get("name", "")
+            duong_name = (detail_data.get("street") or {}).get("name") if detail_data.get("street") else detail_data.get("streetName", "")
+            ngo_so_nha = detail_data.get("address", "")
+            
+            phan_loai_names = [c.get("name") for c in (detail_data.get("criteria") or []) if c and c.get("name")]
+            phan_loai = ", ".join(phan_loai_names)
+            
+            noi_dung_chinh = f"{ngo_so_nha} {duong_name}, {detail_data.get('area', '')}m2, {detail_data.get('floors', '')} tầng, mt {detail_data.get('wide', '')}m, sâu {detail_data.get('depth', '')}m, giá {detail_data.get('offeringPrice', '')} tỷ, Phường {phuong_name} {quan_name}"
+            
+            mo_ta_chi_tiet = detail_data.get("description", "")
+            gia_chao = str(detail_data.get("offeringPrice", ""))
+            dt_thuc_te = str(detail_data.get("actualArea", ""))
+            dt_tren_so = str(detail_data.get("area", ""))
+            so_tang = str(detail_data.get("floors", ""))
+            mat_tien = str(detail_data.get("wide", ""))
+            chieu_dai = str(detail_data.get("depth", ""))
+            so_phong_ngu = str(detail_data.get("bedrooms") or "")
+            so_nha_ve_sinh = str(detail_data.get("restrooms") or "")
+            
+            huong = detail_data.get("direction", "")
+            duong_truoc_nha = str(detail_data.get("minimumRoadWidth") or "")
+            trang_thai = detail_data.get("status", "")
+            loai_hop_dong = detail_data.get("contractType", "")
+            
+            ten_chu_nha = ", ".join([o.get("name") for o in (detail_data.get("homeOwner") or []) if o and o.get("name")])
+            dien_thoai_1 = detail_data.get("contactPhoneNumber", "")
+            dt_dau_chu = (detail_data.get("ownerSideUser") or {}).get("phone", "")
+            ten_dau_chu = (detail_data.get("ownerSideUser") or {}).get("name", "")
+            link_fb = (detail_data.get("ownerSideUser") or {}).get("fbLink", "")
+            
+            media = detail_data.get("media", [])
+            property_images = []
+            sodo_images = []
+            
+            for m in media:
+                m_type = m.get("type")
+                m_url = m.get("url")
+                if not m_url:
+                    continue
+                if m_type in ["parcel_map", "certificate_image"]:
+                    sodo_images.append(m_url)
+                elif m_type in ["property_image"]:
+                    property_images.append(m_url)
+                    
+            if not property_images:
+                for m in media:
+                    if m.get("type") == "checkin_image" and m.get("url"):
+                        property_images.append(m.get("url"))
+                        
+            crawled_data = {
+                "Mã Hàng": ma_hang,
+                "Tỉnh": tinh,
+                "Quận": quan_name,
+                "Phường": phuong_name,
+                "Đường": duong_name,
+                "Ngõ/Số nhà": ngo_so_nha,
+                "Phân loại": phan_loai,
+                "Nội dung chính": noi_dung_chinh,
+                "Mô tả chi tiết": mo_ta_chi_tiet,
+                "Giá chào": gia_chao,
+                "Giá Public": gia_chao,
+                "DT Thực tế": dt_thuc_te,
+                "DT Trên sổ": dt_tren_so,
+                "Số Tầng": so_tang,
+                "Mặt Tiền": mat_tien,
+                "Chieu_dai": chieu_dai,
+                "Số phòng ngủ": so_phong_ngu,
+                "Số nhà vệ sinh": so_nha_ve_sinh,
+                "Hướng": huong,
+                "Đường trước nhà (m)": duong_truoc_nha,
+                "Tình trạng nhà": "Bình thường",
+                "Trạng thái": trang_thai,
+                "Tên Chủ Nhà": ten_chu_nha,
+                "Điện thoại 1": dien_thoai_1,
+                "Điện thoại Đầu Chủ": dt_dau_chu,
+                "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
+                "Điểm Facebook": link_fb,
+                "Link Gốc": detail_url,
+                "System ID": d_row.get("System_ID") or f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
+                "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            }
+            
+            for idx, url in enumerate(sodo_images[:5]):
+                crawled_data[f"Sơ đồ thửa đất {idx+1}"] = url
+                
+            crawl_pipeline.save_raw_to_sqlite(tk_id, crawled_data, property_images)
+            
+            add_log_message(f"[✅] ĐÃ CÀO LẠI THÀNH CÔNG DUY NHẤT CĂN (PROPTECH): {tk_id}")
+            
+            # Trả về kết quả dòng đã cập nhật
+            conn = sqlite3.connect(DB_FILE, timeout=30.0)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            updated_row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+            conn.close()
+            
+            d = dict(updated_row)
+            d["raw_images_tk"] = json.loads(d["raw_images_tk_json"]) if d.get("raw_images_tk_json") else []
+            d["raw_drive_images"] = json.loads(d["raw_drive_images_json"]) if d.get("raw_drive_images_json") else []
+            d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
+            
+            return jsonify({"status": "success", "message": "Đã cào lại thành công căn nhà proptech!", "listing": d})
+
         # Thực hiện scrape chi tiết căn này trực tiếp trong Flask thread
         headers = {
+
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             "Cookie": cookie,
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
