@@ -726,8 +726,25 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
 
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
-    existing_ids = set(row[0] for row in cursor.execute("SELECT tk_id FROM listings"))
+    try:
+        cursor.execute("PRAGMA table_info(listings)")
+        db_cols = [r[1] for r in cursor.fetchall()]
+    except Exception:
+        db_cols = []
+    
+    gia_col = "Gia_chao" if "Gia_chao" in db_cols else ("Gi__ch_o" if "Gi__ch_o" in db_cols else None)
+    status_col = "Trang_thai" if "Trang_thai" in db_cols else None
+    
+    existing_properties = {}
+    if gia_col and status_col:
+        for row in cursor.execute(f"SELECT tk_id, `{gia_col}`, `{status_col}` FROM listings"):
+            existing_properties[row[0]] = (row[1], row[2])
+    else:
+        for row in cursor.execute("SELECT tk_id FROM listings"):
+            existing_properties[row[0]] = (None, None)
     conn.close()
+    
+    existing_ids = set(existing_properties.keys())
     print(f"[*] Đã tải {len(existing_ids)} căn có sẵn từ SQLite vào bộ nhớ đệm RAM.")
 
     if filter_district:
@@ -852,7 +869,37 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                         continue
                     
                     if tk_id_item in existing_ids:
-                        continue
+                        old_price, old_status = existing_properties.get(tk_id_item, (None, None))
+                        if old_price is not None:
+                            new_price = str(item.get("offeringPrice") or "")
+                            new_status = str(item.get("status") or "")
+                            
+                            old_price_str = str(old_price).strip()
+                            old_status_str = str(old_status).strip()
+                            
+                            try:
+                                p_old = float(old_price_str)
+                                p_new = float(new_price)
+                                price_changed = abs(p_old - p_new) > 0.01
+                            except Exception:
+                                price_changed = old_price_str != new_price
+                                
+                            status_map = {
+                                "selling": "Đang bán",
+                                "deposit": "Đặt cọc",
+                                "sold": "Đã bán",
+                                "expired": "Hết hạn",
+                                "suspended": "Tạm dừng"
+                            }
+                            mapped_new_status = status_map.get(new_status, new_status)
+                            status_changed = old_status_str != mapped_new_status
+                            
+                            if not (price_changed or status_changed):
+                                continue
+                            
+                            print(f"[!] Phát hiện thay đổi ở căn {tk_id_item}: Giá ({old_price_str} -> {new_price}) | Trạng thái ({old_status_str} -> {mapped_new_status}). Kích hoạt cào cập nhật!")
+                        else:
+                            continue
 
                     if filter_district:
                         item_dist = (item.get("district") or {}).get("name", "").lower().strip()
