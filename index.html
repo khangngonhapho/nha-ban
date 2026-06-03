@@ -3247,16 +3247,22 @@
         sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
       }
     }
-    // Hàm giải mã bitmask (gọi sau khi load data)
-    const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    // Hàm giải mã danh sách ID Base64 (gọi sau khi load data)
     function decodeBitmask(encoded, allIds) {
-      let bits = '';
-      for (const ch of encoded) {
-        const val = B64.indexOf(ch);
-        if (val < 0) continue;
-        bits += val.toString(2).padStart(6, '0');
+      try {
+        let safeToken = encoded.replace(/ /g, '+').replace(/-/g, '+').replace(/_/g, '/');
+        while (safeToken.length % 4) {
+          safeToken += '=';
+        }
+        const decoded = atob(safeToken);
+        const idListRegex = /^[A-Za-z0-9_\-]+(,[A-Za-z0-9_\-]+)*$/;
+        if (idListRegex.test(decoded)) {
+          return decoded.split(',').map(s => s.trim()).filter(Boolean);
+        }
+      } catch (e) {
+        console.error("Lỗi giải mã danh sách ID:", e);
       }
-      return allIds.filter((id, i) => bits[i] === '1');
+      return [];
     }
 
     //  ⚙️  CẤU HÌNH 
@@ -4228,7 +4234,9 @@
       if (shareBitmask) {
         const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
         sharedIds = decodeBitmask(shareBitmask, allIds);
-      } else if (sharedIds) {
+      }
+      
+      if (sharedIds) {
         sharedIds = sharedIds.map(tk => {
           if (tk.startsWith('SYS-')) {
             const house = fullList.find(h => h.system_id === tk);
@@ -5811,17 +5819,16 @@
           const systemId = house ? house.system_id : singleId;
           shareUrl = `${baseUrl}?s=${systemId}`;
         } else {
-          // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
-          const allIds = DATA.map(p => String(p.id));
-          let bits = '';
-          allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
-          // Pad to multiple of 6
-          while (bits.length % 6) bits += '0';
-          let encoded = '';
-          for (let i = 0; i < bits.length; i += 6) {
-            encoded += B64[parseInt(bits.substr(i, 6), 2)];
-          }
-          shareUrl = `${baseUrl}?b=${encoded}`;
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}`;
         }
 
         // Dùng Web Share API trên điện thoại
@@ -5895,17 +5902,16 @@
           const systemId = house ? house.system_id : singleId;
           shareUrl = `${baseUrl}?s=${systemId}&c=${encodeURIComponent(encodedName)}`;
         } else {
-          // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
-          const allIds = DATA.map(p => String(p.id));
-          let bits = '';
-          allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
-          // Pad to multiple of 6
-          while (bits.length % 6) bits += '0';
-          let encodedBitmask = '';
-          for (let i = 0; i < bits.length; i += 6) {
-            encodedBitmask += B64[parseInt(bits.substr(i, 6), 2)];
-          }
-          shareUrl = `${baseUrl}?b=${encodedBitmask}&c=${encodeURIComponent(encodedName)}`;
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}&c=${encodeURIComponent(encodedName)}`;
         }
 
         // Đóng Modal
@@ -5949,15 +5955,16 @@
           const systemId = house ? house.system_id : singleId;
           shareUrl = `${baseUrl}?s=${systemId}`;
         } else {
-          const allIds = DATA.map(p => String(p.id));
-          let bits = '';
-          allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
-          while (bits.length % 6) bits += '0';
-          let encodedBitmask = '';
-          for (let i = 0; i < bits.length; i += 6) {
-            encodedBitmask += B64[parseInt(bits.substr(i, 6), 2)];
-          }
-          shareUrl = `${baseUrl}?b=${encodedBitmask}`;
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}`;
         }
 
         // Đóng Modal
