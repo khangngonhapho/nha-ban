@@ -15,10 +15,10 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5000" ^| findstr "LISTENING
     echo [!] Giai phong port 5000 tu tien trinh cu (PID: %%a)...
     taskkill /f /pid %%a >nul 2>&1
 )
-timeout /t 1 >nul
+ping 127.0.0.1 -n 2 >nul
 
 :: Mo trinh duyet sau 2 giay de server Flask co du thoi gian khoi dong
-start /b "" cmd /c "timeout /t 2 >nul && start http://localhost:5000"
+start /b "" cmd /c "ping 127.0.0.1 -n 3 >nul && start http://localhost:5000"
 
 :: Khoi dong server Flask o terminal hien tai
 python curator_server.py
