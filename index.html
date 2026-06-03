@@ -4865,7 +4865,7 @@
           </div>
           <div class="card-right">
             <div class="info">
-              <div class="ititle">${String(p.t).includes(p.gia + ' tỷ') ? p.t : p.t + ' ' + p.gia + ' tỷ'}</div>
+              <div class="ititle">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
               <div class="chips">
                 <span class="chip">📐 ${p.dt}m²</span>
                 <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
@@ -5390,7 +5390,7 @@
                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
                       ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
                     </div>
-                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && p.original_row_data[39]) || p.raw_tieu_de_public || '')}</textarea>
+                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
                   </div>
 
                   <div class="admin-edit-group">
@@ -5669,8 +5669,8 @@
             const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
             const floatActions = document.getElementById('adminDetailFloatActions');
 
-            // Append price to the preview title to match client detail style
-            const displayTieuDeVal = tieuDeVal ? (String(tieuDeVal).includes(p.gia + ' tỷ') ? tieuDeVal : `${tieuDeVal} ${p.gia} tỷ`) : '';
+            // Keep public title exact and without price appending
+            const displayTieuDeVal = tieuDeVal;
 
             // Update the preview carousel dynamically
             setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
@@ -7676,8 +7676,8 @@
           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
           cuPhap,                        // 1: Cu_phap (Cột B)
           "",                            // 2: Note (Cột C)
-          matchedRow[54],                // 3: id (Cột D)
-          matchedRow[55],                // 4: tieu_de (Cột E)
+          matchedRow[55],                // 3: id (Cột D)
+          matchedRow[56],                // 4: tieu_de (Cột E)
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
@@ -7686,13 +7686,13 @@
           matchedRow[4],                 // 10: phuong (Cột K)
           loaiHinh,                      // 11: loai_hinh (Cột L)
           matchedRow[17],                // 12: huong_nha (Cột M)
-          matchedRow[58],                // 13: duong_truoc_nha (Cột N)
-          matchedRow[59],                // 14: do_rong_hem (Cột O)
-          matchedRow[60],                // 15: tinh_trang_nha (Cột P)
-          matchedRow[66],                // 16: danh_gia (Cột Q)
-          matchedRow[67],                // 17: ngu_tang_tret (Cột R)
-          matchedRow[68],                // 18: chdv (Cột S)
-          matchedRow[56],                // 19: mo_ta (Cột T)
+          matchedRow[59],                // 13: duong_truoc_nha (Cột N)
+          matchedRow[60],                // 14: do_rong_hem (Cột O)
+          matchedRow[61],                // 15: tinh_trang_nha (Cột P)
+          matchedRow[67],                // 16: danh_gia (Cột Q)
+          matchedRow[68],                // 17: ngu_tang_tret (Cột R)
+          matchedRow[69],                // 18: chdv (Cột S)
+          matchedRow[57],                // 19: mo_ta (Cột T)
           finalImages[0],                // 20: anh_1 (Cột U)
           finalImages[1],                // 21: anh_2 (Cột V)
           finalImages[2],                // 22: anh_3 (Cột W)
@@ -7704,9 +7704,9 @@
           finalImages[8],                // 28: anh_9 (Cột AC)
           finalImages[9],                // 29: anh_10 (Cột AD)
           new Date().toISOString(),      // 30: Last updated (Cột AE)
-          matchedRow[65],                // 31: phuong_cu (Cột AF)
-          matchedRow[63],                // 32: so_pn (Cột AG)
-          matchedRow[64],                // 33: so_wc (Cột AH)
+          matchedRow[66],                // 31: phuong_cu (Cột AF)
+          matchedRow[64],                // 32: so_pn (Cột AG)
+          matchedRow[65],                // 33: so_wc (Cột AH)
           matchedRow[5],                 // 34: ten_duong (Cột AI)
           "",                            // 35: gio_dang (Cột AJ)
           "",                            // 36: trang_thai (Cột AK)
@@ -7747,7 +7747,7 @@
           console.warn("Không thể ghi nhận Last Sync vào Pool:", e);
         }
         
-        alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[54]} (${matchedRow[55]})!`);
+        alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[55]} (${matchedRow[56]})!`);
         
         // Reset ô tìm kiếm Pool trong Bộ lọc
         const pullInput = document.getElementById('poolSearchToolInput');
@@ -8537,7 +8537,9 @@
         p.original_row_data[30] = new Date().toISOString();
         p.original_row_data[32] = soPn || '-';
         p.original_row_data[33] = soWc || '-';
-        p.original_row_data[39] = tieuDeBds;
+        p.original_row_data[4] = tieuDeBds;
+        p.t = tieuDeBds;
+        p.original_row_data[39] = "";
 
         p.note = note;
         p.huong = huong;
@@ -8875,7 +8877,7 @@
           cuPhap,                        // 1: Cu_phap (Cột B)
           note,                          // 2: Note (Cột C)
           maKhangNgo,                    // 3: id (Cột D)
-          tieuDeBds || matchedRow[55],   // 4: tieu_de (Cột E)
+          tieuDeBds || matchedRow[56],   // 4: tieu_de (Cột E)
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
@@ -8902,7 +8904,7 @@
           finalImages[8],                // 28: anh_9 (Cột AC)
           finalImages[9],                // 29: anh_10 (Cột AD)
           new Date().toISOString(),      // 30: Last updated (Cột AE)
-          matchedRow[65],                // 31: phuong_cu (Cột AF)
+          matchedRow[66],                // 31: phuong_cu (Cột AF)
           soPn || '-',                   // 32: so_pn (Cột AG)
           soWc || '-',                   // 33: so_wc (Cột AH)
           matchedRow[5],                 // 34: ten_duong (Cột AI)
@@ -8910,7 +8912,7 @@
           "",                            // 36: trang_thai (Cột AK)
           sysIdMatched,                  // 37: System ID (Cột AL)
           finalCoverUrl,                 // 38: Hình Mặt Tiền (Cột AM)
-          tieuDeBds,                     // 39: Tiêu đề BDS (Cột AN)
+          "",                            // 39: Tiêu đề BDS (Cột AN)
           false                          // 40: Đăng BDS (Cột AO)
         ];
         
