@@ -2388,7 +2388,8 @@ def execute_publish_listing(tk_id):
             "Ảnh 1", "Ảnh 2", "Ảnh 3", "Ảnh 4", "Ảnh 5", "Ảnh 6", "Ảnh 7", "Ảnh 8",
             "Ảnh 9", "Ảnh 10", "Ảnh 11", "Ảnh 12", "Ảnh 13", "Ảnh 14", "Ảnh 15",
             "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
-            "Last Crawl"
+            "Last Crawl",
+            "Mã Khang Ngô (ID)", "System ID"
         ]
         
         for idx, header in enumerate(POOL_HEADERS):
@@ -2450,6 +2451,30 @@ def execute_publish_listing(tk_id):
             else:
                 add_log_message(f"[⚡] Đang chèn chốt dòng mới lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
                 sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED')
+            
+            # Cập nhật Mã Khang Ngô sang sheet Source (nếu đã có bản ghi ở Source)
+            source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
+            try:
+                source_spreadsheet = client.open_by_key(source_sheet_id)
+                source_sheet = source_spreadsheet.worksheet("Source")
+                source_values = source_sheet.get_all_values()
+                
+                system_id = d.get("System_ID", "")
+                if system_id:
+                    # Cột 38 (index 37) là System ID. Cột 4 (index 3) là id (Mã Khang Ngô)
+                    found_source_row_idx = -1
+                    for s_idx, s_row in enumerate(source_values[1:], start=2):
+                        if len(s_row) > 37 and s_row[37].strip() == system_id:
+                            found_source_row_idx = s_idx
+                            break
+                    
+                    if found_source_row_idx > -1:
+                        new_ma_kn = d.get("Ma_Khang_Ngo_ID", "")
+                        if new_ma_kn:
+                            add_log_message(f"[⚡] Đồng bộ Mã Khang Ngô '{new_ma_kn}' sang cột id của sheet Source (dòng {found_source_row_idx})...")
+                            source_sheet.update_cell(found_source_row_idx, 4, new_ma_kn)
+            except Exception as e_source:
+                add_log_message(f"[⚠️ WARNING] Không thể tự động đồng bộ Mã Khang Ngô sang sheet Source: {str(e_source)}")
             
             # Cập nhật trạng thái trong SQLite -> published
             conn = sqlite3.connect(DB_FILE, timeout=30.0)
