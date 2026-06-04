@@ -5,3 +5,11 @@ docs/
 
 # Ignore Google Apps Script files
 *.gs
+
+# Ignore sensitive files and databases
+credentials.json
+credentials.json.bak
+khangngo-admin-*.json
+thienkhoi_cookie.txt
+*.db
+__pycache__/

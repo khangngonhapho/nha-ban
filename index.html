@@ -2302,14 +2302,7 @@
     
     /* Floating action buttons in detail page (US-039.7 Revision) */
     .admin-detail-float-actions {
-      position: absolute;
-      bottom: 25px;
-      right: 20px;
-      z-index: 150;
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      pointer-events: auto;
+      display: none !important;
     }
     .admin-detail-float-actions .admin-icon-btn {
       background: #f39c12; /* Nền Vàng rực rỡ */
@@ -2492,9 +2485,273 @@
       font-size: 14px !important;
     }
     
-    /* Collections / Favorites / Zalo Sheet Share display text overrides */
-    .fav-title, .fav-count, .save-list-item, .collection-chip {
-      font-size: 13px !important;
+    
+    /* Lead Capture Modal & Client Feedback Styles (US-059) */
+    .client-feedback-box {
+      margin-top: 20px;
+      padding: 16px;
+      border: 1.5px solid var(--gold);
+      border-radius: 14px;
+      background: rgba(224, 168, 0, 0.05);
+      box-shadow: 0 4px 15px rgba(224, 168, 0, 0.08);
+    }
+    .client-feedback-box h4 {
+      margin: 0 0 12px 0;
+      color: var(--text);
+      font-size: 14.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .client-feedback-btns {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+    .client-feedback-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .client-feedback-btn.primary {
+      border: none;
+      background: #27ae60;
+      color: #fff;
+    }
+    .client-feedback-btn.primary:hover {
+      background: #219653;
+      transform: translateY(-1px);
+    }
+    .client-feedback-btn.secondary {
+      border: 1.5px solid var(--blue);
+      background: transparent;
+      color: var(--blue);
+    }
+    .client-feedback-btn.secondary:hover {
+      background: rgba(0, 104, 255, 0.05);
+      transform: translateY(-1px);
+    }
+    .client-req-form {
+      border-top: 1px dashed var(--border);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+    .client-req-form p {
+      margin: 0 0 8px 0;
+      font-size: 12.5px;
+      color: var(--sub);
+      line-height: 1.4;
+    }
+    .client-req-textarea {
+      width: 100%;
+      height: 75px;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      margin-bottom: 10px;
+      background: var(--card);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .client-req-textarea:focus {
+      border-color: var(--gold);
+    }
+    .client-req-submit-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .client-req-submit-btn:hover {
+      background: #0056d6;
+    }
+    .lead-capture-modal-content {
+      padding: 30px 24px;
+      max-width: 400px;
+      width: 90%;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+    .lead-capture-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      font-family: inherit;
+      background: var(--card);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .lead-capture-input:focus {
+      border-color: var(--gold);
+    }
+    .lead-capture-submit-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: var(--gold);
+      color: #1c1c1e;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(224, 168, 0, 0.2);
+      transition: all 0.2s;
+    }
+    .lead-capture-submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(224, 168, 0, 0.3);
+    }
+
+    /* Speed Dial Container */
+    .admin-speed-dial {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    /* Main Action Button (Gear icon) */
+    .dial-main-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #1c1c1e;
+      border: none;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s, color 0.25s;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dial-main-btn:hover {
+      transform: scale(1.06);
+    }
+    .dial-main-btn:active {
+      transform: scale(0.92);
+    }
+    .dial-main-btn.active {
+      transform: rotate(90deg);
+      background: #1c1c1e;
+      color: var(--gold);
+      border: 1.5px solid var(--gold);
+    }
+    
+    /* Actions list container */
+    .dial-actions {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.8);
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dial-actions.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+    
+    /* Override individual buttons inside the speed dial */
+    .dial-btn-item {
+      position: relative !important;
+      bottom: auto !important;
+      right: auto !important;
+      left: auto !important;
+      top: auto !important;
+      margin: 0 !important;
+      width: 48px !important;
+      height: 48px !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
+      border: 1.5px solid rgba(255,255,255,0.1) !important;
+      transition: transform 0.2s, background 0.2s !important;
+      outline: none;
+    }
+    .dial-btn-item:active {
+      transform: scale(0.9) !important;
+    }
+    
+    /* Specific classes for button overrides */
+    .admin-speed-dial .share-btn-float {
+      background: #f39c12 !important;
+      color: #1c1c1e !important;
+      font-size: 18px !important;
+    }
+    .admin-speed-dial .share-btn-float:hover {
+      background: #f5b041 !important;
+    }
+    
+    .admin-speed-dial .selall-btn-float {
+      background: #1c1c1e !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-size: 16px !important;
+    }
+    .admin-speed-dial .selall-btn-float.all-on {
+      color: #f1c40f !important;
+      border-color: #f1c40f !important;
+    }
+    
+    .admin-speed-dial .col-btn-float {
+      background: #e0a800 !important;
+      color: #1c1c1e !important;
+      font-size: 16px !important;
+    }
+    .admin-speed-dial .col-btn-float:hover {
+      background: #f4d03f !important;
     }
   </style>
 </head>
@@ -2552,7 +2809,7 @@
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35" />
       </svg>
-      <input type="text" id="searchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()">
+      <input type="text" id="bdsSearchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()" autocomplete="off" spellcheck="false">
       <span class="search-clear" id="searchClear" onclick="clearSearchInput()" style="display:none">✕</span>
     </div>
     <!-- Admin: thông tin bộ lọc hiện tại -->
@@ -2650,7 +2907,7 @@
         style="padding: 10px; background: rgba(255,255,255,0.08); border-radius: 12px; margin: 5px 0 10px; display: none;">
         <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Google OAuth Client ID:</div>
         <div style="display: flex; gap: 8px;">
-          <input type="password" id="gClientIdInput" placeholder="Dán Client ID vào đây..."
+          <input type="text" id="gClientIdInput" placeholder="Dán Client ID vào đây..."
             style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; outline: none; font-family: inherit;">
           <button onclick="saveGoogleClientId()"
             style="padding: 8px 14px; border-radius: 8px; border: none; background: var(--gold); color: #fff; font-weight: 700; font-size: 12px; cursor: pointer; font-family: inherit;">Lưu</button>
@@ -2757,6 +3014,40 @@
     </div>
   </div>
 
+  <!-- Modal Bắt Buộc Nhập Thông Tin Khách Hàng (Lead Capture Form - US-059) -->
+  <div class="overlay" id="leadCaptureModal" style="display:none; z-index: 100000; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center;">
+    <div class="lead-capture-modal-content">
+      <!-- Header/Branding -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🏡</div>
+        <h3 style="margin: 0 0 8px 0; font-size: 20px; color: var(--text); font-weight: 800;">Giỏ Hàng Khang Ngô Nhà Phố</h3>
+        <p style="margin: 0; font-size: 13.5px; color: var(--sub); line-height: 1.5;">
+          Chào mừng anh/chị! Để mở khóa xem thông số chi tiết và hình ảnh đầy đủ của các căn nhà phố, vui lòng chia sẻ thông tin liên hệ nhanh bên dưới:
+        </p>
+      </div>
+
+      <!-- Inputs -->
+      <div style="margin-bottom: 18px;">
+        <label style="font-size: 13px; color: var(--text); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Tên của anh/chị <span style="color: var(--red);">*</span></label>
+        <input type="text" id="leadCustName" class="lead-capture-input" placeholder="Tên để Khang tiện xưng hô...">
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="font-size: 13px; color: var(--text); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Số điện thoại liên hệ <span style="color: var(--red);">*</span></label>
+        <input type="tel" id="leadCustPhone" class="lead-capture-input" placeholder="Nhập số điện thoại của anh/chị...">
+      </div>
+
+      <!-- Submit Button -->
+      <button onclick="submitLeadCapture()" class="lead-capture-submit-btn">
+        <span>🔑 XEM DANH SÁCH CĂN NHÀ</span>
+      </button>
+      
+      <div style="text-align: center; margin-top: 14px;">
+        <span style="font-size: 11px; color: var(--sub);">🔒 Khang Ngô bảo mật tuyệt đối thông tin của anh/chị.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Tạo Link Gửi Khách -->
   <div class="overlay" id="linkModal" onclick="if(event.target===this) this.classList.remove('open')">
     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
@@ -2791,12 +3082,15 @@
           khách.</div>
       </div>
 
-      <div style="display:flex; gap:12px;">
-        <button onclick="document.getElementById('linkModal').classList.remove('open')"
-          style="flex:1; padding:14px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:15px;">Huỷ</button>
-        <button onclick="executeGenerateLink()"
-          style="flex:1; padding:14px; border-radius:8px; border:none; background:#27ae60; color:#fff; font-weight:700; font-size:15px;">Tạo
-          Link</button>
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top: 10px;">
+        <div style="display:flex; gap:12px;">
+          <button onclick="document.getElementById('linkModal').classList.remove('open')"
+            style="flex:1; padding:14px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:15px;">Huỷ</button>
+          <button onclick="executeGenerateLink()"
+            style="flex:1; padding:14px; border-radius:8px; border:none; background:#27ae60; color:#fff; font-weight:700; font-size:15px;">Tạo Link Cá Nhân</button>
+        </div>
+        <button onclick="executeGenerateQuickLink()"
+          style="width:100%; padding:14px; border-radius:8px; border: 1.5px solid var(--gold); background: transparent; color: var(--gold); font-weight: 800; font-size:15px; cursor: pointer; font-family: inherit;">⚡ Tạo Link Công Khai Nhanh (Khách tự nhập SĐT)</button>
       </div>
     </div>
   </div>
@@ -2930,7 +3224,7 @@
 
     if (isAdmin) {
       document.body.classList.add('is-admin');
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       if (sInput) {
         sInput.placeholder = "Tìm mã căn, đường, tên đầu chủ, ĐT...";
       }
@@ -2953,16 +3247,22 @@
         sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
       }
     }
-    // Hàm giải mã bitmask (gọi sau khi load data)
-    const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    // Hàm giải mã danh sách ID Base64 (gọi sau khi load data)
     function decodeBitmask(encoded, allIds) {
-      let bits = '';
-      for (const ch of encoded) {
-        const val = B64.indexOf(ch);
-        if (val < 0) continue;
-        bits += val.toString(2).padStart(6, '0');
+      try {
+        let safeToken = encoded.replace(/ /g, '+').replace(/-/g, '+').replace(/_/g, '/');
+        while (safeToken.length % 4) {
+          safeToken += '=';
+        }
+        const decoded = atob(safeToken);
+        const idListRegex = /^[A-Za-z0-9_\-]+(,[A-Za-z0-9_\-]+)*$/;
+        if (idListRegex.test(decoded)) {
+          return decoded.split(',').map(s => s.trim()).filter(Boolean);
+        }
+      } catch (e) {
+        console.error("Lỗi giải mã danh sách ID:", e);
       }
-      return allIds.filter((id, i) => bits[i] === '1');
+      return [];
     }
 
     //  ⚙️  CẤU HÌNH 
@@ -3006,17 +3306,20 @@
         const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
         if (row) {
           poolItem = {
-            raw_noi_dung_chinh: row[9] || '',
-            raw_so_nha: row[6] || '',
-            raw_ten_duong: row[5] || '',
-            t: row[56] || row[55] || row[9] || ''
+            raw_noi_dung_chinh: String(row[9] || ''),
+            raw_so_nha: String(row[6] || ''),
+            raw_ten_duong: String(row[5] || ''),
+            t: String(row[56] || row[55] || row[9] || '')
           };
         }
       }
-      const text = (poolItem.raw_noi_dung_chinh || '').trim();
+      const text = String(poolItem.raw_noi_dung_chinh || '').trim();
+      const titleStr = String(poolItem.t || '');
       if (!text) {
-        const cleanedT = poolItem.t && poolItem.t.includes('|') ? poolItem.t.substring(poolItem.t.indexOf('|') + 1).trim() : poolItem.t;
-        return `${poolItem.raw_so_nha ? poolItem.raw_so_nha + ' ' : ''}${poolItem.raw_ten_duong ? poolItem.raw_ten_duong : cleanedT}`;
+        const cleanedT = titleStr.includes('|') ? titleStr.substring(titleStr.indexOf('|') + 1).trim() : titleStr;
+        const soNhaStr = String(poolItem.raw_so_nha || '');
+        const duongStr = String(poolItem.raw_ten_duong || '');
+        return `${soNhaStr ? soNhaStr + ' ' : ''}${duongStr ? duongStr : cleanedT}`;
       }
       const priceRegex = /\b\d+(?:[\.,-]\d+)?\s*(?:tỷ|ty|tỉ)(?!\w)/i;
       const match = text.match(priceRegex);
@@ -3089,30 +3392,34 @@
       });
     }
     function toggleSearchClearBtn() {
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       const clearBtn = document.getElementById('searchClear');
       if (sInput && clearBtn) {
         clearBtn.style.display = sInput.value.trim() ? 'flex' : 'none';
       }
     }
     function clearSearchInput() {
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       if (sInput) {
         sInput.value = '';
         onSearchInput();
       }
     }
+    let searchDebounceTimeout = null;
     function onSearchInput() {
       toggleSearchClearBtn();
-      updateStats();
-      applyFilter();
-      saveState();
+      if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout);
+      searchDebounceTimeout = setTimeout(() => {
+        updateStats();
+        applyFilter();
+        saveState();
+      }, 250);
     }
 
     function toggleSearchBar() {
       const bar = document.getElementById('searchBar');
       const btn = document.getElementById('searchToggleBtn');
-      const input = document.getElementById('searchInput');
+      const input = document.getElementById('bdsSearchInput');
       if (!bar || !btn || !input) return;
       const isOpen = bar.classList.toggle('open');
       btn.classList.toggle('active', isOpen);
@@ -3210,7 +3517,7 @@
       }
       if (!POOL_ROWS || !POOL_ROWS.length) return [];
       
-      MAPPED_POOL_DATA = POOL_ROWS.map(row => {
+      MAPPED_POOL_DATA = POOL_ROWS.map((row, index) => {
         const systemId = row[72] || row[71] || '';
         const dt = parseFloat(row[13] || row[14]) || 0;
         const gia = parseGia(row[11] || row[58]);
@@ -3238,7 +3545,7 @@
         }
 
         const p = {
-          temp_id: "pool_" + systemId,
+          temp_id: index + 1,
           id: row[55] || row[54] || systemId || '',
           cu_phap: "",
           t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
@@ -3270,10 +3577,13 @@
           raw_link_fb: row[76] || '',
           raw_noi_dung_chinh: row[9] || '',
           raw_mo_ta_chi_tiet: cleanConsecutiveNewlines(row[10] || ''),
-          raw_sodo1: row[27] || '',
-          raw_sodo2: row[28] || '',
-          raw_so_nha: row[6] || '',
-          raw_ten_duong: row[5] || '',
+           raw_sodo1: row[27] || '',
+           raw_sodo2: row[28] || '',
+           raw_sodo3: row[77] || '',
+           raw_sodo4: row[78] || '',
+           raw_sodo5: row[79] || '',
+           raw_so_nha: row[6] || '',
+           raw_ten_duong: row[5] || '',
           raw_dt_thuc_te: row[13] || '',
           raw_dt_tren_so: row[14] || '',
           raw_gia_chao: row[11] || row[58] || '',
@@ -3307,36 +3617,153 @@
         ));
       }
       
-      const sv = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+      const sv = (document.getElementById('bdsSearchInput')?.value || '').trim();
       if (sv) {
-        a = a.filter(p => {
-          const idMatch = String(p.id).toLowerCase().includes(sv);
-          const tMatch = p.t.toLowerCase().includes(sv);
-          const dMatch = p.duong_truoc_nha.toLowerCase().includes(sv);
-          const pMatch = p.phuong.toLowerCase().includes(sv);
-          const qMatch = p.q.toLowerCase().includes(sv) ||
-            p.ql.toLowerCase().includes(sv) ||
-            (sv === 'phú nhuận' && p.q === 'pn') ||
-            (sv === 'tân bình' && p.q === 'tb') ||
-            (sv === 'bình thạnh' && p.q === 'bt') ||
-            (sv === 'gò vấp' && p.q === 'gv') ||
-            (sv === 'quận 3' && p.q === 'q3') ||
-            (sv === 'quận 10' && p.q === 'q10');
+        // Helper to remove accents / diacritics for Vietnamese search
+        function removeAccents(str) {
+          if (str === null || str === undefined) return '';
+          const s = String(str);
+          if (!s) return '';
+          return s
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D')
+            .toLowerCase()
+            .trim();
+        }
+
+        if (isAdmin) {
+          // Combined Multi-condition AND Search for Admin
+          const subQueries = sv.split('+').map(s => s.trim()).filter(Boolean);
           
-          if (isAdmin) {
-            const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(sv);
-            const dtMatch = (p.raw_dt_dau_chu || '').toLowerCase().includes(sv);
-            const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(sv);
-            const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(sv);
-            const noteMatch = (p.note || '').toLowerCase().includes(sv);
-            const cpMatch = (p.cu_phap || '').toLowerCase().includes(sv);
-            const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(sv);
-            const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(sv);
-            return idMatch || tMatch || dMatch || pMatch || qMatch ||
-                   dauChuMatch || dtMatch || ndMatch || mtMatch || noteMatch || cpMatch || soNhaMatch || duongMatch;
+          // Helper to normalize street queries (Rule 1 of BDS-AGENTS.md)
+          function normalizeStreetQuery(street) {
+            let s = removeAccents(street);
+            if (!s) return '';
+            s = s.replace(/cach\s+mang\s+thang\s+8|cach\s+mang\s+thang\s+tam|cmt8/g, 'ttmc');
+            s = s.replace(/ba\s+thang\s+hai|3\/2|3-2|3\s+thang\s+2/g, 'htb');
+            s = s.replace(/duong\s+so\s+7/g, '7sd');
+            return s;
           }
-          return idMatch || tMatch || dMatch || pMatch || qMatch;
-        });
+
+          // Helper to match Vietnamese complex house numbers
+          function matchHouseNumber(rawSoNha, querySoNha) {
+            const cleanRaw = String(rawSoNha || '').trim().toLowerCase();
+            const cleanQuery = String(querySoNha || '').trim().toLowerCase();
+            if (!cleanQuery) return true;
+            if (!cleanRaw) return false;
+            
+            // Rule 2: compound numbers "1168.42+44" -> "1168.42"
+            const normalizedRaw = cleanRaw.split('+')[0].trim();
+            
+            // Nếu người dùng gõ prefix có dấu chấm ở cuối (e.g. "95.")
+            if (cleanQuery.endsWith('.')) {
+              if (normalizedRaw.startsWith(cleanQuery)) return true;
+            }
+            
+            if (normalizedRaw === cleanQuery) return true;
+            if (normalizedRaw.startsWith(cleanQuery + '/')) return true;
+            
+            const suffixRegex = new RegExp('^' + cleanQuery + '[a-z]$');
+            if (suffixRegex.test(normalizedRaw)) return true;
+            
+            return false;
+          }
+          
+          a = a.filter(p => {
+            return subQueries.every(sub => {
+              const subCleaned = removeAccents(sub);
+              
+              // 1. Match Price query: e.g. "25 tỷ", "25.5 tỷ"
+              const priceMatch = sub.match(/^([\d,.]+)\s*tỷ$/i) || sub.match(/([\d,.]+)\s*tỷ/i);
+              if (priceMatch) {
+                const numStr = priceMatch[1].replace(',', '.');
+                const num = parseFloat(numStr);
+                const pGia = parseFloat(p.gia) || 0;
+                if (numStr.includes('.')) {
+                  // Decimal price: exact match
+                  return Math.abs(pGia - num) < 0.001;
+                } else {
+                  // Integer price: prefix match range [num, num+1)
+                  return pGia >= num && pGia < num + 1;
+                }
+              }
+              
+              // 2. Match House Number + Street: starts with a digit
+              const houseStreetMatch = sub.match(/^(\d+[\d/a-zA-Z.]*)\s*(.*)$/);
+              if (houseStreetMatch) {
+                const houseNumQuery = houseStreetMatch[1];
+                const streetQuery = houseStreetMatch[2].trim();
+                
+                let hnMatch = matchHouseNumber(p.raw_so_nha, houseNumQuery);
+                if (!hnMatch && p.cu_phap) {
+                  const cuPhapMatch = p.cu_phap.trim().match(/^(\d+[\d/a-zA-Z.]*)\s*(.*)$/);
+                  if (cuPhapMatch) {
+                    hnMatch = matchHouseNumber(cuPhapMatch[1], houseNumQuery);
+                  }
+                }
+                if (!hnMatch) return false;
+                
+                if (streetQuery) {
+                  const normStreetQ = normalizeStreetQuery(streetQuery);
+                  const normRawDuong = normalizeStreetQuery(p.raw_ten_duong);
+                  const normDuongTruoc = normalizeStreetQuery(p.duong_truoc_nha);
+                  const normTenDuong = normalizeStreetQuery(p.ten_duong);
+                  const titleMatch = removeAccents(p.t).includes(removeAccents(streetQuery));
+                  return normRawDuong.includes(normStreetQ) || normDuongTruoc.includes(normStreetQ) || normTenDuong.includes(normStreetQ) || titleMatch;
+                }
+                return true;
+              }
+              
+              // 3. Fallback: General text match
+              const normSub = normalizeStreetQuery(sub);
+              const streetMatch = normalizeStreetQuery(p.raw_ten_duong).includes(normSub) || 
+                                  normalizeStreetQuery(p.duong_truoc_nha).includes(normSub) ||
+                                  normalizeStreetQuery(p.ten_duong).includes(normSub);
+              const titleMatch = removeAccents(p.t).includes(subCleaned);
+              const pMatch = removeAccents(p.phuong).includes(subCleaned);
+              const idMatch = removeAccents(p.id).includes(subCleaned);
+              const qMatch = removeAccents(p.q).includes(subCleaned) ||
+                             removeAccents(p.ql).includes(subCleaned) ||
+                             (subCleaned === 'phu nhuan' && p.q === 'pn') ||
+                             (subCleaned === 'tan binh' && p.q === 'tb') ||
+                             (subCleaned === 'binh thanh' && p.q === 'bt') ||
+                             (subCleaned === 'go vap' && p.q === 'gv') ||
+                             (subCleaned === 'quan 3' && p.q === 'q3') ||
+                             (subCleaned === 'quan 10' && p.q === 'q10');
+                             
+              const dauChuMatch = removeAccents(p.raw_ten_dau_chu).includes(subCleaned);
+              const dtMatch = removeAccents(p.raw_dt_dau_chu).includes(subCleaned);
+              const cpMatch = removeAccents(p.cu_phap).includes(subCleaned);
+              const soNhaMatch = removeAccents(p.raw_so_nha).includes(subCleaned) || (p.cu_phap && removeAccents(p.cu_phap.split(' ')[0]).includes(subCleaned));
+              const duongMatch = removeAccents(p.raw_ten_duong).includes(subCleaned) || removeAccents(p.ten_duong).includes(subCleaned);
+              
+              return idMatch || titleMatch || streetMatch || pMatch || qMatch ||
+                     dauChuMatch || dtMatch || cpMatch || soNhaMatch || duongMatch;
+            });
+          });
+        } else {
+          // Regular client search logic with accent-free search support
+          const svCleaned = removeAccents(sv);
+          a = a.filter(p => {
+            const idMatch = removeAccents(p.id).includes(svCleaned);
+            const tMatch = removeAccents(p.t).includes(svCleaned);
+            const dMatch = removeAccents(p.duong_truoc_nha).includes(svCleaned) || 
+                           removeAccents(p.ten_duong).includes(svCleaned) || 
+                           removeAccents(p.raw_ten_duong).includes(svCleaned);
+            const pMatch = removeAccents(p.phuong).includes(svCleaned);
+            const qMatch = removeAccents(p.q).includes(svCleaned) ||
+              removeAccents(p.ql).includes(svCleaned) ||
+              (svCleaned === 'phu nhuan' && p.q === 'pn') ||
+              (svCleaned === 'tan binh' && p.q === 'tb') ||
+              (svCleaned === 'binh thanh' && p.q === 'bt') ||
+              (svCleaned === 'go vap' && p.q === 'gv') ||
+              (svCleaned === 'quan 3' && p.q === 'q3') ||
+              (svCleaned === 'quan 10' && p.q === 'q10');
+            return idMatch || tMatch || dMatch || pMatch || qMatch;
+          });
+        }
       }
 
       // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT
@@ -3412,6 +3839,11 @@
     // Tự động convert link Google Drive → ảnh có thể nhúng với kích thước tùy chỉnh
     function fixImgUrl(url, sz = 'w800') {
       if (!url) return '';
+      if (url.includes('res.cloudinary.com')) {
+        const width = sz.replace('w', '');
+        // Tối ưu hóa Cloudinary: chất lượng tự động (q_auto), định dạng tự động (f_auto), và tự động xoay đúng chiều EXIF (a_auto)
+        return url.replace('/image/upload/', `/image/upload/q_auto,f_auto,a_auto,c_limit,w_${width}/`);
+      }
       if (url.includes('thumbnail') || url.includes('uc?export')) {
         // Nếu là link thumbnail cũ, cập nhật lại kích thước
         return url.replace(/sz=w\d+/, `sz=${sz}`);
@@ -3551,13 +3983,16 @@
                 }
               }
 
-              const allImgs = [
+              const allImgs = poolRow ? [
+                ...poolImgs,
                 ...[
                   sr[20], sr[21], sr[22], sr[23], sr[24],
                   sr[25], sr[26], sr[27], sr[28], sr[29]
-                ].filter(Boolean),
-                ...poolImgs
-              ];
+                ].filter(Boolean)
+              ] : [
+                sr[20], sr[21], sr[22], sr[23], sr[24],
+                sr[25], sr[26], sr[27], sr[28], sr[29]
+              ].filter(Boolean);
               const uniqueImgs = [...new Set(allImgs)];
 
               const p = {
@@ -3589,6 +4024,7 @@
                 system_id: sr[37] || (index + 1).toString(),
                 so_pn: sr[32] || '-',
                 img_mat_tien: sr[38] || '',
+                ten_duong: sr[34] || '',
                 
                 original_row_data: sr,
                 source_row_index: targetRowNumber
@@ -3603,6 +4039,9 @@
                 p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
                 p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
                 p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
+                p.raw_sodo3 = poolRow[77] || '';             // Sơ đồ thửa đất 3 - Index 77, Column BZ
+                p.raw_sodo4 = poolRow[78] || '';             // Sơ đồ thửa đất 4 - Index 78, Column CA
+                p.raw_sodo5 = poolRow[79] || '';             // Sơ đồ thửa đất 5 - Index 79, Column CB
                 p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
                 p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
                 p.raw_dt_tren_so = poolRow[14] || '';        // DT Trên sổ - Index 14, Column O
@@ -3625,6 +4064,9 @@
                 p.raw_mo_ta_chi_tiet = '';
                 p.raw_sodo1 = '';
                 p.raw_sodo2 = '';
+                p.raw_sodo3 = '';
+                p.raw_sodo4 = '';
+                p.raw_sodo5 = '';
                 p.raw_so_nha = '';
                 p.raw_ten_duong = p.ten_duong || '';
                 p.raw_dt_tren_so = p.dt || '';
@@ -3757,13 +4199,9 @@
           finalizeData(fullList);
           
           // Securely load frontage images via serverless API proxy in the background if Admin is logged in (US-024)
-          const token = localStorage.getItem('g_access_token');
-          const expiry = localStorage.getItem('g_token_expiry');
-          const now = Date.now();
-          const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
-          if (isAdmin && isTokenValid) {
+          if (isAdmin) {
             console.log("Admin session detected in public fallback. Initiating background facade images retrieval...");
-            fetchFacadeImages(token);
+            fetchFacadeImages();
           }
         } catch (e) {
           showError('Lỗi parse dữ liệu: ' + e.message);
@@ -3796,7 +4234,9 @@
       if (shareBitmask) {
         const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
         sharedIds = decodeBitmask(shareBitmask, allIds);
-      } else if (sharedIds) {
+      }
+      
+      if (sharedIds) {
         sharedIds = sharedIds.map(tk => {
           if (tk.startsWith('SYS-')) {
             const house = fullList.find(h => h.system_id === tk);
@@ -3817,6 +4257,35 @@
         showError('Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.');
       } else {
         DATA = fullList.filter(p => !p.is_invisible);
+      }
+
+      // KIỂM TRA ĐĂNG KÝ THÔNG TIN KHÁCH HÀNG (US-059)
+      const isClientView = (shareBitmask || sharedIds) && !isAdmin;
+      if (isClientView) {
+        const savedName = localStorage.getItem('client_name');
+        const savedPhone = localStorage.getItem('client_phone');
+        if (savedName && savedPhone) {
+          displayCustomerName = savedName;
+          trackingCustomerName = `${savedName} - ${savedPhone}`;
+          // Update welcome banner (US-059)
+          const banner = document.getElementById('welcomeBanner');
+          if (banner) {
+            banner.innerHTML = `👋 Xin chào <b>${displayCustomerName}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;
+            banner.style.display = 'block';
+          }
+        } else {
+          // Hiện modal đăng ký thông tin
+          const leadModal = document.getElementById('leadCaptureModal');
+          if (leadModal) {
+            leadModal.style.display = 'flex';
+            leadModal.classList.add('open');
+            // Nếu URL có sẵn tên thì pre-fill
+            if (displayCustomerName) {
+              const leadNameInput = document.getElementById('leadCustName');
+              if (leadNameInput) leadNameInput.value = displayCustomerName;
+            }
+          }
+        }
       }
 
       if (DATA.length > 0) {
@@ -3922,7 +4391,7 @@
         selectedIds: [...SELECTED_IDS],
         favOnly: showFavOnly,
         showOnAirOnly: showOnAirOnly,
-        search: document.getElementById('searchInput')?.value || ''
+        search: document.getElementById('bdsSearchInput')?.value || ''
       };
       localStorage.setItem('adminState', JSON.stringify(state));
     }
@@ -3949,7 +4418,7 @@
           if (toggle) toggle.checked = showOnAirOnly;
         }
 
-        const sInput = document.getElementById('searchInput');
+        const sInput = document.getElementById('bdsSearchInput');
         if (sInput && state.search) {
           sInput.value = state.search;
           toggleSearchClearBtn();
@@ -3971,17 +4440,48 @@
 
     function updateStats() {
       const arr = getFiltered();
-      if (!arr.length) { document.getElementById('totalBadge').textContent = '0 BĐS'; return; }
+      if (!arr.length) {
+        const totalBadge = document.getElementById('totalBadge');
+        if (totalBadge) totalBadge.textContent = '0 BĐS';
+        
+        const sTong = document.getElementById('sTong');
+        if (sTong) sTong.textContent = '0';
+        
+        const sTang = document.getElementById('sTang');
+        if (sTang) sTang.textContent = '-';
+        
+        const sGia = document.getElementById('sGia');
+        if (sGia) sGia.textContent = '-';
+        
+        const sDt = document.getElementById('sDt');
+        if (sDt) sDt.textContent = '-';
+        
+        const sQuan = document.getElementById('sQuan');
+        if (sQuan) sQuan.textContent = '-';
+        return;
+      }
       const gias = arr.map(p => parseFloat(p.gia)).filter(Boolean);
       const dts = arr.map(p => parseFloat(p.dt)).filter(Boolean);
       const tangs = arr.map(p => parseFloat(p.tang)).filter(Boolean);
       const quans = [...new Set(arr.map(p => p.q).filter(Boolean))].length;
-      document.getElementById('sTong').textContent = arr.length;
-      document.getElementById('sTang').textContent = tangs.length ? `${Math.min(...tangs)}–${Math.max(...tangs)}` : '-';
-      document.getElementById('sGia').textContent = gias.length ? `${Math.min(...gias).toFixed(1)}–${Math.max(...gias).toFixed(1)}` : '-';
-      document.getElementById('sDt').textContent = dts.length ? `${Math.min(...dts)}–${Math.max(...dts)}` : '-';
-      document.getElementById('sQuan').textContent = quans || '-';
-      document.getElementById('totalBadge').textContent = `${arr.length} BĐS`;
+      
+      const sTong = document.getElementById('sTong');
+      if (sTong) sTong.textContent = arr.length;
+      
+      const sTang = document.getElementById('sTang');
+      if (sTang) sTang.textContent = tangs.length ? `${Math.min(...tangs)}–${Math.max(...tangs)}` : '-';
+      
+      const sGia = document.getElementById('sGia');
+      if (sGia) sGia.textContent = gias.length ? `${Math.min(...gias).toFixed(1)}–${Math.max(...gias).toFixed(1)}` : '-';
+      
+      const sDt = document.getElementById('sDt');
+      if (sDt) sDt.textContent = dts.length ? `${Math.min(...dts)}–${Math.max(...dts)}` : '-';
+      
+      const sQuan = document.getElementById('sQuan');
+      if (sQuan) sQuan.textContent = quans || '-';
+      
+      const totalBadge = document.getElementById('totalBadge');
+      if (totalBadge) totalBadge.textContent = `${arr.length} BĐS`;
     }
 
     // ── Filter panel toggle ──
@@ -4032,9 +4532,26 @@
     }
 
     // ── Build ward tabs dynamically ──
+    const STATIC_WARD_MAP = {
+      q3: ["Xuân Hòa", "Bàn Cờ", "Nhiêu Lộc"],
+      q10: ["Vườn Lài", "Hòa Hưng", "Diên Hồng"],
+      bt: ["Gia Định", "Bình Thạnh", "Thạnh Mỹ Tây", "Bình Quới", "Bình Lợi Trung"],
+      tb: ["Tân Sơn Hòa", "Tân Sơn Nhất", "Tân Hòa", "Bảy Hiền", "Tân Bình", "Tân Sơn"],
+      pn: ["Phú Nhuận", "Cầu Kiệu", "Đức Nhuận"]
+    };
+
     function buildWardTabs() {
-      const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
-      const wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
+      let wards = [];
+      if (selDistricts.size === 1) {
+        const d = [...selDistricts][0];
+        if (STATIC_WARD_MAP[d]) {
+          wards = [...STATIC_WARD_MAP[d]];
+        }
+      }
+      if (wards.length === 0) {
+        const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+        wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
+      }
       const wt = document.getElementById('wardTabs');
       const wl = document.getElementById('wardLbl');
       if (!wards.length) { wt.classList.remove('has-wards'); wl.style.display = 'none'; return; }
@@ -4139,7 +4656,7 @@
       syncTabUI('danhGiaTabs', selDanhGia);
 
       // Xóa ô tìm kiếm
-      const sInput = document.getElementById('searchInput');
+      const sInput = document.getElementById('bdsSearchInput');
       if (sInput) sInput.value = '';
       toggleSearchClearBtn();
 
@@ -4241,8 +4758,22 @@
       const filteredArr = getFiltered();
       const arr = filteredArr.slice().sort((a, b) => {
         if (currentSortType === 'newest') {
-          const ta = parseInt(a.temp_id, 10) || 0;
-          const tb = parseInt(b.temp_id, 10) || 0;
+          let ta, tb;
+          if (isAdmin && activeMode === 'pool' && showOnAirOnly) {
+            const ma = DATA.find(x => 
+              (x.system_id && a.system_id && String(x.system_id).trim() === String(a.system_id).trim()) ||
+              (x.id && a.id && String(x.id).trim() === String(a.id).trim())
+            );
+            const mb = DATA.find(x => 
+              (x.system_id && b.system_id && String(x.system_id).trim() === String(b.system_id).trim()) ||
+              (x.id && b.id && String(x.id).trim() === String(b.id).trim())
+            );
+            ta = ma ? parseInt(ma.temp_id, 10) || 0 : 0;
+            tb = mb ? parseInt(mb.temp_id, 10) || 0 : 0;
+          } else {
+            ta = parseInt(a.temp_id, 10) || 0;
+            tb = parseInt(b.temp_id, 10) || 0;
+          }
           return currentSortDir === 'asc' ? ta - tb : tb - ta;
         } else {
           const ga = parseFloat(a.gia) || 0, gb = parseFloat(b.gia) || 0;
@@ -4271,7 +4802,7 @@
         ) : null;
 
         const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
-        const cleanImgUrls = imgUrls.filter(u => !isListingSodoUrl(u, p));
+        const cleanImgUrls = imgUrls.filter(u => !(window.isListingSodoUrl && window.isListingSodoUrl(u, p)));
         let thumbUrl = '';
         
         const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
@@ -4334,7 +4865,7 @@
           </div>
           <div class="card-right">
             <div class="info">
-              <div class="ititle">${String(p.t).includes(p.gia + ' tỷ') ? p.t : p.t + ' ' + p.gia + ' tỷ'}</div>
+              <div class="ititle">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
               <div class="chips">
                 <span class="chip">📐 ${p.dt}m²</span>
                 <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
@@ -4396,6 +4927,7 @@
 
         // US-039.3: Smart Pool Fallback khi không có kết quả
         checkPoolFallbackSearch(visibleCount);
+        updateShareUI();
         return;
       }
 
@@ -4413,7 +4945,7 @@
       
       if (!isAdmin || activeMode === 'pool' || visibleCount > 0) return;
       
-      const searchVal = (document.getElementById('searchInput')?.value || '').trim();
+      const searchVal = (document.getElementById('bdsSearchInput')?.value || '').trim();
       
       if (!searchVal) return;
       
@@ -4546,7 +5078,7 @@
         const encoded = encodeURIComponent(s);
         main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
       } else {
-        main.innerHTML = `<img src="${s}" alt="Ảnh phóng to">`;
+        main.innerHTML = `<img src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to">`;
       }
     }
     function renderLbThumbs() {
@@ -4601,7 +5133,7 @@
         <div onclick="openLb(${i})" style="position:absolute; inset:0; z-index:10; cursor:pointer;"></div>
         <iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
         } else {
-          sl.innerHTML = `<img src="${s}" alt="Ảnh ${i + 1}" loading="${i === 0 ? 'eager' : 'lazy'}" onclick="openLb(${i})">`;
+          sl.innerHTML = `<img src="${fixImgUrl(s, 'w800')}" alt="Ảnh ${i + 1}" loading="${i === 0 ? 'eager' : 'lazy'}" onclick="openLb(${i})">`;
         }
         gt.appendChild(sl);
         const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' on' : '');
@@ -4645,6 +5177,14 @@
       const p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
 
+      const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
       const cleanRawNoiDungChinh = (text) => {
         if (!text) return '';
         const keyword = 'nguồn';
@@ -4686,19 +5226,11 @@
       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         if (mID) mID.style.display = 'none';
         if (floatActions) {
-          if (p.isFromPoolOnly) {
-            floatActions.style.display = 'none'; // Will be shown dynamically in updateLivePreview
-            floatActions.innerHTML = `
-              <button class="admin-icon-btn save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none;">💾</button>
-            `;
-          } else {
-            floatActions.style.display = 'flex';
-            floatActions.innerHTML = `
-              <button class="admin-icon-btn save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi">💾</button>
-              <button class="admin-icon-btn zalo-btn" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo">🔗</button>
-            `;
-          }
+          floatActions.style.display = 'none';
+          floatActions.innerHTML = ''; // Keep empty to avoid duplicate IDs
         }
+        // Gọi hàm cấu hình lại các nút Speed Dial hành động chi tiết
+        renderSpeedDialActions('detail', p);
       } else {
         if (mID) {
           mID.style.display = 'block';
@@ -4858,7 +5390,7 @@
                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
                       ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
                     </div>
-                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && p.original_row_data[39]) || p.raw_tieu_de_public || '')}</textarea>
+                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
                   </div>
 
                   <div class="admin-edit-group">
@@ -5000,9 +5532,12 @@
           </div>
         `;
       } else {
-        if (scta) scta.style.display = 'flex';
+        if (scta) scta.style.display = 'none';
         
-        const sortedImgs = [...p.imgs].sort((a, b) => {
+        const cleanImgs = (p.imgs || []).filter(url => {
+          return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
+        });
+        const sortedImgs = cleanImgs.sort((a, b) => {
           const aVis = (a.includes('facebook.com') || a.includes('fb.watch') || a.includes('fb.gg')) ? 1 : 0;
           const bVis = (b.includes('facebook.com') || b.includes('fb.watch') || b.includes('fb.gg')) ? 1 : 0;
           return bVis - aVis;
@@ -5049,6 +5584,28 @@
             </div>
           </div>
           <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
+          
+          <!-- KHUNG TƯƠNG TÁC PHẢN HỒI (US-059) -->
+          <div class="client-feedback-box">
+            <h4>🏡 Căn nhà này thế nào với anh/chị?</h4>
+            <div class="client-feedback-btns">
+              <button onclick="scheduleViewing('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-feedback-btn primary">
+                📅 Hẹn đi xem nhà
+              </button>
+              <button onclick="showRequirementForm('${p.id}')" class="client-feedback-btn secondary">
+                ✏️ Cần tìm căn khác, gửi lại nhu cầu
+              </button>
+            </div>
+            
+            <!-- Form ghi nhu cầu khác -->
+            <div id="clientReqForm_${p.id}" class="client-req-form" style="display: none;">
+              <p>Hãy chia sẻ mong muốn tìm nhà của anh/chị (Khu vực, tài chính, số phòng ngủ, hướng nhà...):</p>
+              <textarea id="clientReqText_${p.id}" class="client-req-textarea" placeholder="Ví dụ: Cần tìm nhà Quận 3 hoặc Phú Nhuận, hẻm xe hơi, giá tầm 10 tỷ..."></textarea>
+              <button onclick="submitClientRequirement('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-req-submit-btn">
+                🚀 Gửi nhu cầu cho Khang Ngô
+              </button>
+            </div>
+          </div>
         `;
         setupScrollCarousel('carouselClientDetail', sortedImgs, false);
       }
@@ -5080,12 +5637,25 @@
             mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
           }
 
-          const nImgs = p.imgs || [];
-          setupScrollCarousel('carouselNha', nImgs, false);
-
           const sImgs = [];
-          if (p.raw_sodo1) sImgs.push(p.raw_sodo1);
-          if (p.raw_sodo2) sImgs.push(p.raw_sodo2);
+          const s1 = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+          const s2 = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+          const s3 = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+          const s4 = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+          const s5 = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
+          if (s1) sImgs.push(s1);
+          if (s2) sImgs.push(s2);
+          if (s3) sImgs.push(s3);
+          if (s4) sImgs.push(s4);
+          if (s5) sImgs.push(s5);
+
+          const sodoUrls = sImgs.map(url => normalizeImgUrl(url));
+          const nImgs = (p.imgs || []).filter(url => {
+            const norm = normalizeImgUrl(url);
+            return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+          });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
           setupScrollCarousel('carouselSo', sImgs, true);
 
           // Sự kiện input reactive Live Preview (US-039.7)
@@ -5099,8 +5669,8 @@
             const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
             const floatActions = document.getElementById('adminDetailFloatActions');
 
-            // Append price to the preview title to match client detail style
-            const displayTieuDeVal = tieuDeVal ? (String(tieuDeVal).includes(p.gia + ' tỷ') ? tieuDeVal : `${tieuDeVal} ${p.gia} tỷ`) : '';
+            // Keep public title exact and without price appending
+            const displayTieuDeVal = tieuDeVal;
 
             // Update the preview carousel dynamically
             setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
@@ -5208,6 +5778,11 @@
       if (!fromPopState && history.state && history.state.detailOpen) {
         history.back();
       }
+
+      // Khôi phục lại các nút chính của danh sách rổ hàng trên Speed Dial
+      if (isAdmin) {
+        renderSpeedDialActions('list');
+      }
     }
     function bgC(e) { if (e.target === document.getElementById('ov')) closeS(false); }
 
@@ -5244,17 +5819,16 @@
           const systemId = house ? house.system_id : singleId;
           shareUrl = `${baseUrl}?s=${systemId}`;
         } else {
-          // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
-          const allIds = DATA.map(p => String(p.id));
-          let bits = '';
-          allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
-          // Pad to multiple of 6
-          while (bits.length % 6) bits += '0';
-          let encoded = '';
-          for (let i = 0; i < bits.length; i += 6) {
-            encoded += B64[parseInt(bits.substr(i, 6), 2)];
-          }
-          shareUrl = `${baseUrl}?b=${encoded}`;
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}`;
         }
 
         // Dùng Web Share API trên điện thoại
@@ -5328,17 +5902,16 @@
           const systemId = house ? house.system_id : singleId;
           shareUrl = `${baseUrl}?s=${systemId}&c=${encodeURIComponent(encodedName)}`;
         } else {
-          // Mã hoá bằng bitmask: mỗi căn = 1 bit, nén thành chuỗi ngắn
-          const allIds = DATA.map(p => String(p.id));
-          let bits = '';
-          allIds.forEach(id => bits += SELECTED_IDS.has(id) ? '1' : '0');
-          // Pad to multiple of 6
-          while (bits.length % 6) bits += '0';
-          let encodedBitmask = '';
-          for (let i = 0; i < bits.length; i += 6) {
-            encodedBitmask += B64[parseInt(bits.substr(i, 6), 2)];
-          }
-          shareUrl = `${baseUrl}?b=${encodedBitmask}&c=${encodeURIComponent(encodedName)}`;
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}&c=${encodeURIComponent(encodedName)}`;
         }
 
         // Đóng Modal
@@ -5366,39 +5939,151 @@
       }
     }
 
-    // Thêm nút tạo link nếu là admin
+    function executeGenerateQuickLink() {
+      if (SELECTED_IDS.size === 0) {
+        alert('Vui lòng chọn ít nhất 1 căn nhà để tạo link!');
+        return;
+      }
+      try {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const count = SELECTED_IDS.size;
+        let shareUrl = '';
+
+        if (count === 1) {
+          const singleId = [...SELECTED_IDS][0];
+          const house = DATA.find(p => String(p.id) === String(singleId));
+          const systemId = house ? house.system_id : singleId;
+          shareUrl = `${baseUrl}?s=${systemId}`;
+        } else {
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}`;
+        }
+
+        // Đóng Modal
+        document.getElementById('linkModal').classList.remove('open');
+
+        // Sao chép link vào clipboard
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        
+        alert(`Đã copy link Công Khai Nhanh thành công!\n(Gồm ${count} căn)\n\nKhách mở link này sẽ tự nhập Tên và Số điện thoại để mở khóa xem nhà.`);
+      } catch (e) {
+        alert('Có lỗi xảy ra: ' + e.message);
+      }
+    }
+
+    // Thêm Speed Dial Menu nếu là admin
     if (isAdmin) {
       document.body.insertAdjacentHTML('beforeend', `
-        <button class="selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
-        <button class="col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
-        <button class="share-btn-float" onclick="promptGenerateLink()">
-          🔗
-          <span class="share-count" id="shareCount">0</span>
-        </button>
+        <div class="admin-speed-dial" id="adminSpeedDial">
+          <button class="dial-main-btn" id="dialMainBtn" onclick="toggleSpeedDial()" title="Quản lý rổ hàng">⚙️</button>
+          <div class="dial-actions" id="dialActions">
+            <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+            <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+            <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+              🔗
+              <span class="share-count" id="shareCount">0</span>
+            </button>
+          </div>
+        </div>
       `);
     }
 
     function toggleSelectAll() {
       const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
       const visibleIds = visibleCards.map(c => c.dataset.pid);
-      const allSelected = visibleIds.every(id => SELECTED_IDS.has(id));
+      const allSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
 
-      visibleCards.forEach(c => {
-        const pid = c.dataset.pid;
-        const cb = c.querySelector('.card-sel');
-        if (allSelected) {
-          SELECTED_IDS.delete(pid);
-          if (cb) cb.checked = false;
-        } else {
-          SELECTED_IDS.add(pid);
+      if (allSelected || (visibleIds.length === 0 && SELECTED_IDS.size > 0)) {
+        // UNCHECK ALL: Clear everything globally
+        SELECTED_IDS.clear();
+        document.querySelectorAll('.card-sel').forEach(cb => cb.checked = false);
+      } else {
+        // CHECK ALL: Select all visible
+        visibleIds.forEach(id => SELECTED_IDS.add(id));
+        visibleCards.forEach(c => {
+          const cb = c.querySelector('.card-sel');
           if (cb) cb.checked = true;
-        }
-      });
+        });
+      }
       updateShareUI();
-      const btn = document.getElementById('selAllBtn');
-      btn.textContent = allSelected ? '☐' : '☑';
-      btn.classList.toggle('all-on', !allSelected);
       saveState();
+    }
+
+    function toggleSpeedDial() {
+      const mainBtn = document.getElementById('dialMainBtn');
+      const actions = document.getElementById('dialActions');
+      if (mainBtn && actions) {
+        const isOpen = actions.classList.toggle('open');
+        mainBtn.classList.toggle('active', isOpen);
+      }
+    }
+
+    document.addEventListener('click', function(event) {
+      const dial = document.getElementById('adminSpeedDial');
+      const actions = document.getElementById('dialActions');
+      const mainBtn = document.getElementById('dialMainBtn');
+      if (dial && actions && mainBtn && !dial.contains(event.target)) {
+        actions.classList.remove('open');
+        mainBtn.classList.remove('active');
+      }
+    });
+
+    let activeDetailListing = null;
+
+    function renderSpeedDialActions(mode, p = null) {
+      const actionsEl = document.getElementById('dialActions');
+      if (!actionsEl) return;
+
+      if (mode === 'detail' && p) {
+        activeDetailListing = p;
+        // Đóng menu nếu đang mở để người dùng chủ động mở rộng
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình chi tiết
+        if (p.isFromPoolOnly) {
+          actionsEl.innerHTML = `
+            <button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+          `;
+        } else {
+          actionsEl.innerHTML = `
+            <button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+            <button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>
+          `;
+        }
+      } else {
+        activeDetailListing = null;
+        // Đóng menu nếu đang mở
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình danh sách chính
+        actionsEl.innerHTML = `
+          <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+          <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+          <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+            🔗
+            <span class="share-count" id="shareCount">0</span>
+          </button>
+        `;
+        updateShareUI();
+      }
     }
 
     // Xử lý hỏi Zalo thông minh
@@ -5479,6 +6164,9 @@
       initGoogleAuth();
     }
 
+    // Hàng đợi lưu các resolver đang chờ token hợp lệ (US-061)
+    window.tokenResolvers = window.tokenResolvers || [];
+
     function initGoogleAuth() {
       let clientId = localStorage.getItem('gClientId');
       if (!clientId) {
@@ -5496,6 +6184,11 @@
             if (tokenResponse.error !== undefined) {
               console.error("OAuth2 error:", tokenResponse.error);
               showGoogleLoginButtonState(false);
+              
+              // Nếu đang có tác vụ chờ token (Save/Pull), hiển thị đăng nhập popup thay vì thất bại âm thầm
+              if (window.tokenResolvers && window.tokenResolvers.length > 0) {
+                promptInteractiveLogin();
+              }
               return;
             }
             const token = tokenResponse.access_token;
@@ -5506,9 +6199,20 @@
             showGoogleLoginButtonState(true);
             document.body.classList.remove('is-locked');
             secureLoadAttempted = false;
-            isSecureLoaded = false;
-            isDataLoaded = false;
-            loadData();
+            
+            // Xử lý và giải phóng các resolvers đang đợi token (US-061)
+            const resolvers = window.tokenResolvers || [];
+            window.tokenResolvers = [];
+            
+            if (resolvers.length > 0) {
+              console.log("Đã tự động gia hạn token ngầm thành công cho tác vụ đang chờ.");
+              resolvers.forEach(r => r.resolve(token));
+            } else {
+              // Chỉ reload dữ liệu nếu không có tác vụ nào đang đợi token ghi sheets (tránh reset form admin)
+              isSecureLoaded = false;
+              isDataLoaded = false;
+              loadData();
+            }
           }
         });
         console.log("Google Auth GSI Client initialized successfully.");
@@ -5597,7 +6301,100 @@
       }
     }
 
-    function fetchFacadeImages(token) {
+    // Kiểm tra thời hạn token, làm mới ngầm hoặc hỏi popup đăng nhập lại nếu mất phiên (US-061)
+    window.ensureValidGoogleToken = function() {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem('g_access_token');
+        const expiry = localStorage.getItem('g_token_expiry');
+        const now = Date.now();
+
+        // Nếu token còn hạn trên 5 phút, trả về ngay lập tức
+        if (token && expiry && parseInt(expiry, 10) > now + 300 * 1000) {
+          return resolve(token);
+        }
+
+        window.tokenResolvers = window.tokenResolvers || [];
+        window.tokenResolvers.push({ resolve, reject });
+
+        // Nếu đã có một tiến trình refresh token đang chạy, chỉ cần đợi callback
+        if (window.tokenResolvers.length > 1) {
+          return;
+        }
+
+        const clientId = localStorage.getItem('gClientId');
+        if (!clientId) {
+          window.tokenResolvers = [];
+          reject(new Error("Chưa cấu hình Google Client ID trong Bộ lọc!"));
+          return;
+        }
+
+        if (!gTokenClient) {
+          initGoogleAuth();
+        }
+
+        if (gTokenClient) {
+          console.log("Token đã hết hạn hoặc sắp hết hạn. Đang tự động làm mới ngầm...");
+          try {
+            gTokenClient.requestAccessToken({ prompt: 'none' }); // Silent refresh
+          } catch (e) {
+            console.warn("Silent refresh failed synchronously, calling fallback:", e);
+            promptInteractiveLogin();
+          }
+        } else {
+          window.tokenResolvers = [];
+          reject(new Error("Không thể khởi tạo client xác thực Google!"));
+        }
+      });
+    };
+
+    function promptInteractiveLogin() {
+      if (confirm("Phiên đăng nhập Google đã hết hiệu lực. Nhấp OK để liên kết lại tài khoản Gmail và tự động hoàn thành lưu dữ liệu!")) {
+        try {
+          gTokenClient.requestAccessToken(); // Mở popup đăng nhập tương tác
+        } catch (e) {
+          console.error("Interactive login request failed:", e);
+          const resolvers = window.tokenResolvers || [];
+          window.tokenResolvers = [];
+          resolvers.forEach(r => r.reject(e));
+        }
+      } else {
+        const resolvers = window.tokenResolvers || [];
+        window.tokenResolvers = [];
+        resolvers.forEach(r => r.reject(new Error("Người dùng từ chối đăng nhập lại")));
+      }
+    }
+
+    // Thiết lập timer chạy ngầm kiểm tra và làm mới token ngầm định kỳ (US-061)
+    setInterval(() => {
+      if (!isAdmin) return;
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (token && expiry) {
+        const timeRemaining = parseInt(expiry, 10) - now;
+        // Nếu token sắp hết hạn trong dưới 15 phút, kích hoạt silent refresh ngầm
+        if (timeRemaining > 0 && timeRemaining < 15 * 60 * 1000) {
+          console.log("Token sắp hết hạn trong", Math.round(timeRemaining / 1000), "giây. Đang làm mới ngầm định kỳ...");
+          if (gTokenClient) {
+            try {
+              gTokenClient.requestAccessToken({ prompt: 'none' });
+            } catch (e) {
+              console.warn("Background silent refresh failed:", e);
+            }
+          }
+        }
+      }
+    }, 5 * 60 * 1000); // Kiểm tra mỗi 5 phút
+
+    async function fetchFacadeImages() {
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        console.warn("Could not retrieve valid Google token for background facade images:", err);
+        return;
+      }
       if (!token) return;
       const url = `/api/get-facade-images`;
 
@@ -5769,13 +6566,27 @@
       const norm = normalizeImgUrl(url);
       if (norm === '') return false;
       
+      // 1. Nhận diện theo mẫu tên file Cloudinary được uploader tạo ra (cực kỳ tối ưu và nhanh)
+      const urlLower = String(url).toLowerCase();
+      if (urlLower.includes('/sodo1_') || urlLower.includes('/sodo2_') || 
+          urlLower.includes('/sodo3_') || urlLower.includes('/sodo4_') || urlLower.includes('/sodo5_')) {
+        return true;
+      }
+
+      // 2. Lấy 5 giá trị sodo hiện có của căn nhà
       const sodo1Val = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
       const sodo2Val = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
-      
+      const sodo3Val = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+      const sodo4Val = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+      const sodo5Val = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
+
       const normS1 = normalizeImgUrl(sodo1Val);
       const normS2 = normalizeImgUrl(sodo2Val);
-      
-      if (norm === normS1 || norm === normS2) {
+      const normS3 = normalizeImgUrl(sodo3Val);
+      const normS4 = normalizeImgUrl(sodo4Val);
+      const normS5 = normalizeImgUrl(sodo5Val);
+
+      if (norm === normS1 || norm === normS2 || norm === normS3 || norm === normS4 || norm === normS5) {
         return true;
       }
       return false;
@@ -5789,6 +6600,15 @@
       
       const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
       if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+
+      const sodo3Url = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+      if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
+
+      const sodo4Url = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+      if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
+
+      const sodo5Url = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
+      if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
       
       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
       if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
@@ -5803,19 +6623,13 @@
         if (url) cards.push({ type: "alley", index: i, url: url });
       }
 
-      const normS1 = normalizeImgUrl(sodo1Url);
-      const normS2 = normalizeImgUrl(sodo2Url);
-      
       const isSodoUrl = (url) => {
-        if (!url) return false;
-        const norm = normalizeImgUrl(url);
-        if (norm === '') return false;
-        return norm === normS1 || norm === normS2;
+        return window.isListingSodoUrl(url, p);
       };
 
       // Priority duplicate filtering:
       // - Original slots (interior 2-15, alley 1-10) take absolute priority.
-      // - Role slots (interior 1 (cover), sodo 1, sodo 2, facade 0) are evaluated last.
+      // - Role slots (interior 1 (cover), sodo 1-5, facade 0) are evaluated last.
       // If a role slot has the same URL as an already rendered slot, it is hidden.
       const priorityList = [
         ...cards.filter(c => (c.type === 'interior' && c.index > 1) || c.type === 'alley'),
@@ -5860,6 +6674,11 @@
             <button type="button" id="toolSodoBtn" onclick="selectImageEditorTool('sodo')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
               🔒 Sổ
             </button>
+            ${!p.isFromPoolOnly ? `
+            <button type="button" id="toolUncheckAllBtn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.2); border: 1px solid var(--red); color: var(--red); padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              ✕ Bỏ All
+            </button>
+            ` : ''}
             <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center; flex: 0.8;">
               ✕ Hủy
             </button>
@@ -5871,28 +6690,24 @@
           <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
       `;
 
-      cards.forEach(c => {
-        if (c.shouldRender) {
-          html += renderImageCardForEdit(c.type, c.index, c.url, p);
-        }
-      });
-
       // Recover current selected public interior/alley indices
-      let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+      let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || '');
       let currentPublicCover = '';
-      if (p.isFromPoolOnly && p.pool_row_data) {
-        currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
-      } else if (p.imgs && p.imgs.length > 0) {
-        currentPublicCover = p.imgs[0]; // First public image
+      if (!p.isFromPoolOnly) {
+        if (p.pool_row_data) {
+          currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
+        } else if (p.imgs && p.imgs.length > 0) {
+          currentPublicCover = p.imgs[0]; // First public image
+        }
       }
       
       let currentInteriorIndices = '';
       let currentAlleyIndices = '';
 
-      if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+      if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
         currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
         currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
-      } else if (p.pool_row_data) {
+      } else if (!p.isFromPoolOnly && p.pool_row_data) {
         // Fallback for legacy listings without saved indices: reconstruct from Source URLs
         const cleanPublicImages = [];
         if (p.original_row_data) {
@@ -5927,7 +6742,7 @@
           }
         }
         currentAlleyIndices = alleyIndices.join(',');
-      } else {
+      } else if (!p.isFromPoolOnly) {
         const intIndices = [];
         if (p.imgs) {
           p.imgs.forEach((url, idx) => {
@@ -5937,6 +6752,56 @@
         currentInteriorIndices = intIndices.join(',');
       }
 
+      // Sort cards: Sổ (1) -> Mặt tiền (2) -> Nền (3) -> Public Checked (4) -> Unchecked (5)
+      const renderedCards = cards.filter(c => c.shouldRender);
+      
+      const getCardSortWeight = (c) => {
+        const normUrl = normalizeImgUrl(c.url);
+        if (!normUrl) return 99;
+
+        // 1. Sổ
+        if (isSodoUrl(c.url)) return 1;
+
+        // 2. Mặt tiền
+        const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+        if (targetMatTien && normUrl === normalizeImgUrl(targetMatTien)) return 2;
+
+        // 3. Nền
+        let targetNen = '';
+        if (!p.isFromPoolOnly) {
+          if (p.pool_row_data) {
+            targetNen = p.pool_row_data[40] || '';
+          } else if (p.original_row_data) {
+            targetNen = p.original_row_data[20] || '';
+          } else if (p.imgs && p.imgs.length > 0) {
+            targetNen = p.imgs[0] || '';
+          }
+        }
+        if (targetNen && normUrl === normalizeImgUrl(targetNen)) return 3;
+
+        // 4. Các hình chọn public khác
+        let isPublic = false;
+        if (!p.isFromPoolOnly) {
+          if (c.type === "interior") {
+            const indices = currentInteriorIndices.split(',').map(s => s.trim());
+            isPublic = indices.includes(String(c.index));
+          } else if (c.type === "alley") {
+            const indices = currentAlleyIndices.split(',').map(s => s.trim());
+            isPublic = indices.includes(String(c.index));
+          }
+        }
+        if (isPublic) return 4;
+
+        // 5. Các hình còn lại
+        return 5;
+      };
+
+      renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+
+      renderedCards.forEach(c => {
+        html += renderImageCardForEdit(c.type, c.index, c.url, p);
+      });
+
       html += `
           </div>
           <!-- Hidden Inputs to hold current selections -->
@@ -5944,8 +6809,8 @@
           <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
           <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
           <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
-          <input type="hidden" id="editSodo1Url" value="${p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || '')}">
-          <input type="hidden" id="editSodo2Url" value="${p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || '')}">
+          <input type="hidden" id="editSodo1Url" value="${p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || ''))}">
+          <input type="hidden" id="editSodo2Url" value="${p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || ''))}">
         </div>
       `;
 
@@ -5956,27 +6821,35 @@
       const normUrl = normalizeImgUrl(url);
       
       let isMatTien = false;
-      const targetMatTien = p.isFromPoolOnly && p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
+      const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
       isMatTien = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
 
       let isAnhNen = false;
       let targetNen = '';
-      if (p.isFromPoolOnly && p.pool_row_data) {
-        targetNen = p.pool_row_data[40] || '';
-      } else if (p.original_row_data) {
-        targetNen = p.original_row_data[20] || '';
-      } else if (p.imgs && p.imgs.length > 0) {
-        targetNen = p.imgs[0] || '';
+      if (!p.isFromPoolOnly) {
+        if (p.pool_row_data) {
+          targetNen = p.pool_row_data[40] || '';
+        } else if (p.original_row_data) {
+          targetNen = p.original_row_data[20] || '';
+        } else if (p.imgs && p.imgs.length > 0) {
+          targetNen = p.imgs[0] || '';
+        }
       }
       isAnhNen = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
 
-      // Check if this image is Sổ 1 or Sổ 2
-      let sodo1Val = document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '';
-      let sodo2Val = document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '';
+      // Check if this image is Sổ 1 to Sổ 5
+      let sodo1Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '');
+      let sodo2Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '');
+      let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3) || '');
+      let sodo4Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4) || '');
+      let sodo5Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5) || '');
       
       let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
       let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
-      let isSodo = isSodo1 || isSodo2;
+      let isSodo3 = normUrl !== '' && normUrl === normalizeImgUrl(sodo3Val);
+      let isSodo4 = normUrl !== '' && normUrl === normalizeImgUrl(sodo4Val);
+      let isSodo5 = normUrl !== '' && normUrl === normalizeImgUrl(sodo5Val);
+      let isSodo = isSodo1 || isSodo2 || isSodo3 || isSodo4 || isSodo5;
       
       if (isSodo) {
         isAnhNen = false;
@@ -5984,7 +6857,9 @@
       }
 
       let isPublic = false;
-      if (type === "facade" || type === "sodo") {
+      if (p.isFromPoolOnly) {
+        isPublic = false;
+      } else if (type === "facade" || type === "sodo") {
         isPublic = false; // Mặt tiền thô và ảnh sổ không hiển thị trong carousel công khai mặc định
       } else if (type === "interior") {
         if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
@@ -6046,12 +6921,11 @@
             ${isAnhNen && !isMatTien && !isSodo ? `
               <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Nền</span>
             ` : ''}
-            ${isSodo1 ? `
-              <span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 1</span>
-            ` : ''}
-            ${isSodo2 ? `
-              <span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 2</span>
-            ` : ''}
+            ${isSodo1 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 1</span>` : ''}
+            ${isSodo2 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 2</span>` : ''}
+            ${isSodo3 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 3</span>` : ''}
+            ${isSodo4 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 4</span>` : ''}
+            ${isSodo5 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 5</span>` : ''}
             ${type !== "facade" && type !== "sodo" ? `
               <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; background: rgba(0,0,0,0.65); padding: 4px; border-radius: 6px; cursor: pointer; margin: 0; z-index: 10; line-height: 0;">
                 <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="window.toggleImagePublic(this)" 
@@ -6133,6 +7007,60 @@
       }
     };
 
+    window.sortCurationImageGrid = function() {
+      const grid = document.getElementById('imageEditorGrid');
+      if (!grid) return;
+
+      // Save scroll positions of all scrollable ancestors
+      const scrollStates = [];
+      let parent = grid.parentElement;
+      while (parent) {
+        scrollStates.push({
+          element: parent,
+          scrollTop: parent.scrollTop,
+          scrollLeft: parent.scrollLeft
+        });
+        parent = parent.parentElement;
+      }
+      const windowScrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowScrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+      // Track active element to prevent auto-scrolling on re-focus
+      const activeEl = document.activeElement;
+      const activeIsInside = grid.contains(activeEl);
+
+      const cards = Array.from(grid.querySelectorAll('.edit-img-card'));
+
+      const getCardWeight = (card) => {
+        if (card.classList.contains('is-sodo')) return 1;
+        if (card.classList.contains('is-mattien')) return 2;
+        if (card.classList.contains('is-anhnen')) return 3;
+        if (card.classList.contains('is-public')) return 4;
+        return 5;
+      };
+
+      cards.sort((a, b) => getCardWeight(a) - getCardWeight(b));
+
+      // Temporarily blur active element inside grid to block browser auto-scroll-to-focus
+      if (activeIsInside && activeEl && typeof activeEl.blur === 'function') {
+        activeEl.blur();
+      }
+
+      cards.forEach(card => grid.appendChild(card));
+
+      // Restore active element focus without scrolling
+      if (activeIsInside && activeEl && typeof activeEl.focus === 'function') {
+        activeEl.focus({ preventScroll: true });
+      }
+
+      // Restore all ancestor scroll positions
+      scrollStates.forEach(state => {
+        state.element.scrollTop = state.scrollTop;
+        state.element.scrollLeft = state.scrollLeft;
+      });
+      window.scrollTo(windowScrollLeft, windowScrollTop);
+    };
+
     window.setImageAsMatTien = function(event, card) {
       if (event) event.stopPropagation();
       const url = card.dataset.url;
@@ -6158,10 +7086,18 @@
       const star = card.querySelector('.cover-star-badge');
       if (star) star.remove();
 
+      // Auto-uncheck "Hiện" checkbox for facade image
+      const cb = card.querySelector('.edit-img-pub-cb');
+      if (cb && cb.checked) {
+        cb.checked = false;
+        window.toggleImagePublic(cb);
+      }
+
       document.getElementById('editCoverImgUrl').value = url;
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
+      window.sortCurationImageGrid();
     };
 
     window.setImageAsAnhNen = function(event, card) {
@@ -6195,6 +7131,7 @@
         cb.checked = true;
         window.toggleImagePublic(cb);
       }
+      window.sortCurationImageGrid();
     };
 
     window.setImageAsSodo = function(event, card) {
@@ -6276,6 +7213,7 @@
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
+      window.sortCurationImageGrid();
     };
 
     window.toggleImagePublic = function(cb) {
@@ -6313,6 +7251,47 @@
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
+      window.sortCurationImageGrid();
+    };
+
+    window.uncheckAllCurationImages = function() {
+      const agree = confirm("Bạn có đồng ý xóa hết tất cả các hình đã chọn (bao gồm hình mặt tiền, hình sổ, hình nền và các hình public) để chọn lại từ đầu không?");
+      if (!agree) return;
+
+      const coverInput = document.getElementById('editCoverImgUrl');
+      const publicCoverInput = document.getElementById('editPublicCoverUrl');
+      const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
+      const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+      const sodo1Input = document.getElementById('editSodo1Url');
+      const sodo2Input = document.getElementById('editSodo2Url');
+
+      if (coverInput) coverInput.value = '';
+      if (publicCoverInput) publicCoverInput.value = '';
+      if (publicInteriorInput) publicInteriorInput.value = '';
+      if (publicAlleyInput) publicAlleyInput.value = '';
+      if (sodo1Input) sodo1Input.value = '';
+      if (sodo2Input) sodo2Input.value = '';
+
+      document.querySelectorAll('.edit-img-card').forEach(card => {
+        card.classList.remove('is-mattien', 'is-anhnen', 'is-sodo', 'is-sodo1', 'is-sodo2', 'is-sodo3', 'is-sodo4', 'is-sodo5', 'is-public');
+        card.style.borderColor = 'transparent';
+
+        const badges = card.querySelectorAll('.mattien-lock-badge, .cover-star-badge, .sodo-badge');
+        badges.forEach(b => b.remove());
+
+        const cb = card.querySelector('.edit-img-pub-cb');
+        if (cb) cb.checked = false;
+      });
+
+      if (typeof window.selectImageEditorTool === 'function') {
+        window.selectImageEditorTool('none');
+      }
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+
+      showToast("Đã bỏ chọn toàn bộ hình ảnh!", "success");
+      window.sortCurationImageGrid();
     };
 
     window.openPoolS = function(systemId) {
@@ -6512,12 +7491,11 @@
     };
 
     async function executePullFromPool(systemId, id, soNha, duong, btnElement) {
-      const token = localStorage.getItem('g_access_token');
-      const expiry = localStorage.getItem('g_token_expiry');
-      const now = Date.now();
-      
-      if (!token || !expiry || parseInt(expiry, 10) <= now) {
-        alert("Phiên đăng nhập Google đã hết hạn hoặc chưa liên kết Gmail. Vui lòng bấm 'Đăng nhập / Liên kết Gmail' trước!");
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        alert("Không thể xác thực Google. Lên sóng thất bại: " + err.message);
         return;
       }
       
@@ -6698,8 +7676,8 @@
           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
           cuPhap,                        // 1: Cu_phap (Cột B)
           "",                            // 2: Note (Cột C)
-          matchedRow[54],                // 3: id (Cột D)
-          matchedRow[55],                // 4: tieu_de (Cột E)
+          matchedRow[55],                // 3: id (Cột D)
+          matchedRow[56],                // 4: tieu_de (Cột E)
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
@@ -6708,13 +7686,13 @@
           matchedRow[4],                 // 10: phuong (Cột K)
           loaiHinh,                      // 11: loai_hinh (Cột L)
           matchedRow[17],                // 12: huong_nha (Cột M)
-          matchedRow[58],                // 13: duong_truoc_nha (Cột N)
-          matchedRow[59],                // 14: do_rong_hem (Cột O)
-          matchedRow[60],                // 15: tinh_trang_nha (Cột P)
-          matchedRow[66],                // 16: danh_gia (Cột Q)
-          matchedRow[67],                // 17: ngu_tang_tret (Cột R)
-          matchedRow[68],                // 18: chdv (Cột S)
-          matchedRow[56],                // 19: mo_ta (Cột T)
+          matchedRow[59],                // 13: duong_truoc_nha (Cột N)
+          matchedRow[60],                // 14: do_rong_hem (Cột O)
+          matchedRow[61],                // 15: tinh_trang_nha (Cột P)
+          matchedRow[67],                // 16: danh_gia (Cột Q)
+          matchedRow[68],                // 17: ngu_tang_tret (Cột R)
+          matchedRow[69],                // 18: chdv (Cột S)
+          matchedRow[57],                // 19: mo_ta (Cột T)
           finalImages[0],                // 20: anh_1 (Cột U)
           finalImages[1],                // 21: anh_2 (Cột V)
           finalImages[2],                // 22: anh_3 (Cột W)
@@ -6726,9 +7704,9 @@
           finalImages[8],                // 28: anh_9 (Cột AC)
           finalImages[9],                // 29: anh_10 (Cột AD)
           new Date().toISOString(),      // 30: Last updated (Cột AE)
-          matchedRow[65],                // 31: phuong_cu (Cột AF)
-          matchedRow[63],                // 32: so_pn (Cột AG)
-          matchedRow[64],                // 33: so_wc (Cột AH)
+          matchedRow[66],                // 31: phuong_cu (Cột AF)
+          matchedRow[64],                // 32: so_pn (Cột AG)
+          matchedRow[65],                // 33: so_wc (Cột AH)
           matchedRow[5],                 // 34: ten_duong (Cột AI)
           "",                            // 35: gio_dang (Cột AJ)
           "",                            // 36: trang_thai (Cột AK)
@@ -6769,7 +7747,7 @@
           console.warn("Không thể ghi nhận Last Sync vào Pool:", e);
         }
         
-        alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[54]} (${matchedRow[55]})!`);
+        alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[55]} (${matchedRow[56]})!`);
         
         // Reset ô tìm kiếm Pool trong Bộ lọc
         const pullInput = document.getElementById('poolSearchToolInput');
@@ -6804,6 +7782,16 @@
       const colFloatBtn = document.getElementById('colFloatBtn');
       if (colFloatBtn) {
         colFloatBtn.style.display = SELECTED_IDS.size > 0 ? 'flex' : 'none';
+      }
+
+      // Cập nhật trạng thái nút Chọn tất cả (☐/☑) dựa trên các căn đang hiển thị
+      const btn = document.getElementById('selAllBtn');
+      if (btn) {
+        const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+        const visibleIds = visibleCards.map(c => c.dataset.pid);
+        const isNowAllSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
+        btn.textContent = isNowAllSelected ? '☑' : '☐';
+        btn.classList.toggle('all-on', isNowAllSelected);
       }
     }
 
@@ -7370,12 +8358,11 @@
         return;
       }
 
-      const token = localStorage.getItem('g_access_token');
-      const expiry = localStorage.getItem('g_token_expiry');
-      const now = Date.now();
-
-      if (!token || !expiry || parseInt(expiry, 10) <= now) {
-        showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
         return;
       }
 
@@ -7550,7 +8537,9 @@
         p.original_row_data[30] = new Date().toISOString();
         p.original_row_data[32] = soPn || '-';
         p.original_row_data[33] = soWc || '-';
-        p.original_row_data[39] = tieuDeBds;
+        p.original_row_data[4] = tieuDeBds;
+        p.t = tieuDeBds;
+        p.original_row_data[39] = "";
 
         p.note = note;
         p.huong = huong;
@@ -7682,12 +8671,11 @@
     };
 
     window.saveNewListingFromPool = async function(systemId, btnElement) {
-      const token = localStorage.getItem('g_access_token');
-      const expiry = localStorage.getItem('g_token_expiry');
-      const now = Date.now();
-      
-      if (!token || !expiry || parseInt(expiry, 10) <= now) {
-        showToast("Phiên đăng nhập Google đã hết hạn. Vui lòng liên kết lại Gmail!", "error");
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
         return;
       }
       
@@ -7889,7 +8877,7 @@
           cuPhap,                        // 1: Cu_phap (Cột B)
           note,                          // 2: Note (Cột C)
           maKhangNgo,                    // 3: id (Cột D)
-          tieuDeBds || matchedRow[55],   // 4: tieu_de (Cột E)
+          tieuDeBds || matchedRow[56],   // 4: tieu_de (Cột E)
           matchedRow[13],                // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
@@ -7916,7 +8904,7 @@
           finalImages[8],                // 28: anh_9 (Cột AC)
           finalImages[9],                // 29: anh_10 (Cột AD)
           new Date().toISOString(),      // 30: Last updated (Cột AE)
-          matchedRow[65],                // 31: phuong_cu (Cột AF)
+          matchedRow[66],                // 31: phuong_cu (Cột AF)
           soPn || '-',                   // 32: so_pn (Cột AG)
           soWc || '-',                   // 33: so_wc (Cột AH)
           matchedRow[5],                 // 34: ten_duong (Cột AI)
@@ -7924,7 +8912,7 @@
           "",                            // 36: trang_thai (Cột AK)
           sysIdMatched,                  // 37: System ID (Cột AL)
           finalCoverUrl,                 // 38: Hình Mặt Tiền (Cột AM)
-          tieuDeBds,                     // 39: Tiêu đề BDS (Cột AN)
+          "",                            // 39: Tiêu đề BDS (Cột AN)
           false                          // 40: Đăng BDS (Cột AO)
         ];
         
@@ -8035,6 +9023,121 @@
           btnElement.innerHTML = oldText;
         }
       }
+    };
+
+    window.submitLeadCapture = function() {
+      const nameInput = document.getElementById('leadCustName');
+      const phoneInput = document.getElementById('leadCustPhone');
+      const name = nameInput ? nameInput.value.trim() : "";
+      let phone = phoneInput ? phoneInput.value.trim() : "";
+      
+      if (!name) {
+        alert("Vui lòng nhập Tên của anh/chị!");
+        if (nameInput) nameInput.focus();
+        return;
+      }
+      if (!phone) {
+        alert("Vui lòng nhập Số điện thoại liên hệ!");
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+      
+      const phoneClean = phone.replace(/[\s\.-]/g, "");
+      if (!/^(0\d{9}|[1-9]\d{8})$/.test(phoneClean)) {
+        alert("Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại di động Việt Nam gồm 10 chữ số.");
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+      
+      phone = formatPhone(phoneClean);
+      localStorage.setItem('client_name', name);
+      localStorage.setItem('client_phone', phone);
+      
+      displayCustomerName = name;
+      trackingCustomerName = `${name} - ${phone}`;
+      
+      const leadModal = document.getElementById('leadCaptureModal');
+      if (leadModal) {
+        leadModal.style.display = 'none';
+        leadModal.classList.remove('open');
+      }
+      
+      const banner = document.getElementById('welcomeBanner');
+      if (banner) {
+        banner.innerHTML = `👋 Xin chào <b>${displayCustomerName}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;
+        banner.style.display = 'block';
+      }
+      
+      trackAction("Khách tự đăng ký", `Tên: ${name} - SĐT: ${phone}`);
+      if (DATA.length > 0) {
+        trackAction("Mở danh sách nhà", `Số lượng hiển thị: ${DATA.length} căn`);
+      }
+    };
+
+    window.scheduleViewing = function(id, title) {
+      trackAction("Hẹn lịch xem nhà", `Mã căn: #${id} - ${title}`);
+      const name = localStorage.getItem('client_name') || displayCustomerName || "Khách hàng";
+      const phone = localStorage.getItem('client_phone') || "";
+      const phoneStr = phone ? ` (SĐT: ${phone})` : "";
+      const msg = `Chào anh Khang Ngô, tôi là ${name}${phoneStr}. Tôi quan tâm căn nhà mã #${id}: ${title}. Tôi muốn hẹn lịch đi xem nhà thực tế nhé!`;
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã copy tin nhắn đặt lịch! Anh/chị hãy dán (Paste) gửi qua Zalo sắp mở ra nhé.');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
+    };
+
+    window.showRequirementForm = function(id) {
+      const form = document.getElementById(`clientReqForm_${id}`);
+      if (form) {
+        const isHidden = form.style.display === 'none';
+        form.style.display = isHidden ? 'block' : 'none';
+        trackAction("Mở form nhu cầu khác", `Mã căn: #${id}`);
+        if (isHidden) {
+          setTimeout(() => {
+            const textarea = document.getElementById(`clientReqText_${id}`);
+            if (textarea) textarea.focus();
+          }, 100);
+        }
+      }
+    };
+
+    window.submitClientRequirement = function(id, title) {
+      const textEl = document.getElementById(`clientReqText_${id}`);
+      if (!textEl) return;
+      const reqText = textEl.value.trim();
+      if (!reqText) {
+        alert("Vui lòng ghi lại nhu cầu tìm nhà của anh/chị!");
+        textEl.focus();
+        return;
+      }
+      
+      trackAction("Gửi nhu cầu khác", `Xem căn #${id} chưa phù hợp. Nhu cầu: ${reqText}`);
+      const name = localStorage.getItem('client_name') || displayCustomerName || "Khách hàng";
+      const phone = localStorage.getItem('client_phone') || "";
+      const phoneStr = phone ? ` (SĐT: ${phone})` : "";
+      const msg = `Chào anh Khang Ngô, tôi là ${name}${phoneStr}. Tôi xem căn #${id} chưa phù hợp. Nhu cầu thực tế của tôi là: ${reqText}. Anh tìm giúp tôi căn phù hợp nhé!`;
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã ghi nhận nhu cầu! Lời nhắn đã được copy, anh/chị hãy dán (Paste) gửi qua Zalo cho Khang nhé.');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
+      
+      textEl.value = "";
+      const form = document.getElementById(`clientReqForm_${id}`);
+      if (form) form.style.display = 'none';
     };
 
     // Khởi động
