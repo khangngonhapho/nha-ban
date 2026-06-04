@@ -20,6 +20,7 @@ import threading
 from datetime import datetime
 import requests
 import hashlib
+import crawl_pipeline
 from flask import Flask, jsonify, request, Response
 
 def safe_str(val):
@@ -494,7 +495,6 @@ def get_google_access_token(creds):
 # ==================================================
 # KHỞI CHẠY TIẾN TRÌNH CÀO (BACKGROUND THREAD - PACKAGED READY)
 # ==================================================
-import crawl_pipeline
 
 ACTIVE_CRAWLER_THREAD = None
 ACTIVE_CRAWLER_LOCK = threading.Lock()
@@ -1507,7 +1507,6 @@ def save_cookie_endpoint():
         
     try:
         # Ngắt tiến trình cào cũ ngay lập tức bằng cách kích hoạt cờ dừng
-        import crawl_pipeline
         crawl_pipeline.STOP_REQUESTED = True
         
         # Ghi cookie mới vào file COOKIE_FILE
@@ -2138,7 +2137,6 @@ def recrawl_single_listing(tk_id):
             return jsonify({"status": "error", "message": "Không tìm thấy nội dung chi tiết căn nhà trên trang Thiên Khôi. Vui lòng cập nhật lại Cookie."}), 400
             
         # Bóc tách DOM bằng helper của crawl_pipeline
-        import crawl_pipeline
         
         ma_hang_scraped = crawl_pipeline.get_val_by_label(soup_detail, "mã hàng") or tk_id
         
@@ -2636,7 +2634,6 @@ def bulk_publish_listings():
 if __name__ == '__main__':
     # Tự động khởi tạo hoặc thực hiện di cư (migration) cột database SQLite cũ
     try:
-        import crawl_pipeline
         crawl_pipeline.init_db()
     except Exception as e:
         add_log_message(f"[⚠️ WARNING] Không thể khởi tạo database: {str(e)}")
