@@ -6666,7 +6666,7 @@
       });
 
       let html = `
-        <div class="admin-edit-group" style="margin-top: 10px;">
+        <div class="admin-edit-group" id="imageEditorCurationGroup" style="margin-top: 10px;">
           <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CỌ SƠN CHỌN NHANH 🎨)</label>
           
           <!-- LOCAL IMAGE UPLOADER (US-053) -->
@@ -7444,7 +7444,7 @@
       if (progressDiv) progressDiv.style.display = "none";
       if (uploadLocalBtn) uploadLocalBtn.disabled = false;
 
-      const editGroup = document.querySelector(".admin-edit-group");
+      const editGroup = document.getElementById("imageEditorCurationGroup");
       if (editGroup) {
         const parent = editGroup.parentNode;
         const tempDiv = document.createElement("div");
