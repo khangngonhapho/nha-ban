@@ -82,8 +82,10 @@ POOL_HEADERS = [
 "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)",
 "Duyệt Public", "Trạng thái Public", "System ID", "Link Gốc",
 "Điện thoại Đầu Chủ", "Tên Đầu Chủ (Hợp đồng)", "Điểm Facebook",
+"Last Crawl", "Last Sync", "Mã TK Mới",
 "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
-"Last Crawl", "Last Sync"
+"Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20",
+"Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25"
 ]
 
 # ==========================================

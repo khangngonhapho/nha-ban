@@ -1874,6 +1874,9 @@ def handle_listing_detail(tk_id):
             "Hình Mặt Tiền": data.get("hinh_mat_tien"),
             "Sơ đồ thửa đất 1": data.get("so_do_1"),
             "Sơ đồ thửa đất 2": data.get("so_do_2"),
+            "Sơ đồ thửa đất 3": data.get("so_do_3"),
+            "Sơ đồ thửa đất 4": data.get("so_do_4"),
+            "Sơ đồ thửa đất 5": data.get("so_do_5"),
             "Ảnh Public (VD: 1,3,5)": data.get("anh_public_vd_1_3_5"),
             "Ảnh Hẻm Public (VD: 1,2)": data.get("anh_hem_public_vd_1_2")
         }
@@ -1884,9 +1887,9 @@ def handle_listing_detail(tk_id):
             col_name = f"Hình Hẻm {i+1}"
             fields_to_update[col_name] = hem_imgs[i] if i < len(hem_imgs) else ""
             
-        # Cập nhật các cột Ảnh 1-15
+        # Cập nhật các cột Ảnh 1-25
         public_imgs = data.get("public_imgs", [])
-        for i in range(15):
+        for i in range(25):
             col_name = f"Ảnh {i+1}"
             fields_to_update[col_name] = public_imgs[i] if i < len(public_imgs) else ""
             
@@ -2285,8 +2288,10 @@ POOL_HEADERS = [
     "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)",
     "Duyệt Public", "Trạng thái Public", "System ID", "Link Gốc",
     "Điện thoại Đầu Chủ", "Tên đầu chủ (BX)", "Điểm Facebook",
+    "Last Crawl", "Last Sync", "Mã TK Mới",
     "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
-    "Last Crawl", "Last Sync"
+    "Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20",
+    "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25"
 ]
 
 def get_table_end_row_index(sheet_id, creds):
@@ -2459,6 +2464,8 @@ def execute_publish_listing(tk_id):
             "Hình Hẻm 6", "Hình Hẻm 7", "Hình Hẻm 8", "Hình Hẻm 9", "Hình Hẻm 10",
             "Ảnh 1", "Ảnh 2", "Ảnh 3", "Ảnh 4", "Ảnh 5", "Ảnh 6", "Ảnh 7", "Ảnh 8",
             "Ảnh 9", "Ảnh 10", "Ảnh 11", "Ảnh 12", "Ảnh 13", "Ảnh 14", "Ảnh 15",
+            "Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20", 
+            "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25",
             "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
             "Last Crawl",
             "Mã Khang Ngô (ID)"
