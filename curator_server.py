@@ -435,12 +435,53 @@ def trim_tieu_de_bds(tieu_de):
 # ==================================================
 # GOOGLE CLOUD SERVICE ACCOUNT CONNECTIVITY (DRIVE & SHEETS)
 # ==================================================
+LAST_CREDENTIALS_WARNING_TIME = 0
+
 def get_google_credentials():
     """Tạo credentials từ credentials.json nếu tồn tại (Hỗ trợ định vị đa cấp US-043)"""
+    global LAST_CREDENTIALS_WARNING_TIME
+    
+    # Định nghĩa cache ở Home Directory (Tránh bị xóa bởi git clean hoặc lỗi drive ảo)
+    home_dir = os.path.expanduser("~")
+    bds_home_dir = os.path.join(home_dir, ".bds_khangngo")
+    home_credentials_path = os.path.abspath(os.path.join(bds_home_dir, "credentials.json"))
+    
+    workspace_credentials_path = CREDENTIALS_FILE
+    
+    # 1. Tự phục hồi: Nếu ở Workspace thiếu credentials.json nhưng có cache local tại Home Directory
+    if not os.path.exists(workspace_credentials_path) and os.path.exists(home_credentials_path):
+        try:
+            os.makedirs(os.path.dirname(workspace_credentials_path), exist_ok=True)
+            import shutil
+            shutil.copy2(home_credentials_path, workspace_credentials_path)
+            add_log_message(f"[🛡️ SELF-HEALING] Tự động khôi phục credentials.json từ local cache về Workspace: '{workspace_credentials_path}'")
+        except Exception:
+            pass
+
+    # --- CƠ CHẾ TỰ PHỤC HỒI (SELF-HEALING) NẾU THIẾU credentials.json (US-073.b) ---
+    bak_paths = [
+        os.path.join(PROJECT_ROOT, "credentials.json.bak"),
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "credentials.json.bak")),
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "..", "credentials.json.bak"))
+    ]
+    for bak_p in bak_paths:
+        if os.path.exists(bak_p):
+            dest_p = os.path.join(os.path.dirname(bak_p), "credentials.json")
+            if not os.path.exists(dest_p):
+                try:
+                    import shutil
+                    shutil.copy2(bak_p, dest_p)
+                    add_log_message(f"[🛡️ SELF-HEALING] Phát hiện thiếu credentials.json nhưng có file backup. Đã tự động khôi phục tại: '{dest_p}'")
+                except Exception as e_copy:
+                    add_log_message(f"[⚠️ WARNING] Không thể tự động khôi phục credentials.json từ backup: {str(e_copy)}")
+            break
+
     target_paths = [
         CREDENTIALS_FILE,
+        home_credentials_path,
         os.path.abspath(os.path.join(PROJECT_ROOT, "..", "credentials.json")),
         os.path.abspath(os.path.join(PROJECT_ROOT, "..", "..", "credentials.json")),
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "admin-nha-ban", "automation", "credentials.json")),
         os.path.abspath(os.path.join(os.getcwd(), "credentials.json")),
         os.path.abspath(os.path.join(os.getcwd(), "..", "credentials.json"))
     ]
@@ -462,10 +503,32 @@ def get_google_credentials():
         # Loại bỏ các đường dẫn trùng lắp để log cho gọn
         unique_paths = list(dict.fromkeys(target_paths))
         paths_str = "\n  - ".join(f"'{p}'" for p in unique_paths)
-        add_log_message(f"[⚠️ API WARNING] Không tìm thấy credentials.json. Các vị trí hệ thống đã quét qua:\n  - {paths_str}")
+        
+        # Chỉ in cảnh báo tối đa 1 lần mỗi 10 phút để tránh spam log liên tục
+        current_time = time.time()
+        if current_time - LAST_CREDENTIALS_WARNING_TIME > 600:
+            add_log_message(f"[⚠️ API WARNING] Không tìm thấy credentials.json. Các vị trí hệ thống đã quét qua:\n  - {paths_str}")
+            LAST_CREDENTIALS_WARNING_TIME = current_time
         return None
         
-    add_log_message(f"[🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: '{resolved_path}'")
+    # 2. Đồng bộ cache: Nếu tìm thấy credentials.json hợp lệ, sao lưu vào Home Directory để phục vụ khôi phục tự động lâu dài
+    if resolved_path != home_credentials_path:
+        try:
+            if not os.path.exists(home_credentials_path) or os.path.getsize(resolved_path) != os.path.getsize(home_credentials_path):
+                os.makedirs(os.path.dirname(home_credentials_path), exist_ok=True)
+                import shutil
+                shutil.copy2(resolved_path, home_credentials_path)
+                # Backup thêm 1 bản dạng .bak ở Home Directory cho chắc chắn
+                shutil.copy2(resolved_path, home_credentials_path + ".bak")
+                add_log_message(f"[🛡️ CACHE] Đã đồng bộ credentials.json vào cache local Home Directory: '{home_credentials_path}'")
+        except Exception:
+            pass
+
+    # Reset thời gian cảnh báo nếu tìm thấy file hợp lệ
+    LAST_CREDENTIALS_WARNING_TIME = 0
+    
+    # Chỉ log tìm thấy file nếu không chạy ngầm hoặc giảm tần suất để tránh rối màn hình
+    # Nhưng vẫn giữ log ngắn gọn khi kết nối thành công lần đầu
     
     try:
         from google.oauth2 import service_account
