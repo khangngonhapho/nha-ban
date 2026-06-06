@@ -8322,14 +8322,15 @@
       }
     };
 
-    window.getPublicImagesFromForm = function(p) {
+    window.getPublicImagesFromForm = function(p, customPoolRowData) {
       if (!p) return [];
+      const poolRowData = customPoolRowData || p.pool_row_data;
       const customCoverUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
       const publicCoverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
       const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
       const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
 
-      const targetMatTien = customCoverUrl || p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+      const targetMatTien = customCoverUrl || p.img_mat_tien || (poolRowData ? poolRowData[29] : '') || '';
       const normMatTien = normalizeImgUrl(targetMatTien);
       const isFacadeUrl = (url) => {
         if (!url) return false;
@@ -8337,15 +8338,15 @@
         return norm !== '' && norm === normMatTien;
       };
 
-      if (p.pool_row_data) {
+      if (poolRowData) {
         const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
         const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
 
-        const sodo1Url = (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(1)] : p.raw_sodo1) || '').trim();
-        const sodo2Url = (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(2)] : p.raw_sodo2) || '').trim();
-        const sodo3Url = (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(3)] : p.raw_sodo3) || '').trim();
-        const sodo4Url = (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(4)] : p.raw_sodo4) || '').trim();
-        const sodo5Url = (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5) || '').trim();
+        const sodo1Url = (document.getElementById('editSodo1Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(1)] : p.raw_sodo1) || '').trim();
+        const sodo2Url = (document.getElementById('editSodo2Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(2)] : p.raw_sodo2) || '').trim();
+        const sodo3Url = (document.getElementById('editSodo3Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(3)] : p.raw_sodo3) || '').trim();
+        const sodo4Url = (document.getElementById('editSodo4Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(4)] : p.raw_sodo4) || '').trim();
+        const sodo5Url = (document.getElementById('editSodo5Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(5)] : p.raw_sodo5) || '').trim();
         const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
         const isSodoUrl = (url) => {
           if (!url) return false;
@@ -8361,12 +8362,12 @@
         if (!publicCover) {
           const candidates = [];
           const interior1Idx = window.getPoolInteriorColIdx(1);
-          if (p.pool_row_data[interior1Idx] && (!window.isListingSodoUrl || !window.isListingSodoUrl(p.pool_row_data[interior1Idx], p)) && !isFacadeUrl(p.pool_row_data[interior1Idx])) {
-            candidates.push(p.pool_row_data[interior1Idx]);
+          if (poolRowData[interior1Idx] && (!window.isListingSodoUrl || !window.isListingSodoUrl(poolRowData[interior1Idx], p)) && !isFacadeUrl(poolRowData[interior1Idx])) {
+            candidates.push(poolRowData[interior1Idx]);
           }
-          // p.pool_row_data[29] (raw facade) is completely excluded!
+          // poolRowData[29] (raw facade) is completely excluded!
           for (let i = 0; i < noithatIndices.length; i++) {
-            const url = p.pool_row_data[window.getPoolInteriorColIdx(noithatIndices[i])];
+            const url = poolRowData[window.getPoolInteriorColIdx(noithatIndices[i])];
             if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
               candidates.push(url);
               break;
@@ -8383,7 +8384,7 @@
         let addedHem = 0;
         for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
           const hemIdx = hemIndices[i];
-          const hemUrl = p.pool_row_data[window.getPoolAlleyColIdx(hemIdx)];
+          const hemUrl = poolRowData[window.getPoolAlleyColIdx(hemIdx)];
           if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p)) && !isFacadeUrl(hemUrl)) {
             finalImages.push(hemUrl);
             addedHem++;
@@ -8392,8 +8393,8 @@
         
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
-          const imgUrl = p.pool_row_data[window.getPoolInteriorColIdx(imgIdx)];
-          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 10) {
+          const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
             finalImages.push(imgUrl);
           }
         }
@@ -8412,7 +8413,7 @@
             }
           });
         }
-        return finalImages.filter(Boolean);
+        return finalImages.slice(0, 15).filter(Boolean);
       }
     };
 
@@ -8698,57 +8699,7 @@
 
         // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
         if (p.pool_row_data) {
-          const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
-          const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
-
-          const finalImages = [];
-          
-          let publicCover = publicCoverUrl;
-          if (isSodoUrl(publicCover) || isFacadeUrl(publicCover)) {
-            publicCover = '';
-          }
-          if (!publicCover) {
-            const candidates = [];
-            const interior1Idx = window.getPoolInteriorColIdx(1);
-            if (p.pool_row_data[interior1Idx] && !isSodoUrl(p.pool_row_data[interior1Idx]) && !isFacadeUrl(p.pool_row_data[interior1Idx])) {
-              candidates.push(p.pool_row_data[interior1Idx]);
-            }
-            for (let i = 0; i < noithatIndices.length; i++) {
-              const imgIdx = noithatIndices[i];
-              const colIdx = window.getPoolInteriorColIdx(imgIdx);
-              const url = p.pool_row_data[colIdx];
-              if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
-                candidates.push(url);
-                break;
-              }
-            }
-            publicCover = candidates[0] || '';
-          }
-
-          if (publicCover && !isSodoUrl(publicCover) && !isFacadeUrl(publicCover)) {
-            finalImages.push(publicCover);
-          }
-          
-          const maxHem = 2;
-          let addedHem = 0;
-          for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
-            const hemIdx = hemIndices[i];
-            const hemUrl = p.pool_row_data[window.getPoolAlleyColIdx(hemIdx)];
-            if (hemUrl && !isSodoUrl(hemUrl) && !isFacadeUrl(hemUrl)) {
-              finalImages.push(hemUrl);
-              addedHem++;
-            }
-          }
-          
-          for (let i = 0; i < noithatIndices.length; i++) {
-            const imgIdx = noithatIndices[i];
-            const colIdx = window.getPoolInteriorColIdx(imgIdx);
-            const imgUrl = p.pool_row_data[colIdx];
-            if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
-              finalImages.push(imgUrl);
-            }
-          }
-
+          const finalImages = window.getPublicImagesFromForm(p);
           while (finalImages.length < 15) finalImages.push("");
 
           // Pad original_row_data to 46 columns
@@ -9152,76 +9103,7 @@
           return;
         }
 
-        const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
-        const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
-
-        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
-        
-        const isSodoUrl = (url) => {
-          if (!url) return false;
-          const norm = normalizeImgUrl(url);
-          if (norm === '') return false;
-          return normSodos.includes(norm);
-        };
-
-        const normMatTien = normalizeImgUrl(customCoverUrl || matchedRow[29] || '');
-        const isFacadeUrl = (url) => {
-          if (!url) return false;
-          const norm = normalizeImgUrl(url);
-          return norm !== '' && norm === normMatTien;
-        };
-
-        const finalImages = [];
-        
-        // 1. Cover (Public cover goes to index 0 of finalImages -> Ảnh 1 / Cột U)
-        let publicCover = publicCoverUrl;
-        if (isSodoUrl(publicCover) || isFacadeUrl(publicCover)) {
-          publicCover = '';
-        }
-        if (!publicCover) {
-          const candidates = [];
-          const interior1Idx = window.getPoolInteriorColIdx(1);
-          if (matchedRow[interior1Idx] && !isSodoUrl(matchedRow[interior1Idx]) && !isFacadeUrl(matchedRow[interior1Idx])) {
-            candidates.push(matchedRow[interior1Idx]);
-          }
-          for (let i = 0; i < noithatIndices.length; i++) {
-            const imgIdx = noithatIndices[i];
-            const colIdx = window.getPoolInteriorColIdx(imgIdx);
-            const url = matchedRow[colIdx];
-            if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
-              candidates.push(url);
-              break;
-            }
-          }
-          publicCover = candidates[0] || '';
-        }
-        
-        if (publicCover && !isSodoUrl(publicCover) && !isFacadeUrl(publicCover)) {
-          finalImages.push(publicCover);
-        }
-        
-        // 2. Alley
-        const maxHem = 2;
-        let addedHem = 0;
-        for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
-          const hemIdx = hemIndices[i];
-          const hemUrl = matchedRow[window.getPoolAlleyColIdx(hemIdx)];
-          if (hemUrl && !isSodoUrl(hemUrl) && !isFacadeUrl(hemUrl)) {
-            finalImages.push(hemUrl);
-            addedHem++;
-          }
-        }
-        
-        // 3. Nội thất khác
-        for (let i = 0; i < noithatIndices.length; i++) {
-          const imgIdx = noithatIndices[i];
-          const colIdx = window.getPoolInteriorColIdx(imgIdx);
-          const imgUrl = matchedRow[colIdx];
-          if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
-            finalImages.push(imgUrl);
-          }
-        }
-
+        const finalImages = window.getPublicImagesFromForm(p, matchedRow);
         while (finalImages.length < 15) finalImages.push("");
         
         // Xử lý Cú pháp
@@ -9254,8 +9136,9 @@
         
         const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
         
+        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
         let finalCoverUrl = customCoverUrl || matchedRow[29] || '';
-        if (isSodoUrl(finalCoverUrl)) {
+        if (finalCoverUrl && normSodos.includes(normalizeImgUrl(finalCoverUrl))) {
           finalCoverUrl = '';
         }
 
