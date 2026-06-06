@@ -1099,8 +1099,8 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 val = row[col_name] if col_name in row.keys() else None
                 update_fields[col_name] = val or ""
             
-            # Ảnh 1 to Ảnh 15 (Chỉ chứa ảnh nội thất/ngoại thất thô)
-            for i in range(15):
+            # Ảnh 1 to Ảnh 25 (Chứa tất cả 25 ảnh nội thất/ngoại thất thô)
+            for i in range(25):
                 col_name = get_safe_col_name(f"Ảnh {i+1}")
                 val = house_links[i] if i < len(house_links) else ""
                 update_fields[col_name] = val
