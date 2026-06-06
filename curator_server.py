@@ -438,7 +438,7 @@ def trim_tieu_de_bds(tieu_de):
 LAST_CREDENTIALS_WARNING_TIME = 0
 
 def get_google_credentials():
-    """Tạo credentials từ credentials.json nếu tồn tại (Hỗ trợ định vị đa cấp US-043)"""
+    """Tạo credentials từ credentials.json hoặc khangngo-admin-*.json nếu tồn tại (Hỗ trợ tự sửa và phục hồi lỗi JWT Signature)"""
     global LAST_CREDENTIALS_WARNING_TIME
     
     # Định nghĩa cache ở Home Directory (Tránh bị xóa bởi git clean hoặc lỗi drive ảo)
@@ -476,71 +476,109 @@ def get_google_credentials():
                     add_log_message(f"[⚠️ WARNING] Không thể tự động khôi phục credentials.json từ backup: {str(e_copy)}")
             break
 
-    target_paths = [
-        CREDENTIALS_FILE,
-        home_credentials_path,
-        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "credentials.json")),
-        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "..", "credentials.json")),
-        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "admin-nha-ban", "automation", "credentials.json")),
-        os.path.abspath(os.path.join(os.getcwd(), "credentials.json")),
-        os.path.abspath(os.path.join(os.getcwd(), "..", "credentials.json"))
+    # Thu thập toàn bộ thư mục đích quét qua
+    target_dirs = [
+        PROJECT_ROOT,
+        os.path.dirname(home_credentials_path),
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..")),
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "..")),
+        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "admin-nha-ban", "automation")),
+        os.getcwd(),
+        os.path.abspath(os.path.join(os.getcwd(), ".."))
     ]
     
     # Nếu chạy dưới dạng EXE đóng gói (frozen), kiểm tra thêm các đường dẫn lân cận file thực thi
     if getattr(sys, 'frozen', False):
         exe_dir = os.path.dirname(sys.executable)
-        target_paths.insert(0, os.path.abspath(os.path.join(exe_dir, "credentials.json")))
-        target_paths.insert(1, os.path.abspath(os.path.join(os.path.dirname(exe_dir), "credentials.json")))
-        target_paths.insert(2, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(exe_dir)), "credentials.json")))
+        target_dirs.insert(0, exe_dir)
+        target_dirs.insert(1, os.path.dirname(exe_dir))
+        target_dirs.insert(2, os.path.dirname(os.path.dirname(exe_dir)))
         
+    # Tạo danh sách các ứng cử viên credentials (bao gồm credentials.json và khangngo-admin-*.json)
+    import glob
+    candidates = []
+    for d in target_dirs:
+        if not os.path.exists(d):
+            continue
+        p_cred = os.path.abspath(os.path.join(d, "credentials.json"))
+        if os.path.exists(p_cred):
+            candidates.append(p_cred)
+        # Quét thêm các file định danh dịch vụ dạng khangngo-admin-*.json
+        for p_wild in glob.glob(os.path.join(d, "khangngo-admin-*.json")):
+            candidates.append(os.path.abspath(p_wild))
+            
+    # Loại bỏ các đường dẫn trùng lặp nhưng giữ nguyên thứ tự ưu tiên
+    candidates = list(dict.fromkeys(candidates))
+    
+    from google.oauth2 import service_account
+    import google.auth.transport.requests
+    req = google.auth.transport.requests.Request()
+    
     resolved_path = None
-    for p in target_paths:
-        if os.path.exists(p):
-            resolved_path = p
-            break
+    creds_obj = None
+    
+    for path in candidates:
+        try:
+            scopes = [
+                'https://www.googleapis.com/auth/drive.file',
+                'https://www.googleapis.com/auth/spreadsheets'
+            ]
+            temp_creds = service_account.Credentials.from_service_account_file(path, scopes=scopes)
+            # Kiểm tra nhanh token để xác thực chữ ký (Signature & Time validation)
+            try:
+                temp_creds.refresh(req)
+                resolved_path = path
+                creds_obj = temp_creds
+                break
+            except Exception as e_refresh:
+                err_msg = str(e_refresh)
+                # Nếu là lỗi chữ ký, hết hạn hoặc thông tin xác thực sai -> loại bỏ ứng cử viên này
+                if "invalid_grant" in err_msg or "invalid_client" in err_msg or "signature" in err_msg.lower():
+                    try:
+                        ORIGINAL_STDOUT.write(f"[DEBUG OAuth] File '{path}' co chu ky hoac khoa khong hop le (JWT Signature/Grant error). Dang quet file tiep theo...\n")
+                    except Exception:
+                        pass
+                    continue
+                else:
+                    # Lỗi mạng hoặc lỗi kết nối khác, mặc định file này có thể hợp lệ
+                    resolved_path = path
+                    creds_obj = temp_creds
+                    break
+        except Exception:
+            continue
             
     if not resolved_path:
-        # Loại bỏ các đường dẫn trùng lắp để log cho gọn
-        unique_paths = list(dict.fromkeys(target_paths))
-        paths_str = "\n  - ".join(f"'{p}'" for p in unique_paths)
-        
         # Chỉ in cảnh báo tối đa 1 lần mỗi 10 phút để tránh spam log liên tục
         current_time = time.time()
         if current_time - LAST_CREDENTIALS_WARNING_TIME > 600:
-            add_log_message(f"[⚠️ API WARNING] Không tìm thấy credentials.json. Các vị trí hệ thống đã quét qua:\n  - {paths_str}")
+            paths_str = "\n  - ".join(f"'{p}'" for p in candidates)
+            add_log_message(f"[⚠️ API WARNING] Không tìm thấy tệp xác thực credentials.json hợp lệ. Các vị trí đã quét:\n  - {paths_str}")
             LAST_CREDENTIALS_WARNING_TIME = current_time
         return None
         
-    # 2. Đồng bộ cache: Nếu tìm thấy credentials.json hợp lệ, sao lưu vào Home Directory để phục vụ khôi phục tự động lâu dài
-    if resolved_path != home_credentials_path:
+    # 2. Đồng bộ cache và sửa lỗi: Nếu tìm thấy file credentials hợp lệ nhưng khác với credentials.json mặc định,
+    # tự động sửa và copy đè lên credentials.json ở Workspace và Home cache để phục hồi hoạt động cho toàn bộ hệ thống.
+    try:
+        import shutil
+        if resolved_path != workspace_credentials_path:
+            shutil.copy2(resolved_path, workspace_credentials_path)
+            shutil.copy2(resolved_path, workspace_credentials_path + ".bak")
+            add_log_message(f"[🛡️ SELF-HEALING] Đã khôi phục credentials.json bằng key dịch vụ hoạt động tốt từ: '{resolved_path}'")
+            
+        if resolved_path != home_credentials_path:
+            os.makedirs(os.path.dirname(home_credentials_path), exist_ok=True)
+            shutil.copy2(resolved_path, home_credentials_path)
+            shutil.copy2(resolved_path, home_credentials_path + ".bak")
+            add_log_message(f"[🛡️ CACHE] Đã đồng bộ credentials.json hợp lệ vào cache local Home Directory: '{home_credentials_path}'")
+    except Exception as e_repair:
         try:
-            if not os.path.exists(home_credentials_path) or os.path.getsize(resolved_path) != os.path.getsize(home_credentials_path):
-                os.makedirs(os.path.dirname(home_credentials_path), exist_ok=True)
-                import shutil
-                shutil.copy2(resolved_path, home_credentials_path)
-                # Backup thêm 1 bản dạng .bak ở Home Directory cho chắc chắn
-                shutil.copy2(resolved_path, home_credentials_path + ".bak")
-                add_log_message(f"[🛡️ CACHE] Đã đồng bộ credentials.json vào cache local Home Directory: '{home_credentials_path}'")
+            ORIGINAL_STDOUT.write(f"[DEBUG OAuth] Loi khi copy sua file credentials: {str(e_repair)}\n")
         except Exception:
             pass
 
     # Reset thời gian cảnh báo nếu tìm thấy file hợp lệ
     LAST_CREDENTIALS_WARNING_TIME = 0
-    
-    # Chỉ log tìm thấy file nếu không chạy ngầm hoặc giảm tần suất để tránh rối màn hình
-    # Nhưng vẫn giữ log ngắn gọn khi kết nối thành công lần đầu
-    
-    try:
-        from google.oauth2 import service_account
-        scopes = [
-            'https://www.googleapis.com/auth/drive.file',
-            'https://www.googleapis.com/auth/spreadsheets'
-        ]
-        creds = service_account.Credentials.from_service_account_file(resolved_path, scopes=scopes)
-        return creds
-    except Exception as e:
-        add_log_message(f"[❌ LỖI] Cấu hình credentials.json tại '{resolved_path}' không hợp lệ: {str(e)}")
-        return None
+    return creds_obj
 
 def get_google_access_token(creds):
     """Lấy Access Token của Google Service Account phục vụ gọi REST API"""
