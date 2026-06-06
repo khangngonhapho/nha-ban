@@ -3543,6 +3543,9 @@
         for (let c = 40; c <= 54; c++) {
           if (row[c]) poolImgs.push(row[c]);
         }
+        for (let c = 83; c <= 92; c++) {
+          if (row[c]) poolImgs.push(row[c]);
+        }
 
         const p = {
           temp_id: index + 1,
@@ -6600,32 +6603,32 @@
     function renderImageEditorWidget(p) {
       const cards = [];
       
-      const sodo1Url = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+      const sodo1Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(1)] : p.raw_sodo1;
       if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url });
       
-      const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+      const sodo2Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(2)] : p.raw_sodo2;
       if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
 
-      const sodo3Url = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+      const sodo3Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(3)] : p.raw_sodo3;
       if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
 
-      const sodo4Url = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
+      const sodo4Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(4)] : p.raw_sodo4;
       if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
 
-      const sodo5Url = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+      const sodo5Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5;
       if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
       
       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
       if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
       
       for (let i = 1; i <= 25; i++) {
-        const idx = i <= 15 ? (39 + i) : (67 + i);
+        const idx = window.getPoolInteriorColIdx(i);
         const url = p.pool_row_data ? p.pool_row_data[idx] : (p.imgs && p.imgs[i - 1]);
         if (url) cards.push({ type: "interior", index: i, url: url });
       }
       
       for (let i = 1; i <= 10; i++) {
-        const url = p.pool_row_data ? p.pool_row_data[29 + i] : null;
+        const url = p.pool_row_data ? p.pool_row_data[window.getPoolAlleyColIdx(i)] : null;
         if (url) cards.push({ type: "alley", index: i, url: url });
       }
 
@@ -7238,6 +7241,19 @@
       window.sortCurationImageGrid();
     };
 
+    // --- POOL SHEET COLUMN INDEX RESOLVERS (US-073) ---
+    window.getPoolInteriorColIdx = function(imgIdx) {
+      return imgIdx <= 15 ? (39 + imgIdx) : (67 + imgIdx);
+    };
+
+    window.getPoolSodoColIdx = function(sodoIdx) {
+      return sodoIdx <= 2 ? (26 + sodoIdx) : (77 + sodoIdx);
+    };
+
+    window.getPoolAlleyColIdx = function(alleyIdx) {
+      return 29 + alleyIdx;
+    };
+
     // --- CLOUDINARY LOCAL UPLOADER HELPERS (US-053) ---
     const CLOUDINARY_CLOUD_NAME = "deru9p712";
     const CLOUDINARY_API_KEY = "127963624723617";
@@ -7393,7 +7409,7 @@
             if (sodoInput) {
               sodoInput.value = uploadedUrl;
               
-              const pIdx = sodoIndex <= 2 ? (26 + sodoIndex) : (77 + sodoIndex);
+              const pIdx = window.getPoolSodoColIdx(sodoIndex);
               if (p.pool_row_data) p.pool_row_data[pIdx] = uploadedUrl;
               p[`raw_sodo${sodoIndex}`] = uploadedUrl;
 
@@ -7406,7 +7422,7 @@
               while (p.pool_row_data.length < 90) p.pool_row_data.push("");
 
               for (let j = 1; j <= 25; j++) {
-                const colIdx = j <= 15 ? (39 + j) : (67 + j);
+                const colIdx = window.getPoolInteriorColIdx(j);
                 if (!p.pool_row_data[colIdx]) {
                   p.pool_row_data[colIdx] = uploadedUrl;
                   assignedIdx = j;
@@ -7847,8 +7863,8 @@
         
         // 1. Cover
         const firstNoithatIdx = parseInt(noithatIndices[0]);
-        if (!isNaN(firstNoithatIdx) && firstNoithatIdx >= 1 && firstNoithatIdx <= 15) {
-          const coverImgUrl = matchedRow[39 + firstNoithatIdx];
+        if (!isNaN(firstNoithatIdx) && firstNoithatIdx >= 1 && firstNoithatIdx <= 25) {
+          const coverImgUrl = matchedRow[window.getPoolInteriorColIdx(firstNoithatIdx)];
           if (coverImgUrl) finalImages.push(coverImgUrl);
         }
         
@@ -7860,7 +7876,7 @@
           for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
             const hemIdx = parseInt(hemIndices[i]);
             if (!isNaN(hemIdx) && hemIdx >= 1 && hemIdx <= 10) {
-              const hemUrl = matchedRow[29 + hemIdx];
+              const hemUrl = matchedRow[window.getPoolAlleyColIdx(hemIdx)];
               if (hemUrl) {
                 finalImages.push(hemUrl);
                 addedHem++;
@@ -7870,7 +7886,7 @@
         } else {
           const availableHem = [];
           for (let i = 1; i <= 10; i++) {
-            const hemUrl = matchedRow[29 + i];
+            const hemUrl = matchedRow[window.getPoolAlleyColIdx(i)];
             if (hemUrl) availableHem.push(hemUrl);
           }
           for (let i = availableHem.length - 1; i > 0; i--) {
@@ -7887,8 +7903,8 @@
         // 3. Nội thất khác
         for (let i = 1; i < noithatIndices.length; i++) {
           const imgIdx = parseInt(noithatIndices[i]);
-          if (!isNaN(imgIdx) && imgIdx >= 1 && imgIdx <= 15) {
-            const imgUrl = matchedRow[39 + imgIdx];
+          if (!isNaN(imgIdx) && imgIdx >= 1 && imgIdx <= 25) {
+            const imgUrl = matchedRow[window.getPoolInteriorColIdx(imgIdx)];
             if (imgUrl) finalImages.push(imgUrl);
           }
         }
@@ -8690,12 +8706,13 @@
           }
           if (!publicCover) {
             const candidates = [];
-            if (p.pool_row_data[40] && !isSodoUrl(p.pool_row_data[40]) && !isFacadeUrl(p.pool_row_data[40])) {
-              candidates.push(p.pool_row_data[40]);
+            const interior1Idx = window.getPoolInteriorColIdx(1);
+            if (p.pool_row_data[interior1Idx] && !isSodoUrl(p.pool_row_data[interior1Idx]) && !isFacadeUrl(p.pool_row_data[interior1Idx])) {
+              candidates.push(p.pool_row_data[interior1Idx]);
             }
             for (let i = 0; i < noithatIndices.length; i++) {
               const imgIdx = noithatIndices[i];
-              const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+              const colIdx = window.getPoolInteriorColIdx(imgIdx);
               const url = p.pool_row_data[colIdx];
               if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
                 candidates.push(url);
@@ -8713,7 +8730,7 @@
           let addedHem = 0;
           for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
             const hemIdx = hemIndices[i];
-            const hemUrl = p.pool_row_data[29 + hemIdx];
+            const hemUrl = p.pool_row_data[window.getPoolAlleyColIdx(hemIdx)];
             if (hemUrl && !isSodoUrl(hemUrl) && !isFacadeUrl(hemUrl)) {
               finalImages.push(hemUrl);
               addedHem++;
@@ -8722,7 +8739,7 @@
           
           for (let i = 0; i < noithatIndices.length; i++) {
             const imgIdx = noithatIndices[i];
-            const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+            const colIdx = window.getPoolInteriorColIdx(imgIdx);
             const imgUrl = p.pool_row_data[colIdx];
             if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
               finalImages.push(imgUrl);
@@ -9060,6 +9077,18 @@
           throw new Error("Không tìm thấy căn nhà này trong kho Pool hoặc không khớp System ID.");
         }
 
+        const p = window.activeCurationListing;
+        if (p && p.pool_row_data) {
+          matchedRow[27] = p.pool_row_data[27] || "";
+          matchedRow[28] = p.pool_row_data[28] || "";
+          matchedRow[80] = p.pool_row_data[80] || "";
+          matchedRow[81] = p.pool_row_data[81] || "";
+          matchedRow[82] = p.pool_row_data[82] || "";
+          for (let c = 30; c <= 39; c++) matchedRow[c] = p.pool_row_data[c] || "";
+          for (let c = 40; c <= 54; c++) matchedRow[c] = p.pool_row_data[c] || "";
+          for (let c = 83; c <= 92; c++) matchedRow[c] = p.pool_row_data[c] || "";
+        }
+
         // Đọc dữ liệu từ form trong modal
         const note = document.getElementById('editNote').value.trim();
         const maKhangNgo = document.getElementById('editMaKhangNgo').value.trim();
@@ -9148,12 +9177,13 @@
         }
         if (!publicCover) {
           const candidates = [];
-          if (matchedRow[40] && !isSodoUrl(matchedRow[40]) && !isFacadeUrl(matchedRow[40])) {
-            candidates.push(matchedRow[40]);
+          const interior1Idx = window.getPoolInteriorColIdx(1);
+          if (matchedRow[interior1Idx] && !isSodoUrl(matchedRow[interior1Idx]) && !isFacadeUrl(matchedRow[interior1Idx])) {
+            candidates.push(matchedRow[interior1Idx]);
           }
           for (let i = 0; i < noithatIndices.length; i++) {
             const imgIdx = noithatIndices[i];
-            const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+            const colIdx = window.getPoolInteriorColIdx(imgIdx);
             const url = matchedRow[colIdx];
             if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
               candidates.push(url);
@@ -9172,7 +9202,7 @@
         let addedHem = 0;
         for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
           const hemIdx = hemIndices[i];
-          const hemUrl = matchedRow[29 + hemIdx];
+          const hemUrl = matchedRow[window.getPoolAlleyColIdx(hemIdx)];
           if (hemUrl && !isSodoUrl(hemUrl) && !isFacadeUrl(hemUrl)) {
             finalImages.push(hemUrl);
             addedHem++;
@@ -9182,7 +9212,7 @@
         // 3. Nội thất khác
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
-          const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+          const colIdx = window.getPoolInteriorColIdx(imgIdx);
           const imgUrl = matchedRow[colIdx];
           if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
             finalImages.push(imgUrl);
