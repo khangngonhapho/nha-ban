@@ -3158,8 +3158,6 @@
       }
       
       .criteria-section,
-      .filter-panel > .filter-section-lbl,
-      .filter-panel > .tabs,
       .detailed-specs-title,
       .detailed-specs-container,
       #collectionsManager,
@@ -3168,9 +3166,34 @@
         padding-right: 16px !important;
       }
       
+      .filter-panel > .tabs {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0 16px 12px 16px !important;
+        margin: 0 !important;
+      }
+      .filter-panel .tab {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 13px !important;
+        padding: 7px 16px !important;
+        min-height: 36px !important;
+      }
+      
       .filter-panel > .filter-section-lbl {
         margin-top: 12px !important;
         margin-bottom: 6px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
       }
       
       .criteria-grid {
@@ -4441,72 +4464,8 @@
       
       if (p.raw_phan_loai && p.raw_phan_loai.toLowerCase().includes(c)) return true;
 
-      // Custom keyword mapping for better search matching
-      if (c === 'triệu đô') {
-        return textToSearch.includes('triệu đô') || textToSearch.includes('trieu do') || (parseFloat(p.raw_gia_chao) >= 23 || parseFloat(p.gia) >= 23);
-      }
-      if (c === 'hiếm') {
-        return textToSearch.includes('hiếm') || textToSearch.includes('cực hiếm') || textToSearch.includes('hiem');
-      }
-      if (c === 'nội thất đẹp - giá trị') {
-        return textToSearch.includes('nội thất') || textToSearch.includes('noi that') || textToSearch.includes('đẹp') || textToSearch.includes('mới') || textToSearch.includes('full option');
-      }
-      if (c === 'để kinh doanh') {
-        return textToSearch.includes('kinh doanh') || textToSearch.includes('buôn bán') || textToSearch.includes('kd') || textToSearch.includes('văn phòng') || textToSearch.includes('spa') || textToSearch.includes('cho thuê');
-      }
-      if (c === 'chủ cần bán gấp') {
-        return textToSearch.includes('bán gấp') || textToSearch.includes('gấp') || textToSearch.includes('ngợp') || textToSearch.includes('chủ cần') || textToSearch.includes('hạ giá') || textToSearch.includes('giam gia');
-      }
-      if (c === 'hẻm xe máy') {
-        return textToSearch.includes('hẻm xe máy') || textToSearch.includes('ba gác') || textToSearch.includes('hẻm nhỏ') || textToSearch.includes('hẻm 2m') || textToSearch.includes('hẻm 3m') || textToSearch.includes('hẻm bagac');
-      }
-      if (c === 'chưa được cấp cnqsd') {
-        return textToSearch.includes('chưa sổ') || textToSearch.includes('chưa cấp') || textToSearch.includes('giấy tay') || textToSearch.includes('thừa phát lại');
-      }
-      if (c === 'dân đầu tư') {
-        return textToSearch.includes('đầu tư') || textToSearch.includes('lời') || textToSearch.includes('lãi') || textToSearch.includes('hiệu suất') || textToSearch.includes('dòng tiền');
-      }
-      if (c === 'thang máy') {
-        return textToSearch.includes('thang máy') || textToSearch.includes('thang may') || textToSearch.includes(' tm ');
-      }
-      if (c === 'lô góc') {
-        return textToSearch.includes('lô góc') || textToSearch.includes('lo goc') || textToSearch.includes('2 mặt tiền') || textToSearch.includes('hai mặt tiền');
-      }
-      if (c === 'độc quyền bán') {
-        return textToSearch.includes('độc quyền') || textToSearch.includes('doc quyen');
-      }
-      if (c === 'dòng tiền ổn định') {
-        return textToSearch.includes('dòng tiền') || textToSearch.includes('dong tien') || textToSearch.includes('cho thuê') || textToSearch.includes('thu nhập') || textToSearch.includes('hđt');
-      }
-      if (c === 'view hồ - công viên') {
-        return textToSearch.includes('view hồ') || textToSearch.includes('công viên') || textToSearch.includes('cv') || textToSearch.includes('cong vien');
-      }
-      if (c === 'để ở') {
-        return textToSearch.includes('để ở') || textToSearch.includes('gia đình') || textToSearch.includes('an cư') || textToSearch.includes('ở ngay');
-      }
-      if (c === 'lãi vốn (rẻ)') {
-        return textToSearch.includes('rẻ') || textToSearch.includes('lãi vốn') || textToSearch.includes('giá tốt') || textToSearch.includes('thơm') || textToSearch.includes('gạt tay');
-      }
-      if (c === 'hẻm ô tô') {
-        return textToSearch.includes('hẻm xe hơi') || textToSearch.includes('hẻm ô tô') || textToSearch.includes('hẻm xe tai') || textToSearch.includes('xe hơi đỗ') || textToSearch.includes('ô tô tránh') || textToSearch.includes('hẻm rộng');
-      }
-      if (c === 'đất - nhà cấp 4 - nhà cũ') {
-        return textToSearch.includes('nhà cấp 4') || textToSearch.includes('nhà cũ') || textToSearch.includes('đất trống') || textToSearch.includes('tiện xây mới') || textToSearch.includes('nhà nát');
-      }
-      if (c === 'chính chủ') {
-        return textToSearch.includes('chính chủ') || textToSearch.includes('chủ gửi') || textToSearch.includes('chinh chu');
-      }
-      if (c === 'thế chấp ngân hàng') {
-        return textToSearch.includes('ngân hàng') || textToSearch.includes('thế chấp') || textToSearch.includes('vay');
-      }
-      if (c === 'mặt phố') {
-        return textToSearch.includes('mặt phố') || textToSearch.includes('mặt tiền') || textToSearch.includes('mt') || textToSearch.includes('mat pho');
-      }
-      if (c === 'bảo lãnh hoa hồng') {
-        return textToSearch.includes('hoa hồng') || textToSearch.includes('hh') || textToSearch.includes('hoa hong');
-      }
-      if (c === 'chung cư') {
-        return textToSearch.includes('chung cư') || textToSearch.includes('căn hộ') || textToSearch.includes('chung cu');
+      if (c === 'chdv') {
+        return p.chdv === 'Có' || (p.chdv && String(p.chdv).toLowerCase().includes('có')) || textToSearch.includes('chdv') || textToSearch.includes('căn hộ dịch vụ');
       }
 
       return textToSearch.includes(c);
@@ -4515,12 +4474,7 @@
     // Tự động dựng checklist chỉ chứa các tiêu chí hiện diện trong dữ liệu thô (US-076.3)
     function renderCriteriaCheckboxes(data) {
       const allPossibleCriteria = [
-        "Triệu đô", "Dòng tiền ổn định", "Hiếm", "View hồ - công viên",
-        "Nội thất đẹp - giá trị", "Để ở", "Để kinh doanh", "Lãi vốn (rẻ)",
-        "Chủ cần bán gấp", "Hẻm ô tô", "Hẻm xe máy", "Đất - nhà cấp 4 - nhà cũ",
-        "Chưa được cấp CNQSD", "Chính chủ", "Dân đầu tư", "Thế chấp ngân hàng",
-        "Thang máy", "Mặt phố", "Lô góc", "Bảo lãnh hoa hồng",
-        "Độc quyền bán", "Chung cư"
+        "CHDV"
       ];
       
       const grid = document.querySelector('.criteria-grid');
