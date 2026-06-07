@@ -311,7 +311,32 @@
     }
     
     .range-box .unit {
-      display: none;
+      display: inline-block;
+      font-size: 11px;
+      color: rgba(44, 44, 46, 0.45);
+      margin-left: 4px;
+      font-weight: 600;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .range-label {
+      font-size: 11px;
+      color: rgba(44, 44, 46, 0.5);
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+      padding-left: 2px;
+    }
+
+    .range-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .detailed-spec-group {
+      margin-bottom: 14px;
     }
 
     .filter-section-lbl {
@@ -2807,6 +2832,10 @@
         margin-bottom: 0 !important;
       }
 
+      #filterPanel > .detailed-specs-container .detailed-spec-group {
+        margin-bottom: 0 !important;
+      }
+
       #filterPanel > #collectionsManager {
         grid-column: 2;
         margin: 0 !important;
@@ -2947,47 +2976,129 @@
       </div>
       <div class="filter-section-lbl full-width-lbl">📊 BỘ LỌC THÔNG SỐ CHI TIẾT</div>
       <div class="detailed-specs-container" style="padding: 0 10px 10px 10px;">
-        <!-- Diện tích -->
-        <div class="filter-section-sublbl">DIỆN TÍCH THỰC TẾ (M²)</div>
-        <div class="range-group">
-          <div class="range-box">
-            <input type="number" id="filterDtMin" placeholder="Từ DT (m²)" oninput="onSearchInput()">
-          </div>
-          <div class="range-box">
-            <input type="number" id="filterDtMax" placeholder="Đến DT (m²)" oninput="onSearchInput()">
+        <!-- Khoảng giá -->
+        <div class="detailed-spec-group">
+          <div class="filter-section-sublbl">KHOẢNG GIÁ (TỶ)</div>
+          <div class="range-group">
+            <div class="range-col">
+              <span class="range-label">Từ</span>
+              <div class="range-box">
+                <input type="number" step="0.1" id="filterGiaMin" placeholder="VD: 5" oninput="onSearchInput()">
+                <span class="unit">tỷ</span>
+              </div>
+            </div>
+            <div class="range-col">
+              <span class="range-label">Đến</span>
+              <div class="range-box">
+                <input type="number" step="0.1" id="filterGiaMax" placeholder="VD: 15" oninput="onSearchInput()">
+                <span class="unit">tỷ</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Chiều ngang -->
-        <div class="filter-section-sublbl">CHIỀU NGANG MẶT TIỀN (M)</div>
-        <div class="range-group">
-          <div class="range-box">
-            <input type="number" step="0.1" id="filterNgangMin" placeholder="Từ ngang (m)" oninput="onSearchInput()">
-          </div>
-          <div class="range-box">
-            <input type="number" step="0.1" id="filterNgangMax" placeholder="Đến ngang (m)" oninput="onSearchInput()">
+        <!-- Diện tích sổ -->
+        <div class="detailed-spec-group">
+          <div class="filter-section-sublbl">DIỆN TÍCH TRÊN SỔ (M²)</div>
+          <div class="range-group">
+            <div class="range-col">
+              <span class="range-label">Từ</span>
+              <div class="range-box">
+                <input type="number" id="filterDtTrenSoMin" placeholder="VD: 40" oninput="onSearchInput()">
+                <span class="unit">m²</span>
+              </div>
+            </div>
+            <div class="range-col">
+              <span class="range-label">Đến</span>
+              <div class="range-box">
+                <input type="number" id="filterDtTrenSoMax" placeholder="VD: 80" oninput="onSearchInput()">
+                <span class="unit">m²</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Chiều dài -->
-        <div class="filter-section-sublbl">CHIỀU DÀI SÂU (M)</div>
-        <div class="range-group">
-          <div class="range-box">
-            <input type="number" step="0.1" id="filterDaiMin" placeholder="Từ dài (m)" oninput="onSearchInput()">
+        <!-- Diện tích thực tế -->
+        <div class="detailed-spec-group">
+          <div class="filter-section-sublbl">DIỆN TÍCH THỰC TẾ (M²)</div>
+          <div class="range-group">
+            <div class="range-col">
+              <span class="range-label">Từ</span>
+              <div class="range-box">
+                <input type="number" id="filterDtThucTeMin" placeholder="VD: 40" oninput="onSearchInput()">
+                <span class="unit">m²</span>
+              </div>
+            </div>
+            <div class="range-col">
+              <span class="range-label">Đến</span>
+              <div class="range-box">
+                <input type="number" id="filterDtThucTeMax" placeholder="VD: 80" oninput="onSearchInput()">
+                <span class="unit">m²</span>
+              </div>
+            </div>
           </div>
-          <div class="range-box">
-            <input type="number" step="0.1" id="filterDaiMax" placeholder="Đến dài (m)" oninput="onSearchInput()">
+        </div>
+
+        <!-- Ngang (mặt tiền) -->
+        <div class="detailed-spec-group">
+          <div class="filter-section-sublbl">NGANG (MẶT TIỀN) (M)</div>
+          <div class="range-group">
+            <div class="range-col">
+              <span class="range-label">Từ</span>
+              <div class="range-box">
+                <input type="number" step="0.1" id="filterNgangMin" placeholder="VD: 4" oninput="onSearchInput()">
+                <span class="unit">m</span>
+              </div>
+            </div>
+            <div class="range-col">
+              <span class="range-label">Đến</span>
+              <div class="range-box">
+                <input type="number" step="0.1" id="filterNgangMax" placeholder="VD: 6" oninput="onSearchInput()">
+                <span class="unit">m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rộng hẻm -->
+        <div class="detailed-spec-group">
+          <div class="filter-section-sublbl">RỘNG HẺM (M)</div>
+          <div class="range-group">
+            <div class="range-col">
+              <span class="range-label">Từ</span>
+              <div class="range-box">
+                <input type="number" step="0.1" id="filterHemMin" placeholder="VD: 3" oninput="onSearchInput()">
+                <span class="unit">m</span>
+              </div>
+            </div>
+            <div class="range-col">
+              <span class="range-label">Đến</span>
+              <div class="range-box">
+                <input type="number" step="0.1" id="filterHemMax" placeholder="VD: 6" oninput="onSearchInput()">
+                <span class="unit">m</span>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Số phòng ngủ -->
-        <div class="filter-section-sublbl">SỐ PHÒNG NGỦ (PHÒNG)</div>
-        <div class="range-group">
-          <div class="range-box">
-            <input type="number" id="filterPhongMin" placeholder="Từ số phòng" oninput="onSearchInput()">
-          </div>
-          <div class="range-box">
-            <input type="number" id="filterPhongMax" placeholder="Đến số phòng" oninput="onSearchInput()">
+        <div class="detailed-spec-group">
+          <div class="filter-section-sublbl">SỐ PHÒNG NGỦ (PHÒNG)</div>
+          <div class="range-group">
+            <div class="range-col">
+              <span class="range-label">Từ</span>
+              <div class="range-box">
+                <input type="number" id="filterPhongMin" placeholder="VD: 2" oninput="onSearchInput()">
+                <span class="unit">phòng</span>
+              </div>
+            </div>
+            <div class="range-col">
+              <span class="range-label">Đến</span>
+              <div class="range-box">
+                <input type="number" id="filterPhongMax" placeholder="VD: 5" oninput="onSearchInput()">
+                <span class="unit">phòng</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -3885,46 +3996,86 @@
         }
       }
 
-      // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT
-      const dtMin = document.getElementById('filterDtMin')?.value || '';
-      const dtMax = document.getElementById('filterDtMax')?.value || '';
+      // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT NÂNG CAO (US-076)
+      const giaMin = document.getElementById('filterGiaMin')?.value || '';
+      const giaMax = document.getElementById('filterGiaMax')?.value || '';
+      const dtTrenSoMin = document.getElementById('filterDtTrenSoMin')?.value || '';
+      const dtTrenSoMax = document.getElementById('filterDtTrenSoMax')?.value || '';
+      const dtThucTeMin = document.getElementById('filterDtThucTeMin')?.value || '';
+      const dtThucTeMax = document.getElementById('filterDtThucTeMax')?.value || '';
       const ngangMin = document.getElementById('filterNgangMin')?.value || '';
       const ngangMax = document.getElementById('filterNgangMax')?.value || '';
-      const daiMin = document.getElementById('filterDaiMin')?.value || '';
-      const daiMax = document.getElementById('filterDaiMax')?.value || '';
+      const hemMin = document.getElementById('filterHemMin')?.value || '';
+      const hemMax = document.getElementById('filterHemMax')?.value || '';
       const phongMin = document.getElementById('filterPhongMin')?.value || '';
       const phongMax = document.getElementById('filterPhongMax')?.value || '';
 
-      if (dtMin !== '' || dtMax !== '') {
+      if (giaMin !== '' || giaMax !== '') {
         a = a.filter(p => {
-          const val = parseFloat(p.raw_dt_tren_so || p.dt) || 0;
-          if (dtMin !== '' && val < parseFloat(dtMin)) return false;
-          if (dtMax !== '' && val > parseFloat(dtMax)) return false;
+          let val = parseFloat(p.raw_gia_chao);
+          if (isNaN(val) || val === 0) {
+            val = parseFloat(p.gia) || 0;
+          }
+          if (giaMin !== '' && val < parseFloat(giaMin)) return false;
+          if (giaMax !== '' && val > parseFloat(giaMax)) return false;
+          return true;
+        });
+      }
+
+      if (dtTrenSoMin !== '' || dtTrenSoMax !== '') {
+        a = a.filter(p => {
+          let val = parseFloat(p.raw_dt_tren_so);
+          if (isNaN(val) || val === 0) {
+            val = parseFloat(p.dt) || 0;
+          }
+          if (dtTrenSoMin !== '' && val < parseFloat(dtTrenSoMin)) return false;
+          if (dtTrenSoMax !== '' && val > parseFloat(dtTrenSoMax)) return false;
+          return true;
+        });
+      }
+
+      if (dtThucTeMin !== '' || dtThucTeMax !== '') {
+        a = a.filter(p => {
+          let val = parseFloat(p.raw_dt_thuc_te);
+          if (isNaN(val) || val === 0) {
+            val = parseFloat(p.dt) || 0;
+          }
+          if (dtThucTeMin !== '' && val < parseFloat(dtThucTeMin)) return false;
+          if (dtThucTeMax !== '' && val > parseFloat(dtThucTeMax)) return false;
           return true;
         });
       }
 
       if (ngangMin !== '' || ngangMax !== '') {
         a = a.filter(p => {
-          const val = parseFloat(p.raw_mat_tien || p.mat) || 0;
+          let val = parseFloat(p.raw_mat_tien);
+          if (isNaN(val) || val === 0) {
+            val = parseFloat(p.mat) || 0;
+          }
           if (ngangMin !== '' && val < parseFloat(ngangMin)) return false;
           if (ngangMax !== '' && val > parseFloat(ngangMax)) return false;
           return true;
         });
       }
 
-      if (daiMin !== '' || daiMax !== '') {
+      if (hemMin !== '' || hemMax !== '') {
         a = a.filter(p => {
-          const val = parseFloat(p.dai_nha) || 0;
-          if (daiMin !== '' && val < parseFloat(daiMin)) return false;
-          if (daiMax !== '' && val > parseFloat(daiMax)) return false;
+          let val = parseFloat(p.raw_duong_truoc_nha);
+          if (isNaN(val) || val === 0) {
+            val = parseFloat(p.rong_hem) || 0;
+          }
+          if (hemMin !== '' && val < parseFloat(hemMin)) return false;
+          if (hemMax !== '' && val > parseFloat(hemMax)) return false;
           return true;
         });
       }
 
       if (phongMin !== '' || phongMax !== '') {
         a = a.filter(p => {
-          const val = parseInt(p.raw_so_pn || p.so_pn) || 0;
+          let val = parseInt(p.raw_so_pn, 10);
+          if (isNaN(val) || val === 0) {
+            val = parseInt(p.so_pn, 10) || 0;
+          }
           if (phongMin !== '' && val < parseInt(phongMin, 10)) return false;
           if (phongMax !== '' && val > parseInt(phongMax, 10)) return false;
           return true;
@@ -4197,6 +4348,7 @@
                 p.raw_sodo5 = poolRow[82] || '';             // Sơ đồ thửa đất 5 - Index 82, Column CE
                 p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
                 p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
+                p.raw_dt_thuc_te = poolRow[13] || '';        // DT Thực tế - Index 13, Column N
                 p.raw_dt_tren_so = poolRow[14] || '';        // DT Trên sổ - Index 14, Column O
                 p.raw_gia_chao = poolRow[11] || poolRow[58] || '';          // Giá chào - Index 11, Column L
                 p.raw_so_tang = poolRow[15] || '';           // Số Tầng - Index 15, Column P
@@ -4222,6 +4374,7 @@
                 p.raw_sodo5 = '';
                 p.raw_so_nha = '';
                 p.raw_ten_duong = p.ten_duong || '';
+                p.raw_dt_thuc_te = p.dt || '';
                 p.raw_dt_tren_so = p.dt || '';
                 p.raw_gia_chao = p.gia || '';
                 p.raw_so_tang = p.tang || '';
@@ -4564,7 +4717,21 @@
         selectedIds: [...SELECTED_IDS],
         favOnly: showFavOnly,
         showOnAirOnly: showOnAirOnly,
-        search: document.getElementById('bdsSearchInput')?.value || ''
+        search: document.getElementById('bdsSearchInput')?.value || '',
+        adv: {
+          giaMin: document.getElementById('filterGiaMin')?.value || '',
+          giaMax: document.getElementById('filterGiaMax')?.value || '',
+          dtTrenSoMin: document.getElementById('filterDtTrenSoMin')?.value || '',
+          dtTrenSoMax: document.getElementById('filterDtTrenSoMax')?.value || '',
+          dtThucTeMin: document.getElementById('filterDtThucTeMin')?.value || '',
+          dtThucTeMax: document.getElementById('filterDtThucTeMax')?.value || '',
+          ngangMin: document.getElementById('filterNgangMin')?.value || '',
+          ngangMax: document.getElementById('filterNgangMax')?.value || '',
+          hemMin: document.getElementById('filterHemMin')?.value || '',
+          hemMax: document.getElementById('filterHemMax')?.value || '',
+          phongMin: document.getElementById('filterPhongMin')?.value || '',
+          phongMax: document.getElementById('filterPhongMax')?.value || ''
+        }
       };
       localStorage.setItem('adminState', JSON.stringify(state));
     }
@@ -4591,10 +4758,31 @@
           if (toggle) toggle.checked = showOnAirOnly;
         }
 
-        const sInput = document.getElementById('bdsSearchInput');
+         const sInput = document.getElementById('bdsSearchInput');
         if (sInput && state.search) {
           sInput.value = state.search;
           toggleSearchClearBtn();
+        }
+
+        if (state.adv) {
+          const advKeys = [
+            { id: 'filterGiaMin', val: state.adv.giaMin },
+            { id: 'filterGiaMax', val: state.adv.giaMax },
+            { id: 'filterDtTrenSoMin', val: state.adv.dtTrenSoMin },
+            { id: 'filterDtTrenSoMax', val: state.adv.dtTrenSoMax },
+            { id: 'filterDtThucTeMin', val: state.adv.dtThucTeMin },
+            { id: 'filterDtThucTeMax', val: state.adv.dtThucTeMax },
+            { id: 'filterNgangMin', val: state.adv.ngangMin },
+            { id: 'filterNgangMax', val: state.adv.ngangMax },
+            { id: 'filterHemMin', val: state.adv.hemMin },
+            { id: 'filterHemMax', val: state.adv.hemMax },
+            { id: 'filterPhongMin', val: state.adv.phongMin },
+            { id: 'filterPhongMax', val: state.adv.phongMax }
+          ];
+          advKeys.forEach(k => {
+            const el = document.getElementById(k.id);
+            if (el && k.val !== undefined) el.value = k.val;
+          });
         }
 
         syncTabUI('districtTabs', selDistricts);
@@ -4835,9 +5023,11 @@
 
       // Xóa các ô lọc thông số chi tiết nâng cao
       const advInputs = [
-        'filterDtMin', 'filterDtMax',
+        'filterGiaMin', 'filterGiaMax',
+        'filterDtTrenSoMin', 'filterDtTrenSoMax',
+        'filterDtThucTeMin', 'filterDtThucTeMax',
         'filterNgangMin', 'filterNgangMax',
-        'filterDaiMin', 'filterDaiMax',
+        'filterHemMin', 'filterHemMax',
         'filterPhongMin', 'filterPhongMax'
       ];
       advInputs.forEach(id => {
