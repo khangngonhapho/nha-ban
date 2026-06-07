@@ -799,7 +799,6 @@
       transition: max-width 0.3s;
     }
 
-    }
 
     .sec-lbl {
       font-size: 11px;
@@ -2642,15 +2641,15 @@
 
       /* Ảnh lớn hơn trên desktop */
       .crow {
-        flex-direction: column;
-        height: auto;
+        flex-direction: column !important;
+        height: auto !important;
       }
 
       .ibox {
-        width: 100%;
-        min-width: 100%;
-        height: 220px;
-        border-radius: 16px 16px 0 0;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 220px !important;
+        border-radius: 16px 16px 0 0 !important;
       }
 
       .info {
@@ -2757,35 +2756,46 @@
       }
 
       /* US-074: Laptop layout optimization for filter panel and admin modal */
-      #filterPanel.open {
-        display: grid;
+      #filterPanel {
+        display: grid !important;
         grid-template-columns: 160px 1fr;
         gap: 12px 24px;
         align-items: center;
-        padding: 16px 24px !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 24px !important;
+        border-bottom: none !important;
+        transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
       }
 
-      #filterPanel.open > .filter-section-lbl {
+      #filterPanel.open {
+        max-height: 75vh !important;
+        padding: 16px 24px !important;
+        overflow-y: auto !important;
+        border-bottom: 1.5px solid #e2ded6 !important;
+      }
+
+      #filterPanel > .filter-section-lbl {
         grid-column: 1;
         margin: 0 !important;
         padding: 0 !important;
         align-self: center;
       }
 
-      #filterPanel.open > .tabs {
+      #filterPanel > .tabs {
         grid-column: 2;
         margin: 0 !important;
         padding: 0 !important;
       }
 
-      #filterPanel.open > .filter-section-lbl.full-width-lbl {
+      #filterPanel > .filter-section-lbl.full-width-lbl {
         grid-column: 1 / -1;
         border-top: 1.5px solid #e2ded6;
         padding: 16px 0 4px 0 !important;
         margin-top: 8px !important;
       }
 
-      #filterPanel.open > .detailed-specs-container {
+      #filterPanel > .detailed-specs-container {
         grid-column: 1 / -1;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -2793,21 +2803,21 @@
         padding: 8px 0 !important;
       }
 
-      #filterPanel.open > .detailed-specs-container .range-group {
+      #filterPanel > .detailed-specs-container .range-group {
         margin-bottom: 0 !important;
       }
 
-      #filterPanel.open > #collectionsManager {
+      #filterPanel > #collectionsManager {
         grid-column: 2;
         margin: 0 !important;
       }
 
-      #filterPanel.open > div.admin-only:not(#collectionsManager) {
+      #filterPanel > div.admin-only:not(#collectionsManager) {
         grid-column: 2;
         margin: 0 !important;
       }
 
-      #filterPanel.open > .filter-footer-actions {
+      #filterPanel > .filter-footer-actions {
         grid-column: 1 / -1;
         border-top: 1.5px solid #e2ded6;
         padding: 16px 0 0 0 !important;
@@ -2835,6 +2845,7 @@
       .sheet {
         width: 1100px !important;
       }
+    }
 </style>
 </head>
 
