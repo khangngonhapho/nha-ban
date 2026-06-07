@@ -45,29 +45,29 @@
       display: flex !important;
     }
 
-    /* Ward tabs: ẩn mặc định, JS tự bật khi có dữ liệu */
-    #wardTabs {
+    /* Ward multiselect: ẩn mặc định, JS tự bật khi có dữ liệu */
+    #wardMulti {
       display: none !important;
     }
 
-    body.is-admin #wardTabs.has-wards {
-      display: flex !important;
+    body.is-admin #wardMulti.has-wards {
+      display: block !important;
     }
 
-    #duongTabs {
+    #duongMulti {
       display: none !important;
     }
 
-    body.is-admin #duongTabs.has-duong {
-      display: flex !important;
+    body.is-admin #duongMulti.has-duong {
+      display: block !important;
     }
 
-    #huongTabs {
+    #huongMulti {
       display: none !important;
     }
 
-    body.is-admin #huongTabs.has-huong {
-      display: flex !important;
+    body.is-admin #huongMulti.has-huong {
+      display: block !important;
     }
 
     body:not(.is-admin) header {
@@ -2978,7 +2978,8 @@
         align-self: center;
       }
 
-      #filterPanel > .tabs {
+      #filterPanel > .tabs,
+      #filterPanel > .multiselect-container {
         grid-column: 2;
         margin: 0 !important;
         padding: 0 !important;
@@ -3090,6 +3091,98 @@
         align-items: center;
         justify-content: center;
       }
+    }
+
+    /* ── Custom Multiselect Dropdown ── */
+    .multiselect-container {
+      position: relative;
+      width: 100%;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .multiselect-trigger {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #ffffff;
+      color: #2c2c2e;
+      border: 1.5px solid #e2ded6;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      box-sizing: border-box;
+      user-select: none;
+      transition: all 0.2s;
+    }
+    .multiselect-trigger:hover {
+      border-color: rgba(192, 57, 43, 0.5);
+    }
+    .multiselect-container.open .multiselect-trigger {
+      border-color: var(--red);
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
+    }
+    .multiselect-placeholder {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 24px);
+    }
+    .multiselect-arrow {
+      width: 16px;
+      height: 16px;
+      stroke: #2c2c2e;
+      stroke-width: 2.5;
+      fill: none;
+      transition: transform 0.2s;
+    }
+    .multiselect-container.open .multiselect-arrow {
+      transform: rotate(180deg);
+    }
+    .multiselect-options {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #ffffff;
+      border: 1.5px solid #e2ded6;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      z-index: 1010;
+      box-sizing: border-box;
+    }
+    .multiselect-container.open .multiselect-options {
+      display: block;
+    }
+    .multiselect-option {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #2c2c2e;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .multiselect-option:hover {
+      background: #f9f8f6;
+    }
+    .multiselect-option input[type="checkbox"] {
+      margin-right: 10px;
+      accent-color: var(--red);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
     }
     
     /* ── Mobile view overrides (US-076.3) ── */
@@ -3258,6 +3351,13 @@
         align-items: center;
         justify-content: center;
       }
+      .filter-panel > .multiselect-container {
+        width: calc(100% - 32px) !important;
+        margin-left: 16px !important;
+        margin-right: 16px !important;
+        margin-top: 4px !important;
+        margin-bottom: 12px !important;
+      }
     }
 </style>
 </head>
@@ -3345,19 +3445,37 @@
       <div class="filter-divider"></div>
 
       <div class="filter-section-lbl" id="districtLbl" style="margin-top:4px;">Quận / TP</div>
-      <div class="tabs" id="districtTabs">
-        <button class="tab on" data-val="all" onclick="tDistrict('all')">Tất cả</button>
-        <button class="tab" data-val="q3" onclick="tDistrict('q3')">Quận 3</button>
-        <button class="tab" data-val="q10" onclick="tDistrict('q10')">Quận 10</button>
-        <button class="tab" data-val="pn" onclick="tDistrict('pn')">Phú Nhuận</button>
-        <button class="tab" data-val="tb" onclick="tDistrict('tb')">Tân Bình</button>
-        <button class="tab" data-val="bt" onclick="tDistrict('bt')">Bình Thạnh</button>
-        <button class="tab" data-val="gv" onclick="tDistrict('gv')">Gò Vấp</button>
+      <div class="multiselect-container" id="districtMulti">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('districtMulti')">
+          <span class="multiselect-placeholder" id="districtPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="districtOptions"></div>
       </div>
+
       <div class="filter-section-lbl" id="wardLbl" style="display:none">Phường</div>
-      <div class="tabs" id="wardTabs"></div>
+      <div class="multiselect-container" id="wardMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('wardMulti')">
+          <span class="multiselect-placeholder" id="wardPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="wardOptions"></div>
+      </div>
+
       <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
-      <div class="tabs" id="duongTabs"></div>
+      <div class="multiselect-container" id="duongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('duongMulti')">
+          <span class="multiselect-placeholder" id="duongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="duongOptions"></div>
+      </div>
       <div class="filter-section-lbl" id="giaLbl">Khoảng giá</div>
       <div class="tabs" id="giaTabs">
         <button class="tab on" data-val="all" onclick="tGia('all')">Tất cả</button>
@@ -3368,7 +3486,15 @@
         <button class="tab" data-val="gt20" onclick="tGia('gt20')">Trên 20 tỷ</button>
       </div>
       <div class="filter-section-lbl" id="huongLbl" style="display:none">Hướng nhà</div>
-      <div class="tabs" id="huongTabs"></div>
+      <div class="multiselect-container" id="huongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('huongMulti')">
+          <span class="multiselect-placeholder" id="huongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="huongOptions"></div>
+      </div>
       <div class="filter-section-lbl" id="danhGiaLbl">Đánh giá</div>
       <div class="tabs" id="danhGiaTabs">
         <button class="tab on" data-val="all" onclick="tDanhGia('all')">Tất cả</button>
@@ -3957,6 +4083,100 @@
         btn.classList.toggle('on', v === 'all' ? set.size === 0 : set.has(v));
       });
     }
+
+    // ── Custom Multiselect Event Handlers ──
+    window.toggleMultiselect = function(containerId) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      document.querySelectorAll('.multiselect-container').forEach(other => {
+        if (other !== el) other.classList.remove('open');
+      });
+      el.classList.toggle('open');
+    };
+
+    window.toggleOption = function(category, val, event) {
+      if (event && event.target.tagName === 'INPUT') {
+        return;
+      }
+      const container = document.getElementById(category + 'Options');
+      if (!container) return;
+      const checkbox = container.querySelector(`input[value="${val}"]`);
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        updateSelectionFromCheckboxes(category);
+      }
+    };
+
+    window.updateSelectionFromCheckboxes = function(category) {
+      let set;
+      if (category === 'district') set = selDistricts;
+      else if (category === 'ward') set = selWards;
+      else if (category === 'duong') set = selDuongs;
+      else if (category === 'huong') set = selHuong;
+      if (!set) return;
+
+      const container = document.getElementById(category + 'Options');
+      if (!container) return;
+
+      set.clear();
+      container.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+        set.add(cb.value);
+      });
+
+      updateMultiselectPlaceholder(category);
+
+      if (category === 'district') {
+        selWards.clear(); selDuongs.clear(); selHuong.clear();
+        buildWardTabs(); buildDuongTabs(); buildHuongTabs();
+      } else if (category === 'ward') {
+        selDuongs.clear(); selHuong.clear();
+        buildDuongTabs(); buildHuongTabs();
+      }
+
+      updateFilterSummary();
+      updateStats();
+      applyFilter();
+    };
+
+    function updateMultiselectPlaceholder(category) {
+      let set, namesMap;
+      if (category === 'district') {
+        set = selDistricts;
+        namesMap = {
+          q1: 'Quận 1', q2: 'Quận 2', q3: 'Quận 3', q4: 'Quận 4', q5: 'Quận 5', q6: 'Quận 6',
+          q7: 'Quận 7', q8: 'Quận 8', q9: 'Quận 9', q10: 'Quận 10', q11: 'Quận 11', q12: 'Quận 12',
+          pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp',
+          tp: 'Tân Phú', btan: 'Bình Tân', td: 'Thủ Đức',
+          hm: 'Hóc Môn', nb: 'Nhà Bè', bc: 'Bình Chánh', cc: 'Củ Chi', cg: 'Cần Giờ'
+        };
+      } else if (category === 'ward') {
+        set = selWards;
+      } else if (category === 'duong') {
+        set = selDuongs;
+      } else if (category === 'huong') {
+        set = selHuong;
+      }
+      const el = document.getElementById(category + 'Placeholder');
+      if (!el) return;
+
+      if (!set || set.size === 0) {
+        el.textContent = 'Tất cả';
+        el.style.color = 'rgba(44, 44, 46, 0.5)';
+      } else {
+        const selectedNames = [...set].map(val => namesMap ? (namesMap[val] || val) : val);
+        el.textContent = selectedNames.join(', ');
+        el.style.color = '#2c2c2e';
+      }
+    }
+
+    // Close dropdowns on click outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.multiselect-container')) {
+        document.querySelectorAll('.multiselect-container.open').forEach(el => {
+          el.classList.remove('open');
+        });
+      }
+    });
     function applyGia(arr) {
       if (!selGia.size) return arr;
       return arr.filter(p => {
@@ -5065,12 +5285,12 @@
         trackAction("Mở danh sách nhà", `Số lượng hiển thị: ${DATA.length} căn`);
       }
 
-      buildDistrictTabs();
       renderCriteriaCheckboxes(DATA);
       updateStaticTabsVisibility(DATA);
       restoreState();
       updateSortButtonsUI();
 
+      buildDistrictTabs();
       buildWardTabs();
       buildDuongTabs();
       buildHuongTabs();
@@ -5263,7 +5483,6 @@
           document.querySelectorAll('.filter-criterion').forEach(el => el.checked = false);
         }
 
-        syncTabUI('districtTabs', selDistricts);
         syncTabUI('giaTabs', selGia);
         syncTabUI('danhGiaTabs', selDanhGia);
 
@@ -5366,21 +5585,30 @@
         return idxA - idxB;
       });
 
-      const container = document.getElementById('districtTabs');
-      if (!container) return;
-
+      const container = document.getElementById('districtOptions');
+      const box = document.getElementById('districtMulti');
       const lbl = document.getElementById('districtLbl');
+      if (!container || !box) return;
+
       if (districtsInPool.length === 0) {
         if (lbl) lbl.style.display = 'none';
-        container.style.display = 'none';
+        box.style.display = 'none';
       } else {
         if (lbl) lbl.style.display = '';
-        container.style.display = 'flex';
-        container.innerHTML = `<button class="tab ${selDistricts.size === 0 ? 'on' : ''}" data-val="all" onclick="tDistrict('all')">Tất cả</button>`
-          + districtsInPool.map(d => {
-              const name = dNamesFull[d] || d.toUpperCase();
-              return `<button class="tab ${selDistricts.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDistrict('${d}')">${name}</button>`;
-            }).join('');
+        box.style.display = 'block';
+        
+        container.innerHTML = districtsInPool.map(d => {
+          const name = dNamesFull[d] || d.toUpperCase();
+          const checked = selDistricts.has(d) ? 'checked' : '';
+          return `
+            <div class="multiselect-option" onclick="toggleOption('district', '${d}', event)">
+              <input type="checkbox" value="${d}" ${checked} onclick="event.stopPropagation()" onchange="updateSelectionFromCheckboxes('district')">
+              <span>${name}</span>
+            </div>
+          `;
+        }).join('');
+        
+        updateMultiselectPlaceholder('district');
       }
     }
 
@@ -5406,23 +5634,32 @@
         const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
         wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
       }
-      const wt = document.getElementById('wardTabs');
+      const container = document.getElementById('wardOptions');
+      const box = document.getElementById('wardMulti');
       const wl = document.getElementById('wardLbl');
+      if (!container || !box) return;
+
       if (!wards.length) { 
-        if (wt) {
-          wt.classList.remove('has-wards'); 
-          wt.style.display = 'none';
-        }
+        box.classList.remove('has-wards'); 
+        box.style.display = 'none';
         if (wl) wl.style.display = 'none'; 
         return; 
       }
       if (wl) wl.style.display = 'block';
-      if (wt) {
-        wt.innerHTML = `<button class="tab ${selWards.size === 0 ? 'on' : ''}" data-val="all" onclick="tWard('all')">Tất cả</button>`
-          + wards.map(w => `<button class="tab ${selWards.has(w) ? 'on' : ''}" data-val="${w}" onclick="tWard('${w}')">${w}</button>`).join('');
-        wt.classList.add('has-wards');
-        wt.style.display = '';
-      }
+      box.classList.add('has-wards');
+      box.style.display = '';
+
+      container.innerHTML = wards.map(w => {
+        const checked = selWards.has(w) ? 'checked' : '';
+        return `
+          <div class="multiselect-option" onclick="toggleOption('ward', '${w}', event)">
+            <input type="checkbox" value="${w}" ${checked} onclick="event.stopPropagation()" onchange="updateSelectionFromCheckboxes('ward')">
+            <span>${w}</span>
+          </div>
+        `;
+      }).join('');
+      
+      updateMultiselectPlaceholder('ward');
     }
 
     // ── Build duong tabs dynamically ──
@@ -5431,23 +5668,32 @@
       let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
       if (selWards.size) pool = pool.filter(p => selWards.has(p.phuong));
       const duongs = [...new Set(pool.map(p => p.duong_truoc_nha).filter(d => d && d !== '-'))].sort();
-      const dt = document.getElementById('duongTabs');
+      const container = document.getElementById('duongOptions');
+      const box = document.getElementById('duongMulti');
       const dl = document.getElementById('duongLbl');
+      if (!container || !box) return;
+
       if (!duongs.length) { 
-        if (dt) {
-          dt.classList.remove('has-duong'); 
-          dt.style.display = 'none';
-        }
+        box.classList.remove('has-duong'); 
+        box.style.display = 'none';
         if (dl) dl.style.display = 'none'; 
         return; 
       }
       if (dl) dl.style.display = 'block';
-      if (dt) {
-        dt.innerHTML = `<button class="tab ${selDuongs.size === 0 ? 'on' : ''}" data-val="all" onclick="tDuong('all')">Tất cả</button>`
-          + duongs.map(d => `<button class="tab ${selDuongs.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDuong('${d}')">${d}</button>`).join('');
-        dt.classList.add('has-duong');
-        dt.style.display = '';
-      }
+      box.classList.add('has-duong');
+      box.style.display = '';
+
+      container.innerHTML = duongs.map(d => {
+        const checked = selDuongs.has(d) ? 'checked' : '';
+        return `
+          <div class="multiselect-option" onclick="toggleOption('duong', '${d}', event)">
+            <input type="checkbox" value="${d}" ${checked} onclick="event.stopPropagation()" onchange="updateSelectionFromCheckboxes('duong')">
+            <span>${d}</span>
+          </div>
+        `;
+      }).join('');
+      
+      updateMultiselectPlaceholder('duong');
     }
 
     // ── Build huong (direction) tabs dynamically ──
@@ -5456,51 +5702,41 @@
       let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
       if (selWards.size) pool = pool.filter(p => selWards.has(p.phuong));
       const huongs = [...new Set(pool.map(p => p.huong).filter(h => h && h !== '-'))].sort();
-      const ht = document.getElementById('huongTabs');
+      const container = document.getElementById('huongOptions');
+      const box = document.getElementById('huongMulti');
       const hl = document.getElementById('huongLbl');
+      if (!container || !box) return;
+
       if (!huongs.length) { 
-        if (ht) {
-          ht.classList.remove('has-huong'); 
-          ht.style.display = 'none';
-        }
+        box.classList.remove('has-huong'); 
+        box.style.display = 'none';
         if (hl) hl.style.display = 'none'; 
         return; 
       }
       if (hl) hl.style.display = 'block';
-      if (ht) {
-        ht.innerHTML = `<button class="tab ${selHuong.size === 0 ? 'on' : ''}" data-val="all" onclick="tHuong('all')">Tất cả</button>`
-          + huongs.map(h => `<button class="tab ${selHuong.has(h) ? 'on' : ''}" data-val="${h}" onclick="tHuong('${h}')">${h}</button>`).join('');
-        ht.classList.add('has-huong');
-        ht.style.display = '';
-      }
+      box.classList.add('has-huong');
+      box.style.display = '';
+
+      container.innerHTML = huongs.map(h => {
+        const checked = selHuong.has(h) ? 'checked' : '';
+        return `
+          <div class="multiselect-option" onclick="toggleOption('huong', '${h}', event)">
+            <input type="checkbox" value="${h}" ${checked} onclick="event.stopPropagation()" onchange="updateSelectionFromCheckboxes('huong')">
+            <span>${h}</span>
+          </div>
+        `;
+      }).join('');
+      
+      updateMultiselectPlaceholder('huong');
     }
 
     // ── Toggle functions (multi-select) ──
-    function tDistrict(val) {
-      tSel(selDistricts, val); syncTabUI('districtTabs', selDistricts);
-      selWards.clear(); selDuongs.clear(); selHuong.clear();
-      buildWardTabs(); buildDuongTabs(); buildHuongTabs();
-      updateFilterSummary(); updateStats(); applyFilter();
-    }
-    function tWard(val) {
-      tSel(selWards, val); syncTabUI('wardTabs', selWards);
-      selDuongs.clear(); selHuong.clear(); buildDuongTabs(); buildHuongTabs();
-      updateFilterSummary(); updateStats(); applyFilter();
-    }
-    function tDuong(val) {
-      tSel(selDuongs, val); syncTabUI('duongTabs', selDuongs);
-      updateFilterSummary(); updateStats(); applyFilter();
-    }
     function tGia(val) {
       tSel(selGia, val); syncTabUI('giaTabs', selGia);
       updateFilterSummary(); updateStats(); applyFilter();
     }
     function tDanhGia(val) {
       tSel(selDanhGia, val); syncTabUI('danhGiaTabs', selDanhGia);
-      updateFilterSummary(); updateStats(); applyFilter();
-    }
-    function tHuong(val) {
-      tSel(selHuong, val); syncTabUI('huongTabs', selHuong);
       updateFilterSummary(); updateStats(); applyFilter();
     }
 
@@ -5537,7 +5773,6 @@
     function resetFilters() {
       selDistricts.clear(); selWards.clear(); selDuongs.clear(); selHuong.clear(); selGia.clear(); selDanhGia.clear();
       buildDistrictTabs();
-      syncTabUI('districtTabs', selDistricts);
       syncTabUI('giaTabs', selGia);
       syncTabUI('danhGiaTabs', selDanhGia);
 
