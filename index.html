@@ -3256,6 +3256,7 @@
     // Check persistent admin session flag in localStorage
     const isSavedAdmin = localStorage.getItem('isAdminSession') === 'true';
     let isAdmin = isTokenValid || isSavedAdmin;
+    let hasErrorState = false;
 
     // Check if URL has raw password parameter, verify and clean it up asynchronously
     const rawPwd = urlParams.get('pwd') || urlParams.get('pw');
@@ -4376,7 +4377,7 @@
         DATA = fullList.filter(p => sharedIds.map(String).includes(String(p.id)) && !p.is_invisible);
       } else if (!isAdmin) {
         DATA = [];
-        showError('Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.');
+        showError('Vui lòng liên hệ <b>Khang Ngô Nhà Phố</b> để được cung cấp thông tin.');
       } else {
         DATA = fullList.filter(p => !p.is_invisible);
       }
@@ -4499,6 +4500,7 @@
     };
 
     function showError(msg) {
+      hasErrorState = true;
       const list = document.getElementById('list');
       list.innerHTML = '';
       
@@ -4513,7 +4515,7 @@
       list.insertAdjacentHTML('beforeend', `
     <div class="err-box">
       <h3>🏠 Thông báo</h3>
-      <p style="font-size: 15px; font-weight: 500;">Vui lòng liên hệ <b>Khang Ngô Nhà Phố</b> để được cung cấp thông tin.</p>
+      <p style="font-size: 15px; font-weight: 500;">${msg}</p>
       ${adminLoginLink}
     </div>`);
     }
@@ -4890,6 +4892,7 @@
     }
 
     function render() {
+      if (hasErrorState) return;
       const list = document.getElementById('list');
       list.innerHTML = '';
       
