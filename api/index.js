@@ -7,6 +7,129 @@ module.exports = async (req, res) => {
   const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = urlObj.pathname;
 
+  // 1. Endpoint exchange authorization code for tokens
+  if (pathname === '/api/auth/token') {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    let body = {};
+    try {
+      body = req.body;
+      if (typeof body === 'string') body = JSON.parse(body);
+    } catch (e) {}
+
+    if (!body || !body.code) {
+      try {
+        const buffers = [];
+        for await (const chunk of req) {
+          buffers.push(chunk);
+        }
+        const data = Buffer.concat(buffers).toString();
+        body = JSON.parse(data);
+      } catch (e) {
+        return res.status(400).json({ error: 'Bad Request: Missing JSON body' });
+      }
+    }
+
+    const { code, redirect_uri } = body;
+    if (!code) {
+      return res.status(400).json({ error: 'Bad Request: Missing authorization code' });
+    }
+
+    const CLIENT_ID = '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+    const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
+    if (!CLIENT_SECRET) {
+      return res.status(500).json({ error: 'Server configuration error: GOOGLE_CLIENT_SECRET environment variable is missing' });
+    }
+
+    try {
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          code,
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          redirect_uri: redirect_uri || 'postmessage',
+          grant_type: 'authorization_code'
+        }).toString()
+      });
+
+      const tokenData = await response.json();
+      if (!response.ok) {
+        return res.status(response.status).json(tokenData);
+      }
+
+      return res.status(200).json(tokenData);
+    } catch (err) {
+      console.error('Error exchanging code for token:', err);
+      return res.status(500).json({ error: 'Internal Server Error during token exchange' });
+    }
+  }
+
+  // 2. Endpoint refresh access token using refresh_token
+  if (pathname === '/api/auth/refresh') {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    let body = {};
+    try {
+      body = req.body;
+      if (typeof body === 'string') body = JSON.parse(body);
+    } catch (e) {}
+
+    if (!body || !body.refresh_token) {
+      try {
+        const buffers = [];
+        for await (const chunk of req) {
+          buffers.push(chunk);
+        }
+        const data = Buffer.concat(buffers).toString();
+        body = JSON.parse(data);
+      } catch (e) {
+        return res.status(400).json({ error: 'Bad Request: Missing JSON body' });
+      }
+    }
+
+    const { refresh_token } = body;
+    if (!refresh_token) {
+      return res.status(400).json({ error: 'Bad Request: Missing refresh token' });
+    }
+
+    const CLIENT_ID = '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+    const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
+    if (!CLIENT_SECRET) {
+      return res.status(500).json({ error: 'Server configuration error: GOOGLE_CLIENT_SECRET environment variable is missing' });
+    }
+
+    try {
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          refresh_token,
+          grant_type: 'refresh_token'
+        }).toString()
+      });
+
+      const tokenData = await response.json();
+      if (!response.ok) {
+        return res.status(response.status).json(tokenData);
+      }
+
+      return res.status(200).json(tokenData);
+    } catch (err) {
+      console.error('Error refreshing token:', err);
+      return res.status(500).json({ error: 'Internal Server Error during token refresh' });
+    }
+  }
+
   // Xử lý secure API endpoint trung gian lấy ảnh mặt tiền
   if (pathname === '/api/get-facade-images') {
     const authHeader = req.headers.authorization;

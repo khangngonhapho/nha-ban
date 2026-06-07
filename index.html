@@ -3982,10 +3982,37 @@
       const oldAdmin = document.getElementById('_gs_admin');
       if (oldAdmin) oldAdmin.remove();
 
-      const token = localStorage.getItem('g_access_token');
-      const expiry = localStorage.getItem('g_token_expiry');
+      let token = localStorage.getItem('g_access_token');
+      let expiry = localStorage.getItem('g_token_expiry');
       const now = Date.now();
-      const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+      let isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+
+      if (isAdmin && !isTokenValid) {
+        const refreshToken = localStorage.getItem('g_refresh_token');
+        if (refreshToken) {
+          console.log("Access token expired. Attempting silent refresh via server proxy...");
+          try {
+            const res = await fetch('/api/auth/refresh', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refresh_token: refreshToken })
+            });
+            if (res.ok) {
+              const tokenData = await res.json();
+              token = tokenData.access_token;
+              expiry = Date.now() + (tokenData.expires_in - 60) * 1000;
+              localStorage.setItem('g_access_token', token);
+              localStorage.setItem('g_token_expiry', expiry);
+              isTokenValid = true;
+              console.log("Silent refresh succeeded on loadData.");
+            } else {
+              console.warn("Silent refresh failed on loadData, status:", res.status);
+            }
+          } catch (e) {
+            console.error("Silent refresh error on loadData:", e);
+          }
+        }
+      }
 
       if (isAdmin && !isTokenValid) {
         console.log("Admin accessed without valid Google token. Displaying Auth Screen...");
@@ -6293,7 +6320,7 @@
     // ============================================================
     //  🔑 GOOGLE OAUTH2 & SECURE FACADE IMAGE FETCHING (US-024)
     // ============================================================
-    let gTokenClient = null;
+    let gCodeClient = null;
 
     function saveGoogleClientId() {
       const input = document.getElementById('gClientIdInput');
@@ -6314,52 +6341,77 @@
     function initGoogleAuth() {
       let clientId = localStorage.getItem('gClientId');
       if (!clientId) {
-        clientId = '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+        clientId = '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
         localStorage.setItem('gClientId', clientId);
       }
       const gClientIdInput = document.getElementById('gClientIdInput');
       if (gClientIdInput) gClientIdInput.value = clientId;
 
       try {
-        gTokenClient = google.accounts.oauth2.initTokenClient({
+        gCodeClient = google.accounts.oauth2.initCodeClient({
           client_id: clientId,
           scope: 'https://www.googleapis.com/auth/spreadsheets',
-          callback: (tokenResponse) => {
-            if (tokenResponse.error !== undefined) {
-              console.error("OAuth2 error:", tokenResponse.error);
+          ux_mode: 'popup',
+          access_type: 'offline',
+          callback: async (response) => {
+            if (response.error !== undefined) {
+              console.error("OAuth2 error:", response.error);
               showGoogleLoginButtonState(false);
               
-              // Nếu đang có tác vụ chờ token (Save/Pull), hiển thị đăng nhập popup thay vì thất bại âm thầm
               if (window.tokenResolvers && window.tokenResolvers.length > 0) {
                 promptInteractiveLogin();
               }
               return;
             }
-            const token = tokenResponse.access_token;
-            const expiry = Date.now() + (tokenResponse.expires_in - 60) * 1000;
-            localStorage.setItem('g_access_token', token);
-            localStorage.setItem('g_token_expiry', expiry);
-            localStorage.setItem('isAdminSession', 'true'); // Save admin session flag (US-049.2 Refinement)
-            showGoogleLoginButtonState(true);
-            document.body.classList.remove('is-locked');
-            secureLoadAttempted = false;
+            const authCode = response.code;
+            console.log("Authorization code received. Exchanging for tokens...");
             
-            // Xử lý và giải phóng các resolvers đang đợi token (US-061)
-            const resolvers = window.tokenResolvers || [];
-            window.tokenResolvers = [];
-            
-            if (resolvers.length > 0) {
-              console.log("Đã tự động gia hạn token ngầm thành công cho tác vụ đang chờ.");
-              resolvers.forEach(r => r.resolve(token));
-            } else {
-              // Chỉ reload dữ liệu nếu không có tác vụ nào đang đợi token ghi sheets (tránh reset form admin)
-              isSecureLoaded = false;
-              isDataLoaded = false;
-              loadData();
+            try {
+              const res = await fetch('/api/auth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: authCode, redirect_uri: window.location.origin })
+              });
+              
+              if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || 'Token exchange failed');
+              }
+              
+              const tokenData = await res.json();
+              const token = tokenData.access_token;
+              const refresh = tokenData.refresh_token;
+              const expiry = Date.now() + (tokenData.expires_in - 60) * 1000;
+              
+              localStorage.setItem('g_access_token', token);
+              if (refresh) {
+                localStorage.setItem('g_refresh_token', refresh);
+              }
+              localStorage.setItem('g_token_expiry', expiry);
+              localStorage.setItem('isAdminSession', 'true');
+              showGoogleLoginButtonState(true);
+              document.body.classList.remove('is-locked');
+              secureLoadAttempted = false;
+              
+              const resolvers = window.tokenResolvers || [];
+              window.tokenResolvers = [];
+              
+              if (resolvers.length > 0) {
+                console.log("Đã tự động gia hạn token ngầm thành công cho tác vụ đang chờ.");
+                resolvers.forEach(r => r.resolve(token));
+              } else {
+                isSecureLoaded = false;
+                isDataLoaded = false;
+                loadData();
+              }
+            } catch (err) {
+              console.error("Token exchange error:", err);
+              alert("Lỗi xác thực Google: " + err.message);
+              showGoogleLoginButtonState(false);
             }
           }
         });
-        console.log("Google Auth GSI Client initialized successfully.");
+        console.log("Google Auth GSI Code Client initialized successfully.");
         // Update the login button state on initialization based on active token in localStorage
         const token = localStorage.getItem('g_access_token');
         const expiry = localStorage.getItem('g_token_expiry');
@@ -6383,16 +6435,16 @@
         return;
       }
 
-      if (!gTokenClient) {
+      if (!gCodeClient) {
         initGoogleAuth();
       }
 
-      if (gTokenClient) {
+      if (gCodeClient) {
         try {
-          gTokenClient.requestAccessToken();
+          gCodeClient.requestCode();
         } catch (e) {
-          console.error("Error requesting access token:", e);
-          alert("Lỗi yêu cầu token. Vui lòng kiểm tra lại Client ID hoặc kết nối mạng.");
+          console.error("Error requesting auth code:", e);
+          alert("Lỗi xác thực Google. Vui lòng kiểm tra lại Client ID hoặc kết nối mạng.");
         }
       } else {
         alert("Không thể khởi tạo Client xác thực. Vui lòng tải lại trang.");
@@ -6417,6 +6469,7 @@
       }
     }
 
+    // Tự động kiểm tra làm mới ngầm bằng refresh_token
     function autoLoginOrSilentRefresh() {
       const token = localStorage.getItem('g_access_token');
       const expiry = localStorage.getItem('g_token_expiry');
@@ -6427,22 +6480,30 @@
         showGoogleLoginButtonState(true);
         loadData();
       } else {
-        const clientId = localStorage.getItem('gClientId');
-        if (clientId) {
-          console.log("Access token expired or missing. Attempting Silent Auto-Login...");
-          const checkAndRefresh = () => {
-            if (gTokenClient) {
-              try {
-                gTokenClient.requestAccessToken({ prompt: 'none' });
-              } catch (e) {
-                console.warn("Silent token request failed:", e);
-                showGoogleLoginButtonState(false);
-              }
-            } else {
-              setTimeout(checkAndRefresh, 300);
-            }
-          };
-          checkAndRefresh();
+        const refreshToken = localStorage.getItem('g_refresh_token');
+        if (refreshToken) {
+          console.log("Access token expired or missing. Refreshing using refresh token proxy...");
+          fetch('/api/auth/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken })
+          })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to refresh token on startup");
+            return res.json();
+          })
+          .then(tokenData => {
+            const token = tokenData.access_token;
+            const expiry = Date.now() + (tokenData.expires_in - 60) * 1000;
+            localStorage.setItem('g_access_token', token);
+            localStorage.setItem('g_token_expiry', expiry);
+            showGoogleLoginButtonState(true);
+            loadData();
+          })
+          .catch(err => {
+            console.warn("Auto token refresh failed on startup:", err);
+            showGoogleLoginButtonState(false);
+          });
         } else {
           showGoogleLoginButtonState(false);
         }
@@ -6469,28 +6530,34 @@
           return;
         }
 
-        const clientId = localStorage.getItem('gClientId');
-        if (!clientId) {
-          window.tokenResolvers = [];
-          reject(new Error("Chưa cấu hình Google Client ID trong Bộ lọc!"));
-          return;
-        }
-
-        if (!gTokenClient) {
-          initGoogleAuth();
-        }
-
-        if (gTokenClient) {
-          console.log("Token đã hết hạn hoặc sắp hết hạn. Đang tự động làm mới ngầm...");
-          try {
-            gTokenClient.requestAccessToken({ prompt: 'none' }); // Silent refresh
-          } catch (e) {
-            console.warn("Silent refresh failed synchronously, calling fallback:", e);
+        const refreshToken = localStorage.getItem('g_refresh_token');
+        if (refreshToken) {
+          console.log("Token expired or close to expiry. Refreshing using refresh token proxy...");
+          fetch('/api/auth/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken })
+          })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to refresh token");
+            return res.json();
+          })
+          .then(tokenData => {
+            const newToken = tokenData.access_token;
+            const newExpiry = Date.now() + (tokenData.expires_in - 60) * 1000;
+            localStorage.setItem('g_access_token', newToken);
+            localStorage.setItem('g_token_expiry', newExpiry);
+            
+            const resolvers = window.tokenResolvers || [];
+            window.tokenResolvers = [];
+            resolvers.forEach(r => r.resolve(newToken));
+          })
+          .catch(err => {
+            console.error("Refresh token exchange failed:", err);
             promptInteractiveLogin();
-          }
+          });
         } else {
-          window.tokenResolvers = [];
-          reject(new Error("Không thể khởi tạo client xác thực Google!"));
+          promptInteractiveLogin();
         }
       });
     };
@@ -6498,7 +6565,7 @@
     function promptInteractiveLogin() {
       if (confirm("Phiên đăng nhập Google đã hết hiệu lực. Nhấp OK để liên kết lại tài khoản Gmail và tự động hoàn thành lưu dữ liệu!")) {
         try {
-          gTokenClient.requestAccessToken(); // Mở popup đăng nhập tương tác
+          gCodeClient.requestCode(); // Mở popup đăng nhập tương tác
         } catch (e) {
           console.error("Interactive login request failed:", e);
           const resolvers = window.tokenResolvers || [];
@@ -6521,15 +6588,30 @@
 
       if (token && expiry) {
         const timeRemaining = parseInt(expiry, 10) - now;
-        // Nếu token sắp hết hạn trong dưới 15 phút, kích hoạt silent refresh ngầm
+        // Nếu token sắp hết hạn trong dưới 15 phút, kích hoạt silent refresh ngầm qua API
         if (timeRemaining > 0 && timeRemaining < 15 * 60 * 1000) {
-          console.log("Token sắp hết hạn trong", Math.round(timeRemaining / 1000), "giây. Đang làm mới ngầm định kỳ...");
-          if (gTokenClient) {
-            try {
-              gTokenClient.requestAccessToken({ prompt: 'none' });
-            } catch (e) {
+          const refreshToken = localStorage.getItem('g_refresh_token');
+          if (refreshToken) {
+            console.log("Token sắp hết hạn trong", Math.round(timeRemaining / 1000), "giây. Đang làm mới ngầm định kỳ...");
+            fetch('/api/auth/refresh', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refresh_token: refreshToken })
+            })
+            .then(res => {
+              if (res.ok) {
+                return res.json().then(tokenData => {
+                  const newToken = tokenData.access_token;
+                  const newExpiry = Date.now() + (tokenData.expires_in - 60) * 1000;
+                  localStorage.setItem('g_access_token', newToken);
+                  localStorage.setItem('g_token_expiry', newExpiry);
+                  console.log("Làm mới token định kỳ thành công.");
+                });
+              }
+            })
+            .catch(e => {
               console.warn("Background silent refresh failed:", e);
-            }
+            });
           }
         }
       }
