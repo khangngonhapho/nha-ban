@@ -4427,7 +4427,7 @@
       render();
       updateSwitcherCounts();
       if (isAdmin) {
-        autoLoginOrSilentRefresh();
+        showGoogleLoginButtonState(true);
       }
 
       // US-049: Tự động mở modal Curation Pool thô nếu Admin mở link của căn chưa public
@@ -6360,8 +6360,12 @@
           }
         });
         console.log("Google Auth GSI Client initialized successfully.");
-        // Auto silent refresh on initialization if Admin (US-049.2 Refinement)
-        autoLoginOrSilentRefresh();
+        // Update the login button state on initialization based on active token in localStorage
+        const token = localStorage.getItem('g_access_token');
+        const expiry = localStorage.getItem('g_token_expiry');
+        const now = Date.now();
+        const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+        showGoogleLoginButtonState(isTokenValid);
       } catch (e) {
         console.error("Error initializing Google Auth GSI:", e);
       }
