@@ -3097,13 +3097,20 @@
       body.filter-active {
         overflow: hidden;
       }
+      body.filter-active header {
+        position: static !important;
+        transform: none !important;
+        transition: none !important;
+      }
       .filter-panel {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         max-height: 100vh !important;
+        max-height: 100dvh !important;
         background: #ffffff !important;
         z-index: 1000;
         margin: 0 !important;
@@ -3305,35 +3312,12 @@
       <div class="criteria-section">
         <div class="criteria-title">TIÊU CHÍ BĐS *</div>
         <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
-        <div class="criteria-grid">
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Triệu đô" onchange="onSearchInput()"><span>Triệu đô</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Dòng tiền ổn định" onchange="onSearchInput()"><span>Dòng tiền ổn định</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Hiếm" onchange="onSearchInput()"><span>Hiếm</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="View hồ - công viên" onchange="onSearchInput()"><span>View hồ - công viên</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Nội thất đẹp - giá trị" onchange="onSearchInput()"><span>Nội thất đẹp - giá trị</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Để ở" onchange="onSearchInput()"><span>Để ở</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Để kinh doanh" onchange="onSearchInput()"><span>Để kinh doanh</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Lãi vốn (rẻ)" onchange="onSearchInput()"><span>Lãi vốn (rẻ)</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chủ cần bán gấp" onchange="onSearchInput()"><span>Chủ cần bán gấp</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Hẻm ô tô" onchange="onSearchInput()"><span>Hẻm ô tô</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Hẻm xe máy" onchange="onSearchInput()"><span>Hẻm xe máy</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Đất - nhà cấp 4 - nhà cũ" onchange="onSearchInput()"><span>Đất - nhà cấp 4 - nhà cũ</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chưa được cấp CNQSD" onchange="onSearchInput()"><span>Chưa được cấp CNQSD</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chính chủ" onchange="onSearchInput()"><span>Chính chủ</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Dân đầu tư" onchange="onSearchInput()"><span>Dân đầu tư</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Thế chấp ngân hàng" onchange="onSearchInput()"><span>Thế chấp ngân hàng</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Thang máy" onchange="onSearchInput()"><span>Thang máy</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Mặt phố" onchange="onSearchInput()"><span>Mặt phố</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Lô góc" onchange="onSearchInput()"><span>Lô góc</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Bảo lãnh hoa hồng" onchange="onSearchInput()"><span>Bảo lãnh hoa hồng</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Độc quyền bán" onchange="onSearchInput()"><span>Độc quyền bán</span></label>
-          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chung cư" onchange="onSearchInput()"><span>Chung cư</span></label>
-        </div>
+        <div class="criteria-grid"></div>
       </div>
 
       <div class="filter-divider"></div>
 
-      <div class="filter-section-lbl" style="margin-top:4px;">Quận / TP</div>
+      <div class="filter-section-lbl" id="districtLbl" style="margin-top:4px;">Quận / TP</div>
       <div class="tabs" id="districtTabs">
         <button class="tab on" data-val="all" onclick="tDistrict('all')">Tất cả</button>
         <button class="tab" data-val="q3" onclick="tDistrict('q3')">Quận 3</button>
@@ -3347,7 +3331,7 @@
       <div class="tabs" id="wardTabs"></div>
       <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
       <div class="tabs" id="duongTabs"></div>
-      <div class="filter-section-lbl">Khoảng giá</div>
+      <div class="filter-section-lbl" id="giaLbl">Khoảng giá</div>
       <div class="tabs" id="giaTabs">
         <button class="tab on" data-val="all" onclick="tGia('all')">Tất cả</button>
         <button class="tab" data-val="lt7" onclick="tGia('lt7')">Dưới 7 tỷ</button>
@@ -3358,7 +3342,7 @@
       </div>
       <div class="filter-section-lbl" id="huongLbl" style="display:none">Hướng nhà</div>
       <div class="tabs" id="huongTabs"></div>
-      <div class="filter-section-lbl">Đánh giá</div>
+      <div class="filter-section-lbl" id="danhGiaLbl">Đánh giá</div>
       <div class="tabs" id="danhGiaTabs">
         <button class="tab on" data-val="all" onclick="tDanhGia('all')">Tất cả</button>
         <button class="tab" data-val="Hàng Ngon" style="background:var(--gold);color:#fff"
@@ -4333,91 +4317,7 @@
       // LỌC THEO TIÊU CHÍ BĐS CHECKBOXES (US-076.3)
       const activeCriteria = Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val'));
       if (activeCriteria.length > 0) {
-        function matchCriteria(p, criterion) {
-          const textToSearch = [
-            p.t || '',
-            p.m || '',
-            p.raw_phan_loai || '',
-            p.raw_mo_ta_chi_tiet || '',
-            p.raw_tieu_de_public || ''
-          ].join(' ').toLowerCase();
-
-          const c = criterion.toLowerCase();
-          
-          if (p.raw_phan_loai && p.raw_phan_loai.toLowerCase().includes(c)) return true;
-
-          // Custom keyword mapping for better search matching
-          if (c === 'triệu đô') {
-            return textToSearch.includes('triệu đô') || textToSearch.includes('trieu do') || (parseFloat(p.raw_gia_chao) >= 23 || parseFloat(p.gia) >= 23);
-          }
-          if (c === 'hiếm') {
-            return textToSearch.includes('hiếm') || textToSearch.includes('cực hiếm') || textToSearch.includes('hiem');
-          }
-          if (c === 'nội thất đẹp - giá trị') {
-            return textToSearch.includes('nội thất') || textToSearch.includes('noi that') || textToSearch.includes('đẹp') || textToSearch.includes('mới') || textToSearch.includes('full option');
-          }
-          if (c === 'để kinh doanh') {
-            return textToSearch.includes('kinh doanh') || textToSearch.includes('buôn bán') || textToSearch.includes('kd') || textToSearch.includes('văn phòng') || textToSearch.includes('spa') || textToSearch.includes('cho thuê');
-          }
-          if (c === 'chủ cần bán gấp') {
-            return textToSearch.includes('bán gấp') || textToSearch.includes('gấp') || textToSearch.includes('ngợp') || textToSearch.includes('chủ cần') || textToSearch.includes('hạ giá') || textToSearch.includes('giam gia');
-          }
-          if (c === 'hẻm xe máy') {
-            return textToSearch.includes('hẻm xe máy') || textToSearch.includes('ba gác') || textToSearch.includes('hẻm nhỏ') || textToSearch.includes('hẻm 2m') || textToSearch.includes('hẻm 3m') || textToSearch.includes('hẻm bagac');
-          }
-          if (c === 'chưa được cấp cnqsd') {
-            return textToSearch.includes('chưa sổ') || textToSearch.includes('chưa cấp') || textToSearch.includes('giấy tay') || textToSearch.includes('thừa phát lại');
-          }
-          if (c === 'dân đầu tư') {
-            return textToSearch.includes('đầu tư') || textToSearch.includes('lời') || textToSearch.includes('lãi') || textToSearch.includes('hiệu suất') || textToSearch.includes('dòng tiền');
-          }
-          if (c === 'thang máy') {
-            return textToSearch.includes('thang máy') || textToSearch.includes('thang may') || textToSearch.includes(' tm ');
-          }
-          if (c === 'lô góc') {
-            return textToSearch.includes('lô góc') || textToSearch.includes('lo goc') || textToSearch.includes('2 mặt tiền') || textToSearch.includes('hai mặt tiền');
-          }
-          if (c === 'độc quyền bán') {
-            return textToSearch.includes('độc quyền') || textToSearch.includes('doc quyen');
-          }
-          if (c === 'dòng tiền ổn định') {
-            return textToSearch.includes('dòng tiền') || textToSearch.includes('dong tien') || textToSearch.includes('cho thuê') || textToSearch.includes('thu nhập') || textToSearch.includes('hđt');
-          }
-          if (c === 'view hồ - công viên') {
-            return textToSearch.includes('view hồ') || textToSearch.includes('công viên') || textToSearch.includes('cv') || textToSearch.includes('cong vien');
-          }
-          if (c === 'để ở') {
-            return textToSearch.includes('để ở') || textToSearch.includes('gia đình') || textToSearch.includes('an cư') || textToSearch.includes('ở ngay');
-          }
-          if (c === 'lãi vốn (rẻ)') {
-            return textToSearch.includes('rẻ') || textToSearch.includes('lãi vốn') || textToSearch.includes('giá tốt') || textToSearch.includes('thơm') || textToSearch.includes('gạt tay');
-          }
-          if (c === 'hẻm ô tô') {
-            return textToSearch.includes('hẻm xe hơi') || textToSearch.includes('hẻm ô tô') || textToSearch.includes('hẻm xe tai') || textToSearch.includes('xe hơi đỗ') || textToSearch.includes('ô tô tránh') || textToSearch.includes('hẻm rộng');
-          }
-          if (c === 'đất - nhà cấp 4 - nhà cũ') {
-            return textToSearch.includes('nhà cấp 4') || textToSearch.includes('nhà cũ') || textToSearch.includes('đất trống') || textToSearch.includes('tiện xây mới') || textToSearch.includes('nhà nát');
-          }
-          if (c === 'chính chủ') {
-            return textToSearch.includes('chính chủ') || textToSearch.includes('chủ gửi') || textToSearch.includes('chinh chu');
-          }
-          if (c === 'thế chấp ngân hàng') {
-            return textToSearch.includes('ngân hàng') || textToSearch.includes('thế chấp') || textToSearch.includes('vay');
-          }
-          if (c === 'mặt phố') {
-            return textToSearch.includes('mặt phố') || textToSearch.includes('mặt tiền') || textToSearch.includes('mt') || textToSearch.includes('mat pho');
-          }
-          if (c === 'bảo lãnh hoa hồng') {
-            return textToSearch.includes('hoa hồng') || textToSearch.includes('hh') || textToSearch.includes('hoa hong');
-          }
-          if (c === 'chung cư') {
-            return textToSearch.includes('chung cư') || textToSearch.includes('căn hộ') || textToSearch.includes('chung cu');
-          }
-
-          return textToSearch.includes(c);
-        }
-
-        a = a.filter(p => activeCriteria.every(crit => matchCriteria(p, crit)));
+        a = a.filter(p => activeCriteria.every(crit => matchCriteriaHelper(p, crit)));
       }
 
       // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT NÂNG CAO (US-076)
@@ -4526,6 +4426,188 @@
       return a;
     }
     const SELECTED_IDS = new Set();
+
+    // Helper so khớp tiêu chí thô hoặc keywords fallback (US-076.3)
+    function matchCriteriaHelper(p, criterion) {
+      const textToSearch = [
+        p.t || '',
+        p.m || '',
+        p.raw_phan_loai || '',
+        p.raw_mo_ta_chi_tiet || '',
+        p.raw_tieu_de_public || ''
+      ].join(' ').toLowerCase();
+
+      const c = criterion.toLowerCase();
+      
+      if (p.raw_phan_loai && p.raw_phan_loai.toLowerCase().includes(c)) return true;
+
+      // Custom keyword mapping for better search matching
+      if (c === 'triệu đô') {
+        return textToSearch.includes('triệu đô') || textToSearch.includes('trieu do') || (parseFloat(p.raw_gia_chao) >= 23 || parseFloat(p.gia) >= 23);
+      }
+      if (c === 'hiếm') {
+        return textToSearch.includes('hiếm') || textToSearch.includes('cực hiếm') || textToSearch.includes('hiem');
+      }
+      if (c === 'nội thất đẹp - giá trị') {
+        return textToSearch.includes('nội thất') || textToSearch.includes('noi that') || textToSearch.includes('đẹp') || textToSearch.includes('mới') || textToSearch.includes('full option');
+      }
+      if (c === 'để kinh doanh') {
+        return textToSearch.includes('kinh doanh') || textToSearch.includes('buôn bán') || textToSearch.includes('kd') || textToSearch.includes('văn phòng') || textToSearch.includes('spa') || textToSearch.includes('cho thuê');
+      }
+      if (c === 'chủ cần bán gấp') {
+        return textToSearch.includes('bán gấp') || textToSearch.includes('gấp') || textToSearch.includes('ngợp') || textToSearch.includes('chủ cần') || textToSearch.includes('hạ giá') || textToSearch.includes('giam gia');
+      }
+      if (c === 'hẻm xe máy') {
+        return textToSearch.includes('hẻm xe máy') || textToSearch.includes('ba gác') || textToSearch.includes('hẻm nhỏ') || textToSearch.includes('hẻm 2m') || textToSearch.includes('hẻm 3m') || textToSearch.includes('hẻm bagac');
+      }
+      if (c === 'chưa được cấp cnqsd') {
+        return textToSearch.includes('chưa sổ') || textToSearch.includes('chưa cấp') || textToSearch.includes('giấy tay') || textToSearch.includes('thừa phát lại');
+      }
+      if (c === 'dân đầu tư') {
+        return textToSearch.includes('đầu tư') || textToSearch.includes('lời') || textToSearch.includes('lãi') || textToSearch.includes('hiệu suất') || textToSearch.includes('dòng tiền');
+      }
+      if (c === 'thang máy') {
+        return textToSearch.includes('thang máy') || textToSearch.includes('thang may') || textToSearch.includes(' tm ');
+      }
+      if (c === 'lô góc') {
+        return textToSearch.includes('lô góc') || textToSearch.includes('lo goc') || textToSearch.includes('2 mặt tiền') || textToSearch.includes('hai mặt tiền');
+      }
+      if (c === 'độc quyền bán') {
+        return textToSearch.includes('độc quyền') || textToSearch.includes('doc quyen');
+      }
+      if (c === 'dòng tiền ổn định') {
+        return textToSearch.includes('dòng tiền') || textToSearch.includes('dong tien') || textToSearch.includes('cho thuê') || textToSearch.includes('thu nhập') || textToSearch.includes('hđt');
+      }
+      if (c === 'view hồ - công viên') {
+        return textToSearch.includes('view hồ') || textToSearch.includes('công viên') || textToSearch.includes('cv') || textToSearch.includes('cong vien');
+      }
+      if (c === 'để ở') {
+        return textToSearch.includes('để ở') || textToSearch.includes('gia đình') || textToSearch.includes('an cư') || textToSearch.includes('ở ngay');
+      }
+      if (c === 'lãi vốn (rẻ)') {
+        return textToSearch.includes('rẻ') || textToSearch.includes('lãi vốn') || textToSearch.includes('giá tốt') || textToSearch.includes('thơm') || textToSearch.includes('gạt tay');
+      }
+      if (c === 'hẻm ô tô') {
+        return textToSearch.includes('hẻm xe hơi') || textToSearch.includes('hẻm ô tô') || textToSearch.includes('hẻm xe tai') || textToSearch.includes('xe hơi đỗ') || textToSearch.includes('ô tô tránh') || textToSearch.includes('hẻm rộng');
+      }
+      if (c === 'đất - nhà cấp 4 - nhà cũ') {
+        return textToSearch.includes('nhà cấp 4') || textToSearch.includes('nhà cũ') || textToSearch.includes('đất trống') || textToSearch.includes('tiện xây mới') || textToSearch.includes('nhà nát');
+      }
+      if (c === 'chính chủ') {
+        return textToSearch.includes('chính chủ') || textToSearch.includes('chủ gửi') || textToSearch.includes('chinh chu');
+      }
+      if (c === 'thế chấp ngân hàng') {
+        return textToSearch.includes('ngân hàng') || textToSearch.includes('thế chấp') || textToSearch.includes('vay');
+      }
+      if (c === 'mặt phố') {
+        return textToSearch.includes('mặt phố') || textToSearch.includes('mặt tiền') || textToSearch.includes('mt') || textToSearch.includes('mat pho');
+      }
+      if (c === 'bảo lãnh hoa hồng') {
+        return textToSearch.includes('hoa hồng') || textToSearch.includes('hh') || textToSearch.includes('hoa hong');
+      }
+      if (c === 'chung cư') {
+        return textToSearch.includes('chung cư') || textToSearch.includes('căn hộ') || textToSearch.includes('chung cu');
+      }
+
+      return textToSearch.includes(c);
+    }
+
+    // Tự động dựng checklist chỉ chứa các tiêu chí hiện diện trong dữ liệu thô (US-076.3)
+    function renderCriteriaCheckboxes(data) {
+      const allPossibleCriteria = [
+        "Triệu đô", "Dòng tiền ổn định", "Hiếm", "View hồ - công viên",
+        "Nội thất đẹp - giá trị", "Để ở", "Để kinh doanh", "Lãi vốn (rẻ)",
+        "Chủ cần bán gấp", "Hẻm ô tô", "Hẻm xe máy", "Đất - nhà cấp 4 - nhà cũ",
+        "Chưa được cấp CNQSD", "Chính chủ", "Dân đầu tư", "Thế chấp ngân hàng",
+        "Thang máy", "Mặt phố", "Lô góc", "Bảo lãnh hoa hồng",
+        "Độc quyền bán", "Chung cư"
+      ];
+      
+      const grid = document.querySelector('.criteria-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      
+      // Lọc các tiêu chí có tối thiểu 1 căn trong data thỏa mãn
+      const matchedCriteria = allPossibleCriteria.filter(crit => {
+        const cLower = crit.toLowerCase();
+        return data.some(p => {
+          if (p.raw_phan_loai) {
+            const tags = p.raw_phan_loai.split(',').map(t => t.trim().toLowerCase());
+            if (tags.includes(cLower)) return true;
+          }
+          return matchCriteriaHelper(p, crit);
+        });
+      });
+      
+      // Render các checkbox
+      matchedCriteria.forEach(crit => {
+        const label = document.createElement('label');
+        label.className = 'criterion-item';
+        label.innerHTML = `
+          <input type="checkbox" class="filter-criterion" data-val="${crit}" onchange="onSearchInput()">
+          <span>${crit}</span>
+        `;
+        grid.appendChild(label);
+      });
+      
+      // Ẩn phần tiêu chí và vách ngăn nếu không có tiêu chí nào khớp
+      const section = document.querySelector('.criteria-section');
+      if (section) {
+        section.style.display = matchedCriteria.length > 0 ? 'block' : 'none';
+      }
+      const divider = document.querySelector('.filter-divider');
+      if (divider) {
+        divider.style.display = matchedCriteria.length > 0 ? 'block' : 'none';
+      }
+    }
+
+    // Tự động ẩn hiện các bộ lọc giá/đánh giá tĩnh dựa trên dữ liệu hiện có (US-076.3)
+    function updateStaticTabsVisibility(data) {
+      // 1. Gia tabs
+      const hasLt7 = data.some(p => { const g = parseFloat(p.gia) || 0; return g > 0 && g < 7; });
+      const has7to10 = data.some(p => { const g = parseFloat(p.gia) || 0; return g >= 7 && g <= 10; });
+      const has10to15 = data.some(p => { const g = parseFloat(p.gia) || 0; return g > 10 && g <= 15; });
+      const has15to20 = data.some(p => { const g = parseFloat(p.gia) || 0; return g > 15 && g <= 20; });
+      const hasGt20 = data.some(p => { const g = parseFloat(p.gia) || 0; return g > 20; });
+
+      const giaTabs = document.getElementById('giaTabs');
+      const giaLbl = document.getElementById('giaLbl');
+      if (giaTabs) {
+        const btnLt7 = giaTabs.querySelector('[data-val="lt7"]');
+        const btn7_10 = giaTabs.querySelector('[data-val="7-10"]');
+        const btn10_15 = giaTabs.querySelector('[data-val="10-15"]');
+        const btn15_20 = giaTabs.querySelector('[data-val="15-20"]');
+        const btnGt20 = giaTabs.querySelector('[data-val="gt20"]');
+
+        if (btnLt7) btnLt7.style.display = hasLt7 ? '' : 'none';
+        if (btn7_10) btn7_10.style.display = has7to10 ? '' : 'none';
+        if (btn10_15) btn10_15.style.display = has10to15 ? '' : 'none';
+        if (btn15_20) btn15_20.style.display = has15to20 ? '' : 'none';
+        if (btnGt20) btnGt20.style.display = hasGt20 ? '' : 'none';
+
+        const hasAnyPriceOption = hasLt7 || has7to10 || has10to15 || has15to20 || hasGt20;
+        if (giaLbl) giaLbl.style.display = hasAnyPriceOption ? '' : 'none';
+        giaTabs.style.display = hasAnyPriceOption ? 'flex' : 'none';
+      }
+
+      // 2. Danh gia tabs
+      const hasNgon = data.some(p => p.danh_gia === 'Hàng Ngon');
+      const hasLoi = data.some(p => p.danh_gia === 'Hàng Lỗi');
+
+      const danhGiaTabs = document.getElementById('danhGiaTabs');
+      const danhGiaLbl = document.getElementById('danhGiaLbl');
+      if (danhGiaTabs) {
+        const btnNgon = danhGiaTabs.querySelector('[data-val="Hàng Ngon"]');
+        const btnLoi = danhGiaTabs.querySelector('[data-val="Hàng Lỗi"]');
+
+        if (btnNgon) btnNgon.style.display = hasNgon ? '' : 'none';
+        if (btnLoi) btnLoi.style.display = hasLoi ? '' : 'none';
+
+        const hasAnyRatingOption = hasNgon || hasLoi;
+        if (danhGiaLbl) danhGiaLbl.style.display = hasAnyRatingOption ? '' : 'none';
+        danhGiaTabs.style.display = hasAnyRatingOption ? 'flex' : 'none';
+      }
+    }
 
     // Lấy giá trị ô từ Google Sheets JSON (xử lý null do lỗi mixed type của gviz)
     function cv(cell) { return cell ? (cell.v ?? cell.f ?? '') : ''; }
@@ -5026,6 +5108,8 @@
       }
 
       buildDistrictTabs();
+      renderCriteriaCheckboxes(DATA);
+      updateStaticTabsVisibility(DATA);
       restoreState();
       updateSortButtonsUI();
 
@@ -5327,11 +5411,19 @@
       const container = document.getElementById('districtTabs');
       if (!container) return;
 
-      container.innerHTML = `<button class="tab ${selDistricts.size === 0 ? 'on' : ''}" data-val="all" onclick="tDistrict('all')">Tất cả</button>`
-        + districtsInPool.map(d => {
-            const name = dNamesFull[d] || d.toUpperCase();
-            return `<button class="tab ${selDistricts.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDistrict('${d}')">${name}</button>`;
-          }).join('');
+      const lbl = document.getElementById('districtLbl');
+      if (districtsInPool.length === 0) {
+        if (lbl) lbl.style.display = 'none';
+        container.style.display = 'none';
+      } else {
+        if (lbl) lbl.style.display = '';
+        container.style.display = 'flex';
+        container.innerHTML = `<button class="tab ${selDistricts.size === 0 ? 'on' : ''}" data-val="all" onclick="tDistrict('all')">Tất cả</button>`
+          + districtsInPool.map(d => {
+              const name = dNamesFull[d] || d.toUpperCase();
+              return `<button class="tab ${selDistricts.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDistrict('${d}')">${name}</button>`;
+            }).join('');
+      }
     }
 
     // ── Build ward tabs dynamically ──
@@ -5344,6 +5436,7 @@
     };
 
     function buildWardTabs() {
+      if (!isAdmin) return;
       let wards = [];
       if (selDistricts.size === 1) {
         const d = [...selDistricts][0];
@@ -5357,39 +5450,71 @@
       }
       const wt = document.getElementById('wardTabs');
       const wl = document.getElementById('wardLbl');
-      if (!wards.length) { wt.classList.remove('has-wards'); wl.style.display = 'none'; return; }
-      wl.style.display = 'block';
-      wt.innerHTML = `<button class="tab ${selWards.size === 0 ? 'on' : ''}" data-val="all" onclick="tWard('all')">Tất cả</button>`
-        + wards.map(w => `<button class="tab ${selWards.has(w) ? 'on' : ''}" data-val="${w}" onclick="tWard('${w}')">${w}</button>`).join('');
-      wt.classList.add('has-wards');
+      if (!wards.length) { 
+        if (wt) {
+          wt.classList.remove('has-wards'); 
+          wt.style.display = 'none';
+        }
+        if (wl) wl.style.display = 'none'; 
+        return; 
+      }
+      if (wl) wl.style.display = 'block';
+      if (wt) {
+        wt.innerHTML = `<button class="tab ${selWards.size === 0 ? 'on' : ''}" data-val="all" onclick="tWard('all')">Tất cả</button>`
+          + wards.map(w => `<button class="tab ${selWards.has(w) ? 'on' : ''}" data-val="${w}" onclick="tWard('${w}')">${w}</button>`).join('');
+        wt.classList.add('has-wards');
+        wt.style.display = '';
+      }
     }
 
     // ── Build duong tabs dynamically ──
     function buildDuongTabs() {
+      if (!isAdmin) return;
       let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
       if (selWards.size) pool = pool.filter(p => selWards.has(p.phuong));
       const duongs = [...new Set(pool.map(p => p.duong_truoc_nha).filter(d => d && d !== '-'))].sort();
       const dt = document.getElementById('duongTabs');
       const dl = document.getElementById('duongLbl');
-      if (!duongs.length) { dt.classList.remove('has-duong'); dl.style.display = 'none'; return; }
-      dl.style.display = 'block';
-      dt.innerHTML = `<button class="tab ${selDuongs.size === 0 ? 'on' : ''}" data-val="all" onclick="tDuong('all')">Tất cả</button>`
-        + duongs.map(d => `<button class="tab ${selDuongs.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDuong('${d}')">${d}</button>`).join('');
-      dt.classList.add('has-duong');
+      if (!duongs.length) { 
+        if (dt) {
+          dt.classList.remove('has-duong'); 
+          dt.style.display = 'none';
+        }
+        if (dl) dl.style.display = 'none'; 
+        return; 
+      }
+      if (dl) dl.style.display = 'block';
+      if (dt) {
+        dt.innerHTML = `<button class="tab ${selDuongs.size === 0 ? 'on' : ''}" data-val="all" onclick="tDuong('all')">Tất cả</button>`
+          + duongs.map(d => `<button class="tab ${selDuongs.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDuong('${d}')">${d}</button>`).join('');
+        dt.classList.add('has-duong');
+        dt.style.display = '';
+      }
     }
 
     // ── Build huong (direction) tabs dynamically ──
     function buildHuongTabs() {
+      if (!isAdmin) return;
       let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
       if (selWards.size) pool = pool.filter(p => selWards.has(p.phuong));
       const huongs = [...new Set(pool.map(p => p.huong).filter(h => h && h !== '-'))].sort();
       const ht = document.getElementById('huongTabs');
       const hl = document.getElementById('huongLbl');
-      if (!huongs.length) { ht.classList.remove('has-huong'); hl.style.display = 'none'; return; }
-      hl.style.display = 'block';
-      ht.innerHTML = `<button class="tab ${selHuong.size === 0 ? 'on' : ''}" data-val="all" onclick="tHuong('all')">Tất cả</button>`
-        + huongs.map(h => `<button class="tab ${selHuong.has(h) ? 'on' : ''}" data-val="${h}" onclick="tHuong('${h}')">${h}</button>`).join('');
-      ht.classList.add('has-huong');
+      if (!huongs.length) { 
+        if (ht) {
+          ht.classList.remove('has-huong'); 
+          ht.style.display = 'none';
+        }
+        if (hl) hl.style.display = 'none'; 
+        return; 
+      }
+      if (hl) hl.style.display = 'block';
+      if (ht) {
+        ht.innerHTML = `<button class="tab ${selHuong.size === 0 ? 'on' : ''}" data-val="all" onclick="tHuong('all')">Tất cả</button>`
+          + huongs.map(h => `<button class="tab ${selHuong.has(h) ? 'on' : ''}" data-val="${h}" onclick="tHuong('${h}')">${h}</button>`).join('');
+        ht.classList.add('has-huong');
+        ht.style.display = '';
+      }
     }
 
     // ── Toggle functions (multi-select) ──
@@ -6918,6 +7043,7 @@
     let lastScrollTime = Date.now();
     const headerEl = document.querySelector('header');
     window.addEventListener('scroll', () => {
+      if (filterOpen) return; // Không đóng bộ lọc khi đang mở lọc (sửa lỗi iOS tự động cuộn khi mở bàn phím)
       const currentScrollY = window.scrollY;
       const currentScrollTime = Date.now();
 
@@ -6953,6 +7079,7 @@
     // Bấm ra ngoài header → tự động đóng bộ lọc
     document.addEventListener('click', (e) => {
       if (!filterOpen) return;
+      if (e.target.closest('#filterPanel')) return;
       if (!e.target.closest('header')) closeFilter();
     });
 
