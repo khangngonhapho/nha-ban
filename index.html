@@ -3270,8 +3270,7 @@
           urlParams.delete('s');
           const newSearch = urlParams.toString();
           const newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
-          window.history.replaceState({}, '', newUrl);
-          window.location.reload();
+          window.location.replace(newUrl);
         }
       });
     }
