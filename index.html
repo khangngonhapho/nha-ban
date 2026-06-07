@@ -799,234 +799,6 @@
       transition: max-width 0.3s;
     }
 
-    /* Responsive cho máy tính */
-    @media (min-width: 768px) {
-      main {
-        max-width: 1100px;
-        padding: 20px 24px calc(24px + var(--safe-bot));
-      }
-
-      #list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-        gap: 16px;
-        padding-top: 10px;
-      }
-
-      /* Thông báo trống cũng chiếm full */
-      #list>div[style*="text-align:center"] {
-        grid-column: 1 / -1;
-      }
-
-      #noResultMsg {
-        grid-column: 1 / -1;
-      }
-
-      .card {
-        margin-bottom: 0;
-        transition: transform 0.2s, box-shadow 0.2s;
-      }
-
-      .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
-      }
-
-      /* Ảnh lớn hơn trên desktop */
-      .crow {
-        flex-direction: column;
-        height: auto;
-      }
-
-      .ibox {
-        width: 100%;
-        min-width: 100%;
-        height: 220px;
-        border-radius: 16px 16px 0 0;
-      }
-
-      .info {
-        padding: 16px;
-      }
-
-      /* Căn chỉnh header */
-      header {
-        padding-left: max(16px, calc((100vw - 1100px) / 2));
-        padding-right: max(16px, calc((100vw - 1100px) / 2));
-      }
-
-      /* Căn chỉnh stats */
-      .stats {
-        justify-content: center;
-        padding: 10px 0;
-      }
-
-      .stat {
-        flex: 0 1 180px;
-        border-right: 1px solid var(--border);
-      }
-
-      /* Biến Bottom Sheet thành Modal giữa màn hình */
-      .overlay {
-        align-items: center;
-        padding: 20px;
-      }
-
-      .sheet {
-        width: 850px;
-        max-width: 95vw;
-        max-height: 80vh;
-        border-radius: 24px;
-        animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      @keyframes zoomIn {
-        from {
-          opacity: 0;
-          transform: scale(0.9);
-        }
-
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      .dh {
-        display: none;
-      }
-
-      /* Ẩn vạch kéo trên máy tính */
-
-      .sbody {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        padding: 24px;
-        overflow-y: auto;
-        align-items: start;
-      }
-
-      /* Gallery bên trái: giữ cố định, không vượt modal */
-      .gwrap {
-        margin-bottom: 0;
-        aspect-ratio: 3/4;
-        max-height: 55vh;
-        position: sticky;
-        top: 0;
-      }
-
-      .gslide img {
-        height: 100%;
-      }
-
-      .ig {
-        margin-bottom: 0;
-      }
-
-      /* Cột phải chứa info: để tự nhiên, cuộn nếu dài */
-      .sbody>div:last-child {
-        overflow-y: auto;
-        max-height: 70vh;
-      }
-
-      /* Lightbox nút mũi tên lớn hơn */
-      .garr {
-        width: 48px;
-        height: 48px;
-        font-size: 24px;
-      }
-
-      .lb-thumbs {
-        height: 90px;
-        gap: 12px;
-        padding: 12px 20px;
-      }
-
-      .lb-thumb,
-      .lb-thumb-vid {
-        width: 72px;
-      }
-
-      /* US-074: Laptop layout optimization for filter panel and admin modal */
-      #filterPanel {
-        display: grid;
-        grid-template-columns: 160px 1fr;
-        gap: 12px 24px;
-        align-items: center;
-        padding: 16px 24px !important;
-      }
-
-      #filterPanel > .filter-section-lbl {
-        grid-column: 1;
-        margin: 0 !important;
-        padding: 0 !important;
-        align-self: center;
-      }
-
-      #filterPanel > .tabs {
-        grid-column: 2;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      #filterPanel > .filter-section-lbl.full-width-lbl {
-        grid-column: 1 / -1;
-        border-top: 1.5px solid #e2ded6;
-        padding: 16px 0 4px 0 !important;
-        margin-top: 8px !important;
-      }
-
-      #filterPanel > .detailed-specs-container {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 12px 24px;
-        padding: 8px 0 !important;
-      }
-
-      #filterPanel > .detailed-specs-container .range-group {
-        margin-bottom: 0 !important;
-      }
-
-      #filterPanel > #collectionsManager {
-        grid-column: 2;
-        margin: 0 !important;
-      }
-
-      #filterPanel > div.admin-only:not(#collectionsManager) {
-        grid-column: 2;
-        margin: 0 !important;
-      }
-
-      #filterPanel > .filter-footer-actions {
-        grid-column: 1 / -1;
-        border-top: 1.5px solid #e2ded6;
-        padding: 16px 0 0 0 !important;
-        margin-top: 8px !important;
-      }
-
-      /* Admin Curation Modal grid optimization */
-      .admin-quick-link-bar {
-        grid-column: 1 / -1;
-      }
-
-      #accPool {
-        grid-column: 1;
-        margin-bottom: 0 !important;
-      }
-
-      .admin-accordion {
-        grid-column: 2;
-        margin-bottom: 0 !important;
-      }
-    }
-
-    /* US-074: Modal width expansion on large screens */
-    @media (min-width: 1200px) {
-      .sheet {
-        width: 1100px !important;
-      }
     }
 
     .sec-lbl {
@@ -2833,7 +2605,237 @@
     .admin-speed-dial .col-btn-float:hover {
       background: #f4d03f !important;
     }
-  </style>
+  
+
+    /* Responsive cho máy tính */
+    @media (min-width: 768px) {
+      main {
+        max-width: 1100px;
+        padding: 20px 24px calc(24px + var(--safe-bot));
+      }
+
+      #list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px;
+        padding-top: 10px;
+      }
+
+      /* Thông báo trống cũng chiếm full */
+      #list>div[style*="text-align:center"] {
+        grid-column: 1 / -1;
+      }
+
+      #noResultMsg {
+        grid-column: 1 / -1;
+      }
+
+      .card {
+        margin-bottom: 0;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
+      }
+
+      /* Ảnh lớn hơn trên desktop */
+      .crow {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .ibox {
+        width: 100%;
+        min-width: 100%;
+        height: 220px;
+        border-radius: 16px 16px 0 0;
+      }
+
+      .info {
+        padding: 16px;
+      }
+
+      /* Căn chỉnh header */
+      header {
+        padding-left: max(16px, calc((100vw - 1100px) / 2));
+        padding-right: max(16px, calc((100vw - 1100px) / 2));
+      }
+
+      /* Căn chỉnh stats */
+      .stats {
+        justify-content: center;
+        padding: 10px 0;
+      }
+
+      .stat {
+        flex: 0 1 180px;
+        border-right: 1px solid var(--border);
+      }
+
+      /* Biến Bottom Sheet thành Modal giữa màn hình */
+      .overlay {
+        align-items: center;
+        padding: 20px;
+      }
+
+      .sheet {
+        width: 850px;
+        max-width: 95vw;
+        max-height: 80vh;
+        border-radius: 24px;
+        animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes zoomIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .dh {
+        display: none;
+      }
+
+      /* Ẩn vạch kéo trên máy tính */
+
+      .sbody {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding: 24px;
+        overflow-y: auto;
+        align-items: start;
+      }
+
+      /* Gallery bên trái: giữ cố định, không vượt modal */
+      .gwrap {
+        margin-bottom: 0;
+        aspect-ratio: 3/4;
+        max-height: 55vh;
+        position: sticky;
+        top: 0;
+      }
+
+      .gslide img {
+        height: 100%;
+      }
+
+      .ig {
+        margin-bottom: 0;
+      }
+
+      /* Cột phải chứa info: để tự nhiên, cuộn nếu dài */
+      .sbody>div:last-child {
+        overflow-y: auto;
+        max-height: 70vh;
+      }
+
+      /* Lightbox nút mũi tên lớn hơn */
+      .garr {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+      }
+
+      .lb-thumbs {
+        height: 90px;
+        gap: 12px;
+        padding: 12px 20px;
+      }
+
+      .lb-thumb,
+      .lb-thumb-vid {
+        width: 72px;
+      }
+
+      /* US-074: Laptop layout optimization for filter panel and admin modal */
+      #filterPanel.open {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 12px 24px;
+        align-items: center;
+        padding: 16px 24px !important;
+      }
+
+      #filterPanel.open > .filter-section-lbl {
+        grid-column: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-self: center;
+      }
+
+      #filterPanel.open > .tabs {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel.open > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel.open > .detailed-specs-container {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px 24px;
+        padding: 8px 0 !important;
+      }
+
+      #filterPanel.open > .detailed-specs-container .range-group {
+        margin-bottom: 0 !important;
+      }
+
+      #filterPanel.open > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel.open > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel.open > .filter-footer-actions {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 0 0 !important;
+        margin-top: 8px !important;
+      }
+
+      /* Admin Curation Modal grid optimization */
+      .admin-quick-link-bar {
+        grid-column: 1 / -1;
+      }
+
+      #accPool {
+        grid-column: 1;
+        margin-bottom: 0 !important;
+      }
+
+      .admin-accordion {
+        grid-column: 2;
+        margin-bottom: 0 !important;
+      }
+    }
+
+    /* US-074: Modal width expansion on large screens */
+    @media (min-width: 1200px) {
+      .sheet {
+        width: 1100px !important;
+      }
+</style>
 </head>
 
 <body>
