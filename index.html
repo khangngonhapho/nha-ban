@@ -320,23 +320,91 @@
       white-space: nowrap;
     }
 
-    .range-label {
-      font-size: 11px;
-      color: rgba(44, 44, 46, 0.5);
-      font-weight: 600;
-      margin-bottom: 4px;
-      display: block;
-      padding-left: 2px;
+    .detailed-specs-card {
+      background: #ffffff;
+      border: 1.5px solid #e2ded6;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin: 5px 0 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
-    .range-col {
+    .detailed-specs-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 576px) {
+      .detailed-specs-grid {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 24px;
+        row-gap: 14px;
+      }
+    }
+
+    .spec-item {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #3a3a3c;
+    }
+
+    .spec-label {
+      font-weight: 600;
+      color: #4a4a4c;
+      white-space: nowrap;
+    }
+
+    .spec-value-group {
+      display: flex;
+      align-items: center;
       gap: 2px;
     }
 
-    .detailed-spec-group {
-      margin-bottom: 14px;
+    .inline-input {
+      border: none;
+      border-bottom: 1.5px dashed #a1a1a6;
+      background: transparent;
+      text-align: center;
+      width: 42px;
+      font-family: inherit;
+      font-size: 13.5px;
+      color: #1c1c1e;
+      outline: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .inline-input:focus {
+      border-bottom: 1.5px dashed var(--gold, #d4af37);
+      color: var(--gold, #d4af37);
+    }
+
+    .inline-input::-webkit-outer-spin-button,
+    .inline-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .inline-input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    .spec-sep {
+      color: #a1a1a6;
+      font-size: 11px;
+      margin: 0 2px;
+      user-select: none;
+    }
+
+    .spec-unit {
+      font-size: 12px;
+      color: #c0392b; /* Tông màu đỏ đất trầm ấm sang trọng giống hình thiết kế */
+      font-weight: 700;
+      margin-left: 4px;
+      user-select: none;
+      white-space: nowrap;
     }
 
     .filter-section-lbl {
@@ -2822,18 +2890,7 @@
 
       #filterPanel > .detailed-specs-container {
         grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 12px 24px;
-        padding: 8px 0 !important;
-      }
-
-      #filterPanel > .detailed-specs-container .range-group {
-        margin-bottom: 0 !important;
-      }
-
-      #filterPanel > .detailed-specs-container .detailed-spec-group {
-        margin-bottom: 0 !important;
+        padding: 4px 0 !important;
       }
 
       #filterPanel > #collectionsManager {
@@ -2976,127 +3033,71 @@
       </div>
       <div class="filter-section-lbl full-width-lbl">📊 BỘ LỌC THÔNG SỐ CHI TIẾT</div>
       <div class="detailed-specs-container" style="padding: 0 10px 10px 10px;">
-        <!-- Khoảng giá -->
-        <div class="detailed-spec-group">
-          <div class="filter-section-sublbl">KHOẢNG GIÁ (TỶ)</div>
-          <div class="range-group">
-            <div class="range-col">
-              <span class="range-label">Từ</span>
-              <div class="range-box">
-                <input type="number" step="0.1" id="filterGiaMin" placeholder="VD: 5" oninput="onSearchInput()">
-                <span class="unit">tỷ</span>
+        <div class="detailed-specs-card">
+          <div class="detailed-specs-grid">
+            <!-- Khoảng giá -->
+            <div class="spec-item">
+              <span class="spec-label">💰 Giá chào:</span>
+              <div class="spec-value-group">
+                <input type="number" step="0.1" id="filterGiaMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-sep">–</span>
+                <input type="number" step="0.1" id="filterGiaMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">tỷ</span>
               </div>
             </div>
-            <div class="range-col">
-              <span class="range-label">Đến</span>
-              <div class="range-box">
-                <input type="number" step="0.1" id="filterGiaMax" placeholder="VD: 15" oninput="onSearchInput()">
-                <span class="unit">tỷ</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Diện tích sổ -->
-        <div class="detailed-spec-group">
-          <div class="filter-section-sublbl">DIỆN TÍCH TRÊN SỔ (M²)</div>
-          <div class="range-group">
-            <div class="range-col">
-              <span class="range-label">Từ</span>
-              <div class="range-box">
-                <input type="number" id="filterDtTrenSoMin" placeholder="VD: 40" oninput="onSearchInput()">
-                <span class="unit">m²</span>
+            <!-- Diện tích thực tế -->
+            <div class="spec-item">
+              <span class="spec-label">🏠 Thực tế:</span>
+              <div class="spec-value-group">
+                <input type="number" id="filterDtThucTeMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-sep">–</span>
+                <input type="number" id="filterDtThucTeMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m²</span>
               </div>
             </div>
-            <div class="range-col">
-              <span class="range-label">Đến</span>
-              <div class="range-box">
-                <input type="number" id="filterDtTrenSoMax" placeholder="VD: 80" oninput="onSearchInput()">
-                <span class="unit">m²</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Diện tích thực tế -->
-        <div class="detailed-spec-group">
-          <div class="filter-section-sublbl">DIỆN TÍCH THỰC TẾ (M²)</div>
-          <div class="range-group">
-            <div class="range-col">
-              <span class="range-label">Từ</span>
-              <div class="range-box">
-                <input type="number" id="filterDtThucTeMin" placeholder="VD: 40" oninput="onSearchInput()">
-                <span class="unit">m²</span>
+            <!-- Diện tích sổ -->
+            <div class="spec-item">
+              <span class="spec-label">📐 Trên sổ:</span>
+              <div class="spec-value-group">
+                <input type="number" id="filterDtTrenSoMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-sep">–</span>
+                <input type="number" id="filterDtTrenSoMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m²</span>
               </div>
             </div>
-            <div class="range-col">
-              <span class="range-label">Đến</span>
-              <div class="range-box">
-                <input type="number" id="filterDtThucTeMax" placeholder="VD: 80" oninput="onSearchInput()">
-                <span class="unit">m²</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Ngang (mặt tiền) -->
-        <div class="detailed-spec-group">
-          <div class="filter-section-sublbl">NGANG (MẶT TIỀN) (M)</div>
-          <div class="range-group">
-            <div class="range-col">
-              <span class="range-label">Từ</span>
-              <div class="range-box">
-                <input type="number" step="0.1" id="filterNgangMin" placeholder="VD: 4" oninput="onSearchInput()">
-                <span class="unit">m</span>
+            <!-- Ngang (mặt tiền) -->
+            <div class="spec-item">
+              <span class="spec-label">↔️ Mặt tiền:</span>
+              <div class="spec-value-group">
+                <input type="number" step="0.1" id="filterNgangMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-sep">–</span>
+                <input type="number" step="0.1" id="filterNgangMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m</span>
               </div>
             </div>
-            <div class="range-col">
-              <span class="range-label">Đến</span>
-              <div class="range-box">
-                <input type="number" step="0.1" id="filterNgangMax" placeholder="VD: 6" oninput="onSearchInput()">
-                <span class="unit">m</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Rộng hẻm -->
-        <div class="detailed-spec-group">
-          <div class="filter-section-sublbl">RỘNG HẺM (M)</div>
-          <div class="range-group">
-            <div class="range-col">
-              <span class="range-label">Từ</span>
-              <div class="range-box">
-                <input type="number" step="0.1" id="filterHemMin" placeholder="VD: 3" oninput="onSearchInput()">
-                <span class="unit">m</span>
+            <!-- Rộng hẻm -->
+            <div class="spec-item">
+              <span class="spec-label">🛣️ Rộng hẻm:</span>
+              <div class="spec-value-group">
+                <input type="number" step="0.1" id="filterHemMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-sep">–</span>
+                <input type="number" step="0.1" id="filterHemMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m</span>
               </div>
             </div>
-            <div class="range-col">
-              <span class="range-label">Đến</span>
-              <div class="range-box">
-                <input type="number" step="0.1" id="filterHemMax" placeholder="VD: 6" oninput="onSearchInput()">
-                <span class="unit">m</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Số phòng ngủ -->
-        <div class="detailed-spec-group">
-          <div class="filter-section-sublbl">SỐ PHÒNG NGỦ (PHÒNG)</div>
-          <div class="range-group">
-            <div class="range-col">
-              <span class="range-label">Từ</span>
-              <div class="range-box">
-                <input type="number" id="filterPhongMin" placeholder="VD: 2" oninput="onSearchInput()">
-                <span class="unit">phòng</span>
-              </div>
-            </div>
-            <div class="range-col">
-              <span class="range-label">Đến</span>
-              <div class="range-box">
-                <input type="number" id="filterPhongMax" placeholder="VD: 5" oninput="onSearchInput()">
-                <span class="unit">phòng</span>
+            <!-- Số phòng ngủ -->
+            <div class="spec-item">
+              <span class="spec-label">🛏️ Phòng ngủ:</span>
+              <div class="spec-value-group">
+                <input type="number" id="filterPhongMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-sep">–</span>
+                <input type="number" id="filterPhongMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">pn</span>
               </div>
             </div>
           </div>
