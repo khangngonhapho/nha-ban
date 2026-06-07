@@ -3235,7 +3235,16 @@
     // ============================================================
     //  ⚙️  KIỂM TRA QUYỀN TRUY CẬP & GIAI ĐOẠN 1 TRACKING
     // ============================================================
-    const ADMIN_PASSWORD = 'trang';
+    // Helper to calculate SHA-256 hash (async)
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+
+    const ADMIN_PASSWORD_HASH = 'd555c82a203f56860361a12e52e46b9a8cf6fb0010996f8c2e1751d3b0e12776'; // SHA-256 of 'trang'
     const urlParams = new URLSearchParams(window.location.search);
 
     // Auto-detect admin from active valid Google token in localStorage (US-049.2)
@@ -3244,14 +3253,28 @@
     const now = Date.now();
     const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
 
-    // Check persistent admin session flag in localStorage (US-049.2 Refinement)
-    const hasAdminParam = urlParams.get('pwd') === ADMIN_PASSWORD || urlParams.get('pw') === ADMIN_PASSWORD;
-    if (hasAdminParam) {
-      localStorage.setItem('isAdminSession', 'true');
-    }
+    // Check persistent admin session flag in localStorage
     const isSavedAdmin = localStorage.getItem('isAdminSession') === 'true';
+    let isAdmin = isTokenValid || isSavedAdmin;
 
-    const isAdmin = hasAdminParam || isTokenValid || isSavedAdmin;
+    // Check if URL has raw password parameter, verify and clean it up asynchronously
+    const rawPwd = urlParams.get('pwd') || urlParams.get('pw');
+    if (rawPwd) {
+      sha256(rawPwd.trim()).then(hash => {
+        if (hash === ADMIN_PASSWORD_HASH) {
+          localStorage.setItem('isAdminSession', 'true');
+          urlParams.delete('pwd');
+          urlParams.delete('pw');
+          urlParams.delete('c');
+          urlParams.delete('b');
+          urlParams.delete('s');
+          const newSearch = urlParams.toString();
+          const newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
+          window.history.replaceState({}, '', newUrl);
+          window.location.reload();
+        }
+      });
+    }
 
     const shareToken = urlParams.get('s');
 
@@ -4443,12 +4466,24 @@
       }
     }
 
-    window.triggerAdminAuthPrompt = function() {
+    let loginClickCount = 0;
+    window.triggerAdminAuthPrompt = async function() {
+      loginClickCount++;
+      if (loginClickCount < 5) {
+        return; // Bấm đủ 5 lần mới mở prompt
+      }
+      loginClickCount = 0; // Reset counter
+      
       const pw = prompt("Nhập mật khẩu Admin để đăng nhập:");
       if (pw === null) return;
-      if (pw.trim() === ADMIN_PASSWORD) {
+      
+      const hashedInput = await sha256(pw.trim());
+      if (hashedInput === ADMIN_PASSWORD_HASH) {
+        localStorage.setItem('isAdminSession', 'true');
+        alert("Đăng nhập Admin thành công!");
         const url = new URL(window.location.href);
-        url.searchParams.set('pwd', ADMIN_PASSWORD);
+        url.searchParams.delete('pwd');
+        url.searchParams.delete('pw');
         url.searchParams.delete('c');
         url.searchParams.delete('b');
         url.searchParams.delete('s');
