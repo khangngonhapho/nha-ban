@@ -320,23 +320,34 @@
       white-space: nowrap;
     }
 
+    .detailed-specs-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #c0392b; /* Tông màu đỏ trầm ấm giống hình thiết kế */
+      margin-bottom: 12px;
+      margin-top: 15px;
+      text-transform: none;
+      letter-spacing: 0.5px;
+      padding: 0 10px;
+    }
+
     .detailed-specs-card {
-      background: #ffffff;
-      border: 1.5px solid #e2ded6;
-      border-radius: 16px;
-      padding: 12px 14px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0 10px;
       margin: 5px 0 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     .detailed-specs-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 12px;
     }
 
     @media (min-width: 576px) {
       .detailed-specs-grid {
+        display: grid;
         grid-template-columns: 1fr 1fr;
         column-gap: 24px;
         row-gap: 14px;
@@ -347,38 +358,45 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
-      color: #3a3a3c;
+      font-size: 13.5px;
+      color: #2c2c2e;
+      padding: 6px 0;
     }
 
     .spec-label {
-      font-weight: 600;
-      color: #4a4a4c;
+      font-weight: 500;
+      color: #2c2c2e;
       white-space: nowrap;
     }
 
     .spec-value-group {
       display: flex;
       align-items: center;
-      gap: 2px;
+      gap: 4px;
+    }
+
+    .spec-text {
+      color: #2c2c2e;
+      font-size: 13.5px;
     }
 
     .inline-input {
       border: none;
-      border-bottom: 1.5px dashed #a1a1a6;
+      border-bottom: 1px solid #a1a1a6;
       background: transparent;
       text-align: center;
-      width: 42px;
+      width: 54px; /* Độ rộng tối ưu cho nhập số thập phân */
       font-family: inherit;
       font-size: 13.5px;
       color: #1c1c1e;
       outline: none;
-      padding: 0;
+      padding: 0 2px;
       margin: 0;
+      border-radius: 0;
     }
 
     .inline-input:focus {
-      border-bottom: 1.5px dashed var(--gold, #d4af37);
+      border-bottom: 1.5px solid var(--gold, #d4af37);
       color: var(--gold, #d4af37);
     }
 
@@ -391,20 +409,105 @@
       -moz-appearance: textfield;
     }
 
-    .spec-sep {
-      color: #a1a1a6;
-      font-size: 11px;
-      margin: 0 2px;
-      user-select: none;
-    }
-
     .spec-unit {
       font-size: 12px;
-      color: #c0392b; /* Tông màu đỏ đất trầm ấm sang trọng giống hình thiết kế */
+      color: #c0392b; /* Tông màu đỏ trầm ấm giống hình thiết kế */
       font-weight: 700;
-      margin-left: 4px;
+      margin-left: 2px;
       user-select: none;
       white-space: nowrap;
+    }
+
+    /* ── Criteria section BĐS (US-076.3) ── */
+    .criteria-section {
+      grid-column: 1 / -1;
+      padding: 10px;
+    }
+    
+    .criteria-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #c0392b;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    
+    .criteria-subtitle {
+      font-size: 11px;
+      font-style: italic;
+      color: #8e8e93;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+    
+    .criterion-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #2c2c2e;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .criterion-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1.5px solid #d1d1d6;
+      outline: none;
+      cursor: pointer;
+      accent-color: #c0392b;
+    }
+    
+    .filter-divider {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: #e2ded6;
+      border: none;
+      margin: 12px 0;
+    }
+    
+    .mobile-filter-header {
+      display: none;
+    }
+    
+    .btn-filter-apply {
+      padding: 11px;
+      border-radius: 8px;
+      border: none;
+      background: var(--gold);
+      color: #2a0a0a;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .btn-filter-clear {
+      padding: 11px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      background: transparent;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .filter-section-lbl {
@@ -2932,6 +3035,196 @@
         width: 1100px !important;
       }
     }
+
+    /* ── Desktop view overrides (US-076.3) ── */
+    @media (min-width: 768px) {
+      .criteria-section {
+        border-bottom: 1.5px solid #e2ded6;
+        padding: 16px 0;
+        margin-bottom: 8px;
+      }
+      .criteria-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .filter-divider {
+        grid-column: 1 / -1;
+        height: 1px;
+        background: #e2ded6;
+        border: none;
+        margin: 12px 0;
+      }
+      .filter-footer-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px 0 0 0 !important;
+        border-top: 1.5px solid #e2ded6;
+        margin-top: 8px !important;
+        grid-column: 1 / -1;
+      }
+      .btn-filter-apply {
+        padding: 11px;
+        border-radius: 8px;
+        border: none;
+        background: var(--gold);
+        color: #2a0a0a;
+        font-weight: 800;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn-filter-clear {
+        padding: 11px;
+        border-radius: 8px;
+        border: 1.5px solid #a1a1a6;
+        background: transparent;
+        color: #2c2c2e;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    
+    /* ── Mobile view overrides (US-076.3) ── */
+    @media (max-width: 767px) {
+      body.filter-active {
+        overflow: hidden;
+      }
+      .filter-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh !important;
+        background: #ffffff !important;
+        z-index: 1000;
+        margin: 0 !important;
+        padding: 0 0 80px 0 !important; /* reserve space for sticky footer */
+        display: flex !important;
+        flex-direction: column !important;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+      .filter-panel.open {
+        transform: translateX(0) !important;
+        padding: 0 0 80px 0 !important;
+      }
+      .mobile-filter-header {
+        display: flex;
+        align-items: center;
+        background: var(--red);
+        color: #ffffff;
+        padding: calc(var(--safe-top) + 12px) 16px 12px;
+        position: sticky;
+        top: 0;
+        z-index: 15;
+      }
+      .mobile-filter-back-btn {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        padding: 4px;
+        margin-right: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mobile-filter-back-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+      .mobile-filter-title {
+        font-size: 17px;
+        font-weight: 600;
+      }
+      
+      .criteria-section,
+      .filter-panel > .filter-section-lbl,
+      .filter-panel > .tabs,
+      .detailed-specs-title,
+      .detailed-specs-container,
+      #collectionsManager,
+      .admin-only {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      
+      .filter-panel > .filter-section-lbl {
+        margin-top: 12px !important;
+        margin-bottom: 6px !important;
+      }
+      
+      .criteria-grid {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      .criteria-title, .criteria-subtitle {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      .filter-divider {
+        height: 8px;
+        background: #f2f2f7;
+        border-top: 1px solid #e5e5ea;
+        border-bottom: 1px solid #e5e5ea;
+        margin: 16px 0 !important;
+        padding: 0 !important;
+      }
+      .filter-footer-actions {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        background: #ffffff;
+        border-top: 1px solid #e5e5ea;
+        padding: 12px 16px calc(var(--safe-bottom) + 12px) !important;
+        margin-top: auto !important;
+        z-index: 100;
+      }
+      .btn-filter-apply {
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        background: #c0392b;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn-filter-clear {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1.5px solid #c0392b;
+        background: #ffffff;
+        color: #c0392b;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
 </style>
 </head>
 
@@ -2998,6 +3291,48 @@
     </div>
     <!-- Collapsible panel -->
     <div class="filter-panel" id="filterPanel">
+      <!-- Mobile Filter Header (US-076.3) -->
+      <div class="mobile-filter-header">
+        <button class="mobile-filter-back-btn" onclick="toggleFilter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <span class="mobile-filter-title">Tìm kiếm</span>
+      </div>
+
+      <!-- TIÊU CHÍ BĐS Checklist (US-076.3) -->
+      <div class="criteria-section">
+        <div class="criteria-title">TIÊU CHÍ BĐS *</div>
+        <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
+        <div class="criteria-grid">
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Triệu đô" onchange="onSearchInput()"><span>Triệu đô</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Dòng tiền ổn định" onchange="onSearchInput()"><span>Dòng tiền ổn định</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Hiếm" onchange="onSearchInput()"><span>Hiếm</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="View hồ - công viên" onchange="onSearchInput()"><span>View hồ - công viên</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Nội thất đẹp - giá trị" onchange="onSearchInput()"><span>Nội thất đẹp - giá trị</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Để ở" onchange="onSearchInput()"><span>Để ở</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Để kinh doanh" onchange="onSearchInput()"><span>Để kinh doanh</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Lãi vốn (rẻ)" onchange="onSearchInput()"><span>Lãi vốn (rẻ)</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chủ cần bán gấp" onchange="onSearchInput()"><span>Chủ cần bán gấp</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Hẻm ô tô" onchange="onSearchInput()"><span>Hẻm ô tô</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Hẻm xe máy" onchange="onSearchInput()"><span>Hẻm xe máy</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Đất - nhà cấp 4 - nhà cũ" onchange="onSearchInput()"><span>Đất - nhà cấp 4 - nhà cũ</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chưa được cấp CNQSD" onchange="onSearchInput()"><span>Chưa được cấp CNQSD</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chính chủ" onchange="onSearchInput()"><span>Chính chủ</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Dân đầu tư" onchange="onSearchInput()"><span>Dân đầu tư</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Thế chấp ngân hàng" onchange="onSearchInput()"><span>Thế chấp ngân hàng</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Thang máy" onchange="onSearchInput()"><span>Thang máy</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Mặt phố" onchange="onSearchInput()"><span>Mặt phố</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Lô góc" onchange="onSearchInput()"><span>Lô góc</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Bảo lãnh hoa hồng" onchange="onSearchInput()"><span>Bảo lãnh hoa hồng</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Độc quyền bán" onchange="onSearchInput()"><span>Độc quyền bán</span></label>
+          <label class="criterion-item"><input type="checkbox" class="filter-criterion" data-val="Chung cư" onchange="onSearchInput()"><span>Chung cư</span></label>
+        </div>
+      </div>
+
+      <div class="filter-divider"></div>
+
       <div class="filter-section-lbl" style="margin-top:4px;">Quận / TP</div>
       <div class="tabs" id="districtTabs">
         <button class="tab on" data-val="all" onclick="tDistrict('all')">Tất cả</button>
@@ -3031,72 +3366,78 @@
         <button class="tab" data-val="Hàng Lỗi" style="background:#7f8c8d;color:#fff" onclick="tDanhGia('Hàng Lỗi')">⚠️
           Lỗi</button>
       </div>
-      <div class="filter-section-lbl full-width-lbl">📊 BỘ LỌC THÔNG SỐ CHI TIẾT</div>
-      <div class="detailed-specs-container" style="padding: 0 10px 10px 10px;">
+      <div class="detailed-specs-title">Tìm kiếm mở rộng</div>
+      <div class="detailed-specs-container">
         <div class="detailed-specs-card">
           <div class="detailed-specs-grid">
             <!-- Khoảng giá -->
             <div class="spec-item">
-              <span class="spec-label">💰 Giá chào:</span>
+              <span class="spec-label">Giá chào:</span>
               <div class="spec-value-group">
-                <input type="number" step="0.1" id="filterGiaMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
-                <span class="spec-sep">–</span>
-                <input type="number" step="0.1" id="filterGiaMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterGiaMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterGiaMax" class="inline-input" oninput="onSearchInput()">
                 <span class="spec-unit">tỷ</span>
               </div>
             </div>
 
             <!-- Diện tích thực tế -->
             <div class="spec-item">
-              <span class="spec-label">🏠 Thực tế:</span>
+              <span class="spec-label">Diện tích thực tế:</span>
               <div class="spec-value-group">
-                <input type="number" id="filterDtThucTeMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
-                <span class="spec-sep">–</span>
-                <input type="number" id="filterDtThucTeMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterDtThucTeMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterDtThucTeMax" class="inline-input" oninput="onSearchInput()">
                 <span class="spec-unit">m²</span>
               </div>
             </div>
 
             <!-- Diện tích sổ -->
             <div class="spec-item">
-              <span class="spec-label">📐 Trên sổ:</span>
+              <span class="spec-label">Diện tích trên sổ:</span>
               <div class="spec-value-group">
-                <input type="number" id="filterDtTrenSoMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
-                <span class="spec-sep">–</span>
-                <input type="number" id="filterDtTrenSoMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterDtTrenSoMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterDtTrenSoMax" class="inline-input" oninput="onSearchInput()">
                 <span class="spec-unit">m²</span>
               </div>
             </div>
 
             <!-- Ngang (mặt tiền) -->
             <div class="spec-item">
-              <span class="spec-label">↔️ Mặt tiền:</span>
+              <span class="spec-label">Mặt tiền:</span>
               <div class="spec-value-group">
-                <input type="number" step="0.1" id="filterNgangMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
-                <span class="spec-sep">–</span>
-                <input type="number" step="0.1" id="filterNgangMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterNgangMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterNgangMax" class="inline-input" oninput="onSearchInput()">
                 <span class="spec-unit">m</span>
               </div>
             </div>
 
             <!-- Rộng hẻm -->
             <div class="spec-item">
-              <span class="spec-label">🛣️ Rộng hẻm:</span>
+              <span class="spec-label">Rộng hẻm:</span>
               <div class="spec-value-group">
-                <input type="number" step="0.1" id="filterHemMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
-                <span class="spec-sep">–</span>
-                <input type="number" step="0.1" id="filterHemMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterHemMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterHemMax" class="inline-input" oninput="onSearchInput()">
                 <span class="spec-unit">m</span>
               </div>
             </div>
 
             <!-- Số phòng ngủ -->
             <div class="spec-item">
-              <span class="spec-label">🛏️ Phòng ngủ:</span>
+              <span class="spec-label">Số phòng ngủ:</span>
               <div class="spec-value-group">
-                <input type="number" id="filterPhongMin" placeholder="..." class="inline-input" oninput="onSearchInput()">
-                <span class="spec-sep">–</span>
-                <input type="number" id="filterPhongMax" placeholder="..." class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterPhongMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterPhongMax" class="inline-input" oninput="onSearchInput()">
                 <span class="spec-unit">pn</span>
               </div>
             </div>
@@ -3121,13 +3462,13 @@
           trình duyệt của bạn (LocalStorage)</div>
       </div>
 
-      <!-- Action Button Footer -->
-      <div class="filter-footer-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 10px 15px 10px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 8px;">
-        <button onclick="toggleFilter()" style="padding: 11px; border-radius: 8px; border: none; background: var(--gold); color: #2a0a0a; font-weight: 800; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
-          <span>🔍 ÁP DỤNG</span>
+      <!-- Action Button Footer (US-076.3) -->
+      <div class="filter-footer-actions">
+        <button class="btn-filter-apply" onclick="toggleFilter()">
+          <span>Tìm kiếm</span>
         </button>
-        <button onclick="clearAllFilters()" style="padding: 11px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.4); background: transparent; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px;">
-          <span>↺ XÓA ĐIỀU KIỆN</span>
+        <button class="btn-filter-clear" onclick="clearAllFilters()">
+          <span>Xóa điều kiện</span>
         </button>
       </div>
     </div>
@@ -3989,6 +4330,96 @@
         }
       }
 
+      // LỌC THEO TIÊU CHÍ BĐS CHECKBOXES (US-076.3)
+      const activeCriteria = Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val'));
+      if (activeCriteria.length > 0) {
+        function matchCriteria(p, criterion) {
+          const textToSearch = [
+            p.t || '',
+            p.m || '',
+            p.raw_phan_loai || '',
+            p.raw_mo_ta_chi_tiet || '',
+            p.raw_tieu_de_public || ''
+          ].join(' ').toLowerCase();
+
+          const c = criterion.toLowerCase();
+          
+          if (p.raw_phan_loai && p.raw_phan_loai.toLowerCase().includes(c)) return true;
+
+          // Custom keyword mapping for better search matching
+          if (c === 'triệu đô') {
+            return textToSearch.includes('triệu đô') || textToSearch.includes('trieu do') || (parseFloat(p.raw_gia_chao) >= 23 || parseFloat(p.gia) >= 23);
+          }
+          if (c === 'hiếm') {
+            return textToSearch.includes('hiếm') || textToSearch.includes('cực hiếm') || textToSearch.includes('hiem');
+          }
+          if (c === 'nội thất đẹp - giá trị') {
+            return textToSearch.includes('nội thất') || textToSearch.includes('noi that') || textToSearch.includes('đẹp') || textToSearch.includes('mới') || textToSearch.includes('full option');
+          }
+          if (c === 'để kinh doanh') {
+            return textToSearch.includes('kinh doanh') || textToSearch.includes('buôn bán') || textToSearch.includes('kd') || textToSearch.includes('văn phòng') || textToSearch.includes('spa') || textToSearch.includes('cho thuê');
+          }
+          if (c === 'chủ cần bán gấp') {
+            return textToSearch.includes('bán gấp') || textToSearch.includes('gấp') || textToSearch.includes('ngợp') || textToSearch.includes('chủ cần') || textToSearch.includes('hạ giá') || textToSearch.includes('giam gia');
+          }
+          if (c === 'hẻm xe máy') {
+            return textToSearch.includes('hẻm xe máy') || textToSearch.includes('ba gác') || textToSearch.includes('hẻm nhỏ') || textToSearch.includes('hẻm 2m') || textToSearch.includes('hẻm 3m') || textToSearch.includes('hẻm bagac');
+          }
+          if (c === 'chưa được cấp cnqsd') {
+            return textToSearch.includes('chưa sổ') || textToSearch.includes('chưa cấp') || textToSearch.includes('giấy tay') || textToSearch.includes('thừa phát lại');
+          }
+          if (c === 'dân đầu tư') {
+            return textToSearch.includes('đầu tư') || textToSearch.includes('lời') || textToSearch.includes('lãi') || textToSearch.includes('hiệu suất') || textToSearch.includes('dòng tiền');
+          }
+          if (c === 'thang máy') {
+            return textToSearch.includes('thang máy') || textToSearch.includes('thang may') || textToSearch.includes(' tm ');
+          }
+          if (c === 'lô góc') {
+            return textToSearch.includes('lô góc') || textToSearch.includes('lo goc') || textToSearch.includes('2 mặt tiền') || textToSearch.includes('hai mặt tiền');
+          }
+          if (c === 'độc quyền bán') {
+            return textToSearch.includes('độc quyền') || textToSearch.includes('doc quyen');
+          }
+          if (c === 'dòng tiền ổn định') {
+            return textToSearch.includes('dòng tiền') || textToSearch.includes('dong tien') || textToSearch.includes('cho thuê') || textToSearch.includes('thu nhập') || textToSearch.includes('hđt');
+          }
+          if (c === 'view hồ - công viên') {
+            return textToSearch.includes('view hồ') || textToSearch.includes('công viên') || textToSearch.includes('cv') || textToSearch.includes('cong vien');
+          }
+          if (c === 'để ở') {
+            return textToSearch.includes('để ở') || textToSearch.includes('gia đình') || textToSearch.includes('an cư') || textToSearch.includes('ở ngay');
+          }
+          if (c === 'lãi vốn (rẻ)') {
+            return textToSearch.includes('rẻ') || textToSearch.includes('lãi vốn') || textToSearch.includes('giá tốt') || textToSearch.includes('thơm') || textToSearch.includes('gạt tay');
+          }
+          if (c === 'hẻm ô tô') {
+            return textToSearch.includes('hẻm xe hơi') || textToSearch.includes('hẻm ô tô') || textToSearch.includes('hẻm xe tai') || textToSearch.includes('xe hơi đỗ') || textToSearch.includes('ô tô tránh') || textToSearch.includes('hẻm rộng');
+          }
+          if (c === 'đất - nhà cấp 4 - nhà cũ') {
+            return textToSearch.includes('nhà cấp 4') || textToSearch.includes('nhà cũ') || textToSearch.includes('đất trống') || textToSearch.includes('tiện xây mới') || textToSearch.includes('nhà nát');
+          }
+          if (c === 'chính chủ') {
+            return textToSearch.includes('chính chủ') || textToSearch.includes('chủ gửi') || textToSearch.includes('chinh chu');
+          }
+          if (c === 'thế chấp ngân hàng') {
+            return textToSearch.includes('ngân hàng') || textToSearch.includes('thế chấp') || textToSearch.includes('vay');
+          }
+          if (c === 'mặt phố') {
+            return textToSearch.includes('mặt phố') || textToSearch.includes('mặt tiền') || textToSearch.includes('mt') || textToSearch.includes('mat pho');
+          }
+          if (c === 'bảo lãnh hoa hồng') {
+            return textToSearch.includes('hoa hồng') || textToSearch.includes('hh') || textToSearch.includes('hoa hong');
+          }
+          if (c === 'chung cư') {
+            return textToSearch.includes('chung cư') || textToSearch.includes('căn hộ') || textToSearch.includes('chung cu');
+          }
+
+          return textToSearch.includes(c);
+        }
+
+        a = a.filter(p => activeCriteria.every(crit => matchCriteria(p, crit)));
+      }
+
       // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT NÂNG CAO (US-076)
       const giaMin = document.getElementById('filterGiaMin')?.value || '';
       const giaMax = document.getElementById('filterGiaMax')?.value || '';
@@ -4352,6 +4783,7 @@
                 p.raw_so_wc = poolRow[65] || '';             // Số nhà vệ sinh - Index 65, Column BN
                 p.raw_tieu_de_public = poolRow[56] || '';    // Tiêu đề Public - Index 56, Column BE
                 p.raw_mo_ta_public = poolRow[57] || '';      // Mô tả Public - Index 57, Column BF
+                p.raw_phan_loai = poolRow[7] || '';          // Phân loại - Index 7, Column H
                 p.pool_row_index = poolRows.indexOf(poolRow) + 2;
                 p.pool_row_data = poolRow;
               } else {
@@ -4378,6 +4810,7 @@
                 p.raw_so_wc = '';
                 p.raw_tieu_de_public = '';
                 p.raw_mo_ta_public = '';
+                p.raw_phan_loai = '';
                 p.pool_row_index = null;
                 p.pool_row_data = null;
               }
@@ -4724,7 +5157,8 @@
           hemMax: document.getElementById('filterHemMax')?.value || '',
           phongMin: document.getElementById('filterPhongMin')?.value || '',
           phongMax: document.getElementById('filterPhongMax')?.value || ''
-        }
+        },
+        criteria: Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val'))
       };
       localStorage.setItem('adminState', JSON.stringify(state));
     }
@@ -4776,6 +5210,15 @@
             const el = document.getElementById(k.id);
             if (el && k.val !== undefined) el.value = k.val;
           });
+        }
+
+        if (state.criteria) {
+          const critSet = new Set(state.criteria);
+          document.querySelectorAll('.filter-criterion').forEach(el => {
+            el.checked = critSet.has(el.getAttribute('data-val'));
+          });
+        } else {
+          document.querySelectorAll('.filter-criterion').forEach(el => el.checked = false);
         }
 
         syncTabUI('districtTabs', selDistricts);
@@ -4844,14 +5287,20 @@
       document.getElementById('filterPanel').classList.toggle('open', filterOpen);
       const btn = document.getElementById('filterBtn');
       btn.classList.toggle('active', filterOpen);
+      if (window.innerWidth < 768) {
+        document.body.classList.toggle('filter-active', filterOpen);
+      }
     }
     function closeFilter() {
       if (!filterOpen) return;
       filterOpen = false;
       document.getElementById('filterPanel').classList.remove('open');
       const btn = document.getElementById('filterBtn');
-      const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size);
+      const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size || document.querySelectorAll('.filter-criterion:checked').length);
       btn.classList.toggle('active', anyActive);
+      if (window.innerWidth < 768) {
+        document.body.classList.remove('filter-active');
+      }
     }
 
     // ── Build district tabs dynamically ──
@@ -5027,6 +5476,9 @@
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
+
+      // Xóa các tiêu chí checkbox BĐS
+      document.querySelectorAll('.filter-criterion').forEach(el => el.checked = false);
 
       // Ward, Duong & Huong tabs cần rebuild vì là dynamic
       buildWardTabs(); buildDuongTabs(); buildHuongTabs();
