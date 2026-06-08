@@ -1692,7 +1692,6 @@
       padding: calc(max(16px, env(safe-area-inset-top)) + 50px) 0 10px;
       overflow: hidden;
       width: 100%;
-      transition: opacity 0.18s ease; /* US-081: fade khi chuyển ảnh lightbox */
     }
 
     .lb-main img {
@@ -6370,51 +6369,107 @@
     }
 
     // ── Lightbox Logic ──
-    let lbIdx = 0;
-    let currentImgs = [];
-    function openLb(i) {
-      lbIdx = i;
-      document.getElementById('lbOverlay').classList.add('open');
-      renderLbMain(); renderLbThumbs();
-    }
-    function closeLb() {
-      document.getElementById('lbOverlay').classList.remove('open');
-      document.getElementById('lbMain').innerHTML = ''; // Stop video
-      // Reset zoom state
-      lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0; lbMaxTouches = 0; lbStartDist = 0;
-    }
-
-    // US-081 v2: Lightbox pinch-to-zoom + swipe với lock khi đang zoom
+    let lbIdx = 0, currentImgs = [];
     let lbImgScale = 1, lbImgPosX = 0, lbImgPosY = 0;
     let lbMaxTouches = 0, lbStartDist = 0, lbLastScale = 1;
     let lbTx = 0, lbTy = 0, lbDragging = false;
+    let lbCw = 0; // cached track width
+
+    function isLbVideo(s) {
+      return s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg');
+    }
+
+    function buildLbTrack() {
+      const main = document.getElementById('lbMain');
+      lbCw = main.offsetWidth;
+      const track = document.createElement('div');
+      track.id = 'lbTrack';
+      track.style.cssText = `display:flex;height:100%;width:100%;will-change:transform;transition:none;`;
+      currentImgs.forEach((s, i) => {
+        const slide = document.createElement('div');
+        slide.style.cssText = 'min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+        if (isLbVideo(s)) {
+          const encoded = encodeURIComponent(s);
+          slide.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false${i === lbIdx ? '&autoplay=1' : ''}" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+        } else {
+          const img = document.createElement('img');
+          img.id = `lbImg-${i}`;
+          img.src = fixImgUrl(s, 'w1200');
+          img.alt = `Ảnh ${i + 1}`;
+          img.loading = i === lbIdx ? 'eager' : 'lazy';
+          img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;touch-action:none;';
+          slide.appendChild(img);
+        }
+        track.appendChild(slide);
+      });
+      main.innerHTML = '';
+      main.appendChild(track);
+      // Jump to current index without animation
+      track.style.transform = `translateX(${-lbIdx * lbCw}px)`;
+    }
+
+    function lbAnimateTo(idx) {
+      const track = document.getElementById('lbTrack');
+      if (!track) return;
+      // Reset zoom on slide change
+      lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
+      const prev = document.getElementById(`lbImg-${lbIdx}`);
+      if (prev) prev.style.transform = 'translate(0,0) scale(1)';
+      lbIdx = idx;
+      track.style.transition = 'transform .3s cubic-bezier(.25,.46,.45,.94)';
+      track.style.transform = `translateX(${-lbIdx * lbCw}px)`;
+      updateLbThumbsUI();
+    }
+
+    function openLb(i) {
+      lbIdx = i;
+      document.getElementById('lbOverlay').classList.add('open');
+      buildLbTrack();
+      renderLbThumbs();
+      updateLbThumbsUI();
+    }
+    function closeLb() {
+      document.getElementById('lbOverlay').classList.remove('open');
+      document.getElementById('lbMain').innerHTML = '';
+      lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0; lbMaxTouches = 0; lbStartDist = 0;
+    }
+
+    // US-081 v6: Lightbox carousel track — live drag + pinch-to-zoom
     (function() {
       const lbMain = document.getElementById('lbMain');
 
       lbMain.addEventListener('touchstart', e => {
         e.preventDefault();
         lbMaxTouches = Math.max(lbMaxTouches, e.touches.length);
-        const img = document.getElementById('lbImg');
-        if (e.touches.length === 2 && img) {
-          lbStartDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          lbLastScale = lbImgScale;
+        if (e.touches.length === 2) {
+          // Pinch start
+          const img = document.getElementById(`lbImg-${lbIdx}`);
+          if (img) {
+            lbStartDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            lbLastScale = lbImgScale;
+          }
         } else if (e.touches.length === 1) {
           lbTx = e.touches[0].clientX;
           lbTy = e.touches[0].clientY;
           lbDragging = true;
+          // Tắt transition khi bắt đầu kéo
+          const track = document.getElementById('lbTrack');
+          if (track) track.style.transition = 'none';
         }
       }, { passive: false });
 
       lbMain.addEventListener('touchmove', e => {
         e.preventDefault();
         lbMaxTouches = Math.max(lbMaxTouches, e.touches.length);
-        const img = document.getElementById('lbImg');
-        if (!img) return;
-        if (e.touches.length === 2 && lbStartDist > 0) {
-          // Pinch-to-zoom ảnh
+        const img = document.getElementById(`lbImg-${lbIdx}`);
+        const track = document.getElementById('lbTrack');
+        if (!track) return;
+
+        if (e.touches.length === 2 && lbStartDist > 0 && img) {
+          // Pinch-to-zoom ảnh hiện tại
           const dist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
@@ -6423,68 +6478,61 @@
           img.style.transform = `translate(${lbImgPosX}px,${lbImgPosY}px) scale(${lbImgScale})`;
         } else if (e.touches.length === 1 && lbDragging) {
           if (lbImgScale > 1) {
-            // Đang zoom: pan ảnh, không chuyển hình
-            lbImgPosX = e.touches[0].clientX - lbTx + lbImgPosX;
-            lbImgPosY = e.touches[0].clientY - lbTy + lbImgPosY;
-            lbTx = e.touches[0].clientX;
-            lbTy = e.touches[0].clientY;
-            img.style.transform = `translate(${lbImgPosX}px,${lbImgPosY}px) scale(${lbImgScale})`;
+            // Đang zoom: pan ảnh
+            const newX = lbImgPosX + (e.touches[0].clientX - lbTx);
+            const newY = lbImgPosY + (e.touches[0].clientY - lbTy);
+            lbTx = e.touches[0].clientX; lbTy = e.touches[0].clientY;
+            lbImgPosX = newX; lbImgPosY = newY;
+            if (img) img.style.transform = `translate(${lbImgPosX}px,${lbImgPosY}px) scale(${lbImgScale})`;
+          } else {
+            // Live drag: slide track theo ngón tay
+            const dx = lbTx - e.touches[0].clientX;
+            track.style.transform = `translateX(${-lbIdx * lbCw - dx}px)`;
           }
         }
       }, { passive: false });
 
       lbMain.addEventListener('touchend', e => {
         lbDragging = false;
+        const wasMulti = lbMaxTouches >= 2;
+        if (e.touches.length === 0) {
+          lbMaxTouches = 0; lbStartDist = 0;
+        }
         if (lbImgScale <= 1.05) {
-          // Scale về 1: reset vị trí
           lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
-          const img = document.getElementById('lbImg');
+          const img = document.getElementById(`lbImg-${lbIdx}`);
           if (img) img.style.transform = 'translate(0,0) scale(1)';
         }
-        if (e.touches.length === 0) {
-          const wasMultiTouch = lbMaxTouches >= 2;
-          lbMaxTouches = 0; lbStartDist = 0;
-          // Chỉ chuyển hình khi: 1 ngón, không zoom, vuốt đủ xa
-          if (!wasMultiTouch && lbImgScale <= 1.05) {
-            const dx = lbTx - e.changedTouches[0].clientX;
-            if (Math.abs(dx) > 50) lbMove(dx > 0 ? 1 : -1);
-          }
+        if (e.touches.length === 0 && !wasMulti && lbImgScale <= 1.05) {
+          const dx = lbTx - e.changedTouches[0].clientX;
+          const newIdx = Math.abs(dx) > 50
+            ? Math.max(0, Math.min(currentImgs.length - 1, lbIdx + (dx > 0 ? 1 : -1)))
+            : lbIdx;
+          // double-rAF: commit drag frame rồi animate snap
+          requestAnimationFrame(() => {
+            const track = document.getElementById('lbTrack');
+            if (track) track.style.transition = 'transform .3s cubic-bezier(.25,.46,.45,.94)';
+            requestAnimationFrame(() => {
+              if (newIdx !== lbIdx) lbAnimateTo(newIdx);
+              else {
+                const track2 = document.getElementById('lbTrack');
+                if (track2) track2.style.transform = `translateX(${-lbIdx * lbCw}px)`;
+              }
+            });
+          });
         }
       }, { passive: false });
     })();
 
     function lbMove(d) {
-      lbIdx = (lbIdx + d + currentImgs.length) % currentImgs.length;
-      renderLbMain(); updateLbThumbsUI();
+      const newIdx = (lbIdx + d + currentImgs.length) % currentImgs.length;
+      lbAnimateTo(newIdx);
     }
-    function goToLb(i) {
-      lbIdx = i; renderLbMain(); updateLbThumbsUI();
-    }
-    function renderLbMain() {
-      const s = currentImgs[lbIdx];
-      const main = document.getElementById('lbMain');
-      // Reset zoom khi chuyển ảnh
-      lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
-      // Fade transition
-      main.style.opacity = '0';
-      setTimeout(() => {
-        if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
-          const encoded = encodeURIComponent(s);
-          main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
-        } else {
-          main.innerHTML = `<img id="lbImg" src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to" style="max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;transition:transform 0.15s ease-out;">`;
-        }
-        main.style.opacity = '1';
-      }, 150);
-    }
+    function goToLb(i) { lbAnimateTo(i); }
     function renderLbThumbs() {
       document.getElementById('lbThumbs').innerHTML = currentImgs.map((s, i) => {
-        if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
-          return `<div class="lb-thumb-vid ${i === lbIdx ? 'on' : ''}" onclick="goToLb(${i})" id="lbt-${i}">▶</div>`;
-        } else {
-          const thumbSrc = fixImgUrl(s, 'w200');
-          return `<img src="${thumbSrc}" class="lb-thumb ${i === lbIdx ? 'on' : ''}" onclick="goToLb(${i})" id="lbt-${i}">`;
-        }
+        if (isLbVideo(s)) return `<div class="lb-thumb-vid ${i === lbIdx ? 'on' : ''}" onclick="goToLb(${i})" id="lbt-${i}">▶</div>`;
+        return `<img src="${fixImgUrl(s, 'w200')}" class="lb-thumb ${i === lbIdx ? 'on' : ''}" onclick="goToLb(${i})" id="lbt-${i}">`;
       }).join('');
     }
     function updateLbThumbsUI() {
