@@ -4967,6 +4967,7 @@
 
           const fullList = sourceRows
             .map((sr, index) => {
+              if (index === 0) return null; // Bỏ qua hàng tiêu đề
               if (!sr[3] && !sr[4]) return null;
               
               const targetRowNumber = index + 2;
@@ -5656,26 +5657,93 @@
     }
 
     // ── Build ward tabs dynamically ──
+    const WARD_PRIORITY = [
+      "Xuân Hoà", "Xuân Hòa",
+      "Bàn Cờ",
+      "Nhiêu Lộc",
+      "Cầu Kiệu",
+      "Đức Nhuận",
+      "Phú Nhuận",
+      "Vườn Lài",
+      "Hoà Hưng", "Hòa Hưng",
+      "Diên Hồng",
+      "Gia Định",
+      "Bình Thạnh",
+      "Bình Lợi Trung",
+      "Thạnh Mỹ Tây",
+      "Bình Quới",
+      "Tân Sơn Hòa",
+      "Tân Sơn Nhất",
+      "Tân Bình",
+      "Bảy Hiền",
+      "Tân Hòa"
+    ];
+
+    function normalizeVietnameseTones(str) {
+      if (!str) return '';
+      return str.normalize('NFC')
+        .replace(/o\u0300/g, 'ò').replace(/o\u0301/g, 'ó').replace(/o\u0309/g, 'ỏ').replace(/o\u0303/g, 'õ').replace(/o\u0323/g, 'ọ')
+        .replace(/a\u0300/g, 'à').replace(/a\u0301/g, 'á').replace(/a\u0309/g, 'ả').replace(/a\u0303/g, 'ã').replace(/a\u0323/g, 'ạ')
+        .replace(/o\u0302\u0300/g, 'ồ').replace(/o\u0302\u0301/g, 'ố').replace(/o\u0302\u0309/g, 'ổ').replace(/o\u0302\u0303/g, 'ỗ').replace(/o\u0302\u0323/g, 'ộ')
+        .replace(/a\u0302\u0300/g, 'ầ').replace(/a\u0302\u0301/g, 'ấ').replace(/a\u0302\u0309/g, 'ẩ').replace(/a\u0302\u0303/g, 'ẫ').replace(/a\u0302\u0323/g, 'ậ')
+        .replace(/e\u0302\u0300/g, 'ề').replace(/e\u0302\u0301/g, 'ế').replace(/e\u0302\u0309/g, 'ể').replace(/e\u0302\u0303/g, 'ễ').replace(/e\u0302\u0323/g, 'ệ')
+        .replace(/oà/g, 'òa').replace(/oá/g, 'óa').replace(/oả/g, 'ỏa').replace(/oã/g, 'õa').replace(/oạ/g, 'ọa')
+        .replace(/uý/g, 'úy').replace(/uỳ/g, 'ùy').replace(/uỷ/g, 'ủy').replace(/uỹ/g, 'ũy').replace(/uỵ/g, 'ụy')
+        .replace(/oè/g, 'òe').replace(/oé/g, 'óe').replace(/oẻ/g, 'ỏe').replace(/oẽ/g, 'õe').replace(/oẹ/g, 'ọe')
+        .replace(/uâ\u0300/g, 'uầ').replace(/uâ\u0301/g, 'uấ').replace(/uâ\u0309/g, 'uẩ').replace(/uâ\u0303/g, 'uẫ').replace(/uâ\u0323/g, 'uậ')
+        .trim().toLowerCase();
+    }
+
+    function sortWardsByPriority(wardList) {
+      const priorityMap = {};
+      WARD_PRIORITY.forEach((w, idx) => {
+        priorityMap[normalizeVietnameseTones(w)] = idx;
+      });
+
+      return wardList.sort((a, b) => {
+        const normA = normalizeVietnameseTones(a);
+        const normB = normalizeVietnameseTones(b);
+        const idxA = priorityMap[normA] !== undefined ? priorityMap[normA] : 9999;
+        const idxB = priorityMap[normB] !== undefined ? priorityMap[normB] : 9999;
+        
+        if (idxA !== idxB) {
+          return idxA - idxB;
+        }
+        return a.localeCompare(b, 'vi');
+      });
+    }
+
     const STATIC_WARD_MAP = {
       q3: ["Xuân Hòa", "Bàn Cờ", "Nhiêu Lộc"],
       q10: ["Vườn Lài", "Hòa Hưng", "Diên Hồng"],
-      bt: ["Gia Định", "Bình Thạnh", "Thạnh Mỹ Tây", "Bình Quới", "Bình Lợi Trung"],
-      tb: ["Tân Sơn Hòa", "Tân Sơn Nhất", "Tân Hòa", "Bảy Hiền", "Tân Bình", "Tân Sơn"],
-      pn: ["Phú Nhuận", "Cầu Kiệu", "Đức Nhuận"]
+      bt: ["Gia Định", "Bình Thạnh", "Bình Lợi Trung", "Thạnh Mỹ Tây", "Bình Quới"],
+      tb: ["Tân Sơn Hòa", "Tân Sơn Nhất", "Tân Bình", "Bảy Hiền", "Tân Hòa"],
+      pn: ["Cầu Kiệu", "Đức Nhuận", "Phú Nhuận"]
     };
 
     function buildWardTabs() {
       if (!isAdmin) return;
       let wards = [];
-      if (selDistricts.size === 1) {
-        const d = [...selDistricts][0];
-        if (STATIC_WARD_MAP[d]) {
-          wards = [...STATIC_WARD_MAP[d]];
+      
+      if (selDistricts.size === 0) {
+        const staticWards = [];
+        ['q3', 'pn', 'q10', 'bt', 'tb'].forEach(d => {
+          if (STATIC_WARD_MAP[d]) staticWards.push(...STATIC_WARD_MAP[d]);
+        });
+        const dataWards = [...new Set(DATA.map(p => p.phuong).filter(w => w && w !== '-' && w !== 'phuong'))];
+        const combined = [...new Set([...staticWards, ...dataWards])];
+        wards = sortWardsByPriority(combined);
+      } else {
+        const staticWards = [];
+        for (const d of selDistricts) {
+          if (STATIC_WARD_MAP[d]) {
+            staticWards.push(...STATIC_WARD_MAP[d]);
+          }
         }
-      }
-      if (wards.length === 0) {
-        const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
-        wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
+        const pool = DATA.filter(p => selDistricts.has(p.q));
+        const dataWards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-' && w !== 'phuong'))];
+        const combined = [...new Set([...staticWards, ...dataWards])];
+        wards = sortWardsByPriority(combined);
       }
       const container = document.getElementById('wardOptions');
       const box = document.getElementById('wardMulti');
