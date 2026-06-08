@@ -367,19 +367,10 @@ module.exports = async (req, res) => {
     let systemPrompt = '';
     if (docId) {
       try {
-        // Ưu tiên sử dụng token của Client gửi lên
-        const authHeader = req.headers.authorization;
         let googleToken = null;
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-          googleToken = authHeader.split(' ')[1];
-        }
-
-        // Nếu không có client token, fallback về Service Account
-        if (!googleToken) {
-          const creds = getCredentials();
-          if (creds) {
-            googleToken = await getGoogleAccessToken(creds);
-          }
+        const creds = getCredentials();
+        if (creds) {
+          googleToken = await getGoogleAccessToken(creds);
         }
 
         if (googleToken) {
