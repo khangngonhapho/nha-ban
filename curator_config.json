@@ -13,5 +13,6 @@
     "delay_page_min": 3,
     "delay_page_max": 5,
     "openai_api_key": "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",
-    "openai_system_prompt": ""
+    "openai_system_prompt": "",
+    "prompt_google_doc_id": "1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE"
 }
