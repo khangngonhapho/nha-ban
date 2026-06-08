@@ -7259,9 +7259,10 @@
       lastScrollTime = currentScrollTime;
     }, { passive: true });
 
-    // Bấm ra ngoài header → tự động đóng bộ lọc
+    // Bấm ra ngoài header → tự động đóng bộ lọc (chỉ áp dụng trên Desktop)
     document.addEventListener('click', (e) => {
       if (!filterOpen) return;
+      if (window.innerWidth < 768) return; // Tránh tự động đóng trên mobile do bàn phím ảo hay gợi ý autocomplete
       if (e.target.closest('#filterPanel')) return;
       if (!e.target.closest('header')) closeFilter();
     });
