@@ -6566,7 +6566,10 @@
         
         sbody.innerHTML = `
           <!-- QUICK LINK COPY BAR (US-049) -->
-          <div class="admin-quick-link-bar" style="margin-bottom: 16px; text-align: right;">
+          <div class="admin-quick-link-bar" style="margin-bottom: 16px; display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" onclick="downloadAllListingImages('${p.id || p.system_id}')" style="background: #27ae60; color: #fff; border: none; padding: 7px 14px; border-radius: 16px; font-size: 11px; font-weight: 850; cursor: pointer; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.15);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+              📥 Tải toàn bộ ảnh
+            </button>
             <button type="button" onclick="copyQuickClientLink('${p.system_id}')" style="background: var(--gold); color: #1c1c1e; border: none; padding: 7px 14px; border-radius: 16px; font-size: 11px; font-weight: 850; cursor: pointer; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 10px rgba(255, 191, 36, 0.15);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
               Copy link nhanh
             </button>
@@ -7374,10 +7377,12 @@
         // Màn hình chi tiết
         if (p.isFromPoolOnly) {
           actionsEl.innerHTML = `
+            <button class="dial-btn-item download-images-btn" onclick="downloadAllListingImages('${p.system_id}')" title="Tải toàn bộ ảnh" style="background:#2ecc71 !important; color:white !important; font-size:18px !important;">📥</button>
             <button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
           `;
         } else {
           actionsEl.innerHTML = `
+            <button class="dial-btn-item download-images-btn" onclick="downloadAllListingImages('${p.id}')" title="Tải toàn bộ ảnh" style="background:#2ecc71 !important; color:white !important; font-size:18px !important;">📥</button>
             <button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
             <button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>
           `;
@@ -7954,6 +7959,136 @@
       
       return cleanUrl;
     }
+
+    function loadJSZip() {
+      return new Promise((resolve, reject) => {
+        if (window.JSZip) {
+          resolve(window.JSZip);
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        script.onload = () => resolve(window.JSZip);
+        script.onerror = () => reject(new Error('Không thể tải thư viện JSZip từ CDN'));
+        document.head.appendChild(script);
+      });
+    }
+
+    window.downloadAllListingImages = async function(id) {
+      const p = window.activeCurationListing || DATA.find(x => String(x.id) === String(id) || String(x.system_id) === String(id));
+      if (!p) {
+        alert('Không tìm thấy thông tin căn nhà!');
+        return;
+      }
+
+      // Thu thập ảnh: mặt tiền và các ảnh trong p.imgs
+      const urls = [];
+      const facadeUrl = (p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '').trim();
+      if (facadeUrl) {
+        urls.push(facadeUrl);
+      }
+      if (p.imgs && Array.isArray(p.imgs)) {
+        p.imgs.forEach(url => {
+          const u = (url || '').trim();
+          if (u && !urls.includes(u)) {
+            // Loại trừ ảnh sổ đỏ
+            if (!window.isListingSodoUrl || !window.isListingSodoUrl(u, p)) {
+              urls.push(u);
+            }
+          }
+        });
+      }
+
+      if (urls.length === 0) {
+        alert('Căn nhà này không có hình ảnh nào để tải!');
+        return;
+      }
+
+      const prefix = p.id || p.system_id || 'bds';
+      
+      const btn = document.activeElement;
+      const originalText = btn ? btn.innerHTML : 'Tải toàn bộ ảnh';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Đang chuẩn bị tải...';
+      }
+
+      try {
+        const JSZip = await loadJSZip();
+        const zip = new JSZip();
+        let loadedCount = 0;
+
+        const downloadPromises = urls.map(async (url, idx) => {
+          try {
+            // Cloudinary: tải ảnh chất lượng gốc; các nguồn khác: dùng fixImgUrl w2000
+            const cleanUrl = url.includes('res.cloudinary.com') ? url : fixImgUrl(url, 'w2000');
+            const response = await fetch(cleanUrl);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const blob = await response.blob();
+            
+            let ext = 'jpg';
+            const urlLower = cleanUrl.toLowerCase();
+            if (urlLower.includes('.png')) ext = 'png';
+            else if (urlLower.includes('.webp')) ext = 'webp';
+            
+            const fileName = `${prefix}_${String(idx + 1).padStart(2, '0')}.${ext}`;
+            zip.file(fileName, blob);
+            
+            loadedCount++;
+            if (btn) btn.innerHTML = `⏳ Đang tải ${loadedCount}/${urls.length} ảnh...`;
+          } catch (err) {
+            console.error(`Failed to download image: ${url}`, err);
+            // Fallback: Thử tải link thô ban đầu
+            try {
+              const response = await fetch(url);
+              if (response.ok) {
+                const blob = await response.blob();
+                let ext = 'jpg';
+                const urlLower = url.toLowerCase();
+                if (urlLower.includes('.png')) ext = 'png';
+                else if (urlLower.includes('.webp')) ext = 'webp';
+                const fileName = `${prefix}_${String(idx + 1).padStart(2, '0')}.${ext}`;
+                zip.file(fileName, blob);
+                loadedCount++;
+                if (btn) btn.innerHTML = `⏳ Đang tải ${loadedCount}/${urls.length} ảnh...`;
+                return;
+              }
+            } catch (e) {
+              console.error(`Fallback download failed for: ${url}`, e);
+            }
+          }
+        });
+
+        await Promise.all(downloadPromises);
+
+        const filesInZip = Object.keys(zip.files);
+        if (filesInZip.length === 0) {
+          throw new Error('Không thể tải xuống bất kỳ hình ảnh nào do lỗi CORS hoặc kết nối mạng!');
+        }
+
+        if (btn) btn.innerHTML = '⚙️ Đang đóng gói file ZIP...';
+        
+        const content = await zip.generateAsync({ type: 'blob' });
+        const blobUrl = URL.createObjectURL(content);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `${prefix}_images.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+
+        trackAction("Tải trọn bộ ảnh", `#${prefix} - ${urls.length} ảnh`);
+      } catch (error) {
+        alert('Có lỗi xảy ra khi tải ảnh: ' + error.message + '\n\nHệ thống sẽ mở tối đa 10 ảnh trong tab mới để bạn tải thủ công.');
+        urls.slice(0, 10).forEach(url => window.open(url, '_blank'));
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      }
+    };
 
     window.isListingSodoUrl = function(url, p) {
       if (!url || !p) return false;
