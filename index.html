@@ -7960,18 +7960,54 @@
       return cleanUrl;
     }
 
-    function loadJSZip() {
-      return new Promise((resolve, reject) => {
-        if (window.JSZip) {
-          resolve(window.JSZip);
-          return;
+    async function downloadSingleImage(url, fileName) {
+      try {
+        const cleanUrl = url.includes('res.cloudinary.com') ? url : fixImgUrl(url, 'w2000');
+        const response = await fetch(cleanUrl);
+        if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+        const blob = await response.blob();
+        
+        let ext = 'jpg';
+        const urlLower = cleanUrl.toLowerCase();
+        if (urlLower.includes('.png')) ext = 'png';
+        else if (urlLower.includes('.webp')) ext = 'webp';
+        
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `${fileName}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+      } catch (err) {
+        console.error(`Failed to download via fetch: ${url}`, err);
+        // Fallback: try raw URL download
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            const blob = await response.blob();
+            let ext = 'jpg';
+            const urlLower = url.toLowerCase();
+            if (urlLower.includes('.png')) ext = 'png';
+            else if (urlLower.includes('.webp')) ext = 'webp';
+            
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = `${fileName}.${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+            return;
+          }
+        } catch (e) {
+          console.error(`Fallback fetch failed: ${url}`, e);
         }
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-        script.onload = () => resolve(window.JSZip);
-        script.onerror = () => reject(new Error('Không thể tải thư viện JSZip từ CDN'));
-        document.head.appendChild(script);
-      });
+        // Fallback to opening in new tab
+        window.open(url, '_blank');
+      }
     }
 
     window.downloadAllListingImages = async function(id) {
@@ -8004,84 +8040,27 @@
         return;
       }
 
-      const prefix = p.id || p.system_id || 'bds';
+      // Đặt tên như systemID-1 (e.g. SYS-20260608-001-1)
+      const prefix = p.system_id || p.id || 'bds';
       
       const btn = document.activeElement;
       const originalText = btn ? btn.innerHTML : 'Tải toàn bộ ảnh';
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '⏳ Đang chuẩn bị tải...';
+        btn.innerHTML = '⏳ Bắt đầu tải...';
       }
 
       try {
-        const JSZip = await loadJSZip();
-        const zip = new JSZip();
-        let loadedCount = 0;
-
-        const downloadPromises = urls.map(async (url, idx) => {
-          try {
-            // Cloudinary: tải ảnh chất lượng gốc; các nguồn khác: dùng fixImgUrl w2000
-            const cleanUrl = url.includes('res.cloudinary.com') ? url : fixImgUrl(url, 'w2000');
-            const response = await fetch(cleanUrl);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const blob = await response.blob();
-            
-            let ext = 'jpg';
-            const urlLower = cleanUrl.toLowerCase();
-            if (urlLower.includes('.png')) ext = 'png';
-            else if (urlLower.includes('.webp')) ext = 'webp';
-            
-            const fileName = `${prefix}_${String(idx + 1).padStart(2, '0')}.${ext}`;
-            zip.file(fileName, blob);
-            
-            loadedCount++;
-            if (btn) btn.innerHTML = `⏳ Đang tải ${loadedCount}/${urls.length} ảnh...`;
-          } catch (err) {
-            console.error(`Failed to download image: ${url}`, err);
-            // Fallback: Thử tải link thô ban đầu
-            try {
-              const response = await fetch(url);
-              if (response.ok) {
-                const blob = await response.blob();
-                let ext = 'jpg';
-                const urlLower = url.toLowerCase();
-                if (urlLower.includes('.png')) ext = 'png';
-                else if (urlLower.includes('.webp')) ext = 'webp';
-                const fileName = `${prefix}_${String(idx + 1).padStart(2, '0')}.${ext}`;
-                zip.file(fileName, blob);
-                loadedCount++;
-                if (btn) btn.innerHTML = `⏳ Đang tải ${loadedCount}/${urls.length} ảnh...`;
-                return;
-              }
-            } catch (e) {
-              console.error(`Fallback download failed for: ${url}`, e);
-            }
-          }
-        });
-
-        await Promise.all(downloadPromises);
-
-        const filesInZip = Object.keys(zip.files);
-        if (filesInZip.length === 0) {
-          throw new Error('Không thể tải xuống bất kỳ hình ảnh nào do lỗi CORS hoặc kết nối mạng!');
+        for (let i = 0; i < urls.length; i++) {
+          if (btn) btn.innerHTML = `⏳ Đang tải ${i + 1}/${urls.length}...`;
+          await downloadSingleImage(urls[i], `${prefix}-${i + 1}`);
+          // Delay để tránh bị trình duyệt chặn tải hàng loạt
+          await new Promise(r => setTimeout(r, 250));
         }
-
-        if (btn) btn.innerHTML = '⚙️ Đang đóng gói file ZIP...';
-        
-        const content = await zip.generateAsync({ type: 'blob' });
-        const blobUrl = URL.createObjectURL(content);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = `${prefix}_images.zip`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
 
         trackAction("Tải trọn bộ ảnh", `#${prefix} - ${urls.length} ảnh`);
       } catch (error) {
-        alert('Có lỗi xảy ra khi tải ảnh: ' + error.message + '\n\nHệ thống sẽ mở tối đa 10 ảnh trong tab mới để bạn tải thủ công.');
-        urls.slice(0, 10).forEach(url => window.open(url, '_blank'));
+        alert('Có lỗi xảy ra khi tải ảnh: ' + error.message);
       } finally {
         if (btn) {
           btn.disabled = false;
