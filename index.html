@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -7966,12 +7966,10 @@
         const response = await fetch(cleanUrl);
         if (!response.ok) throw new Error(`HTTP status ${response.status}`);
         const blob = await response.blob();
-        
         let ext = 'jpg';
         const urlLower = cleanUrl.toLowerCase();
         if (urlLower.includes('.png')) ext = 'png';
         else if (urlLower.includes('.webp')) ext = 'webp';
-        
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = blobUrl;
@@ -7981,8 +7979,7 @@
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
       } catch (err) {
-        console.error(`Failed to download via fetch: ${url}`, err);
-        // Fallback: try raw URL download
+        console.error(`[DL] fetch failed: ${url}`, err);
         try {
           const response = await fetch(url);
           if (response.ok) {
@@ -7991,7 +7988,6 @@
             const urlLower = url.toLowerCase();
             if (urlLower.includes('.png')) ext = 'png';
             else if (urlLower.includes('.webp')) ext = 'webp';
-            
             const blobUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = blobUrl;
@@ -8002,70 +7998,150 @@
             setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
             return;
           }
-        } catch (e) {
-          console.error(`Fallback fetch failed: ${url}`, e);
-        }
-        // Fallback to opening in new tab
+        } catch (e) { console.error(`[DL] fallback failed: ${url}`, e); }
         window.open(url, '_blank');
       }
     }
 
+    // US-080: Fetch toan bo URLs thanh Blob[], cap nhat progress bar theo tung anh
+    async function fetchAllBlobs(urls, fileNames, onProgress) {
+      const results = [];
+      for (let i = 0; i < urls.length; i++) {
+        if (onProgress) onProgress(i + 1, urls.length);
+        const url = urls[i];
+        const fileName = fileNames[i];
+        try {
+          const cleanUrl = url.includes('res.cloudinary.com') ? url : fixImgUrl(url, 'w2000');
+          let response = await fetch(cleanUrl);
+          if (!response.ok) response = await fetch(url);
+          if (response.ok) {
+            const blob = await response.blob();
+            let ext = 'jpg';
+            const urlLower = cleanUrl.toLowerCase();
+            if (urlLower.includes('.png')) ext = 'png';
+            else if (urlLower.includes('.webp')) ext = 'webp';
+            results.push({ blob, fileName: `${fileName}.${ext}`, ok: true });
+          } else {
+            console.warn(`[US-080] HTTP ${response.status}: ${url}`);
+            results.push({ ok: false, url });
+          }
+        } catch (err) {
+          console.warn(`[US-080] Loi fetch: ${url}`, err);
+          results.push({ ok: false, url });
+        }
+      }
+      return results;
+    }
+
+    // US-080: Web Share API - gui toan bo file anh rieng le 1 lan (mobile luu vao Gallery)
+    async function shareAllImagesToGallery(blobResults) {
+      const files = blobResults
+        .filter(r => r.ok)
+        .map(r => new File([r.blob], r.fileName, { type: r.blob.type || 'image/jpeg' }));
+      if (!files.length) return false;
+      if (!navigator.canShare || !navigator.canShare({ files })) return false;
+      try {
+        await navigator.share({ title: 'Anh can nha - Khang Ngo', files });
+        return true;
+      } catch (err) {
+        if (err.name !== 'AbortError') console.warn('[US-080] Share error:', err);
+        return false;
+      }
+    }
+
+    // US-080: Sequential fallback - tai tung file anh rieng le (delay 250ms, khong ZIP)
+    async function downloadSequential(blobResults) {
+      for (const r of blobResults) {
+        if (!r.ok) continue;
+        const blobUrl = URL.createObjectURL(r.blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = r.fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+        await new Promise(res => setTimeout(res, 250));
+      }
+    }
+
+    // US-080: Progress Bar inline - hien thi ngay duoi nut bam, khong popup
+    function renderDownloadProgress(current, total, btn) {
+      let bar = document.getElementById('dl-progress-wrap');
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'dl-progress-wrap';
+        bar.style.cssText = 'margin-top:8px;background:rgba(255,255,255,0.07);border-radius:8px;overflow:hidden;height:28px;position:relative;display:flex;align-items:center;min-width:180px;max-width:280px;';
+        bar.innerHTML = '<div id="dl-progress-fill" style="height:100%;background:linear-gradient(90deg,#27ae60,#2ecc71);border-radius:8px;transition:width 0.25s ease;width:0%;"></div>' +
+          '<span id="dl-progress-label" style="position:absolute;left:0;right:0;text-align:center;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);white-space:nowrap;"></span>';
+        if (btn && btn.parentNode) btn.parentNode.insertBefore(bar, btn.nextSibling);
+        else document.body.appendChild(bar);
+      }
+      const pct = Math.round((current / total) * 100);
+      const fillEl = document.getElementById('dl-progress-fill');
+      const labelEl = document.getElementById('dl-progress-label');
+      if (fillEl) fillEl.style.width = pct + '%';
+      if (labelEl) labelEl.textContent = '\uD83D\uDDBC\uFE0F ' + current + '/' + total + '...';
+    }
+
+    function clearDownloadProgress() {
+      const bar = document.getElementById('dl-progress-wrap');
+      if (bar) bar.remove();
+    }
+
     window.downloadAllListingImages = async function(id) {
       const p = window.activeCurationListing || DATA.find(x => String(x.id) === String(id) || String(x.system_id) === String(id));
-      if (!p) {
-        alert('Không tìm thấy thông tin căn nhà!');
-        return;
-      }
+      if (!p) { alert('Khong tim thay thong tin can nha!'); return; }
 
-      // Thu thập ảnh: mặt tiền và các ảnh trong p.imgs
+      // Thu thap URLs anh: mat tien + noi that, loai tru so do
       const urls = [];
       const facadeUrl = (p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '').trim();
-      if (facadeUrl) {
-        urls.push(facadeUrl);
-      }
+      if (facadeUrl) urls.push(facadeUrl);
       if (p.imgs && Array.isArray(p.imgs)) {
         p.imgs.forEach(url => {
           const u = (url || '').trim();
           if (u && !urls.includes(u)) {
-            // Loại trừ ảnh sổ đỏ
-            if (!window.isListingSodoUrl || !window.isListingSodoUrl(u, p)) {
-              urls.push(u);
-            }
+            if (!window.isListingSodoUrl || !window.isListingSodoUrl(u, p)) urls.push(u);
           }
         });
       }
+      if (urls.length === 0) { alert('Can nha nay khong co hinh anh nao de tai!'); return; }
 
-      if (urls.length === 0) {
-        alert('Căn nhà này không có hình ảnh nào để tải!');
-        return;
-      }
-
-      // Đặt tên như systemID-1 (e.g. SYS-20260608-001-1)
       const prefix = p.system_id || p.id || 'bds';
-      
-      const btn = document.activeElement;
-      const originalText = btn ? btn.innerHTML : 'Tải toàn bộ ảnh';
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Bắt đầu tải...';
-      }
+      const fileNames = urls.map((_, i) => `${prefix}-${i + 1}`);
+
+      // UI: disable nut, Progress Bar
+      const btn = document.activeElement && document.activeElement.tagName === 'BUTTON' ? document.activeElement : null;
+      const originalHTML = btn ? btn.innerHTML : null;
+      if (btn) { btn.disabled = true; btn.innerHTML = '\u23F3 Chuan bi...'; }
 
       try {
-        for (let i = 0; i < urls.length; i++) {
-          if (btn) btn.innerHTML = `⏳ Đang tải ${i + 1}/${urls.length}...`;
-          await downloadSingleImage(urls[i], `${prefix}-${i + 1}`);
-          // Delay để tránh bị trình duyệt chặn tải hàng loạt
-          await new Promise(r => setTimeout(r, 250));
+        // Buoc 1: Fetch tat ca Blob + Progress Bar
+        const blobResults = await fetchAllBlobs(urls, fileNames, (cur, tot) => {
+          renderDownloadProgress(cur, tot, btn);
+          if (btn) btn.innerHTML = '\u23F3 ' + cur + '/' + tot + '...';
+        });
+
+        const successCount = blobResults.filter(r => r.ok).length;
+
+        // Buoc 2: Thu Web Share API (Mobile - iOS/Android luu vao Gallery)
+        const shared = await shareAllImagesToGallery(blobResults);
+
+        if (!shared) {
+          // Buoc 3: Fallback Sequential - file anh rieng le, khong ZIP
+          if (btn) btn.innerHTML = '\u2B07\uFE0F Dang luu...';
+          await downloadSequential(blobResults);
         }
 
-        trackAction("Tải trọn bộ ảnh", `#${prefix} - ${urls.length} ảnh`);
+        clearDownloadProgress();
+        trackAction("Tai tron bo anh v2", `#${prefix} - ${successCount}/${urls.length} anh - ${shared ? 'Share' : 'Sequential'}`);
+        showToast(`\u2705 Da luu ${successCount} anh${shared ? ' vao Gallery!' : ' thanh cong!'}`, 'success');
+
       } catch (error) {
-        alert('Có lỗi xảy ra khi tải ảnh: ' + error.message);
+        clearDownloadProgress();
+        showToast('Co loi xay ra khi tai anh: ' + error.message, 'error');
       } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
-        }
+        if (btn) { btn.disabled = false; btn.innerHTML = originalHTML || '\uD83D\uDCE5 Tai toan bo anh'; }
       }
     };
 
