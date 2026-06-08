@@ -1488,7 +1488,7 @@
       overflow: hidden;
       background: #000;
       margin-bottom: 12px;
-      touch-action: pan-y;
+      touch-action: none; /* US-081 v2: JS kiểm soát 100%, chặn browser zoom trang */
       aspect-ratio: 3 / 4;
     }
 
@@ -1658,6 +1658,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
+      touch-action: none; /* US-081 v2: chặn browser zoom trang trong lightbox */
     }
 
     .lightbox.open {
@@ -6378,26 +6379,79 @@
     function closeLb() {
       document.getElementById('lbOverlay').classList.remove('open');
       document.getElementById('lbMain').innerHTML = ''; // Stop video
+      // Reset zoom state
+      lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0; lbMaxTouches = 0; lbStartDist = 0;
     }
-    // US-081: Touch swipe cho lightbox với pinch guard (thay thế inline attrs đã xóa)
+
+    // US-081 v2: Lightbox pinch-to-zoom + swipe với lock khi đang zoom
+    let lbImgScale = 1, lbImgPosX = 0, lbImgPosY = 0;
+    let lbMaxTouches = 0, lbStartDist = 0, lbLastScale = 1;
+    let lbTx = 0, lbTy = 0, lbDragging = false;
     (function() {
-      let lbTx = 0, lbPinching = false;
       const lbMain = document.getElementById('lbMain');
+
       lbMain.addEventListener('touchstart', e => {
-        if (e.touches.length >= 2) { lbPinching = true; return; }
-        lbPinching = false;
-        lbTx = e.touches[0].clientX;
-      }, { passive: true });
-      lbMain.addEventListener('touchmove', e => {
-        if (e.touches.length >= 2) { lbPinching = true; }
-      }, { passive: true });
-      lbMain.addEventListener('touchend', e => {
-        if (lbPinching) { lbPinching = false; return; } // bỏ qua nếu vừa pinch
-        if (Math.abs(lbTx - e.changedTouches[0].clientX) > 40) {
-          lbMove(lbTx > e.changedTouches[0].clientX ? 1 : -1);
+        e.preventDefault();
+        lbMaxTouches = Math.max(lbMaxTouches, e.touches.length);
+        const img = document.getElementById('lbImg');
+        if (e.touches.length === 2 && img) {
+          lbStartDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          lbLastScale = lbImgScale;
+        } else if (e.touches.length === 1) {
+          lbTx = e.touches[0].clientX;
+          lbTy = e.touches[0].clientY;
+          lbDragging = true;
         }
-      }, { passive: true });
+      }, { passive: false });
+
+      lbMain.addEventListener('touchmove', e => {
+        e.preventDefault();
+        lbMaxTouches = Math.max(lbMaxTouches, e.touches.length);
+        const img = document.getElementById('lbImg');
+        if (!img) return;
+        if (e.touches.length === 2 && lbStartDist > 0) {
+          // Pinch-to-zoom ảnh
+          const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          lbImgScale = Math.max(1, Math.min(4, lbLastScale * (dist / lbStartDist)));
+          img.style.transform = `translate(${lbImgPosX}px,${lbImgPosY}px) scale(${lbImgScale})`;
+        } else if (e.touches.length === 1 && lbDragging) {
+          if (lbImgScale > 1) {
+            // Đang zoom: pan ảnh, không chuyển hình
+            lbImgPosX = e.touches[0].clientX - lbTx + lbImgPosX;
+            lbImgPosY = e.touches[0].clientY - lbTy + lbImgPosY;
+            lbTx = e.touches[0].clientX;
+            lbTy = e.touches[0].clientY;
+            img.style.transform = `translate(${lbImgPosX}px,${lbImgPosY}px) scale(${lbImgScale})`;
+          }
+        }
+      }, { passive: false });
+
+      lbMain.addEventListener('touchend', e => {
+        lbDragging = false;
+        if (lbImgScale <= 1.05) {
+          // Scale về 1: reset vị trí
+          lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
+          const img = document.getElementById('lbImg');
+          if (img) img.style.transform = 'translate(0,0) scale(1)';
+        }
+        if (e.touches.length === 0) {
+          const wasMultiTouch = lbMaxTouches >= 2;
+          lbMaxTouches = 0; lbStartDist = 0;
+          // Chỉ chuyển hình khi: 1 ngón, không zoom, vuốt đủ xa
+          if (!wasMultiTouch && lbImgScale <= 1.05) {
+            const dx = lbTx - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 50) lbMove(dx > 0 ? 1 : -1);
+          }
+        }
+      }, { passive: false });
     })();
+
     function lbMove(d) {
       lbIdx = (lbIdx + d + currentImgs.length) % currentImgs.length;
       renderLbMain(); updateLbThumbsUI();
@@ -6408,17 +6462,19 @@
     function renderLbMain() {
       const s = currentImgs[lbIdx];
       const main = document.getElementById('lbMain');
-      // US-081: Fade transition khi chuyển ảnh lightbox
+      // Reset zoom khi chuyển ảnh
+      lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
+      // Fade transition
       main.style.opacity = '0';
       setTimeout(() => {
         if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
           const encoded = encodeURIComponent(s);
           main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
         } else {
-          main.innerHTML = `<img src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to">`;
+          main.innerHTML = `<img id="lbImg" src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to" style="max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;transition:transform 0.15s ease-out;">`;
         }
         main.style.opacity = '1';
-      }, 160);
+      }, 150);
     }
     function renderLbThumbs() {
       document.getElementById('lbThumbs').innerHTML = currentImgs.map((s, i) => {
@@ -6481,29 +6537,49 @@
       gt.style.transform = 'translateX(0)'; ua();
       const gw = document.getElementById('gw');
 
-      // US-081: Vuốt ảnh mượt mà + chặn "Back" iPhone + pinch-to-zoom không nhảy ảnh
-      let gwPinching = false;
+      // US-081 v2: Live drag + maxTouches pinch guard + touch-action:none
+      let gwMaxTouches = 0;
+      const gt = document.getElementById('gt');
+
       gw.ontouchstart = e => {
-        if (e.touches.length >= 2) { gwPinching = true; return; }
-        gwPinching = false;
-        tx = e.touches[0].clientX;
-        ty = e.touches[0].clientY;
+        e.preventDefault(); // touch-action:none → cần preventDefault để nhận move
+        gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
+        if (e.touches.length === 1 && gwMaxTouches === 1) {
+          tx = e.touches[0].clientX;
+          ty = e.touches[0].clientY;
+        }
       };
 
       gw.ontouchmove = e => {
-        if (e.touches.length >= 2) { gwPinching = true; return; }
+        e.preventDefault();
+        gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
+        if (gwMaxTouches >= 2) return; // đang pinch — không làm gì
         const dx = tx - e.touches[0].clientX;
         const dy = ty - e.touches[0].clientY;
-        // Nếu vuốt ngang nhiều hơn vuốt dọc -> Chặn lệnh của trình duyệt
         if (Math.abs(dx) > Math.abs(dy)) {
-          if (e.cancelable) e.preventDefault();
+          // Live drag: dịch ảnh theo ngón tay realtime
+          gt.style.transition = 'none';
+          gt.style.transform = `translateX(calc(-${gI * 100}% - ${dx}px))`;
         }
       };
 
       gw.ontouchend = e => {
-        if (gwPinching) { gwPinching = false; return; } // bỏ qua nếu vừa pinch
-        const dx = tx - e.changedTouches[0].clientX;
-        if (Math.abs(dx) > 40) gm(dx > 0 ? 1 : -1);
+        if (e.touches.length === 0) {
+          const wasPinch = gwMaxTouches >= 2;
+          gwMaxTouches = 0;
+          gt.style.transition = ''; // khôi phục CSS transition
+          if (wasPinch) {
+            // Snap lại vị trí hiện tại nếu vừa pinch
+            gt.style.transform = `translateX(-${gI * 100}%)`;
+            return;
+          }
+          const dx = tx - e.changedTouches[0].clientX;
+          if (Math.abs(dx) > 50) {
+            gm(dx > 0 ? 1 : -1); // animate chuyển hình
+          } else {
+            gt.style.transform = `translateX(-${gI * 100}%)`; // snap lại
+          }
+        }
       };
     }
     function gm(d) {
