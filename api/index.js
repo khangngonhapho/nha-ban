@@ -108,6 +108,11 @@ async function getGoogleAccessToken(creds) {
     return null;
   }
 
+  let privateKey = creds.private_key;
+  if (privateKey && typeof privateKey === 'string') {
+    privateKey = privateKey.replace(/\\n/g, '\n');
+  }
+
   const tokenUri = creds.token_uri || 'https://oauth2.googleapis.com/token';
   const iat = Math.floor(Date.now() / 1000);
   const exp = iat + 3600;
@@ -136,7 +141,7 @@ async function getGoogleAccessToken(creds) {
   try {
     const signer = crypto.createSign('RSA-SHA256');
     signer.update(signatureInput);
-    const signature = base64Escape(signer.sign(creds.private_key, 'base64'));
+    const signature = base64Escape(signer.sign(privateKey, 'base64'));
 
     const jwt = `${signatureInput}.${signature}`;
 
