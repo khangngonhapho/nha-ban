@@ -2971,7 +2971,12 @@
         border-bottom: 1.5px solid #e2ded6 !important;
       }
 
-      #filterPanel > .filter-section-lbl {
+      .filter-scroll-content {
+        display: contents;
+      }
+
+      #filterPanel > .filter-section-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl {
         grid-column: 1;
         margin: 0 !important;
         padding: 0 !important;
@@ -2979,30 +2984,36 @@
       }
 
       #filterPanel > .tabs,
-      #filterPanel > .multiselect-container {
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
         grid-column: 2;
         margin: 0 !important;
         padding: 0 !important;
       }
 
-      #filterPanel > .filter-section-lbl.full-width-lbl {
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
         grid-column: 1 / -1;
         border-top: 1.5px solid #e2ded6;
         padding: 16px 0 4px 0 !important;
         margin-top: 8px !important;
       }
 
-      #filterPanel > .detailed-specs-container {
+      #filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
         grid-column: 1 / -1;
         padding: 4px 0 !important;
       }
 
-      #filterPanel > #collectionsManager {
+      #filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
         grid-column: 2;
         margin: 0 !important;
       }
 
-      #filterPanel > div.admin-only:not(#collectionsManager) {
+      #filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
         grid-column: 2;
         margin: 0 !important;
       }
@@ -3226,18 +3237,25 @@
         background: #ffffff !important;
         z-index: 1000;
         margin: 0 !important;
-        padding: 0 0 80px 0 !important; /* reserve space for sticky footer */
+        padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
         transform: translateX(100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow-y: auto !important;
+        overflow: hidden !important;
         box-shadow: none !important;
         border-radius: 0 !important;
       }
       .filter-panel.open {
         transform: translateX(0) !important;
-        padding: 0 0 80px 0 !important;
+        padding: 0 !important;
+      }
+      .filter-scroll-content {
+        display: block !important;
+        flex: 1 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 24px !important;
       }
       .mobile-filter-header {
         display: flex;
@@ -3278,7 +3296,8 @@
         padding-right: 16px !important;
       }
       
-      .filter-panel > .tabs {
+      .filter-panel > .tabs,
+      .filter-scroll-content > .tabs {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
@@ -3293,7 +3312,8 @@
         min-height: 52px !important;
         height: auto !important;
       }
-      .filter-panel .tab {
+      .filter-panel .tab,
+      .filter-scroll-content .tab {
         flex-shrink: 0 !important;
         white-space: nowrap !important;
         display: inline-flex !important;
@@ -3305,7 +3325,8 @@
         margin: 0 !important;
       }
       
-      .filter-panel > .filter-section-lbl {
+      .filter-panel > .filter-section-lbl,
+      .filter-scroll-content > .filter-section-lbl {
         margin-top: 12px !important;
         margin-bottom: 6px !important;
         padding-left: 16px !important;
@@ -3329,17 +3350,15 @@
         padding: 0 !important;
       }
       .filter-footer-actions {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
+        position: relative !important;
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
         gap: 12px !important;
         background: #ffffff !important;
         border-top: 1px solid #e5e5ea !important;
-        padding: 8px 16px calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
-        margin-top: auto !important;
+        padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+        margin-top: 0 !important;
+        flex-shrink: 0 !important;
         z-index: 1000 !important;
       }
       .btn-filter-apply {
@@ -3370,7 +3389,8 @@
         align-items: center;
         justify-content: center;
       }
-      .filter-panel > .multiselect-container {
+      .filter-panel > .multiselect-container,
+      .filter-scroll-content > .multiselect-container {
         width: calc(100% - 32px) !important;
         margin-left: 16px !important;
         margin-right: 16px !important;
@@ -3453,6 +3473,8 @@
         </button>
         <span class="mobile-filter-title">Tìm kiếm</span>
       </div>
+
+      <div class="filter-scroll-content">
 
       <!-- TIÊU CHÍ BĐS Checklist (US-076.3) -->
       <div class="criteria-section">
@@ -3604,6 +3626,7 @@
       <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
       <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(0,0,0,0.03); border: 1.5px solid #e2ded6; border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; align-items: center;"></div>
 
+      </div>
 
       <!-- Action Button Footer (US-076.3) -->
       <div class="filter-footer-actions">
