@@ -444,6 +444,14 @@ module.exports = async (req, res) => {
     }
 
     // 3. Tạo User Prompt
+    const soNhaBiMat = String(body.soNha || '').trim();
+    let securityWarning = "";
+    if (soNhaBiMat) {
+      securityWarning = `🚨 QUY TẮC BẢO MẬT ĐỊA CHỈ: Tuyệt đối KHÔNG được đưa số nhà cụ thể "${soNhaBiMat}" (hoặc bất kỳ số nhà/số hẻm cụ thể nào khác xuất hiện trong Tin gốc) vào Tiêu đề chính, Tiêu đề phụ, hay Mô tả. Phải loại bỏ hoàn toàn số nhà này khỏi bài viết để bảo mật nguồn hàng. Ví dụ: thay vì viết "${soNhaBiMat} ${body.duong || ''}" thì BẮT BUỘC chỉ được viết là "${body.duong || ''}" (hoặc "Đường ${body.duong || ''}").\n`;
+    } else {
+      securityWarning = `🚨 QUY TẮC BẢO MẬT ĐỊA CHỈ: Tuyệt đối KHÔNG được đưa bất kỳ số nhà cụ thể hoặc số hẻm cụ thể nào xuất hiện trong tin gốc vào Tiêu đề chính, Tiêu đề phụ, hay Mô tả. Chỉ dùng tên đường để bảo mật nguồn hàng.\n`;
+    }
+
     const userPrompt =
       "THÔNG TIN CĂN NHÀ:\n" +
       `- Địa chỉ: ${body.soNha || ''} ${body.duong || ''}, Phường ${body.phuong || ''}, Quận ${body.quan || ''}\n` +
@@ -456,6 +464,7 @@ module.exports = async (req, res) => {
       `- Giá: ${giaFormat}\n` +
       `- Phân loại / Tag USP: ${body.phanLoai || ''}\n` +
       `- Điểm nổi bật của căn nhà (nguồn USP chính): ${body.moTaChiTiet || ''}\n\n` +
+      securityWarning +
       "LƯU Ý QUAN TRỌNG: Đọc kỹ 'Nội dung chính gốc', 'Phân loại / Tag USP' và 'Điểm nổi bật' — bắt buộc phản ánh các thông số kỹ thuật và ưu điểm vào Tiêu đề và Mô tả. BẮT BUỘC bắt đầu phần tiêu đề trực tiếp bằng tiền tố '" + tienTo + "' kết hợp liền mạch với Tên đường (TUYỆT ĐỐI không chèn thêm bất kỳ dấu gạch ngang, dấu chấm hay ký tự đặc biệt nào giữa tiền tố này và tên đường, Ví dụ: " + (tienTo ? `'${tienTo}Trần Quang Diệu - ...'` : "'Trần Quang Diệu - ...'") + ").\n" +
       "🚨 YÊU CẦU ĐỊNH DẠNG: Bắt buộc phải trả về kết quả dưới định dạng JSON sạch (respond in json format) theo đúng cấu trúc yêu cầu trong System Prompt.";
 
