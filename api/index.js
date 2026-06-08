@@ -349,7 +349,7 @@ module.exports = async (req, res) => {
     }
 
     const cfg = loadConfig();
-    const apiKey = (cfg.openai_api_key || process.env.OPENAI_API_KEY || '').trim();
+    const apiKey = (process.env.OPENAI_API_KEY || cfg.openai_api_key || '').trim();
     if (!apiKey) {
       return res.status(400).json({
         status: 'error',
