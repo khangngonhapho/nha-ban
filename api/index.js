@@ -393,8 +393,8 @@ module.exports = async (req, res) => {
       "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n" +
       "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n" +
       "{\n" +
-      "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n" +
-      "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n" +
+      "  \"tieuDe\": \"Tiêu đề public chính (viết theo hướng dẫn của Mục 1 thuộc Bước 3)\",\n" +
+      "  \"moTa\": \"Mô tả public hoàn chỉnh (bắt buộc bao gồm cả phần TIÊU ĐỀ PHỤ mục 2 có biểu tượng 🏩, tiếp nối ngay bên dưới là PHẦN MÔ TẢ CHI TIẾT mục 3 và GÓC NHÌN ĐẦU TƯ mục 4 nếu thỏa mãn điều kiện hiển thị)\",\n" +
       "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n" +
       "}";
       
