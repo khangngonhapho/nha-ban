@@ -4086,17 +4086,94 @@
     let isDataLoaded = false;
     window.CURRENT_EDITING_LISTING = null;
 
-    window.autoFillCurationDetails = function() {
+    window.autoFillCurationDetails = async function() {
       const editTieuDe = document.getElementById('editTieuDeBds');
       const editMoTa = document.getElementById('editMoTaBds');
-      if (window.CURRENT_EDITING_LISTING) {
-        const p = window.CURRENT_EDITING_LISTING;
+      const btn = document.getElementById('btnAutoFillCuration');
+      
+      if (!window.CURRENT_EDITING_LISTING) return;
+      const p = window.CURRENT_EDITING_LISTING;
+      
+      let originalBtnText = "";
+      if (btn) {
+        originalBtnText = btn.innerHTML;
+        btn.innerHTML = "⏳ Đang chạy AI...";
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+      }
+      
+      try {
+        const payload = {
+          soNha: p.raw_so_nha || '',
+          duong: p.raw_ten_duong || '',
+          phuong: p.phuong || '',
+          quan: p.ql || '',
+          noiDungChinh: p.raw_noi_dung_chinh || '',
+          moTaChiTiet: p.raw_mo_ta_chi_tiet || '',
+          dtThucTe: p.raw_dt_thuc_te || p.dt || '',
+          dtTrenSo: p.raw_dt_tren_so || p.dt || '',
+          matTien: p.raw_mat_tien || p.mat || '',
+          soTang: p.raw_so_tang || p.tang || '',
+          soPhongNgu: p.so_pn !== '-' ? p.so_pn : '',
+          soToilet: (p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || ''),
+          giaChao: p.raw_gia_chao || p.gia || '',
+          duongTruocNha: p.raw_duong_truoc_nha || p.duong_truoc_nha || '',
+          phanLoaiHem: p.raw_do_rong_hem || p.rong_hem || '',
+          phanLoai: p.danh_gia || ''
+        };
+        
+        const gToken = localStorage.getItem('g_access_token') || '';
+        const headers = { 'Content-Type': 'application/json' };
+        if (gToken) {
+          headers['Authorization'] = `Bearer ${gToken}`;
+        }
+        
+        const res = await fetch('/api/ai/generate', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.message || `Lỗi server HTTP ${res.status}`);
+        }
+        
+        const data = await res.json();
+        if (data.status === 'success') {
+          if (editTieuDe) editTieuDe.value = data.tieu_de_public || '';
+          if (editMoTa) editMoTa.value = data.mo_ta_public || '';
+          
+          p.phuong_cu = data.phuong_cu || '';
+          if (p.original_row_data) {
+            p.original_row_data[66] = data.phuong_cu || '';
+          }
+          if (p.pool_row_data) {
+            p.pool_row_data[66] = data.phuong_cu || '';
+          }
+          
+          if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
+          if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+          
+          showToast("🤖 AI biên tập Tiêu đề và Mô tả thành công!", "success");
+        } else {
+          throw new Error(data.message || "Lỗi không xác định từ AI.");
+        }
+      } catch (err) {
+        console.error("Lỗi Tự động điền AI:", err);
+        showToast("⚠️ " + err.message + " -> Dùng mẫu mặc định.", "warning");
+        
         if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
         if (editMoTa) editMoTa.value = p.m || p.raw_mo_ta_public || generateAutoDescription(p);
         
-        // Kích hoạt event input để cập nhật live preview
         if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
         if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+      } finally {
+        if (btn) {
+          btn.innerHTML = originalBtnText;
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
       }
     };
     const selDistricts = new Set();
@@ -6627,7 +6704,7 @@
                   <div class="admin-edit-group">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
-                      ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+                      ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
                     </div>
                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
                   </div>
@@ -9283,7 +9360,7 @@
           finalImages[8],                // 28: anh_9 (Cột AC)
           finalImages[9],                // 29: anh_10 (Cột AD)
           new Date().toISOString(),      // 30: Last updated (Cột AE)
-          matchedRow[66],                // 31: phuong_cu (Cột AF)
+          (window.activeCurationListing && window.activeCurationListing.phuong_cu) || matchedRow[66] || "", // 31: phuong_cu (Cột AF)
           matchedRow[64],                // 32: so_pn (Cột AG)
           matchedRow[65],                // 33: so_wc (Cột AH)
           matchedRow[5],                 // 34: ten_duong (Cột AI)
@@ -10484,7 +10561,7 @@
           finalImages[8],                // 28: anh_9 (Cột AC)
           finalImages[9],                // 29: anh_10 (Cột AD)
           new Date().toISOString(),      // 30: Last updated (Cột AE)
-          matchedRow[66],                // 31: phuong_cu (Cột AF)
+          (p && p.phuong_cu) || matchedRow[66] || "", // 31: phuong_cu (Cột AF)
           soPn || '-',                   // 32: so_pn (Cột AG)
           soWc || '-',                   // 33: so_wc (Cột AH)
           matchedRow[5],                 // 34: ten_duong (Cột AI)

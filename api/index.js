@@ -1,7 +1,200 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+
+const DEFAULT_SYSTEM_PROMPT = `Bạn hãy đóng vai là Đầu chủ Trà Mi - chuyên gia viết bài và định vị bất động sản nhà phố cao cấp tại TP.HCM. Nhiệm vụ của bạn là tiếp nhận dữ liệu thô từ tôi (ảnh chụp màn hình tin nội bộ, thông số mã căn hoặc sơ đồ thửa đất do tôi cung cấp) và xử lý nghiêm ngặt theo quy trình 4 bước sau đây để xuất ra bài đăng hoàn chỉnh.
+
+BƯỚC 1: GIẢI MÃ CÚ PHÁP DỮ LIỆU THÔ (BẮT BUỘC)
+- Quy tắc giải mã địa chỉ: Chuỗi số đứng trước tên đường, phân cách bằng dấu chấm "." tương ứng với dấu xẹt "/". Ví dụ: "12.14 Đào Duy Anh" -> "12/14 Đào Duy Anh". Phải ghi nhận chính xác số hẻm nội bộ ở bước này để tôi tiện quản lý nguồn hàng.
+- Quy tắc diện tích (Lấy số lớn nhất): Nếu dữ liệu có dạng "Số nhỏ/Số lớn" (ví dụ: 55/60m2), luôn lấy số lớn nhất (60m2) làm diện tích sử dụng để đăng tin.
+- Quy tắc kích thước (Lấy thông số lớn): Nếu chiều ngang hoặc chiều dài có 2 thông số (ví dụ: ngang 3.6/3.8m), luôn lấy số lớn (3.8m).
+- Thứ tự suy luận dữ liệu mặc định: [Địa chỉ] - [Tên đường] - [Diện tích] - [Số tầng] - [Ngang] - [Dài] - [Giá].
+- Ký hiệu kết cấu viết tắt cần hiểu: BTCT (Bê tông cốt thép), ST (Sân thượng), CHDV (Căn hộ dịch vụ), HXH (Hẻm xe hơi - mặc định áp dụng khi hẻm từ 4m trở lên).
+
+BƯỚC 2: TRA CỨU ĐỊA GIỚI & ĐỊNH VỊ VIP (BẮT BUỘC)
+- Quy tắc sáp nhập địa giới: Tự động tra cứu và cập nhật tên Phường mới nhất theo quy định sáp nhập địa giới hành chính hiện hành tại TP.HCM (Ví dụ: Các phường cũ của Quận 3 nay sáp nhập thành Phường Võ Thị Sáu).
+- Chiến thuật định vị "Hướng tâm & Ưu tiên cự ly thực tế": Tự động đối chiếu địa giới hành chính để nhặt đúng các "Location Hot" trong danh sách VIP được cung cấp bên dưới. Sắp xếp theo thứ tự ưu tiên hướng về phía các quận trung tâm lõi như Quận 1, Quận 3 trước.
+- Ưu tiên địa danh có độ Hot tương đương nhưng cự ly gần hơn: Đối với các căn nhà nằm ở khu vực giáp ranh hoặc hẻm thông, luôn ưu tiên chọn địa danh VIP có khoảng cách địa lý gần nhất và mang tính đồng bộ phân khu cao nhất (Ví dụ: Trục Tô Hiến Thành đoạn gần Thành Thái/KingDom thì ưu tiên "Khu VIP Thành Thái", "Chung cư KingDom 101" lên tiêu đề và đoạn đầu mô tả, các địa danh khác như Toà nhà Viettel, Hà Đô Centrosa nêu bổ sung ở vế sau).
+- Kiểm soát khoảng cách thực tế & Bộ lọc từ ngữ cự ly an toàn (TUYỆT ĐỐI KHÔNG ĐỂ KHÁCH BẮT BẸ):
+  + Không bao giờ dùng từ "sát vách" vì dễ bị khách vặn vẹo khi đi xem thực tế.
+  + Dùng từ "Sát cạnh": Khi tài sản nằm kế bên, chung vách hoặc sát sạt địa danh đó (không có khoảng cách).
+  + Dùng từ "Sát khu" hoặc "Sát phân khu": Khi tài sản liền kề một đại đô thị, khu phức hợp thương mại lớn (Ví dụ: sát khu đại đô thị Richmond City, sát phân khu KingDom 101).
+  + Dùng từ "Sát": Khi khoảng cách rất gần nhưng có ranh giới nhỏ như con hẻm (bỏ hẳn chữ vách/cạnh).
+  + Dùng từ "Gần" hoặc "Kết nối nhanh": Khi địa danh nằm khác phường hoặc cách vài trăm mét. Hạn chế nhắc đến chữ "Chợ" (Ví dụ: Thay "Chợ Bà Chiểu" bằng "Lăng Ông Bà Chiểu") để tránh tâm lý ngại ồn ào của khách VIP.
+- Nếu nhà thuộc Mặt tiền kinh doanh thì nêu rõ là Mặt tiền. Nếu thuộc hẻm nhỏ, luôn dùng chiến thuật kéo góc nhìn của khách ra các trục đường lớn sầm uất kế bên.
+
+DANH SÁCH ĐỊA DANH VIP (LOCATION HOT) ĐỂ ĐỐI CHIẾU:
+1. Địa danh VIP quận 3: Vòng xoay Dân Chủ, Tòa nhà Viettel, Hà Đô Centrosa, Khu VIP Kỳ Đồng, Cầu Lê Văn Sỹ, Khu VIP Lê Văn Sỹ, Kinh đô thời trang Lê Văn Sỹ, Kinh đô thời trang Trần Huy Liệu, Khu VIP Nam Kỳ Khởi Nghĩa, Khu VIP Nguyễn Văn Trỗi, Khu VIP Trần Quốc Thảo, Nhà khách T78, Terra Royal - Lavela Saigon, Cầu Công Lý, Khu VIP Hoàng Sa, Khu VIP Trường Sa, Cầu Kiệu, Tân Định Q1, Công viên Lê Văn Tám, Khu VIP Phạm Ngọc Thạch, Cầu Bông, Nhà thờ Kỳ Đồng / Nhà thờ Chúa Cứu Thế, Phường Võ Thị Sáu, CV Lý Thái Tổ, Khu VIP Nguyễn Thị Minh Khai, BV Từ Dũ, CV Tao Đàn, NVH Lao Động.
+2. Địa danh VIP quận Phú Nhuận: Khu VIP Trường Sa, Cầu Kiệu, Khu VIP Phan Xích Long, Khu VIP đường Hoa Phú Nhuận - Phan Xích Long, Ngã Tư Phú Nhuận, Phan Đình Phùng, Công viên Phú Nhuận. Nếu ở khu vực giáp ranh cầu, bắt buộc dùng cụm từ "Qua cầu là Quận 1" để thể hiện độ đắt giá.
+3. Địa danh VIP quận 10: Khu VIP Thành Thái, Chung cư KingDom 101, Khu VIP Nguyễn Tri Phương, Cầu vượt 3/2, Vòng xoay Lý Thái Tổ, Công viên Lý Thái Tổ, Trục VIP Nguyễn Thị Minh Khai, CV Tao Đàn, BV Từ Dũ, Khu VIP Cao Thắng, Hà Đô Centrosa, Trục VIP 3/2, Tòa nhà Viettel, Vòng xoay Dân Chủ, Tuyến Metro số 2, Nhà ga Metro 2, CLB Lan Anh, Công viên Lê Thị Riêng.
+4. Địa danh VIP quận Bình Thạnh: Cầu Bông, Đinh Tiên Hoàng, Lăng Ông Bà Chiểu (Tuyệt đối không dùng chữ "Chợ Bà Chiểu"), Ngã tư Hàng Xanh, Khu Tân Định, Khu VIP Phan Đăng Lưu, Khu VIP Trường Sa, Vòng xoay Điện Biên Phủ, Đại lộ Phạm Văn Đồng, Khu đại đô thị Richmond City.
+5. Địa danh VIP quận Tân Bình: Khu VIP Nguyễn Văn Trỗi, Trục huyết mạch Nam Kỳ Khởi Nghĩa, Khu VIP Lê Văn Sỹ, CV Lê Thị Riêng, Khu VIP Trường Sa, Khu VIP Hoàng Sa, Khu Khách sạn Đệ Nhất, Vòng xoay Lăng Cha Cả, Khu VIP Đặng Văn Ngữ, Khu VIP Huỳnh Văn Bánh, Nhà thờ Ba Chuông, Nhà thờ Đa Minh.
+
+BƯỚC 3: XUẤT BÀI ĐĂNG CHUẨN PHONG CÁCH TRÀ MI
+(LƯU Ý QUAN TRỌNG: Tôi sẽ copy bài đăng quảng cáo từ bước này trở xuống để đăng tin. Do đó, từ bước này trở xuống tuyệt đối không được ghi số hẻm cụ thể, số nhà, mã căn nội bộ để tránh lộ nguồn hàng ra bên ngoài cho khách hoặc môi giới khác giật mối. Tuyệt đối không xuất hiện phiên bản ngắn hay phiên bản mini ở bước này).
+
+Yêu cầu cốt lõi về văn phong: Ngắn gọn, súc tích, sắc bén. Tách câu ngắn gọn gàng, không viết lan man, không lặp từ đầu câu, tuyệt đối không dùng từ ngữ hợp mùa (như đón Tết, đón Xuân). Bỏ hoàn toàn các cụm từ trùng lặp kiểu "Mặt tiền/Hẻm", viết trực tiếp vào thẳng vấn đề.
+- Quy tắc chọn từ ngữ đại chúng, thực chiến: Tuyệt đối không dùng các từ xa lạ mang tính văn chương như "độc bản". Thay thế hoàn toàn bằng hai cụm từ ưu tiên: "lợi thế hiếm có" hoặc "vị trí hiếm nhà bán".
+- Tư duy môi giới thực chiến về giá: Tuyệt đối không bao giờ dùng các từ ngữ tiêu cực như "ngộp", "ngộp bank", "vỡ nợ", "bán gấp" (tránh bị ép giá). Luôn ghi ngắn gọn ở cuối dòng giá là: "(Chủ thiện chí)". Không viết dài dòng rườm rà.
+
+Cấu trúc bài viết bắt buộc gồm đúng các phần sau:
+
+1. TIÊU ĐỀ CHÍNH (QUY TẮC PHÂN BỔ KÝ TỰ NGHIÊM NGẶT - TỐI ĐA 95 KÝ TỰ - Không dùng chữ "Bán nhà"):
+* Quy tắc "Độ dài 70": Tính từ chữ đầu tiên của tiêu đề cho đến hết chữ "Tỷ" (chốt chặn giá tiền) tuyệt đối KHÔNG ĐƯỢC VƯỢT QUÁ 70 KÝ TỰ để đảm bảo giá tiền không bị các ứng dụng tự động cắt bớt khi hiển thị.
+* Quy tắc thứ tự ưu tiên từ khóa "Mồi" ở đầu tiêu đề:
+  - Ưu tiên 1 (Nhà có yếu tố CHDV): Bắt buộc đưa chữ "CHDV" lên vị trí đầu tiên của tiêu đề.
+  - Ưu tiên 2 (Nhà có HXH/Ô tô tránh nhưng KHÔNG có CHDV): Bắt buộc đưa chữ "HXH" lên vị trí đầu tiên của tiêu đề.
+  - Trường hợp còn lại (Hẻm nhỏ/ba gác/xe máy): Bắt đầu thẳng bằng Tên đường.
+* Chiến thuật "Nhồi" thông số đắt giá trước Giá: Tận dụng khoảng trống ký tự (nếu đoạn đầu chưa quá 70 ký tự) để nhồi các từ khóa mạnh như: "Ô tô tránh" hoặc "Ô tô né", "Ngang lớn/Ngang khủng" (chỉ ghi nếu ngang >= 3.8m), "Số tầng" (nếu từ 4 tầng trở lên) lên trước chữ "Tỷ". Để tiết kiệm ký tự, linh hoạt sử dụng dấu phẩy "," thay vì dấu gạch ngang " - " (Ví dụ: ", Ngang lớn, 4 tầng, Ô tô tránh - 24 Tỷ").
+* Quy tắc viết tắt và thẩm mỹ để ép ký tự:
+  - Tên Quận bắt buộc viết gọn: Q.PN, Q.TB, Q.BT, Q3, Q10... (hoặc bỏ hẳn Quận ở đoạn đầu dời ra sau dấu sổ thẳng nếu bị quá tải ký tự).
+  - Viết gọn: "Lô góc 2 mặt thoáng" -> "Lô góc", "nội thất" -> "NT".`;
+
+function loadConfig() {
+  const paths = [
+    path.join(process.cwd(), 'curator_config.json'),
+    path.join(process.cwd(), '..', 'curator_config.json'),
+    path.join(__dirname, 'curator_config.json'),
+    path.join(__dirname, '..', 'curator_config.json'),
+    path.join(__dirname, '..', '..', 'curator_config.json')
+  ];
+  for (const p of paths) {
+    if (fs.existsSync(p)) {
+      try {
+        return JSON.parse(fs.readFileSync(p, 'utf8'));
+      } catch (e) {}
+    }
+  }
+  return {};
+}
+
+function findCredentialsJson() {
+  const paths = [
+    path.join(process.cwd(), 'credentials.json'),
+    path.join(process.cwd(), '..', 'credentials.json'),
+    path.join(__dirname, 'credentials.json'),
+    path.join(__dirname, '..', 'credentials.json'),
+    path.join(__dirname, '..', '..', 'credentials.json')
+  ];
+  for (const p of paths) {
+    if (fs.existsSync(p)) {
+      try {
+        return JSON.parse(fs.readFileSync(p, 'utf8'));
+      } catch (e) {}
+    }
+  }
+  return null;
+}
+
+function getCredentials() {
+  const fileCreds = findCredentialsJson();
+  if (fileCreds) return fileCreds;
+  
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    try {
+      return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+    } catch (e) {
+      console.error('Error parsing GOOGLE_SERVICE_ACCOUNT_JSON env var:', e);
+    }
+  }
+  return null;
+}
+
+async function getGoogleAccessToken(creds) {
+  if (!creds || !creds.private_key || !creds.client_email) {
+    console.error('Missing credentials or private_key/client_email');
+    return null;
+  }
+
+  const tokenUri = creds.token_uri || 'https://oauth2.googleapis.com/token';
+  const iat = Math.floor(Date.now() / 1000);
+  const exp = iat + 3600;
+
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT'
+  };
+
+  const payload = {
+    iss: creds.client_email,
+    scope: 'https://www.googleapis.com/auth/drive.readonly',
+    aud: tokenUri,
+    exp: exp,
+    iat: iat
+  };
+
+  const base64Escape = (str) => {
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  };
+
+  const headerB64 = base64Escape(Buffer.from(JSON.stringify(header)).toString('base64'));
+  const payloadB64 = base64Escape(Buffer.from(JSON.stringify(payload)).toString('base64'));
+  const signatureInput = `${headerB64}.${payloadB64}`;
+
+  try {
+    const signer = crypto.createSign('RSA-SHA256');
+    signer.update(signatureInput);
+    const signature = base64Escape(signer.sign(creds.private_key, 'base64'));
+
+    const jwt = `${signatureInput}.${signature}`;
+
+    const response = await fetch(tokenUri, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: jwt
+      }).toString()
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Google token exchange failed:', data);
+      return null;
+    }
+    return data.access_token;
+  } catch (err) {
+    console.error('Error generating Google access token:', err);
+    return null;
+  }
+}
+
+async function fetchGoogleDocContent(docId, accessToken) {
+  if (!docId || !accessToken) return null;
+  
+  let cleanId = docId.trim();
+  if (cleanId.includes('/')) {
+    const match = cleanId.match(/\/document\/d\/([a-zA-Z0-9-_]+)/);
+    if (match) {
+      cleanId = match[1];
+    }
+  }
+
+  const url = `https://www.googleapis.com/drive/v3/files/${cleanId}/export?mimeType=text/plain`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    if (!res.ok) {
+      console.error(`Google Docs download failed: ${res.status}`);
+      return null;
+    }
+    let content = await res.text();
+    if (content.startsWith('\ufeff')) {
+      content = content.substring(1);
+    }
+    return content.trim();
+  } catch (err) {
+    console.error('Error fetching Google Doc content:', err);
+    return null;
+  }
+}
 
 module.exports = async (req, res) => {
   const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -127,6 +320,234 @@ module.exports = async (req, res) => {
     } catch (err) {
       console.error('Error refreshing token:', err);
       return res.status(500).json({ error: 'Internal Server Error during token refresh' });
+    }
+  }
+
+  // 3. Endpoint sinh tiêu đề, mô tả và phường cũ bằng AI
+  if (pathname === '/api/ai/generate') {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    let body = {};
+    try {
+      body = req.body;
+      if (typeof body === 'string') body = JSON.parse(body);
+    } catch (e) {}
+
+    if (!body || Object.keys(body).length === 0) {
+      try {
+        const buffers = [];
+        for await (const chunk of req) {
+          buffers.push(chunk);
+        }
+        const data = Buffer.concat(buffers).toString();
+        body = JSON.parse(data);
+      } catch (e) {
+        return res.status(400).json({ error: 'Bad Request: Missing JSON body' });
+      }
+    }
+
+    const cfg = loadConfig();
+    const apiKey = (cfg.openai_api_key || process.env.OPENAI_API_KEY || '').trim();
+    if (!apiKey) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Chưa cấu hình OpenAI API Key. Vui lòng thiết lập trong file config hoặc biến môi trường.'
+      });
+    }
+
+    // Tải prompt động từ Google Doc
+    const docId = cfg.prompt_google_doc_id || '';
+    let systemPrompt = '';
+    if (docId) {
+      try {
+        // Ưu tiên sử dụng token của Client gửi lên
+        const authHeader = req.headers.authorization;
+        let googleToken = null;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          googleToken = authHeader.split(' ')[1];
+        }
+
+        // Nếu không có client token, fallback về Service Account
+        if (!googleToken) {
+          const creds = getCredentials();
+          if (creds) {
+            googleToken = await getGoogleAccessToken(creds);
+          }
+        }
+
+        if (googleToken) {
+          const docPrompt = await fetchGoogleDocContent(docId, googleToken);
+          if (docPrompt) {
+            systemPrompt = docPrompt;
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching dynamic prompt, fallback to default:', err);
+      }
+    }
+
+    if (!systemPrompt) {
+      systemPrompt = cfg.openai_system_prompt || DEFAULT_SYSTEM_PROMPT;
+    }
+
+    // Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+    const jsonSuffix =
+      "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n" +
+      "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n" +
+      "{\n" +
+      "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n" +
+      "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n" +
+      "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n" +
+      "}";
+      
+    if (!systemPrompt.includes('tieuDe') && !systemPrompt.includes('tieu_de')) {
+      systemPrompt += jsonSuffix;
+    }
+
+    // 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
+    const soNha = String(body.soNha || '').trim();
+    const duongTruocNha = String(body.duongTruocNha || '').trim();
+    const phanLoaiHem = String(body.phanLoaiHem || '').toLowerCase();
+
+    let isMatTien = false;
+    if (soNha) {
+      if (!soNha.includes('.')) {
+        isMatTien = true;
+      }
+    } else if (phanLoaiHem.includes('mặt tiền') || phanLoaiHem.includes('mặt phố')) {
+      isMatTien = true;
+    }
+
+    let widthVal = parseFloat(duongTruocNha);
+    if (isNaN(widthVal)) widthVal = 0.0;
+
+    let tienTo = "";
+    if (isMatTien) {
+      tienTo = "Mặt tiền ";
+    } else if (widthVal >= 4.0) {
+      tienTo = "HXH ";
+    }
+
+    // 2. Xử lý định dạng Giá (tương thích Thiên Khôi)
+    const giaChao = body.giaChao || '';
+    let giaFormat = giaChao;
+    const giaTy = parseFloat(giaChao);
+    if (!isNaN(giaTy)) {
+      let finalGiaTy = giaTy;
+      if (finalGiaTy > 100) {
+        finalGiaTy = finalGiaTy / 1000;
+      }
+      giaFormat = finalGiaTy > 0 ? `${finalGiaTy} tỷ` : '';
+    }
+
+    // 3. Tạo User Prompt
+    const userPrompt =
+      "THÔNG TIN CĂN NHÀ:\n" +
+      `- Địa chỉ: ${body.soNha || ''} ${body.duong || ''}, Phường ${body.phuong || ''}, Quận ${body.quan || ''}\n` +
+      `- Nội dung chính gốc (chứa kích thước ở đầu): ${body.noiDungChinh || ''}\n` +
+      `- DT Thực tế: ${body.dtThucTe || ''}m2 | DT Trên sổ: ${body.dtTrenSo || ''}m2\n` +
+      `- Chiều ngang (mặt tiền): ${body.matTien || ''}m\n` +
+      `- Hướng: ${body.huong || ''}\n` +
+      `- Kết cấu: ${body.soTang || ''} tầng, ${body.soPhongNgu || ''} PN, ${body.soToilet || ''} WC\n` +
+      `- Hẻm: ${body.phanLoaiHem || ''} (Rộng: ${body.duongTruocNha || ''}m)\n` +
+      `- Giá: ${giaFormat}\n` +
+      `- Phân loại / Tag USP: ${body.phanLoai || ''}\n` +
+      `- Điểm nổi bật của căn nhà (nguồn USP chính): ${body.moTaChiTiet || ''}\n\n` +
+      "LƯU Ý QUAN TRỌNG: Đọc kỹ 'Nội dung chính gốc', 'Phân loại / Tag USP' và 'Điểm nổi bật' — bắt buộc phản ánh các thông số kỹ thuật và ưu điểm vào Tiêu đề và Mô tả. BẮT BUỘC bắt đầu phần tiêu đề trực tiếp bằng tiền tố '" + tienTo + "' kết hợp liền mạch với Tên đường (TUYỆT ĐỐI không chèn thêm bất kỳ dấu gạch ngang, dấu chấm hay ký tự đặc biệt nào giữa tiền tố này và tên đường, Ví dụ: " + (tienTo ? `'${tienTo}Trần Quang Diệu - ...'` : "'Trần Quang Diệu - ...'") + ").\n" +
+      "🚨 YÊU CẦU ĐỊNH DẠNG: Bắt buộc phải trả về kết quả dưới định dạng JSON sạch (respond in json format) theo đúng cấu trúc yêu cầu trong System Prompt.";
+
+    const openaiApiBase = (cfg.openai_api_base || 'https://api.openai.com/v1').replace(/\/$/, '');
+    
+    try {
+      const openAiResponse = await fetch(`${openaiApiBase}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.3,
+          response_format: { type: 'json_object' }
+        })
+      });
+
+      const resJson = await openAiResponse.json();
+      if (!openAiResponse.ok) {
+        const errMsg = resJson.error?.message || 'Lỗi không xác định từ OpenAI.';
+        return res.status(openAiResponse.status).json({ status: 'error', message: `OpenAI API Error: ${errMsg}` });
+      }
+
+      const aiMessage = resJson.choices[0].message.content;
+      console.log(`[🤖 AI] Nhận kết quả từ OpenAI: ${aiMessage}`);
+      
+      const aiData = JSON.parse(aiMessage);
+
+      // Trích xuất các trường linh hoạt chống lỗi OpenAI tự đổi tên hoặc định dạng key
+      let tieuDeRaw = '';
+      for (const k of ['tieuDe', 'tieu_de', 'tieuDePublic', 'tieu_de_public', 'tieu de', 'Tiêu đề', 'tiêu đề']) {
+        if (aiData[k]) {
+          tieuDeRaw = aiData[k];
+          break;
+        }
+      }
+      if (!tieuDeRaw) {
+        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('tieu'));
+        if (key) tieuDeRaw = aiData[key];
+      }
+
+      let moTaRaw = '';
+      for (const k of ['moTa', 'mo_ta', 'moTaPublic', 'mo_ta_public', 'mo ta', 'Mô tả', 'mô tả']) {
+        if (aiData[k]) {
+          moTaRaw = aiData[k];
+          break;
+        }
+      }
+      if (!moTaRaw) {
+        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('mo') && !k.toLowerCase().includes('phuong'));
+        if (key) moTaRaw = aiData[key];
+      }
+
+      let phuongCuRaw = '';
+      for (const k of ['phuongCu', 'phuong_cu', 'phuong cu', 'Phường cũ', 'phường cũ']) {
+        if (aiData[k]) {
+          phuongCuRaw = aiData[k];
+          break;
+        }
+      }
+      if (!phuongCuRaw) {
+        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('phuong') || k.toLowerCase().includes('old'));
+        if (key) phuongCuRaw = aiData[key];
+      }
+
+      const trimTieuDeBds = (title) => {
+        if (!title) return '';
+        let t = String(title).trim();
+        t = t.replace(/^["'\s]+|["'\s]+$/g, '');
+        t = t.replace(/\s+/g, ' ');
+        if (t.length > 85) {
+          t = t.substring(0, 85).trim();
+        }
+        return t;
+      };
+
+      const tieuDeClean = trimTieuDeBds(tieuDeRaw);
+
+      return res.status(200).json({
+        status: 'success',
+        tieu_de_public: tieuDeClean,
+        mo_ta_public: moTaRaw,
+        phuong_cu: phuongCuRaw
+      });
+    } catch (err) {
+      console.error('Error calling OpenAI API in Node.js:', err);
+      return res.status(500).json({ status: 'error', message: `Lỗi gọi OpenAI API: ${err.message}` });
     }
   }
 
