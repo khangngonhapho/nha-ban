@@ -6539,7 +6539,6 @@
 
       // US-081 v2: Live drag + maxTouches pinch guard + touch-action:none
       let gwMaxTouches = 0;
-      const gt = document.getElementById('gt');
 
       gw.ontouchstart = e => {
         e.preventDefault(); // touch-action:none → cần preventDefault để nhận move
