@@ -393,12 +393,17 @@ module.exports = async (req, res) => {
       "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n" +
       "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n" +
       "{\n" +
-      "  \"tieuDe\": \"Tiêu đề public chính (viết theo hướng dẫn của Mục 1 thuộc Bước 3)\",\n" +
-      "  \"moTa\": \"Mô tả public hoàn chỉnh (bắt buộc bao gồm cả phần TIÊU ĐỀ PHỤ mục 2 có biểu tượng 🏩, tiếp nối ngay bên dưới là PHẦN MÔ TẢ CHI TIẾT mục 3 và GÓC NHÌN ĐẦU TƯ mục 4 nếu thỏa mãn điều kiện hiển thị)\",\n" +
+      "  \"tieuDeChinh\": \"Tiêu đề public chính (viết theo hướng dẫn của Mục 1 thuộc Bước 3)\",\n" +
+      "  \"tieuDePhu\": \"Tiêu đề phụ public (bắt buộc viết hoa toàn bộ, bắt đầu bằng biểu tượng 🏩, viết theo hướng dẫn của Mục 2 thuộc Bước 3)\",\n" +
+      "  \"moTaChiTiet\": \"Mô tả chi tiết (bắt đầu bằng chữ 'Mô tả:', tiếp nối ngay bên dưới là các dòng con bắt đầu bằng dấu gạch bạt dài '–' theo hướng dẫn của Mục 3 thuộc Bước 3)\",\n" +
+      "  \"gocNhinDauTu\": \"Góc nhìn đầu tư (bắt đầu bằng dòng tiêu đề viết hoa toàn bộ 'GÓC NHÌN ĐẦU TƯ...' sau đó là các dòng con bắt đầu bằng dấu chấm tròn nhỏ '•' theo hướng dẫn của Mục 4 thuộc Bước 3. Để trống nếu không thỏa mãn bộ lọc điều kiện)\",\n" +
       "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n" +
       "}";
       
-    if (!systemPrompt.includes('tieuDe') && !systemPrompt.includes('tieu_de')) {
+    if (!systemPrompt.includes('tieuDeChinh') && 
+        !systemPrompt.includes('tieu_de_chinh') && 
+        !systemPrompt.includes('tieuDe') && 
+        !systemPrompt.includes('tieu_de')) {
       systemPrompt += jsonSuffix;
     }
 
@@ -486,40 +491,64 @@ module.exports = async (req, res) => {
       const aiData = JSON.parse(aiMessage);
 
       // Trích xuất các trường linh hoạt chống lỗi OpenAI tự đổi tên hoặc định dạng key
-      let tieuDeRaw = '';
-      for (const k of ['tieuDe', 'tieu_de', 'tieuDePublic', 'tieu_de_public', 'tieu de', 'Tiêu đề', 'tiêu đề']) {
-        if (aiData[k]) {
-          tieuDeRaw = aiData[k];
+      let tieuDeChinh = '';
+      for (const k of ['tieuDeChinh', 'tieu_de_chinh', 'tieuDe', 'tieu_de', 'tieuDePublic', 'tieu_de_public', 'tieu de', 'Tiêu đề', 'tiêu đề']) {
+        if (aiData[k] !== undefined && aiData[k] !== null) {
+          tieuDeChinh = String(aiData[k]);
           break;
         }
       }
-      if (!tieuDeRaw) {
-        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('tieu'));
-        if (key) tieuDeRaw = aiData[key];
+      if (!tieuDeChinh) {
+        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('tieu') && !k.toLowerCase().includes('phu'));
+        if (key) tieuDeChinh = String(aiData[key]);
       }
 
-      let moTaRaw = '';
-      for (const k of ['moTa', 'mo_ta', 'moTaPublic', 'mo_ta_public', 'mo ta', 'Mô tả', 'mô tả']) {
-        if (aiData[k]) {
-          moTaRaw = aiData[k];
+      let tieuDePhu = '';
+      for (const k of ['tieuDePhu', 'tieu_de_phu', 'tieuPhu', 'tieu_phu']) {
+        if (aiData[k] !== undefined && aiData[k] !== null) {
+          tieuDePhu = String(aiData[k]);
           break;
         }
       }
-      if (!moTaRaw) {
-        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('mo') && !k.toLowerCase().includes('phuong'));
-        if (key) moTaRaw = aiData[key];
+      if (!tieuDePhu) {
+        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('tieu') && k.toLowerCase().includes('phu'));
+        if (key) tieuDePhu = String(aiData[key]);
+      }
+
+      let moTaChiTiet = '';
+      for (const k of ['moTaChiTiet', 'mo_ta_chi_tiet', 'moTa', 'mo_ta', 'moTaPublic', 'mo_ta_public', 'mo ta', 'Mô tả', 'mô tả']) {
+        if (aiData[k] !== undefined && aiData[k] !== null) {
+          moTaChiTiet = String(aiData[k]);
+          break;
+        }
+      }
+      if (!moTaChiTiet) {
+        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('mo') && !k.toLowerCase().includes('phuong') && !k.toLowerCase().includes('phu'));
+        if (key) moTaChiTiet = String(aiData[key]);
+      }
+
+      let gocNhinDauTu = '';
+      for (const k of ['gocNhinDauTu', 'goc_nhin_dau_tu', 'gocNhin', 'goc_nhin']) {
+        if (aiData[k] !== undefined && aiData[k] !== null) {
+          gocNhinDauTu = String(aiData[k]);
+          break;
+        }
+      }
+      if (!gocNhinDauTu) {
+        const key = Object.keys(aiData).find(k => k.toLowerCase().includes('goc') || k.toLowerCase().includes('dau_tu'));
+        if (key) gocNhinDauTu = String(aiData[key]);
       }
 
       let phuongCuRaw = '';
       for (const k of ['phuongCu', 'phuong_cu', 'phuong cu', 'Phường cũ', 'phường cũ']) {
-        if (aiData[k]) {
-          phuongCuRaw = aiData[k];
+        if (aiData[k] !== undefined && aiData[k] !== null) {
+          phuongCuRaw = String(aiData[k]);
           break;
         }
       }
       if (!phuongCuRaw) {
         const key = Object.keys(aiData).find(k => k.toLowerCase().includes('phuong') || k.toLowerCase().includes('old'));
-        if (key) phuongCuRaw = aiData[key];
+        if (key) phuongCuRaw = String(aiData[key]);
       }
 
       const trimTieuDeBds = (title) => {
@@ -533,7 +562,29 @@ module.exports = async (req, res) => {
         return t;
       };
 
-      const tieuDeClean = trimTieuDeBds(tieuDeRaw).replace(/\*\*/g, '');
+      const tieuDeClean = trimTieuDeBds(tieuDeChinh).replace(/\*\*/g, '');
+      const tieuDePhuClean = tieuDePhu ? String(tieuDePhu).replace(/\*\*/g, '') : '';
+      const moTaChiTietClean = moTaChiTiet ? String(moTaChiTiet).replace(/\*\*/g, '') : '';
+      const gocNhinDauTuClean = gocNhinDauTu ? String(gocNhinDauTu).replace(/\*\*/g, '') : '';
+
+      // Ghép tiêu đề phụ, mô tả chi tiết và góc nhìn đầu tư lại thành mô tả public
+      let moTaRaw = '';
+      if (tieuDePhuClean) {
+        moTaRaw += tieuDePhuClean.trim() + '\n';
+      }
+      if (moTaChiTietClean) {
+        moTaRaw += moTaChiTietClean.trim();
+      }
+      if (gocNhinDauTuClean && gocNhinDauTuClean.trim()) {
+        let gnd = gocNhinDauTuClean.trim();
+        if (!gnd.startsWith('---')) {
+          moTaRaw += '\n---\n';
+        } else {
+          moTaRaw += '\n';
+        }
+        moTaRaw += gnd;
+      }
+
       const moTaClean = moTaRaw ? String(moTaRaw).replace(/\*\*/g, '') : '';
 
       return res.status(200).json({
