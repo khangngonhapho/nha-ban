@@ -4020,6 +4020,18 @@
         .trim();
     }
 
+    // Hàm phân tích số thực xử lý dấu phẩy thập phân
+    function parseFloatHelper(val) {
+      if (val === null || val === undefined) return 0;
+      if (typeof val === 'number') return val;
+      let s = String(val).trim();
+      if (s.includes(',')) {
+        s = s.replace(/,/g, '.');
+      }
+      let num = parseFloat(s);
+      return isNaN(num) ? 0 : num;
+    }
+
     // Hàm phân tích và định dạng giá tiền (US-039.7)
     function parseGia(val) {
       if (!val) return 0;
@@ -4612,60 +4624,60 @@
 
       if (giaMin !== '' || giaMax !== '') {
         a = a.filter(p => {
-          let val = parseFloat(p.raw_gia_chao);
+          let val = parseFloat(p.gia);
           if (isNaN(val) || val === 0) {
-            val = parseFloat(p.gia) || 0;
+            val = parseGia(p.raw_gia_chao) || 0;
           }
-          if (giaMin !== '' && val < parseFloat(giaMin)) return false;
-          if (giaMax !== '' && val > parseFloat(giaMax)) return false;
+          if (giaMin !== '' && val < parseFloatHelper(giaMin)) return false;
+          if (giaMax !== '' && val > parseFloatHelper(giaMax)) return false;
           return true;
         });
       }
 
       if (dtTrenSoMin !== '' || dtTrenSoMax !== '') {
         a = a.filter(p => {
-          let val = parseFloat(p.raw_dt_tren_so);
+          let val = parseFloatHelper(p.raw_dt_tren_so);
           if (isNaN(val) || val === 0) {
-            val = parseFloat(p.dt) || 0;
+            val = parseFloatHelper(p.dt) || 0;
           }
-          if (dtTrenSoMin !== '' && val < parseFloat(dtTrenSoMin)) return false;
-          if (dtTrenSoMax !== '' && val > parseFloat(dtTrenSoMax)) return false;
+          if (dtTrenSoMin !== '' && val < parseFloatHelper(dtTrenSoMin)) return false;
+          if (dtTrenSoMax !== '' && val > parseFloatHelper(dtTrenSoMax)) return false;
           return true;
         });
       }
 
       if (dtThucTeMin !== '' || dtThucTeMax !== '') {
         a = a.filter(p => {
-          let val = parseFloat(p.raw_dt_thuc_te);
+          let val = parseFloatHelper(p.raw_dt_thuc_te);
           if (isNaN(val) || val === 0) {
-            val = parseFloat(p.dt) || 0;
+            val = parseFloatHelper(p.dt) || 0;
           }
-          if (dtThucTeMin !== '' && val < parseFloat(dtThucTeMin)) return false;
-          if (dtThucTeMax !== '' && val > parseFloat(dtThucTeMax)) return false;
+          if (dtThucTeMin !== '' && val < parseFloatHelper(dtThucTeMin)) return false;
+          if (dtThucTeMax !== '' && val > parseFloatHelper(dtThucTeMax)) return false;
           return true;
         });
       }
 
       if (ngangMin !== '' || ngangMax !== '') {
         a = a.filter(p => {
-          let val = parseFloat(p.raw_mat_tien);
+          let val = parseFloatHelper(p.raw_mat_tien);
           if (isNaN(val) || val === 0) {
-            val = parseFloat(p.mat) || 0;
+            val = parseFloatHelper(p.mat) || 0;
           }
-          if (ngangMin !== '' && val < parseFloat(ngangMin)) return false;
-          if (ngangMax !== '' && val > parseFloat(ngangMax)) return false;
+          if (ngangMin !== '' && val < parseFloatHelper(ngangMin)) return false;
+          if (ngangMax !== '' && val > parseFloatHelper(ngangMax)) return false;
           return true;
         });
       }
 
       if (hemMin !== '' || hemMax !== '') {
         a = a.filter(p => {
-          let val = parseFloat(p.raw_duong_truoc_nha);
+          let val = parseFloatHelper(p.raw_duong_truoc_nha);
           if (isNaN(val) || val === 0) {
-            val = parseFloat(p.rong_hem) || 0;
+            val = parseFloatHelper(p.rong_hem) || 0;
           }
-          if (hemMin !== '' && val < parseFloat(hemMin)) return false;
-          if (hemMax !== '' && val > parseFloat(hemMax)) return false;
+          if (hemMin !== '' && val < parseFloatHelper(hemMin)) return false;
+          if (hemMax !== '' && val > parseFloatHelper(hemMax)) return false;
           return true;
         });
       }
