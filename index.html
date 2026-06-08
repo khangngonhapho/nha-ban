@@ -1496,6 +1496,7 @@
       display: flex;
       transition: transform .28s cubic-bezier(.25, .46, .45, .94);
       height: 100%;
+      will-change: transform; /* US-081 v3: GPU composite layer */
     }
 
     .gslide {
@@ -6537,11 +6538,11 @@
       gt.style.transform = 'translateX(0)'; ua();
       const gw = document.getElementById('gw');
 
-      // US-081 v2: Live drag + maxTouches pinch guard + touch-action:none
+      // US-081 v3: Live drag tức thì + maxTouches pinch guard
       let gwMaxTouches = 0;
 
       gw.ontouchstart = e => {
-        e.preventDefault(); // touch-action:none → cần preventDefault để nhận move
+        // Không cần preventDefault với touch-action:none
         gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
         if (e.touches.length === 1 && gwMaxTouches === 1) {
           tx = e.touches[0].clientX;
@@ -6552,14 +6553,11 @@
       gw.ontouchmove = e => {
         e.preventDefault();
         gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
-        if (gwMaxTouches >= 2) return; // đang pinch — không làm gì
+        if (gwMaxTouches >= 2) return; // đang pinch — bỏ qua
         const dx = tx - e.touches[0].clientX;
-        const dy = ty - e.touches[0].clientY;
-        if (Math.abs(dx) > Math.abs(dy)) {
-          // Live drag: dịch ảnh theo ngón tay realtime
-          gt.style.transition = 'none';
-          gt.style.transform = `translateX(calc(-${gI * 100}% - ${dx}px))`;
-        }
+        // Live drag tức thì, không cần kiểm tra hướng
+        gt.style.transition = 'none';
+        gt.style.transform = `translateX(calc(-${gI * 100}% - ${dx}px))`;
       };
 
       gw.ontouchend = e => {
@@ -6568,15 +6566,14 @@
           gwMaxTouches = 0;
           gt.style.transition = ''; // khôi phục CSS transition
           if (wasPinch) {
-            // Snap lại vị trí hiện tại nếu vừa pinch
             gt.style.transform = `translateX(-${gI * 100}%)`;
             return;
           }
           const dx = tx - e.changedTouches[0].clientX;
           if (Math.abs(dx) > 50) {
-            gm(dx > 0 ? 1 : -1); // animate chuyển hình
+            gm(dx > 0 ? 1 : -1);
           } else {
-            gt.style.transform = `translateX(-${gI * 100}%)`; // snap lại
+            gt.style.transform = `translateX(-${gI * 100}%)`;
           }
         }
       };
