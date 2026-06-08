@@ -533,12 +533,13 @@ module.exports = async (req, res) => {
         return t;
       };
 
-      const tieuDeClean = trimTieuDeBds(tieuDeRaw);
+      const tieuDeClean = trimTieuDeBds(tieuDeRaw).replace(/\*\*/g, '');
+      const moTaClean = moTaRaw ? String(moTaRaw).replace(/\*\*/g, '') : '';
 
       return res.status(200).json({
         status: 'success',
         tieu_de_public: tieuDeClean,
-        mo_ta_public: moTaRaw,
+        mo_ta_public: moTaClean,
         phuong_cu: phuongCuRaw
       });
     } catch (err) {
