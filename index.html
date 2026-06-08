@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -1690,6 +1690,7 @@
       padding: calc(max(16px, env(safe-area-inset-top)) + 50px) 0 10px;
       overflow: hidden;
       width: 100%;
+      transition: opacity 0.18s ease; /* US-081: fade khi chuyển ảnh lightbox */
     }
 
     .lb-main img {
@@ -3689,8 +3690,7 @@
   <!-- Lightbox (Full Screen Media Viewer) -->
   <div class="lightbox" id="lbOverlay">
     <div class="lb-close" onclick="closeLb()">✕</div>
-    <div class="lb-main" id="lbMain" ontouchstart="window.lbTx=event.touches[0].clientX"
-      ontouchend="if(Math.abs(window.lbTx-event.changedTouches[0].clientX)>40) lbMove(window.lbTx>event.changedTouches[0].clientX?1:-1)">
+    <div class="lb-main" id="lbMain">
     </div>
     <button class="garr al" style="z-index:9999;" id="lbPrev" onclick="lbMove(-1)">‹</button>
     <button class="garr ar" style="z-index:9999;" id="lbNext" onclick="lbMove(1)">›</button>
@@ -6379,6 +6379,25 @@
       document.getElementById('lbOverlay').classList.remove('open');
       document.getElementById('lbMain').innerHTML = ''; // Stop video
     }
+    // US-081: Touch swipe cho lightbox với pinch guard (thay thế inline attrs đã xóa)
+    (function() {
+      let lbTx = 0, lbPinching = false;
+      const lbMain = document.getElementById('lbMain');
+      lbMain.addEventListener('touchstart', e => {
+        if (e.touches.length >= 2) { lbPinching = true; return; }
+        lbPinching = false;
+        lbTx = e.touches[0].clientX;
+      }, { passive: true });
+      lbMain.addEventListener('touchmove', e => {
+        if (e.touches.length >= 2) { lbPinching = true; }
+      }, { passive: true });
+      lbMain.addEventListener('touchend', e => {
+        if (lbPinching) { lbPinching = false; return; } // bỏ qua nếu vừa pinch
+        if (Math.abs(lbTx - e.changedTouches[0].clientX) > 40) {
+          lbMove(lbTx > e.changedTouches[0].clientX ? 1 : -1);
+        }
+      }, { passive: true });
+    })();
     function lbMove(d) {
       lbIdx = (lbIdx + d + currentImgs.length) % currentImgs.length;
       renderLbMain(); updateLbThumbsUI();
@@ -6389,12 +6408,17 @@
     function renderLbMain() {
       const s = currentImgs[lbIdx];
       const main = document.getElementById('lbMain');
-      if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
-        const encoded = encodeURIComponent(s);
-        main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
-      } else {
-        main.innerHTML = `<img src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to">`;
-      }
+      // US-081: Fade transition khi chuyển ảnh lightbox
+      main.style.opacity = '0';
+      setTimeout(() => {
+        if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
+          const encoded = encodeURIComponent(s);
+          main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+        } else {
+          main.innerHTML = `<img src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to">`;
+        }
+        main.style.opacity = '1';
+      }, 160);
     }
     function renderLbThumbs() {
       document.getElementById('lbThumbs').innerHTML = currentImgs.map((s, i) => {
@@ -6457,13 +6481,17 @@
       gt.style.transform = 'translateX(0)'; ua();
       const gw = document.getElementById('gw');
 
-      // Xử lý vuốt ảnh mượt mà và chặn lệnh "Back" của iPhone
+      // US-081: Vuốt ảnh mượt mà + chặn "Back" iPhone + pinch-to-zoom không nhảy ảnh
+      let gwPinching = false;
       gw.ontouchstart = e => {
+        if (e.touches.length >= 2) { gwPinching = true; return; }
+        gwPinching = false;
         tx = e.touches[0].clientX;
         ty = e.touches[0].clientY;
       };
 
       gw.ontouchmove = e => {
+        if (e.touches.length >= 2) { gwPinching = true; return; }
         const dx = tx - e.touches[0].clientX;
         const dy = ty - e.touches[0].clientY;
         // Nếu vuốt ngang nhiều hơn vuốt dọc -> Chặn lệnh của trình duyệt
@@ -6473,6 +6501,7 @@
       };
 
       gw.ontouchend = e => {
+        if (gwPinching) { gwPinching = false; return; } // bỏ qua nếu vừa pinch
         const dx = tx - e.changedTouches[0].clientX;
         if (Math.abs(dx) > 40) gm(dx > 0 ? 1 : -1);
       };
