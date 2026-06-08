@@ -6538,49 +6538,44 @@
       gt.style.transform = 'translateX(0px)'; ua();
       const gw = document.getElementById('gw');
 
-      // US-081 v4: px thuần + rAF để browser animate đúng từ vị trí drag
-      let gwMaxTouches = 0;
-
-      const snapTo = (idx) => {
-        const cw = gw.offsetWidth;
-        gt.style.transform = `translateX(${-idx * cw}px)`;
-        document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === idx));
-        ua();
-      };
+      // US-081 v5: cache width + transition once + double-rAF
+      let gwMaxTouches = 0, gwCw = 0;
 
       gw.ontouchstart = e => {
         gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
         if (e.touches.length === 1 && gwMaxTouches === 1) {
+          gwCw = gw.offsetWidth;         // cache 1 lần — không read layout trong move
           tx = e.touches[0].clientX;
-          ty = e.touches[0].clientY;
+          gt.style.transition = 'none';  // tắt transition 1 lần tại đây
         }
       };
 
       gw.ontouchmove = e => {
         e.preventDefault();
         gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
-        if (gwMaxTouches >= 2) return;
+        if (gwMaxTouches >= 2 || !gwCw) return;
         const dx = tx - e.touches[0].clientX;
-        const cw = gw.offsetWidth;
-        // Dùng px thuần — không calc() trộn đơn vị
-        gt.style.transition = 'none';
-        gt.style.transform = `translateX(${-gI * cw - dx}px)`;
+        // Chỉ set transform — không set transition (đã tắt từ touchstart)
+        gt.style.transform = `translateX(${-gI * gwCw - dx}px)`;
       };
 
       gw.ontouchend = e => {
         if (e.touches.length === 0) {
           const wasPinch = gwMaxTouches >= 2;
           gwMaxTouches = 0;
-          const cw = gw.offsetWidth;
-          const dx = wasPinch ? 0 : (tx - e.changedTouches[0].clientX);
-          if (!wasPinch && Math.abs(dx) > 50) {
-            gI = Math.max(0, Math.min(gN - 1, gI + (dx > 0 ? 1 : -1)));
+          if (!wasPinch) {
+            const dx = tx - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 50) gI = Math.max(0, Math.min(gN - 1, gI + (dx > 0 ? 1 : -1)));
           }
-          // rAF: đảm bảo browser đã vẽ frame drag cuối, rồi mới bật transition + animate
-          gt.style.transition = 'none';
+          // Cập nhật dots/arrows TRƯỚC animation (tránh reflow làm đứt transition)
+          document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === gI));
+          ua();
+          // Double-rAF: frame 1 = vẽ vị trí drag, frame 2 = bật transition + animate tới đích
           requestAnimationFrame(() => {
             gt.style.transition = '';
-            snapTo(gI);
+            requestAnimationFrame(() => {
+              gt.style.transform = `translateX(${-gI * gwCw}px)`;
+            });
           });
         }
       };
