@@ -4054,7 +4054,7 @@
         const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
         if (row) {
           poolItem = {
-            raw_noi_dung_chinh: String(row[9] || ''),
+            raw_noi_dung_chinh: String(row[9] || '').replace(/\r\n|\r|\n/g, ' '),
             raw_so_nha: String(row[6] || ''),
             raw_ten_duong: String(row[5] || ''),
             t: String(row[56] || row[55] || row[9] || '')
@@ -4497,7 +4497,7 @@
           raw_ten_dau_chu: row[75] || '',
           raw_dt_dau_chu: row[74] || '',
           raw_link_fb: row[76] || '',
-          raw_noi_dung_chinh: row[9] || '',
+          raw_noi_dung_chinh: String(row[9] || '').replace(/\r\n|\r|\n/g, ' '),
           raw_mo_ta_chi_tiet: cleanConsecutiveNewlines(row[10] || ''),
            raw_sodo1: row[27] || '',
            raw_sodo2: row[28] || '',
@@ -5143,7 +5143,7 @@
                 p.raw_ten_dau_chu = poolRow[75] || '';       // Tên Đầu Chủ (Hợp đồng) - Index 75, Column BX
                 p.raw_dt_dau_chu = poolRow[74] || '';        // Điện thoại Đầu Chủ - Index 74, Column BW
                 p.raw_link_fb = poolRow[76] || '';           // Điểm Facebook / Link Facebook - Index 76, Column BY
-                p.raw_noi_dung_chinh = poolRow[9] || '';     // Nội dung chính - Index 9, Column J
+                p.raw_noi_dung_chinh = String(poolRow[9] || '').replace(/\r\n|\r|\n/g, ' ');     // Nội dung chính - Index 9, Column J
                 p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
                 p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
                 p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
@@ -6751,7 +6751,7 @@
             </div>
 
             <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
-            <div class="admin-mota-box red-text" style="margin-top:14px; margin-bottom:8px; font-size:12px;">${formatRawDescription(cleanedNoiDungChinh) || 'Chưa có nội dung chính.'}</div>
+            <div class="admin-mota-box red-text" style="margin-top:14px; margin-bottom:8px; font-size:12px; white-space:normal;">${(cleanedNoiDungChinh || 'Chưa có nội dung chính.').replace(/\r/g,'').replace(/\n/g,' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
             <div class="admin-mota-box black-text" id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet || p.m) || 'Chưa có mô tả chi tiết.'}</div>
 
             <!-- Technical Specs Dotted Grid -->
@@ -9366,7 +9366,7 @@
         raw_ten_dau_chu: row[75] || '',
         raw_dt_dau_chu: row[74] || '',
         raw_link_fb: row[76] || '',
-        raw_noi_dung_chinh: row[9] || '',
+        raw_noi_dung_chinh: String(row[9] || '').replace(/\r\n|\r|\n/g, ' '),
         raw_mo_ta_chi_tiet: row[10] || '',
         raw_sodo1: row[27] || '',
         raw_sodo2: row[28] || '',

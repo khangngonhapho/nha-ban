@@ -622,7 +622,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                         "Đường": safe_get_val(soup_detail, '#Detail_sDuongPho'),
                         "Ngõ/Số nhà": safe_get_val(soup_detail, '#Detail_sDiaChi'),
                         "Phân loại": phan_loai_scraped,
-                        "Nội dung chính": safe_get_val(soup_detail, '#Detail_sNoiDung'),
+                        "Nội dung chính": safe_get_val(soup_detail, '#Detail_sNoiDung').replace('\r', '').replace('\n', ' '),
                         "Mô tả chi tiết": mo_ta_scraped,
                         "Giá chào": safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
                         "Giá Public": safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'), # Mặc định lấy giá chào

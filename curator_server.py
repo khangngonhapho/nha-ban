@@ -2383,7 +2383,7 @@ def recrawl_single_listing(tk_id):
             "Đường": duong_name,
             "Ngõ/Số nhà": so_nha,
             "Phân loại": phan_loai_scraped,
-            "Nội dung chính": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sNoiDung'),
+            "Nội dung chính": crawl_pipeline.safe_get_val(soup_detail, '#Detail_sNoiDung').replace('\r', '').replace('\n', ' '),
             "Mô tả chi tiết": mo_ta_scraped,
             "Giá chào": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
             "Giá Public": crawl_pipeline.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
