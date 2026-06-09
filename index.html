@@ -8888,19 +8888,6 @@
     }
 
 
-      // Restore active element focus without scrolling
-      if (activeIsInside && activeEl && typeof activeEl.focus === 'function') {
-        activeEl.focus({ preventScroll: true });
-      }
-
-      // Restore all ancestor scroll positions
-      scrollStates.forEach(state => {
-        state.element.scrollTop = state.scrollTop;
-        state.element.scrollLeft = state.scrollLeft;
-      });
-      window.scrollTo(windowScrollLeft, windowScrollTop);
-    };
-
     // --- CAROUSEL IMAGE EDITOR INTERACTORS (US-084) ---
     window.sortCurationImageGrid = function() {}; // Dummy for compatibility
     window.activeImageEditorIndex = 0;
