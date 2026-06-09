@@ -7496,6 +7496,9 @@
               const arrow = accSource.querySelector('.arrow');
               if (arrow) arrow.textContent = '▶';
             }
+            if (typeof window.gotoImageEditorSlide === 'function') {
+              window.gotoImageEditorSlide(window.activeImageEditorIndex || 0);
+            }
           }
         }, 50);
       }
@@ -8874,14 +8877,6 @@
           <input type="hidden" id="editSodo4Url" value="${p.pool_row_data ? (p.pool_row_data[81] || '') : (p.raw_sodo4 || '')}">
           <input type="hidden" id="editSodo5Url" value="${p.pool_row_data ? (p.pool_row_data[82] || '') : (p.raw_sodo5 || '')}">
         </div>
-        
-        <script>
-          setTimeout(() => {
-            if (typeof window.refreshImageEditorUI === 'function') {
-              window.refreshImageEditorUI();
-            }
-          }, 50);
-        </script>
       `;
 
       return html;
@@ -9597,6 +9592,9 @@
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = renderImageEditorWidget(p);
         parent.replaceChild(tempDiv.firstElementChild, editGroup);
+        if (typeof window.gotoImageEditorSlide === 'function') {
+          window.gotoImageEditorSlide(window.activeImageEditorIndex || 0);
+        }
       }
       
       if (typeof window.updateLivePreview === 'function') {
@@ -9668,6 +9666,9 @@
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = renderImageEditorWidget(p);
         parent.replaceChild(tempDiv.firstElementChild, editGroup);
+        if (typeof window.gotoImageEditorSlide === 'function') {
+          window.gotoImageEditorSlide(window.activeImageEditorIndex || 0);
+        }
       }
       
       if (typeof window.updateLivePreview === 'function') {
