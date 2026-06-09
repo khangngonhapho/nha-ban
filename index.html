@@ -11250,19 +11250,7 @@
             console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
           }
 
-          try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:AO${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [[publicCoverUrl]] })
-            });
-            p.pool_row_data[40] = publicCoverUrl;
-          } catch (e) {
-            console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
-          }
+
 
           // 1a. Đồng bộ Sổ 3-5 (CC:CE)
           try {
@@ -11628,18 +11616,7 @@
             console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
           }
 
-          try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:AO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [[publicCoverUrl]] })
-            });
-          } catch (e) {
-            console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
-          }
+
 
           // 0c. Cập nhật Sổ 3-5 (CC:CE)
           try {
