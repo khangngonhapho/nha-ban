@@ -8667,7 +8667,9 @@
       let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || '');
       let currentPublicCover = '';
       if (!p.isFromPoolOnly) {
-        if (p.pool_row_data) {
+        if (p.original_row_data && p.original_row_data[20]) {
+          currentPublicCover = p.original_row_data[20];
+        } else if (p.pool_row_data) {
           currentPublicCover = p.pool_row_data[40] || '';
         } else if (p.imgs && p.imgs.length > 0) {
           currentPublicCover = p.imgs[0];
@@ -8735,10 +8737,10 @@
 
         let targetNen = '';
         if (!p.isFromPoolOnly) {
-          if (p.pool_row_data) {
+          if (p.original_row_data && p.original_row_data[20]) {
+            targetNen = p.original_row_data[20];
+          } else if (p.pool_row_data) {
             targetNen = p.pool_row_data[40] || '';
-          } else if (p.original_row_data) {
-            targetNen = p.original_row_data[20] || '';
           } else if (p.imgs && p.imgs.length > 0) {
             targetNen = p.imgs[0] || '';
           }
