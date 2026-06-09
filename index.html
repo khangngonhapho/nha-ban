@@ -8973,6 +8973,7 @@
     // --- CAROUSEL IMAGE EDITOR INTERACTORS (US-084) ---
     window.sortCurationImageGrid = function() {}; // Dummy for compatibility
     window.activeImageEditorIndex = 0;
+    window.carouselJustMounted = true;
 
     window.slideImageEditorCarousel = function(direction) {
       const slides = window.imageEditorSlides || [];
@@ -8993,8 +8994,13 @@
       
       const track = document.getElementById('carouselSlidesTrack');
       if (track) {
-        if (track.style.transition === 'none') {
+        const isNone = track.style.transition.includes('none') || track.style.transition === 'none' || window.carouselJustMounted;
+        if (isNone) {
+          window.carouselJustMounted = false;
+          track.style.transition = 'none';
           track.style.transform = `translateX(-${idx * 100}%)`;
+          // Force layout reflow to make transition: none take immediate effect
+          track.offsetHeight;
           requestAnimationFrame(() => {
             track.style.transition = '';
           });
@@ -9374,6 +9380,8 @@
 
       const editGroup = document.getElementById("imageEditorCurationGroup");
       if (!editGroup) return;
+
+      window.carouselJustMounted = true;
 
       const newHtml = renderImageEditorWidget(p);
 
