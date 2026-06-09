@@ -8997,16 +8997,14 @@
         const isNone = track.style.transition.includes('none') || track.style.transition === 'none' || window.carouselJustMounted;
         if (isNone) {
           window.carouselJustMounted = false;
-          track.style.transition = 'none';
+          track.style.setProperty('transition', 'none', 'important');
           track.style.transform = `translateX(-${idx * 100}%)`;
           // Force layout reflow to make transition: none take immediate effect
           track.offsetHeight;
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              const t = document.getElementById('carouselSlidesTrack');
-              if (t) t.style.transition = '';
-            });
-          });
+          setTimeout(() => {
+            const t = document.getElementById('carouselSlidesTrack');
+            if (t) t.style.transition = '';
+          }, 50);
         } else {
           track.style.transition = '';
           track.style.transform = `translateX(-${idx * 100}%)`;
