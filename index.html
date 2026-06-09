@@ -8601,21 +8601,31 @@
     };
 
     function renderImageEditorWidget(p) {
+      const domCover = document.getElementById('editCoverImgUrl');
+      const domPublicCover = document.getElementById('editPublicCoverUrl');
+      const domPublicInterior = document.getElementById('editPublicInteriorIndices');
+      const domPublicAlley = document.getElementById('editPublicAlleyIndices');
+      const domSodo1 = document.getElementById('editSodo1Url');
+      const domSodo2 = document.getElementById('editSodo2Url');
+      const domSodo3 = document.getElementById('editSodo3Url');
+      const domSodo4 = document.getElementById('editSodo4Url');
+      const domSodo5 = document.getElementById('editSodo5Url');
+
       const cards = [];
       
-      const sodo1Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(1)] : p.raw_sodo1;
+      const sodo1Url = domSodo1 ? domSodo1.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(1)] : p.raw_sodo1);
       if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url });
       
-      const sodo2Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(2)] : p.raw_sodo2;
+      const sodo2Url = domSodo2 ? domSodo2.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(2)] : p.raw_sodo2);
       if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
 
-      const sodo3Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(3)] : p.raw_sodo3;
+      const sodo3Url = domSodo3 ? domSodo3.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(3)] : p.raw_sodo3);
       if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
 
-      const sodo4Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(4)] : p.raw_sodo4;
+      const sodo4Url = domSodo4 ? domSodo4.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(4)] : p.raw_sodo4);
       if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
 
-      const sodo5Url = p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5;
+      const sodo5Url = domSodo5 ? domSodo5.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5);
       if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
       
       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
@@ -8664,66 +8674,75 @@
       const renderedCards = cards.filter(c => c.shouldRender);
 
       // Recover current selected public interior/alley indices
-      let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || '');
+      let currentCover = domCover ? domCover.value : ((p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || ''));
       let currentPublicCover = '';
-      if (!p.isFromPoolOnly) {
-        if (p.original_row_data && p.original_row_data[20]) {
-          currentPublicCover = p.original_row_data[20];
-        } else if (p.pool_row_data) {
-          currentPublicCover = p.pool_row_data[40] || '';
-        } else if (p.imgs && p.imgs.length > 0) {
-          currentPublicCover = p.imgs[0];
+      if (domPublicCover) {
+        currentPublicCover = domPublicCover.value;
+      } else {
+        if (!p.isFromPoolOnly) {
+          if (p.original_row_data && p.original_row_data[20]) {
+            currentPublicCover = p.original_row_data[20];
+          } else if (p.pool_row_data) {
+            currentPublicCover = p.pool_row_data[40] || '';
+          } else if (p.imgs && p.imgs.length > 0) {
+            currentPublicCover = p.imgs[0];
+          }
         }
       }
       
       let currentInteriorIndices = '';
       let currentAlleyIndices = '';
 
-      if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
-        currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
-        currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
-      } else if (!p.isFromPoolOnly && p.pool_row_data) {
-        const cleanPublicImages = [];
-        if (p.original_row_data) {
-          for (let i = 20; i <= 29; i++) {
-            if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+      if (domPublicInterior && domPublicAlley) {
+        currentInteriorIndices = domPublicInterior.value;
+        currentAlleyIndices = domPublicAlley.value;
+      } else {
+        if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+          currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
+          currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
+        } else if (!p.isFromPoolOnly && p.pool_row_data) {
+          const cleanPublicImages = [];
+          if (p.original_row_data) {
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+            }
+          } else {
+            cleanPublicImages.push(...(p.imgs || []));
           }
-        } else {
-          cleanPublicImages.push(...(p.imgs || []));
-        }
-        const normPublic = cleanPublicImages.map(url => normalizeImgUrl(url));
+          const normPublic = cleanPublicImages.map(url => normalizeImgUrl(url));
 
-        const intIndices = [];
-        for (let i = 1; i <= 25; i++) {
-          const url = p.pool_row_data[window.getPoolInteriorColIdx(i)];
-          if (url) {
-            let isMatched = normPublic.includes(normalizeImgUrl(url));
-            if (isMatched) {
-              intIndices.push(i);
+          const intIndices = [];
+          for (let i = 1; i <= 25; i++) {
+            const url = p.pool_row_data[window.getPoolInteriorColIdx(i)];
+            if (url) {
+              let isMatched = normPublic.includes(normalizeImgUrl(url));
+              if (isMatched) {
+                intIndices.push(i);
+              }
             }
           }
-        }
-        currentInteriorIndices = intIndices.join(',');
+          currentInteriorIndices = intIndices.join(',');
 
-        const alleyIndices = [];
-        for (let i = 1; i <= 10; i++) {
-          const url = p.pool_row_data[window.getPoolAlleyColIdx(i)];
-          if (url) {
-            let isMatched = normPublic.includes(normalizeImgUrl(url));
-            if (isMatched) {
-              alleyIndices.push(i);
+          const alleyIndices = [];
+          for (let i = 1; i <= 10; i++) {
+            const url = p.pool_row_data[window.getPoolAlleyColIdx(i)];
+            if (url) {
+              let isMatched = normPublic.includes(normalizeImgUrl(url));
+              if (isMatched) {
+                alleyIndices.push(i);
+              }
             }
           }
+          currentAlleyIndices = alleyIndices.join(',');
+        } else if (!p.isFromPoolOnly) {
+          const intIndices = [];
+          if (p.imgs) {
+            p.imgs.forEach((url, idx) => {
+              intIndices.push(idx + 1);
+            });
+          }
+          currentInteriorIndices = intIndices.join(',');
         }
-        currentAlleyIndices = alleyIndices.join(',');
-      } else if (!p.isFromPoolOnly) {
-        const intIndices = [];
-        if (p.imgs) {
-          p.imgs.forEach((url, idx) => {
-            intIndices.push(idx + 1);
-          });
-        }
-        currentInteriorIndices = intIndices.join(',');
       }
 
       // Compute active public display order list (finalImages) to sort public images by their exact selection order (US-084 Curation Order Thumbnail Sorting)
@@ -8922,11 +8941,11 @@
           <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
           <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
           <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
-          <input type="hidden" id="editSodo1Url" value="${p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || '')}">
-          <input type="hidden" id="editSodo2Url" value="${p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || '')}">
-          <input type="hidden" id="editSodo3Url" value="${p.pool_row_data ? (p.pool_row_data[80] || '') : (p.raw_sodo3 || '')}">
-          <input type="hidden" id="editSodo4Url" value="${p.pool_row_data ? (p.pool_row_data[81] || '') : (p.raw_sodo4 || '')}">
-          <input type="hidden" id="editSodo5Url" value="${p.pool_row_data ? (p.pool_row_data[82] || '') : (p.raw_sodo5 || '')}">
+          <input type="hidden" id="editSodo1Url" value="${sodo1Url || ''}">
+          <input type="hidden" id="editSodo2Url" value="${sodo2Url || ''}">
+          <input type="hidden" id="editSodo3Url" value="${sodo3Url || ''}">
+          <input type="hidden" id="editSodo4Url" value="${sodo4Url || ''}">
+          <input type="hidden" id="editSodo5Url" value="${sodo5Url || ''}">
         </div>
       `;
 
@@ -9063,7 +9082,7 @@
         }
       }
       
-      window.refreshImageEditorUI();
+      window.reRenderCurationEditorInPlace();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
@@ -9114,7 +9133,7 @@
         }
       }
       
-      window.refreshImageEditorUI();
+      window.reRenderCurationEditorInPlace();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
@@ -9178,7 +9197,7 @@
         }
       }
       
-      window.refreshImageEditorUI();
+      window.reRenderCurationEditorInPlace();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
@@ -9251,7 +9270,7 @@
         input.value = indices.join(',');
       }
       
-      window.refreshImageEditorUI();
+      window.reRenderCurationEditorInPlace();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
@@ -9282,7 +9301,7 @@
           indices[newPos] = temp;
           input.value = indices.join(',');
           
-          window.refreshImageEditorUI();
+          window.reRenderCurationEditorInPlace();
           if (typeof window.updateLivePreview === 'function') {
             window.updateLivePreview();
           }
@@ -9303,7 +9322,7 @@
           indices[newPos] = temp;
           input.value = indices.join(',');
           
-          window.refreshImageEditorUI();
+          window.reRenderCurationEditorInPlace();
           if (typeof window.updateLivePreview === 'function') {
             window.updateLivePreview();
           }
@@ -9322,6 +9341,43 @@
       const slide = slides[activeIdx];
       if (!slide) return;
       window.rotateSingleCurationImage(slide.type, slide.index, angleOffset);
+    };
+
+    window.reRenderCurationEditorInPlace = function() {
+      const p = window.activeCurationListing;
+      if (!p) return;
+
+      const editGroup = document.getElementById("imageEditorCurationGroup");
+      if (!editGroup) return;
+
+      const slidesBefore = window.imageEditorSlides || [];
+      const activeIdxBefore = window.activeImageEditorIndex;
+      let activeCardId = null;
+      if (activeIdxBefore >= 0 && activeIdxBefore < slidesBefore.length) {
+        const activeCard = slidesBefore[activeIdxBefore];
+        activeCardId = { type: activeCard.type, index: activeCard.index };
+      }
+
+      const newHtml = renderImageEditorWidget(p);
+
+      const parent = editGroup.parentNode;
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = newHtml;
+      parent.replaceChild(tempDiv.firstElementChild, editGroup);
+
+      const slidesAfter = window.imageEditorSlides || [];
+      let newActiveIdx = 0;
+      if (activeCardId) {
+        const foundIdx = slidesAfter.findIndex(s => s.type === activeCardId.type && s.index === activeCardId.index);
+        if (foundIdx !== -1) {
+          newActiveIdx = foundIdx;
+        }
+      }
+
+      window.activeImageEditorIndex = newActiveIdx;
+      if (typeof window.gotoImageEditorSlide === 'function') {
+        window.gotoImageEditorSlide(newActiveIdx);
+      }
     };
 
     // Refresh Editor badges/states
@@ -9630,16 +9686,7 @@
         publicCoverInput.value = newUrl;
       }
       
-      const editGroup = document.getElementById("imageEditorCurationGroup");
-      if (editGroup) {
-        const parent = editGroup.parentNode;
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = renderImageEditorWidget(p);
-        parent.replaceChild(tempDiv.firstElementChild, editGroup);
-        if (typeof window.gotoImageEditorSlide === 'function') {
-          window.gotoImageEditorSlide(window.activeImageEditorIndex || 0);
-        }
-      }
+      window.reRenderCurationEditorInPlace();
       
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
@@ -9704,16 +9751,7 @@
         publicCoverInput.value = rotateCloudinaryUrl(publicCoverInput.value, angleOffset);
       }
       
-      const editGroup = document.getElementById("imageEditorCurationGroup");
-      if (editGroup) {
-        const parent = editGroup.parentNode;
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = renderImageEditorWidget(p);
-        parent.replaceChild(tempDiv.firstElementChild, editGroup);
-        if (typeof window.gotoImageEditorSlide === 'function') {
-          window.gotoImageEditorSlide(window.activeImageEditorIndex || 0);
-        }
-      }
+      window.reRenderCurationEditorInPlace();
       
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
@@ -9930,28 +9968,23 @@
       if (progressDiv) progressDiv.style.display = "none";
       if (uploadLocalBtn) uploadLocalBtn.disabled = false;
 
-      const editGroup = document.getElementById("imageEditorCurationGroup");
-      if (editGroup) {
-        const parent = editGroup.parentNode;
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = renderImageEditorWidget(p);
-        parent.replaceChild(tempDiv.firstElementChild, editGroup);
-        
-        if (lastUploadedUrl) {
-          const normLast = normalizeImgUrl(lastUploadedUrl);
-          const slides = window.imageEditorSlides || [];
-          const newIdx = slides.findIndex(s => normalizeImgUrl(s.url) === normLast);
-          if (newIdx !== -1) {
-            window.activeImageEditorIndex = newIdx;
-            if (typeof window.gotoImageEditorSlide === 'function') {
-              window.gotoImageEditorSlide(newIdx);
-            }
+      if (lastUploadedUrl) {
+        window.reRenderCurationEditorInPlace();
+        const normLast = normalizeImgUrl(lastUploadedUrl);
+        const slides = window.imageEditorSlides || [];
+        const newIdx = slides.findIndex(s => normalizeImgUrl(s.url) === normLast);
+        if (newIdx !== -1) {
+          window.activeImageEditorIndex = newIdx;
+          if (typeof window.gotoImageEditorSlide === 'function') {
+            window.gotoImageEditorSlide(newIdx);
           }
         }
+      } else {
+        window.reRenderCurationEditorInPlace();
+      }
 
-        if (typeof window.updateLivePreview === "function") {
-          window.updateLivePreview();
-        }
+      if (typeof window.updateLivePreview === "function") {
+        window.updateLivePreview();
       }
     };
 
@@ -9979,7 +10012,7 @@
       if (sodo4Input) sodo4Input.value = '';
       if (sodo5Input) sodo5Input.value = '';
 
-      window.refreshImageEditorUI();
+      window.reRenderCurationEditorInPlace();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
