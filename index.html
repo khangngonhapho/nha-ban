@@ -3232,10 +3232,10 @@
       width: 100%;
       height: 100%;
       display: flex;
-      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transition: none;
     }
-    .carousel-slides-track.no-transition {
-      transition: none !important;
+    .carousel-slides-track.has-transition {
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     .carousel-slide-item {
       width: 100%;
@@ -8881,7 +8881,10 @@
 
       let html = `
         <div class="admin-edit-group" id="imageEditorCurationGroup" style="margin-top: 10px;">
-          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CAROUSEL TRƯỢT 📱)</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="font-weight: 800; color: var(--gold); display: block; font-size: 12px; margin: 0;">🖼️ BIÊN TẬP HÌNH ẢNH (CAROUSEL TRƯỢT 📱)</label>
+            <span id="editorDebugLabel" style="font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.45); font-family: monospace;">v1.4</span>
+          </div>
           
           <!-- LOCAL IMAGE UPLOADER (US-053) -->
           <div class="local-uploader-panel" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 191, 36, 0.08); padding: 8px 12px; border-radius: 10px; border: 1.5px solid rgba(255, 191, 36, 0.2); margin-bottom: 10px; flex-wrap: wrap; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); width: 100%; box-sizing: border-box;">
@@ -8907,7 +8910,7 @@
                  ontouchstart="window.handleCarouselTouchStart(event)" 
                  ontouchmove="window.handleCarouselTouchMove(event)" 
                  ontouchend="window.handleCarouselTouchEnd(event)">
-              <div class="carousel-slides-track no-transition" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%);">
+              <div class="carousel-slides-track" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%);">
                 ${slidesHtml}
               </div>
               <button type="button" class="carousel-nav-btn prev-btn" onclick="window.slideImageEditorCarousel(-1)">◀</button>
@@ -8918,7 +8921,7 @@
             <div class="thumbnail-strip-wrapper">
               <div class="thumbnail-strip-scroll" id="thumbnailStripScroll">
                 ${renderedCards.map((c, idx) => `
-                  <div class="thumbnail-item-card" id="thumbCard-${idx}" onclick="window.gotoImageEditorSlide(${idx})">
+                  <div class="thumbnail-item-card" id="thumbCard-${idx}" onclick="window.gotoImageEditorSlide(${idx}, true)">
                     <img src="${fixImgUrl(c.url, 'w100')}" alt="Thumb ${idx + 1}" loading="lazy">
                     <span class="thumb-mini-badge" id="thumbMiniBadge-${idx}"></span>
                     <span class="thumb-mini-badge public-badge" id="thumbPublicBadge-${idx}"></span>
@@ -8995,10 +8998,10 @@
       let nextIdx = window.activeImageEditorIndex + direction;
       if (nextIdx < 0) nextIdx = slides.length - 1;
       if (nextIdx >= slides.length) nextIdx = 0;
-      window.gotoImageEditorSlide(nextIdx);
+      window.gotoImageEditorSlide(nextIdx, true);
     };
 
-    window.gotoImageEditorSlide = function(idx) {
+    window.gotoImageEditorSlide = function(idx, enableTransition = false) {
       const slides = window.imageEditorSlides || [];
       if (slides.length === 0) return;
       if (idx < 0) idx = 0;
@@ -9008,22 +9011,16 @@
       
       const track = document.getElementById('carouselSlidesTrack');
       if (track) {
-        const hasNoTransitionClass = track.classList.contains('no-transition');
-        const isNone = hasNoTransitionClass || window.carouselJustMounted;
-        if (isNone) {
-          window.carouselJustMounted = false;
-          track.classList.add('no-transition');
-          track.style.transform = `translateX(-${idx * 100}%)`;
-          // Force layout reflow to make transition: none take immediate effect
-          track.offsetHeight;
-          setTimeout(() => {
-            const t = document.getElementById('carouselSlidesTrack');
-            if (t) t.classList.remove('no-transition');
-          }, 150);
-        } else {
-          track.classList.remove('no-transition');
-          track.style.transform = `translateX(-${idx * 100}%)`;
+        const debugLabel = document.getElementById('editorDebugLabel');
+        if (debugLabel) {
+          debugLabel.innerText = `v1.4 [Idx:${idx} (Trans:${enableTransition})]`;
         }
+        if (enableTransition) {
+          track.classList.add('has-transition');
+        } else {
+          track.classList.remove('has-transition');
+        }
+        track.style.transform = `translateX(-${idx * 100}%)`;
       }
       
       document.querySelectorAll('.thumbnail-item-card').forEach((card, cidx) => {
