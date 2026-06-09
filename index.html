@@ -8726,38 +8726,90 @@
         currentInteriorIndices = intIndices.join(',');
       }
 
+      // Compute active public display order list (finalImages) to sort public images by their exact selection order (US-084 Curation Order Thumbnail Sorting)
+      const poolRowData = p.pool_row_data;
+      const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
+      const finalImages = [];
+      if (poolRowData) {
+        const noithatIndices = currentInteriorIndices.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
+        const hemIndices = currentAlleyIndices.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+
+        let publicCover = currentPublicCover;
+        if (publicCover && ((window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) || isFacadeUrl(publicCover))) {
+          publicCover = '';
+        }
+        if (!publicCover) {
+          const candidates = [];
+          const interior1Idx = window.getPoolInteriorColIdx(1);
+          if (poolRowData[interior1Idx] && (!window.isListingSodoUrl || !window.isListingSodoUrl(poolRowData[interior1Idx], p)) && !isFacadeUrl(poolRowData[interior1Idx])) {
+            candidates.push(poolRowData[interior1Idx]);
+          }
+          for (let i = 0; i < noithatIndices.length; i++) {
+            const url = poolRowData[window.getPoolInteriorColIdx(noithatIndices[i])];
+            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+              candidates.push(url);
+              break;
+            }
+          }
+          publicCover = candidates[0] || '';
+        }
+
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+          finalImages.push(publicCover);
+        }
+        
+        const maxHem = 2;
+        let addedHem = 0;
+        for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+          const hemIdx = hemIndices[i];
+          const hemUrl = poolRowData[window.getPoolAlleyColIdx(hemIdx)];
+          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p)) && !isFacadeUrl(hemUrl)) {
+            finalImages.push(hemUrl);
+            addedHem++;
+          }
+        }
+        
+        for (let i = 0; i < noithatIndices.length; i++) {
+          const imgIdx = noithatIndices[i];
+          const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+            finalImages.push(imgUrl);
+          }
+        }
+      } else {
+        const publicCover = currentPublicCover || (p.imgs && p.imgs[0]);
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+          finalImages.push(publicCover);
+        }
+        if (p.imgs) {
+          p.imgs.forEach(url => {
+            if (url && url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+              finalImages.push(url);
+            }
+          });
+        }
+      }
+      const normFinalImages = finalImages.filter(Boolean).map(url => normalizeImgUrl(url));
+
       const getCardSortWeight = (c) => {
         const normUrl = normalizeImgUrl(c.url);
         if (!normUrl) return 99;
 
         if (isSodoUrl(c.url)) return 1;
 
-        const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
-        if (targetMatTien && normUrl === normalizeImgUrl(targetMatTien)) return 2;
+        if (normMatTien && normUrl === normMatTien) return 2;
 
-        let targetNen = '';
-        if (!p.isFromPoolOnly) {
-          if (p.original_row_data && p.original_row_data[20]) {
-            targetNen = p.original_row_data[20];
-          } else if (p.pool_row_data) {
-            targetNen = p.pool_row_data[40] || '';
-          } else if (p.imgs && p.imgs.length > 0) {
-            targetNen = p.imgs[0] || '';
-          }
+        const publicIdx = normFinalImages.indexOf(normUrl);
+        if (publicIdx !== -1) {
+          return 3 + publicIdx / 100;
         }
-        if (targetNen && normUrl === normalizeImgUrl(targetNen)) return 3;
-
-        let isPublic = false;
-        if (!p.isFromPoolOnly) {
-          if (c.type === "interior") {
-            const indices = currentInteriorIndices.split(',').map(s => s.trim());
-            isPublic = indices.includes(String(c.index));
-          } else if (c.type === "alley") {
-            const indices = currentAlleyIndices.split(',').map(s => s.trim());
-            isPublic = indices.includes(String(c.index));
-          }
-        }
-        if (isPublic) return 4;
 
         return 5;
       };
