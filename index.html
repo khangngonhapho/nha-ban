@@ -9002,7 +9002,10 @@
           // Force layout reflow to make transition: none take immediate effect
           track.offsetHeight;
           requestAnimationFrame(() => {
-            track.style.transition = '';
+            requestAnimationFrame(() => {
+              const t = document.getElementById('carouselSlidesTrack');
+              if (t) t.style.transition = '';
+            });
           });
         } else {
           track.style.transition = '';
