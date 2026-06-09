@@ -8769,7 +8769,7 @@
       renderedCards.forEach((c, idx) => {
         slidesHtml += `
           <div class="carousel-slide-item" data-slide-index="${idx}">
-            <img src="${fixImgUrl(c.url, 'w600')}" alt="Slide ${idx + 1}">
+            <img src="${fixImgUrl(c.url, 'w600')}" alt="Slide ${idx + 1}" style="cursor: zoom-in;" onclick="window.openZoomOverlay('${c.url.replace(/'/g, "\\'")}')">
             <div class="carousel-slide-badge">${c.type === "facade" ? "Mặt Tiền" : (c.type === "sodo" ? `Sổ ${c.index}` : (c.type === "interior" ? `Nội Thất ${c.index}` : `Hẻm ${c.index}`))}</div>
             <div class="carousel-order-indicator" id="carouselOrderIndicator-${idx}" style="display: none;">#1</div>
             <div class="carousel-role-indicator" id="carouselRoleIndicator-${idx}" style="display: none;"></div>
@@ -8850,9 +8850,6 @@
                 </button>
                 <button type="button" class="control-btn" onclick="window.activeImageRotate(90)">
                   🔄 Xoay +90°
-                </button>
-                <button type="button" class="control-btn" onclick="window.activeImageZoom()">
-                  🔍 Xem ảnh gốc
                 </button>
               </div>
               ${!p.isFromPoolOnly ? `
@@ -9264,14 +9261,7 @@
       }
     };
 
-    // Zoom Original Image
-    window.activeImageZoom = function() {
-      const slides = window.imageEditorSlides || [];
-      const activeIdx = window.activeImageEditorIndex;
-      const slide = slides[activeIdx];
-      if (!slide) return;
-      window.open(slide.url, '_blank');
-    };
+
 
     // Rotate active image
     window.activeImageRotate = function(angleOffset) {
