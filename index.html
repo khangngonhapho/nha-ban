@@ -8420,7 +8420,7 @@
           </div>
 
           <!-- IMAGE EDITOR TOOLBAR -->
-          <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: nowrap; width: 100%; box-sizing: border-box;">
+          <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; width: 100%; box-sizing: border-box;">
             <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
               🔒 Mặt Tiền
             </button>
@@ -8435,6 +8435,12 @@
               ✕ Bỏ All
             </button>
             ` : ''}
+            <button type="button" onclick="window.rotateAllListingImages(90)" style="background: rgba(255,191,36,0.12); border: 1px solid rgba(255,191,36,0.3); color: var(--gold); padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              🔄 Xoay +90°
+            </button>
+            <button type="button" onclick="window.rotateAllListingImages(270)" style="background: rgba(255,191,36,0.12); border: 1px solid rgba(255,191,36,0.3); color: var(--gold); padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              🔄 Xoay -90°
+            </button>
             <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center; flex: 0.8;">
               ✕ Hủy
             </button>
@@ -8981,6 +8987,106 @@
 
     window.getPoolAlleyColIdx = function(alleyIdx) {
       return 29 + alleyIdx;
+    };
+
+    // --- CLOUDINARY URL ROTATION HELPERS (US-083) ---
+    function rotateCloudinaryUrl(url, angleOffset = 90) {
+      if (!url || !url.includes("cloudinary.com/")) return url;
+      
+      const uploadMarker = "/upload/";
+      const index = url.indexOf(uploadMarker);
+      if (index === -1) return url;
+      
+      const prefix = url.substring(0, index + uploadMarker.length);
+      let remaining = url.substring(index + uploadMarker.length);
+      
+      const rotationRegex = /^a_(-?\d+)\//;
+      const match = remaining.match(rotationRegex);
+      
+      let currentAngle = 0;
+      if (match) {
+        currentAngle = parseInt(match[1], 10);
+        remaining = remaining.replace(rotationRegex, "");
+      }
+      
+      let newAngle = (currentAngle + angleOffset) % 360;
+      if (newAngle < 0) newAngle += 360;
+      
+      if (newAngle === 0) {
+        return prefix + remaining;
+      } else {
+        return prefix + `a_${newAngle}/` + remaining;
+      }
+    }
+
+    window.rotateAllListingImages = function(angleOffset) {
+      const p = window.activeCurationListing;
+      if (!p) {
+        alert("Không tìm thấy thông tin căn nhà để xoay ảnh!");
+        return;
+      }
+      
+      const cards = document.querySelectorAll('#imageEditorGrid .edit-img-card');
+      if (!cards || cards.length === 0) {
+        alert("Không có hình ảnh nào để xoay!");
+        return;
+      }
+      
+      let count = 0;
+      cards.forEach(card => {
+        const url = card.dataset.url;
+        if (url && url.includes("cloudinary.com/")) {
+          const newUrl = rotateCloudinaryUrl(url, angleOffset);
+          card.dataset.url = newUrl;
+          
+          const img = card.querySelector('img');
+          if (img) {
+            img.src = fixImgUrl(newUrl, 'w200');
+          }
+          
+          const type = card.dataset.type;
+          const index = parseInt(card.dataset.index, 10);
+          
+          // Update data model
+          if (p.pool_row_data) {
+            if (type === 'interior') {
+              const colIdx = window.getPoolInteriorColIdx(index);
+              p.pool_row_data[colIdx] = newUrl;
+            } else if (type === 'alley') {
+              const colIdx = window.getPoolAlleyColIdx(index);
+              p.pool_row_data[colIdx] = newUrl;
+            } else if (type === 'sodo') {
+              const colIdx = window.getPoolSodoColIdx(index);
+              p.pool_row_data[colIdx] = newUrl;
+            } else if (type === 'facade') {
+              p.pool_row_data[29] = newUrl;
+            }
+          }
+          
+          if (type === 'sodo') {
+            const input = document.getElementById(`editSodo${index}Url`);
+            if (input) input.value = newUrl;
+          }
+          
+          count++;
+        }
+      });
+      
+      // Update cover inputs if their selected URL matches the rotated image
+      const coverInput = document.getElementById('editCoverImgUrl');
+      if (coverInput && coverInput.value) {
+        coverInput.value = rotateCloudinaryUrl(coverInput.value, angleOffset);
+      }
+      const publicCoverInput = document.getElementById('editPublicCoverUrl');
+      if (publicCoverInput && publicCoverInput.value) {
+        publicCoverInput.value = rotateCloudinaryUrl(publicCoverInput.value, angleOffset);
+      }
+      
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+      
+      showToast(`Đã xoay ${count} ảnh Cloudinary của căn nhà thêm ${angleOffset}°!`, "success");
     };
 
     // --- CLOUDINARY LOCAL UPLOADER HELPERS (US-053) ---
