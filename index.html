@@ -3234,6 +3234,9 @@
       display: flex;
       transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+    .carousel-slides-track.no-transition {
+      transition: none !important;
+    }
     .carousel-slide-item {
       width: 100%;
       height: 100%;
@@ -8608,6 +8611,11 @@
         const activeCard = slidesBefore[activeIdxBefore];
         activeCardId = { type: activeCard.type, index: activeCard.index };
       }
+      console.log("Image Editor Debug - Before:", {
+        activeIdxBefore,
+        slidesCountBefore: slidesBefore.length,
+        activeCardId
+      });
 
       const domCover = document.getElementById('editCoverImgUrl');
       const domPublicCover = document.getElementById('editPublicCoverUrl');
@@ -8850,6 +8858,12 @@
           newActiveIdx = foundIdx;
         }
       }
+      console.log("Image Editor Debug - After:", {
+        newActiveIdx,
+        slidesCountAfter: renderedCards.length,
+        activeImageEditorIndex: window.activeImageEditorIndex,
+        isJustMounted: window.carouselJustMounted
+      });
       window.imageEditorSlides = renderedCards;
       window.activeImageEditorIndex = newActiveIdx;
 
@@ -8893,7 +8907,7 @@
                  ontouchstart="window.handleCarouselTouchStart(event)" 
                  ontouchmove="window.handleCarouselTouchMove(event)" 
                  ontouchend="window.handleCarouselTouchEnd(event)">
-              <div class="carousel-slides-track" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%); transition: none;">
+              <div class="carousel-slides-track no-transition" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%);">
                 ${slidesHtml}
               </div>
               <button type="button" class="carousel-nav-btn prev-btn" onclick="window.slideImageEditorCarousel(-1)">◀</button>
@@ -8994,19 +9008,20 @@
       
       const track = document.getElementById('carouselSlidesTrack');
       if (track) {
-        const isNone = track.style.transition.includes('none') || track.style.transition === 'none' || window.carouselJustMounted;
+        const hasNoTransitionClass = track.classList.contains('no-transition');
+        const isNone = hasNoTransitionClass || window.carouselJustMounted;
         if (isNone) {
           window.carouselJustMounted = false;
-          track.style.setProperty('transition', 'none', 'important');
+          track.classList.add('no-transition');
           track.style.transform = `translateX(-${idx * 100}%)`;
           // Force layout reflow to make transition: none take immediate effect
           track.offsetHeight;
           setTimeout(() => {
             const t = document.getElementById('carouselSlidesTrack');
-            if (t) t.style.transition = '';
+            if (t) t.classList.remove('no-transition');
           }, 50);
         } else {
-          track.style.transition = '';
+          track.classList.remove('no-transition');
           track.style.transform = `translateX(-${idx * 100}%)`;
         }
       }
