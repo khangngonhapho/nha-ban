@@ -2465,6 +2465,10 @@
                             <span style="font-size:10px; color:var(--text-muted)">#${index+1}</span>
                             <button class="order-btn" onclick="moveImage(${index}, 1)" ${index === imagesConfig.length - 1 ? 'disabled' : ''}>Phải ▶</button>
                         </div>
+                        <div class="order-btn-group" style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 4px; margin-top: 4px;">
+                            <button class="order-btn" style="flex: 1; text-align: left;" onclick="rotateSingleImage(${index}, 90)" ${!item.url.includes('cloudinary.com') ? 'disabled title="Chỉ xoay được ảnh Cloudinary"' : ''}>🔄 Xoay +90°</button>
+                            <button class="order-btn" style="flex: 1; text-align: right;" onclick="rotateSingleImage(${index}, 270)" ${!item.url.includes('cloudinary.com') ? 'disabled title="Chỉ xoay được ảnh Cloudinary"' : ''}>🔄 Xoay -90°</button>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -2508,6 +2512,51 @@
             const temp = imagesConfig[idx];
             imagesConfig[idx] = imagesConfig[targetIdx];
             imagesConfig[targetIdx] = temp;
+            
+            renderImageGrid();
+        }
+
+        // --- CLOUDINARY URL ROTATION HELPERS (US-083) ---
+        function rotateCloudinaryUrl(url, angleOffset = 90) {
+            if (!url || !url.includes("cloudinary.com/")) return url;
+            
+            const uploadMarker = "/upload/";
+            const index = url.indexOf(uploadMarker);
+            if (index === -1) return url;
+            
+            const prefix = url.substring(0, index + uploadMarker.length);
+            let remaining = url.substring(index + uploadMarker.length);
+            
+            const rotationRegex = /^a_(-?\d+)\//;
+            const match = remaining.match(rotationRegex);
+            
+            let currentAngle = 0;
+            if (match) {
+                currentAngle = parseInt(match[1], 10);
+                remaining = remaining.replace(rotationRegex, "");
+            }
+            
+            let newAngle = (currentAngle + angleOffset) % 360;
+            if (newAngle < 0) newAngle += 360;
+            
+            if (newAngle === 0) {
+                return prefix + remaining;
+            } else {
+                return prefix + `a_${newAngle}/` + remaining;
+            }
+        }
+
+        function rotateSingleImage(idx, angleOffset) {
+            const item = imagesConfig[idx];
+            if (!item || !item.url) return;
+            
+            if (!item.url.includes("cloudinary.com/")) {
+                alert("Chỉ hỗ trợ xoay ảnh đã tải lên Cloudinary!");
+                return;
+            }
+            
+            const newUrl = rotateCloudinaryUrl(item.url, angleOffset);
+            imagesConfig[idx].url = newUrl;
             
             renderImageGrid();
         }
