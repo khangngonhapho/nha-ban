@@ -8837,31 +8837,31 @@
                 <button type="button" id="ctrlSodoBtn" class="control-btn" onclick="window.activeImageToggleSodo()">
                   📜 Gán Sổ đỏ
                 </button>
+              </div>
+              <div class="control-row" style="margin-top: 5px;">
                 <button type="button" id="ctrlPublicBtn" class="control-btn" onclick="window.activeImageTogglePublic()">
                   👁️ Hiện Public
                 </button>
-              </div>
-              <div class="control-row">
                 <button type="button" class="control-btn" onclick="window.activeImageMoveOrder(-1)">
                   ◀ Di chuyển lên
                 </button>
                 <button type="button" class="control-btn" onclick="window.activeImageMoveOrder(1)">
                   Di chuyển xuống ▶
                 </button>
+              </div>
+              <div class="control-row" style="margin-top: 5px;">
                 <button type="button" class="control-btn" onclick="window.activeImageRotate(90)">
                   🔄 Xoay +90°
                 </button>
-              </div>
-              ${!p.isFromPoolOnly ? `
-              <div class="control-row" style="margin-top: 5px;">
-                <button type="button" class="control-btn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red); min-height: 38px;">
-                  ✕ Bỏ chọn hiển thị tất cả
+                ${!p.isFromPoolOnly ? `
+                <button type="button" class="control-btn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red);">
+                  ✕ Bỏ tất cả
                 </button>
-                <button type="button" class="control-btn" onclick="window.rotateAllListingImages(90)" style="background: rgba(255,191,36,0.08); border-color: rgba(255,191,36,0.3); color: var(--gold); min-height: 38px;">
-                  🔄 Xoay tất cả ảnh +90°
+                <button type="button" class="control-btn" onclick="window.rotateAllListingImages(90)" style="background: rgba(255,191,36,0.08); border-color: rgba(255,191,36,0.3); color: var(--gold);">
+                  🔄 Xoay tất cả
                 </button>
+                ` : ''}
               </div>
-              ` : ''}
             </div>
           </div>
 
