@@ -610,12 +610,14 @@
       -webkit-tap-highlight-color: transparent
     }
 
-    body {
+    html, body {
       font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
-      overscroll-behavior: none
+      overscroll-behavior: none;
+      max-width: 100%;
+      overflow-x: hidden;
     }
 
     header {
@@ -3508,7 +3510,7 @@
         padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
-        transform: translateX(100%);
+        transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         overflow: hidden !important;
         box-shadow: none !important;
