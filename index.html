@@ -8601,6 +8601,14 @@
     };
 
     function renderImageEditorWidget(p) {
+      const slidesBefore = window.imageEditorSlides || [];
+      const activeIdxBefore = window.activeImageEditorIndex || 0;
+      let activeCardId = null;
+      if (activeIdxBefore >= 0 && activeIdxBefore < slidesBefore.length) {
+        const activeCard = slidesBefore[activeIdxBefore];
+        activeCardId = { type: activeCard.type, index: activeCard.index };
+      }
+
       const domCover = document.getElementById('editCoverImgUrl');
       const domPublicCover = document.getElementById('editPublicCoverUrl');
       const domPublicInterior = document.getElementById('editPublicInteriorIndices');
@@ -8834,7 +8842,16 @@
       };
 
       renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+
+      let newActiveIdx = 0;
+      if (activeCardId) {
+        const foundIdx = renderedCards.findIndex(s => s.type === activeCardId.type && s.index === activeCardId.index);
+        if (foundIdx !== -1) {
+          newActiveIdx = foundIdx;
+        }
+      }
       window.imageEditorSlides = renderedCards;
+      window.activeImageEditorIndex = newActiveIdx;
 
       let slidesHtml = '';
       renderedCards.forEach((c, idx) => {
@@ -8876,7 +8893,7 @@
                  ontouchstart="window.handleCarouselTouchStart(event)" 
                  ontouchmove="window.handleCarouselTouchMove(event)" 
                  ontouchend="window.handleCarouselTouchEnd(event)">
-              <div class="carousel-slides-track" id="carouselSlidesTrack">
+              <div class="carousel-slides-track" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%); transition: none;">
                 ${slidesHtml}
               </div>
               <button type="button" class="carousel-nav-btn prev-btn" onclick="window.slideImageEditorCarousel(-1)">◀</button>
@@ -8976,7 +8993,15 @@
       
       const track = document.getElementById('carouselSlidesTrack');
       if (track) {
-        track.style.transform = `translateX(-${idx * 100}%)`;
+        if (track.style.transition === 'none') {
+          track.style.transform = `translateX(-${idx * 100}%)`;
+          requestAnimationFrame(() => {
+            track.style.transition = '';
+          });
+        } else {
+          track.style.transition = '';
+          track.style.transform = `translateX(-${idx * 100}%)`;
+        }
       }
       
       document.querySelectorAll('.thumbnail-item-card').forEach((card, cidx) => {
@@ -9350,14 +9375,6 @@
       const editGroup = document.getElementById("imageEditorCurationGroup");
       if (!editGroup) return;
 
-      const slidesBefore = window.imageEditorSlides || [];
-      const activeIdxBefore = window.activeImageEditorIndex;
-      let activeCardId = null;
-      if (activeIdxBefore >= 0 && activeIdxBefore < slidesBefore.length) {
-        const activeCard = slidesBefore[activeIdxBefore];
-        activeCardId = { type: activeCard.type, index: activeCard.index };
-      }
-
       const newHtml = renderImageEditorWidget(p);
 
       const parent = editGroup.parentNode;
@@ -9365,18 +9382,8 @@
       tempDiv.innerHTML = newHtml;
       parent.replaceChild(tempDiv.firstElementChild, editGroup);
 
-      const slidesAfter = window.imageEditorSlides || [];
-      let newActiveIdx = 0;
-      if (activeCardId) {
-        const foundIdx = slidesAfter.findIndex(s => s.type === activeCardId.type && s.index === activeCardId.index);
-        if (foundIdx !== -1) {
-          newActiveIdx = foundIdx;
-        }
-      }
-
-      window.activeImageEditorIndex = newActiveIdx;
       if (typeof window.gotoImageEditorSlide === 'function') {
-        window.gotoImageEditorSlide(newActiveIdx);
+        window.gotoImageEditorSlide(window.activeImageEditorIndex);
       }
     };
 
