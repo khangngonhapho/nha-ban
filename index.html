@@ -3202,6 +3202,265 @@
       flex-shrink: 0;
     }
     
+    
+    /* ============================================================ */
+    /*  ⚡ CAROUSEL-BASED IMAGE EDITOR STYLES (US-084)               */
+    /* ============================================================ */
+    .image-editor-carousel-container {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+    .carousel-viewport-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 75%; /* 4:3 Aspect Ratio */
+      background: #0d0d0f;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .carousel-slides-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .carousel-slide-item {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-slide-item img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 18px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: all 0.2s;
+    }
+    .carousel-nav-btn:hover {
+      background: rgba(255, 191, 36, 0.8);
+      color: #000;
+      border-color: var(--gold);
+    }
+    .carousel-nav-btn.prev-btn {
+      left: 10px;
+    }
+    .carousel-nav-btn.next-btn {
+      right: 10px;
+    }
+    .carousel-slide-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 5;
+    }
+    .carousel-order-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--green);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(39, 174, 96, 0.5);
+    }
+    .carousel-role-indicator {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .thumbnail-strip-wrapper {
+      position: relative;
+      margin-top: 10px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 6px;
+    }
+    .thumbnail-strip-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,191,36,0.3) transparent;
+    }
+    .thumbnail-strip-scroll::-webkit-scrollbar {
+      height: 4px;
+    }
+    .thumbnail-strip-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255,191,36,0.3);
+      border-radius: 2px;
+    }
+    .thumbnail-item-card {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      overflow: hidden;
+      background: #000;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .thumbnail-item-card.active-item {
+      border-color: var(--gold);
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(255, 191, 36, 0.4);
+    }
+    .thumbnail-item-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.75;
+      transition: opacity 0.2s;
+    }
+    .thumbnail-item-card.active-item img {
+      opacity: 1;
+    }
+    .thumb-mini-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 9px;
+      padding: 1px 3px;
+      border-radius: 3px;
+      color: #fff;
+      font-weight: 800;
+      line-height: 1;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .thumb-mini-badge.facade-badge {
+      background: rgba(192, 57, 43, 0.95);
+    }
+    .thumb-mini-badge.cover-badge {
+      background: rgba(243, 156, 18, 0.95);
+      color: #000;
+    }
+    .thumb-mini-badge.sodo-badge {
+      background: rgba(142, 68, 173, 0.95);
+    }
+    .thumb-mini-badge.public-badge {
+      background: rgba(39, 174, 96, 0.95);
+      font-size: 8.5px;
+      top: auto;
+      bottom: 2px;
+      right: 2px;
+    }
+    .image-editor-control-panel {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .control-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .control-btn {
+      flex: 1;
+      min-width: 110px;
+      min-height: 44px; /* Touch-friendly size */
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .control-btn.active-btn-facade {
+      background: rgba(192, 57, 43, 0.2);
+      border-color: #e74c3c;
+      color: #fc5c65;
+    }
+    .control-btn.active-btn-cover {
+      background: rgba(243, 156, 18, 0.2);
+      border-color: #f39c12;
+      color: var(--gold);
+    }
+    .control-btn.active-btn-sodo {
+      background: rgba(142, 68, 173, 0.2);
+      border-color: #8e44ad;
+      color: #a55eea;
+    }
+    .control-btn.active-btn-public {
+      background: rgba(39, 174, 96, 0.2);
+      border-color: #2ecc71;
+      color: #2ecc71;
+    }
+
     /* ── Mobile view overrides (US-076.3) ── */
     @media (max-width: 767px) {
       html.filter-active,
@@ -6125,10 +6384,15 @@
         const cleanImgUrls = imgUrls.filter(u => !(window.isListingSodoUrl && window.isListingSodoUrl(u, p)));
         let thumbUrl = '';
         
-        const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
-        if (effectiveImgMatTien) {
-          thumbUrl = effectiveImgMatTien;
+        if (isAdmin) {
+          const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
+          if (effectiveImgMatTien) {
+            thumbUrl = effectiveImgMatTien;
+          } else {
+            thumbUrl = cleanImgUrls[0] || imgUrls[0];
+          }
         } else {
+          // Khách hàng: lấy ảnh nền đầu tiên (first public image), bảo mật ảnh mặt tiền
           thumbUrl = cleanImgUrls[0] || imgUrls[0];
         }
         const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
@@ -8370,9 +8634,6 @@
       };
 
       // Priority duplicate filtering:
-      // - Original slots (interior 2-15, alley 1-10) take absolute priority.
-      // - Role slots (interior 1 (cover), sodo 1-5, facade 0) are evaluated last.
-      // If a role slot has the same URL as an already rendered slot, it is hidden.
       const priorityList = [
         ...cards.filter(c => (c.type === 'interior' && c.index > 1) || c.type === 'alley'),
         ...cards.filter(c => (c.type === 'interior' && c.index === 1) || c.type === 'sodo' || c.type === 'facade')
@@ -8385,14 +8646,10 @@
           c.shouldRender = false;
           return;
         }
-
-        // If it is an interior or alley slot, but its URL is classified as a Sổ (diagram),
-        // we must NOT render it as an interior/alley card. It should only render as a Sổ card!
         if ((c.type === 'interior' || c.type === 'alley') && isSodoUrl(c.url)) {
           c.shouldRender = false;
           return;
         }
-
         if (!renderedUrls.has(normUrl)) {
           c.shouldRender = true;
           renderedUrls.add(normUrl);
@@ -8401,66 +8658,16 @@
         }
       });
 
-      let html = `
-        <div class="admin-edit-group" id="imageEditorCurationGroup" style="margin-top: 10px;">
-          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CỌ SƠN CHỌN NHANH 🎨)</label>
-          
-          <!-- LOCAL IMAGE UPLOADER (US-053) -->
-          <div class="local-uploader-panel" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 191, 36, 0.08); padding: 8px 12px; border-radius: 10px; border: 1.5px solid rgba(255, 191, 36, 0.2); margin-bottom: 10px; flex-wrap: wrap; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); width: 100%; box-sizing: border-box;">
-            <div style="font-size: 11px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 4px;">
-              📁 TẢI LÊN:
-            </div>
-            <select id="localUploadType" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,191,36,0.3); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; font-family: inherit;">
-              <option value="interior">Ảnh thường (Có nén)</option>
-              <option value="sodo">Ảnh sổ (Ko nén)</option>
-            </select>
-            <button type="button" id="uploadLocalBtn" onclick="document.getElementById('localImageFileInput').click()" style="background: var(--gold); color: #1c1c1e; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; font-family: inherit; text-transform: uppercase;">
-              ➕ UP ẢNH
-            </button>
-            <input type="file" id="localImageFileInput" multiple accept="image/*" style="display: none;" onchange="window.handleLocalImageUpload(event)" />
-            <div id="localUploadProgress" style="font-size: 11px; font-weight: 700; color: #fff; margin-left: auto; display: none;">
-              ⌛ Đang tải: <span id="localUploadProgressTxt">0/0</span>
-            </div>
-          </div>
-
-          <!-- IMAGE EDITOR TOOLBAR -->
-          <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; width: 100%; box-sizing: border-box;">
-            <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
-              🔒 Mặt Tiền
-            </button>
-            <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
-              ⭐ Nền
-            </button>
-            <button type="button" id="toolSodoBtn" onclick="selectImageEditorTool('sodo')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
-              🔒 Sổ
-            </button>
-            ${!p.isFromPoolOnly ? `
-            <button type="button" id="toolUncheckAllBtn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.2); border: 1px solid var(--red); color: var(--red); padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
-              ✕ Bỏ All
-            </button>
-            ` : ''}
-            <button type="button" onclick="window.rotateAllListingImages(90)" style="background: rgba(255,191,36,0.12); border: 1px solid rgba(255,191,36,0.3); color: var(--gold); padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
-              🔄 Xoay tất cả +90°
-            </button>
-            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center; flex: 0.8;">
-              ✕ Hủy
-            </button>
-          </div>
-          <div style="font-size: 9.5px; color: var(--gold); text-align: center; margin-top: -6px; margin-bottom: 10px; font-weight: 600;">
-            💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Nền/Sổ. Click ảnh bình thường để Ẩn/Hiện!
-          </div>
-
-          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
-      `;
+      const renderedCards = cards.filter(c => c.shouldRender);
 
       // Recover current selected public interior/alley indices
       let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || '');
       let currentPublicCover = '';
       if (!p.isFromPoolOnly) {
         if (p.pool_row_data) {
-          currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
+          currentPublicCover = p.pool_row_data[40] || '';
         } else if (p.imgs && p.imgs.length > 0) {
-          currentPublicCover = p.imgs[0]; // First public image
+          currentPublicCover = p.imgs[0];
         }
       }
       
@@ -8471,7 +8678,6 @@
         currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
         currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
       } else if (!p.isFromPoolOnly && p.pool_row_data) {
-        // Fallback for legacy listings without saved indices: reconstruct from Source URLs
         const cleanPublicImages = [];
         if (p.original_row_data) {
           for (let i = 20; i <= 29; i++) {
@@ -8515,21 +8721,15 @@
         currentInteriorIndices = intIndices.join(',');
       }
 
-      // Sort cards: Sổ (1) -> Mặt tiền (2) -> Nền (3) -> Public Checked (4) -> Unchecked (5)
-      const renderedCards = cards.filter(c => c.shouldRender);
-      
       const getCardSortWeight = (c) => {
         const normUrl = normalizeImgUrl(c.url);
         if (!normUrl) return 99;
 
-        // 1. Sổ
         if (isSodoUrl(c.url)) return 1;
 
-        // 2. Mặt tiền
         const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
         if (targetMatTien && normUrl === normalizeImgUrl(targetMatTien)) return 2;
 
-        // 3. Nền
         let targetNen = '';
         if (!p.isFromPoolOnly) {
           if (p.pool_row_data) {
@@ -8542,7 +8742,6 @@
         }
         if (targetNen && normUrl === normalizeImgUrl(targetNen)) return 3;
 
-        // 4. Các hình chọn public khác
         let isPublic = false;
         if (!p.isFromPoolOnly) {
           if (c.type === "interior") {
@@ -8555,18 +8754,115 @@
         }
         if (isPublic) return 4;
 
-        // 5. Các hình còn lại
         return 5;
       };
 
       renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+      window.imageEditorSlides = renderedCards;
 
-      renderedCards.forEach(c => {
-        html += renderImageCardForEdit(c.type, c.index, c.url, p);
+      let slidesHtml = '';
+      renderedCards.forEach((c, idx) => {
+        slidesHtml += `
+          <div class="carousel-slide-item" data-slide-index="${idx}">
+            <img src="${fixImgUrl(c.url, 'w600')}" alt="Slide ${idx + 1}">
+            <div class="carousel-slide-badge">${c.type === "facade" ? "Mặt Tiền" : (c.type === "sodo" ? `Sổ ${c.index}` : (c.type === "interior" ? `Nội Thất ${c.index}` : `Hẻm ${c.index}`))}</div>
+            <div class="carousel-order-indicator" id="carouselOrderIndicator-${idx}" style="display: none;">#1</div>
+            <div class="carousel-role-indicator" id="carouselRoleIndicator-${idx}" style="display: none;"></div>
+          </div>
+        `;
       });
 
-      html += `
+      let html = `
+        <div class="admin-edit-group" id="imageEditorCurationGroup" style="margin-top: 10px;">
+          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CAROUSEL TRƯỢT 📱)</label>
+          
+          <!-- LOCAL IMAGE UPLOADER (US-053) -->
+          <div class="local-uploader-panel" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 191, 36, 0.08); padding: 8px 12px; border-radius: 10px; border: 1.5px solid rgba(255, 191, 36, 0.2); margin-bottom: 10px; flex-wrap: wrap; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); width: 100%; box-sizing: border-box;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 4px;">
+              📁 TẢI LÊN:
+            </div>
+            <select id="localUploadType" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,191,36,0.3); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; font-family: inherit;">
+              <option value="interior">Ảnh thường (Có nén)</option>
+              <option value="sodo">Ảnh sổ (Ko nén)</option>
+            </select>
+            <button type="button" id="uploadLocalBtn" onclick="document.getElementById('localImageFileInput').click()" style="background: var(--gold); color: #1c1c1e; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; font-family: inherit; text-transform: uppercase;">
+              ➕ UP ẢNH
+            </button>
+            <input type="file" id="localImageFileInput" multiple accept="image/*" style="display: none;" onchange="window.handleLocalImageUpload(event)" />
+            <div id="localUploadProgress" style="font-size: 11px; font-weight: 700; color: #fff; margin-left: auto; display: none;">
+              ⌛ Đang tải: <span id="localUploadProgressTxt">0/0</span>
+            </div>
           </div>
+
+          <!-- CAROUSEL VIEWPORT -->
+          <div class="image-editor-carousel-container">
+            <div class="carousel-viewport-wrapper" id="carouselViewportWrapper" 
+                 ontouchstart="window.handleCarouselTouchStart(event)" 
+                 ontouchmove="window.handleCarouselTouchMove(event)" 
+                 ontouchend="window.handleCarouselTouchEnd(event)">
+              <div class="carousel-slides-track" id="carouselSlidesTrack">
+                ${slidesHtml}
+              </div>
+              <button type="button" class="carousel-nav-btn prev-btn" onclick="window.slideImageEditorCarousel(-1)">◀</button>
+              <button type="button" class="carousel-nav-btn next-btn" onclick="window.slideImageEditorCarousel(1)">▶</button>
+            </div>
+
+            <!-- THUMBNAIL STRIP -->
+            <div class="thumbnail-strip-wrapper">
+              <div class="thumbnail-strip-scroll" id="thumbnailStripScroll">
+                ${renderedCards.map((c, idx) => `
+                  <div class="thumbnail-item-card" id="thumbCard-${idx}" onclick="window.gotoImageEditorSlide(${idx})">
+                    <img src="${fixImgUrl(c.url, 'w100')}" alt="Thumb ${idx + 1}" loading="lazy">
+                    <span class="thumb-mini-badge" id="thumbMiniBadge-${idx}"></span>
+                    <span class="thumb-mini-badge public-badge" id="thumbPublicBadge-${idx}"></span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- CONTROL PANEL -->
+            <div class="image-editor-control-panel">
+              <div class="control-row">
+                <button type="button" id="ctrlFacadeBtn" class="control-btn" onclick="window.activeImageToggleFacade()">
+                  🔒 Mặt Tiền
+                </button>
+                <button type="button" id="ctrlCoverBtn" class="control-btn" onclick="window.activeImageToggleCover()">
+                  ⭐ Ảnh Nền
+                </button>
+                <button type="button" id="ctrlSodoBtn" class="control-btn" onclick="window.activeImageToggleSodo()">
+                  📜 Gán Sổ đỏ
+                </button>
+                <button type="button" id="ctrlPublicBtn" class="control-btn" onclick="window.activeImageTogglePublic()">
+                  👁️ Hiện Public
+                </button>
+              </div>
+              <div class="control-row">
+                <button type="button" class="control-btn" onclick="window.activeImageMoveOrder(-1)">
+                  ◀ Di chuyển lên
+                </button>
+                <button type="button" class="control-btn" onclick="window.activeImageMoveOrder(1)">
+                  Di chuyển xuống ▶
+                </button>
+                <button type="button" class="control-btn" onclick="window.activeImageRotate(90)">
+                  🔄 Xoay +90°
+                </button>
+                <button type="button" class="control-btn" onclick="window.activeImageZoom()">
+                  🔍 Xem ảnh gốc
+                </button>
+              </div>
+              ${!p.isFromPoolOnly ? `
+              <div class="control-row" style="margin-top: 5px;">
+                <button type="button" class="control-btn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red); min-height: 38px;">
+                  ✕ Bỏ chọn hiển thị tất cả
+                </button>
+                <button type="button" class="control-btn" onclick="window.rotateAllListingImages(90)" style="background: rgba(255,191,36,0.08); border-color: rgba(255,191,36,0.3); color: var(--gold); min-height: 38px;">
+                  🔄 Xoay tất cả ảnh +90°
+                </button>
+              </div>
+              ` : ''}
+            </div>
+          </div>
+
           <!-- Hidden Inputs to hold current selections -->
           <input type="hidden" id="editCoverImgUrl" value="${currentCover}">
           <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
@@ -8578,261 +8874,19 @@
           <input type="hidden" id="editSodo4Url" value="${p.pool_row_data ? (p.pool_row_data[81] || '') : (p.raw_sodo4 || '')}">
           <input type="hidden" id="editSodo5Url" value="${p.pool_row_data ? (p.pool_row_data[82] || '') : (p.raw_sodo5 || '')}">
         </div>
+        
+        <script>
+          setTimeout(() => {
+            if (typeof window.refreshImageEditorUI === 'function') {
+              window.refreshImageEditorUI();
+            }
+          }, 50);
+        </script>
       `;
 
       return html;
     }
 
-    function renderImageCardForEdit(type, index, url, p) {
-      const normUrl = normalizeImgUrl(url);
-      
-      let isMatTien = false;
-      const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
-      isMatTien = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
-
-      let isAnhNen = false;
-      let targetNen = '';
-      if (!p.isFromPoolOnly) {
-        if (p.pool_row_data) {
-          targetNen = p.pool_row_data[40] || '';
-        } else if (p.original_row_data) {
-          targetNen = p.original_row_data[20] || '';
-        } else if (p.imgs && p.imgs.length > 0) {
-          targetNen = p.imgs[0] || '';
-        }
-      }
-      isAnhNen = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
-
-      // Check if this image is Sổ 1 to Sổ 5
-      let sodo1Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '');
-      let sodo2Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '');
-      let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3) || '');
-      let sodo4Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4) || '');
-      let sodo5Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5) || '');
-      
-      let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
-      let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
-      let isSodo3 = normUrl !== '' && normUrl === normalizeImgUrl(sodo3Val);
-      let isSodo4 = normUrl !== '' && normUrl === normalizeImgUrl(sodo4Val);
-      let isSodo5 = normUrl !== '' && normUrl === normalizeImgUrl(sodo5Val);
-      let isSodo = isSodo1 || isSodo2 || isSodo3 || isSodo4 || isSodo5;
-      
-      if (isSodo) {
-        isAnhNen = false;
-        isMatTien = false;
-      }
-
-      let isPublic = false;
-      if (p.isFromPoolOnly) {
-        isPublic = false;
-      } else if (type === "facade" || type === "sodo") {
-        isPublic = false; // Mặt tiền thô và ảnh sổ không hiển thị trong carousel công khai mặc định
-      } else if (type === "interior") {
-        if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
-          const publicIntStr = String(p.pool_row_data[62] || '').trim();
-          const indices = publicIntStr.split(',').map(s => s.trim());
-          isPublic = indices.includes(String(index));
-        } else {
-          // Fallback matching by Source URL
-          const cleanPublicImages = [];
-          if (p.original_row_data) {
-            for (let i = 20; i <= 29; i++) {
-              if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
-            }
-          } else {
-            cleanPublicImages.push(...(p.imgs || []));
-          }
-          const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
-          isPublic = normPublic.includes(normUrl);
-        }
-      } else if (type === "alley") {
-        if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
-          const publicAlleyStr = String(p.pool_row_data[63] || '').trim();
-          const indices = publicAlleyStr.split(',').map(s => s.trim());
-          isPublic = indices.includes(String(index));
-        } else {
-          // Fallback matching by Source URL
-          const cleanPublicImages = [];
-          if (p.original_row_data) {
-            for (let i = 20; i <= 29; i++) {
-              if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
-            }
-          } else {
-            cleanPublicImages.push(...(p.imgs || []));
-          }
-          const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
-          isPublic = normPublic.includes(normUrl);
-        }
-      }
-
-      const typeBadge = type === "facade" ? "Mặt Tiền" : (type === "sodo" ? `Sổ ${index}` : (type === "interior" ? `Nội Thất ${index}` : `Hẻm ${index}`));
-      const badgeColor = type === "facade" ? "var(--red)" : (type === "sodo" ? "#8e44ad" : (type === "interior" ? "var(--green)" : "var(--blue)"));
-      
-      const cardBorder = isMatTien ? '2px solid var(--red)' : (isAnhNen ? '2px solid var(--gold)' : (isSodo ? '2px solid #8e44ad' : (isPublic ? 'rgba(39, 174, 96, 0.5)' : 'transparent')));
-
-      return `
-        <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isSodo ? 'is-sodo' : ''} ${isPublic ? 'is-public' : ''}" 
-          data-type="${type}" data-index="${index}" data-url="${url}"
-          style="position: relative; background: #000; border: ${cardBorder}; border-radius: 8px; overflow: hidden; display: block; width: 100%; box-sizing: border-box;">
-          <div class="edit-img-card-wrap" style="position: relative; width: 100%; height: 0; padding-top: 75%; overflow: hidden; cursor: pointer;" 
-            onclick="window.onImageCardClick(event, this.closest('.edit-img-card'))">
-            <img src="${fixImgUrl(url, 'w200')}" alt="Ảnh ${index}" loading="lazy"
-              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
-            
-            <!-- CENTER VIEW FULL IMAGE BUTTON (US-083) -->
-            <div class="view-full-center-btn" onclick="event.stopPropagation(); window.open('${url}', '_blank')" 
-              style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.65); border: 1.5px solid var(--gold); color: var(--gold); border-radius: 50%; width: 32px; height: 32px; z-index: 12; cursor: pointer; transition: all 0.2s; opacity: 0;"
-              onmouseover="this.style.background='var(--gold)'; this.style.color='#000';"
-              onmouseout="this.style.background='rgba(0,0,0,0.65)'; this.style.color='var(--gold)';"
-              title="Click để xem ảnh gốc full-size">
-              🔍
-            </div>
-
-            <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px; z-index: 5;">
-              ${typeBadge}
-            </span>
-            ${isMatTien ? `
-              <span class="mattien-lock-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Mặt Tiền</span>
-            ` : ''}
-            ${isAnhNen && !isMatTien && !isSodo ? `
-              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Nền</span>
-            ` : ''}
-            ${isSodo1 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 1</span>` : ''}
-            ${isSodo2 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 2</span>` : ''}
-            ${isSodo3 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 3</span>` : ''}
-            ${isSodo4 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 4</span>` : ''}
-            ${isSodo5 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 5</span>` : ''}
-            
-            <!-- INDIVIDUAL ROTATION BUTTON (US-083) -->
-            ${url.includes('cloudinary.com') ? `
-              <button type="button" onclick="event.stopPropagation(); window.rotateSingleCurationImage('${type}', ${index}, 90)" 
-                style="position: absolute; bottom: 4px; left: 4px; background: rgba(0,0,0,0.65); border: 1px solid rgba(255,191,36,0.4); color: var(--gold); border-radius: 6px; padding: 4px; font-size: 10px; font-weight: 700; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-family: inherit;"
-                title="Xoay ảnh này +90°">
-                🔄
-              </button>
-            ` : ''}
-
-            ${type !== "facade" && type !== "sodo" ? `
-              <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; background: rgba(0,0,0,0.65); padding: 4px; border-radius: 6px; cursor: pointer; margin: 0; z-index: 10; line-height: 0;">
-                <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="window.toggleImagePublic(this)" 
-                  style="margin: 0; transform: scale(1.1); cursor: pointer;">
-              </label>
-            ` : ''}
-          </div>
-        </div>
-      `;
-    }
-
-    window.currentImageEditorTool = 'none';
-    window.selectImageEditorTool = function(tool) {
-      window.currentImageEditorTool = tool;
-      const facadeBtn = document.getElementById('toolFacadeBtn');
-      const coverBtn = document.getElementById('toolCoverBtn');
-      const sodoBtn = document.getElementById('toolSodoBtn');
-      const clearBtn = document.getElementById('toolClearBtn');
-      if (!facadeBtn || !coverBtn || !clearBtn) return;
-      
-      // Reset to dark transparent
-      facadeBtn.style.background = 'rgba(0,0,0,0.5)';
-      facadeBtn.style.color = '#fff';
-      facadeBtn.style.borderColor = 'rgba(255,255,255,0.15)';
-      facadeBtn.style.boxShadow = 'none';
-      
-      coverBtn.style.background = 'rgba(0,0,0,0.5)';
-      coverBtn.style.color = '#fff';
-      coverBtn.style.borderColor = 'rgba(255,255,255,0.15)';
-      coverBtn.style.boxShadow = 'none';
-
-      if (sodoBtn) {
-        sodoBtn.style.background = 'rgba(0,0,0,0.5)';
-        sodoBtn.style.color = '#fff';
-        sodoBtn.style.borderColor = 'rgba(255,255,255,0.15)';
-        sodoBtn.style.boxShadow = 'none';
-      }
-      
-      if (tool === 'facade') {
-        facadeBtn.style.background = 'var(--red)';
-        facadeBtn.style.borderColor = 'var(--red)';
-        facadeBtn.style.boxShadow = '0 0 8px rgba(231, 76, 60, 0.6)';
-        clearBtn.style.display = 'flex'; // Show cancel button
-      } else if (tool === 'cover') {
-        coverBtn.style.background = 'var(--gold)';
-        coverBtn.style.borderColor = 'var(--gold)';
-        coverBtn.style.color = '#000';
-        coverBtn.style.boxShadow = '0 0 8px rgba(241, 196, 15, 0.6)';
-        clearBtn.style.display = 'flex'; // Show cancel button
-      } else if (tool === 'sodo') {
-        if (sodoBtn) {
-          sodoBtn.style.background = '#8e44ad';
-          sodoBtn.style.borderColor = '#8e44ad';
-          sodoBtn.style.boxShadow = '0 0 8px rgba(142, 68, 173, 0.6)';
-        }
-        clearBtn.style.display = 'flex'; // Show cancel button
-      } else {
-        clearBtn.style.display = 'none'; // Hide cancel button
-      }
-    };
-
-    window.onImageCardClick = function(event, card) {
-      if (event) event.stopPropagation();
-      const tool = window.currentImageEditorTool || 'none';
-      
-      if (tool === 'facade') {
-        window.setImageAsMatTien(event, card);
-      } else if (tool === 'cover') {
-        window.setImageAsAnhNen(event, card);
-      } else if (tool === 'sodo') {
-        window.setImageAsSodo(event, card);
-      } else {
-        // Toggle public visibility
-        const cb = card.querySelector('.edit-img-pub-cb');
-        if (cb) {
-          cb.checked = !cb.checked;
-          window.toggleImagePublic(cb);
-        }
-      }
-    };
-
-    window.sortCurationImageGrid = function() {
-      const grid = document.getElementById('imageEditorGrid');
-      if (!grid) return;
-
-      // Save scroll positions of all scrollable ancestors
-      const scrollStates = [];
-      let parent = grid.parentElement;
-      while (parent) {
-        scrollStates.push({
-          element: parent,
-          scrollTop: parent.scrollTop,
-          scrollLeft: parent.scrollLeft
-        });
-        parent = parent.parentElement;
-      }
-      const windowScrollTop = window.scrollY || document.documentElement.scrollTop;
-      const windowScrollLeft = window.scrollX || document.documentElement.scrollLeft;
-
-      // Track active element to prevent auto-scrolling on re-focus
-      const activeEl = document.activeElement;
-      const activeIsInside = grid.contains(activeEl);
-
-      const cards = Array.from(grid.querySelectorAll('.edit-img-card'));
-
-      const getCardWeight = (card) => {
-        if (card.classList.contains('is-sodo')) return 1;
-        if (card.classList.contains('is-mattien')) return 2;
-        if (card.classList.contains('is-anhnen')) return 3;
-        if (card.classList.contains('is-public')) return 4;
-        return 5;
-      };
-
-      cards.sort((a, b) => getCardWeight(a) - getCardWeight(b));
-
-      // Temporarily blur active element inside grid to block browser auto-scroll-to-focus
-      if (activeIsInside && activeEl && typeof activeEl.blur === 'function') {
-        activeEl.blur();
-      }
-
-      cards.forEach(card => grid.appendChild(card));
 
       // Restore active element focus without scrolling
       if (activeIsInside && activeEl && typeof activeEl.focus === 'function') {
@@ -8847,82 +8901,198 @@
       window.scrollTo(windowScrollLeft, windowScrollTop);
     };
 
-    window.setImageAsMatTien = function(event, card) {
-      if (event) event.stopPropagation();
-      const url = card.dataset.url;
+    // --- CAROUSEL IMAGE EDITOR INTERACTORS (US-084) ---
+    window.sortCurationImageGrid = function() {}; // Dummy for compatibility
+    window.activeImageEditorIndex = 0;
 
-      document.querySelectorAll('.edit-img-card').forEach(c => {
-        c.classList.remove('is-mattien');
-        const lock = c.querySelector('.mattien-lock-badge');
-        if (lock) lock.remove();
+    window.slideImageEditorCarousel = function(direction) {
+      const slides = window.imageEditorSlides || [];
+      if (slides.length === 0) return;
+      let nextIdx = window.activeImageEditorIndex + direction;
+      if (nextIdx < 0) nextIdx = slides.length - 1;
+      if (nextIdx >= slides.length) nextIdx = 0;
+      window.gotoImageEditorSlide(nextIdx);
+    };
+
+    window.gotoImageEditorSlide = function(idx) {
+      const slides = window.imageEditorSlides || [];
+      if (slides.length === 0) return;
+      if (idx < 0) idx = 0;
+      if (idx >= slides.length) idx = slides.length - 1;
+      
+      window.activeImageEditorIndex = idx;
+      
+      const track = document.getElementById('carouselSlidesTrack');
+      if (track) {
+        track.style.transform = `translateX(-${idx * 100}%)`;
+      }
+      
+      document.querySelectorAll('.thumbnail-item-card').forEach((card, cidx) => {
+        if (cidx === idx) {
+          card.classList.add('active');
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          card.classList.remove('active');
+        }
       });
+      
+      window.refreshImageEditorUI();
+    };
 
-      card.classList.add('is-mattien');
+    // Swipe gestures
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-      const imgWrapper = card.querySelector('.edit-img-card-wrap');
-      if (imgWrapper) {
-        const lockSpan = document.createElement('span');
-        lockSpan.className = 'mattien-lock-badge';
-        lockSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;';
-        lockSpan.innerHTML = '🔒 Mặt Tiền';
-        imgWrapper.appendChild(lockSpan);
+    window.handleCarouselTouchStart = function(event) {
+      touchStartX = event.changedTouches[0].screenX;
+    };
+
+    window.handleCarouselTouchMove = function(event) {
+      // Swipe detection is handled on touchend
+    };
+
+    window.handleCarouselTouchEnd = function(event) {
+      touchEndX = event.changedTouches[0].screenX;
+      window.handleCarouselSwipe();
+    };
+
+    window.handleCarouselSwipe = function() {
+      const minSwipeDistance = 50;
+      const diffX = touchEndX - touchStartX;
+      if (Math.abs(diffX) > minSwipeDistance) {
+        if (diffX > 0) {
+          window.slideImageEditorCarousel(-1);
+        } else {
+          window.slideImageEditorCarousel(1);
+        }
       }
+    };
 
-      // Remove cover badge on this card if any
-      const star = card.querySelector('.cover-star-badge');
-      if (star) star.remove();
-
-      // Auto-uncheck "Hiện" checkbox for facade image
-      const cb = card.querySelector('.edit-img-pub-cb');
-      if (cb && cb.checked) {
-        cb.checked = false;
-        window.toggleImagePublic(cb);
+    // Helpers to manage lists
+    window.removeImageFromPublicLists = function(url, type, index) {
+      if (type === "interior") {
+        const input = document.getElementById('editPublicInteriorIndices');
+        if (input) {
+          let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
+          indices = indices.filter(i => i !== String(index));
+          input.value = indices.join(',');
+        }
+      } else if (type === "alley") {
+        const input = document.getElementById('editPublicAlleyIndices');
+        if (input) {
+          let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
+          indices = indices.filter(i => i !== String(index));
+          input.value = indices.join(',');
+        }
       }
+    };
 
-      document.getElementById('editCoverImgUrl').value = url;
+    window.removeImageFromSodo = function(url) {
+      const normUrl = normalizeImgUrl(url);
+      if (!normUrl) return;
+      
+      const sodoInputs = [
+        document.getElementById('editSodo1Url'),
+        document.getElementById('editSodo2Url'),
+        document.getElementById('editSodo3Url'),
+        document.getElementById('editSodo4Url'),
+        document.getElementById('editSodo5Url')
+      ];
+      
+      sodoInputs.forEach(input => {
+        if (input && normalizeImgUrl(input.value) === normUrl) {
+          input.value = "";
+        }
+      });
+    };
+
+    // Role Assignments
+    window.activeImageToggleFacade = function() {
+      const slides = window.imageEditorSlides || [];
+      const activeIdx = window.activeImageEditorIndex;
+      const slide = slides[activeIdx];
+      if (!slide) return;
+      
+      const input = document.getElementById('editCoverImgUrl');
+      if (!input) return;
+      
+      const currentVal = input.value.trim();
+      const slideUrl = slide.url.trim();
+      
+      if (normalizeImgUrl(currentVal) === normalizeImgUrl(slideUrl)) {
+        input.value = "";
+      } else {
+        input.value = slideUrl;
+        window.removeImageFromPublicLists(slideUrl, slide.type, slide.index);
+        const coverInput = document.getElementById('editPublicCoverUrl');
+        if (coverInput && normalizeImgUrl(coverInput.value) === normalizeImgUrl(slideUrl)) {
+          coverInput.value = "";
+        }
+      }
+      
+      window.refreshImageEditorUI();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
-      window.sortCurationImageGrid();
     };
 
-    window.setImageAsAnhNen = function(event, card) {
-      if (event) event.stopPropagation();
-      const url = card.dataset.url;
-
-      document.querySelectorAll('.edit-img-card').forEach(c => {
-        c.classList.remove('is-anhnen');
-        const star = c.querySelector('.cover-star-badge');
-        if (star) star.remove();
-      });
-
-      card.classList.add('is-anhnen');
-
-      if (!card.classList.contains('is-mattien')) {
-        const imgWrapper = card.querySelector('.edit-img-card-wrap');
-        if (imgWrapper) {
-          const starSpan = document.createElement('span');
-          starSpan.className = 'cover-star-badge';
-          starSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;';
-          starSpan.innerHTML = '⭐ Ảnh Nền';
-          imgWrapper.appendChild(starSpan);
+    window.activeImageToggleCover = function() {
+      const slides = window.imageEditorSlides || [];
+      const activeIdx = window.activeImageEditorIndex;
+      const slide = slides[activeIdx];
+      if (!slide) return;
+      
+      const input = document.getElementById('editPublicCoverUrl');
+      if (!input) return;
+      
+      const currentVal = input.value.trim();
+      const slideUrl = slide.url.trim();
+      
+      if (normalizeImgUrl(currentVal) === normalizeImgUrl(slideUrl)) {
+        input.value = "";
+      } else {
+        input.value = slideUrl;
+        
+        const facadeInput = document.getElementById('editCoverImgUrl');
+        if (facadeInput && normalizeImgUrl(facadeInput.value) === normalizeImgUrl(slideUrl)) {
+          facadeInput.value = "";
+        }
+        
+        window.removeImageFromSodo(slideUrl);
+        
+        if (slide.type === "interior") {
+          const publicIntInput = document.getElementById('editPublicInteriorIndices');
+          if (publicIntInput) {
+            let indices = publicIntInput.value.split(',').map(s => s.trim()).filter(Boolean);
+            if (!indices.includes(String(slide.index))) {
+              indices.push(String(slide.index));
+              publicIntInput.value = indices.join(',');
+            }
+          }
+        } else if (slide.type === "alley") {
+          const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+          if (publicAlleyInput) {
+            let indices = publicAlleyInput.value.split(',').map(s => s.trim()).filter(Boolean);
+            if (!indices.includes(String(slide.index))) {
+              indices.push(String(slide.index));
+              publicAlleyInput.value = indices.join(',');
+            }
+          }
         }
       }
-
-      document.getElementById('editPublicCoverUrl').value = url;
-
-      // Auto-check "Hiện" checkbox for public cover
-      const cb = card.querySelector('.edit-img-pub-cb');
-      if (cb && !cb.checked) {
-        cb.checked = true;
-        window.toggleImagePublic(cb);
+      
+      window.refreshImageEditorUI();
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
       }
-      window.sortCurationImageGrid();
     };
 
-    window.setImageAsSodo = function(event, card) {
-      if (event) event.stopPropagation();
-      const url = card.dataset.url;
+    window.activeImageToggleSodo = function() {
+      const slides = window.imageEditorSlides || [];
+      const activeIdx = window.activeImageEditorIndex;
+      const slide = slides[activeIdx];
+      if (!slide) return;
+      
       const sodoInputs = [
         document.getElementById('editSodo1Url'),
         document.getElementById('editSodo2Url'),
@@ -8931,70 +9101,410 @@
         document.getElementById('editSodo5Url')
       ];
       if (sodoInputs.some(input => !input)) return;
-
-      const normUrl = normalizeImgUrl(url);
+      
+      const slideUrl = slide.url.trim();
+      const normUrl = normalizeImgUrl(slideUrl);
+      if (!normUrl) return;
+      
       const vals = sodoInputs.map(input => input.value.trim());
       const normVals = vals.map(val => normalizeImgUrl(val));
-
-      // If already marked as any Sổ, toggle it off!
-      const existingIdx = normUrl !== '' ? normVals.indexOf(normUrl) : -1;
+      
+      const existingIdx = normVals.indexOf(normUrl);
       if (existingIdx !== -1) {
         sodoInputs[existingIdx].value = "";
-        card.classList.remove('is-sodo', `is-sodo${existingIdx + 1}`);
-        const badge = card.querySelector('.sodo-badge');
-        if (badge) badge.remove();
-        card.style.borderColor = 'transparent';
+        showToast(`Đã hủy gán Sổ ${existingIdx + 1} cho ảnh này!`, "info");
       } else {
-        // Assign to the first empty slot
         let assigned = false;
         let badgeNum = 1;
         const emptyIdx = vals.indexOf("");
         if (emptyIdx !== -1) {
-          sodoInputs[emptyIdx].value = url;
+          sodoInputs[emptyIdx].value = slideUrl;
           assigned = true;
           badgeNum = emptyIdx + 1;
         } else {
-          // All filled, overwrite Sổ 1
-          sodoInputs[0].value = url;
+          sodoInputs[0].value = slideUrl;
           assigned = true;
           badgeNum = 1;
-          // Clear styling on the previous Sổ 1 card
-          const prevS1Url = normVals[0];
-          document.querySelectorAll('.edit-img-card').forEach(c => {
-            if (normalizeImgUrl(c.dataset.url) === prevS1Url) {
-              c.classList.remove('is-sodo', 'is-sodo1');
-              const badge = c.querySelector('.sodo-badge');
-              if (badge) badge.remove();
-              c.style.borderColor = 'transparent';
-            }
-          });
+          showToast("Tất cả 5 vị trí Sổ đỏ đã đầy. Tự động ghi đè vị trí Sổ 1!", "warning");
         }
-
+        
         if (assigned) {
-          card.classList.add('is-sodo', `is-sodo${badgeNum}`);
-          card.style.borderColor = '#8e44ad';
-          const imgWrapper = card.querySelector('.edit-img-card-wrap');
-          if (imgWrapper) {
-            const badgeSpan = document.createElement('span');
-            badgeSpan.className = 'sodo-badge';
-            badgeSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;';
-            badgeSpan.innerHTML = `🔒 Sổ ${badgeNum}`;
-            imgWrapper.appendChild(badgeSpan);
+          window.removeImageFromPublicLists(slideUrl, slide.type, slide.index);
+          
+          const facadeInput = document.getElementById('editCoverImgUrl');
+          if (facadeInput && normalizeImgUrl(facadeInput.value) === normUrl) {
+            facadeInput.value = "";
           }
-
-          // Sodo images are private, auto-uncheck public visibility check box
-          const cb = card.querySelector('.edit-img-pub-cb');
-          if (cb && cb.checked) {
-            cb.checked = false;
-            window.toggleImagePublic(cb);
+          
+          const coverInput = document.getElementById('editPublicCoverUrl');
+          if (coverInput && normalizeImgUrl(coverInput.value) === normUrl) {
+            coverInput.value = "";
           }
+          
+          showToast(`Đã gán ảnh này làm Sổ ${badgeNum}!`, "success");
         }
       }
-
+      
+      window.refreshImageEditorUI();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
-      window.sortCurationImageGrid();
+    };
+
+    window.activeImageTogglePublic = function() {
+      const slides = window.imageEditorSlides || [];
+      const activeIdx = window.activeImageEditorIndex;
+      const slide = slides[activeIdx];
+      if (!slide) return;
+      
+      if (slide.type === "facade" || slide.type === "sodo") {
+        showToast("Không thể chọn hiển thị public cho hình Mặt Tiền hoặc Sổ đỏ!", "warning");
+        return;
+      }
+      
+      const slideUrl = slide.url.trim();
+      const normUrl = normalizeImgUrl(slideUrl);
+      
+      const facadeInput = document.getElementById('editCoverImgUrl');
+      if (facadeInput && normalizeImgUrl(facadeInput.value) === normUrl) {
+        showToast("Không thể chọn hiển thị public cho hình Mặt Tiền!", "warning");
+        return;
+      }
+      
+      const sodoInputs = [
+        document.getElementById('editSodo1Url'),
+        document.getElementById('editSodo2Url'),
+        document.getElementById('editSodo3Url'),
+        document.getElementById('editSodo4Url'),
+        document.getElementById('editSodo5Url')
+      ];
+      const sodoVals = sodoInputs.map(input => normalizeImgUrl(input?.value || ''));
+      if (sodoVals.includes(normUrl)) {
+        showToast("Không thể chọn hiển thị public cho hình Sổ đỏ!", "warning");
+        return;
+      }
+      
+      if (slide.type === "interior") {
+        const input = document.getElementById('editPublicInteriorIndices');
+        if (!input) return;
+        let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
+        const indexStr = String(slide.index);
+        
+        if (indices.includes(indexStr)) {
+          indices = indices.filter(i => i !== indexStr);
+          const coverInput = document.getElementById('editPublicCoverUrl');
+          if (coverInput && normalizeImgUrl(coverInput.value) === normUrl) {
+            coverInput.value = "";
+          }
+        } else {
+          indices.push(indexStr);
+        }
+        input.value = indices.join(',');
+      } else if (slide.type === "alley") {
+        const input = document.getElementById('editPublicAlleyIndices');
+        if (!input) return;
+        let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
+        const indexStr = String(slide.index);
+        
+        if (indices.includes(indexStr)) {
+          indices = indices.filter(i => i !== indexStr);
+          const coverInput = document.getElementById('editPublicCoverUrl');
+          if (coverInput && normalizeImgUrl(coverInput.value) === normUrl) {
+            coverInput.value = "";
+          }
+        } else {
+          indices.push(indexStr);
+        }
+        input.value = indices.join(',');
+      }
+      
+      window.refreshImageEditorUI();
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+    };
+
+    // Manual Reordering
+    window.activeImageMoveOrder = function(direction) {
+      const p = window.activeCurationListing;
+      if (!p) return;
+      const activeIdx = window.activeImageEditorIndex;
+      const slides = window.imageEditorSlides || [];
+      if (activeIdx < 0 || activeIdx >= slides.length) return;
+      const slide = slides[activeIdx];
+      
+      if (slide.type === "interior") {
+        const input = document.getElementById('editPublicInteriorIndices');
+        if (!input) return;
+        let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
+        const pos = indices.indexOf(String(slide.index));
+        if (pos === -1) {
+          showToast("Hình này chưa được chọn hiển thị public để sắp xếp!", "warning");
+          return;
+        }
+        const newPos = pos + direction;
+        if (newPos >= 0 && newPos < indices.length) {
+          const temp = indices[pos];
+          indices[pos] = indices[newPos];
+          indices[newPos] = temp;
+          input.value = indices.join(',');
+          
+          window.refreshImageEditorUI();
+          if (typeof window.updateLivePreview === 'function') {
+            window.updateLivePreview();
+          }
+        }
+      } else if (slide.type === "alley") {
+        const input = document.getElementById('editPublicAlleyIndices');
+        if (!input) return;
+        let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
+        const pos = indices.indexOf(String(slide.index));
+        if (pos === -1) {
+          showToast("Hình này chưa được chọn hiển thị public để sắp xếp!", "warning");
+          return;
+        }
+        const newPos = pos + direction;
+        if (newPos >= 0 && newPos < indices.length) {
+          const temp = indices[pos];
+          indices[pos] = indices[newPos];
+          indices[newPos] = temp;
+          input.value = indices.join(',');
+          
+          window.refreshImageEditorUI();
+          if (typeof window.updateLivePreview === 'function') {
+            window.updateLivePreview();
+          }
+        }
+      } else {
+        showToast("Chỉ có thể sắp xếp thứ tự của hình Nội Thất hoặc Hẻm hiển thị public!", "warning");
+      }
+    };
+
+    // Zoom Original Image
+    window.activeImageZoom = function() {
+      const slides = window.imageEditorSlides || [];
+      const activeIdx = window.activeImageEditorIndex;
+      const slide = slides[activeIdx];
+      if (!slide) return;
+      window.open(slide.url, '_blank');
+    };
+
+    // Rotate active image
+    window.activeImageRotate = function(angleOffset) {
+      const slides = window.imageEditorSlides || [];
+      const activeIdx = window.activeImageEditorIndex;
+      const slide = slides[activeIdx];
+      if (!slide) return;
+      window.rotateSingleCurationImage(slide.type, slide.index, angleOffset);
+    };
+
+    // Refresh Editor badges/states
+    window.refreshImageEditorUI = function() {
+      const p = window.activeCurationListing;
+      if (!p) return;
+      
+      const slides = window.imageEditorSlides || [];
+      if (slides.length === 0) return;
+      
+      const facadeUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+      const coverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
+      const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
+      
+      const sodoUrls = [
+        (document.getElementById('editSodo1Url')?.value || '').trim(),
+        (document.getElementById('editSodo2Url')?.value || '').trim(),
+        (document.getElementById('editSodo3Url')?.value || '').trim(),
+        (document.getElementById('editSodo4Url')?.value || '').trim(),
+        (document.getElementById('editSodo5Url')?.value || '').trim()
+      ];
+      
+      const normFacade = normalizeImgUrl(facadeUrl);
+      const normCover = normalizeImgUrl(coverUrl);
+      const normSodos = sodoUrls.map(url => normalizeImgUrl(url));
+      
+      const publicIntIndices = publicIntStr.split(',').map(s => s.trim()).filter(Boolean);
+      const publicAlleyIndices = publicAlleyStr.split(',').map(s => s.trim()).filter(Boolean);
+      
+      const publicImages = window.getPublicImagesFromForm(p);
+      const normPublicImages = publicImages.map(url => normalizeImgUrl(url));
+
+      slides.forEach((c, idx) => {
+        const normUrl = normalizeImgUrl(c.url);
+        const isFacade = normUrl && normUrl === normFacade;
+        const isCover = normUrl && normUrl === normCover;
+        
+        let sodoNum = 0;
+        if (normUrl) {
+          const sidx = normSodos.indexOf(normUrl);
+          if (sidx !== -1) {
+            sodoNum = sidx + 1;
+          }
+        }
+        
+        let isPublic = false;
+        if (c.type === "interior") {
+          isPublic = publicIntIndices.includes(String(c.index));
+        } else if (c.type === "alley") {
+          isPublic = publicAlleyIndices.includes(String(c.index));
+        }
+        
+        const orderInd = document.getElementById(`carouselOrderIndicator-${idx}`);
+        const roleInd = document.getElementById(`carouselRoleIndicator-${idx}`);
+        
+        if (orderInd) {
+          if (isPublic || isCover) {
+            const orderIdx = normPublicImages.indexOf(normUrl);
+            if (orderIdx !== -1) {
+              orderInd.style.display = 'block';
+              orderInd.innerHTML = `#${orderIdx + 1}`;
+              orderInd.className = 'carousel-order-indicator public-order';
+            } else {
+              orderInd.style.display = 'none';
+            }
+          } else {
+            orderInd.style.display = 'none';
+          }
+        }
+        
+        if (roleInd) {
+          if (isFacade) {
+            roleInd.style.display = 'block';
+            roleInd.innerHTML = '🔒 Mặt Tiền';
+            roleInd.className = 'carousel-role-indicator role-facade';
+          } else if (sodoNum > 0) {
+            roleInd.style.display = 'block';
+            roleInd.innerHTML = `📜 Sổ ${sodoNum}`;
+            roleInd.className = 'carousel-role-indicator role-sodo';
+          } else if (isCover) {
+            roleInd.style.display = 'block';
+            roleInd.innerHTML = '⭐ Ảnh Nền';
+            roleInd.className = 'carousel-role-indicator role-cover';
+          } else {
+            roleInd.style.display = 'none';
+          }
+        }
+        
+        const thumbCard = document.getElementById(`thumbCard-${idx}`);
+        const miniBadge = document.getElementById(`thumbMiniBadge-${idx}`);
+        const publicBadge = document.getElementById(`thumbPublicBadge-${idx}`);
+        
+        if (thumbCard) {
+          thumbCard.className = `thumbnail-item-card ${idx === window.activeImageEditorIndex ? 'active' : ''}`;
+          if (isFacade) {
+            thumbCard.className += ' is-facade';
+          } else if (sodoNum > 0) {
+            thumbCard.className += ' is-sodo';
+          } else if (isCover) {
+            thumbCard.className += ' is-cover';
+          } else if (isPublic) {
+            thumbCard.className += ' is-public';
+          }
+        }
+        
+        if (miniBadge) {
+          if (isFacade) {
+            miniBadge.style.display = 'flex';
+            miniBadge.innerHTML = '🔒';
+            miniBadge.className = 'thumb-mini-badge badge-facade';
+          } else if (sodoNum > 0) {
+            miniBadge.style.display = 'flex';
+            miniBadge.innerHTML = `S${sodoNum}`;
+            miniBadge.className = 'thumb-mini-badge badge-sodo';
+          } else if (isCover) {
+            miniBadge.style.display = 'flex';
+            miniBadge.innerHTML = '⭐';
+            miniBadge.className = 'thumb-mini-badge badge-cover';
+          } else {
+            miniBadge.style.display = 'none';
+          }
+        }
+        
+        if (publicBadge) {
+          if (isPublic || isCover) {
+            const orderIdx = normPublicImages.indexOf(normUrl);
+            if (orderIdx !== -1) {
+              publicBadge.style.display = 'flex';
+              publicBadge.innerHTML = `#${orderIdx + 1}`;
+              publicBadge.className = 'thumb-mini-badge public-badge active-public';
+            } else {
+              publicBadge.style.display = 'none';
+            }
+          } else {
+            publicBadge.style.display = 'none';
+          }
+        }
+      });
+      
+      const activeIdx = window.activeImageEditorIndex;
+      const activeSlide = slides[activeIdx];
+      if (!activeSlide) return;
+      
+      const activeUrlNorm = normalizeImgUrl(activeSlide.url);
+      const isActiveFacade = activeUrlNorm && activeUrlNorm === normFacade;
+      const isActiveCover = activeUrlNorm && activeUrlNorm === normCover;
+      const isActiveSodo = activeUrlNorm && normSodos.includes(activeUrlNorm);
+      
+      let isActivePublic = false;
+      if (activeSlide.type === "interior") {
+        isActivePublic = publicIntIndices.includes(String(activeSlide.index));
+      } else if (activeSlide.type === "alley") {
+        isActivePublic = publicAlleyIndices.includes(String(activeSlide.index));
+      }
+      
+      const btnFacade = document.getElementById('ctrlFacadeBtn');
+      const btnCover = document.getElementById('ctrlCoverBtn');
+      const btnSodo = document.getElementById('ctrlSodoBtn');
+      const btnPublic = document.getElementById('ctrlPublicBtn');
+      
+      if (btnFacade) {
+        if (isActiveFacade) {
+          btnFacade.style.background = 'var(--red)';
+          btnFacade.style.color = '#fff';
+        } else {
+          btnFacade.style.background = '';
+          btnFacade.style.color = '';
+        }
+      }
+      
+      if (btnCover) {
+        if (isActiveCover) {
+          btnCover.style.background = 'var(--gold)';
+          btnCover.style.color = '#1c1c1e';
+        } else {
+          btnCover.style.background = '';
+          btnCover.style.color = '';
+        }
+      }
+      
+      if (btnSodo) {
+        if (isActiveSodo) {
+          btnSodo.style.background = '#8e44ad';
+          btnSodo.style.color = '#fff';
+        } else {
+          btnSodo.style.background = '';
+          btnSodo.style.color = '';
+        }
+      }
+      
+      if (btnPublic) {
+        if (activeSlide.type === "facade" || activeSlide.type === "sodo" || isActiveFacade || isActiveSodo) {
+          btnPublic.disabled = true;
+          btnPublic.style.opacity = '0.4';
+          btnPublic.style.background = '';
+          btnPublic.style.color = '';
+        } else {
+          btnPublic.disabled = false;
+          btnPublic.style.opacity = '1';
+          if (isActivePublic) {
+            btnPublic.style.background = '#27ae60';
+            btnPublic.style.color = '#fff';
+          } else {
+            btnPublic.style.background = '';
+            btnPublic.style.color = '';
+          }
+        }
+      }
     };
 
     // --- POOL SHEET COLUMN INDEX RESOLVERS (US-073) ---
@@ -9040,6 +9550,75 @@
       }
     }
 
+    window.rotateSingleCurationImage = function(type, index, angleOffset) {
+      const p = window.activeCurationListing;
+      if (!p) return;
+      
+      const slides = window.imageEditorSlides || [];
+      const slide = slides.find(s => s.type === type && s.index === index);
+      if (!slide) return;
+      
+      const url = slide.url;
+      if (!url || !url.includes("cloudinary.com/")) {
+        alert("Chỉ hỗ trợ xoay ảnh đã tải lên Cloudinary!");
+        return;
+      }
+      
+      const newUrl = rotateCloudinaryUrl(url, angleOffset);
+      slide.url = newUrl;
+      
+      if (p.pool_row_data) {
+        if (type === 'interior') {
+          const colIdx = window.getPoolInteriorColIdx(index);
+          p.pool_row_data[colIdx] = newUrl;
+        } else if (type === 'alley') {
+          const colIdx = window.getPoolAlleyColIdx(index);
+          p.pool_row_data[colIdx] = newUrl;
+        } else if (type === 'sodo') {
+          const colIdx = window.getPoolSodoColIdx(index);
+          p.pool_row_data[colIdx] = newUrl;
+        } else if (type === 'facade') {
+          p.pool_row_data[29] = newUrl;
+        }
+      }
+      
+      if (p.imgs) {
+        const normOld = normalizeImgUrl(url);
+        const idxInImgs = p.imgs.findIndex(imgUrl => normalizeImgUrl(imgUrl) === normOld);
+        if (idxInImgs !== -1) {
+          p.imgs[idxInImgs] = newUrl;
+        }
+      }
+      
+      if (type === 'sodo') {
+        const input = document.getElementById(`editSodo${index}Url`);
+        if (input) input.value = newUrl;
+      }
+      
+      const coverInput = document.getElementById('editCoverImgUrl');
+      if (coverInput && normalizeImgUrl(coverInput.value) === normalizeImgUrl(url)) {
+        coverInput.value = newUrl;
+      }
+      const publicCoverInput = document.getElementById('editPublicCoverUrl');
+      if (publicCoverInput && normalizeImgUrl(publicCoverInput.value) === normalizeImgUrl(url)) {
+        publicCoverInput.value = newUrl;
+      }
+      
+      const editGroup = document.getElementById("imageEditorCurationGroup");
+      if (editGroup) {
+        const parent = editGroup.parentNode;
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = renderImageEditorWidget(p);
+        parent.replaceChild(tempDiv.firstElementChild, editGroup);
+      }
+      
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+      
+      showToast(`Đã xoay ảnh này thêm ${angleOffset}°!`, "success");
+    };
+
     window.rotateAllListingImages = function(angleOffset) {
       const p = window.activeCurationListing;
       if (!p) {
@@ -9047,33 +9626,22 @@
         return;
       }
       
-      const cards = document.querySelectorAll('#imageEditorGrid .edit-img-card');
-      if (!cards || cards.length === 0) {
+      const slides = window.imageEditorSlides || [];
+      if (slides.length === 0) {
         alert("Không có hình ảnh nào để xoay!");
         return;
       }
       
       let count = 0;
-      cards.forEach(card => {
-        const url = card.dataset.url;
+      slides.forEach(slide => {
+        const url = slide.url;
         if (url && url.includes("cloudinary.com/")) {
           const newUrl = rotateCloudinaryUrl(url, angleOffset);
-          card.dataset.url = newUrl;
+          slide.url = newUrl;
           
-          const img = card.querySelector('img');
-          if (img) {
-            img.src = fixImgUrl(newUrl, 'w200');
-          }
+          const type = slide.type;
+          const index = parseInt(slide.index, 10);
           
-          const viewBtn = card.querySelector('.view-full-center-btn');
-          if (viewBtn) {
-            viewBtn.setAttribute('onclick', `event.stopPropagation(); window.open('${newUrl}', '_blank')`);
-          }
-          
-          const type = card.dataset.type;
-          const index = parseInt(card.dataset.index, 10);
-          
-          // Update data model
           if (p.pool_row_data) {
             if (type === 'interior') {
               const colIdx = window.getPoolInteriorColIdx(index);
@@ -9098,7 +9666,6 @@
         }
       });
       
-      // Update cover inputs if their selected URL matches the rotated image
       const coverInput = document.getElementById('editCoverImgUrl');
       if (coverInput && coverInput.value) {
         coverInput.value = rotateCloudinaryUrl(coverInput.value, angleOffset);
@@ -9108,73 +9675,19 @@
         publicCoverInput.value = rotateCloudinaryUrl(publicCoverInput.value, angleOffset);
       }
       
+      const editGroup = document.getElementById("imageEditorCurationGroup");
+      if (editGroup) {
+        const parent = editGroup.parentNode;
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = renderImageEditorWidget(p);
+        parent.replaceChild(tempDiv.firstElementChild, editGroup);
+      }
+      
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
       
       showToast(`Đã xoay ${count} ảnh Cloudinary của căn nhà thêm ${angleOffset}°!`, "success");
-    };
-
-    window.rotateSingleCurationImage = function(type, index, angleOffset) {
-      const p = window.activeCurationListing;
-      if (!p) return;
-      
-      const card = document.querySelector(`.edit-img-card[data-type="${type}"][data-index="${index}"]`);
-      if (!card) return;
-      
-      const url = card.dataset.url;
-      if (!url || !url.includes("cloudinary.com/")) {
-        alert("Chỉ hỗ trợ xoay ảnh đã tải lên Cloudinary!");
-        return;
-      }
-      
-      const newUrl = rotateCloudinaryUrl(url, angleOffset);
-      card.dataset.url = newUrl;
-      
-      const img = card.querySelector('img');
-      if (img) {
-        img.src = fixImgUrl(newUrl, 'w200');
-      }
-      
-      const viewBtn = card.querySelector('.view-full-center-btn');
-      if (viewBtn) {
-        viewBtn.setAttribute('onclick', `event.stopPropagation(); window.open('${newUrl}', '_blank')`);
-      }
-      
-      if (p.pool_row_data) {
-        if (type === 'interior') {
-          const colIdx = window.getPoolInteriorColIdx(index);
-          p.pool_row_data[colIdx] = newUrl;
-        } else if (type === 'alley') {
-          const colIdx = window.getPoolAlleyColIdx(index);
-          p.pool_row_data[colIdx] = newUrl;
-        } else if (type === 'sodo') {
-          const colIdx = window.getPoolSodoColIdx(index);
-          p.pool_row_data[colIdx] = newUrl;
-        } else if (type === 'facade') {
-          p.pool_row_data[29] = newUrl;
-        }
-      }
-      
-      if (type === 'sodo') {
-        const input = document.getElementById(`editSodo${index}Url`);
-        if (input) input.value = newUrl;
-      }
-      
-      const coverInput = document.getElementById('editCoverImgUrl');
-      if (coverInput && normalizeImgUrl(coverInput.value) === normalizeImgUrl(url)) {
-        coverInput.value = newUrl;
-      }
-      const publicCoverInput = document.getElementById('editPublicCoverUrl');
-      if (publicCoverInput && normalizeImgUrl(publicCoverInput.value) === normalizeImgUrl(url)) {
-        publicCoverInput.value = newUrl;
-      }
-      
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
-      
-      showToast(`Đã xoay ảnh này thêm ${angleOffset}°!`, "success");
     };
 
     // --- CLOUDINARY LOCAL UPLOADER HELPERS (US-053) ---
@@ -9304,6 +9817,7 @@
       if (uploadLocalBtn) uploadLocalBtn.disabled = true;
 
       let successCount = 0;
+      let lastUploadedUrl = "";
 
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
@@ -9326,6 +9840,7 @@
           }
 
           const uploadedUrl = await uploadFileToCloudinary(file, uploadType, p.id || p.system_id);
+          lastUploadedUrl = uploadedUrl;
 
           if (uploadType === "sodo") {
             const sodoInput = document.getElementById(`editSodo${sodoIndex}Url`);
@@ -9390,49 +9905,22 @@
         tempDiv.innerHTML = renderImageEditorWidget(p);
         parent.replaceChild(tempDiv.firstElementChild, editGroup);
         
-        window.sortCurationImageGrid();
+        if (lastUploadedUrl) {
+          const normLast = normalizeImgUrl(lastUploadedUrl);
+          const slides = window.imageEditorSlides || [];
+          const newIdx = slides.findIndex(s => normalizeImgUrl(s.url) === normLast);
+          if (newIdx !== -1) {
+            window.activeImageEditorIndex = newIdx;
+            if (typeof window.gotoImageEditorSlide === 'function') {
+              window.gotoImageEditorSlide(newIdx);
+            }
+          }
+        }
+
         if (typeof window.updateLivePreview === "function") {
           window.updateLivePreview();
         }
       }
-    };
-
-    window.toggleImagePublic = function(cb) {
-      const card = cb.closest('.edit-img-card');
-      const type = card.dataset.type;
-      const index = card.dataset.index;
-      const isChecked = cb.checked;
-
-      card.classList.toggle('is-public', isChecked);
-      if (!card.classList.contains('is-cover') && !card.classList.contains('is-mattien') && !card.classList.contains('is-anhnen') && !card.classList.contains('is-sodo')) {
-        card.style.borderColor = isChecked ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
-      }
-
-      if (type === "interior") {
-        const publicIntInput = document.getElementById('editPublicInteriorIndices');
-        let indices = publicIntInput.value.split(',').map(s => s.trim()).filter(Boolean);
-        if (isChecked) {
-          if (!indices.includes(index)) indices.push(index);
-        } else {
-          indices = indices.filter(i => i !== index);
-        }
-        indices.sort((a, b) => parseInt(a) - parseInt(b));
-        publicIntInput.value = indices.join(',');
-      } else if (type === "alley") {
-        const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
-        let indices = publicAlleyInput.value.split(',').map(s => s.trim()).filter(Boolean);
-        if (isChecked) {
-          if (!indices.includes(index)) indices.push(index);
-        } else {
-          indices = indices.filter(i => i !== index);
-        }
-        indices.sort((a, b) => parseInt(a) - parseInt(b));
-        publicAlleyInput.value = indices.join(',');
-      }
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
-      window.sortCurationImageGrid();
     };
 
     window.uncheckAllCurationImages = function() {
@@ -9459,26 +9947,12 @@
       if (sodo4Input) sodo4Input.value = '';
       if (sodo5Input) sodo5Input.value = '';
 
-      document.querySelectorAll('.edit-img-card').forEach(card => {
-        card.classList.remove('is-mattien', 'is-anhnen', 'is-sodo', 'is-sodo1', 'is-sodo2', 'is-sodo3', 'is-sodo4', 'is-sodo5', 'is-public');
-        card.style.borderColor = 'transparent';
-
-        const badges = card.querySelectorAll('.mattien-lock-badge, .cover-star-badge, .sodo-badge');
-        badges.forEach(b => b.remove());
-
-        const cb = card.querySelector('.edit-img-pub-cb');
-        if (cb) cb.checked = false;
-      });
-
-      if (typeof window.selectImageEditorTool === 'function') {
-        window.selectImageEditorTool('none');
-      }
+      window.refreshImageEditorUI();
       if (typeof window.updateLivePreview === 'function') {
         window.updateLivePreview();
       }
 
       showToast("Đã bỏ chọn toàn bộ hình ảnh!", "success");
-      window.sortCurationImageGrid();
     };
 
     window.openPoolS = function(systemId) {
@@ -10641,12 +11115,8 @@
 
         if (p.original_row_data) {
           while (p.original_row_data.length < 46) p.original_row_data.push("");
-          let cleanCoverUrl = customCoverUrl || p.original_row_data[38] || '';
-          if (isSodoUrl(cleanCoverUrl) || isFacadeUrl(cleanCoverUrl)) {
-            cleanCoverUrl = '';
-          }
-          p.original_row_data[38] = cleanCoverUrl;
-          p.img_mat_tien = cleanCoverUrl;
+          p.original_row_data[38] = customCoverUrl;
+          p.img_mat_tien = customCoverUrl;
 
           if (isSodoUrl(p.original_row_data[20]) || isFacadeUrl(p.original_row_data[20])) {
             let newCover = '';
