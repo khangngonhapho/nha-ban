@@ -4097,9 +4097,9 @@
       
       <div style="margin-bottom: 20px;">
         <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tạo Bộ sưu tập mới:</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="newColName" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; outline:none; font-family: inherit;" placeholder="VD: Khách Hùng Quận 3">
-          <button onclick="createNewCollection()" style="padding: 10px 16px; border-radius: 8px; border: none; background: #2980b9; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; white-space: nowrap;">Tạo</button>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <input type="text" id="newColName" style="padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; outline:none; font-family: inherit;" placeholder="VD: Khách Hùng Quận 3">
+          <button onpointerdown="createNewCollection(event)" onclick="createNewCollection(event)" style="padding: 12px; border-radius: 8px; border: none; background: #2980b9; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; width: 100%; transition: background 0.2s;">Tạo bộ sưu tập mới</button>
         </div>
       </div>
       
@@ -10673,7 +10673,11 @@
       }
     }
 
-    function createNewCollection() {
+    function createNewCollection(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       try {
         const name = document.getElementById('newColName').value.trim();
         if (!name) {
