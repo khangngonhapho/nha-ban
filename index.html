@@ -10567,7 +10567,7 @@
       // Cập nhật trạng thái nút Chọn tất cả (☐/☑) dựa trên các căn đang hiển thị
       const btn = document.getElementById('selAllBtn');
       if (btn) {
-        const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+        const visibleCards = Array.from(document.querySelectorAll('#list .card')).filter(c => c && c.style.display !== 'none');
         const visibleIds = visibleCards.map(c => c.dataset.pid);
         const isNowAllSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
         btn.textContent = isNowAllSelected ? '☑' : '☐';
@@ -10685,17 +10685,35 @@
           collections = {};
         }
         
-        if (collections[name]) {
-          if (!confirm(`Bộ sưu tập "${name}" đã tồn tại. Bạn có muốn ghi đè/nạp thêm vào bộ sưu tập này không?`)) {
-            return;
-          }
-        }
-        
         const idsToSave = Array.from(SELECTED_IDS).map(id => {
-          const house = DATA.find(p => String(p.id) === String(id)) || 
-                        (typeof getMappedPoolData === 'function' && getMappedPoolData().find(p => String(p.id) === String(id)));
+          const house = DATA.find(p => p && String(p.id) === String(id)) || 
+                        (typeof getMappedPoolData === 'function' && getMappedPoolData().find(p => p && String(p.id) === String(id)));
           return house && house.system_id ? String(house.system_id) : String(id);
         });
+
+        if (collections[name]) {
+          // Nếu đã tồn tại, tự động gộp (merge) mà không confirm để tránh bị WebView di động chặn
+          const currentIds = collections[name] || [];
+          const merged = Array.from(new Set([...currentIds, ...idsToSave]));
+          collections[name] = merged;
+          localStorage.setItem('adminCollections', JSON.stringify(collections));
+          
+          document.querySelectorAll('.card-sel').forEach(cb => cb.checked = false);
+          SELECTED_IDS.clear();
+          updateShareUI();
+          renderCollectionsManager();
+          
+          alert(`Bộ sưu tập "${name}" đã tồn tại. Đã nạp thêm căn mới vào bộ sưu tập này thành công! (Tổng số: ${merged.length} căn)`);
+          document.getElementById('colSaveModal').classList.remove('open');
+          
+          if (activeCollectionName === name) {
+            viewCollection(name);
+          } else {
+            render();
+          }
+          return;
+        }
+        
         collections[name] = idsToSave;
         localStorage.setItem('adminCollections', JSON.stringify(collections));
         
@@ -10731,8 +10749,8 @@
         
         const currentIds = collections[name] || [];
         const newIds = Array.from(SELECTED_IDS).map(id => {
-          const house = DATA.find(p => String(p.id) === String(id)) || 
-                        (typeof getMappedPoolData === 'function' && getMappedPoolData().find(p => String(p.id) === String(id)));
+          const house = DATA.find(p => p && String(p.id) === String(id)) || 
+                        (typeof getMappedPoolData === 'function' && getMappedPoolData().find(p => p && String(p.id) === String(id)));
           return house && house.system_id ? String(house.system_id) : String(id);
         });
         
@@ -10838,8 +10856,8 @@
         if (event) event.stopPropagation();
         
         // Tìm system_id tương ứng của căn nhà để xóa
-        const item = DATA.find(x => String(x.id) === String(id)) || 
-                     (typeof getMappedPoolData === 'function' && getMappedPoolData().find(x => String(x.id) === String(id)));
+        const item = DATA.find(x => x && String(x.id) === String(id)) || 
+                     (typeof getMappedPoolData === 'function' && getMappedPoolData().find(x => x && String(x.id) === String(id)));
         const systemId = item && item.system_id ? String(item.system_id) : String(id);
         
         if (colName === 'favorites') {
