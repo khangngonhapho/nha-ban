@@ -5048,7 +5048,7 @@
         });
       }
 
-      if (showFavOnly) a = a.filter(p => favs.has(String(p.id)));
+      if (showFavOnly) a = a.filter(p => favs.has(p.system_id ? String(p.system_id) : String(p.id)));
       if (selDistricts.size) a = a.filter(p => selDistricts.has(p.q));
       if (selWards.size) a = a.filter(p => selWards.has(p.phuong));
       if (selDuongs.size) a = a.filter(p => selDuongs.has(p.duong_truoc_nha));
@@ -5059,10 +5059,10 @@
       // LỌC THEO BỘ SƯU TẬP HOẶC DANH SÁCH YÊU THÍCH CỦA ADMIN
       if (activeCollectionName) {
         if (activeCollectionName === 'favorites') {
-          a = a.filter(p => favs.has(String(p.id)) || (p.system_id && favs.has(String(p.system_id))));
+          a = a.filter(p => favs.has(p.system_id ? String(p.system_id) : String(p.id)));
         } else if (collections[activeCollectionName]) {
           const colIds = new Set(collections[activeCollectionName].map(String));
-          a = a.filter(p => colIds.has(String(p.id)) || (p.system_id && colIds.has(String(p.system_id))));
+          a = a.filter(p => colIds.has(p.system_id ? String(p.system_id) : String(p.id)));
         }
       }
       return a;
@@ -6425,7 +6425,7 @@
             ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
             <img src="${thumb}" alt="${p.t}" loading="lazy" decoding="async" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
             <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>
-            <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+            <button class="heart ${favs.has(p.system_id ? String(p.system_id) : String(p.id)) ? 'on' : ''}" onclick="th('${p.system_id ? p.system_id : p.id}', this, event)">${favs.has(p.system_id ? String(p.system_id) : String(p.id)) ? '♥' : '♡'}</button>
           </div>
           <div class="card-right">
             <div class="info">
@@ -6458,7 +6458,7 @@
             ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
             <img src="${thumb}" alt="${p.t}" loading="lazy" decoding="async" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
             ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
-            <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+            <button class="heart ${favs.has(p.system_id ? String(p.system_id) : String(p.id)) ? 'on' : ''}" onclick="th('${p.system_id ? p.system_id : p.id}', this, event)">${favs.has(p.system_id ? String(p.system_id) : String(p.id)) ? '♥' : '♡'}</button>
           </div>
           <div class="card-right">
             <div class="info">
@@ -10691,7 +10691,11 @@
           }
         }
         
-        const idsToSave = Array.from(SELECTED_IDS);
+        const idsToSave = Array.from(SELECTED_IDS).map(id => {
+          const house = DATA.find(p => String(p.id) === String(id)) || 
+                        (typeof getMappedPoolData === 'function' && getMappedPoolData().find(p => String(p.id) === String(id)));
+          return house && house.system_id ? String(house.system_id) : String(id);
+        });
         collections[name] = idsToSave;
         localStorage.setItem('adminCollections', JSON.stringify(collections));
         
@@ -10726,7 +10730,11 @@
         if (!collections[name]) return;
         
         const currentIds = collections[name] || [];
-        const newIds = Array.from(SELECTED_IDS);
+        const newIds = Array.from(SELECTED_IDS).map(id => {
+          const house = DATA.find(p => String(p.id) === String(id)) || 
+                        (typeof getMappedPoolData === 'function' && getMappedPoolData().find(p => String(p.id) === String(id)));
+          return house && house.system_id ? String(house.system_id) : String(id);
+        });
         
         const merged = Array.from(new Set([...currentIds, ...newIds]));
         const addedCount = merged.length - currentIds.length;
@@ -10829,20 +10837,17 @@
       try {
         if (event) event.stopPropagation();
         
-        // Tìm system_id tương ứng của căn nhà để xóa kép
+        // Tìm system_id tương ứng của căn nhà để xóa
         const item = DATA.find(x => String(x.id) === String(id)) || 
                      (typeof getMappedPoolData === 'function' && getMappedPoolData().find(x => String(x.id) === String(id)));
-        const systemId = item ? item.system_id : null;
+        const systemId = item && item.system_id ? String(item.system_id) : String(id);
         
         if (colName === 'favorites') {
-          favs.delete(String(id));
-          if (systemId) favs.delete(String(systemId));
+          favs.delete(systemId);
           localStorage.setItem('favs', JSON.stringify(Array.from(favs)));
           updateFavBtnUI();
         } else if (collections[colName]) {
-          collections[colName] = collections[colName].filter(x => 
-            String(x) !== String(id) && (!systemId || String(x) !== String(systemId))
-          );
+          collections[colName] = collections[colName].filter(x => String(x) !== systemId);
           localStorage.setItem('adminCollections', JSON.stringify(collections));
           renderCollectionsManager();
         }
