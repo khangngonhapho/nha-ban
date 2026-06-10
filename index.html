@@ -4455,7 +4455,16 @@
     let currentSortDir = 'desc'; // 'desc' = high/newest first, 'asc' = low/oldest first
     let showFavOnly = false;
     let favs = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
-    let collections = JSON.parse(localStorage.getItem('adminCollections') || '{}');
+    let collections = {};
+    try {
+      collections = JSON.parse(localStorage.getItem('adminCollections') || '{}');
+      if (typeof collections !== 'object' || collections === null) {
+        collections = {};
+      }
+    } catch (e) {
+      console.error("Error loading collections:", e);
+      collections = {};
+    }
     let activeCollectionName = null; // null | 'favorites' | '[Tên BST tự tạo]'
 
     // ── Multi-select helper ──
@@ -5050,10 +5059,10 @@
       // LỌC THEO BỘ SƯU TẬP HOẶC DANH SÁCH YÊU THÍCH CỦA ADMIN
       if (activeCollectionName) {
         if (activeCollectionName === 'favorites') {
-          a = a.filter(p => favs.has(String(p.id)));
+          a = a.filter(p => favs.has(String(p.id)) || (p.system_id && favs.has(String(p.system_id))));
         } else if (collections[activeCollectionName]) {
-          const colIds = new Set(collections[activeCollectionName]);
-          a = a.filter(p => colIds.has(String(p.id)));
+          const colIds = new Set(collections[activeCollectionName].map(String));
+          a = a.filter(p => colIds.has(String(p.id)) || (p.system_id && colIds.has(String(p.system_id))));
         }
       }
       return a;
@@ -10567,233 +10576,316 @@
     }
 
     function openColViewModal() {
-      const viewList = document.getElementById('colViewList');
-      if (!viewList) return;
-      viewList.innerHTML = '';
-      
-      // 1. Thêm bộ sưu tập Mặc định: Yêu thích (Thích)
-      const favCount = favs.size;
-      const favItem = document.createElement('div');
-      favItem.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; transition:background 0.2s;';
-      favItem.innerHTML = `
-        <div style="display:flex; align-items:center; gap:8px;" onclick="viewCollection('favorites')">
-          <span style="font-size:16px;">❤️</span>
-          <span style="font-weight:600; font-size:14px;">Căn nhà đã thích</span>
-          <span style="font-size:12px; color:var(--sub);">(${favCount} căn)</span>
-        </div>
-      `;
-      favItem.onclick = () => {
-        viewCollection('favorites');
-        document.getElementById('colViewModal').classList.remove('open');
-      };
-      viewList.appendChild(favItem);
-      
-      // 2. Thêm các bộ sưu tập tự tạo
-      Object.keys(collections).forEach(name => {
-        const count = collections[name].length;
-        const item = document.createElement('div');
-        item.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; transition:background 0.2s; margin-top:8px;';
-        item.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px; flex:1;" onclick="viewCollection('${name.replace(/'/g, "\\'")}')">
-            <span style="font-size:16px;">📁</span>
-            <span style="font-weight:600; font-size:14px; word-break:break-all;">${name}</span>
-            <span style="font-size:12px; color:var(--sub);">(${count} căn)</span>
+      try {
+        const viewList = document.getElementById('colViewList');
+        if (!viewList) return;
+        viewList.innerHTML = '';
+        
+        // 1. Thêm bộ sưu tập Mặc định: Yêu thích (Thích)
+        const favCount = favs.size;
+        const favItem = document.createElement('div');
+        favItem.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:10px; cursor:pointer; transition:background 0.2s;';
+        favItem.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;" onclick="viewCollection('favorites')">
+            <span style="font-size:16px;">❤️</span>
+            <span style="font-weight:600; font-size:14px; color:var(--text);">Căn nhà đã thích</span>
+            <span style="font-size:12px; color:var(--sub);">(${favCount} căn)</span>
           </div>
-          <button onclick="deleteCollection('${name.replace(/'/g, "\\'")}', event)" style="background:none; border:none; color:var(--sub); font-size:14px; cursor:pointer; padding:4px 8px; display:flex; align-items:center; justify-content:center; transition:color 0.15s;" title="Xóa bộ sưu tập">🗑️</button>
         `;
-        item.querySelector('div').onclick = () => {
-          viewCollection(name);
+        favItem.onclick = () => {
+          viewCollection('favorites');
           document.getElementById('colViewModal').classList.remove('open');
         };
-        viewList.appendChild(item);
-      });
-      
-      document.getElementById('colViewModal').classList.add('open');
+        viewList.appendChild(favItem);
+        
+        // 2. Thêm các bộ sưu tập tự tạo
+        if (typeof collections !== 'object' || collections === null) {
+          collections = {};
+        }
+        Object.keys(collections).forEach(name => {
+          const val = collections[name];
+          if (!Array.isArray(val)) return;
+          const count = val.length;
+          const item = document.createElement('div');
+          item.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:10px; cursor:pointer; transition:background 0.2s; margin-top:8px;';
+          item.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px; flex:1;" onclick="viewCollection('${name.replace(/'/g, "\\'")}')">
+              <span style="font-size:16px;">📁</span>
+              <span style="font-weight:600; font-size:14px; color:var(--text); word-break:break-all;">${name}</span>
+              <span style="font-size:12px; color:var(--sub);">(${count} căn)</span>
+            </div>
+            <button onclick="deleteCollection('${name.replace(/'/g, "\\'")}', event)" style="background:none; border:none; color:var(--sub); font-size:14px; cursor:pointer; padding:4px 8px; display:flex; align-items:center; justify-content:center; transition:color 0.15s;" title="Xóa bộ sưu tập">🗑️</button>
+          `;
+          item.querySelector('div').onclick = () => {
+            viewCollection(name);
+            document.getElementById('colViewModal').classList.remove('open');
+          };
+          viewList.appendChild(item);
+        });
+        
+        document.getElementById('colViewModal').classList.add('open');
+      } catch (err) {
+        alert(`❌ Lỗi hiển thị danh sách bộ sưu tập: ${err.message}`);
+        console.error(err);
+      }
     }
 
     function openColSaveModal() {
-      if (SELECTED_IDS.size === 0) {
-        alert('Vui lòng chọn ít nhất 1 căn nhà!');
-        return;
+      try {
+        if (SELECTED_IDS.size === 0) {
+          alert('Vui lòng chọn ít nhất 1 căn nhà!');
+          return;
+        }
+        
+        document.getElementById('colSaveModalCount').textContent = SELECTED_IDS.size;
+        document.getElementById('newColName').value = '';
+        
+        const saveList = document.getElementById('colSaveList');
+        if (!saveList) return;
+        saveList.innerHTML = '';
+        
+        if (typeof collections !== 'object' || collections === null) {
+          collections = {};
+        }
+        const colNames = Object.keys(collections);
+        if (colNames.length === 0) {
+          saveList.innerHTML = '<div style="text-align:center; padding:12px; font-size:13px; color:var(--sub);">Chưa có bộ sưu tập nào. Hãy tạo bộ sưu tập đầu tiên ở trên nhé!</div>';
+        } else {
+          colNames.forEach(name => {
+            const val = collections[name];
+            if (!Array.isArray(val)) return;
+            const count = val.length;
+            const btn = document.createElement('button');
+            btn.style.cssText = 'width:100%; text-align:left; padding:12px 16px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:8px; color:#1c1c1e; font-weight:600; font-size:13px; cursor:pointer; font-family:inherit; transition:background 0.2s; margin-bottom:8px;';
+            btn.innerHTML = `📁 ${name} <span style="font-size:11px; color:var(--sub); font-weight:normal;">(${count} căn)</span>`;
+            btn.onclick = () => {
+              saveToExistingCollection(name);
+              document.getElementById('colSaveModal').classList.remove('open');
+            };
+            saveList.appendChild(btn);
+          });
+        }
+        
+        document.getElementById('colSaveModal').classList.add('open');
+      } catch (err) {
+        alert(`❌ Lỗi mở form lưu: ${err.message}`);
+        console.error(err);
       }
-      
-      document.getElementById('colSaveModalCount').textContent = SELECTED_IDS.size;
-      document.getElementById('newColName').value = '';
-      
-      const saveList = document.getElementById('colSaveList');
-      if (!saveList) return;
-      saveList.innerHTML = '';
-      
-      const colNames = Object.keys(collections);
-      if (colNames.length === 0) {
-        saveList.innerHTML = '<div style="text-align:center; padding:12px; font-size:13px; color:var(--sub);">Chưa có bộ sưu tập nào. Hãy tạo bộ sưu tập đầu tiên ở trên nhé!</div>';
-      } else {
-        colNames.forEach(name => {
-          const count = collections[name].length;
-          const btn = document.createElement('button');
-          btn.style.cssText = 'width:100%; text-align:left; padding:12px 16px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-weight:600; font-size:13px; cursor:pointer; font-family:inherit; transition:background 0.2s; margin-bottom:8px;';
-          btn.innerHTML = `📁 ${name} <span style="font-size:11px; color:var(--sub); font-weight:normal;">(${count} căn)</span>`;
-          btn.onclick = () => {
-            saveToExistingCollection(name);
-            document.getElementById('colSaveModal').classList.remove('open');
-          };
-          saveList.appendChild(btn);
-        });
-      }
-      
-      document.getElementById('colSaveModal').classList.add('open');
     }
 
     function createNewCollection() {
-      const name = document.getElementById('newColName').value.trim();
-      if (!name) {
-        alert('Vui lòng nhập tên bộ sưu tập!');
-        return;
-      }
-      
-      if (collections[name]) {
-        if (!confirm(`Bộ sưu tập "${name}" đã tồn tại. Bạn có muốn ghi đè/nạp thêm vào bộ sưu tập này không?`)) {
+      try {
+        const name = document.getElementById('newColName').value.trim();
+        if (!name) {
+          alert('Vui lòng nhập tên bộ sưu tập!');
           return;
         }
-      }
-      
-      const idsToSave = Array.from(SELECTED_IDS);
-      collections[name] = idsToSave;
-      localStorage.setItem('adminCollections', JSON.stringify(collections));
-      
-      // Xóa check sau khi lưu
-      SELECTED_IDS.clear();
-      updateShareUI();
-      
-      renderCollectionsManager();
-      
-      alert(`Đã tạo bộ sưu tập "${name}" với ${idsToSave.length} căn thành công!`);
-      document.getElementById('colSaveModal').classList.remove('open');
-      
-      if (activeCollectionName === name) {
-        viewCollection(name);
-      } else {
-        render();
+        
+        if (typeof collections !== 'object' || collections === null) {
+          collections = {};
+        }
+        
+        if (collections[name]) {
+          if (!confirm(`Bộ sưu tập "${name}" đã tồn tại. Bạn có muốn ghi đè/nạp thêm vào bộ sưu tập này không?`)) {
+            return;
+          }
+        }
+        
+        const idsToSave = Array.from(SELECTED_IDS);
+        collections[name] = idsToSave;
+        localStorage.setItem('adminCollections', JSON.stringify(collections));
+        
+        // Bỏ chọn toàn bộ checkbox trên UI
+        document.querySelectorAll('.card-sel').forEach(cb => cb.checked = false);
+        
+        // Xóa check sau khi lưu
+        SELECTED_IDS.clear();
+        updateShareUI();
+        
+        renderCollectionsManager();
+        
+        alert(`Đã tạo bộ sưu tập "${name}" với ${idsToSave.length} căn thành công!`);
+        document.getElementById('colSaveModal').classList.remove('open');
+        
+        if (activeCollectionName === name) {
+          viewCollection(name);
+        } else {
+          render();
+        }
+      } catch (err) {
+        alert(`❌ Lỗi tạo bộ sưu tập: ${err.message}`);
+        console.error(err);
       }
     }
 
     function saveToExistingCollection(name) {
-      if (!collections[name]) return;
-      
-      const currentIds = collections[name];
-      const newIds = Array.from(SELECTED_IDS);
-      
-      const merged = Array.from(new Set([...currentIds, ...newIds]));
-      const addedCount = merged.length - currentIds.length;
-      
-      collections[name] = merged;
-      localStorage.setItem('adminCollections', JSON.stringify(collections));
-      
-      SELECTED_IDS.clear();
-      updateShareUI();
-      
-      renderCollectionsManager();
-      
-      alert(`Đã lưu thêm ${addedCount} căn mới vào bộ sưu tập "${name}" thành công! (Tổng số: ${merged.length} căn)`);
-      
-      if (activeCollectionName === name) {
-        viewCollection(name);
-      } else {
-        render();
+      try {
+        if (typeof collections !== 'object' || collections === null) {
+          collections = {};
+        }
+        if (!collections[name]) return;
+        
+        const currentIds = collections[name] || [];
+        const newIds = Array.from(SELECTED_IDS);
+        
+        const merged = Array.from(new Set([...currentIds, ...newIds]));
+        const addedCount = merged.length - currentIds.length;
+        
+        collections[name] = merged;
+        localStorage.setItem('adminCollections', JSON.stringify(collections));
+        
+        // Bỏ chọn toàn bộ checkbox trên UI
+        document.querySelectorAll('.card-sel').forEach(cb => cb.checked = false);
+        
+        SELECTED_IDS.clear();
+        updateShareUI();
+        
+        renderCollectionsManager();
+        
+        alert(`Đã lưu thêm ${addedCount} căn mới vào bộ sưu tập "${name}" thành công! (Tổng số: ${merged.length} căn)`);
+        
+        if (activeCollectionName === name) {
+          viewCollection(name);
+        } else {
+          render();
+        }
+      } catch (err) {
+        alert(`❌ Lỗi lưu bộ sưu tập: ${err.message}`);
+        console.error(err);
       }
     }
 
     function viewCollection(name) {
-      activeCollectionName = name;
-      
-      SELECTED_IDS.clear();
-      updateShareUI();
-      
-      const bar = document.getElementById('activeColBar');
-      const text = document.getElementById('activeColNameText');
-      if (bar && text) {
-        let count = 0;
-        let displayName = '';
-        if (name === 'favorites') {
-          count = favs.size;
-          displayName = '❤️ Căn nhà đã thích';
-        } else {
-          count = collections[name] ? collections[name].length : 0;
-          displayName = `📂 ${name}`;
+      try {
+        activeCollectionName = name;
+        
+        SELECTED_IDS.clear();
+        updateShareUI();
+        
+        const bar = document.getElementById('activeColBar');
+        const text = document.getElementById('activeColNameText');
+        if (bar && text) {
+          let count = 0;
+          let displayName = '';
+          if (name === 'favorites') {
+            count = favs.size;
+            displayName = '❤️ Căn nhà đã thích';
+          } else {
+            count = collections[name] ? collections[name].length : 0;
+            displayName = `📂 ${name}`;
+          }
+          text.innerHTML = `<b>${displayName}</b> (${count} căn)`;
+          bar.style.display = 'flex';
         }
-        text.innerHTML = `<b>${displayName}</b> (${count} căn)`;
-        bar.style.display = 'flex';
+        
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        console.error("Error viewing collection:", err);
       }
-      
-      render();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function exitCollectionView() {
-      activeCollectionName = null;
-      
-      const bar = document.getElementById('activeColBar');
-      if (bar) bar.style.display = 'none';
-      
-      render();
+      try {
+        activeCollectionName = null;
+        
+        const bar = document.getElementById('activeColBar');
+        if (bar) bar.style.display = 'none';
+        
+        render();
+      } catch (err) {
+        console.error("Error exiting collection view:", err);
+      }
     }
 
     function deleteCollection(name, event) {
-      if (event) event.stopPropagation();
-      if (!confirm(`Bạn có chắc chắn muốn xóa bộ sưu tập "${name}" không?`)) {
-        return;
-      }
-      
-      delete collections[name];
-      localStorage.setItem('adminCollections', JSON.stringify(collections));
-      
-      renderCollectionsManager();
-      
-      if (activeCollectionName === name) {
-        exitCollectionView();
-      } else {
-        openColViewModal();
+      try {
+        if (event) event.stopPropagation();
+        if (!confirm(`Bạn có chắc chắn muốn xóa bộ sưu tập "${name}" không?`)) {
+          return;
+        }
+        
+        if (typeof collections !== 'object' || collections === null) {
+          collections = {};
+        }
+        
+        delete collections[name];
+        localStorage.setItem('adminCollections', JSON.stringify(collections));
+        
+        renderCollectionsManager();
+        
+        if (activeCollectionName === name) {
+          exitCollectionView();
+        } else {
+          openColViewModal();
+        }
+      } catch (err) {
+        alert(`❌ Lỗi xóa bộ sưu tập: ${err.message}`);
+        console.error(err);
       }
     }
 
     function removeFromCol(id, colName, event) {
-      if (event) event.stopPropagation();
-      
-      if (colName === 'favorites') {
-        favs.delete(String(id));
-        localStorage.setItem('favs', JSON.stringify(Array.from(favs)));
-        updateFavBtnUI();
-      } else if (collections[colName]) {
-        collections[colName] = collections[colName].filter(x => String(x) !== String(id));
-        localStorage.setItem('adminCollections', JSON.stringify(collections));
-        renderCollectionsManager();
+      try {
+        if (event) event.stopPropagation();
+        
+        // Tìm system_id tương ứng của căn nhà để xóa kép
+        const item = DATA.find(x => String(x.id) === String(id)) || 
+                     (typeof getMappedPoolData === 'function' && getMappedPoolData().find(x => String(x.id) === String(id)));
+        const systemId = item ? item.system_id : null;
+        
+        if (colName === 'favorites') {
+          favs.delete(String(id));
+          if (systemId) favs.delete(String(systemId));
+          localStorage.setItem('favs', JSON.stringify(Array.from(favs)));
+          updateFavBtnUI();
+        } else if (collections[colName]) {
+          collections[colName] = collections[colName].filter(x => 
+            String(x) !== String(id) && (!systemId || String(x) !== String(systemId))
+          );
+          localStorage.setItem('adminCollections', JSON.stringify(collections));
+          renderCollectionsManager();
+        }
+        
+        viewCollection(colName);
+      } catch (err) {
+        alert(`❌ Lỗi gỡ khỏi bộ sưu tập: ${err.message}`);
+        console.error(err);
       }
-      
-      viewCollection(colName);
     }
 
     function renderCollectionsManager() {
-      const manager = document.getElementById('collectionsManager');
-      if (!manager) return;
-      manager.innerHTML = '';
-      
-      const colNames = Object.keys(collections);
-      if (colNames.length === 0) {
-        manager.innerHTML = '<span style="font-size:12px; color:rgba(44,44,46,0.5); padding:6px 6px;">Chưa có bộ sưu tập. Chọn căn & bấm 📁 để tạo.</span>';
-        return;
-      }
-      
-      colNames.forEach(name => {
-        const count = collections[name].length;
-        const chip = document.createElement('div');
-        chip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#ffffff; border:1.5px solid #e2ded6; border-radius:16px; padding:6px 12px; font-size:12px; font-weight:600; color:#3a3a3c; cursor:pointer; transition:all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);';
+      try {
+        const manager = document.getElementById('collectionsManager');
+        if (!manager) return;
+        manager.innerHTML = '';
         
-        chip.innerHTML = `
-          <span onclick="viewCollection('${name.replace(/'/g, "\\'")}')" style="display:inline-flex; align-items:center; gap:4px;">📁 ${name} (${count})</span>
-          <span onclick="deleteCollection('${name.replace(/'/g, "\\'")}', event)" style="color:rgba(44,44,46,0.5); font-size:11px; padding-left:6px; border-left:1px solid #e2ded6; margin-left:2px;" title="Xóa">✕</span>
-        `;
-        manager.appendChild(chip);
-      });
+        if (typeof collections !== 'object' || collections === null) {
+          collections = {};
+        }
+        
+        const colNames = Object.keys(collections);
+        if (colNames.length === 0) {
+          manager.innerHTML = '<span style="font-size:12px; color:rgba(44,44,46,0.5); padding:6px 6px;">Chưa có bộ sưu tập. Chọn căn & bấm 📁 để tạo.</span>';
+          return;
+        }
+        
+        colNames.forEach(name => {
+          const val = collections[name];
+          if (!Array.isArray(val)) return;
+          const count = val.length;
+          const chip = document.createElement('div');
+          chip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#ffffff; border:1.5px solid #e2ded6; border-radius:16px; padding:6px 12px; font-size:12px; font-weight:600; color:#3a3a3c; cursor:pointer; transition:all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);';
+          
+          chip.innerHTML = `
+            <span onclick="viewCollection('${name.replace(/'/g, "\\'")}')" style="display:inline-flex; align-items:center; gap:4px;">📁 ${name} (${count})</span>
+            <span onclick="deleteCollection('${name.replace(/'/g, "\\'")}', event)" style="color:rgba(44,44,46,0.5); font-size:11px; padding-left:6px; border-left:1px solid #e2ded6; margin-left:2px;" title="Xóa">✕</span>
+          `;
+          manager.appendChild(chip);
+        });
+      } catch (err) {
+        console.error("Error rendering collections manager:", err);
+      }
     }
 
     // ============================================================
