@@ -86,6 +86,7 @@ from pool_lego import POOL_HEADERS, remove_accents, get_safe_col_name, gen_id_kh
 
 # File cấu hình & cơ sở dữ liệu (Dùng đường dẫn tuyệt đối dựa trên PROJECT_ROOT)
 DB_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, get_db_file()))
+LISTINGS_TABLE = "listings_v2" if "raw_archive_v2.db" in DB_FILE else "listings"
 CONFIG_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "settings.json"))
 COOKIE_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "thienkhoi_cookie.txt"))
 CREDENTIALS_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "credentials.json"))
@@ -835,7 +836,7 @@ def start_auto_migration_scheduler():
                 if os.path.exists(DB_FILE):
                     conn = sqlite3.connect(DB_FILE, timeout=30.0)
                     cursor = conn.cursor()
-                    count = cursor.execute("SELECT COUNT(*) FROM listings WHERE status = 'raw_text'").fetchone()[0]
+                    count = cursor.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = 'raw_text'").fetchone()[0]
                     conn.close()
                     
                     if count > 0:
@@ -883,9 +884,9 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     if target_tk_id:
-        rows = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (target_tk_id,)).fetchall()
+        rows = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (target_tk_id,)).fetchall()
     else:
-        rows = cursor.execute("SELECT * FROM listings WHERE status = 'raw_text'").fetchall()
+        rows = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE status = 'raw_text'").fetchall()
     conn.close()
     
     if not rows:
@@ -934,7 +935,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         if limit and processed >= limit:
             break
             
-        row_db_id = row["id"]
+        row_db_id = row["tk_id"] if LISTINGS_TABLE == "listings_v2" else row["id"]
         tk_id = row["tk_id"]
         d = normalize_listing_for_client(row)
         raw_images_tk = d["raw_images_tk"]
@@ -1186,8 +1187,9 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             vals = list(update_fields.values())
             vals.extend([json.dumps(drive_links), row_db_id])
             
+            primary_key_col = "tk_id" if LISTINGS_TABLE == "listings_v2" else "id"
             cursor.execute(
-                f"UPDATE listings SET {', '.join(cols_sql)}, raw_drive_images_json = ?, status = 'raw_complete' WHERE id = ?",
+                f"UPDATE {LISTINGS_TABLE} SET {', '.join(cols_sql)}, raw_drive_images_json = ?, status = 'raw_complete' WHERE {primary_key_col} = ?",
                 vals
             )
             conn.commit()
@@ -1814,9 +1816,9 @@ def clear_all_listings():
     try:
         conn = sqlite3.connect(DB_FILE, timeout=30.0)
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM listings")
+        cursor.execute(f"DELETE FROM {LISTINGS_TABLE}")
         # Reset autoincrement
-        cursor.execute("DELETE FROM sqlite_sequence WHERE name='listings'")
+        cursor.execute(f"DELETE FROM sqlite_sequence WHERE name='{LISTINGS_TABLE}'")
         conn.commit()
         conn.close()
         
@@ -1859,7 +1861,7 @@ def get_listings():
     
     # Lấy danh sách cột thực tế của bảng listings để chống lỗi lệch cột/font chữ gạch dưới
     try:
-        cursor.execute("PRAGMA table_info(listings)")
+        cursor.execute(f"PRAGMA table_info({LISTINGS_TABLE})")
         db_cols = [r[1] for r in cursor.fetchall()]
     except Exception:
         db_cols = []
@@ -1868,7 +1870,7 @@ def get_listings():
     duong_col = next((c for c in db_cols if c in ["Duong", "___ng"]), "Duong")
     so_nha_col = next((c for c in db_cols if c in ["Ngo_So_nha", "Ng__S__nh_"]), "Ngo_So_nha")
     
-    sql = "SELECT * FROM listings"
+    sql = f"SELECT * FROM {LISTINGS_TABLE}"
     conditions = []
     params = []
     
@@ -1897,7 +1899,7 @@ def get_listings():
         sql += " WHERE " + " AND ".join(conditions)
         
     # Mặc định sắp xếp mới nhất lên trước
-    sql += " ORDER BY id DESC"
+    sql += " ORDER BY rowid DESC"
     
     rows = cursor.execute(sql, params).fetchall()
     conn.close()
@@ -1911,7 +1913,7 @@ def get_listings():
             conn_count = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor_count = conn_count.cursor()
             for s in ["raw_text", "raw_complete", "published"]:
-                c = cursor_count.execute("SELECT COUNT(*) FROM listings WHERE status = ?", (s,)).fetchone()[0]
+                c = cursor_count.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = ?", (s,)).fetchone()[0]
                 counts[s] = c
             conn_count.close()
         except Exception:
@@ -1932,14 +1934,14 @@ def handle_listing_detail(tk_id):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
-    row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+    row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
     
     if not row:
         conn.close()
         return jsonify({"status": "error", "message": "Mã căn không tồn tại"}), 404
         
     if request.method == 'DELETE':
-        cursor.execute("DELETE FROM listings WHERE tk_id = ?", (tk_id,))
+        cursor.execute(f"DELETE FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,))
         conn.commit()
         conn.close()
         
@@ -1963,7 +1965,7 @@ def handle_listing_detail(tk_id):
         # Đồng thời cập nhật trực tiếp vào các cột nghiệp vụ SQLite
         # Cập nhật cột curated_config_json trước
         cursor.execute(
-            "UPDATE listings SET curated_config_json = ? WHERE tk_id = ?",
+            f"UPDATE {LISTINGS_TABLE} SET curated_config_json = ? WHERE tk_id = ?",
             (json.dumps(curated_config), tk_id)
         )
         
@@ -2020,7 +2022,7 @@ def handle_listing_detail(tk_id):
             update_vals.append(str(val) if val is not None else "")
             
         update_vals.append(tk_id)
-        update_sql = f"UPDATE listings SET {', '.join(update_cols)} WHERE tk_id = ?"
+        update_sql = f"UPDATE {LISTINGS_TABLE} SET {', '.join(update_cols)} WHERE tk_id = ?"
         cursor.execute(update_sql, update_vals)
         
         conn.commit()
@@ -2043,7 +2045,7 @@ def recrawl_single_listing(tk_id):
         conn = sqlite3.connect(DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+        row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
         
         d_row = {}
         if row:
@@ -2210,7 +2212,7 @@ def recrawl_single_listing(tk_id):
             conn = sqlite3.connect(DB_FILE, timeout=30.0)
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            updated_row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+            updated_row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
             conn.close()
             
             d = dict(updated_row)
@@ -2359,7 +2361,7 @@ def recrawl_single_listing(tk_id):
         conn = sqlite3.connect(DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        updated_row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+        updated_row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
         conn.close()
         
         d = dict(updated_row)
