@@ -48,6 +48,23 @@ POOL_HEADERS = [
     "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25"
 ]
 
+LISTINGS_V2_COLS = [
+    # Định danh & Trạng thái
+    "System_ID", "Ma_Hang", "isSigned", "status_nguon", "commissionAgent",
+    "ownerSideUserId", "certificateSeries", "latitude", "longitude", "placeName",
+    "streetName", "Quan", "Phuong", "Ngo_So_nha",
+    # Kỹ thuật & Tiêu chí phong phú từ API
+    "bedrooms", "restrooms", "balconies", "sidewalk", "behindOpenSpace",
+    "sideOpenSpace", "minimumRoadWidth", "createdAt", "updatedAt", "commissionType",
+    "commissionValue", "isDispute", "createdAtSigned", "CCCD_Dau_Chu", "Kenh_tin_TK",
+    "The_tags_TK",
+    # Tiêu chí & Nghiệp vụ kế thừa từ Pool Headers (chỉ giữ phần cào được từ TK)
+    "Noi_dung_chinh", "Mo_ta_chi_tiet", "Gia_chao", "DT_Thuc_te",
+    "DT_Tren_so", "So_Tang", "Mat_Tien", "Chieu_dai", "Huong", "Ten_Chu_Nha",
+    "Dien_thoai_1", "Ten_Dau_Chu", "Dien_thoai_Dau_Chu", "Diem_Facebook",
+    "Link_Goc", "Last_Crawl", "Last_Sync"
+]
+
 def remove_accents(input_str):
     """
     Khử toàn bộ dấu tiếng Việt từ chuỗi đầu vào.
@@ -206,16 +223,6 @@ def init_db(db_file=None):
         pass
 
     if is_pool2:
-        # Bảng listings_v2 (Chứa metadata văn bản thô đầy đủ trường)
-        columns_def = [
-            "tk_id TEXT PRIMARY KEY",
-            "status TEXT DEFAULT 'raw_text'",
-            "raw_images_tk_json TEXT",
-            "raw_drive_images_json TEXT",
-            "curated_config_json TEXT",
-            "Chieu_dai TEXT"
-        ]
-
         # 19 cột tiêu chí Criteria_... tường minh
         explicit_criteria_cols = [
             "Criteria_Tiem_nang_Rui_ro",
@@ -238,14 +245,90 @@ def init_db(db_file=None):
             "Criteria_Vi_tri_trong_ngo",
             "Criteria_Khoang_cach_duong_oto"
         ]
+
+        # Self-healing Schema alignment for listings_v2 (US-089A)
+        try:
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='listings_v2'")
+            if cursor.fetchone():
+                cursor.execute("PRAGMA table_info(listings_v2)")
+                actual_cols = [row[1] for row in cursor.fetchall()]
+                
+                # Define correct allowed columns for listings_v2
+                correct_cols = {
+                    "tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json", "Chieu_dai"
+                }
+                for col in explicit_criteria_cols:
+                    correct_cols.add(col)
+                for col in LISTINGS_V2_COLS:
+                    correct_cols.add(get_safe_col_name(col))
+                
+                # Check if there are dirty columns (like custom V1 columns)
+                dirty_cols = [c for c in actual_cols if c not in correct_cols]
+                if dirty_cols:
+                    print(f"[🛡️ SCHEMA REALIGNMENT] Found invalid columns in listings_v2: {dirty_cols}. Re-aligning schema...")
+                    
+                    # Fetch all existing rows
+                    cursor.execute("SELECT * FROM listings_v2")
+                    rows = cursor.fetchall()
+                    
+                    # Drop the old table
+                    cursor.execute("DROP TABLE listings_v2")
+                    conn.commit()
+                    
+                    # Re-create table using correct columns definition
+                    columns_def = [
+                        "tk_id TEXT PRIMARY KEY",
+                        "status TEXT DEFAULT 'raw_text'",
+                        "raw_images_tk_json TEXT",
+                        "raw_drive_images_json TEXT",
+                        "curated_config_json TEXT",
+                        "Chieu_dai TEXT"
+                    ]
+                    for col in explicit_criteria_cols:
+                        columns_def.append(f"`{col}` TEXT")
+                    for col in LISTINGS_V2_COLS:
+                        col_name = get_safe_col_name(col)
+                        if col_name not in ["tk_id", "status"] and col_name not in explicit_criteria_cols:
+                            if not any(c.startswith(f"`{col_name}` ") or c.startswith(f"{col_name} ") for c in columns_def):
+                                columns_def.append(f"`{col_name}` TEXT")
+                                
+                    create_table_sql = f"CREATE TABLE listings_v2 ({', '.join(columns_def)})"
+                    cursor.execute(create_table_sql)
+                    conn.commit()
+                    
+                    # Restore rows
+                    if rows:
+                        common_cols = [c for c in actual_cols if c in correct_cols]
+                        placeholders = ", ".join(["?" for _ in common_cols])
+                        cols_str = ", ".join([f"`{c}`" for c in common_cols])
+                        col_indices = [actual_cols.index(c) for c in common_cols]
+                        
+                        for row in rows:
+                            row_data_vals = [row[idx] for idx in col_indices]
+                            cursor.execute(f"INSERT OR REPLACE INTO listings_v2 ({cols_str}) VALUES ({placeholders})", row_data_vals)
+                        conn.commit()
+                        print(f"[✅ SCHEMA REALIGNMENT] Restored {len(rows)} rows into clean listings_v2.")
+        except Exception as e_realignment:
+            print(f"[❌ SCHEMA REALIGNMENT ERROR] {str(e_realignment)}")
+
+        # Bảng listings_v2 (Chứa metadata văn bản thô đầy đủ trường)
+        columns_def = [
+            "tk_id TEXT PRIMARY KEY",
+            "status TEXT DEFAULT 'raw_text'",
+            "raw_images_tk_json TEXT",
+            "raw_drive_images_json TEXT",
+            "curated_config_json TEXT",
+            "Chieu_dai TEXT"
+        ]
         for col in explicit_criteria_cols:
             columns_def.append(f"`{col}` TEXT")
 
-        # Sinh thêm cột từ POOL_HEADERS (nếu chưa có trong list trên)
-        for header in POOL_HEADERS:
-            col_name = get_safe_col_name(header)
+        # Sinh thêm cột từ LISTINGS_V2_COLS (nếu chưa có trong list trên)
+        for col in LISTINGS_V2_COLS:
+            col_name = get_safe_col_name(col)
             if col_name not in ["tk_id", "status"] and col_name not in explicit_criteria_cols:
-                columns_def.append(f"`{col_name}` TEXT")
+                if not any(c.startswith(f"`{col_name}` ") or c.startswith(f"{col_name} ") for c in columns_def):
+                    columns_def.append(f"`{col_name}` TEXT")
 
         create_table_sql = f"CREATE TABLE IF NOT EXISTS listings_v2 ({', '.join(columns_def)})"
         cursor.execute(create_table_sql)
@@ -326,8 +409,8 @@ def init_db(db_file=None):
                     cursor.execute(f"ALTER TABLE listings_v2 ADD COLUMN `{col}` TEXT")
                     conn.commit()
 
-            for header in POOL_HEADERS:
-                new_col = get_safe_col_name(header)
+            for col in LISTINGS_V2_COLS:
+                new_col = get_safe_col_name(col)
                 if new_col not in existing_cols and new_col not in ["tk_id", "status"] and new_col not in explicit_criteria_cols:
                     cursor.execute(f"ALTER TABLE listings_v2 ADD COLUMN `{new_col}` TEXT")
                     conn.commit()
@@ -452,68 +535,104 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
     except Exception:
         pass
 
+    target_table = "listings_v2" if is_pool2 else "listings"
+    
+    # Lấy danh sách cột thực tế của bảng SQLite mục tiêu để lọc cột động
+    cursor.execute(f"PRAGMA table_info({target_table})")
+    db_cols = {row[1] for row in cursor.fetchall()}
+
+    explicit_criteria_cols = [
+        "Criteria_Tiem_nang_Rui_ro", "Criteria_Duong_truoc_nha", "Criteria_Loai_BDS",
+        "Criteria_Giay_to_phap_ly", "Criteria_Hinh_dang_dat", "Criteria_Tinh_trang_xay_dung",
+        "Criteria_Cau_truc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
+        "Criteria_Vi_tri_tinh_thue", "Criteria_Mat_thoang", "Criteria_Khoang_cach_bai_do_xe",
+        "Criteria_Kinh_doanh_Dong_tien", "Criteria_Tien_ich", "Criteria_Phong_thuy",
+        "Criteria_Huong_nha", "Criteria_Vi_tri_trong_ngo", "Criteria_Khoang_cach_duong_oto"
+    ]
+
+    # Tiền xử lý metadata để đồng bộ chuẩn hóa tên cột
+    cleaned_metadata = {}
+    
+    # Tự động sinh System ID và Mã Hàng nếu chưa có trong metadata
     if is_pool2:
-        # Chế độ Pool2
-        # 1. Tự động sinh System ID và Mã Hàng nếu chưa có trong metadata
-        if "System ID" not in metadata and "system_id" not in metadata:
+        if "System ID" not in metadata and "system_id" not in metadata and "System_ID" not in metadata:
             metadata["System ID"] = f"SYS-{datetime.now().strftime('%Y%m%d').upper()}-{random.randint(100, 999)}"
-        if "Mã Hàng" not in metadata and "ma_hang" not in metadata:
+        if "Mã Hàng" not in metadata and "ma_hang" not in metadata and "Ma_Hang" not in metadata:
             parts = tk_id.split('-')
             suffix = parts[-1].upper() if parts else ""
             metadata["Mã Hàng"] = f"TK-{suffix}"
 
-        # 2. Lưu hoặc Cập nhật bảng listings_v2
-        existing = cursor.execute("SELECT tk_id FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
+    for key, val in metadata.items():
+        safe_col = key if key in explicit_criteria_cols else get_safe_col_name(key)
+        # Chỉ giữ lại những cột thực sự tồn tại trong CSDL mục tiêu
+        if safe_col in db_cols and safe_col not in ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"]:
+            cleaned_metadata[safe_col] = str(val) if val is not None else ""
+
+    # Lưu hoặc Cập nhật bảng
+    existing = cursor.execute(f"SELECT tk_id FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+    
+    # Dò tìm các ảnh sơ đồ (diagram) từ metadata trước để phục vụ phân loại và phân nhóm
+    diagram_urls = []
+    for idx in range(1, 6):
+        sodo_key = f"Sơ đồ thửa đất {idx}"
+        if sodo_key in metadata and metadata[sodo_key]:
+            url = metadata[sodo_key].strip()
+            if url and url not in diagram_urls:
+                diagram_urls.append(url)
+
+    # Đọc danh sách ảnh sắp xếp gốc từ TK nếu có
+    ordered_urls = metadata.get("raw_images_tk_ordered")
+    if isinstance(ordered_urls, str):
+        try:
+            ordered_urls = json.loads(ordered_urls)
+        except Exception:
+            pass
+
+    # Phân nhóm hình ảnh theo đúng yêu cầu: Nhóm nội thất trước (interior), rồi tới sơ đồ sau (diagram)
+    if ordered_urls and isinstance(ordered_urls, list):
+        ordered_interiors = [url for url in ordered_urls if url.strip() not in diagram_urls]
+        ordered_diagrams = [url for url in ordered_urls if url.strip() in diagram_urls]
+        # Đảm bảo không bị thiếu ảnh sơ đồ nào khai báo trong metadata
+        for d_url in diagram_urls:
+            if d_url not in ordered_diagrams:
+                ordered_diagrams.append(d_url)
+        grouped_urls = ordered_interiors + ordered_diagrams
+    else:
+        # Fallback khi không có ordered_urls
+        ordered_interiors = [url for url in images_tk_list if url.strip() not in diagram_urls]
+        ordered_diagrams = [url for url in diagram_urls]
+        grouped_urls = ordered_interiors + ordered_diagrams
+
+    raw_images_tk_json_val = json.dumps(grouped_urls)
         
-        # Tiền xử lý các cột tiêu chí để không bị nhầm lẫn trong listings_v2
-        explicit_criteria_cols = [
-            "Criteria_Tiem_nang_Rui_ro", "Criteria_Duong_truoc_nha", "Criteria_Loai_BDS",
-            "Criteria_Giay_to_phap_ly", "Criteria_Hinh_dang_dat", "Criteria_Tinh_trang_xay_dung",
-            "Criteria_Cau_truc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
-            "Criteria_Vi_tri_tinh_thue", "Criteria_Mat_thoang", "Criteria_Khoang_cach_bai_do_xe",
-            "Criteria_Kinh_doanh_Dong_tien", "Criteria_Tien_ich", "Criteria_Phong_thuy",
-            "Criteria_Huong_nha", "Criteria_Vi_tri_trong_ngo", "Criteria_Khoang_cach_duong_oto"
-        ]
-
-        if existing:
-            update_parts = ["status = ?", "raw_images_tk_json = ?"]
-            values = ["raw_text", json.dumps(images_tk_list)]
+    if existing:
+        update_parts = ["status = ?", "raw_images_tk_json = ?"]
+        values = ["raw_text", raw_images_tk_json_val]
+        
+        for safe_col, val in cleaned_metadata.items():
+            update_parts.append(f"`{safe_col}` = ?")
+            values.append(val)
             
-            for key, val in metadata.items():
-                safe_col = get_safe_col_name(key) if key not in explicit_criteria_cols else key
-                if safe_col not in ["tk_id", "status"]:
-                    update_parts.append(f"`{safe_col}` = ?")
-                    values.append(str(val) if val is not None else "")
-                    
-            values.append(tk_id)
-            update_sql = f"UPDATE listings_v2 SET {', '.join(update_parts)} WHERE tk_id = ?"
-            cursor.execute(update_sql, values)
-        else:
-            columns = ["tk_id", "status", "raw_images_tk_json"]
-            placeholders = ["?", "?", "?"]
-            values = [tk_id, "raw_text", json.dumps(images_tk_list)]
+        values.append(tk_id)
+        update_sql = f"UPDATE {target_table} SET {', '.join(update_parts)} WHERE tk_id = ?"
+        cursor.execute(update_sql, values)
+    else:
+        columns = ["tk_id", "status", "raw_images_tk_json"]
+        placeholders = ["?", "?", "?"]
+        values = [tk_id, "raw_text", raw_images_tk_json_val]
+        
+        for safe_col, val in cleaned_metadata.items():
+            columns.append(f"`{safe_col}`")
+            placeholders.append("?")
+            values.append(val)
             
-            for key, val in metadata.items():
-                safe_col = get_safe_col_name(key) if key not in explicit_criteria_cols else key
-                if safe_col not in ["tk_id", "status"]:
-                    columns.append(f"`{safe_col}`")
-                    placeholders.append("?")
-                    values.append(str(val) if val is not None else "")
-                    
-            insert_sql = f"INSERT INTO listings_v2 ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
-            cursor.execute(insert_sql, values)
-        conn.commit()
+        insert_sql = f"INSERT INTO {target_table} ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
+        cursor.execute(insert_sql, values)
+        
+    conn.commit()
 
-        # 3. Quản lý danh sách hình ảnh trong listings_images
-        # Dò tìm các ảnh sơ đồ (diagram) từ metadata
-        diagram_urls = []
-        for idx in range(1, 6):
-            sodo_key = f"Sơ đồ thửa đất {idx}"
-            if sodo_key in metadata and metadata[sodo_key]:
-                url = metadata[sodo_key].strip()
-                if url and url not in diagram_urls:
-                    diagram_urls.append(url)
-
+    # Ở chế độ Pool2, lưu ảnh sơ đồ và ảnh nội thất thô vào listings_images
+    if is_pool2:
         # Lấy danh sách ảnh hiện tại trong db để lọc trùng
         existing_images = cursor.execute(
             "SELECT image_url FROM listings_images WHERE tk_id = ?", (tk_id,)
@@ -526,59 +645,19 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
         ).fetchone()
         next_seq = (max_seq_row[0] or 0) + 1 if max_seq_row and max_seq_row[0] is not None else 0
 
-        # Lưu ảnh sơ đồ
-        for url in diagram_urls:
-            if url not in existing_urls:
-                cursor.execute("""
-                    INSERT INTO listings_images (tk_id, image_url, role, sequence_index)
-                    VALUES (?, ?, ?, ?)
-                """, (tk_id, url, "diagram", next_seq))
-                next_seq += 1
-                existing_urls.add(url)
-
-        # Lưu ảnh nội thất thô
-        for url in images_tk_list:
+        # Lưu hình ảnh theo đúng thứ tự đã phân nhóm (nội thất trước, sơ đồ sau)
+        for url in grouped_urls:
             url = url.strip()
             if url and url not in existing_urls:
+                role = "diagram" if url in diagram_urls else "interior"
                 cursor.execute("""
                     INSERT INTO listings_images (tk_id, image_url, role, sequence_index)
                     VALUES (?, ?, ?, ?)
-                """, (tk_id, url, "interior", next_seq))
+                """, (tk_id, url, role, next_seq))
                 next_seq += 1
                 existing_urls.add(url)
         conn.commit()
 
-    else:
-        # Chế độ Pool1
-        existing = cursor.execute("SELECT id FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
-        
-        if existing:
-            update_parts = ["status = ?", "raw_images_tk_json = ?"]
-            values = ["raw_text", json.dumps(images_tk_list)]
-            
-            for key, val in metadata.items():
-                safe_col = get_safe_col_name(key)
-                update_parts.append(f"`{safe_col}` = ?")
-                values.append(str(val) if val is not None else "")
-                
-            values.append(tk_id)
-            update_sql = f"UPDATE listings SET {', '.join(update_parts)} WHERE tk_id = ?"
-            cursor.execute(update_sql, values)
-        else:
-            columns = ["tk_id", "status", "raw_images_tk_json"]
-            placeholders = ["?", "?", "?"]
-            values = [tk_id, "raw_text", json.dumps(images_tk_list)]
-            
-            for key, val in metadata.items():
-                safe_col = get_safe_col_name(key)
-                columns.append(f"`{safe_col}`")
-                placeholders.append("?")
-                values.append(str(val) if val is not None else "")
-                
-            insert_sql = f"INSERT INTO listings ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
-            cursor.execute(insert_sql, values)
-        conn.commit()
-        
     conn.close()
 
 
@@ -673,22 +752,141 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
     if not os.path.exists(db_file):
         return {"status": "error", "message": "Database không tồn tại"}
         
+    # Xác định bảng listings động
+    is_pool2 = False
+    try:
+        config_file = "settings.json"
+        if os.path.exists(config_file):
+            with open(config_file, 'r', encoding='utf-8') as f:
+                cfg = json.load(f)
+                if cfg.get("active_pool_system") == "Pool2":
+                    is_pool2 = True
+    except Exception:
+        pass
+    listings_table = "listings_v2" if is_pool2 else "listings"
+
     conn = sqlite3.connect(db_file, timeout=30.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    row = cursor.execute("SELECT * FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+    if is_pool2:
+        sql = """
+            SELECT listings_v2.*, 
+                   listings_custom_v2.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, 
+                   listings_custom_v2.Gia_Public AS custom_Gia_Public, 
+                   listings_custom_v2.Tieu_De_Public AS custom_Tieu_De_Public, 
+                   listings_custom_v2.Mo_ta_Public AS custom_Mo_ta_Public, 
+                   listings_custom_v2.Note_Noi_Bo AS custom_Note_Noi_Bo, 
+                   listings_custom_v2.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich, 
+                   listings_custom_v2.Ngu_Tret AS custom_Ngu_Tret, 
+                   listings_custom_v2.CHDV AS custom_CHDV, 
+                   listings_custom_v2.Trang_Thai_KN AS custom_Trang_Thai_KN, 
+                   listings_custom_v2.images_metadata_json AS custom_images_metadata_json, 
+                   listings_custom_v2.Dia_Chi_That AS custom_Dia_Chi_That, 
+                   listings_custom_v2.So_Nha AS custom_So_Nha, 
+                   listings_custom_v2.Ten_Duong AS custom_Ten_Duong,
+                   listings_custom_v2.bedrooms AS custom_bedrooms,
+                   listings_custom_v2.restrooms AS custom_restrooms,
+                   listings_custom_v2.minimumRoadWidth AS custom_minimumRoadWidth,
+                   listings_custom_v2.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                   listings_custom_v2.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet,
+                   listings_custom_v2.Gia_chao AS custom_Gia_chao,
+                   listings_custom_v2.DT_Thuc_te AS custom_DT_Thuc_te,
+                   listings_custom_v2.DT_Tren_so AS custom_DT_Tren_so,
+                   listings_custom_v2.So_Tang AS custom_So_Tang,
+                   listings_custom_v2.Mat_Tien AS custom_Mat_Tien,
+                   listings_custom_v2.Chieu_dai AS custom_Chieu_dai,
+                   listings_custom_v2.Huong AS custom_Huong,
+                   listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                   listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+                   listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                   listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+                   listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                   listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                   listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+            FROM listings_v2 
+            LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
+            WHERE listings_v2.tk_id = ?
+        """
+        row = cursor.execute(sql, (tk_id,)).fetchone()
+    else:
+        row = cursor.execute(f"SELECT * FROM {listings_table} WHERE tk_id = ?", (tk_id,)).fetchone()
     
     if not row:
         conn.close()
         return {"status": "error", "message": "Mã căn không tồn tại"}
         
     d = dict(row)
+    if is_pool2:
+        try:
+            # Fetch images from listings_images since listings_v2 has no image columns
+            cursor.execute(
+                "SELECT image_url, cloudinary_url, role, sequence_index FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC", 
+                (tk_id,)
+            )
+            img_rows = cursor.fetchall()
+            
+            diagrams = []
+            facades = []
+            alleys = []
+            interiors = []
+            for img_url, cld_url, role, seq in img_rows:
+                url = cld_url if cld_url else img_url
+                if not url:
+                    continue
+                if role == "diagram":
+                    diagrams.append(url)
+                elif role in ["facade", "cover"]:
+                    facades.append(url)
+                elif role == "alley":
+                    alleys.append(url)
+                elif role == "interior":
+                    interiors.append(url)
+            
+            # Map them into safe column name keys
+            for idx in range(5):
+                d[get_safe_col_name(f"Sơ đồ thửa đất {idx+1}")] = diagrams[idx] if idx < len(diagrams) else ""
+            d[get_safe_col_name("Hình Mặt Tiền")] = facades[0] if facades else (interiors[0] if interiors else "")
+            for idx in range(10):
+                d[get_safe_col_name(f"Hình Hẻm {idx+1}")] = alleys[idx] if idx < len(alleys) else ""
+            for idx in range(25):
+                d[get_safe_col_name(f"Ảnh {idx+1}")] = interiors[idx] if idx < len(interiors) else ""
+        except Exception as e_img_fetch:
+            add_log_message(f"[⚠️ WARNING] Không thể truy vấn ảnh từ listings_images cho publish: {str(e_img_fetch)}")
+    if is_pool2 and "custom_Ma_Khang_Ngo" in d:
+        if d.get("custom_Ma_Khang_Ngo"): d["Ma_Khang_Ngo_ID"] = d["custom_Ma_Khang_Ngo"]
+        if d.get("custom_Tieu_De_Public"): d["Tieu_de_Public"] = d["custom_Tieu_De_Public"]
+        if d.get("custom_Mo_ta_Public"): d["Mo_ta_Public"] = d["custom_Mo_ta_Public"]
+        if d.get("custom_Gia_Public"): d["Gia_Public"] = d["custom_Gia_Public"]
+        if d.get("custom_Note_Noi_Bo"): d["Note_Noi_Bo"] = d["custom_Note_Noi_Bo"]
+        if d.get("custom_Trang_Thai_Giao_Dich"): d["Tinh_trang_nha"] = d["custom_Trang_Thai_Giao_Dich"]
+        if d.get("custom_Ngu_Tret"): d["Ngu_tret_Admin"] = d["custom_Ngu_Tret"]
+        if d.get("custom_CHDV"): d["CHDV_Admin"] = d["custom_CHDV"]
+        if d.get("custom_Trang_Thai_KN"): d["Danh_gia_Admin"] = d["custom_Trang_Thai_KN"]
+        
+        # Nhóm đè địa chỉ / kỹ thuật
+        if d.get("custom_So_Nha"): d["Ngo_So_nha"] = d["custom_So_Nha"]
+        if d.get("custom_Ten_Duong"): d["Duong"] = d["custom_Ten_Duong"]
+        if d.get("custom_Quan"): d["Quan"] = d["custom_Quan"]
+        if d.get("custom_Phuong"): d["Phuong"] = d["custom_Phuong"]
+        if d.get("custom_bedrooms"): d["bedrooms"] = d["custom_bedrooms"]
+        if d.get("custom_restrooms"): d["restrooms"] = d["custom_restrooms"]
+        if d.get("custom_minimumRoadWidth"): d["minimumRoadWidth"] = d["custom_minimumRoadWidth"]
+        if d.get("custom_Noi_dung_chinh"): d["Noi_dung_chinh"] = d["custom_Noi_dung_chinh"]
+        if d.get("custom_Mo_ta_chi_tiet"): d["Mo_ta_chi_tiet"] = d["custom_Mo_ta_chi_tiet"]
+        if d.get("custom_Gia_chao"): d["Gia_chao"] = d["custom_Gia_chao"]
+        if d.get("custom_DT_Thuc_te"): d["DT_Thuc_te"] = d["custom_DT_Thuc_te"]
+        if d.get("custom_DT_Tren_so"): d["DT_Tren_so"] = d["custom_DT_Tren_so"]
+        if d.get("custom_So_Tang"): d["So_Tang"] = d["custom_So_Tang"]
+        if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
+        if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
+        if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
     
     # Khử va chạm Mã Hàng
     ma_hang_db = d.get("M__H_ng", "") or d.get("Ma_Hang", "")
     if ma_hang_db:
         collision_count = cursor.execute(
-            "SELECT COUNT(DISTINCT tk_id) FROM listings WHERE Ma_Hang = ?",
+            f"SELECT COUNT(DISTINCT tk_id) FROM {listings_table} WHERE Ma_Hang = ?",
             (ma_hang_db,)
         ).fetchone()[0]
         if collision_count > 1:
@@ -815,7 +1013,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     conn_db = sqlite3.connect(db_file, timeout=30.0)
                     cursor_db = conn_db.cursor()
                     col_ma_kn_safe = get_safe_col_name("Mã Khang Ngô (ID)")
-                    cursor_db.execute(f"UPDATE listings SET `{col_ma_kn_safe}` = ? WHERE tk_id = ?", (val, tk_id))
+                    cursor_db.execute(f"UPDATE {listings_table} SET `{col_ma_kn_safe}` = ? WHERE tk_id = ?", (val, tk_id))
                     conn_db.commit()
                     conn_db.close()
                 except Exception as e_db:
@@ -831,7 +1029,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     conn_db = sqlite3.connect(db_file, timeout=30.0)
                     cursor_db = conn_db.cursor()
                     col_sys_safe = get_safe_col_name("System ID")
-                    cursor_db.execute(f"UPDATE listings SET `{col_sys_safe}` = ? WHERE tk_id = ?", (val, tk_id))
+                    cursor_db.execute(f"UPDATE {listings_table} SET `{col_sys_safe}` = ? WHERE tk_id = ?", (val, tk_id))
                     conn_db.commit()
                     conn_db.close()
                 except Exception as e_db:
@@ -875,7 +1073,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             conn = sqlite3.connect(db_file, timeout=30.0)
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE listings SET status = 'published', `Last_Sync` = ? WHERE tk_id = ?",
+                f"UPDATE {listings_table} SET status = 'published', `Last_Sync` = ? WHERE tk_id = ?",
                 (datetime.now().strftime("%d/%m/%Y %H:%M:%S"), tk_id)
             )
             conn.commit()
