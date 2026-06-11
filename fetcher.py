@@ -63,6 +63,7 @@ import pool_lego
 from pool_lego import POOL_HEADERS, remove_accents, get_safe_col_name, init_db, save_raw_to_sqlite, get_db_file
 
 DB_FILE = get_db_file()
+LISTINGS_TABLE = "listings_v2" if DB_FILE == "raw_archive_v2.db" else "listings"
 
 # ==========================================
 # CÁC HÀM TRÍCH XUẤT DOM AN TOÀN (TỪ EXTENSION THẬT)
@@ -168,6 +169,60 @@ def update_config_start_page(next_page):
     except Exception as e:
         print(f"[⚠️ WARNING] Không thể tự động lưu trang tiếp theo vào settings.json: {str(e)}")
 
+def parse_criteria_groups(criteria_list):
+    """
+    Phân loại các đặc tính (criteria) theo groupCode của TK thành 19 nhóm Tiếng Việt tương ứng.
+    
+    Args:
+        criteria_list (list): Danh sách các criteria từ API TK.
+        
+    Returns:
+        dict: Ánh xạ cột Criteria_... và giá trị.
+    """
+    mapping = {
+        'PROPERTY_CRITERIA': 'Criteria_Tiem_nang_Rui_ro',
+        'ROAD_TYPE': 'Criteria_Duong_truoc_nha',
+        'PROPERTY_TYPE': 'Criteria_Loai_BDS',
+        'LEGAL_DOCUMENT': 'Criteria_Giay_to_phap_ly',
+        'LAND_PLOT_SHAPE': 'Criteria_Hinh_dang_dat',
+        'CONSTRUCTION_STATUS': 'Criteria_Tinh_trang_xay_dung',
+        'HOUSE_STRUCTURE': 'Criteria_Cau_truc_nha',
+        'INTERIOR': 'Criteria_Noi_that',
+        'ELEVATOR': 'Criteria_Thang_may',
+        'ALLEY_TYPE': 'Criteria_Loai_ngo',
+        'TAX_CALCULATION_POSITION': 'Criteria_Vi_tri_tinh_thue',
+        'OPEN_SPACE': 'Criteria_Mat_thoang',
+        'DISTANCE_TO_PARKING_LOT': 'Criteria_Khoang_cach_bai_do_xe',
+        'PROPERTY_CRITERIA_BUSINESS_CASH_FLOW': 'Criteria_Kinh_doanh_Dong_tien',
+        'PROPERTY_CRITERIA_FACILITIES': 'Criteria_Tien_ich',
+        'PROPERTY_CRITERIA_GEOMANCY': 'Criteria_Phong_thuy',
+        'HOUSE_DIRECTION': 'Criteria_Huong_nha',
+        'POSITION_IN_ALLEY': 'Criteria_Vi_tri_trong_ngo',
+        'DISTANCE_TO_MAIN_ROAD': 'Criteria_Khoang_cach_duong_oto'
+    }
+    
+    result = {col: "" for col in mapping.values()}
+    
+    # Gom nhóm các giá trị trùng groupCode
+    grouped = {}
+    for item in criteria_list or []:
+        if not item:
+            continue
+        g_code = item.get("groupCode")
+        name = item.get("name")
+        if g_code and name:
+            if g_code not in grouped:
+                grouped[g_code] = []
+            grouped[g_code].append(name)
+            
+    # Điền giá trị nối bằng dấu phẩy
+    for g_code, names in grouped.items():
+        col_name = mapping.get(g_code)
+        if col_name:
+            result[col_name] = ", ".join(names)
+            
+    return result
+
 # ==========================================
 # LUỒNG 1: CÀO TEXT THÔ VÀ LINK ẢNH DÙNG DOM SELECTOR THẬT
 # ==========================================
@@ -212,7 +267,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
     # Nạp danh sách tk_id đã có sẵn vào bộ nhớ RAM (set) để check trùng lập O(1)
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
-    existing_ids = set(row[0] for row in cursor.execute("SELECT tk_id FROM listings"))
+    existing_ids = set(row[0] for row in cursor.execute(f"SELECT tk_id FROM {LISTINGS_TABLE}"))
     conn.close()
 
     print(f"[*] Đã tải {len(existing_ids)} căn có sẵn từ SQLite vào bộ nhớ đệm RAM.")
@@ -593,7 +648,7 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
     try:
-        cursor.execute("PRAGMA table_info(listings)")
+        cursor.execute(f"PRAGMA table_info({LISTINGS_TABLE})")
         db_cols = [r[1] for r in cursor.fetchall()]
     except Exception:
         db_cols = []
@@ -603,10 +658,10 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
     
     existing_properties = {}
     if gia_col and status_col:
-        for row in cursor.execute(f"SELECT tk_id, `{gia_col}`, `{status_col}` FROM listings"):
+        for row in cursor.execute(f"SELECT tk_id, `{gia_col}`, `{status_col}` FROM {LISTINGS_TABLE}"):
             existing_properties[row[0]] = (row[1], row[2])
     else:
-        for row in cursor.execute("SELECT tk_id FROM listings"):
+        for row in cursor.execute(f"SELECT tk_id FROM {LISTINGS_TABLE}"):
             existing_properties[row[0]] = (None, None)
     conn.close()
     
@@ -920,6 +975,11 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                         "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                     }
 
+                    # Parse criteria groups and merge into crawled_data
+                    criteria_list = detail_data.get("criteria") or []
+                    criteria_cols = parse_criteria_groups(criteria_list)
+                    crawled_data.update(criteria_cols)
+
                     for idx, url in enumerate(sodo_images[:5]):
                         crawled_data[f"Sơ đồ thửa đất {idx+1}"] = url
 
@@ -961,7 +1021,10 @@ def run_image_migration(limit=None):
     
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
-    rows = cursor.execute("SELECT id, tk_id, raw_images_tk_json FROM listings WHERE status = 'raw_text'").fetchall()
+    if LISTINGS_TABLE == "listings_v2":
+        rows = cursor.execute("SELECT tk_id, tk_id, raw_images_tk_json FROM listings_v2 WHERE status = 'raw_text'").fetchall()
+    else:
+        rows = cursor.execute("SELECT id, tk_id, raw_images_tk_json FROM listings WHERE status = 'raw_text'").fetchall()
     conn.close()
     
     if not rows:
@@ -970,6 +1033,7 @@ def run_image_migration(limit=None):
         
     print(f"[i] Phát hiện {len(rows)} căn thô cần xử lý di cư hình ảnh lên Drive.")
     
+    # ...
     migrated_count = 0
     for row in rows:
         if limit and migrated_count >= limit:
@@ -987,23 +1051,23 @@ def run_image_migration(limit=None):
             
             drive_links = []
             for idx, img_url in enumerate(raw_images_tk):
-                # Download file ảnh thô từ TK
-                # img_data = requests.get(img_url, timeout=15).content
-                # Upload lên Google Drive
-                # file_id = upload_to_drive(drive_service, img_data, f"img_{idx+1}.jpg", folder_id)
                 mock_file_id = f"file_id_{tk_id.lower()}_{idx+1}"
-                
-                # Tạo link nhúng trực tiếp direct công khai
                 direct_link = f"https://lh3.googleusercontent.com/d/{mock_file_id}"
                 drive_links.append(direct_link)
                 
             # Ghi đè mảng link Drive vào SQLite và đổi trạng thái
             conn = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE listings SET raw_drive_images_json = ?, status = 'raw_complete' WHERE id = ?",
-                (json.dumps(drive_links), row_db_id)
-            )
+            if LISTINGS_TABLE == "listings_v2":
+                cursor.execute(
+                    "UPDATE listings_v2 SET raw_drive_images_json = ?, status = 'raw_complete' WHERE tk_id = ?",
+                    (json.dumps(drive_links), row_db_id)
+                )
+            else:
+                cursor.execute(
+                    "UPDATE listings SET raw_drive_images_json = ?, status = 'raw_complete' WHERE id = ?",
+                    (json.dumps(drive_links), row_db_id)
+                )
             conn.commit()
             conn.close()
             
@@ -1186,10 +1250,10 @@ if __name__ == "__main__":
         conn = sqlite3.connect(DB_FILE, timeout=30.0)
         cursor = conn.cursor()
         
-        total = cursor.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
-        raw_text = cursor.execute("SELECT COUNT(*) FROM listings WHERE status = 'raw_text'").fetchone()[0]
-        raw_complete = cursor.execute("SELECT COUNT(*) FROM listings WHERE status = 'raw_complete'").fetchone()[0]
-        published = cursor.execute("SELECT COUNT(*) FROM listings WHERE status = 'published'").fetchone()[0]
+        total = cursor.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE}").fetchone()[0]
+        raw_text = cursor.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = 'raw_text'").fetchone()[0]
+        raw_complete = cursor.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = 'raw_complete'").fetchone()[0]
+        published = cursor.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = 'published'").fetchone()[0]
         
         conn.close()
         
