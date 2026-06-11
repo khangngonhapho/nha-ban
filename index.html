@@ -4076,7 +4076,7 @@
   </div>
 
   <!-- Modal Xem Bộ sưu tập (Admin) -->
-  <div class="overlay" id="colViewModal" onclick="if(event.target===this) this.classList.remove('open')">
+  <div class="overlay" id="colViewModal" onclick="if(event.target===this) closeColViewModal()">
     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📂 Xem Bộ Sưu Tập</h3>
       <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Vui lòng chọn bộ sưu tập để xem rổ hàng:</p>
@@ -4084,7 +4084,7 @@
       <div id="colViewList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;"></div>
       
       <div>
-        <button onclick="document.getElementById('colViewModal').classList.remove('open')" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
+        <button onclick="closeColViewModal()" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
       </div>
     </div>
   </div>
@@ -7792,7 +7792,9 @@
       const dial = document.getElementById('adminSpeedDial');
       const actions = document.getElementById('dialActions');
       const mainBtn = document.getElementById('dialMainBtn');
-      if (dial && actions && mainBtn && !dial.contains(event.target)) {
+      const colViewModal = document.getElementById('colViewModal');
+      const isColViewOpen = colViewModal && colViewModal.classList.contains('open');
+      if (dial && actions && mainBtn && !dial.contains(event.target) && !isColViewOpen) {
         actions.classList.remove('open');
         mainBtn.classList.remove('active');
       }
@@ -7824,6 +7826,11 @@
             <button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>
           `;
         }
+      } else if (mode === 'colView') {
+        // Chế độ xem danh sách bộ sưu tập (chỉ đổi các nút hành động thành nút xóa BST)
+        actionsEl.innerHTML = `
+          <button class="dial-btn-item delete-col-btn-float" onclick="deleteSelectedCollections()" title="Xóa các bộ sưu tập đã chọn" style="background:#e74c3c !important; color:white !important; font-size:18px !important;">🗑️</button>
+        `;
       } else {
         activeDetailListing = null;
         // Đóng menu nếu đang mở
@@ -10584,18 +10591,28 @@
         // 1. Thêm bộ sưu tập Mặc định: Yêu thích (Thích)
         const favCount = favs.size;
         const favItem = document.createElement('div');
-        favItem.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:10px; cursor:pointer; transition:background 0.2s;';
-        favItem.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px;" onclick="viewCollection('favorites')">
-            <span style="font-size:16px;">❤️</span>
-            <span style="font-weight:600; font-size:14px; color:var(--text);">Căn nhà đã thích</span>
-            <span style="font-size:12px; color:var(--sub);">(${favCount} căn)</span>
-          </div>
+        favItem.style.cssText = 'display:flex; align-items:center; gap:12px; padding:12px 16px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:10px; cursor:pointer; transition:background 0.2s;';
+        
+        // Checkbox disabled cho danh sách mặc định không thể xóa
+        const favCb = document.createElement('input');
+        favCb.type = 'checkbox';
+        favCb.disabled = true;
+        favCb.style.cssText = 'width:24px; height:24px; cursor:not-allowed; margin:0; flex-shrink:0; opacity:0.3;';
+        
+        const favInfo = document.createElement('div');
+        favInfo.style.cssText = 'display:flex; align-items:center; gap:8px; flex:1;';
+        favInfo.innerHTML = `
+          <span style="font-size:16px;">❤️</span>
+          <span style="font-weight:600; font-size:14px; color:var(--text);">Căn nhà đã thích</span>
+          <span style="font-size:12px; color:var(--sub);">(${favCount} căn)</span>
         `;
-        favItem.onclick = () => {
+        favInfo.onclick = () => {
           viewCollection('favorites');
-          document.getElementById('colViewModal').classList.remove('open');
+          closeColViewModal();
         };
+        
+        favItem.appendChild(favCb);
+        favItem.appendChild(favInfo);
         viewList.appendChild(favItem);
         
         // 2. Thêm các bộ sưu tập tự tạo
@@ -10606,11 +10623,24 @@
           const val = collections[name];
           if (!Array.isArray(val)) return;
           const count = val.length;
-          
           const item = document.createElement('div');
-          item.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:10px; cursor:pointer; transition:background 0.2s; margin-top:8px;';
+          item.style.cssText = 'display:flex; align-items:center; gap:12px; padding:12px 16px; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:10px; cursor:pointer; transition:background 0.2s; margin-top:8px;';
           
-          // Tạo info div click để xem
+          // Checkbox chọn để xóa hàng loạt
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'col-delete-checkbox';
+          cb.dataset.colname = name;
+          cb.style.cssText = 'width:24px; height:24px; cursor:pointer; margin:0; flex-shrink:0;';
+          cb.onclick = (e) => {
+            if (e) e.stopPropagation();
+          };
+          
+          // Click vào vùng trống bên ngoài tên bộ sưu tập sẽ kích hoạt checkbox
+          item.onclick = () => {
+            cb.checked = !cb.checked;
+          };
+          
           const infoDiv = document.createElement('div');
           infoDiv.style.cssText = 'display:flex; align-items:center; gap:8px; flex:1;';
           infoDiv.innerHTML = `
@@ -10621,24 +10651,24 @@
           infoDiv.onclick = (e) => {
             if (e) e.stopPropagation();
             viewCollection(name);
-            document.getElementById('colViewModal').classList.remove('open');
+            closeColViewModal();
           };
           
-          // Tạo nút xóa bộ sưu tập
-          const delBtn = document.createElement('button');
-          delBtn.style.cssText = 'background:none; border:none; color:var(--sub); font-size:14px; cursor:pointer; padding:4px 8px; display:flex; align-items:center; justify-content:center; transition:color 0.15s;';
-          delBtn.title = 'Xóa bộ sưu tập';
-          delBtn.innerHTML = '🗑️';
-          delBtn.onclick = (e) => {
-            deleteCollection(name, e);
-          };
-          
+          item.appendChild(cb);
           item.appendChild(infoDiv);
-          item.appendChild(delBtn);
           viewList.appendChild(item);
         });
         
         document.getElementById('colViewModal').classList.add('open');
+        
+        // Kích hoạt hiển thị nút xóa của Speed Dial và tự động mở dial
+        renderSpeedDialActions('colView');
+        const dialActions = document.getElementById('dialActions');
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (dialActions && mainBtn) {
+          dialActions.classList.add('open');
+          mainBtn.classList.add('active');
+        }
       } catch (err) {
         alert(`❌ Lỗi hiển thị danh sách bộ sưu tập: ${err.message}`);
         console.error(err);
@@ -10842,6 +10872,57 @@
         console.error("Error exiting collection view:", err);
       }
     }
+
+    function closeColViewModal() {
+      try {
+        const modal = document.getElementById('colViewModal');
+        if (modal) modal.classList.remove('open');
+        renderSpeedDialActions('list');
+      } catch (err) {
+        console.error("Error closing collection view modal:", err);
+      }
+    }
+    window.closeColViewModal = closeColViewModal;
+
+    function deleteSelectedCollections() {
+      try {
+        const checkboxes = document.querySelectorAll('.col-delete-checkbox:checked');
+        if (checkboxes.length === 0) {
+          alert('Vui lòng chọn ít nhất 1 bộ sưu tập để xóa!');
+          return;
+        }
+        
+        const namesToDelete = Array.from(checkboxes).map(cb => cb.dataset.colname);
+        if (!confirm(`Bạn có chắc chắn muốn xóa ${namesToDelete.length} bộ sưu tập đã chọn không?`)) {
+          return;
+        }
+        
+        if (typeof collections !== 'object' || collections === null) {
+          collections = {};
+        }
+        
+        namesToDelete.forEach(name => {
+          delete collections[name];
+        });
+        
+        localStorage.setItem('adminCollections', JSON.stringify(collections));
+        
+        renderCollectionsManager();
+        
+        namesToDelete.forEach(name => {
+          if (activeCollectionName === name) {
+            exitCollectionView();
+          }
+        });
+        
+        closeColViewModal();
+        alert('Đã xóa thành công các bộ sưu tập đã chọn!');
+      } catch (err) {
+        alert(`❌ Lỗi khi xóa bộ sưu tập: ${err.message}`);
+        console.error(err);
+      }
+    }
+    window.deleteSelectedCollections = deleteSelectedCollections;
 
     function deleteCollection(name, event) {
       try {
