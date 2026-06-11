@@ -81,51 +81,268 @@ def safe_get_val(soup, selector, is_input=True):
 def get_val_by_label(soup, label_text):
     target = label_text.lower().strip()
 
-    # 1. Thử khớp chính xác trước (Exact Match) để tránh nhầm lẫn
-    for label in soup.select('label'):
+    def find_val_near(label_el):
+        # 1. Direct sibling (input or text)
+        sibling = label_el.find_next_sibling()
+        if sibling:
+            inp = sibling.find('input') if hasattr(sibling, 'find') else None
+            if inp:
+                return inp.get('value', '').strip()
+            txt = sibling.text.strip()
+            if txt:
+                return txt
+
+        # 2. Traverse up parent chain (up to 3 levels) to find siblings of ancestors
+        curr = label_el
+        for _ in range(3):
+            if not curr:
+                break
+            sib = curr.find_next_sibling()
+            if sib:
+                inp = sib.find('input') if hasattr(sib, 'find') else None
+                if inp:
+                    return inp.get('value', '').strip()
+                a = sib.find('a') if hasattr(sib, 'find') else None
+                if a and target not in ["mô tả", "mô tả chi tiết", "nội dung", "nội dung chính"]:
+                    return a.get('href', '').strip()
+                txt = sib.text.strip()
+                if txt:
+                    return txt
+            curr = curr.parent
+        return ""
+
+    # 1. Exact Match
+    for label in soup.find_all(['label', 'p', 'span', 'div']):
+        if label.name == 'div' and len(label.text) > 100:
+            continue
         txt = label.text.replace(':', '').strip().lower()
         if txt == target:
-            # Thử tìm input là sibling kế cận (bỏ qua thẻ br nếu có)
-            inp_sibling = label.find_next_sibling('input')
-            if inp_sibling:
-                return inp_sibling.get('value', '').strip()
+            val = find_val_near(label)
+            if val:
+                return val
                 
-            # Hoặc tìm trong wrapper sibling
-            sibling = label.find_next_sibling()
-            if sibling:
-                inp = sibling.find('input')
-                if inp:
-                    return inp.get('value', '').strip()
-                a = sibling.find('a')
-                if a and target not in ["mô tả", "mô tả chi tiết", "nội dung", "nội dung chính"]:
-                    return a.get('href', '').strip()
-                return sibling.text.strip()
-                
-    # 2. Nếu không khớp chính xác, thử khớp substring nhưng loại trừ các trường hợp nhầm lẫn
-    for label in soup.select('label'):
+    # 2. Substring Match
+    for label in soup.find_all(['label', 'p', 'span', 'div']):
+        if label.name == 'div' and len(label.text) > 100:
+            continue
         txt = label.text.replace(':', '').strip().lower()
         if target in txt:
-            # Ngăn chặn nhầm lẫn 'hợp đồng' với 'giá chào hợp đồng' hoặc 'giá hợp đồng'
             if target == "hợp đồng" and "giá" in txt:
                 continue
-            # Ngăn chặn nhầm lẫn 'đầu chủ' với 'điện thoại đầu chủ'
             if target == "đầu chủ" and "điện thoại" in txt:
                 continue
-                
-            inp_sibling = label.find_next_sibling('input')
-            if inp_sibling:
-                return inp_sibling.get('value', '').strip()
-                
-            sibling = label.find_next_sibling()
-            if sibling:
-                inp = sibling.find('input')
-                if inp:
-                    return inp.get('value', '').strip()
-                a = sibling.find('a')
-                if a and target not in ["mô tả", "mô tả chi tiết", "nội dung", "nội dung chính"]:
-                    return a.get('href', '').strip()
-                return sibling.text.strip()
+            val = find_val_near(label)
+            if val:
+                return val
     return ""
+
+def extract_badges_from_container(container):
+    if not container:
+        return []
+    if len(container.text) > 250:
+        return []
+    elements = container.find_all(['span', 'button', 'div'])
+    leaves = []
+    for el in elements:
+        child_tags = el.find_all(['span', 'button', 'div'])
+        if not child_tags:
+            txt = el.text.strip()
+            if txt and len(txt) <= 50 and txt not in leaves:
+                leaves.append(txt)
+    if not leaves:
+        txt = container.text.strip()
+        if txt and len(txt) <= 250:
+            leaves = [v.strip() for v in re.split(r'[,;\n]', txt) if v.strip() and len(v.strip()) <= 50]
+    return leaves
+
+def get_criteria_by_label(soup, label_text):
+    if not soup:
+        return []
+    target = remove_accents(label_text).lower().strip()
+    
+    def find_badges_near(label_el):
+        sibling = label_el.find_next_sibling()
+        if sibling:
+            badges = extract_badges_from_container(sibling)
+            if badges:
+                return badges
+        curr = label_el
+        for _ in range(3):
+            if not curr:
+                break
+            sib = curr.find_next_sibling()
+            if sib:
+                badges = extract_badges_from_container(sib)
+                if badges:
+                    return badges
+            curr = curr.parent
+        return []
+
+    # 1. Exact Match
+    for label in soup.find_all(['label', 'p', 'span', 'div']):
+        if label.name == 'div' and len(label.text) > 100:
+            continue
+        txt = remove_accents(label.text.replace(':', '').strip()).lower()
+        if txt == target:
+            badges = find_badges_near(label)
+            if badges:
+                return badges
+                
+    # 2. Substring Match with whole-word checking for single-word targets
+    for label in soup.find_all(['label', 'p', 'span', 'div']):
+        if label.name == 'div' and len(label.text) > 100:
+            continue
+        txt = remove_accents(label.text.replace(':', '').strip()).lower()
+        txt_clean = re.sub(r'[^a-z0-9\s]', ' ', txt)
+        txt_words = txt_clean.split()
+        
+        is_match = False
+        if " " in target:
+            is_match = (target in txt)
+        else:
+            is_match = (target in txt_words)
+            
+        if is_match:
+            badges = find_badges_near(label)
+            if badges:
+                return badges
+    return []
+
+def scrape_criteria_from_dom(soup, phan_loai_scraped):
+    CRITERIA_LABEL_MAPPING = {
+        "Criteria_Tiem_nang_Rui_ro": ["Tiềm năng - Rủi ro", "Tiềm năng", "Rủi ro"],
+        "Criteria_Duong_truoc_nha": ["Đường trước nhà"],
+        "Criteria_Loai_BDS": ["Loại hình bất động sản", "Loại hình BĐS", "Loại BĐS"],
+        "Criteria_Giay_to_phap_ly": ["Giấy tờ pháp lý", "Pháp lý"],
+        "Criteria_Hinh_dang_dat": ["Hình dạng thửa đất", "Hình dạng đất"],
+        "Criteria_Tinh_trang_xay_dung": ["Tình trạng xây dựng"],
+        "Criteria_Cau_truc_nha": ["Cấu trúc nhà"],
+        "Criteria_Noi_that": ["Nội thất"],
+        "Criteria_Thang_may": ["Thang máy"],
+        "Criteria_Loai_ngo": ["Loại ngõ"],
+        "Criteria_Vi_tri_tinh_thue": ["Vị trí tính thuế theo quy định của Nhà nước", "Vị trí tính thuế"],
+        "Criteria_Mat_thoang": ["Mặt thoáng"],
+        "Criteria_Khoang_cach_bai_do_xe": ["Khoảng cách ra bãi đỗ xe oto", "Khoảng cách ra bãi đỗ xe ô tô", "Khoảng cách bãi đỗ xe"],
+        "Criteria_Kinh_doanh_Dong_tien": ["Kinh doanh - Dòng tiền", "Kinh doanh, dòng tiền", "Dòng tiền"],
+        "Criteria_Tien_ich": ["Tiện ích"],
+        "Criteria_Phong_thuy": ["Phong thủy"],
+        "Criteria_Huong_nha": ["Hướng nhà", "Hướng"],
+        "Criteria_Vi_tri_trong_ngo": ["Vị trí nhà trong ngõ", "Vị trí trong ngõ"],
+        "Criteria_Khoang_cach_duong_oto": ["Khoảng cách ra đường ô tô tránh", "Khoảng cách ra đường ô tô", "Khoảng cách đường ô tô"]
+    }
+    
+    result = {}
+    for col, labels in CRITERIA_LABEL_MAPPING.items():
+        val = ""
+        for label in labels:
+            badges = get_criteria_by_label(soup, label)
+            if badges:
+                val = ", ".join(badges)
+                break
+        result[col] = val
+
+    # Fallback to V1 multiselect matching if empty
+    if phan_loai_scraped:
+        for item in [x.strip() for x in phan_loai_scraped.split(",") if x.strip()]:
+            col_name = classify_criterion(item)
+            if col_name:
+                if not result.get(col_name):
+                    result[col_name] = item
+                elif item not in result[col_name]:
+                    result[col_name] += ", " + item
+                    
+    return result
+
+def classify_criterion(value):
+    val = value.strip()
+    val_lower = val.lower()
+    
+    # 1. Hướng nhà (HOUSE_DIRECTION)
+    huong_names = ["đông bắc", "đông nam", "tây bắc", "tây nam", "đông", "tây", "nam", "bắc"]
+    if any(h == val_lower for h in huong_names):
+        return "Criteria_Huong_nha"
+        
+    # 2. Thang máy (ELEVATOR)
+    if "thang máy" in val_lower:
+        return "Criteria_Thang_may"
+        
+    # 3. Loại ngõ (ALLEY_TYPE)
+    if val_lower in ["ngõ thông", "ngõ cụt", "hẻm thông", "hẻm cụt"]:
+        return "Criteria_Loai_ngo"
+        
+    # 4. Khoảng cách bãi đỗ xe (DISTANCE_TO_PARKING_LOT)
+    if "bãi đỗ" in val_lower or "bãi xe" in val_lower or val_lower in ["dưới 100m", "dưới 200m", "dưới 500m"]:
+        return "Criteria_Khoang_cach_bai_do_xe"
+        
+    # 5. Đường trước nhà (ROAD_TYPE)
+    if "ô tô" in val_lower or "ba gác" in val_lower or "xe hơi" in val_lower or "tránh" in val_lower or "mặt tiền" in val_lower or "mặt phố" in val_lower or "đường trước nhà" in val_lower:
+        return "Criteria_Duong_truoc_nha"
+        
+    # 6. Lô góc / Mặt thoáng (OPEN_SPACE)
+    if "lô góc" in val_lower or "mặt thoáng" in val_lower or "thoáng" in val_lower or "góc" in val_lower:
+        return "Criteria_Mat_thoang"
+        
+    # 7. Tiện ích (PROPERTY_CRITERIA_FACILITIES)
+    facilities_keywords = ["trường", "chợ", "bệnh viện", "dân trí", "trung tâm thương mại", "siêu thị", "công viên", "ubnd", "tiện ích"]
+    if any(k in val_lower for k in facilities_keywords):
+        return "Criteria_Tien_ich"
+        
+    # 8. Kinh doanh / Dòng tiền (PROPERTY_CRITERIA_BUSINESS_CASH_FLOW)
+    business_keywords = ["kinh doanh", "dòng tiền", "cho thuê", "chdv", "văn phòng", "spa", "tiệm"]
+    if any(k in val_lower for k in business_keywords):
+        return "Criteria_Kinh_doanh_Dong_tien"
+        
+    # 9. Giấy tờ pháp lý (LEGAL_DOCUMENT)
+    legal_keywords = ["sổ hồng", "sổ đỏ", "giấy tay", "bản vẽ", "pháp lý", "giấy tờ"]
+    if any(k in val_lower for k in legal_keywords):
+        return "Criteria_Giay_to_phap_ly"
+        
+    # 10. Hình dáng đất (LAND_PLOT_SHAPE)
+    shape_keywords = ["nở hậu", "thóp hậu", "vuông", "vuông vức", "hình thang", "thửa đất"]
+    if any(k in val_lower for k in shape_keywords):
+        return "Criteria_Hinh_dang_dat"
+        
+    # 11. Tình trạng xây dựng (CONSTRUCTION_STATUS)
+    construction_keywords = ["nhà mới", "nhà cũ", "nhà nát", "xây thô", "đang hoàn thiện", "mới tinh"]
+    if any(k in val_lower for k in construction_keywords):
+        return "Criteria_Tinh_trang_xay_dung"
+        
+    # 12. Cấu trúc nhà (HOUSE_STRUCTURE)
+    structure_keywords = ["lửng", "sân thượng", "giếng trời", "lầu", "hầm", "áp mái", "cấu trúc"]
+    if any(k in val_lower for k in structure_keywords):
+        return "Criteria_Cau_truc_nha"
+        
+    # 13. Nội thất (INTERIOR)
+    interior_keywords = ["nội thất", "nhà trống", "full option", "bàn giao thô"]
+    if any(k in val_lower for k in interior_keywords):
+        return "Criteria_Noi_that"
+        
+    # 14. Vị trí trong ngõ (POSITION_IN_ALLEY)
+    if "đầu ngõ" in val_lower or "cuối ngõ" in val_lower or "đầu hẻm" in val_lower or "cuối hẻm" in val_lower:
+        return "Criteria_Vi_tri_trong_ngo"
+        
+    # 15. Khoảng cách đường ô tô (DISTANCE_TO_MAIN_ROAD)
+    if "cách đường" in val_lower or "cách ô tô" in val_lower or "gần đường ô tô" in val_lower:
+        return "Criteria_Khoang_cach_duong_oto"
+        
+    # 16. Phong thủy (PROPERTY_CRITERIA_GEOMANCY)
+    geomancy_keywords = ["đâm đường", "đường đâm", "lỗi phong thủy", "phong thủy"]
+    if any(k in val_lower for k in geomancy_keywords):
+        return "Criteria_Phong_thuy"
+        
+    # 17. Loại BDS (PROPERTY_TYPE)
+    type_keywords = ["nhà phố", "biệt thự", "đất trống", "căn hộ", "chung cư"]
+    if any(k in val_lower for k in type_keywords):
+        return "Criteria_Loai_BDS"
+        
+    # 18. Vị trí tính thuế (TAX_CALCULATION_POSITION)
+    if "vị trí" in val_lower:
+        return "Criteria_Vi_tri_tinh_thue"
+        
+    # 19. Mặc định là Tiềm năng - Rủi ro (PROPERTY_CRITERIA)
+    # Ví dụ: "Hiếm", "Giấy phép xây dựng", "Phòng cháy cháy nổ", "Chính chủ"
+    return "Criteria_Tiem_nang_Rui_ro"
+
 
 def build_paging_url(base_url, page_num):
     # Tự động thay thế tham số page trong query string bảo toàn casing và thứ tự (in-place)
@@ -532,40 +749,64 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                     img_els_nd = soup_detail.select('#lightgalleryND li')
                     images_nd = [li.get('data-src', '') for li in img_els_nd if li.get('data-src')]
                     
+                    # Scrape more technical parameters using get_val_by_label
+                    behind_open_space = get_val_by_label(soup_detail, "độ rộng mặt thoáng đằng sau nhà (m)") or get_val_by_label(soup_detail, "độ rộng mặt thoáng đằng sau nhà") or get_val_by_label(soup_detail, "mặt thoáng đằng sau")
+                    side_open_space = get_val_by_label(soup_detail, "độ rộng mặt thoáng bên cạnh (m)") or get_val_by_label(soup_detail, "độ rộng mặt thoáng bên cạnh") or get_val_by_label(soup_detail, "mặt thoáng bên cạnh")
+                    bedrooms_scraped = get_val_by_label(soup_detail, "số phòng ngủ") or safe_get_val(soup_detail, '#Detail_iSoPhongNgu_show')
+                    restrooms_scraped = get_val_by_label(soup_detail, "số nhà vệ sinh") or get_val_by_label(soup_detail, "số toilet") or safe_get_val(soup_detail, '#Detail_iSoToilet_show')
+                    balconies_scraped = get_val_by_label(soup_detail, "số ban công")
+                    sidewalk_scraped = get_val_by_label(soup_detail, "vỉa hè")
+                    commission_value = get_val_by_label(soup_detail, "phần trăm trích thưởng") or get_val_by_label(soup_detail, "phần trăm hoa hồng")
+                    certificate_series = get_val_by_label(soup_detail, "series sổ đỏ") or get_val_by_label(soup_detail, "series sổ")
+
                     # Đóng gói dữ liệu bóc tách
                     crawled_data = {
                         "Mã Hàng": ma_hang_scraped,
-                        "Tỉnh": safe_get_val(soup_detail, '#Detail_sTenTinh'),
-                        "Quận": safe_get_val(soup_detail, '#Detail_sTenQuan'),
-                        "Phường": safe_get_val(soup_detail, '#Detail_sTenPhuongXa'),
-                        "Đường": safe_get_val(soup_detail, '#Detail_sDuongPho'),
-                        "Ngõ/Số nhà": safe_get_val(soup_detail, '#Detail_sDiaChi'),
+                        "Tỉnh": safe_get_val(soup_detail, '#Detail_sTenTinh') or get_val_by_label(soup_detail, "tỉnh/thành phố") or get_val_by_label(soup_detail, "tỉnh"),
+                        "Quận": safe_get_val(soup_detail, '#Detail_sTenQuan') or get_val_by_label(soup_detail, "quận/huyện") or get_val_by_label(soup_detail, "quận"),
+                        "Phường": safe_get_val(soup_detail, '#Detail_sTenPhuongXa') or get_val_by_label(soup_detail, "phường/xã") or get_val_by_label(soup_detail, "phường"),
+                        "Đường": safe_get_val(soup_detail, '#Detail_sDuongPho') or get_val_by_label(soup_detail, "đường/phố") or get_val_by_label(soup_detail, "đường"),
+                        "Ngõ/Số nhà": safe_get_val(soup_detail, '#Detail_sDiaChi') or get_val_by_label(soup_detail, "ngõ/số nhà"),
                         "Phân loại": phan_loai_scraped,
-                        "Nội dung chính": safe_get_val(soup_detail, '#Detail_sNoiDung').replace('\r', '').replace('\n', ' '),
+                        "Nội dung chính": safe_get_val(soup_detail, '#Detail_sNoiDung').replace('\r', '').replace('\n', ' ') if safe_get_val(soup_detail, '#Detail_sNoiDung') else "",
                         "Mô tả chi tiết": mo_ta_scraped,
-                        "Giá chào": safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
-                        "Giá Public": safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'), # Mặc định lấy giá chào
-                        "DT Thực tế": safe_get_val(soup_detail, '#Detail_iDienTich_show'),
-                        "DT Trên sổ": safe_get_val(soup_detail, '#Detail_iDienTichSo_show'),
-                        "Mặt Tiền": safe_get_val(soup_detail, '#Detail_iMatTien_show'),
-                        "Chieu_dai": safe_get_val(soup_detail, '#Detail_iDai_show') or safe_get_val(soup_detail, '#Detail_iDai'),
-                        "Số Tầng": safe_get_val(soup_detail, '#Detail_iSoTang_show'),
-                        "Số phòng ngủ": safe_get_val(soup_detail, '#Detail_iSoPhongNgu_show'),
-                        "Số nhà vệ sinh": safe_get_val(soup_detail, '#Detail_iSoToilet_show'),
-                        "Hướng": huong_scraped,
+                        "Giá chào": safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show') or get_val_by_label(soup_detail, "giá chào"),
+                        "Giá Public": safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show') or get_val_by_label(soup_detail, "giá chào"), 
+                        "DT Thực tế": safe_get_val(soup_detail, '#Detail_iDienTich_show') or get_val_by_label(soup_detail, "diện tích thực tế"),
+                        "DT Trên sổ": safe_get_val(soup_detail, '#Detail_iDienTichSo_show') or get_val_by_label(soup_detail, "diện tích sổ"),
+                        "Mặt Tiền": safe_get_val(soup_detail, '#Detail_iMatTien_show') or get_val_by_label(soup_detail, "mặt tiền"),
+                        "Chieu_dai": safe_get_val(soup_detail, '#Detail_iDai_show') or safe_get_val(soup_detail, '#Detail_iDai') or get_val_by_label(soup_detail, "chiều dài"),
+                        "Số Tầng": safe_get_val(soup_detail, '#Detail_iSoTang_show') or get_val_by_label(soup_detail, "số tầng"),
+                        "Số phòng ngủ": bedrooms_scraped,
+                        "Số nhà vệ sinh": restrooms_scraped,
+                        "Hướng": huong_scraped or get_val_by_label(soup_detail, "hướng"),
                         "Đường trước nhà (m)": duong_truoc_nha,
                         "Tình trạng nhà": "Bình thường",
-                        "Trạng thái": safe_get_val(soup_detail, '#Detail_iTrangThai'),
-                        "Tên Chủ Nhà": safe_get_val(soup_detail, '#Detail_sTenChuNha'),
-                        "Điện thoại 1": safe_get_val(soup_detail, '#Detail_sDienThoaiChuNha'),
+                        "Trạng thái": safe_get_val(soup_detail, '#Detail_iTrangThai') or get_val_by_label(soup_detail, "trạng thái"),
+                        "Tên Chủ Nhà": safe_get_val(soup_detail, '#Detail_sTenChuNha') or get_val_by_label(soup_detail, "tên chủ nhà"),
+                        "Điện thoại 1": safe_get_val(soup_detail, '#Detail_sDienThoaiChuNha') or get_val_by_label(soup_detail, "điện thoại 1"),
                         "Điện thoại Đầu Chủ": dt_dau_chu,
                         "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
                         "Điểm Facebook": link_fb,
                         "Link Gốc": detail_url,
-                        "System ID": f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
-                        "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        "System ID": f"SYS-{datetime.now().strftime('%Y%m%d').upper()}-{random.randint(100, 999)}",
+                        "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                        
+                        # English compatibility mapping
+                        "bedrooms": bedrooms_scraped,
+                        "restrooms": restrooms_scraped,
+                        "balconies": balconies_scraped,
+                        "sidewalk": sidewalk_scraped,
+                        "behindOpenSpace": behind_open_space,
+                        "sideOpenSpace": side_open_space,
+                        "minimumRoadWidth": duong_truoc_nha,
+                        "commissionValue": commission_value,
+                        "certificateSeries": certificate_series
                     }
                     
+                    # Parse criteria using direct label scraper + fallback to V1 multiselect
+                    classified_cols = scrape_criteria_from_dom(soup_detail, phan_loai_scraped)
+                    crawled_data.update(classified_cols)
                     # Ghi nhận các liên kết ảnh sơ đồ (Cột 28 và 29 + Thêm 3 cột sơ đồ ở đáy)
                     if len(images_td) >= 1: crawled_data["Sơ đồ thửa đất 1"] = images_td[0]
                     if len(images_td) >= 2: crawled_data["Sơ đồ thửa đất 2"] = images_td[1]
@@ -591,6 +832,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                         if img and img not in seen_images:
                             combined_images.append(img)
                             seen_images.add(img)
+                    crawled_data["raw_images_tk_ordered"] = images_td + combined_images
                     save_raw_to_sqlite(tk_id, crawled_data, combined_images)
                     
                     existing_ids.add(tk_id)
@@ -942,7 +1184,17 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                             if m.get("type") == "checkin_image" and m.get("url"):
                                 property_images.append(m.get("url"))
 
+                    # Channels and tags processing
+                    channels_list = detail_data.get("channels") or []
+                    channels_str = ", ".join([str(c) for c in channels_list if c])
+                    
+                    tags_list = detail_data.get("tags") or []
+                    tags_str = ", ".join([t.get("name") if isinstance(t, dict) else str(t) for t in tags_list if t])
+
+                    raw_images_tk_ordered = [m.get("url") for m in media if m.get("url")]
+
                     crawled_data = {
+                        "raw_images_tk_ordered": raw_images_tk_ordered,
                         "Mã Hàng": ma_hang,
                         "Tỉnh": tinh,
                         "Quận": quan_name,
@@ -969,14 +1221,53 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                         "Điện thoại 1": dien_thoai_1,
                         "Điện thoại Đầu Chủ": dt_dau_chu,
                         "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
+                        "Ten_Dau_Chu": ten_dau_chu,
                         "Điểm Facebook": link_fb,
                         "Link Gốc": f"https://proptech.thienkhoi.com/warehouse/sources/{tk_id_crawling}",
                         "System ID": f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
-                        "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                        
+                        # English compatibility mapping
+                        "bedrooms": so_phong_ngu,
+                        "restrooms": so_nha_ve_sinh,
+                        "minimumRoadWidth": duong_truoc_nha,
+                        
+                        # Rich contract & technical fields from API
+                        "isSigned": "1" if detail_data.get("isSigned") else "0",
+                        "status_nguon": trang_thai,
+                        "commissionAgent": str(detail_data.get("commissionAgent") or ""),
+                        "ownerSideUserId": str(detail_data.get("ownerSideUserId") or ""),
+                        "certificateSeries": str(detail_data.get("certificateSeries") or ""),
+                        "latitude": str((detail_data.get("coordinate") or {}).get("latitude") or detail_data.get("latitude") or ""),
+                        "longitude": str((detail_data.get("coordinate") or {}).get("longitude") or detail_data.get("longitude") or ""),
+                        "placeName": str(detail_data.get("placeName") or ""),
+                        "streetName": str(detail_data.get("streetName") or ""),
+                        "balconies": str(detail_data.get("balconies") or ""),
+                        "sidewalk": str(detail_data.get("sidewalk") or ""),
+                        "behindOpenSpace": str(detail_data.get("behindOpenSpace") or ""),
+                        "sideOpenSpace": str(detail_data.get("sideOpenSpace") or ""),
+                        "createdAt": str(detail_data.get("createdAt") or ""),
+                        "updatedAt": str(detail_data.get("updatedAt") or ""),
+                        "commissionType": str(detail_data.get("commissionType") or ""),
+                        "commissionValue": str(detail_data.get("commissionValue") or ""),
+                        "isDispute": "1" if detail_data.get("isDispute") else "0",
+                        "createdAtSigned": str(detail_data.get("createdAtSigned") or ""),
+                        "CCCD_Dau_Chu": str((detail_data.get("ownerSideUser") or {}).get("numberId") or ""),
+                        "Kenh_tin_TK": channels_str,
+                        "The_tags_TK": tags_str
                     }
 
                     # Parse criteria groups and merge into crawled_data
                     criteria_list = detail_data.get("criteria") or []
+                    
+                    # Save to scratch/last_crawled_criteria.json for debug
+                    try:
+                        os.makedirs("scratch", exist_ok=True)
+                        with open("scratch/last_crawled_criteria.json", "w", encoding="utf-8") as f:
+                            json.dump(criteria_list, f, indent=4, ensure_ascii=False)
+                    except Exception as e_debug:
+                        print(f"  [⚠️ WARNING] Lỗi ghi file debug criteria: {str(e_debug)}")
+                        
                     criteria_cols = parse_criteria_groups(criteria_list)
                     crawled_data.update(criteria_cols)
 

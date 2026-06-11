@@ -1191,6 +1191,17 @@
                             
                             <div class="editor-grid-2" style="margin-top: 10px;">
                                 <div class="form-group">
+                                    <label>Mặt tiền (m)</label>
+                                    <input type="text" id="edit-mat-tien" placeholder="Mặt tiền...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Chiều dài (m)</label>
+                                    <input type="text" id="edit-chieu-dai" placeholder="Chiều dài...">
+                                </div>
+                            </div>
+                            
+                            <div class="editor-grid-2" style="margin-top: 10px;">
+                                <div class="form-group">
                                     <label>Số phòng ngủ</label>
                                     <input type="text" id="edit-so-phong-ngu" placeholder="Số PN...">
                                 </div>
@@ -1929,21 +1940,25 @@
             if (!query) return null;
             query = query.trim();
             
-            // Nếu là URL đầy đủ từ Thiên Khôi
-            if (query.includes('thienkhoi.com')) {
-                const parts = query.split('/');
-                const lastPart = parts[parts.length - 1].split('?')[0].trim();
-                if (lastPart) return lastPart;
+            // 1. Check if it contains a UUID anywhere (standard 36-char format with hyphens)
+            const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+            const uuidMatch = query.match(uuidRegex);
+            if (uuidMatch) {
+                return uuidMatch[0];
             }
             
-            // Nếu là UUID (dài 36 ký tự)
-            if (query.length === 36 && query.includes('-')) {
-                return query;
+            // 2. Check if it is a URL containing /Detail/(\d+)
+            const detailRegex = /\/Detail\/(\d+)/i;
+            const detailMatch = query.match(detailRegex);
+            if (detailMatch) {
+                return detailMatch[1];
             }
             
-            // Nếu là mã hàng truyền thống (chỉ số, độ dài từ 5 đến 12)
-            if (/^\d+$/.test(query) && query.length >= 5 && query.length <= 12) {
-                return query;
+            // 3. Fallback: split by slash and get the last non-empty segment
+            const parts = query.split('/').map(p => p.trim()).filter(p => p);
+            if (parts.length > 0) {
+                const lastSegment = parts[parts.length - 1].split('?')[0].trim();
+                if (lastSegment) return lastSegment;
             }
             
             return null;
@@ -2281,6 +2296,8 @@
             document.getElementById('edit-gia-public').value = house.Gia_Public || house.Gia_chao || '';
             document.getElementById('edit-phan-loai-hem').value = house.Phan_loai_Hem || 'Hẻm xe hơi';
             document.getElementById('edit-duong-truoc-nha').value = house.Duong_truoc_nha_m || '';
+            document.getElementById('edit-mat-tien').value = house.Mat_Tien || '';
+            document.getElementById('edit-chieu-dai').value = house.Chieu_dai || '';
             document.getElementById('edit-so-phong-ngu').value = house.So_phong_ngu || '';
             document.getElementById('edit-so-nha-ve-sinh').value = house.So_nha_ve_sinh || '';
             document.getElementById('edit-danh-gia').value = house.Danh_gia_Admin || '';
@@ -2602,6 +2619,8 @@
                 gia_public: document.getElementById('edit-gia-public').value,
                 phan_loai_hem: document.getElementById('edit-phan-loai-hem').value,
                 duong_truoc_nha: document.getElementById('edit-duong-truoc-nha').value,
+                mat_tien: document.getElementById('edit-mat-tien').value,
+                chieu_dai: document.getElementById('edit-chieu-dai').value,
                 so_phong_ngu: document.getElementById('edit-so-phong-ngu').value,
                 so_nha_ve_sinh: document.getElementById('edit-so-nha-ve-sinh').value,
                 danh_gia: document.getElementById('edit-danh-gia').value,

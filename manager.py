@@ -114,17 +114,18 @@ def normalize_listing_for_client(row):
         "DT_Tren_so": ["DT_Tren_so", "DT_Tr_n_s_"],
         "So_Tang": ["So_Tang", "S__T_ng"],
         "Mat_Tien": ["Mat_Tien", "M_t_Ti_n"],
-        "So_phong_ngu": ["So_phong_ngu", "S__ph_ng_ng_"],
-        "So_nha_ve_sinh": ["So_nha_ve_sinh", "S__nh__v__sinh"],
+        "Chieu_dai": ["Chieu_dai", "Chi_u_dai"],
+        "So_phong_ngu": ["So_phong_ngu", "S__ph_ng_ng_", "bedrooms"],
+        "So_nha_ve_sinh": ["So_nha_ve_sinh", "S__nh__v__sinh", "restrooms"],
         "Gia_chao": ["Gia_chao", "Gi__ch_o"],
         "Gia_Public": ["Gia_Public", "Gi__Public"],
         "Phan_lo_i_Hem": ["Phan_loai_Hem", "Phan_lo_i_Hem", "Ph_n_lo_i_H_m"],
-        "Duong_truoc_nha_m": ["Duong_truoc_nha_m", "___ng_tr__c_nh___m_"],
+        "Duong_truoc_nha_m": ["Duong_truoc_nha_m", "___ng_tr__c_nh___m_", "minimumRoadWidth"],
         "Tinh_trang_nha": ["Tinh_trang_nha", "T_nh_tr_ng_nh_"],
         "Danh_gia_Admin": ["Danh_gia_Admin", "__nh_gi___Admin_"],
         "Ngu_tret_Admin": ["Ngu_tret_Admin", "Ng__tr_t__Admin_"],
         "CHDV_Admin": ["CHDV_Admin", "CHDV__Admin_"],
-        "Ten_Dau_Chu_Hop_dong": ["Ten_Dau_Chu_Hop_dong", "T_n___u_Ch___H_p___ng_"],
+        "Ten_Dau_Chu_Hop_dong": ["Ten_Dau_Chu_Hop_dong", "T_n___u_Ch___H_p___ng_", "Ten_Dau_Chu"],
         "Dien_thoai_Dau_Chu": ["Dien_thoai_Dau_Chu", "_i_n_tho_i___u_Ch_"],
         "Diem_Facebook": ["Diem_Facebook", "_i_m_Facebook"],
         "Ma_Hang": ["Ma_Hang", "M__H_ng"],
@@ -140,6 +141,46 @@ def normalize_listing_for_client(row):
                     break
         d[client_key] = val
         
+    # Áp dụng các trường custom_* từ listings_custom_v2 nếu có (chỉ ở chế độ Pool2)
+    if "custom_Ma_Khang_Ngo" in d:
+        if d.get("custom_Ma_Khang_Ngo"): d["Ma_Khang_Ngo_ID"] = d["custom_Ma_Khang_Ngo"]
+        if d.get("custom_Tieu_De_Public"): d["Tieu_de_Public"] = d["custom_Tieu_De_Public"]
+        if d.get("custom_Mo_ta_Public"): d["Mo_ta_Public"] = d["custom_Mo_ta_Public"]
+        if d.get("custom_Gia_Public"): d["Gia_Public"] = d["custom_Gia_Public"]
+        if d.get("custom_Note_Noi_Bo"): d["Note_Noi_Bo"] = d["custom_Note_Noi_Bo"]
+        if d.get("custom_Trang_Thai_Giao_Dich"): d["Tinh_trang_nha"] = d["custom_Trang_Thai_Giao_Dich"]
+        if d.get("custom_Ngu_Tret"): d["Ngu_tret_Admin"] = d["custom_Ngu_Tret"]
+        if d.get("custom_CHDV"): d["CHDV_Admin"] = d["custom_CHDV"]
+        if d.get("custom_Trang_Thai_KN"): d["Danh_gia_Admin"] = d["custom_Trang_Thai_KN"]
+        
+        # Nhóm đè địa chỉ / kỹ thuật
+        if d.get("custom_So_Nha"): d["Ngo_So_nha"] = d["custom_So_Nha"]
+        if d.get("custom_Ten_Duong"): d["Duong"] = d["custom_Ten_Duong"]
+        if d.get("custom_Quan"): d["Quan"] = d["custom_Quan"]
+        if d.get("custom_Phuong"): d["Phuong"] = d["custom_Phuong"]
+        if d.get("custom_bedrooms"): d["bedrooms"] = d["custom_bedrooms"]
+        if d.get("custom_restrooms"): d["restrooms"] = d["custom_restrooms"]
+        if d.get("custom_minimumRoadWidth"): d["minimumRoadWidth"] = d["custom_minimumRoadWidth"]
+        if d.get("custom_Noi_dung_chinh"): d["Noi_dung_chinh"] = d["custom_Noi_dung_chinh"]
+        if d.get("custom_Mo_ta_chi_tiet"): d["Mo_ta_chi_tiet"] = d["custom_Mo_ta_chi_tiet"]
+        if d.get("custom_Gia_chao"): d["Gia_chao"] = d["custom_Gia_chao"]
+        if d.get("custom_DT_Thuc_te"): d["DT_Thuc_te"] = d["custom_DT_Thuc_te"]
+        if d.get("custom_DT_Tren_so"): d["DT_Tren_so"] = d["custom_DT_Tren_so"]
+        if d.get("custom_So_Tang"): d["So_Tang"] = d["custom_So_Tang"]
+        if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
+        if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
+        if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+        
+        # Nhóm Tiêu chí
+        if d.get("custom_Criteria_Duong_truoc_nha"): d["Criteria_Duong_truoc_nha"] = d["custom_Criteria_Duong_truoc_nha"]
+        if d.get("custom_Criteria_Noi_that"): d["Criteria_Noi_that"] = d["custom_Criteria_Noi_that"]
+        if d.get("custom_Criteria_Thang_may"): d["Criteria_Thang_may"] = d["custom_Criteria_Thang_may"]
+        if d.get("custom_Criteria_Loai_ngo"): d["Criteria_Loai_ngo"] = d["custom_Criteria_Loai_ngo"]
+        if d.get("custom_Criteria_Khoang_cach_bai_do_xe"): d["Criteria_Khoang_cach_bai_do_xe"] = d["custom_Criteria_Khoang_cach_bai_do_xe"]
+        if d.get("custom_Criteria_Kinh_doanh_Dong_tien"): d["Criteria_Kinh_doanh_Dong_tien"] = d["custom_Criteria_Kinh_doanh_Dong_tien"]
+        if d.get("custom_Criteria_Huong_nha"): d["Criteria_Huong_nha"] = d["custom_Criteria_Huong_nha"]
+        if d.get("custom_Criteria_Khoang_cach_duong_oto"): d["Criteria_Khoang_cach_duong_oto"] = d["custom_Criteria_Khoang_cach_duong_oto"]
+        
     # Đồng bộ key Phuong_cu_AI không gạch dưới đề phòng client khác đọc
     d["Phuong_cu_AI"] = d["Phuong_cu_AI_"]
             
@@ -148,6 +189,38 @@ def normalize_listing_for_client(row):
     d["raw_drive_images"] = json.loads(d["raw_drive_images_json"]) if d.get("raw_drive_images_json") else []
     d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
     
+    if LISTINGS_TABLE == "listings_v2":
+        try:
+            # Query all images from listings_images since listings_v2 has no image columns
+            conn_img = sqlite3.connect(DB_FILE, timeout=30.0)
+            cursor_img = conn_img.cursor()
+            img_rows = cursor_img.execute(
+                "SELECT image_url, cloudinary_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
+                (d.get("tk_id"),)
+            ).fetchall()
+            conn_img.close()
+            
+            if img_rows:
+                raw_tk_all = []
+                raw_drive_all = []
+                diagrams_raw = []
+                
+                for img_url, cld_url, role in img_rows:
+                    raw_tk_all.append(img_url)
+                    raw_drive_all.append(cld_url or img_url)
+                    if role == "diagram":
+                        diagrams_raw.append(img_url)
+                
+                d["raw_images_tk"] = raw_tk_all
+                d["raw_drive_images"] = raw_drive_all
+                
+                # Populate Sơ đồ thửa đất 1 đến 5 for frontend compatibility mapping
+                for idx in range(5):
+                    col_name = get_safe_col_name(f"Sơ đồ thửa đất {idx+1}")
+                    d[col_name] = diagrams_raw[idx] if idx < len(diagrams_raw) else ""
+        except Exception as e_img:
+            add_log_message(f"[⚠️ WARNING] Lỗi tải ảnh từ listings_images trong normalize: {str(e_img)}")
+            
     return d
 
 # Bộ đệm logs thời gian thực cho UI
@@ -966,11 +1039,11 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
         col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
         col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
-        original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
-        original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
-        original_sodo3 = row[col_sodo3_key] if col_sodo3_key in row.keys() else None
-        original_sodo4 = row[col_sodo4_key] if col_sodo4_key in row.keys() else None
-        original_sodo5 = row[col_sodo5_key] if col_sodo5_key in row.keys() else None
+        original_sodo1 = d.get(col_sodo1_key)
+        original_sodo2 = d.get(col_sodo2_key)
+        original_sodo3 = d.get(col_sodo3_key)
+        original_sodo4 = d.get(col_sodo4_key)
+        original_sodo5 = d.get(col_sodo5_key)
         
         def process_single_image(args_tuple):
             idx, img_url = args_tuple
@@ -1042,8 +1115,8 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 if img_link:
                     drive_links[idx] = img_link
                     
-        # Lọc bỏ các ảnh bị lỗi/trống trong khi giữ nguyên thứ tự sắp xếp ảnh gốc thành công
-        drive_links = [link for link in drive_links if link]
+        # Giữ nguyên độ dài và index của drive_links để tránh lệch index khi map vai trò
+        # Việc lọc ảnh rỗng/lỗi sẽ được thực hiện khi lưu vào DB hoặc khi đẩy lên các trường
                     
         # Cập nhật SQLite, phân loại sơ đồ/ảnh thô và tự động đẩy Sheets Pool (US-040)
         try:
@@ -1054,11 +1127,11 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
             col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
             
-            original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
-            original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
-            original_sodo3 = row[col_sodo3_key] if col_sodo3_key in row.keys() else None
-            original_sodo4 = row[col_sodo4_key] if col_sodo4_key in row.keys() else None
-            original_sodo5 = row[col_sodo5_key] if col_sodo5_key in row.keys() else None
+            original_sodo1 = d.get(col_sodo1_key)
+            original_sodo2 = d.get(col_sodo2_key)
+            original_sodo3 = d.get(col_sodo3_key)
+            original_sodo4 = d.get(col_sodo4_key)
+            original_sodo5 = d.get(col_sodo5_key)
             
             clean_sodo1 = ""
             clean_sodo2 = ""
@@ -1152,6 +1225,9 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             conn = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor = conn.cursor()
             
+            cursor.execute(f"PRAGMA table_info({LISTINGS_TABLE})")
+            db_cols = {r[1] for r in cursor.fetchall()}
+            
             update_fields = {}
             # Public/curated fields
             update_fields[col_ma_kn] = ma_khang_ngo or ""
@@ -1183,15 +1259,46 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             update_fields[col_anh_pub] = anh_pub or ""
             update_fields[col_anh_hem_pub] = anh_hem_pub or ""
                 
-            cols_sql = [f"`{k}` = ?" for k in update_fields.keys()]
-            vals = list(update_fields.values())
-            vals.extend([json.dumps(drive_links), row_db_id])
+            # Lọc các trường thực sự tồn tại trong DB để tránh lỗi no such column
+            valid_update_fields = {k: v for k, v in update_fields.items() if k in db_cols}
+                
+            cols_sql = [f"`{k}` = ?" for k in valid_update_fields.keys()]
             
             primary_key_col = "tk_id" if LISTINGS_TABLE == "listings_v2" else "id"
-            cursor.execute(
-                f"UPDATE {LISTINGS_TABLE} SET {', '.join(cols_sql)}, raw_drive_images_json = ?, status = 'raw_complete' WHERE {primary_key_col} = ?",
-                vals
-            )
+            drive_links_clean = [link for link in drive_links if link]
+            if cols_sql:
+                vals = list(valid_update_fields.values())
+                vals.extend([json.dumps(drive_links_clean), row_db_id])
+                cursor.execute(
+                    f"UPDATE {LISTINGS_TABLE} SET {', '.join(cols_sql)}, raw_drive_images_json = ?, status = 'raw_complete' WHERE {primary_key_col} = ?",
+                    vals
+                )
+            else:
+                cursor.execute(
+                    f"UPDATE {LISTINGS_TABLE} SET raw_drive_images_json = ?, status = 'raw_complete' WHERE {primary_key_col} = ?",
+                    [json.dumps(drive_links_clean), row_db_id]
+                )
+            
+            # If in Pool2 mode, update individual migrated images in listings_images table
+            if LISTINGS_TABLE == "listings_v2":
+                # Update diagram images
+                for s_num, clean_s in enumerate([clean_sodo1, clean_sodo2, clean_sodo3, clean_sodo4, clean_sodo5], start=1):
+                    orig_s = [original_sodo1, original_sodo2, original_sodo3, original_sodo4, original_sodo5][s_num-1]
+                    if orig_s and clean_s:
+                        cursor.execute(
+                            "UPDATE listings_images SET cloudinary_url = ? WHERE tk_id = ? AND image_url = ?",
+                            (clean_s, tk_id, orig_s)
+                        )
+                # Update interior/house images
+                for idx, orig_img_url in enumerate(raw_images_tk):
+                    if idx < len(drive_links):
+                        mig_img_url = drive_links[idx]
+                        if mig_img_url:
+                            cursor.execute(
+                                "UPDATE listings_images SET cloudinary_url = ? WHERE tk_id = ? AND image_url = ?",
+                                (mig_img_url, tk_id, orig_img_url)
+                            )
+            
             conn.commit()
             conn.close()
             
@@ -1867,39 +1974,99 @@ def get_listings():
         db_cols = []
         
     quan_col = next((c for c in db_cols if c in ["Quan", "Qu_n"]), "Quan")
-    duong_col = next((c for c in db_cols if c in ["Duong", "___ng"]), "Duong")
+    duong_col = next((c for c in db_cols if c in ["streetName", "Duong", "___ng"]), "Duong")
     so_nha_col = next((c for c in db_cols if c in ["Ngo_So_nha", "Ng__S__nh_"]), "Ngo_So_nha")
     
-    sql = f"SELECT * FROM {LISTINGS_TABLE}"
+    t_prefix = "listings_v2." if LISTINGS_TABLE == "listings_v2" else ""
+    if LISTINGS_TABLE == "listings_v2":
+        sql = """
+            SELECT listings_v2.*, 
+                   listings_custom_v2.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, 
+                   listings_custom_v2.Gia_Public AS custom_Gia_Public, 
+                   listings_custom_v2.Tieu_De_Public AS custom_Tieu_De_Public, 
+                   listings_custom_v2.Mo_ta_Public AS custom_Mo_ta_Public, 
+                   listings_custom_v2.Note_Noi_Bo AS custom_Note_Noi_Bo, 
+                   listings_custom_v2.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich, 
+                   listings_custom_v2.Ngu_Tret AS custom_Ngu_Tret, 
+                   listings_custom_v2.CHDV AS custom_CHDV, 
+                   listings_custom_v2.Trang_Thai_KN AS custom_Trang_Thai_KN, 
+                   listings_custom_v2.images_metadata_json AS custom_images_metadata_json, 
+                   listings_custom_v2.Dia_Chi_That AS custom_Dia_Chi_That, 
+                   listings_custom_v2.So_Nha AS custom_So_Nha, 
+                   listings_custom_v2.Ten_Duong AS custom_Ten_Duong,
+                   listings_custom_v2.bedrooms AS custom_bedrooms,
+                   listings_custom_v2.restrooms AS custom_restrooms,
+                   listings_custom_v2.minimumRoadWidth AS custom_minimumRoadWidth,
+                   listings_custom_v2.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                   listings_custom_v2.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet,
+                   listings_custom_v2.Gia_chao AS custom_Gia_chao,
+                   listings_custom_v2.DT_Thuc_te AS custom_DT_Thuc_te,
+                   listings_custom_v2.DT_Tren_so AS custom_DT_Tren_so,
+                   listings_custom_v2.So_Tang AS custom_So_Tang,
+                   listings_custom_v2.Mat_Tien AS custom_Mat_Tien,
+                   listings_custom_v2.Chieu_dai AS custom_Chieu_dai,
+                   listings_custom_v2.Huong AS custom_Huong,
+                   listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                   listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+                   listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                   listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+                   listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                   listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                   listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+            FROM listings_v2 
+            LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
+        """
+    else:
+        sql = f"SELECT * FROM {LISTINGS_TABLE}"
+
     conditions = []
     params = []
     
     if status_filter:
-        conditions.append("status = ?")
+        conditions.append(f"{t_prefix}status = ?")
         params.append(status_filter)
         
     if search_q:
-        conditions.append(f"(tk_id LIKE ? OR Ma_Hang LIKE ? OR `{quan_col}` LIKE ? OR `{duong_col}` LIKE ? OR `{so_nha_col}` LIKE ?)")
-        search_like = f"%{search_q}%"
-        params.extend([search_like, search_like, search_like, search_like, search_like])
+        # Tự động trích xuất UUID hoặc mã hàng số từ URL nếu người dùng dán cả link
+        uuid_match = re.search(r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', search_q, re.I)
+        detail_match = re.search(r'/Detail/(\d+)', search_q, re.I)
+        
+        extracted_id = None
+        if uuid_match:
+            extracted_id = uuid_match.group(0)
+        elif detail_match:
+            extracted_id = detail_match.group(1)
+            
+        if extracted_id:
+            conditions.append(f"({t_prefix}tk_id = ? OR {t_prefix}tk_id LIKE ? OR {t_prefix}Ma_Hang LIKE ? OR {t_prefix}`{quan_col}` LIKE ? OR {t_prefix}`{duong_col}` LIKE ? OR {t_prefix}`{so_nha_col}` LIKE ?)")
+            search_like = f"%{search_q}%"
+            params.extend([extracted_id, search_like, search_like, search_like, search_like, search_like])
+        else:
+            conditions.append(f"({t_prefix}tk_id LIKE ? OR {t_prefix}Ma_Hang LIKE ? OR {t_prefix}`{quan_col}` LIKE ? OR {t_prefix}`{duong_col}` LIKE ? OR {t_prefix}`{so_nha_col}` LIKE ?)")
+            search_like = f"%{search_q}%"
+            params.extend([search_like, search_like, search_like, search_like, search_like])
         
     if quan_filter:
-        conditions.append(f"`{quan_col}` LIKE ?")
+        conditions.append(f"{t_prefix}`{quan_col}` LIKE ?")
         params.append(f"%{quan_filter}%")
         
     if duong_filter:
-        conditions.append(f"`{duong_col}` LIKE ?")
+        conditions.append(f"{t_prefix}`{duong_col}` LIKE ?")
         params.append(f"%{duong_filter}%")
         
     if so_nha_filter:
-        conditions.append(f"`{so_nha_col}` LIKE ?")
+        conditions.append(f"{t_prefix}`{so_nha_col}` LIKE ?")
         params.append(f"%{so_nha_filter}%")
         
     if conditions:
         sql += " WHERE " + " AND ".join(conditions)
         
     # Mặc định sắp xếp mới nhất lên trước
-    sql += " ORDER BY rowid DESC"
+    if LISTINGS_TABLE == "listings_v2":
+        sql += " ORDER BY listings_v2.rowid DESC"
+    else:
+        sql += " ORDER BY rowid DESC"
     
     rows = cursor.execute(sql, params).fetchall()
     conn.close()
@@ -1934,7 +2101,49 @@ def handle_listing_detail(tk_id):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
-    row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
+    if LISTINGS_TABLE == "listings_v2":
+        sql = """
+            SELECT listings_v2.*, 
+                   listings_custom_v2.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, 
+                   listings_custom_v2.Gia_Public AS custom_Gia_Public, 
+                   listings_custom_v2.Tieu_De_Public AS custom_Tieu_De_Public, 
+                   listings_custom_v2.Mo_ta_Public AS custom_Mo_ta_Public, 
+                   listings_custom_v2.Note_Noi_Bo AS custom_Note_Noi_Bo, 
+                   listings_custom_v2.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich, 
+                   listings_custom_v2.Ngu_Tret AS custom_Ngu_Tret, 
+                   listings_custom_v2.CHDV AS custom_CHDV, 
+                   listings_custom_v2.Trang_Thai_KN AS custom_Trang_Thai_KN, 
+                   listings_custom_v2.images_metadata_json AS custom_images_metadata_json, 
+                   listings_custom_v2.Dia_Chi_That AS custom_Dia_Chi_That, 
+                   listings_custom_v2.So_Nha AS custom_So_Nha, 
+                   listings_custom_v2.Ten_Duong AS custom_Ten_Duong,
+                   listings_custom_v2.bedrooms AS custom_bedrooms,
+                   listings_custom_v2.restrooms AS custom_restrooms,
+                   listings_custom_v2.minimumRoadWidth AS custom_minimumRoadWidth,
+                   listings_custom_v2.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                   listings_custom_v2.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet,
+                   listings_custom_v2.Gia_chao AS custom_Gia_chao,
+                   listings_custom_v2.DT_Thuc_te AS custom_DT_Thuc_te,
+                   listings_custom_v2.DT_Tren_so AS custom_DT_Tren_so,
+                   listings_custom_v2.So_Tang AS custom_So_Tang,
+                   listings_custom_v2.Mat_Tien AS custom_Mat_Tien,
+                   listings_custom_v2.Chieu_dai AS custom_Chieu_dai,
+                   listings_custom_v2.Huong AS custom_Huong,
+                   listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                   listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+                   listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                   listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+                   listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                   listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                   listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+            FROM listings_v2 
+            LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
+            WHERE listings_v2.tk_id = ?
+        """
+        row = cursor.execute(sql, (tk_id,)).fetchone()
+    else:
+        row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
     
     if not row:
         conn.close()
@@ -1977,6 +2186,8 @@ def handle_listing_detail(tk_id):
             "Mã Khang Ngô (ID)": data.get("ma_khang_ngo"),
             "Phân loại Hẻm": data.get("phan_loai_hem"),
             "Đường trước nhà (m)": data.get("duong_truoc_nha"),
+            "Mặt Tiền": data.get("mat_tien"),
+            "Chiều dài": data.get("chieu_dai"),
             "Tình trạng nhà": data.get("tinh_trang_nha"),
             "Số phòng ngủ": data.get("so_phong_ngu"),
             "Số nhà vệ sinh": data.get("so_nha_ve_sinh"),
@@ -2013,17 +2224,117 @@ def handle_listing_detail(tk_id):
             col_name = f"Ảnh {i+1}"
             fields_to_update[col_name] = public_imgs[i] if i < len(public_imgs) else ""
             
+        # Lấy danh sách cột thực tế của bảng SQLite mục tiêu để lọc cột động
+        cursor.execute(f"PRAGMA table_info({LISTINGS_TABLE})")
+        db_cols = {row[1] for row in cursor.fetchall()}
+
         # Xây dựng câu lệnh Update SQL động
         update_cols = []
         update_vals = []
         for key, val in fields_to_update.items():
             safe_col = get_safe_col_name(key)
-            update_cols.append(f"`{safe_col}` = ?")
-            update_vals.append(str(val) if val is not None else "")
+            if safe_col in db_cols:
+                update_cols.append(f"`{safe_col}` = ?")
+                update_vals.append(str(val) if val is not None else "")
             
-        update_vals.append(tk_id)
-        update_sql = f"UPDATE {LISTINGS_TABLE} SET {', '.join(update_cols)} WHERE tk_id = ?"
-        cursor.execute(update_sql, update_vals)
+        if update_cols:
+            update_vals.append(tk_id)
+            update_sql = f"UPDATE {LISTINGS_TABLE} SET {', '.join(update_cols)} WHERE tk_id = ?"
+            cursor.execute(update_sql, update_vals)
+        
+        # Nếu đang ở chế độ Pool2, đồng bộ cập nhật vào bảng listings_custom_v2
+        if LISTINGS_TABLE == "listings_v2":
+            try:
+                row_v2 = cursor.execute("SELECT * FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
+                if row_v2:
+                    d_v2 = dict(row_v2)
+                    system_id = d_v2.get("System_ID")
+                    if system_id:
+                        # Kiểm tra xem đã tồn tại System_ID trong listings_custom_v2 chưa
+                        custom_exists = cursor.execute(
+                            "SELECT 1 FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)
+                        ).fetchone()
+                        
+                        # Trích xuất danh sách ảnh an toàn từ curated_config
+                        images_metadata = []
+                        if curated_config and isinstance(curated_config, dict):
+                            images_list = curated_config.get("images", [])
+                            safe_roles = ["interior", "alley", "cover", "interior_public", "alley_public"]
+                            images_metadata = [img for img in images_list if img.get("role") in safe_roles or not img.get("role")]
+                        
+                        # Điền thông tin vào listings_custom_v2
+                        custom_data = {
+                            "System_ID": system_id,
+                            "Ma_Khang_Ngo": data.get("ma_khang_ngo") or d_v2.get("Ma_Khang_Ngo_ID") or "",
+                            "Gia_Public": data.get("gia_public") or d_v2.get("Gia_Public") or "",
+                            "Tieu_De_Public": trim_tieu_de_bds(data.get("tieu_de_public")) or d_v2.get("Tieu_de_Public") or "",
+                            "Mo_ta_Public": data.get("mo_ta_public") or d_v2.get("Mo_ta_Public") or "",
+                            "Note_Noi_Bo": data.get("note_noi_bo") or d_v2.get("Note_Noi_Bo") or "",
+                            "Trang_Thai_Giao_Dich": data.get("tinh_trang_nha") or d_v2.get("Tinh_trang_nha") or "",
+                            "Ngu_Tret": data.get("ngu_tret") or d_v2.get("Ngu_tret_Admin") or "",
+                            "CHDV": data.get("chdv") or d_v2.get("CHDV_Admin") or "",
+                            "Trang_Thai_KN": data.get("danh_gia") or d_v2.get("Danh_gia_Admin") or "",
+                            "images_metadata_json": json.dumps(images_metadata),
+                            "Dia_Chi_That": d_v2.get("Dia_Chi_That") or "",
+                            "So_Nha": data.get("ngo_so_nha") or d_v2.get("Ngo_So_nha") or "",
+                            "Ten_Duong": data.get("duong") or d_v2.get("Duong") or "",
+                            "Quan": data.get("quan") or d_v2.get("Quan") or "",
+                            "Phuong": data.get("phuong") or d_v2.get("Phuong") or "",
+                            "Duong": data.get("duong") or d_v2.get("Duong") or "",
+                            "Ngo_So_nha": data.get("ngo_so_nha") or d_v2.get("Ngo_So_nha") or "",
+                            "bedrooms": data.get("so_phong_ngu") or d_v2.get("bedrooms") or d_v2.get("So_phong_ngu") or "",
+                            "restrooms": data.get("so_nha_ve_sinh") or d_v2.get("restrooms") or d_v2.get("So_nha_ve_sinh") or "",
+                            "minimumRoadWidth": data.get("duong_truoc_nha") or d_v2.get("minimumRoadWidth") or d_v2.get("Duong_truoc_nha_m") or "",
+                            "Noi_dung_chinh": d_v2.get("Noi_dung_chinh") or "",
+                            "Mo_ta_chi_tiet": d_v2.get("Mo_ta_chi_tiet") or "",
+                            "Gia_chao": d_v2.get("Gia_chao") or "",
+                            "DT_Thuc_te": d_v2.get("DT_Thuc_te") or "",
+                            "DT_Tren_so": d_v2.get("DT_Tren_so") or "",
+                            "So_Tang": d_v2.get("So_Tang") or "",
+                            "Mat_Tien": data.get("mat_tien") or d_v2.get("Mat_Tien") or "",
+                            "Chieu_dai": data.get("chieu_dai") or d_v2.get("Chieu_dai") or "",
+                            "Huong": d_v2.get("Huong") or "",
+                            "Criteria_Duong_truoc_nha": d_v2.get("Criteria_Duong_truoc_nha") or "",
+                            "Criteria_Noi_that": d_v2.get("Criteria_Noi_that") or "",
+                            "Criteria_Thang_may": d_v2.get("Criteria_Thang_may") or "",
+                            "Criteria_Loai_ngo": d_v2.get("Criteria_Loai_ngo") or "",
+                            "Criteria_Khoang_cach_bai_do_xe": d_v2.get("Criteria_Khoang_cach_bai_do_xe") or "",
+                            "Criteria_Kinh_doanh_Dong_tien": d_v2.get("Criteria_Kinh_doanh_Dong_tien") or "",
+                            "Criteria_Huong_nha": d_v2.get("Criteria_Huong_nha") or "",
+                            "Criteria_Khoang_cach_duong_oto": d_v2.get("Criteria_Khoang_cach_duong_oto") or "",
+                        }
+                        
+                        # Lấy danh sách cột thực tế của listings_custom_v2 đề phòng lệch schema
+                        cursor.execute("PRAGMA table_info(listings_custom_v2)")
+                        custom_db_cols = [r[1] for r in cursor.fetchall()]
+                        
+                        # Lọc bỏ cột không tồn tại
+                        valid_custom_data = {k: v for k, v in custom_data.items() if k in custom_db_cols}
+                        
+                        if custom_exists:
+                            # UPDATE
+                            update_pairs = []
+                            update_custom_vals = []
+                            for col_k, col_v in valid_custom_data.items():
+                                if col_k != "System_ID":
+                                    update_pairs.append(f"`{col_k}` = ?")
+                                    update_custom_vals.append(str(col_v) if col_v is not None else "")
+                            update_custom_vals.append(system_id)
+                            cursor.execute(
+                                f"UPDATE listings_custom_v2 SET {', '.join(update_pairs)} WHERE System_ID = ?",
+                                update_custom_vals
+                            )
+                        else:
+                            # INSERT
+                            cols_list = list(valid_custom_data.keys())
+                            placeholders = ["?"] * len(cols_list)
+                            insert_vals = [str(valid_custom_data[col_k]) if valid_custom_data[col_k] is not None else "" for col_k in cols_list]
+                            cursor.execute(
+                                f"INSERT INTO listings_custom_v2 ({', '.join(cols_list)}) VALUES ({', '.join(placeholders)})",
+                                insert_vals
+                            )
+            except Exception as e_custom:
+                add_log_message(f"[⚠️ WARNING] Lỗi khi đồng bộ vào bảng listings_custom_v2: {str(e_custom)}")
         
         conn.commit()
         conn.close()
@@ -2161,7 +2472,17 @@ def recrawl_single_listing(tk_id):
                     if m.get("type") == "checkin_image" and m.get("url"):
                         property_images.append(m.get("url"))
                         
+            # Channels and tags processing
+            channels_list = detail_data.get("channels") or []
+            channels_str = ", ".join([str(c) for c in channels_list if c])
+            
+            tags_list = detail_data.get("tags") or []
+            tags_str = ", ".join([t.get("name") if isinstance(t, dict) else str(t) for t in tags_list if t])
+
+            raw_images_tk_ordered = [m.get("url") for m in media if m.get("url")]
+
             crawled_data = {
+                "raw_images_tk_ordered": raw_images_tk_ordered,
                 "Mã Hàng": ma_hang,
                 "Tỉnh": tinh,
                 "Quận": quan_name,
@@ -2188,16 +2509,60 @@ def recrawl_single_listing(tk_id):
                 "Điện thoại 1": dien_thoai_1,
                 "Điện thoại Đầu Chủ": dt_dau_chu,
                 "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
+                "Ten_Dau_Chu": ten_dau_chu,
                 "Điểm Facebook": link_fb,
                 "Link Gốc": detail_url,
                 "System ID": d_row.get("System_ID") or f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
                 "Mã Khang Ngô (ID)": d_row.get("Ma_Khang_Ngo_ID") or gen_id_khang_ngo_python(ngo_so_nha, duong_name, quan_name),
-                "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                
+                # English compatibility mapping
+                "bedrooms": so_phong_ngu,
+                "restrooms": so_nha_ve_sinh,
+                "minimumRoadWidth": duong_truoc_nha,
+                
+                # Rich contract & technical fields from API
+                "isSigned": "1" if detail_data.get("isSigned") else "0",
+                "status_nguon": trang_thai,
+                "commissionAgent": str(detail_data.get("commissionAgent") or ""),
+                "ownerSideUserId": str(detail_data.get("ownerSideUserId") or ""),
+                "certificateSeries": str(detail_data.get("certificateSeries") or ""),
+                "latitude": str((detail_data.get("coordinate") or {}).get("latitude") or detail_data.get("latitude") or ""),
+                "longitude": str((detail_data.get("coordinate") or {}).get("longitude") or detail_data.get("longitude") or ""),
+                "placeName": str(detail_data.get("placeName") or ""),
+                "streetName": str(detail_data.get("streetName") or ""),
+                "balconies": str(detail_data.get("balconies") or ""),
+                "sidewalk": str(detail_data.get("sidewalk") or ""),
+                "behindOpenSpace": str(detail_data.get("behindOpenSpace") or ""),
+                "sideOpenSpace": str(detail_data.get("sideOpenSpace") or ""),
+                "createdAt": str(detail_data.get("createdAt") or ""),
+                "updatedAt": str(detail_data.get("updatedAt") or ""),
+                "commissionType": str(detail_data.get("commissionType") or ""),
+                "commissionValue": str(detail_data.get("commissionValue") or ""),
+                "isDispute": "1" if detail_data.get("isDispute") else "0",
+                "createdAtSigned": str(detail_data.get("createdAtSigned") or ""),
+                "CCCD_Dau_Chu": str((detail_data.get("ownerSideUser") or {}).get("numberId") or ""),
+                "Kenh_tin_TK": channels_str,
+                "The_tags_TK": tags_str
             }
             
             for idx, url in enumerate(sodo_images[:5]):
                 crawled_data[f"Sơ đồ thửa đất {idx+1}"] = url
                 
+            # Parse criteria groups and merge into crawled_data
+            criteria_list = detail_data.get("criteria") or []
+            
+            # Save to scratch/last_crawled_criteria.json for debug
+            try:
+                os.makedirs("scratch", exist_ok=True)
+                with open("scratch/last_crawled_criteria.json", "w", encoding="utf-8") as f:
+                    json.dump(criteria_list, f, indent=4, ensure_ascii=False)
+            except Exception as e_debug:
+                add_log_message(f"[⚠️ WARNING] Lỗi ghi file debug criteria: {str(e_debug)}")
+                
+            criteria_cols = fetcher.parse_criteria_groups(criteria_list)
+            crawled_data.update(criteria_cols)
+            
             fetcher.save_raw_to_sqlite(tk_id, crawled_data, property_images)
             
             add_log_message(f"[✅] Đã cào thô thành công căn (Proptech): {tk_id}. Tiến hành di cư ảnh và xuất bản...")
@@ -2212,7 +2577,49 @@ def recrawl_single_listing(tk_id):
             conn = sqlite3.connect(DB_FILE, timeout=30.0)
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            updated_row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
+            if LISTINGS_TABLE == "listings_v2":
+                sql = """
+                    SELECT listings_v2.*, 
+                           listings_custom_v2.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, 
+                           listings_custom_v2.Gia_Public AS custom_Gia_Public, 
+                           listings_custom_v2.Tieu_De_Public AS custom_Tieu_De_Public, 
+                           listings_custom_v2.Mo_ta_Public AS custom_Mo_ta_Public, 
+                           listings_custom_v2.Note_Noi_Bo AS custom_Note_Noi_Bo, 
+                           listings_custom_v2.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich, 
+                           listings_custom_v2.Ngu_Tret AS custom_Ngu_Tret, 
+                           listings_custom_v2.CHDV AS custom_CHDV, 
+                           listings_custom_v2.Trang_Thai_KN AS custom_Trang_Thai_KN, 
+                           listings_custom_v2.images_metadata_json AS custom_images_metadata_json, 
+                           listings_custom_v2.Dia_Chi_That AS custom_Dia_Chi_That, 
+                           listings_custom_v2.So_Nha AS custom_So_Nha, 
+                           listings_custom_v2.Ten_Duong AS custom_Ten_Duong,
+                           listings_custom_v2.bedrooms AS custom_bedrooms,
+                           listings_custom_v2.restrooms AS custom_restrooms,
+                           listings_custom_v2.minimumRoadWidth AS custom_minimumRoadWidth,
+                           listings_custom_v2.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                           listings_custom_v2.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet,
+                           listings_custom_v2.Gia_chao AS custom_Gia_chao,
+                           listings_custom_v2.DT_Thuc_te AS custom_DT_Thuc_te,
+                           listings_custom_v2.DT_Tren_so AS custom_DT_Tren_so,
+                           listings_custom_v2.So_Tang AS custom_So_Tang,
+                           listings_custom_v2.Mat_Tien AS custom_Mat_Tien,
+                           listings_custom_v2.Chieu_dai AS custom_Chieu_dai,
+                           listings_custom_v2.Huong AS custom_Huong,
+                           listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                           listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+                           listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                           listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+                           listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                           listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                           listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+                           listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                    FROM listings_v2 
+                    LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
+                    WHERE listings_v2.tk_id = ?
+                """
+                updated_row = cursor.execute(sql, (tk_id,)).fetchone()
+            else:
+                updated_row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
             conn.close()
             
             d = dict(updated_row)
@@ -2300,39 +2707,63 @@ def recrawl_single_listing(tk_id):
         quan_name = fetcher.safe_get_val(soup_detail, '#Detail_sTenQuan')
         phuong_name = fetcher.safe_get_val(soup_detail, '#Detail_sTenPhuongXa')
         
+        behind_open_space = fetcher.get_val_by_label(soup_detail, "độ rộng mặt thoáng đằng sau nhà (m)") or fetcher.get_val_by_label(soup_detail, "độ rộng mặt thoáng đằng sau nhà") or fetcher.get_val_by_label(soup_detail, "mặt thoáng đằng sau")
+        side_open_space = fetcher.get_val_by_label(soup_detail, "độ rộng mặt thoáng bên cạnh (m)") or fetcher.get_val_by_label(soup_detail, "độ rộng mặt thoáng bên cạnh") or fetcher.get_val_by_label(soup_detail, "mặt thoáng bên cạnh")
+        bedrooms_scraped = fetcher.get_val_by_label(soup_detail, "số phòng ngủ") or fetcher.safe_get_val(soup_detail, '#Detail_iSoPhongNgu_show')
+        restrooms_scraped = fetcher.get_val_by_label(soup_detail, "số nhà vệ sinh") or fetcher.get_val_by_label(soup_detail, "số toilet") or fetcher.safe_get_val(soup_detail, '#Detail_iSoToilet_show')
+        balconies_scraped = fetcher.get_val_by_label(soup_detail, "số ban công")
+        sidewalk_scraped = fetcher.get_val_by_label(soup_detail, "vỉa hè")
+        commission_value = fetcher.get_val_by_label(soup_detail, "phần trăm trích thưởng") or fetcher.get_val_by_label(soup_detail, "phần trăm hoa hồng")
+        certificate_series = fetcher.get_val_by_label(soup_detail, "series sổ đỏ") or fetcher.get_val_by_label(soup_detail, "series sổ")
+
         crawled_data = {
             "Mã Hàng": ma_hang_scraped,
-            "Tỉnh": fetcher.safe_get_val(soup_detail, '#Detail_sTenTinh'),
-            "Quận": quan_name,
-            "Phường": phuong_name,
-            "Đường": duong_name,
-            "Ngõ/Số nhà": so_nha,
+            "Tỉnh": fetcher.safe_get_val(soup_detail, '#Detail_sTenTinh') or fetcher.get_val_by_label(soup_detail, "tỉnh/thành phố") or fetcher.get_val_by_label(soup_detail, "tỉnh"),
+            "Quận": quan_name or fetcher.get_val_by_label(soup_detail, "quận/huyện") or fetcher.get_val_by_label(soup_detail, "quận"),
+            "Phường": phuong_name or fetcher.get_val_by_label(soup_detail, "phường/xã") or fetcher.get_val_by_label(soup_detail, "phường"),
+            "Đường": duong_name or fetcher.get_val_by_label(soup_detail, "đường/phố") or fetcher.get_val_by_label(soup_detail, "đường"),
+            "Ngõ/Số nhà": so_nha or fetcher.get_val_by_label(soup_detail, "ngõ/số nhà"),
             "Phân loại": phan_loai_scraped,
-            "Nội dung chính": fetcher.safe_get_val(soup_detail, '#Detail_sNoiDung').replace('\r', '').replace('\n', ' '),
+            "Nội dung chính": fetcher.safe_get_val(soup_detail, '#Detail_sNoiDung').replace('\r', '').replace('\n', ' ') if fetcher.safe_get_val(soup_detail, '#Detail_sNoiDung') else "",
             "Mô tả chi tiết": mo_ta_scraped,
-            "Giá chào": fetcher.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
-            "Giá Public": fetcher.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show'),
-            "DT Thực tế": fetcher.safe_get_val(soup_detail, '#Detail_iDienTich_show'),
-            "DT Trên sổ": fetcher.safe_get_val(soup_detail, '#Detail_iDienTichSo_show'),
-            "Mặt Tiền": fetcher.safe_get_val(soup_detail, '#Detail_iMatTien_show'),
-            "Chieu_dai": fetcher.safe_get_val(soup_detail, '#Detail_iDai_show') or fetcher.safe_get_val(soup_detail, '#Detail_iDai'),
-            "Số Tầng": fetcher.safe_get_val(soup_detail, '#Detail_iSoTang_show'),
-            "Số phòng ngủ": fetcher.safe_get_val(soup_detail, '#Detail_iSoPhongNgu_show'),
-            "Số nhà vệ sinh": fetcher.safe_get_val(soup_detail, '#Detail_iSoToilet_show'),
-            "Hướng": huong_scraped,
+            "Giá chào": fetcher.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show') or fetcher.get_val_by_label(soup_detail, "giá chào"),
+            "Giá Public": fetcher.safe_get_val(soup_detail, '#Detail_iGiaChaoHopDong_show') or fetcher.get_val_by_label(soup_detail, "giá chào"),
+            "DT Thực tế": fetcher.safe_get_val(soup_detail, '#Detail_iDienTich_show') or fetcher.get_val_by_label(soup_detail, "diện tích thực tế"),
+            "DT Trên sổ": fetcher.safe_get_val(soup_detail, '#Detail_iDienTichSo_show') or fetcher.get_val_by_label(soup_detail, "diện tích sổ"),
+            "Mặt Tiền": fetcher.safe_get_val(soup_detail, '#Detail_iMatTien_show') or fetcher.get_val_by_label(soup_detail, "mặt tiền"),
+            "Chieu_dai": fetcher.safe_get_val(soup_detail, '#Detail_iDai_show') or fetcher.safe_get_val(soup_detail, '#Detail_iDai') or fetcher.get_val_by_label(soup_detail, "chiều dài"),
+            "Số Tầng": fetcher.safe_get_val(soup_detail, '#Detail_iSoTang_show') or fetcher.get_val_by_label(soup_detail, "số tầng"),
+            "Số phòng ngủ": bedrooms_scraped,
+            "Số nhà vệ sinh": restrooms_scraped,
+            "Hướng": huong_scraped or fetcher.get_val_by_label(soup_detail, "hướng"),
             "Đường trước nhà (m)": duong_truoc_nha,
             "Tình trạng nhà": "Bình thường",
-            "Trạng thái": fetcher.safe_get_val(soup_detail, '#Detail_iTrangThai'),
-            "Tên Chủ Nhà": fetcher.safe_get_val(soup_detail, '#Detail_sTenChuNha'),
-            "Điện thoại 1": fetcher.safe_get_val(soup_detail, '#Detail_sDienThoaiChuNha'),
+            "Trạng thái": fetcher.safe_get_val(soup_detail, '#Detail_iTrangThai') or fetcher.get_val_by_label(soup_detail, "trạng thái"),
+            "Tên Chủ Nhà": fetcher.safe_get_val(soup_detail, '#Detail_sTenChuNha') or fetcher.get_val_by_label(soup_detail, "tên chủ nhà"),
+            "Điện thoại 1": fetcher.safe_get_val(soup_detail, '#Detail_sDienThoaiChuNha') or fetcher.get_val_by_label(soup_detail, "điện thoại 1"),
             "Điện thoại Đầu Chủ": dt_dau_chu,
             "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
             "Điểm Facebook": link_fb,
             "Link Gốc": detail_url,
             "System ID": d_row.get("System_ID") or f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
             "Mã Khang Ngô (ID)": d_row.get("Ma_Khang_Ngo_ID") or gen_id_khang_ngo_python(so_nha, duong_name, quan_name),
-            "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+
+            # English compatibility mapping
+            "bedrooms": bedrooms_scraped,
+            "restrooms": restrooms_scraped,
+            "balconies": balconies_scraped,
+            "sidewalk": sidewalk_scraped,
+            "behindOpenSpace": behind_open_space,
+            "sideOpenSpace": side_open_space,
+            "minimumRoadWidth": duong_truoc_nha,
+            "commissionValue": commission_value,
+            "certificateSeries": certificate_series
         }
+
+        # Parse criteria using direct label scraper + fallback to V1 multiselect
+        classified_cols = fetcher.scrape_criteria_from_dom(soup_detail, phan_loai_scraped)
+        crawled_data.update(classified_cols)
         
         if len(images_td) >= 1: crawled_data["Sơ đồ thửa đất 1"] = images_td[0]
         if len(images_td) >= 2: crawled_data["Sơ đồ thửa đất 2"] = images_td[1]
@@ -2347,6 +2778,7 @@ def recrawl_single_listing(tk_id):
             if img and img not in seen_images:
                 combined_images.append(img)
                 seen_images.add(img)
+        crawled_data["raw_images_tk_ordered"] = images_td + combined_images
         fetcher.save_raw_to_sqlite(tk_id, crawled_data, combined_images)
         
         add_log_message(f"[✅] Đã cào thô thành công căn: {tk_id}. Tiến hành di cư ảnh và xuất bản...")
@@ -2361,7 +2793,49 @@ def recrawl_single_listing(tk_id):
         conn = sqlite3.connect(DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        updated_row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
+        if LISTINGS_TABLE == "listings_v2":
+            sql = """
+                SELECT listings_v2.*, 
+                       listings_custom_v2.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, 
+                       listings_custom_v2.Gia_Public AS custom_Gia_Public, 
+                       listings_custom_v2.Tieu_De_Public AS custom_Tieu_De_Public, 
+                       listings_custom_v2.Mo_ta_Public AS custom_Mo_ta_Public, 
+                       listings_custom_v2.Note_Noi_Bo AS custom_Note_Noi_Bo, 
+                       listings_custom_v2.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich, 
+                       listings_custom_v2.Ngu_Tret AS custom_Ngu_Tret, 
+                       listings_custom_v2.CHDV AS custom_CHDV, 
+                       listings_custom_v2.Trang_Thai_KN AS custom_Trang_Thai_KN, 
+                       listings_custom_v2.images_metadata_json AS custom_images_metadata_json, 
+                       listings_custom_v2.Dia_Chi_That AS custom_Dia_Chi_That, 
+                       listings_custom_v2.So_Nha AS custom_So_Nha, 
+                       listings_custom_v2.Ten_Duong AS custom_Ten_Duong,
+                       listings_custom_v2.bedrooms AS custom_bedrooms,
+                       listings_custom_v2.restrooms AS custom_restrooms,
+                       listings_custom_v2.minimumRoadWidth AS custom_minimumRoadWidth,
+                       listings_custom_v2.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                       listings_custom_v2.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet,
+                       listings_custom_v2.Gia_chao AS custom_Gia_chao,
+                       listings_custom_v2.DT_Thuc_te AS custom_DT_Thuc_te,
+                       listings_custom_v2.DT_Tren_so AS custom_DT_Tren_so,
+                       listings_custom_v2.So_Tang AS custom_So_Tang,
+                       listings_custom_v2.Mat_Tien AS custom_Mat_Tien,
+                       listings_custom_v2.Chieu_dai AS custom_Chieu_dai,
+                       listings_custom_v2.Huong AS custom_Huong,
+                       listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                       listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+                       listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                       listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+                       listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                       listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                       listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+                       listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                FROM listings_v2 
+                LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
+                WHERE listings_v2.tk_id = ?
+            """
+            updated_row = cursor.execute(sql, (tk_id,)).fetchone()
+        else:
+            updated_row = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
         conn.close()
         
         d = dict(updated_row)

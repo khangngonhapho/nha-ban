@@ -103,17 +103,16 @@ def search_db(db_file, table_name, search_term):
     cursor.execute(f"PRAGMA table_info({table_name})")
     cols = [r[1] for r in cursor.fetchall()]
     
+    t_prefix = "listings_v2." if table_name == "listings_v2" else ""
     # Xây dựng câu truy vấn động
-    where_clauses = ["tk_id LIKE :raw"]
+    where_clauses = [f"{t_prefix}tk_id LIKE :raw"]
     if "Ma_Hang" in cols:
-        where_clauses.append("Ma_Hang LIKE :raw")
+        where_clauses.append(f"{t_prefix}Ma_Hang LIKE :raw")
     elif "M__H_ng" in cols:
-        where_clauses.append("M__H_ng LIKE :raw")
+        where_clauses.append(f"{t_prefix}M__H_ng LIKE :raw")
         
     if "System_ID" in cols:
-        where_clauses.append("System_ID LIKE :raw")
-    elif "System_ID" in cols:
-        where_clauses.append("System_ID LIKE :raw")
+        where_clauses.append(f"{t_prefix}System_ID LIKE :raw")
         
     # Tìm kiếm theo địa chỉ
     address_cols = []
@@ -124,17 +123,95 @@ def search_db(db_file, table_name, search_term):
     elif "___ng" in cols: address_cols.append("___ng")
     
     if address_cols:
-        concat_str = " || ' ' || ".join(address_cols)
+        concat_str = " || ' ' || ".join([f"{t_prefix}`{c}`" for c in address_cols])
         where_clauses.append(f"lower(remove_accents({concat_str})) LIKE :q")
         for c in address_cols:
-            where_clauses.append(f"lower(remove_accents({c})) LIKE :q")
+            where_clauses.append(f"lower(remove_accents({t_prefix}`{c}`)) LIKE :q")
             
-    sql = f"SELECT * FROM {table_name} WHERE " + " OR ".join(where_clauses) + " LIMIT 50"
-    
+    if table_name == "listings_v2":
+        sql = """
+            SELECT listings_v2.*, 
+                   listings_custom_v2.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, 
+                   listings_custom_v2.Gia_Public AS custom_Gia_Public, 
+                   listings_custom_v2.Tieu_De_Public AS custom_Tieu_De_Public, 
+                   listings_custom_v2.Mo_ta_Public AS custom_Mo_ta_Public, 
+                   listings_custom_v2.Note_Noi_Bo AS custom_Note_Noi_Bo, 
+                   listings_custom_v2.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich, 
+                   listings_custom_v2.Ngu_Tret AS custom_Ngu_Tret, 
+                   listings_custom_v2.CHDV AS custom_CHDV, 
+                   listings_custom_v2.Trang_Thai_KN AS custom_Trang_Thai_KN, 
+                   listings_custom_v2.images_metadata_json AS custom_images_metadata_json, 
+                   listings_custom_v2.Dia_Chi_That AS custom_Dia_Chi_That, 
+                   listings_custom_v2.So_Nha AS custom_So_Nha, 
+                   listings_custom_v2.Ten_Duong AS custom_Ten_Duong,
+                   listings_custom_v2.bedrooms AS custom_bedrooms,
+                   listings_custom_v2.restrooms AS custom_restrooms,
+                   listings_custom_v2.minimumRoadWidth AS custom_minimumRoadWidth,
+                   listings_custom_v2.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                   listings_custom_v2.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet,
+                   listings_custom_v2.Gia_chao AS custom_Gia_chao,
+                   listings_custom_v2.DT_Thuc_te AS custom_DT_Thuc_te,
+                   listings_custom_v2.DT_Tren_so AS custom_DT_Tren_so,
+                   listings_custom_v2.So_Tang AS custom_So_Tang,
+                   listings_custom_v2.Mat_Tien AS custom_Mat_Tien,
+                   listings_custom_v2.Chieu_dai AS custom_Chieu_dai,
+                   listings_custom_v2.Huong AS custom_Huong,
+                   listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                   listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+                   listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                   listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+                   listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                   listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                   listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+            FROM listings_v2 
+            LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
+            WHERE 
+        """ + " OR ".join(where_clauses) + " LIMIT 50"
+    else:
+        sql = f"SELECT * FROM {table_name} WHERE " + " OR ".join(where_clauses) + " LIMIT 50"
+        
     try:
         rows = cursor.execute(sql, {"raw": q_like_accents, "q": q_like_no_accents}).fetchall()
-        # Chuyển đổi thành danh sách dict
-        result = [dict(r) for r in rows]
+        # Chuyển đổi thành danh sách dict và áp dụng custom overrides
+        result = []
+        for r in rows:
+            d = dict(r)
+            if table_name == "listings_v2" and "custom_Ma_Khang_Ngo" in d:
+                if d.get("custom_Ma_Khang_Ngo"): d["Ma_Khang_Ngo_ID"] = d["custom_Ma_Khang_Ngo"]
+                if d.get("custom_Tieu_De_Public"): d["Tieu_de_Public"] = d["custom_Tieu_De_Public"]
+                if d.get("custom_Mo_ta_Public"): d["Mo_ta_Public"] = d["custom_Mo_ta_Public"]
+                if d.get("custom_Gia_Public"): d["Gia_Public"] = d["custom_Gia_Public"]
+                if d.get("custom_Note_Noi_Bo"): d["Note_Noi_Bo"] = d["custom_Note_Noi_Bo"]
+                if d.get("custom_Trang_Thai_Giao_Dich"): d["Tinh_trang_nha"] = d["custom_Trang_Thai_Giao_Dich"]
+                if d.get("custom_Ngu_Tret"): d["Ngu_tret_Admin"] = d["custom_Ngu_Tret"]
+                if d.get("custom_CHDV"): d["CHDV_Admin"] = d["custom_CHDV"]
+                if d.get("custom_Trang_Thai_KN"): d["Danh_gia_Admin"] = d["custom_Trang_Thai_KN"]
+                
+                # Nhóm đè địa chỉ / kỹ thuật
+                if d.get("custom_So_Nha"): d["Ngo_So_nha"] = d["custom_So_Nha"]
+                if d.get("custom_Ten_Duong"): d["Duong"] = d["custom_Ten_Duong"]
+                if d.get("custom_Quan"): d["Quan"] = d["custom_Quan"]
+                if d.get("custom_Phuong"): d["Phuong"] = d["custom_Phuong"]
+                if d.get("custom_bedrooms"): d["bedrooms"] = d["custom_bedrooms"]
+                if d.get("custom_restrooms"): d["restrooms"] = d["custom_restrooms"]
+                if d.get("custom_minimumRoadWidth"): d["minimumRoadWidth"] = d["custom_minimumRoadWidth"]
+                if d.get("custom_Noi_dung_chinh"): d["Noi_dung_chinh"] = d["custom_Noi_dung_chinh"]
+                if d.get("custom_Mo_ta_chi_tiet"): d["Mo_ta_chi_tiet"] = d["custom_Mo_ta_chi_tiet"]
+                if d.get("custom_Gia_chao"): d["Gia_chao"] = d["custom_Gia_chao"]
+                if d.get("custom_DT_Thuc_te"): d["DT_Thuc_te"] = d["custom_DT_Thuc_te"]
+                if d.get("custom_DT_Tren_so"): d["DT_Tren_so"] = d["custom_DT_Tren_so"]
+                if d.get("custom_So_Tang"): d["So_Tang"] = d["custom_So_Tang"]
+                if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
+                if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
+                if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+                
+                # Nhóm Tiêu chí
+                for ck in ["Criteria_Duong_truoc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo", "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien", "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"]:
+                    custom_ck = "custom_" + ck
+                    if d.get(custom_ck):
+                        d[ck] = d[custom_ck]
+            result.append(d)
         conn.close()
         return result
     except Exception as e:
