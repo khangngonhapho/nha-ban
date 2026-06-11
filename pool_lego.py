@@ -212,7 +212,8 @@ def init_db(db_file=None):
             "status TEXT DEFAULT 'raw_text'",
             "raw_images_tk_json TEXT",
             "raw_drive_images_json TEXT",
-            "curated_config_json TEXT"
+            "curated_config_json TEXT",
+            "Chieu_dai TEXT"
         ]
 
         # 19 cột tiêu chí Criteria_... tường minh
@@ -316,6 +317,10 @@ def init_db(db_file=None):
             cursor.execute("PRAGMA table_info(listings_v2)")
             existing_cols = [row[1] for row in cursor.fetchall()]
             
+            if "Chieu_dai" not in existing_cols:
+                cursor.execute("ALTER TABLE listings_v2 ADD COLUMN Chieu_dai TEXT")
+                conn.commit()
+                
             for col in explicit_criteria_cols:
                 if col not in existing_cols:
                     cursor.execute(f"ALTER TABLE listings_v2 ADD COLUMN `{col}` TEXT")
