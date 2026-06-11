@@ -5,12 +5,12 @@ import sqlite3
 import time
 from datetime import datetime
 
-# Đảm bảo import được các hàm và cấu hình từ curator_server.py và crawl_pipeline.py
+# Đảm bảo import được các hàm và cấu hình từ manager.py và pool_lego.py
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from curator_server import (
+from manager import (
     load_config, get_google_credentials, DB_FILE, get_safe_col_name
 )
-from crawl_pipeline import init_db, POOL_HEADERS
+from pool_lego import init_db, POOL_HEADERS
 
 def restore_database():
     print("======================================================================")

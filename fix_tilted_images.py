@@ -28,7 +28,7 @@ except Exception:
     pass
 
 # Import backend modules
-import curator_server
+import manager
 import hashlib
 
 def extract_cloudinary_public_id(url):
@@ -244,7 +244,7 @@ def re_migrate_listing_images(tk_id, row, cookie, cfg):
     use_cloudinary = bool(cld_cloud_name and cld_api_key and cld_api_secret)
 
     if not use_cloudinary:
-        raise RuntimeError("Chưa cấu hình thông số Cloudinary trong curator_config.json")
+        raise RuntimeError("Chưa cấu hình thông số Cloudinary trong settings.json")
 
     headers_tk = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -262,11 +262,11 @@ def re_migrate_listing_images(tk_id, row, cookie, cfg):
     raw_images_tk = json.loads(row["raw_images_tk_json"]) if row.get("raw_images_tk_json") else []
     drive_links = ["" for _ in raw_images_tk]
 
-    col_sodo1_key = curator_server.get_safe_col_name("Sơ đồ thửa đất 1")
-    col_sodo2_key = curator_server.get_safe_col_name("Sơ đồ thửa đất 2")
-    col_sodo3_key = curator_server.get_safe_col_name("Sơ đồ thửa đất 3")
-    col_sodo4_key = curator_server.get_safe_col_name("Sơ đồ thửa đất 4")
-    col_sodo5_key = curator_server.get_safe_col_name("Sơ đồ thửa đất 5")
+    col_sodo1_key = manager.get_safe_col_name("Sơ đồ thửa đất 1")
+    col_sodo2_key = manager.get_safe_col_name("Sơ đồ thửa đất 2")
+    col_sodo3_key = manager.get_safe_col_name("Sơ đồ thửa đất 3")
+    col_sodo4_key = manager.get_safe_col_name("Sơ đồ thửa đất 4")
+    col_sodo5_key = manager.get_safe_col_name("Sơ đồ thửa đất 5")
     
     original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
     original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
@@ -277,7 +277,7 @@ def re_migrate_listing_images(tk_id, row, cookie, cfg):
     def process_single_image(args_tuple):
         idx, img_url = args_tuple
         try:
-            img_data = curator_server.download_image_with_retry(img_url, headers_tk)
+            img_data = manager.download_image_with_retry(img_url, headers_tk)
             if not img_data:
                 return idx, ""
                 
@@ -288,12 +288,12 @@ def re_migrate_listing_images(tk_id, row, cookie, cfg):
                 pass
             else:
                 # Nén và TỰ ĐỘNG XOAY ĐỨNG VẬT LÝ pillow
-                img_data = curator_server.compress_image(img_data)
+                img_data = manager.compress_image(img_data)
             
             filename = f"img_{tk_id}_{idx+1}.jpg"
             cld_folder = f"BDS-KhangNgo/{tk_id}"
             
-            img_link = curator_server.upload_image_to_cloudinary(
+            img_link = manager.upload_image_to_cloudinary(
                 img_data, 
                 filename, 
                 cld_cloud_name, 
@@ -358,7 +358,7 @@ def re_migrate_listing_images(tk_id, row, cookie, cfg):
     
     # 15 Cột ảnh sản phẩm
     for i in range(15):
-        col_name = curator_server.get_safe_col_name(f"Ảnh {i+1}")
+        col_name = manager.get_safe_col_name(f"Ảnh {i+1}")
         val = house_links[i] if i < len(house_links) else ""
         update_fields[col_name] = val
         
@@ -379,7 +379,7 @@ def re_migrate_listing_images(tk_id, row, cookie, cfg):
 
     # Đẩy lên Google Sheets Pool
     print("  [⚡ Google Sheets] Đang tự động đẩy cập nhật chép đè lên Sheets Pool...")
-    res_publish = curator_server.execute_publish_listing(tk_id)
+    res_publish = manager.execute_publish_listing(tk_id)
     if res_publish.get("status") == "success":
         print(f"  [✅ Sheets Success] Đã sửa đổi xoay thẳng đứng và cập nhật thành công căn {tk_id} lên Google Sheets Pool!")
         return True
@@ -401,7 +401,7 @@ def main():
         return
 
     # Tải cấu hình & Cookie
-    cfg = curator_server.load_config()
+    cfg = manager.load_config()
     cookie = ""
     if os.path.exists("thienkhoi_cookie.txt"):
         try:

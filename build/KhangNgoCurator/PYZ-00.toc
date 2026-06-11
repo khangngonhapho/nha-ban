@@ -979,9 +979,6 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\copy.py',
    'PYMODULE'),
-  ('crawl_pipeline',
-   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\crawl_pipeline.py',
-   'PYMODULE'),
   ('cryptography',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography\\__init__.py',
@@ -1253,6 +1250,46 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\decimal.py',
    'PYMODULE'),
+  ('defusedxml',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\__init__.py',
+   'PYMODULE'),
+  ('defusedxml.ElementTree',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\ElementTree.py',
+   'PYMODULE'),
+  ('defusedxml.cElementTree',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\cElementTree.py',
+   'PYMODULE'),
+  ('defusedxml.common',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\common.py',
+   'PYMODULE'),
+  ('defusedxml.expatbuilder',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\expatbuilder.py',
+   'PYMODULE'),
+  ('defusedxml.expatreader',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\expatreader.py',
+   'PYMODULE'),
+  ('defusedxml.minidom',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\minidom.py',
+   'PYMODULE'),
+  ('defusedxml.pulldom',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\pulldom.py',
+   'PYMODULE'),
+  ('defusedxml.sax',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\sax.py',
+   'PYMODULE'),
+  ('defusedxml.xmlrpc',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\defusedxml\\xmlrpc.py',
+   'PYMODULE'),
   ('difflib',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\difflib.py',
@@ -1264,6 +1301,26 @@
   ('doctest',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\doctest.py',
+   'PYMODULE'),
+  ('dotenv',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\dotenv\\__init__.py',
+   'PYMODULE'),
+  ('dotenv.ipython',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\dotenv\\ipython.py',
+   'PYMODULE'),
+  ('dotenv.main',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\dotenv\\main.py',
+   'PYMODULE'),
+  ('dotenv.parser',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\dotenv\\parser.py',
+   'PYMODULE'),
+  ('dotenv.variables',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\dotenv\\variables.py',
    'PYMODULE'),
   ('email',
    'C:\\Users\\Khang '
@@ -1344,6 +1401,13 @@
   ('email.utils',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\email\\utils.py',
+   'PYMODULE'),
+  ('fetcher',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\fetcher.py',
+   'PYMODULE'),
+  ('fileinput',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\fileinput.py',
    'PYMODULE'),
   ('flask',
    'C:\\Users\\Khang '
@@ -2039,9 +2103,149 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\json\\scanner.py',
    'PYMODULE'),
+  ('jwt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\__init__.py',
+   'PYMODULE'),
+  ('jwt.algorithms',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\algorithms.py',
+   'PYMODULE'),
+  ('jwt.api_jwk',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\api_jwk.py',
+   'PYMODULE'),
+  ('jwt.api_jws',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\api_jws.py',
+   'PYMODULE'),
+  ('jwt.api_jwt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\api_jwt.py',
+   'PYMODULE'),
+  ('jwt.exceptions',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\exceptions.py',
+   'PYMODULE'),
+  ('jwt.jwk_set_cache',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\jwk_set_cache.py',
+   'PYMODULE'),
+  ('jwt.jwks_client',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\jwks_client.py',
+   'PYMODULE'),
+  ('jwt.types',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\types.py',
+   'PYMODULE'),
+  ('jwt.utils',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\utils.py',
+   'PYMODULE'),
+  ('jwt.warnings',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\jwt\\warnings.py',
+   'PYMODULE'),
   ('logging',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\logging\\__init__.py',
+   'PYMODULE'),
+  ('lxml',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\__init__.py',
+   'PYMODULE'),
+  ('lxml.ElementInclude',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\ElementInclude.py',
+   'PYMODULE'),
+  ('lxml.cssselect',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\cssselect.py',
+   'PYMODULE'),
+  ('lxml.doctestcompare',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\doctestcompare.py',
+   'PYMODULE'),
+  ('lxml.html',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\__init__.py',
+   'PYMODULE'),
+  ('lxml.html.ElementSoup',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\ElementSoup.py',
+   'PYMODULE'),
+  ('lxml.html._diffcommand',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\_diffcommand.py',
+   'PYMODULE'),
+  ('lxml.html._html5builder',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\_html5builder.py',
+   'PYMODULE'),
+  ('lxml.html._setmixin',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\_setmixin.py',
+   'PYMODULE'),
+  ('lxml.html.builder',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\builder.py',
+   'PYMODULE'),
+  ('lxml.html.clean',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\clean.py',
+   'PYMODULE'),
+  ('lxml.html.defs',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\defs.py',
+   'PYMODULE'),
+  ('lxml.html.formfill',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\formfill.py',
+   'PYMODULE'),
+  ('lxml.html.html5parser',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\html5parser.py',
+   'PYMODULE'),
+  ('lxml.html.soupparser',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\soupparser.py',
+   'PYMODULE'),
+  ('lxml.html.usedoctest',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\html\\usedoctest.py',
+   'PYMODULE'),
+  ('lxml.includes',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\includes\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.extlibs',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\includes\\extlibs\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libexslt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\includes\\libexslt\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libxml',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\includes\\libxml\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libxslt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\includes\\libxslt\\__init__.py',
+   'PYMODULE'),
+  ('lxml.isoschematron',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\__init__.py',
+   'PYMODULE'),
+  ('lxml.pyclasslookup',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\pyclasslookup.py',
+   'PYMODULE'),
+  ('lxml.usedoctest',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\usedoctest.py',
    'PYMODULE'),
   ('lzma',
    'C:\\Users\\Khang '
@@ -2158,6 +2362,558 @@
   ('numbers',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\numbers.py',
+   'PYMODULE'),
+  ('numpy',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\__init__.py',
+   'PYMODULE'),
+  ('numpy.__config__',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\__config__.py',
+   'PYMODULE'),
+  ('numpy._array_api_info',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_array_api_info.py',
+   'PYMODULE'),
+  ('numpy._core',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\__init__.py',
+   'PYMODULE'),
+  ('numpy._core._add_newdocs',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_add_newdocs.py',
+   'PYMODULE'),
+  ('numpy._core._add_newdocs_scalars',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_add_newdocs_scalars.py',
+   'PYMODULE'),
+  ('numpy._core._asarray',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_asarray.py',
+   'PYMODULE'),
+  ('numpy._core._dtype',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_dtype.py',
+   'PYMODULE'),
+  ('numpy._core._dtype_ctypes',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_dtype_ctypes.py',
+   'PYMODULE'),
+  ('numpy._core._exceptions',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_exceptions.py',
+   'PYMODULE'),
+  ('numpy._core._internal',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_internal.py',
+   'PYMODULE'),
+  ('numpy._core._methods',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_methods.py',
+   'PYMODULE'),
+  ('numpy._core._string_helpers',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_string_helpers.py',
+   'PYMODULE'),
+  ('numpy._core._type_aliases',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_type_aliases.py',
+   'PYMODULE'),
+  ('numpy._core._ufunc_config',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\_ufunc_config.py',
+   'PYMODULE'),
+  ('numpy._core.arrayprint',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\arrayprint.py',
+   'PYMODULE'),
+  ('numpy._core.defchararray',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\defchararray.py',
+   'PYMODULE'),
+  ('numpy._core.einsumfunc',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\einsumfunc.py',
+   'PYMODULE'),
+  ('numpy._core.fromnumeric',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\fromnumeric.py',
+   'PYMODULE'),
+  ('numpy._core.function_base',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\function_base.py',
+   'PYMODULE'),
+  ('numpy._core.getlimits',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\getlimits.py',
+   'PYMODULE'),
+  ('numpy._core.memmap',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\memmap.py',
+   'PYMODULE'),
+  ('numpy._core.multiarray',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\multiarray.py',
+   'PYMODULE'),
+  ('numpy._core.numeric',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\numeric.py',
+   'PYMODULE'),
+  ('numpy._core.numerictypes',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\numerictypes.py',
+   'PYMODULE'),
+  ('numpy._core.overrides',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\overrides.py',
+   'PYMODULE'),
+  ('numpy._core.printoptions',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\printoptions.py',
+   'PYMODULE'),
+  ('numpy._core.records',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\records.py',
+   'PYMODULE'),
+  ('numpy._core.shape_base',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\shape_base.py',
+   'PYMODULE'),
+  ('numpy._core.strings',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\strings.py',
+   'PYMODULE'),
+  ('numpy._core.umath',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_core\\umath.py',
+   'PYMODULE'),
+  ('numpy._distributor_init',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_distributor_init.py',
+   'PYMODULE'),
+  ('numpy._expired_attrs_2_0',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_expired_attrs_2_0.py',
+   'PYMODULE'),
+  ('numpy._globals',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_globals.py',
+   'PYMODULE'),
+  ('numpy._pytesttester',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_pytesttester.py',
+   'PYMODULE'),
+  ('numpy._typing',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\__init__.py',
+   'PYMODULE'),
+  ('numpy._typing._add_docstring',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_add_docstring.py',
+   'PYMODULE'),
+  ('numpy._typing._array_like',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_array_like.py',
+   'PYMODULE'),
+  ('numpy._typing._char_codes',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_char_codes.py',
+   'PYMODULE'),
+  ('numpy._typing._dtype_like',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_dtype_like.py',
+   'PYMODULE'),
+  ('numpy._typing._nbit',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_nbit.py',
+   'PYMODULE'),
+  ('numpy._typing._nbit_base',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_nbit_base.py',
+   'PYMODULE'),
+  ('numpy._typing._nested_sequence',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_nested_sequence.py',
+   'PYMODULE'),
+  ('numpy._typing._scalars',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_scalars.py',
+   'PYMODULE'),
+  ('numpy._typing._shape',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_shape.py',
+   'PYMODULE'),
+  ('numpy._typing._ufunc',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_typing\\_ufunc.py',
+   'PYMODULE'),
+  ('numpy._utils',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_utils\\__init__.py',
+   'PYMODULE'),
+  ('numpy._utils._convertions',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_utils\\_convertions.py',
+   'PYMODULE'),
+  ('numpy._utils._inspect',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_utils\\_inspect.py',
+   'PYMODULE'),
+  ('numpy.char',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\char\\__init__.py',
+   'PYMODULE'),
+  ('numpy.core',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\core\\__init__.py',
+   'PYMODULE'),
+  ('numpy.core._utils',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\core\\_utils.py',
+   'PYMODULE'),
+  ('numpy.ctypeslib',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\ctypeslib\\__init__.py',
+   'PYMODULE'),
+  ('numpy.ctypeslib._ctypeslib',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\ctypeslib\\_ctypeslib.py',
+   'PYMODULE'),
+  ('numpy.dtypes',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\dtypes.py',
+   'PYMODULE'),
+  ('numpy.exceptions',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\exceptions.py',
+   'PYMODULE'),
+  ('numpy.f2py',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\__init__.py',
+   'PYMODULE'),
+  ('numpy.f2py.__version__',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\__version__.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\_backends\\__init__.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends._backend',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\_backends\\_backend.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends._distutils',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\_backends\\_distutils.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends._meson',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\_backends\\_meson.py',
+   'PYMODULE'),
+  ('numpy.f2py._isocbind',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\_isocbind.py',
+   'PYMODULE'),
+  ('numpy.f2py.auxfuncs',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\auxfuncs.py',
+   'PYMODULE'),
+  ('numpy.f2py.capi_maps',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\capi_maps.py',
+   'PYMODULE'),
+  ('numpy.f2py.cb_rules',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\cb_rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.cfuncs',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\cfuncs.py',
+   'PYMODULE'),
+  ('numpy.f2py.common_rules',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\common_rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.crackfortran',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\crackfortran.py',
+   'PYMODULE'),
+  ('numpy.f2py.diagnose',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\diagnose.py',
+   'PYMODULE'),
+  ('numpy.f2py.f2py2e',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\f2py2e.py',
+   'PYMODULE'),
+  ('numpy.f2py.f90mod_rules',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\f90mod_rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.func2subr',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\func2subr.py',
+   'PYMODULE'),
+  ('numpy.f2py.rules',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.symbolic',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\symbolic.py',
+   'PYMODULE'),
+  ('numpy.f2py.use_rules',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\f2py\\use_rules.py',
+   'PYMODULE'),
+  ('numpy.fft',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\fft\\__init__.py',
+   'PYMODULE'),
+  ('numpy.fft._helper',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\fft\\_helper.py',
+   'PYMODULE'),
+  ('numpy.fft._pocketfft',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\fft\\_pocketfft.py',
+   'PYMODULE'),
+  ('numpy.lib',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\__init__.py',
+   'PYMODULE'),
+  ('numpy.lib._array_utils_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_array_utils_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._arraypad_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_arraypad_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._arraysetops_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_arraysetops_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._arrayterator_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_arrayterator_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._datasource',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_datasource.py',
+   'PYMODULE'),
+  ('numpy.lib._format_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_format_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._function_base_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_function_base_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._histograms_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_histograms_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._index_tricks_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_index_tricks_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._iotools',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_iotools.py',
+   'PYMODULE'),
+  ('numpy.lib._nanfunctions_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_nanfunctions_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._npyio_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_npyio_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._polynomial_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_polynomial_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._scimath_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_scimath_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._shape_base_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_shape_base_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._stride_tricks_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_stride_tricks_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._twodim_base_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_twodim_base_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._type_check_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_type_check_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._ufunclike_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_ufunclike_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._utils_impl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_utils_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._version',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\_version.py',
+   'PYMODULE'),
+  ('numpy.lib.array_utils',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\array_utils.py',
+   'PYMODULE'),
+  ('numpy.lib.format',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\format.py',
+   'PYMODULE'),
+  ('numpy.lib.introspect',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\introspect.py',
+   'PYMODULE'),
+  ('numpy.lib.mixins',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\mixins.py',
+   'PYMODULE'),
+  ('numpy.lib.npyio',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\npyio.py',
+   'PYMODULE'),
+  ('numpy.lib.recfunctions',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\recfunctions.py',
+   'PYMODULE'),
+  ('numpy.lib.scimath',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\scimath.py',
+   'PYMODULE'),
+  ('numpy.lib.stride_tricks',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\lib\\stride_tricks.py',
+   'PYMODULE'),
+  ('numpy.linalg',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\linalg\\__init__.py',
+   'PYMODULE'),
+  ('numpy.linalg._linalg',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\linalg\\_linalg.py',
+   'PYMODULE'),
+  ('numpy.ma',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\ma\\__init__.py',
+   'PYMODULE'),
+  ('numpy.ma.core',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\ma\\core.py',
+   'PYMODULE'),
+  ('numpy.ma.extras',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\ma\\extras.py',
+   'PYMODULE'),
+  ('numpy.ma.mrecords',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\ma\\mrecords.py',
+   'PYMODULE'),
+  ('numpy.matlib',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\matlib.py',
+   'PYMODULE'),
+  ('numpy.matrixlib',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\matrixlib\\__init__.py',
+   'PYMODULE'),
+  ('numpy.matrixlib.defmatrix',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\matrixlib\\defmatrix.py',
+   'PYMODULE'),
+  ('numpy.polynomial',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\__init__.py',
+   'PYMODULE'),
+  ('numpy.polynomial._polybase',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\_polybase.py',
+   'PYMODULE'),
+  ('numpy.polynomial.chebyshev',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\chebyshev.py',
+   'PYMODULE'),
+  ('numpy.polynomial.hermite',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\hermite.py',
+   'PYMODULE'),
+  ('numpy.polynomial.hermite_e',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\hermite_e.py',
+   'PYMODULE'),
+  ('numpy.polynomial.laguerre',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\laguerre.py',
+   'PYMODULE'),
+  ('numpy.polynomial.legendre',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\legendre.py',
+   'PYMODULE'),
+  ('numpy.polynomial.polynomial',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\polynomial.py',
+   'PYMODULE'),
+  ('numpy.polynomial.polyutils',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\polynomial\\polyutils.py',
+   'PYMODULE'),
+  ('numpy.random',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\random\\__init__.py',
+   'PYMODULE'),
+  ('numpy.random._pickle',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\random\\_pickle.py',
+   'PYMODULE'),
+  ('numpy.rec',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\rec\\__init__.py',
+   'PYMODULE'),
+  ('numpy.strings',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\strings\\__init__.py',
+   'PYMODULE'),
+  ('numpy.testing',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\testing\\__init__.py',
+   'PYMODULE'),
+  ('numpy.testing._private',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\testing\\_private\\__init__.py',
+   'PYMODULE'),
+  ('numpy.testing._private.extbuild',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\testing\\_private\\extbuild.py',
+   'PYMODULE'),
+  ('numpy.testing._private.utils',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\testing\\_private\\utils.py',
+   'PYMODULE'),
+  ('numpy.testing.overrides',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\testing\\overrides.py',
+   'PYMODULE'),
+  ('numpy.typing',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\typing\\__init__.py',
+   'PYMODULE'),
+  ('numpy.version',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\version.py',
    'PYMODULE'),
   ('oauthlib',
    'C:\\Users\\Khang '
@@ -2451,9 +3207,21 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\oauthlib\\uri_validate.py',
    'PYMODULE'),
+  ('olefile',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\olefile\\__init__.py',
+   'PYMODULE'),
+  ('olefile.olefile',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\olefile\\olefile.py',
+   'PYMODULE'),
   ('opcode',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\opcode.py',
+   'PYMODULE'),
+  ('optparse',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\optparse.py',
    'PYMODULE'),
   ('packaging',
    'C:\\Users\\Khang '
@@ -2534,6 +3302,9 @@
   ('platform',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\platform.py',
+   'PYMODULE'),
+  ('pool_lego',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\pool_lego.py',
    'PYMODULE'),
   ('pprint',
    'C:\\Users\\Khang '
@@ -3995,6 +4766,38 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\__init__.py',
    'PYMODULE'),
+  ('xml.dom',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\__init__.py',
+   'PYMODULE'),
+  ('xml.dom.NodeFilter',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\NodeFilter.py',
+   'PYMODULE'),
+  ('xml.dom.domreg',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\domreg.py',
+   'PYMODULE'),
+  ('xml.dom.expatbuilder',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\expatbuilder.py',
+   'PYMODULE'),
+  ('xml.dom.minicompat',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\minicompat.py',
+   'PYMODULE'),
+  ('xml.dom.minidom',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\minidom.py',
+   'PYMODULE'),
+  ('xml.dom.pulldom',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\pulldom.py',
+   'PYMODULE'),
+  ('xml.dom.xmlbuilder',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\dom\\xmlbuilder.py',
+   'PYMODULE'),
   ('xml.etree',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xml\\etree\\__init__.py',
@@ -4054,6 +4857,10 @@
   ('xmlrpc.client',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xmlrpc\\client.py',
+   'PYMODULE'),
+  ('xmlrpc.server',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\xmlrpc\\server.py',
    'PYMODULE'),
   ('zipfile',
    'C:\\Users\\Khang '

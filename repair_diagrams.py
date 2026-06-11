@@ -9,7 +9,7 @@ from datetime import datetime
 
 # Đảm bảo import được các hàm và cấu hình từ curator_server.py
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from curator_server import (
+from manager import (
     load_config, get_google_credentials, get_google_access_token,
     download_image_with_retry, upload_image_to_drive, upload_image_to_cloudinary,
     get_safe_col_name, DB_FILE, add_log_message
@@ -237,7 +237,7 @@ def run_repair_diagrams(limit=None, do_publish=False):
             if do_publish:
                 print(f"  [⚡ Sheets Pool] Đang đồng bộ và đẩy dữ liệu căn {tk_id} lên Google Sheets...")
                 try:
-                    from curator_server import execute_publish_listing
+                    from manager import execute_publish_listing
                     res_pub = execute_publish_listing(tk_id)
                     if res_pub.get("status") == "success":
                         print(f"     [✅ Sheets Success] Đã đẩy thành công dữ liệu căn {tk_id} lên Google Sheets Pool!")

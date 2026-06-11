@@ -13,6 +13,6 @@ echo.
 start /b "" cmd /c "ping 127.0.0.1 -n 3 >nul && start http://localhost:5000"
 
 :: Khoi dong server Flask o terminal hien tai
-python curator_server.py
+python manager.py
 
 pause

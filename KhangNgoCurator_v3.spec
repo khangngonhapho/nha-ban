@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
-    ['curator_server.py'],
+    ['manager.py'],
     pathex=[],
     binaries=[],
     datas=[('curator.html', '.'), ('thienkhoi_cookie.txt', '.'), ('static', 'static')],

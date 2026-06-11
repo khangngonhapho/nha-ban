@@ -50,7 +50,7 @@ def create_zip_and_upload():
         sys.exit(1)
         
     # 2. Upload file lên Google Drive
-    config_path = os.path.join(project_dir, "curator_config.json")
+    config_path = os.path.join(project_dir, "settings.json")
     credentials_path = os.path.join(project_dir, "credentials.json")
     
     # Đọc cấu hình để lấy folder_id
