@@ -10846,7 +10846,10 @@
         
         if (activeCollectionName === name) {
           exitCollectionView();
-        } else {
+        }
+        
+        const modal = document.getElementById('colViewModal');
+        if (modal && modal.classList.contains('open')) {
           openColViewModal();
         }
       } catch (err) {
