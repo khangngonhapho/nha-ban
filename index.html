@@ -9870,7 +9870,6 @@
     }
 
     async function uploadFileToCloudinary(file, type = "interior", listingId = "") {
-      const timestamp = Math.round(Date.now() / 1000);
       let sodoIndex = 1;
       if (type === "sodo") {
         for (let i = 1; i <= 5; i++) {
@@ -9882,33 +9881,40 @@
         }
       }
 
-      const publicId = type === "sodo" 
-        ? `${listingId}_sodo${sodoIndex}_${Date.now()}`
-        : `${listingId}_interior_${Date.now()}`;
+      const filename = type === "sodo" 
+        ? `${listingId}_sodo${sodoIndex}_${Date.now()}.jpg`
+        : `${listingId}_interior_${Date.now()}.jpg`;
 
-      const strToSign = `folder=${CLOUDINARY_FOLDER}&public_id=${publicId}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
-      const signature = await sha1(strToSign);
+      const base64Data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+      });
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", CLOUDINARY_FOLDER);
-      formData.append("public_id", publicId);
-      formData.append("timestamp", timestamp);
-      formData.append("api_key", CLOUDINARY_API_KEY);
-      formData.append("signature", signature);
-
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      const response = await fetch('/api/upload-r2', {
         method: "POST",
-        body: formData
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          file: base64Data,
+          filename: filename,
+          type: type
+        })
       });
 
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error?.message || "Lỗi tải ảnh lên Cloudinary");
+        let errMsg = "Lỗi tải ảnh lên Cloudflare R2";
+        try {
+          const errData = await response.json();
+          errMsg = errData.error || errMsg;
+        } catch (e) {}
+        throw new Error(errMsg);
       }
 
       const data = await response.json();
-      return data.secure_url;
+      return data.url;
     }
 
     window.handleLocalImageUpload = async function(event) {

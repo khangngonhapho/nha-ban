@@ -201,6 +201,51 @@ async function fetchGoogleDocContent(docId, accessToken) {
   }
 }
 
+function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId) {
+  const host = `${r2BucketName}.${cloudflareAccountId}.r2.cloudflarestorage.com`;
+  const endpoint = `https://${host}`;
+  const key = `BDS-KhangNgo/${filename}`;
+  const path = `/${key}`;
+  
+  const date = new Date();
+  const amzDate = date.toISOString().replace(/[:-]/g, '').split('.')[0] + 'Z';
+  const dateStamp = amzDate.substring(0, 8);
+  
+  const hashedPayload = crypto.createHash('sha256').update(buffer).digest('hex');
+  
+  const canonicalHeaders = `host:${host}\nx-amz-content-sha256:${hashedPayload}\nx-amz-date:${amzDate}\n`;
+  const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
+  
+  const canonicalRequest = `PUT\n${path}\n\n${canonicalHeaders}\n${signedHeaders}\n${hashedPayload}`;
+  const hashedCanonicalRequest = crypto.createHash('sha256').update(canonicalRequest).digest('hex');
+  
+  const algorithm = 'AWS4-HMAC-SHA256';
+  const region = 'auto';
+  const service = 's3';
+  const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`;
+  
+  const stringToSign = `${algorithm}\n${amzDate}\n${credentialScope}\n${hashedCanonicalRequest}`;
+  
+  const kDate = crypto.createHmac('sha256', 'AWS4' + r2SecretAccessKey).update(dateStamp).digest();
+  const kRegion = crypto.createHmac('sha256', kDate).update(region).digest();
+  const kService = crypto.createHmac('sha256', kRegion).update(service).digest();
+  const kSigning = crypto.createHmac('sha256', kService).update('aws4_request').digest();
+  
+  const signature = crypto.createHmac('sha256', kSigning).update(stringToSign).digest('hex');
+  const authorization = `${algorithm} Credential=${r2AccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+  
+  return {
+    url: `${endpoint}${path}`,
+    headers: {
+      'Host': host,
+      'Authorization': authorization,
+      'x-amz-date': amzDate,
+      'x-amz-content-sha256': hashedPayload,
+      'Content-Type': contentType
+    }
+  };
+}
+
 module.exports = async (req, res) => {
   const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = urlObj.pathname;
@@ -325,6 +370,72 @@ module.exports = async (req, res) => {
     } catch (err) {
       console.error('Error refreshing token:', err);
       return res.status(500).json({ error: 'Internal Server Error during token refresh' });
+    }
+  }
+
+  // Endpoint upload image to Cloudflare R2
+  if (pathname === '/api/upload-r2') {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    let body = {};
+    try {
+      body = req.body;
+      if (typeof body === 'string') body = JSON.parse(body);
+    } catch (e) {}
+
+    if (!body || !body.file) {
+      try {
+        const buffers = [];
+        for await (const chunk of req) {
+          buffers.push(chunk);
+        }
+        const data = Buffer.concat(buffers).toString();
+        body = JSON.parse(data);
+      } catch (e) {
+        return res.status(400).json({ error: 'Bad Request: Missing JSON body' });
+      }
+    }
+
+    const { file, filename, type } = body;
+    if (!file || !filename) {
+      return res.status(400).json({ error: 'Bad Request: Missing file or filename' });
+    }
+
+    const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID;
+    const r2SecretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+    const r2BucketName = process.env.R2_BUCKET_NAME;
+    const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const r2PublicUrl = process.env.R2_PUBLIC_URL || 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev';
+
+    if (!r2AccessKeyId || !r2SecretAccessKey || !r2BucketName || !cloudflareAccountId) {
+      return res.status(500).json({ error: 'Internal Server Error: Missing R2 environment variables on Vercel' });
+    }
+
+    try {
+      const buffer = Buffer.from(file, 'base64');
+      const contentType = filename.endsWith('.png') ? 'image/png' : 'image/jpeg';
+      
+      const reqInfo = signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId);
+      
+      const response = await fetch(reqInfo.url, {
+        method: 'PUT',
+        headers: reqInfo.headers,
+        body: buffer
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error('R2 upload response error:', response.status, errText);
+        return res.status(502).json({ error: 'Bad Gateway: Cloudflare R2 upload failed', details: errText });
+      }
+
+      const publicUrl = `${r2PublicUrl}/BDS-KhangNgo/${filename}`;
+      return res.status(200).json({ status: 'success', url: publicUrl });
+    } catch (err) {
+      console.error('Error in R2 upload endpoint:', err);
+      return res.status(500).json({ error: 'Internal Server Error', message: err.message });
     }
   }
 
