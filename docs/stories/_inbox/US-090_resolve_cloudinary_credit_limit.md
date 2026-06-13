@@ -1,6 +1,6 @@
 ---
 id: US-090
-status: done
+status: accepted
 date: 2026-06-13
 size: L
 replaces: none

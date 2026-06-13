@@ -50,4 +50,4 @@
 *   [scratch/test_schema_v2_and_rich_fields.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_schema_v2_and_rich_fields.py) — US-089A: Script unit test kiểm thử schema listings_v2 sạch.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-12 (US-089A completed & group-based image sorting verified).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-13 (US-090 completed & Cloudinary limit resolved via Cloudflare R2).*
