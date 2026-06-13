@@ -6,14 +6,14 @@ Last updated: 2026-06-13
 - Total: 96
 - backlog: 3
 - draft: 0
-- in-progress: 2
+- in-progress: 1
 - done: 19
-- accepted: 66
+- accepted: 67
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
-| US-092 | Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ | in-progress | S | 2026-06-13 | `vercel.json`, `api/index.js`, `docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md` |
+| US-092 | Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ | accepted | S | 2026-06-13 | `vercel.json`, `api/index.js`, `docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md` |
 | US-091 | Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 | in-progress | M | 2026-06-13 | `manager.py`, `restore_r2_quality.py`, `docs/stories/_inbox/US-091_fix_r2_image_quality_degradation.md` |
 | US-090 | Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary | accepted | L | 2026-06-13 | `settings.json`, `migrate_to_r2.py`, `sync_pool_v1_sheet.py`, `list_broken_listings.py`, `docs/stories/_inbox/US-090_resolve_cloudinary_credit_limit.md` |
 | US-089D | Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công | backlog  | M    | 2026-06-11 | `settings.json`, `pool_lego.py`, `manager.py`, `fetcher.py`, `docs/stories/_inbox/US-089D_pool2_dynamic_schema.md` |
@@ -189,7 +189,7 @@ Last updated: 2026-06-13
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
-- [[US-092_fix_homepage_missing_index_error|US-092]]: Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ (in-progress)
+- [[US-092_fix_homepage_missing_index_error|US-092]]: Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ (accepted)
 - [[US-087_fix_xoa_bo_suu_tap|US-087]]: Fix lỗi không xóa được bộ sưu tập đã tồn tại (accepted)
 - [[US-086_fix_loi_tao_bo_suu_tap|US-086]]: Fix lỗi tạo bộ sưu tập (accepted)
 - [[US-085_fix_android_mobile_display_bug|US-085]]: Sửa lỗi hiển thị và vỡ bố cục trên điện thoại Android (accepted)

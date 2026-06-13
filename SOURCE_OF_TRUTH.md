@@ -324,6 +324,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-13 (Nghiệm thu US-092 - Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ - TEST PASS)
+*   **Mã User Story:** `US-092`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Sửa mã nguồn (`api/index.js`):** Thay thế cơ chế đọc tệp tĩnh qua `process.cwd()` bằng mảng đường dẫn đọc tệp dự phòng (multi-fallback), ưu tiên sử dụng `__dirname` (`path.join(__dirname, '..', 'index.html')`) để kích hoạt Vercel NFT (Node File Trace) đóng gói tệp tĩnh vào bundle serverless function.
+    - **Cấu hình deployment (`vercel.json`):** Bổ sung thuộc tính `config.includeFiles` để ép Vercel builder đóng gói tệp `index.html` vào function zip.
+    - **Đồng bộ hóa tài liệu:** Tạo mới User Story đặc tả lỗi [US-092_fix_homepage_missing_index_error.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md) và đồng bộ hóa INDEX.md, NEXT_SESSION.md.
+*   **Được nghiệm thu trực tiếp ("test pass")** bởi Product Owner (Khang Ngô).
+
 ### 2026-06-13 (Nghiệm thu US-090 - Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn Cloudinary - TEST PASS)
 *   **Mã User Story:** `US-090`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1034,6 +1042,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
 - [ ] **US-089:** Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới cho SQLite và Google Sheets v2 theo kiến trúc Lego
 - [x] **US-089A:** Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ ✅ Done 2026-06-12
