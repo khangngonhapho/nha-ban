@@ -1,0 +1,238 @@
+Line 3177: const parts = decoded.split("|").map(p => p.trim());
+Line 3201: function trackAction(action, details = "") {
+Line 3251: function decodeBitmask(encoded, allIds) {
+Line 3279: function cleanConsecutiveNewlines(text) {
+Line 3289: function parseGia(val) {
+Line 3302: function generateAdminTitleFromNộiDungChinh(p) {
+Line 3306: const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
+Line 3342: window.autoFillCurationDetails = function() {
+Line 3370: function tSel(set, val) {
+Line 3374: function syncTabUI(containerId, set) {
+Line 3380: function applyGia(arr) {
+Line 3394: function toggleSearchClearBtn() {
+Line 3401: function clearSearchInput() {
+Line 3409: function onSearchInput() {
+Line 3419: function toggleSearchBar() {
+Line 3434: function formatPhone(phone) {
+Line 3443: function cutTitleToDistrict(title) {
+Line 3455: function formatRawDescription(text) {
+Line 3469: function extractCommission(p) {
+Line 3480: function getDaiNha(p) {
+Line 3484: const idxTy = parts.findIndex(part => part.toLowerCase().includes('tỷ'));
+Line 3514: function getMappedPoolData() {
+Line 3609: function getFiltered() {
+Line 3623: function removeAccents(str) {
+Line 3638: const subQueries = sv.split('+').map(s => s.trim()).filter(Boolean);
+Line 3641: function normalizeStreetQuery(street) {
+Line 3651: function matchHouseNumber(rawSoNha, querySoNha) {
+Line 3837: function cv(cell) { return cell ? (cell.v ?? cell.f ?? '') : ''; }
+Line 3840: function fixImgUrl(url, sz = 'w800') {
+Line 3859: async function loadData() {
+Line 3910: const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
+Line 3970: const poolRow = poolRows.find(pr => {
+Line 4115: function loadPublicDataFallback() {
+Line 4116: window.__gsCallback = function (response) {
+Line 4222: window.toggleShowOnAirOnly = function(isChecked) {
+Line 4231: function updateSwitcherCounts() {
+Line 4236: function finalizeData(fullList) {
+Line 4239: const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
+Line 4246: const house = fullList.find(h => h.system_id === tk);
+Line 4316: const isOnAir = fullList.some(h => h.system_id === shareToken);
+Line 4318: const poolRow = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(shareToken).trim());
+Line 4350: window.triggerAdminAuthPrompt = function() {
+Line 4365: function showError(msg) {
+Line 4386: function saveState() {
+Line 4403: function restoreState() {
+Line 4445: function updateStats() {
+Line 4467: const gias = arr.map(p => parseFloat(p.gia)).filter(Boolean);
+Line 4468: const dts = arr.map(p => parseFloat(p.dt)).filter(Boolean);
+Line 4469: const tangs = arr.map(p => parseFloat(p.tang)).filter(Boolean);
+Line 4470: const quans = [...new Set(arr.map(p => p.q).filter(Boolean))].length;
+Line 4492: function toggleFilter() {
+Line 4498: function closeFilter() {
+Line 4508: function buildDistrictTabs() {
+Line 4509: const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+Line 4547: function buildWardTabs() {
+Line 4556: const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+Line 4569: function buildDuongTabs() {
+Line 4570: let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+Line 4572: const duongs = [...new Set(pool.map(p => p.duong_truoc_nha).filter(d => d && d !== '-'))].sort();
+Line 4583: function buildHuongTabs() {
+Line 4584: let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+Line 4586: const huongs = [...new Set(pool.map(p => p.huong).filter(h => h && h !== '-'))].sort();
+Line 4597: function tDistrict(val) {
+Line 4603: function tWard(val) {
+Line 4608: function tDuong(val) {
+Line 4612: function tGia(val) {
+Line 4616: function tDanhGia(val) {
+Line 4620: function tHuong(val) {
+Line 4625: function updateFilterSummary() {
+Line 4655: function resetFilters() {
+Line 4684: function clearAllFilters() {
+Line 4689: function updateSortButtonsUI() {
+Line 4707: function toggleSortNew() {
+Line 4719: function toggleSortPrice() {
+Line 4731: function updateFavBtnUI() {
+Line 4745: function toggleFavFilter() {
+Line 4756: function render() {
+Line 4763: const arr = filteredArr.slice().sort((a, b) => {
+Line 4767: const ma = DATA.find(x =>
+Line 4771: const mb = DATA.find(x =>
+Line 4803: const curatedListing = isAdmin ? DATA.find(x =>
+Line 4808: const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
+Line 4809: const cleanImgUrls = imgUrls.filter(u => !(window.isListingSodoUrl && window.isListingSodoUrl(u, p)));
+Line 4911: function applyFilter() {
+Line 4946: function checkPoolFallbackSearch(visibleCount) {
+Line 4975: window.executePoolFallbackSearch = function(query) {
+Line 5042: function th(id, b, e) {
+Line 5062: function openLb(i) {
+Line 5067: function closeLb() {
+Line 5071: function lbMove(d) {
+Line 5075: function goToLb(i) {
+Line 5078: function renderLbMain() {
+Line 5088: function renderLbThumbs() {
+Line 5098: function updateLbThumbsUI() {
+Line 5119: window.openLightboxForCarousel = function(imageUrls, index) {
+Line 5126: function buildG(imgs) {
+Line 5169: function gm(d) {
+Line 5175: function ua() {
+Line 5180: function openS(id, tempP = null, autoExpandPreview = false) {
+Line 5181: const p = tempP || DATA.find(x => String(x.id) === String(id));
+Line 5187: const isFacadeUrl = (url) => {
+Line 5193: const cleanRawNoiDungChinh = (text) => {
+Line 5204: const extractSource = (text) => {
+Line 5542: const cleanImgs = (p.imgs || []).filter(url => {
+Line 5545: const sortedImgs = cleanImgs.sort((a, b) => {
+Line 5657: const sodoUrls = sImgs.map(url => normalizeImgUrl(url));
+Line 5658: const nImgs = (p.imgs || []).filter(url => {
+Line 5671: const updateLivePreview = () => {
+Line 5778: function closeS(fromPopState = false) {
+Line 5792: function bgC(e) { if (e.target === document.getElementById('ov')) closeS(false); }
+Line 5802: function toggleSelect(id, el) {
+Line 5809: async function generateShareLink() {
+Line 5823: const house = DATA.find(p => String(p.id) === String(singleId));
+Line 5828: const sysIdList = Array.from(SELECTED_IDS).map(id => {
+Line 5829: const house = DATA.find(p => String(p.id) === String(id));
+Line 5863: function promptGenerateLink() {
+Line 5876: function executeGenerateLink() {
+Line 5906: const house = DATA.find(p => String(p.id) === String(singleId));
+Line 5911: const sysIdList = Array.from(SELECTED_IDS).map(id => {
+Line 5912: const house = DATA.find(p => String(p.id) === String(id));
+Line 5947: function executeGenerateQuickLink() {
+Line 5959: const house = DATA.find(p => String(p.id) === String(singleId));
+Line 5964: const sysIdList = Array.from(SELECTED_IDS).map(id => {
+Line 5965: const house = DATA.find(p => String(p.id) === String(id));
+Line 6010: function toggleSelectAll() {
+Line 6011: const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+Line 6012: const visibleIds = visibleCards.map(c => c.dataset.pid);
+Line 6013: const allSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
+Line 6031: function toggleSpeedDial() {
+Line 6052: function renderSpeedDialActions(mode, p = null) {
+Line 6095: function askZalo(id, title) {
+Line 6159: function saveGoogleClientId() {
+Line 6175: function initGoogleAuth() {
+Line 6231: function handleGoogleLoginClick() {
+Line 6259: function showGoogleLoginButtonState(isLoggedIn) {
+Line 6277: function autoLoginOrSilentRefresh() {
+Line 6290: const checkAndRefresh = () => {
+Line 6310: window.ensureValidGoogleToken = function() {
+Line 6355: function promptInteractiveLogin() {
+Line 6395: async function fetchFacadeImages() {
+Line 6453: function stripVietnameseAccents(str) {
+Line 6461: function abbreviateAndReverseRoad(roadName) {
+Line 6464: const words = cleanRoad.trim().split(/\s+/).filter(w => w.length > 0);
+Line 6465: const abbr = words.map(w => w[0].toUpperCase()).join('');
+Line 6469: function mapSoNha(soNha) {
+Line 6484: function generateMaKhangNgo(soNha, duong) {
+Line 6492: function generateAutoTitle(p) {
+Line 6500: function generateAutoDescription(p) {
+Line 6514: window.copyQuickClientLink = function(systemId) {
+Line 6537: window.shareZaloFromAdminDetail = function(id) {
+Line 6544: function normalizeImgUrl(url) {
+Line 6569: window.isListingSodoUrl = function(url, p) {
+Line 6600: function renderImageEditorWidget(p) {
+Line 6632: const isSodoUrl = (url) => {
+Line 6744: const normPublic = cleanPublicImages.map(url => normalizeImgUrl(url));
+Line 6780: const renderedCards = cards.filter(c => c.shouldRender);
+Line 6782: const getCardSortWeight = (c) => {
+Line 6810: const indices = currentInteriorIndices.split(',').map(s => s.trim());
+Line 6813: const indices = currentAlleyIndices.split(',').map(s => s.trim());
+Line 6847: function renderImageCardForEdit(type, index, url, p) {
+Line 6894: const indices = publicIntStr.split(',').map(s => s.trim());
+Line 6906: const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+Line 6912: const indices = publicAlleyStr.split(',').map(s => s.trim());
+Line 6924: const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+Line 6968: window.selectImageEditorTool = function(tool) {
+Line 7017: window.onImageCardClick = function(event, card) {
+Line 7037: window.sortCurationImageGrid = function() {
+Line 7061: const getCardWeight = (card) => {
+Line 7091: window.setImageAsMatTien = function(event, card) {
+Line 7130: window.setImageAsAnhNen = function(event, card) {
+Line 7164: window.setImageAsSodo = function(event, card) {
+Line 7177: const vals = sodoInputs.map(input => input.value.trim());
+Line 7178: const normVals = vals.map(val => normalizeImgUrl(val));
+Line 7247: async function sha1(string) {
+Line 7251: const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+Line 7255: function compressImageClientSide(file) {
+Line 7305: async function uploadFileToCloudinary(file, type = "interior", listingId = "") {
+Line 7427: let indices = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
+Line 7459: };\n\n    window.toggleImagePublic = function(cb) {
+Line 7472: let indices = publicIntInput.value.split(',').map(s => s.trim()).filter(Boolean);
+Line 7482: let indices = publicAlleyInput.value.split(',').map(s => s.trim()).filter(Boolean);
+Line 7497: window.uncheckAllCurationImages = function() {
+Line 7543: window.openPoolS = function(systemId) {
+Line 7550: const curatedListing = DATA.find(x => x.system_id && String(x.system_id).trim() === String(systemId).trim());
+Line 7556: const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+Line 7652: function searchPoolRows(query) {
+Line 7667: function isPoolRowOnAir(row) {
+Line 7673: window.onPoolSearchToolKeyup = function() {
+Line 7745: async function executePullFromPool(systemId, id, soNha, duong, btnElement) {
+Line 7779: const norm = (str) => {
+Line 7795: const matchedRow = rows.find(r => {
+Line 7827: const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
+Line 7905: const formatQuan = (q) => {
+Line 7916: const formatGia = (g) => {
+Line 8035: function updateShareUI() {
+Line 8047: const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+Line 8048: const visibleIds = visibleCards.map(c => c.dataset.pid);
+Line 8049: const isNowAllSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
+Line 8055: function openColViewModal() {
+Line 8100: function openColSaveModal() {
+Line 8133: function createNewCollection() {
+Line 8166: function saveToExistingCollection(name) {
+Line 8192: function viewCollection(name) {
+Line 8218: function exitCollectionView() {
+Line 8227: function deleteCollection(name, event) {
+Line 8245: function removeFromCol(id, colName, event) {
+Line 8261: function renderCollectionsManager() {
+Line 8288: window.toggleAdminAccordion = function(header) {
+Line 8302: window.getPublicImagesFromForm = function(p) {
+Line 8311: const isFacadeUrl = (url) => {
+Line 8318: const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
+Line 8319: const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+Line 8325: const isSodoUrl = (url) => {
+Line 8393: window.setupScrollCarousel = function(containerId, imageUrls, isLegalImg = false) {
+Line 8436: window.openZoomOverlay = function(url) {
+Line 8516: window.closeZoomOverlay = function() {
+Line 8522: window.checkMoTaCollapse = function() {
+Line 8538: window.toggleMotaGocCollapse = function() {
+Line 8554: window.showToast = function(msg, type = 'success') {
+Line 8612: const p = DATA.find(x => String(x.id) === String(id));
+Line 8657: const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
+Line 8659: const isSodoUrl = (url) => {
+Line 8667: const isFacadeUrl = (url) => {
+Line 8675: const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
+Line 8676: const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+Line 9046: const matchedRow = rows.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+Line 9088: const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
+Line 9111: const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
+Line 9112: const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+Line 9114: const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
+Line 9116: const isSodoUrl = (url) => {
+Line 9124: const isFacadeUrl = (url) => {
+Line 9191: const formatQuan = (q) => {
+Line 9202: const formatGia = (g) => {
+Line 9425: window.submitLeadCapture = function() {
+Line 9474: window.scheduleViewing = function(id, title) {
+Line 9493: window.showRequirementForm = function(id) {
+Line 9508: window.submitClientRequirement = function(id, title) {

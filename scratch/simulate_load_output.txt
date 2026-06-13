@@ -1,0 +1,2 @@
+Listing HWZOICBIMSIPDP mapped object:
+{'id': 'HWZOICBIMSIPDP', 'system_id': '93', 'source_row_index': 94, 'is_invisible': False, 'pool_row_index': 5724}

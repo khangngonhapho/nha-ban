@@ -1,0 +1,18 @@
+Line 2818: #list {
+Context:
+    2813:       main {
+    2814:         max-width: 1100px;
+    2815:         padding: 20px 24px calc(24px + var(--safe-bot));
+    2816:       }
+    2817: 
+--> 2818:       #list {
+    2819:         display: grid;
+    2820:         grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    2821:         gap: 16px;
+    2822:         padding-top: 10px;
+    2823:       }
+    2824: 
+    2825:       /* Thông báo trống cũng chiếm full */
+    2826:       #list>div[style*="text-align:center"] {
+    2827:         grid-column: 1 / -1;
+============================================================

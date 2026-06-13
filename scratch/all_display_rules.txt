@@ -1,0 +1,244 @@
+Line 41: body.is-admin .tabs,
+    body.is-admin .stats -> display: flex !important;
+Line 83: body.is-admin #gLoginBtn -> display: inline-flex !important;
+Line 87: body.is-admin #modeSwitcherContainer -> display: flex !important;
+Line 99: .filter-btn -> display: flex;
+Line 148: /* ── Sort icon btn ── */
+    .sort-icon-btn -> display: flex;
+Line 175: body.is-admin .sort-icon-btn.admin-only -> display: flex;
+Line 256: /* ── Detailed specs range filters ── */
+    .range-group -> display: grid;
+Line 264: .range-box -> display: flex;
+Line 340: .detailed-specs-grid -> display: flex;
+Line 346: @media (min-width: 576px) -> display: grid;
+Line 354: }
+
+    .spec-item -> display: flex;
+Line 370: .spec-value-group -> display: flex;
+Line 441: .criteria-grid -> display: grid;
+Line 447: .criterion-item -> display: flex;
+Line 479: .btn-filter-apply -> display: flex;
+Line 495: .btn-filter-clear -> display: flex;
+Line 520: .share-btn-float -> display: flex;
+Line 573: .selall-btn-float -> display: flex;
+Line 632: .hdr-top -> display: flex;
+Line 648: .fav-filter-btn -> display: flex;
+Line 673: .hdr-icon-btn -> display: flex;
+Line 700: .fav-count-badge -> display: flex;
+Line 806: .tabs -> display: flex;
+Line 819: .tab -> display: flex;
+Line 847: .mode-segmented-control -> display: flex;
+Line 854: .mode-segmented-control .mode-btn -> display: flex;
+Line 950: .stats -> display: flex;
+Line 1072: }
+
+    .crow -> display: flex;
+Line 1143: .card-right -> display: flex;
+Line 1151: .info -> display: flex;
+Line 1208: .chips -> display: flex;
+Line 1224: .pr -> display: flex;
+Line 1241: .pr-loc -> display: flex;
+Line 1249: .loc -> display: flex;
+Line 1257: .cfoot -> display: flex;
+Line 1286: .heart -> display: flex;
+Line 1313: .active-col-bar -> display: flex;
+Line 1340: .remove-from-col-btn -> display: flex;
+Line 1359: .col-btn-float -> display: flex;
+Line 1387: .overlay -> display: none;
+Line 1397: .overlay.open -> display: flex
+Line 1401: .sheet -> display: flex;
+Line 1432: .shead -> display: flex;
+Line 1453: .xbtn -> display: flex;
+Line 1493: .gtrack -> display: flex;
+Line 1513: .gdots -> display: flex;
+Line 1538: .garr -> display: flex;
+Line 1566: .ig -> display: grid;
+Line 1611: .scta -> display: flex;
+Line 1619: .cb -> display: flex;
+Line 1646: /* Lightbox Styles */
+    .lightbox -> display: flex;
+Line 1668: .lb-close -> display: flex;
+Line 1685: .lb-main -> display: flex;
+Line 1711: .lb-thumbs -> display: flex;
+Line 1742: .lb-thumb-vid -> display: flex;
+Line 1788: .admin-card-inner -> display: flex;
+Line 1794: .admin-card-left -> display: flex;
+Line 1836: .admin-card-right -> display: flex;
+Line 1859: .admin-card-details -> display: flex;
+Line 1866: .admin-card-line -> display: flex;
+Line 1886: .admin-card-right .heart -> display: flex;
+Line 1907: /* Admin Accordion details view */
+    .admin-accordion -> display: flex;
+Line 1923: .accordion-header -> display: flex;
+Line 1953: /* CSS Scroll Snap Carousels with Peek */
+    .admin-scroll-carousel -> display: flex;
+Line 1987: .admin-carousel-dots -> display: flex;
+Line 2008: /* Robust cross-device Image Editor Card */
+    .edit-img-card -> display: block; /* Change from flex to block to fix Safari flexbox aspect-ratio collapse */
+Line 2055: .edit-img-actions-bar -> display: flex;
+Line 2095: /* Dotted technical specs grid */
+    .admin-raw-header-row -> display: flex;
+Line 2133: .admin-raw-grid -> display: grid;
+Line 2140: .admin-raw-cell -> display: flex;
+Line 2165: .admin-raw-price-row -> display: flex;
+Line 2185: .admin-raw-source -> display: flex;
+Line 2290: /* Admin Editable Form Elements */
+    .admin-edit-form -> display: flex;
+Line 2297: .admin-edit-group -> display: flex;
+Line 2359: .admin-detail-float-actions .admin-icon-btn -> display: flex;
+Line 2409: .admin-save-btn -> display: flex;
+Line 2550: .client-feedback-box h4 -> display: flex;
+Line 2559: .client-feedback-btns -> display: flex;
+Line 2564: .client-feedback-btn -> display: flex;
+Line 2626: .client-req-submit-btn -> display: flex;
+Line 2673: .lead-capture-submit-btn -> display: flex;
+Line 2695: /* Speed Dial Container */
+    .admin-speed-dial -> display: flex;
+Line 2707: /* Main Action Button (Gear icon) */
+    .dial-main-btn -> display: flex;
+Line 2738: /* Actions list container */
+    .dial-actions -> display: flex;
+Line 2755: /* Override individual buttons inside the speed dial */
+    .dial-btn-item -> display: flex !important;
+Line 2816: #list -> display: grid;
+Line 2906: /* Ẩn vạch kéo trên máy tính */
+
+      .sbody -> display: grid;
+Line 2958: /* US-074: Laptop layout optimization for filter panel and admin modal */
+      #filterPanel -> display: grid !important;
+Line 3073: .filter-footer-actions -> display: grid;
+Line 3082: .btn-filter-apply -> display: flex;
+Line 3096: .btn-filter-clear -> display: flex;
+Line 3119: .multiselect-trigger -> display: flex;
+Line 3181: .multiselect-option -> display: flex;
+Line 3227: .carousel-slides-track -> display: flex;
+Line 3239: .carousel-slide-item -> display: flex;
+Line 3257: .carousel-nav-btn -> display: flex;
+Line 3312: .carousel-role-indicator -> display: flex;
+Line 3336: .thumbnail-strip-scroll -> display: flex;
+Line 3409: .image-editor-control-panel -> display: flex;
+Line 3419: .control-row -> display: flex;
+Line 3424: .control-btn -> display: flex;
+Line 3495: .filter-panel -> display: flex !important;
+Line 3520: .filter-scroll-content -> display: block !important;
+Line 3527: .mobile-filter-header -> display: flex;
+Line 3537: .mobile-filter-back-btn -> display: flex;
+Line 3565: .filter-panel > .tabs,
+      .filter-scroll-content > .tabs -> display: flex !important;
+Line 3582: .filter-panel .tab,
+      .filter-scroll-content .tab -> display: inline-flex !important;
+Line 3619: .filter-footer-actions -> display: grid !important;
+Line 3631: .btn-filter-apply -> display: flex;
+Line 3645: .btn-filter-clear -> display: flex;
+Line 4576: );
+      });
+    }
+    function toggleSearchClearBtn() -> clearBtn.style.display = sInput.value.trim() ? 'flex' : 'none';
+Line 5134: );
+
+      const giaTabs = document.getElementById('giaTabs');
+      const giaLbl = document.getElementById('giaLbl');
+      if (giaTabs) -> if (btnLt7) btnLt7.style.display = hasLt7 ? '' : 'none';
+Line 5154: // 2. Danh gia tabs
+      const hasNgon = data.some(p => p.danh_gia === 'Hàng Ngon');
+      const hasLoi = data.some(p => p.danh_gia === 'Hàng Lỗi');
+
+      const danhGiaTabs = document.getElementById('danhGiaTabs');
+      const danhGiaLbl = document.getElementById('danhGiaLbl');
+      if (danhGiaTabs) -> if (btnNgon) btnNgon.style.display = hasNgon ? '' : 'none';
+Line 5237: }
+      }
+
+      if (isAdmin && !isTokenValid) -> <div class="admin-auth-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(255, 191, 36, 0.25); border-radius: 20px; margin: 40px auto; max-width: 420px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+Line 5652: </b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;
+            banner.style.display = 'block';
+          }
+        } else -> leadModal.style.display = 'flex';
+Line 5757: };
+
+    function showError(msg) -> <span onclick="triggerAdminAuthPrompt()" style="font-size: 12px; color: var(--sub); cursor: pointer; opacity: 0.4; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-weight: 500; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;" onmouseover="this.style.opacity=0.8; this.style.color='var(--gold)'" onmouseout="this.style.opacity=0.4; this.style.color='var(--sub)'">
+Line 6206: ;
+      const parts = [];
+      if (selDistricts.size) parts.push([...selDistricts].map(d => dNames[d] || d).join('+'));
+      if (selWards.size) parts.push('P.' + [...selWards].join('+'));
+      if (selDuongs.size) parts.push([...selDuongs].join('+'));
+      if (selHuong.size) parts.push('🧭' + [...selHuong].join('+'));
+      if (selGia.size) parts.push([...selGia].map(g => gNames[g] || g).join('+'));
+      if (selDanhGia.size) parts.push([...selDanhGia].map(d => d === 'Hàng Ngon' ? '💎' : '⚠️').join(''));
+      document.getElementById('filterSummary').textContent = parts.length ? parts.join(' · ') : 'Tất cả';
+      const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size);
+      document.getElementById('filterBtn').classList.toggle('active', anyActive || filterOpen);
+      document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';
+
+      // Hiển thị dòng thứ 2 (bộ lọc hiện tại) chỉ khi có filter hoạt động
+      const bar = document.getElementById('filterBar');
+      if (bar) -> bar.style.display = (isAdmin && anyActive) ? 'flex' : 'none';
+Line 6302: updateSortButtonsUI();
+      saveState();
+      render();
+    }
+
+    function updateFavBtnUI() -> badge.style.display = 'flex';
+Line 6569: CĂN TRONG POOL THÔ:</div>`;
+      
+      matched.slice(0, 15).forEach(row => -> div.style.cssText = 'padding: 12px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s;';
+Line 6651: function buildLbTrack() -> track.style.cssText = `display:flex;height:100%;width:100%;will-change:transform;transition:none;`;
+Line 6906: px)`;
+      document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === gI));
+      ua();
+    }
+    function ua() -> document.getElementById('al').style.display = gI === 0 ? 'none' : 'flex';
+Line 6982: }
+      
+      const sbody = document.getElementById('sbody');
+      const scta = document.querySelector('.scta');
+
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) -> if (scta) scta.style.display = 'none';
+Line 7457: }
+            } else -> if (accPreview) accPreview.style.display = 'block';
+Line 8492: }
+
+    // US-080: Progress Bar inline - hien thi ngay duoi nut bam, khong popup
+    function renderDownloadProgress(current, total, btn) -> bar.style.cssText = 'margin-top:8px;background:rgba(255,255,255,0.07);border-radius:8px;overflow:hidden;height:28px;position:relative;display:flex;align-items:center;min-width:180px;max-width:280px;';
+Line 9512: }
+        
+        if (miniBadge) -> miniBadge.style.display = 'flex';
+Line 9520: else if (sodoNum > 0) -> miniBadge.style.display = 'flex';
+Line 9522: `;
+            miniBadge.className = 'thumb-mini-badge badge-sodo';
+          } else if (isCover) -> miniBadge.style.display = 'flex';
+Line 9530: }
+        
+        if (publicBadge) -> publicBadge.style.display = 'flex';
+Line 10193: matched.slice(0, 10).forEach(row => -> div.style.cssText = 'padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.2s;';
+Line 10541: }
+    }
+
+    // ============================================================
+    // [COLLECTIONS MANAGEMENT HELPERS]
+    // ============================================================
+    function updateShareUI() -> colFloatBtn.style.display = SELECTED_IDS.size > 0 ? 'flex' : 'none';
+Line 10565: }
+
+    function openColViewModal() -> favItem.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; transition:background 0.2s;';
+Line 10587: ;
+      viewList.appendChild(favItem);
+      
+      // 2. Thêm các bộ sưu tập tự tạo
+      Object.keys(collections).forEach(name => -> item.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; transition:background 0.2s; margin-top:8px;';
+Line 10783: colNames.forEach(name => -> chip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#ffffff; border:1.5px solid #e2ded6; border-radius:16px; padding:6px 12px; font-size:12px; font-weight:600; color:#3a3a3c; cursor:pointer; transition:all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);';
+Line 10903: });
+        }
+        return finalImages.slice(0, 15).filter(Boolean);
+      }
+    };
+
+    window.setupScrollCarousel = function(containerId, imageUrls, isLegalImg = false) -> track.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--sub); font-size:12.5px; font-weight:600; background:#f8f9fa;">Chưa có hình ảnh</div>`;
+Line 10949: );
+      };
+    };
+
+    window.openZoomOverlay = function(url) -> display: flex;
+Line 11068: };
+
+    window.showToast = function(msg, type = 'success') -> display: flex;

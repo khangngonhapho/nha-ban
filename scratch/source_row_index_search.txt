@@ -1,0 +1,2 @@
+Line 4033: source_row_index: targetRowNumber
+Line 8834: const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AT${p.source_row_index}?valueInputOption=USER_ENTERED`;

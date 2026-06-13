@@ -1,0 +1,5 @@
+[17:57:51] [⚠️ API WARNING] Không tìm thấy credentials.json. Các vị trí hệ thống đã quét qua:
+  - 'D:\LHTBrain\01_PROJECTS\BDS-KhangNgo\credentials.json'
+  - 'D:\LHTBrain\01_PROJECTS\credentials.json'
+  - 'D:\LHTBrain\credentials.json'
+No credentials or sheet_id

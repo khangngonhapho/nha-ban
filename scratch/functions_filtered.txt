@@ -1,0 +1,29 @@
+Line 4222: window.toggleShowOnAirOnly = function(isChecked) {
+Line 4365: function showError(msg) {
+Line 5062: function openLb(i) {
+Line 5119: window.openLightboxForCarousel = function(imageUrls, index) {
+Line 5180: function openS(id, tempP = null, autoExpandPreview = false) {
+Line 6259: function showGoogleLoginButtonState(isLoggedIn) {
+Line 6395: async function fetchFacadeImages() {
+Line 6600: function renderImageEditorWidget(p) {
+Line 6744: const normPublic = cleanPublicImages.map(url => normalizeImgUrl(url));
+Line 6847: function renderImageCardForEdit(type, index, url, p) {
+Line 6906: const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+Line 6924: const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+Line 6968: window.selectImageEditorTool = function(tool) {
+Line 7017: window.onImageCardClick = function(event, card) {
+Line 7037: window.sortCurationImageGrid = function() {
+Line 7091: window.setImageAsMatTien = function(event, card) {
+Line 7130: window.setImageAsAnhNen = function(event, card) {
+Line 7164: window.setImageAsSodo = function(event, card) {
+Line 7255: function compressImageClientSide(file) {
+Line 7459: };\n\n    window.toggleImagePublic = function(cb) {
+Line 7497: window.uncheckAllCurationImages = function() {
+Line 7543: window.openPoolS = function(systemId) {
+Line 8055: function openColViewModal() {
+Line 8100: function openColSaveModal() {
+Line 8302: window.getPublicImagesFromForm = function(p) {
+Line 8393: window.setupScrollCarousel = function(containerId, imageUrls, isLegalImg = false) {
+Line 8436: window.openZoomOverlay = function(url) {
+Line 8554: window.showToast = function(msg, type = 'success') {
+Line 9493: window.showRequirementForm = function(id) {

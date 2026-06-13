@@ -1,0 +1,67 @@
+=== ALL TEXT ELEMENTS ===
+
+<span class=None id=None>: Ngô Thái Khang
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: Trang chủ
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: Lộ trình đào tạo
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: Kho Tổng
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: Báo cáo dẫn khách
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: Quản lý khách mua
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: DSKCC Dịch vụ
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: Báo cáo, thống kê
+<span class=['ml-3', 'text-base', 'font-semibold', 'tracking-[-0.32]', 'text-neutral-900'] id=None>: Sự kiện
+<span class=['sr-only'] id=None>: Toggle Sidebar
+<li class=['inline-flex', 'items-center', 'gap-1.5'] id=None>: Kho Tổng
+<li class=['inline-flex', 'items-center', 'gap-1.5'] id=None>: Danh sách nguồn hàng
+<span class=['text-grayscale-500', 'text-[16px]', 'leading-[26px]', 'font-medium', 'tracking-[-0.02]', 'max-w-20', 'truncate', 'md:max-w-none'] id=None>: Chi tiết nguồn hàng
+<h4 class=['text-grayscale-900', 'text-2xl', 'font-bold'] id=None>: Chi tiết nguồn hàng
+<p class=['text-grayscale-900', 'text-base', 'font-semibold'] id=None>: Khác
+<span class=['inline-flex', 'items-center', 'justify-center', 'border', 'py-0.5', 'font-medium', 'w-fit', 'whitespace-nowrap', 'shrink-0', '[&>svg]:size-3', 'gap-1', '[&>svg]:pointer-events-none', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:ring-[3px]', 'aria-invalid:ring-destructive/20', 'dark:aria-invalid:ring-destructive/40', 'aria-invalid:border-destructive', 'transition-[color,box-shadow]', 'overflow-hidden', 'border-transparent', '[a&]:hover:bg-primary/90', 'text-grayscale-900', 'rounded-[4px]', 'border-none', 'bg-white', 'px-[6px]', 'text-xs'] id=None>: Mới
+<p class=['text-grayscale-900', 'wrap-anywhere', 'text-lg', 'font-semibold'] id=None>: 9.36A phạm văn hai 108 4 5.2 21 24 tỷ
+<p class=['text-grayscale-600', 'text-xs', 'hidden'] id=None>: Thời gian niêm yết: Invalid Date
+<p class=['text-grayscale-900', 'text-xs'] id=None>: Nguyễn Hoàng Nam
+<p class=['text-grayscale-400', 'text-xs'] id=None>: Đầu chủ - Bảo Tín
+<p class=['text-grayscale-900', 'text-xs'] id=None>: 0941151187
+<div class=['text-muted-foreground', 'h-9', 'w-fit', 'items-center', 'justify-center', 'rounded-lg', 'p-[3px]', 'flex', 'gap-4', 'bg-white'] id=None>: Bình luậnGhi chú
+<button class=['data-[state=active]:bg-background', 'dark:data-[state=active]:text-foreground', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:outline-ring', 'dark:data-[state=active]:border-input', 'dark:data-[state=active]:bg-input/30', 'text-foreground', 'dark:text-muted-foreground', 'inline-flex', 'h-[calc(100%-1px)]', 'flex-1', 'items-center', 'justify-center', 'gap-1.5', 'rounded-md', 'border', 'border-transparent', 'py-1', 'whitespace-nowrap', 'transition-[color,box-shadow]', 'focus-visible:ring-[3px]', 'focus-visible:outline-1', 'disabled:pointer-events-none', 'disabled:opacity-50', 'data-[state=active]:shadow-sm', '[&_svg]:pointer-events-none', '[&_svg]:shrink-0', "[&_svg:not([class*='size-'])]:size-4", 'data-[state=active]:text-primary-400', 'data-[state=active]:border-b-primary-400', 'data-[state=inactive]:text-grayscale-400', 'max-w-min', '!rounded-none', '!bg-none', 'px-0', 'pb-3', 'text-base', 'font-semibold', '!shadow-none', '!outline-0', 'data-[state=active]:border-b-[2px]', 'data-[state=inactive]:font-medium'] id=radix-«rr»-trigger-comment>: Bình luận
+<button class=['data-[state=active]:bg-background', 'dark:data-[state=active]:text-foreground', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:outline-ring', 'dark:data-[state=active]:border-input', 'dark:data-[state=active]:bg-input/30', 'text-foreground', 'dark:text-muted-foreground', 'inline-flex', 'h-[calc(100%-1px)]', 'flex-1', 'items-center', 'justify-center', 'gap-1.5', 'rounded-md', 'border', 'border-transparent', 'py-1', 'whitespace-nowrap', 'transition-[color,box-shadow]', 'focus-visible:ring-[3px]', 'focus-visible:outline-1', 'disabled:pointer-events-none', 'disabled:opacity-50', 'data-[state=active]:shadow-sm', '[&_svg]:pointer-events-none', '[&_svg]:shrink-0', "[&_svg:not([class*='size-'])]:size-4", 'data-[state=active]:text-primary-400', 'data-[state=active]:border-b-primary-400', 'data-[state=inactive]:text-grayscale-400', 'max-w-min', '!rounded-none', '!bg-none', 'px-0', 'pb-3', 'text-base', 'font-semibold', '!shadow-none', '!outline-0', 'data-[state=active]:border-b-[2px]', 'data-[state=inactive]:font-medium'] id=radix-«rr»-trigger-note>: Ghi chú
+<div class=['flex', 'flex-col', 'items-center', 'justify-center', 'h-[200px]'] id=None>: Chưa có bình luận nào
+<h1 class=['mt-2', 'text-base', 'text-[#0D0D12]'] id=None>: Chưa có bình luận nào
+<div class=['relative', 'shrink-0'] id=None>: Gửi
+<button class=['inline-flex', 'items-center', 'justify-center', 'whitespace-nowrap', 'text-sm', 'font-medium', 'transition-all', 'disabled:pointer-events-none', 'disabled:opacity-50', '[&_svg]:pointer-events-none', "[&_svg:not([class*='size-'])]:size-4", 'shrink-0', '[&_svg]:shrink-0', 'outline-none', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:ring-[3px]', 'aria-invalid:ring-destructive/20', 'aria-invalid:border-destructive', 'bg-primary', 'text-primary-foreground', 'shadow-xs', 'hover:bg-primary/90', 'disabled:bg-grayscale-50', 'disabled:text-grayscale-200', 'h-8', 'rounded-md', 'gap-1.5', 'px-3', 'has-[>svg]:px-2.5', 'absolute', 'right-4', 'bottom-3'] id=None>: Gửi
+<div class=['text-muted-foreground', 'h-9', 'w-fit', 'items-center', 'justify-center', 'rounded-lg', 'p-[3px]', 'flex', 'gap-4', 'bg-white', 'px-4'] id=None>: Thông tin chungThông tin chi tiếtHồ sơ pháp lýBCDK liên quan
+<button class=['data-[state=active]:bg-background', 'dark:data-[state=active]:text-foreground', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:outline-ring', 'dark:data-[state=active]:border-input', 'dark:data-[state=active]:bg-input/30', 'text-foreground', 'dark:text-muted-foreground', 'inline-flex', 'h-[calc(100%-1px)]', 'flex-1', 'items-center', 'justify-center', 'gap-1.5', 'rounded-md', 'border', 'border-transparent', 'py-1', 'whitespace-nowrap', 'transition-[color,box-shadow]', 'focus-visible:ring-[3px]', 'focus-visible:outline-1', 'disabled:pointer-events-none', 'disabled:opacity-50', 'data-[state=active]:shadow-sm', '[&_svg]:pointer-events-none', '[&_svg]:shrink-0', "[&_svg:not([class*='size-'])]:size-4", 'data-[state=active]:text-primary-400', 'data-[state=active]:border-b-primary-400', 'data-[state=inactive]:text-grayscale-400', 'max-w-min', '!rounded-none', '!bg-none', 'px-0', 'pb-3', 'text-base', 'font-semibold', '!shadow-none', '!outline-0', 'data-[state=active]:border-b-[2px]', 'data-[state=inactive]:font-medium'] id=radix-«ru»-trigger-general-information>: Thông tin chung
+<button class=['data-[state=active]:bg-background', 'dark:data-[state=active]:text-foreground', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:outline-ring', 'dark:data-[state=active]:border-input', 'dark:data-[state=active]:bg-input/30', 'text-foreground', 'dark:text-muted-foreground', 'inline-flex', 'h-[calc(100%-1px)]', 'flex-1', 'items-center', 'justify-center', 'gap-1.5', 'rounded-md', 'border', 'border-transparent', 'py-1', 'whitespace-nowrap', 'transition-[color,box-shadow]', 'focus-visible:ring-[3px]', 'focus-visible:outline-1', 'disabled:pointer-events-none', 'disabled:opacity-50', 'data-[state=active]:shadow-sm', '[&_svg]:pointer-events-none', '[&_svg]:shrink-0', "[&_svg:not([class*='size-'])]:size-4", 'data-[state=active]:text-primary-400', 'data-[state=active]:border-b-primary-400', 'data-[state=inactive]:text-grayscale-400', 'max-w-min', '!rounded-none', '!bg-none', 'px-0', 'pb-3', 'text-base', 'font-semibold', '!shadow-none', '!outline-0', 'data-[state=active]:border-b-[2px]', 'data-[state=inactive]:font-medium'] id=radix-«ru»-trigger-detail>: Thông tin chi tiết
+<button class=['data-[state=active]:bg-background', 'dark:data-[state=active]:text-foreground', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:outline-ring', 'dark:data-[state=active]:border-input', 'dark:data-[state=active]:bg-input/30', 'text-foreground', 'dark:text-muted-foreground', 'inline-flex', 'h-[calc(100%-1px)]', 'flex-1', 'items-center', 'justify-center', 'gap-1.5', 'rounded-md', 'border', 'border-transparent', 'py-1', 'whitespace-nowrap', 'transition-[color,box-shadow]', 'focus-visible:ring-[3px]', 'focus-visible:outline-1', 'disabled:pointer-events-none', 'disabled:opacity-50', 'data-[state=active]:shadow-sm', '[&_svg]:pointer-events-none', '[&_svg]:shrink-0', "[&_svg:not([class*='size-'])]:size-4", 'data-[state=active]:text-primary-400', 'data-[state=active]:border-b-primary-400', 'data-[state=inactive]:text-grayscale-400', 'max-w-min', '!rounded-none', '!bg-none', 'px-0', 'pb-3', 'text-base', 'font-semibold', '!shadow-none', '!outline-0', 'data-[state=active]:border-b-[2px]', 'data-[state=inactive]:font-medium'] id=radix-«ru»-trigger-legal-document>: Hồ sơ pháp lý
+<button class=['data-[state=active]:bg-background', 'dark:data-[state=active]:text-foreground', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:outline-ring', 'dark:data-[state=active]:border-input', 'dark:data-[state=active]:bg-input/30', 'text-foreground', 'dark:text-muted-foreground', 'inline-flex', 'h-[calc(100%-1px)]', 'flex-1', 'items-center', 'justify-center', 'gap-1.5', 'rounded-md', 'border', 'border-transparent', 'py-1', 'whitespace-nowrap', 'transition-[color,box-shadow]', 'focus-visible:ring-[3px]', 'focus-visible:outline-1', 'disabled:pointer-events-none', 'disabled:opacity-50', 'data-[state=active]:shadow-sm', '[&_svg]:pointer-events-none', '[&_svg]:shrink-0', "[&_svg:not([class*='size-'])]:size-4", 'data-[state=active]:text-primary-400', 'data-[state=active]:border-b-primary-400', 'data-[state=inactive]:text-grayscale-400', 'max-w-min', '!rounded-none', '!bg-none', 'px-0', 'pb-3', 'text-base', 'font-semibold', '!shadow-none', '!outline-0', 'data-[state=active]:border-b-[2px]', 'data-[state=inactive]:font-medium'] id=radix-«ru»-trigger-bcdk>: BCDK liên quan
+<p class=['text-grayscale-500', 'shrink-0', 'text-sm'] id=None>: Mã nguồn hàng
+<p class=['text-grayscale-900', 'wrap-anywhere', 'text-right', 'text-sm'] id=None>: TKQLMB8Q
+<p class=['text-grayscale-500', 'text-sm'] id=None>: Trạng thái
+<span class=['inline-flex', 'items-center', 'justify-center', 'border', 'px-2', 'py-0.5', 'font-medium', 'w-fit', 'whitespace-nowrap', 'shrink-0', '[&>svg]:size-3', 'gap-1', '[&>svg]:pointer-events-none', 'focus-visible:border-ring', 'focus-visible:ring-ring/50', 'focus-visible:ring-[3px]', 'aria-invalid:ring-destructive/20', 'dark:aria-invalid:ring-destructive/40', 'aria-invalid:border-destructive', 'transition-[color,box-shadow]', 'overflow-hidden', 'border-transparent', '[a&]:hover:bg-primary/90', 'text-grayscale-900', 'rounded-[6px]', 'bg-sky-100', 'text-xs'] id=None>: Chuẩn
+<p class=['text-grayscale-500', 'shrink-0', 'text-sm'] id=None>: Giá chào (VNĐ)
+<p class=['text-grayscale-900', 'wrap-anywhere', 'text-right', 'text-sm'] id=None>: 24 tỷ
+<p class=['text-grayscale-500', 'shrink-0', 'text-sm'] id=None>: Phần trăm trích thưởng
+<p class=['text-grayscale-900', 'wrap-anywhere', 'text-right', 'text-sm'] id=None>: 3%
+<p class=['text-grayscale-500', 'text-sm'] id=None>: Tọa độ
+<p class=['text-grayscale-500', 'shrink-0', 'text-sm'] id=None>: Kênh phân phối
+<p class=['text-grayscale-900', 'wrap-anywhere', 'text-right', 'text-sm'] id=None>: Thiên Khôi
+<p class=['text-grayscale-500', 'shrink-0', 'text-sm'] id=None>: Loại nguồn hàng
+<p class=['text-grayscale-900', 'wrap-anywhere', 'text-right', 'text-sm'] id=None>: Đầu chủ
+<p class=['text-grayscale-500', 'text-sm'] id=None>: Mô tả
+<p class=['text-grayscale-900', 'text-sm', 'whitespace-break-spaces', 'wrap-anywhere', 'max-w-full'] id=None>: 🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥
+
+💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh nhau thoải mái, dân trí cao, an ninh, vị trí cực kỳ khan hiếm nhà bán.
+
+🏡 Diện tích đẹp: 108m² (5.2m x 21m)
+🏢 Kết cấu: 4 tầng kiên cố
+🛏️ 8 phòng ngủ – 8 WC
+📚 Phù hợp ở kết hợp cho thuê căn hộ dịch vụ, văn phòng công ty hoặc khai thác dòng tiền ổn định.
+
+📍 Vị trí đắc địa ngay khu Cư Xá Ngân Hàng – Phạm Văn Hai:
+✔ Kết nối nhanh sân bay Tân Sơn Nhất
+✔ Thuận tiện Quận 1, Quận 3, Phú Nhuận
+✔ Xung quanh đầy đủ tiện ích cao cấp
+
+⭐ Khu vực cực hiếm sản phẩm tương tự xuất hiện trên thị trường.
+⭐ Nhà diện tích lớn, ngang 5m bề thế, giá trị giữ tài sản và tăng trưởng rất tốt.
+
+💰 Giá bán: 24 tỷ thương lượng chính chủ

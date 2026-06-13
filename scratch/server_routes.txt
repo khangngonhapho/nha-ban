@@ -1,0 +1,15 @@
+Line 1150: @app.route('/') -> def index():
+Line 1164: @app.route('/api/config', methods=['GET', 'POST']) -> def handle_config():
+Line 1356: @app.route('/api/ai/generate', methods=['POST']) -> def ai_generate():
+Line 1487: @app.route('/api/logs', methods=['GET']) -> def get_logs():
+Line 1493: @app.route('/api/logs/clear', methods=['POST']) -> def clear_logs():
+Line 1500: @app.route('/api/cookie/save', methods=['POST']) -> def save_cookie_endpoint():
+Line 1526: @app.route('/api/crawl', methods=['POST']) -> def trigger_crawl():
+Line 1602: @app.route('/api/migrate', methods=['POST']) -> def trigger_migration():
+Line 1628: @app.route('/api/crawl/sessions', methods=['GET']) -> def get_crawl_sessions():
+Line 1690: @app.route('/api/listings/clear', methods=['POST']) -> def clear_all_listings():
+Line 1724: @app.route('/api/listings', methods=['GET']) -> def get_listings():
+Line 1807: @app.route('/api/listings/<tk_id>', methods=['GET', 'PUT', 'DELETE']) -> def handle_listing_detail(tk_id):
+Line 1918: @app.route('/api/listings/<tk_id>/recrawl', methods=['POST']) -> def recrawl_single_listing(tk_id):
+Line 2604: @app.route('/api/publish/<tk_id>', methods=['POST']) -> def publish_listing(tk_id):
+Line 2610: @app.route('/api/listings/bulk-publish', methods=['POST']) -> def bulk_publish_listings():

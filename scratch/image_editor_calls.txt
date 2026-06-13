@@ -1,0 +1,3 @@
+Line 5408: ${renderImageEditorWidget(p)}
+Line 6600: function renderImageEditorWidget(p) {
+Line 7451: tempDiv.innerHTML = renderImageEditorWidget(p);

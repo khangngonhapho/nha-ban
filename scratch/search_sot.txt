@@ -1,0 +1,39 @@
+=== Line 398 ===
+        - Giao diện checkbox an toàn ở card tin và thanh thao tác nhanh sidebar với nút **⚡ ĐẨY POOL (N)** bulk publishing.
+        - API `/api/listings/bulk-publish` đẩy tuần tự hàng loạt các căn đã chọn lên Google Sheets Pool với throttling `0.5s` bảo vệ quota của Google Sheet.
+        - Hiệu ứng loading chờ tải (**Premium Glassmorphic Search Loader**) hình vòng xoay vàng gold tuyệt đẹp trong ô tìm kiếm.
+     - Được nghiệm thu trực tiếp ("test pass") bởi Product Owner (Khang Ngô).
+
+### 2026-06-04 (Sửa trùng lặp System ID, gộp dòng, đồng bộ Mã Khang Ngô bằng System ID & Nghiệm thu US-070 - TEST PASS)
+*   **Mã User Story:** `US-070` (Sửa trùng lặp System ID trên Sheets và khôi phục SQLite hợp nhất từ hai sheet)
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Duplicate System ID Repair**: Phát hiện và sửa lỗi 170 dòng trùng lặp `System ID` trên sheet Pool.
+    - **Dual-Sheet SQLite Restore**: Nâng cấp script `restore_db_from_sheets.py` để kết hợp an toàn dữ liệu thô từ Pool và dữ liệu curated từ Source theo `System ID`, khôi phục 5727 dòng dữ liệu vào SQLite.
+    - **Address-Based ID Sync & Deduplication**: Đồng bộ chép đè Mã Khang Ngô và gộp các dòng thủ công thừa trên sheet Pool bằng thuật toán so khớp địa chỉ chuẩn hóa (dọn sạch dòng trùng lặp của Cô Bắc, Trần Huy Liệu, Vạn Kiếp).
+
+=== Line 399 ===
+        - API `/api/listings/bulk-publish` đẩy tuần tự hàng loạt các căn đã chọn lên Google Sheets Pool với throttling `0.5s` bảo vệ quota của Google Sheet.
+        - Hiệu ứng loading chờ tải (**Premium Glassmorphic Search Loader**) hình vòng xoay vàng gold tuyệt đẹp trong ô tìm kiếm.
+     - Được nghiệm thu trực tiếp ("test pass") bởi Product Owner (Khang Ngô).
+
+### 2026-06-04 (Sửa trùng lặp System ID, gộp dòng, đồng bộ Mã Khang Ngô bằng System ID & Nghiệm thu US-070 - TEST PASS)
+*   **Mã User Story:** `US-070` (Sửa trùng lặp System ID trên Sheets và khôi phục SQLite hợp nhất từ hai sheet)
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Duplicate System ID Repair**: Phát hiện và sửa lỗi 170 dòng trùng lặp `System ID` trên sheet Pool.
+    - **Dual-Sheet SQLite Restore**: Nâng cấp script `restore_db_from_sheets.py` để kết hợp an toàn dữ liệu thô từ Pool và dữ liệu curated từ Source theo `System ID`, khôi phục 5727 dòng dữ liệu vào SQLite.
+    - **Address-Based ID Sync & Deduplication**: Đồng bộ chép đè Mã Khang Ngô và gộp các dòng thủ công thừa trên sheet Pool bằng thuật toán so khớp địa chỉ chuẩn hóa (dọn sạch dòng trùng lặp của Cô Bắc, Trần Huy Liệu, Vạn Kiếp).
+    - **System ID URL Encoding**: Thay đổi cơ chế tạo link gửi khách từ Bitmask index không ổn định sang mã hóa trực tiếp danh sách `System ID` dạng Base64URL safe (cập nhật `index.html`), giải quyết triệt để lỗi lệch căn hiển thị cho khách.
+
+=== Line 722 ===
+- [x] **US-065:** Nghiên cứu API & Cào tab Thông tin chi tiết (Chủ nhà) + Hồ sơ pháp lý (Sổ đỏ) ✅ Done 2026-06-03
+- [x] **US-066:** Đồng bộ Google Sheets Pool & Tương thích Curator UI ✅ Done 2026-06-03
+- [x] **US-067:** Sinh ID tự động khi cào hàng loạt và luồng đẩy tin không trùng lặp dữ liệu ✅ Done 2026-06-03
+- [x] **US-068:** Tự động sinh ID cho luồng cào từng căn lẻ ✅ Done 2026-06-03
+- [x] **US-069:** Menu sinh Mã Khang Ngô và System ID cho các căn gõ tay trên Google Sheets ✅ Done 2026-06-03
+- [x] **US-070:** Sửa trùng lặp System ID trên Sheets và khôi phục SQLite hợp nhất từ hai sheet ✅ Done 2026-06-04
+- [ ] **US-053:** Admin tự upload hình ảnh local cho căn nhà và quản lý tags, public (Local Image Upload & Tagging)
+- [ ] **US-052:** Bản đồ Tương tác Admin hiển thị các BĐS lân cận trong rổ hàng (Interactive Curation Map with Nearby Pool Listings)
+- [x] **US-051:** Tích hợp Combobox Tình trạng và Loại bỏ trường Rộng hẻm thừa tại giao diện Biên tập Admin (Curator Editor Status Combobox & Alley Width Cleanup) ✅ Done 2026-05-30
+- [x] **US-050:** Hỗ trợ lướt xem ảnh tiếp theo và thanh xem trước ảnh nhỏ khi phóng to hình (Lightbox Photo Swipe & Thumbnails Strip) ✅ Done 2026-05-30
+- [x] **US-049:** Đồng nhất giao diện chi tiết Khách hàng với Admin Preview và bổ sung Sao chép nhanh link gửi khách (Unified Client Detail View & Quick Client Link Copy) ✅ Done 2026-05-30
+

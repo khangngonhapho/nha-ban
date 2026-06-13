@@ -1,0 +1,23 @@
+Line 3859: async function loadData() {
+Line 3913: fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:ZZ`, {
+Line 3917: fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:ZZ`, {
+Line 6219: loadData();
+Line 6285: loadData();
+Line 7995: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 8019: loadData();
+Line 8855: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${p.pool_row_index}:AC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+Line 8873: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${p.pool_row_index}:AD${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+Line 8888: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:AO${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+Line 8906: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${p.pool_row_index}:CE${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+Line 8930: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:BC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+Line 8948: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${p.pool_row_index}:CO${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+Line 8962: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${p.pool_row_index}:BL${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+Line 9289: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${poolRowNumber}:AC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9303: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${poolRowNumber}:AD${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9316: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:AO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9330: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${poolRowNumber}:CE${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9348: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:BC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9365: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${poolRowNumber}:CO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9378: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${poolRowNumber}:BL${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9388: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+Line 9547: loadData();

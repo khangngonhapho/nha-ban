@@ -1,0 +1,541 @@
+--- REGEX MATCHES FOR WIDTH/LAYOUT STYLE ---
+Match for 'main\s*\{[^}]*width' at line 991:
+main {
+      padding: 10px 12px calc(24px + var(--safe-bot));
+      max-width: 540px;
+      margin: 0 auto;
+      transition: max-width 0.3s;
+    }
+
+
+    .sec-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 2px
+    }
+
+    /* L
+----------------------------------------
+Match for 'main\s*\{[^}]*width' at line 1687:
+main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(max(16px, env(safe-area-inset-top)) + 50px) 0 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .lb-main img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .lb-main iframe {
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+ 
+----------------------------------------
+Match for 'main\s*\{[^}]*width' at line 2813:
+main {
+        max-width: 1100px;
+        padding: 20px 24px calc(24px + var(--safe-bot));
+      }
+
+      #list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px
+----------------------------------------
+Match for '\.sheet\s*\{[^}]*width' at line 1403:
+.sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 540px;
+      max-height: 98dvh;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      animation: su .3s cubic-bezier(.22, 1, .36, 1);
+      overflow: hidden
+  
+----------------------------------------
+Match for '\.sheet\s*\{[^}]*width' at line 2884:
+.sheet {
+        width: 850px;
+        max-width: 95vw;
+        max-height: 80vh;
+        border-radius: 24px;
+        animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes zoomIn {
+        from {
+          opacity: 0;
+----------------------------------------
+Match for '\.sheet\s*\{[^}]*width' at line 3052:
+.sheet {
+        width: 1100px !important;
+      }
+    }
+
+    /* ── Desktop view overrides (US-076.3) ── */
+    @media (min-width: 768px) {
+      .criteria-section {
+        border-bottom: 1.5px solid #e2ded6;
+        padd
+----------------------------------------
+Match for '\.filter-panel\s*\{[^}]*width' at line 3496:
+.filter-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh !important;
+        max-height: 100dvh !important;
+        background: #ffffff !important;
+        z-index: 1000;
+    
+----------------------------------------
+Match for 'header\s*\{[^}]*width' at line 1925:
+header {
+      width: 100%;
+      padding: 13px 16px;
+      background: #f8f9fa;
+      border: none;
+      text-align: left;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #1c1c1e;
+      cursor: pointer;
+ 
+----------------------------------------
+Match for 'grid-template-columns' at line 261:
+grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .range-box {
+      position: relative;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.
+----------------------------------------
+Match for 'grid-template-columns' at line 351:
+grid-template-columns: 1fr 1fr;
+        column-gap: 24px;
+        row-gap: 14px;
+      }
+    }
+
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13.5p
+----------------------------------------
+Match for 'grid-template-columns' at line 445:
+grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+    
+    .criterion-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #2c2c2e;
+      cursor: pointer;
+
+----------------------------------------
+Match for 'grid-template-columns' at line 1570:
+grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px
+    }
+
+    .ib {
+      background: var(--chip);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center
+    }
+
+    .il {
+ 
+----------------------------------------
+Match for 'grid-template-columns' at line 2137:
+grid-template-columns: 1fr 1fr;
+      gap: 10px 14px;
+      margin-bottom: 10px;
+    }
+
+    .admin-raw-cell {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #2c3e50;
+    }
+
+
+----------------------------------------
+Match for 'grid-template-columns' at line 2820:
+grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px;
+        padding-top: 10px;
+      }
+
+      /* Thông báo trống cũng chiếm full */
+      #list>div[style*="text-align:center"] {
+        grid-c
+----------------------------------------
+Match for 'grid-template-columns' at line 2912:
+grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding: 24px;
+        overflow-y: auto;
+        align-items: start;
+      }
+
+      /* Gallery bên trái: giữ cố định, không vượt modal */
+      .gwrap {
+        m
+----------------------------------------
+Match for 'grid-template-columns' at line 2963:
+grid-template-columns: 160px 1fr;
+        gap: 12px 24px;
+        align-items: center;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 24px !important;
+        border-bottom: none
+----------------------------------------
+Match for 'grid-template-columns' at line 3065:
+grid-template-columns: repeat(4, 1fr);
+      }
+      .filter-divider {
+        grid-column: 1 / -1;
+        height: 1px;
+        background: #e2ded6;
+        border: none;
+        margin: 12px 0;
+      }
+      .filter-foo
+----------------------------------------
+Match for 'grid-template-columns' at line 3076:
+grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px 0 0 0 !important;
+        border-top: 1.5px solid #e2ded6;
+        margin-top: 8px !important;
+        grid-column: 1 / -1;
+      }
+      .btn-filte
+----------------------------------------
+Match for 'grid-template-columns' at line 3623:
+grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+        background: #ffffff !important;
+        border-top: 1px solid #e5e5ea !important;
+        padding: 12px 16px calc(env(safe-area-inset-bottom
+----------------------------------------
+Match for 'grid-template-columns' at line 7148:
+grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editHuong">Hướng nhà:</label>
+                      <select id="editHuong">
+               
+----------------------------------------
+Match for 'grid-template-columns' at line 7176:
+grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editDanhGia">Đánh giá:</label>
+                      <select id="editDanhGia">
+            
+----------------------------------------
+Match for 'grid-template-columns' at line 7198:
+grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editSoPn">Số phòng ngủ:</label>
+                      <input type="number" id="editSoPn" va
+----------------------------------------
+Match for 'grid-template-columns' at line 7210:
+grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+                    <div class="admin-edit-group row-group">
+                      <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checke
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 147:
+flex: 1;
+    }
+
+    /* ── Sort icon btn ── */
+    .sort-icon-btn {
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      border: 1.5px solid rgba(255, 255, 255, .4);
+      border-radius: 50%;
+
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 856:
+flex: 1;
+      background: transparent;
+      border: none;
+      padding: 6px 4px;
+      border-radius: 6px;
+      color: #57606f;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+     
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 965:
+flex: 1;
+      min-width: 60px;
+      padding: 10px 6px;
+      text-align: center;
+      border-right: 1px solid var(--border)
+    }
+
+    .stat:last-child {
+      border-right: none
+    }
+
+    .sn {
+      fo
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1146:
+flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .info {
+      flex: 1;
+      padding: 8px 12px 6px 12px;
+      display: flex;
+
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1154:
+flex: 1;
+      padding: 8px 12px 6px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+
+    .mid-sub {
+      font-size: 10px;
+      color: var(--sub);
+ 
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1447:
+flex: 1;
+      font-size: 15.5px;
+      font-weight: 850;
+      color: #ffffff;
+      line-height: 1.35;
+      letter-spacing: -0.2px;
+    }
+
+    .xbtn {
+      background: rgba(255, 255, 255, 0.18);
+      bo
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1481:
+flex: 1;
+      padding: 14px 14px 8px
+    }
+
+    .gwrap {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000;
+      margin-bottom: 12px;
+      touch-action: n
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1622:
+flex: 1;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1688:
+flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(max(16px, env(safe-area-inset-top)) + 50px) 0 10px;
+      overflow: hidden;
+      width: 100%;
+    
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1805:
+flex: 1;
+      border-radius: 16px 0 0 16px;
+      overflow: hidden;
+      background: #f0f0f2;
+    }
+
+    .admin-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      displ
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1839:
+flex: 1;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      min-width: 0;
+    }
+
+    .admin-card-title {
+      
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1865:
+flex: 1;
+    }
+
+    .admin-card-line {
+      font-size: 12px;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+    }
+
+    .admin-card-line.phone-l
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 1973:
+flex: 0 0 85%;
+      scroll-snap-align: center;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f2;
+      box-shadow: 0 2px 6px rgba(0
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 2159:
+flex: 1;
+      margin-left: 5px;
+    }
+
+    .dotted {
+      border-bottom: 1px dotted #a4b0be;
+    }
+
+    .admin-raw-price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 2181:
+flex: 1;
+      text-align: right;
+      margin-left: 8px;
+      color: var(--red);
+    }
+
+    .admin-raw-source {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display:
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 2566:
+flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+ 
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 2874:
+flex: 0 1 180px;
+        border-right: 1px solid var(--border);
+      }
+
+      /* Biến Bottom Sheet thành Modal giữa màn hình */
+      .overlay {
+        align-items: center;
+        padding: 20px;
+      }
+
+
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 3426:
+flex: 1;
+      min-width: 70px;
+      min-height: 44px; /* Touch-friendly size */
+      background: rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      color: #2f3542;
+      border-radius
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 3523:
+flex: 1 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 24px !important;
+      }
+      .mobile-filter-header {
+        display: flex;
+     
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 4067:
+flex:1; padding:14px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:15px;">Huỷ</button>
+          <button onclick="executeGenerateLink()"
+       
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 4069:
+flex:1; padding:14px; border-radius:8px; border:none; background:#27ae60; color:#fff; font-weight:700; font-size:15px;">Tạo Link Cá Nhân</button>
+        </div>
+        <button onclick="executeGenerateQuick
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 4100:
+flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; outline:none; font-family: inherit;" placeholder="VD: Khách Hùng Quận 3">
+          <button onclick="createNewCollection(
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 6598:
+flex: 1; min-width: 0;">
+            <div style="font-size: 13px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              🏠 ${soNha} ${duong}
+          
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 10221:
+flex: 1; min-width: 0; text-align: left;">
+            <div style="font-size: 12px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              🏠 ${soNha} $
+----------------------------------------
+Match for 'flex\s*:\s*[0-9]' at line 10596:
+flex:1;" onclick="viewCollection('${name.replace(/'/g, "\\'")}')">
+            <span style="font-size:16px;">📁</span>
+            <span style="font-weight:600; font-size:14px; word-break:break-all;">${name}
+----------------------------------------

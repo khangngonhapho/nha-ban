@@ -1,0 +1,494 @@
+Line 182: .filter-panel {
+Context:
+    174:       border-color: #fff;
+    175:     }
+    176: 
+    177:     body.is-admin .sort-icon-btn.admin-only {
+    178:       display: flex;
+    179:     }
+    180: 
+    181:     /* ── Collapsible filter panel ── */
+--> 182:     .filter-panel {
+    183:       display: block;
+    184:       background: #f9f8f6; /* Nền kem ngọc trai nhạt siêu sang */
+    185:       border-radius: 0 0 16px 16px;
+    186:       box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    187:       padding: 0 16px;
+    188:       margin: 0 -16px;
+    189:       max-height: 0;
+    190:       overflow-y: auto;
+    191:       transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
+    192:       color: #2c2c2e; /* Chữ màu xám than chì tối tương phản tốt */
+    193:     }
+    194: 
+    195:     .filter-panel.open {
+    196:       max-height: 75vh;
+============================================================
+Line 195: .filter-panel.open {
+Context:
+    187:       padding: 0 16px;
+    188:       margin: 0 -16px;
+    189:       max-height: 0;
+    190:       overflow-y: auto;
+    191:       transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
+    192:       color: #2c2c2e; /* Chữ màu xám than chì tối tương phản tốt */
+    193:     }
+    194: 
+--> 195:     .filter-panel.open {
+    196:       max-height: 75vh;
+    197:       border-bottom: 1.5px solid #e2ded6;
+    198:       padding: 10px 16px;
+    199:     }
+    200: 
+    201:     /* Nhãn phần mục trong filter panel đổi sang màu xám thẫm mờ */
+    202:     .filter-panel .filter-section-lbl {
+    203:       color: rgba(44, 44, 46, 0.6) !important;
+    204:     }
+    205: 
+    206:     /* Tiêu đề các bộ lọc chi tiết con */
+    207:     .filter-panel .filter-section-sublbl {
+    208:       margin-bottom: 6px;
+    209:       font-size: 11px;
+============================================================
+Line 202: .filter-panel .filter-section-lbl {
+Context:
+    194: 
+    195:     .filter-panel.open {
+    196:       max-height: 75vh;
+    197:       border-bottom: 1.5px solid #e2ded6;
+    198:       padding: 10px 16px;
+    199:     }
+    200: 
+    201:     /* Nhãn phần mục trong filter panel đổi sang màu xám thẫm mờ */
+--> 202:     .filter-panel .filter-section-lbl {
+    203:       color: rgba(44, 44, 46, 0.6) !important;
+    204:     }
+    205: 
+    206:     /* Tiêu đề các bộ lọc chi tiết con */
+    207:     .filter-panel .filter-section-sublbl {
+    208:       margin-bottom: 6px;
+    209:       font-size: 11px;
+    210:       font-weight: 700;
+    211:       color: rgba(44, 44, 46, 0.7) !important;
+    212:       font-family: inherit;
+    213:     }
+    214: 
+    215:     /* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Warm Cream & Red */
+    216:     .filter-panel .tab {
+============================================================
+Line 207: .filter-panel .filter-section-sublbl {
+Context:
+    199:     }
+    200: 
+    201:     /* Nhãn phần mục trong filter panel đổi sang màu xám thẫm mờ */
+    202:     .filter-panel .filter-section-lbl {
+    203:       color: rgba(44, 44, 46, 0.6) !important;
+    204:     }
+    205: 
+    206:     /* Tiêu đề các bộ lọc chi tiết con */
+--> 207:     .filter-panel .filter-section-sublbl {
+    208:       margin-bottom: 6px;
+    209:       font-size: 11px;
+    210:       font-weight: 700;
+    211:       color: rgba(44, 44, 46, 0.7) !important;
+    212:       font-family: inherit;
+    213:     }
+    214: 
+    215:     /* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Warm Cream & Red */
+    216:     .filter-panel .tab {
+    217:       background: #ffffff;
+    218:       color: #3a3a3c;
+    219:       border: 1.5px solid #e2ded6;
+    220:     }
+    221: 
+============================================================
+Line 216: .filter-panel .tab {
+Context:
+    208:       margin-bottom: 6px;
+    209:       font-size: 11px;
+    210:       font-weight: 700;
+    211:       color: rgba(44, 44, 46, 0.7) !important;
+    212:       font-family: inherit;
+    213:     }
+    214: 
+    215:     /* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Warm Cream & Red */
+--> 216:     .filter-panel .tab {
+    217:       background: #ffffff;
+    218:       color: #3a3a3c;
+    219:       border: 1.5px solid #e2ded6;
+    220:     }
+    221: 
+    222:     .filter-panel .tab:hover {
+    223:       background: #f5f4f0;
+    224:       border-color: #c5bfb2;
+    225:       color: #1c1c1e;
+    226:     }
+    227: 
+    228:     .filter-panel .tab.on {
+    229:       background: var(--red); /* Nền Đỏ chủ đạo */
+    230:       color: #ffffff; /* Chữ Trắng tinh */
+============================================================
+Line 222: .filter-panel .tab:hover {
+Context:
+    214: 
+    215:     /* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Warm Cream & Red */
+    216:     .filter-panel .tab {
+    217:       background: #ffffff;
+    218:       color: #3a3a3c;
+    219:       border: 1.5px solid #e2ded6;
+    220:     }
+    221: 
+--> 222:     .filter-panel .tab:hover {
+    223:       background: #f5f4f0;
+    224:       border-color: #c5bfb2;
+    225:       color: #1c1c1e;
+    226:     }
+    227: 
+    228:     .filter-panel .tab.on {
+    229:       background: var(--red); /* Nền Đỏ chủ đạo */
+    230:       color: #ffffff; /* Chữ Trắng tinh */
+    231:       border-color: var(--red);
+    232:     }
+    233: 
+    234:     .filter-panel .tab.on:hover {
+    235:       background: #a93224; /* Đỏ sẫm hơn khi hover */
+    236:       border-color: #a93224;
+============================================================
+Line 228: .filter-panel .tab.on {
+Context:
+    220:     }
+    221: 
+    222:     .filter-panel .tab:hover {
+    223:       background: #f5f4f0;
+    224:       border-color: #c5bfb2;
+    225:       color: #1c1c1e;
+    226:     }
+    227: 
+--> 228:     .filter-panel .tab.on {
+    229:       background: var(--red); /* Nền Đỏ chủ đạo */
+    230:       color: #ffffff; /* Chữ Trắng tinh */
+    231:       border-color: var(--red);
+    232:     }
+    233: 
+    234:     .filter-panel .tab.on:hover {
+    235:       background: #a93224; /* Đỏ sẫm hơn khi hover */
+    236:       border-color: #a93224;
+    237:     }
+    238: 
+    239:     /* Các ô nhập thông số range-box đổi sang nền trắng viền xám kem chữ đen */
+    240:     .filter-panel .range-box {
+    241:       background: #ffffff;
+    242:       border: 1.5px solid #e2ded6;
+============================================================
+Line 234: .filter-panel .tab.on:hover {
+Context:
+    226:     }
+    227: 
+    228:     .filter-panel .tab.on {
+    229:       background: var(--red); /* Nền Đỏ chủ đạo */
+    230:       color: #ffffff; /* Chữ Trắng tinh */
+    231:       border-color: var(--red);
+    232:     }
+    233: 
+--> 234:     .filter-panel .tab.on:hover {
+    235:       background: #a93224; /* Đỏ sẫm hơn khi hover */
+    236:       border-color: #a93224;
+    237:     }
+    238: 
+    239:     /* Các ô nhập thông số range-box đổi sang nền trắng viền xám kem chữ đen */
+    240:     .filter-panel .range-box {
+    241:       background: #ffffff;
+    242:       border: 1.5px solid #e2ded6;
+    243:     }
+    244: 
+    245:     .filter-panel .range-box:focus-within {
+    246:       border-color: var(--red);
+    247:       background: #ffffff;
+    248:     }
+============================================================
+Line 240: .filter-panel .range-box {
+Context:
+    232:     }
+    233: 
+    234:     .filter-panel .tab.on:hover {
+    235:       background: #a93224; /* Đỏ sẫm hơn khi hover */
+    236:       border-color: #a93224;
+    237:     }
+    238: 
+    239:     /* Các ô nhập thông số range-box đổi sang nền trắng viền xám kem chữ đen */
+--> 240:     .filter-panel .range-box {
+    241:       background: #ffffff;
+    242:       border: 1.5px solid #e2ded6;
+    243:     }
+    244: 
+    245:     .filter-panel .range-box:focus-within {
+    246:       border-color: var(--red);
+    247:       background: #ffffff;
+    248:     }
+    249: 
+    250:     .filter-panel .range-box input {
+    251:       color: #2c2c2e;
+    252:     }
+    253: 
+    254:     .filter-panel .range-box input::placeholder {
+============================================================
+Line 245: .filter-panel .range-box:focus-within {
+Context:
+    237:     }
+    238: 
+    239:     /* Các ô nhập thông số range-box đổi sang nền trắng viền xám kem chữ đen */
+    240:     .filter-panel .range-box {
+    241:       background: #ffffff;
+    242:       border: 1.5px solid #e2ded6;
+    243:     }
+    244: 
+--> 245:     .filter-panel .range-box:focus-within {
+    246:       border-color: var(--red);
+    247:       background: #ffffff;
+    248:     }
+    249: 
+    250:     .filter-panel .range-box input {
+    251:       color: #2c2c2e;
+    252:     }
+    253: 
+    254:     .filter-panel .range-box input::placeholder {
+    255:       color: rgba(44, 44, 46, 0.35);
+    256:     }
+    257: 
+    258:     /* ── Detailed specs range filters ── */
+    259:     .range-group {
+============================================================
+Line 250: .filter-panel .range-box input {
+Context:
+    242:       border: 1.5px solid #e2ded6;
+    243:     }
+    244: 
+    245:     .filter-panel .range-box:focus-within {
+    246:       border-color: var(--red);
+    247:       background: #ffffff;
+    248:     }
+    249: 
+--> 250:     .filter-panel .range-box input {
+    251:       color: #2c2c2e;
+    252:     }
+    253: 
+    254:     .filter-panel .range-box input::placeholder {
+    255:       color: rgba(44, 44, 46, 0.35);
+    256:     }
+    257: 
+    258:     /* ── Detailed specs range filters ── */
+    259:     .range-group {
+    260:       display: grid;
+    261:       grid-template-columns: 1fr 1fr;
+    262:       gap: 12px;
+    263:       margin-bottom: 12px;
+    264:     }
+============================================================
+Line 254: .filter-panel .range-box input::placeholder {
+Context:
+    246:       border-color: var(--red);
+    247:       background: #ffffff;
+    248:     }
+    249: 
+    250:     .filter-panel .range-box input {
+    251:       color: #2c2c2e;
+    252:     }
+    253: 
+--> 254:     .filter-panel .range-box input::placeholder {
+    255:       color: rgba(44, 44, 46, 0.35);
+    256:     }
+    257: 
+    258:     /* ── Detailed specs range filters ── */
+    259:     .range-group {
+    260:       display: grid;
+    261:       grid-template-columns: 1fr 1fr;
+    262:       gap: 12px;
+    263:       margin-bottom: 12px;
+    264:     }
+    265: 
+    266:     .range-box {
+    267:       position: relative;
+    268:       background: rgba(255, 255, 255, 0.06);
+============================================================
+Line 2484: .filter-panel .tab {
+Context:
+    2476:       font-size: 13px !important;
+    2477:     }
+    2478:     .filter-summary {
+    2479:       font-size: 13px !important;
+    2480:     }
+    2481:     .filter-section-sublbl {
+    2482:       font-size: 12px !important;
+    2483:     }
+--> 2484:     .filter-panel .tab {
+    2485:       font-size: 13px !important;
+    2486:     }
+    2487: 
+    2488:     /* Listing Detail Modal Display Overrides */
+    2489:     .accordion-header {
+    2490:       font-size: 14.5px !important;
+    2491:     }
+    2492:     .accordion-header.is-red {
+    2493:       font-size: 14.5px !important;
+    2494:     }
+    2495:     .admin-detail-section-title {
+    2496:       font-size: 14px !important;
+    2497:     }
+    2498:     .admin-raw-title {
+============================================================
+Line 3496: .filter-panel {
+Context:
+    3488:       .inline-input {
+    3489:         width: 65px !important;
+    3490:       }
+    3491:       body.filter-active header {
+    3492:         position: static !important;
+    3493:         transform: none !important;
+    3494:         transition: none !important;
+    3495:       }
+--> 3496:       .filter-panel {
+    3497:         position: fixed;
+    3498:         top: 0;
+    3499:         left: 0;
+    3500:         width: 100vw;
+    3501:         height: 100vh;
+    3502:         height: 100dvh;
+    3503:         max-height: 100vh !important;
+    3504:         max-height: 100dvh !important;
+    3505:         background: #ffffff !important;
+    3506:         z-index: 1000;
+    3507:         margin: 0 !important;
+    3508:         padding: 0 !important;
+    3509:         display: flex !important;
+    3510:         flex-direction: column !important;
+============================================================
+Line 3517: .filter-panel.open {
+Context:
+    3509:         display: flex !important;
+    3510:         flex-direction: column !important;
+    3511:         transform: translateX(100%);
+    3512:         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    3513:         overflow: hidden !important;
+    3514:         box-shadow: none !important;
+    3515:         border-radius: 0 !important;
+    3516:       }
+--> 3517:       .filter-panel.open {
+    3518:         transform: translateX(0) !important;
+    3519:         padding: 0 !important;
+    3520:       }
+    3521:       .filter-scroll-content {
+    3522:         display: block !important;
+    3523:         flex: 1 !important;
+    3524:         overflow-y: auto !important;
+    3525:         -webkit-overflow-scrolling: touch;
+    3526:         padding-bottom: 24px !important;
+    3527:       }
+    3528:       .mobile-filter-header {
+    3529:         display: flex;
+    3530:         align-items: center;
+    3531:         background: var(--red);
+============================================================
+Line 3567: .filter-panel > .tabs,
+Context:
+    3559:       .detailed-specs-title,
+    3560:       .detailed-specs-container,
+    3561:       #collectionsManager,
+    3562:       .admin-only {
+    3563:         padding-left: 16px !important;
+    3564:         padding-right: 16px !important;
+    3565:       }
+    3566: 
+--> 3567:       .filter-panel > .tabs,
+    3568:       .filter-scroll-content > .tabs {
+    3569:         display: flex !important;
+    3570:         flex-direction: row !important;
+    3571:         flex-wrap: nowrap !important;
+    3572:         justify-content: flex-start !important;
+    3573:         align-items: center !important;
+    3574:         overflow-x: auto !important;
+    3575:         width: 100% !important;
+    3576:         box-sizing: border-box !important;
+    3577:         padding: 8px 16px !important;
+    3578:         margin: 0 !important;
+    3579:         flex-shrink: 0 !important;
+    3580:         min-height: 52px !important;
+    3581:         height: auto !important;
+============================================================
+Line 3583: .filter-panel .tab,
+Context:
+    3575:         width: 100% !important;
+    3576:         box-sizing: border-box !important;
+    3577:         padding: 8px 16px !important;
+    3578:         margin: 0 !important;
+    3579:         flex-shrink: 0 !important;
+    3580:         min-height: 52px !important;
+    3581:         height: auto !important;
+    3582:       }
+--> 3583:       .filter-panel .tab,
+    3584:       .filter-scroll-content .tab {
+    3585:         flex-shrink: 0 !important;
+    3586:         white-space: nowrap !important;
+    3587:         display: inline-flex !important;
+    3588:         align-items: center !important;
+    3589:         justify-content: center !important;
+    3590:         font-size: 13px !important;
+    3591:         padding: 7px 16px !important;
+    3592:         min-height: 36px !important;
+    3593:         margin: 0 !important;
+    3594:       }
+    3595: 
+    3596:       .filter-panel > .filter-section-lbl,
+    3597:       .filter-scroll-content > .filter-section-lbl {
+============================================================
+Line 3596: .filter-panel > .filter-section-lbl,
+Context:
+    3588:         align-items: center !important;
+    3589:         justify-content: center !important;
+    3590:         font-size: 13px !important;
+    3591:         padding: 7px 16px !important;
+    3592:         min-height: 36px !important;
+    3593:         margin: 0 !important;
+    3594:       }
+    3595: 
+--> 3596:       .filter-panel > .filter-section-lbl,
+    3597:       .filter-scroll-content > .filter-section-lbl {
+    3598:         margin-top: 12px !important;
+    3599:         margin-bottom: 6px !important;
+    3600:         padding-left: 16px !important;
+    3601:         padding-right: 16px !important;
+    3602:       }
+    3603: 
+    3604:       .criteria-grid {
+    3605:         padding-left: 0 !important;
+    3606:         padding-right: 0 !important;
+    3607:       }
+    3608:       .criteria-title, .criteria-subtitle {
+    3609:         padding-left: 0 !important;
+    3610:         padding-right: 0 !important;
+============================================================
+Line 3660: .filter-panel > .multiselect-container,
+Context:
+    3652:         font-weight: 700;
+    3653:         font-size: 14px;
+    3654:         cursor: pointer;
+    3655:         font-family: inherit;
+    3656:         display: flex;
+    3657:         align-items: center;
+    3658:         justify-content: center;
+    3659:       }
+--> 3660:       .filter-panel > .multiselect-container,
+    3661:       .filter-scroll-content > .multiselect-container {
+    3662:         width: calc(100% - 32px) !important;
+    3663:         margin-left: 16px !important;
+    3664:         margin-right: 16px !important;
+    3665:         margin-top: 4px !important;
+    3666:         margin-bottom: 12px !important;
+    3667:       }
+    3668:     }
+    3669: </style>
+    3670: </head>
+    3671: 
+    3672: <body>
+    3673:   <div id="welcomeBanner"
+    3674:     style="display:none; background: #27ae60; color: white; padding: 10px 16px; font-weight: 600; font-size: 14px; text-align: center;">
+============================================================

@@ -1,0 +1,3 @@
+2274: def recrawl_single_listing(tk_id):
+2478:             fetcher.save_raw_to_sqlite(tk_id, crawled_data, property_images)
+2672:         fetcher.save_raw_to_sqlite(tk_id, crawled_data, combined_images)

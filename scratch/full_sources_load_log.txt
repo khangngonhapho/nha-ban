@@ -1,0 +1,198 @@
+
+=== Starting navigation to /warehouse/sources ===
+[Req] GET https://proptech.thienkhoi.com/warehouse/sources
+[Res] 200 https://proptech.thienkhoi.com/warehouse/sources
+[Req] GET https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447
+[Res] 200 https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447
+[Req] POST https://proptech.thienkhoi.com/cdn-cgi/rum?
+[Req] GET https://backend.thienkhoi.com/auth/v1/users/me
+[Res] 204 https://proptech.thienkhoi.com/cdn-cgi/rum?
+[Res] 200 https://backend.thienkhoi.com/auth/v1/users/me
+  JSON Response: {"statusCode":200,"timestamp":"2026-06-03T12:41:18.046Z","message":"OK","data":{"id":"57c6eefa-2280-4d67-8d60-0f83834c949c","idNumber":"079078024736","status":"active","name":"Ngô Thái Khang","avatar":"https://dms3amyi97gvv.cloudfront.net/old/avatar/2025/07/21/37581_638887040852478949_0_0.jpeg?Expires=1780490888&Key-Pair-Id=KX5HYW72PVJI2&Signature=af-JvxMLD~QBKM5E5jypmeHO-euS7NHnUkMX2Dy0h1~OELOdn6DpM6vvObsO-VUBAc~bqbK8LTT4oOaVfmqc5-1JSFRgb5qYo6tfpcYxDE-ukNrVEFqo6JAPByGFadMVnElAvYD39HU~mlJ3BjSaSW
+[Req] GET https://maps.googleapis.com/maps/api/js?key=AIzaSyDrm3QH7qh5Gp8IQbz3vMIpy-mqUztUwWc&v=beta&libraries=places&solution_channel=GMP_visgl_rgmlibrary_v1_default&loading=async&callback=__googleMapsCallback__
+[Req] GET https://backend.thienkhoi.com/notification/v1/notification/types
+[Req] GET https://backend.thienkhoi.com/product/v1/master-data/criterias
+[Req] GET https://backend.thienkhoi.com/auth/v1/master-data/branches
+[Req] GET https://backend.thienkhoi.com/product/v1/property/filterable-statuses?my_property=false
+[Req] GET https://backend.thienkhoi.com/product/v1/property/specific?page=1&limit=20&searchBy=address
+[Req] GET https://backend.thienkhoi.com/product/v1/property?page=1&limit=20&searchBy=address
+[Req] GET https://proptech.thienkhoi.com/?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/notification?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/training-path?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/warehouse?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/guest-report?_rsc=15vx6
+[Res] 200 https://maps.googleapis.com/maps/api/js?key=AIzaSyDrm3QH7qh5Gp8IQbz3vMIpy-mqUztUwWc&v=beta&libraries=places&solution_channel=GMP_visgl_rgmlibrary_v1_default&loading=async&callback=__googleMapsCallback__
+[Req] GET https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/places.js
+[Req] GET https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/main.js
+[Res] 200 https://backend.thienkhoi.com/product/v1/property/specific?page=1&limit=20&searchBy=address
+  JSON Response: {"statusCode":200,"timestamp":"2026-06-03T12:41:18.774Z","message":"Danh sách kho tổng đã được lấy thành công","data":[]}
+[Res] 200 https://backend.thienkhoi.com/auth/v1/master-data/branches
+  JSON Response: {"statusCode":200,"timestamp":"2026-06-03T12:41:18.923Z","message":"OK","data":[{"id":12,"name":"Trung tâm Sài Gòn","type":"CHI_NHANH"}]}
+[Res] 200 https://backend.thienkhoi.com/product/v1/master-data/criterias
+  JSON Response: {"statusCode":200,"timestamp":"2026-06-03T12:41:18.945Z","message":"Lấy tiêu chí thành công","data":[{"id":92,"name":"Dưới 100m","criteria_group_id":15,"criteriaGroup":{"name":"Khoảng cách ra đường ô tô","code":"DISTANCE_TO_ROAD"},"children":[],"parentId":null},{"id":67,"name":"Mới xây xong","criteria_group_id":7,"criteriaGroup":{"name":"Tình trạng xây dựng","code":"CONSTRUCTION_STATUS"},"children":[],"parentId":null},{"id":72,"name":"Nhà khung cột","criteria_group_id":8,"criteriaGroup":{"name":
+[Res] 200 https://backend.thienkhoi.com/notification/v1/notification/types
+  JSON Response: {"statusCode":200,"timestamp":"2026-06-03T12:41:18.889Z","message":"OK","data":[{"notification_type_id":"f15b2cdc-552d-41a6-8cf5-78f8c1837d1d","name":"Lead","description":"Dẫn khách","unreadCount":0},{"notification_type_id":"1292ff6e-2db1-439b-95de-963d1bc4064a","name":"Source","description":"Nguồn hàng","unreadCount":0},{"notification_type_id":"ae872077-4d40-4196-a314-839d87ede0b4","name":"Interaction","description":"Tương tác","unreadCount":0},{"notification_type_id":"e135e2a4-4d6f-4b90-833c-a
+[Res] 200 https://backend.thienkhoi.com/product/v1/property/filterable-statuses?my_property=false
+  JSON Response: {"statusCode":200,"timestamp":"2026-06-03T12:41:18.984Z","message":"Lấy danh sách trạng thái có thể lọc thành công","data":["waiting_for_approval","raw","qualified","unqualified","deposited","sold","pause_sale","abandon","deleted","suspend","removed"]}
+[Res] 200 https://proptech.thienkhoi.com/?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/buyer-management?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/notification?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/black-list?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/warehouse?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/statistic?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/training-path?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/guest-report?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/events?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/statistic?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/buyer-management?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/black-list?_rsc=15vx6
+[Res] 200 https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/places.js
+[Res] 200 https://backend.thienkhoi.com/product/v1/property?page=1&limit=20&searchBy=address
+[Res] 200 https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/main.js
+[Res] 200 https://proptech.thienkhoi.com/events?_rsc=15vx6
+[Req] GET https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true
+[Req] GET https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/common.js
+[Req] GET https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/map.js
+[Res] 200 https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true
+  JSON Response: {}
+
+[Res] 200 https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/map.js
+[Res] 200 https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/common.js
+  JSON Response: {"statusCode":200,"timestamp":"2026-06-03T12:41:19.390Z","message":"Danh sách kho tổng đã được lấy thành công","data":{"data":[{"id":"19c74ebc-e5a4-4cfb-844b-3ae5365e6318","isSigned":true,"status":"qualified","contractType":"paper","certificateSeries":"AA01464607","ownerSideUserId":"d3fdd113-7f68-4811-a8f8-a1978dd886e1","createdBy":"d3fdd113-7f68-4811-a8f8-a1978dd886e1","address":"20.19","latitude":10.80021929710657,"longitude":106.6423170268536,"placeId":null,"placeName":"21 Đ. Núi Thành, Tân B
+[Req] GET https://proptech.thienkhoi.com/warehouse/sources/19c74ebc-e5a4-4cfb-844b-3ae5365e6318?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/warehouse/sources/0a9dff09-fc47-4d64-a829-644673c1d056?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/warehouse/sources/fc3f2de9-8af9-4551-b599-1e59672b1c71?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/warehouse/sources/3d7eb275-27c5-4974-9a45-2020c729fde1?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/warehouse/sources/a4fdb7cc-4c15-4735-9cfe-2d9e7d1e1b5b?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/warehouse/sources/a4fdb7cc-4c15-4735-9cfe-2d9e7d1e1b5b?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/warehouse/sources/19c74ebc-e5a4-4cfb-844b-3ae5365e6318?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/warehouse/sources/fc3f2de9-8af9-4551-b599-1e59672b1c71?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/warehouse/sources/0a9dff09-fc47-4d64-a829-644673c1d056?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/warehouse/sources/3d7eb275-27c5-4974-9a45-2020c729fde1?_rsc=15vx6
+[Req] GET https://proptech.thienkhoi.com/warehouse/sources/88903ed1-19b8-45ec-ad23-97979e637f61?_rsc=15vx6
+[Res] 200 https://proptech.thienkhoi.com/warehouse/sources/88903ed1-19b8-45ec-ad23-97979e637f61?_rsc=15vx6
+
+=== Navigation completed. Waiting 10s ===
+[Req] GET https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/util.js
+[Res] 200 https://maps.googleapis.com/maps-api-v3/api/js/65/2d-beta/util.js
+Text length: 3321
+First 1000 characters of body text:
+Ngô Thái Khang
+Trang chủ
+Lộ trình đào tạo
+Kho Tổng
+Báo cáo dẫn khách
+Quản lý khách mua
+DSKCC Dịch vụ
+Báo cáo, thống kê
+Sự kiện
+Toggle Sidebar
+Kho Tổng
+Nguồn hàng
+Nguồn hàng
+Địa chỉ
+Bộ lọc
+Mới
+Bảo lãnh hoa hồng
+Độc quyền
+
+20.19 Núi Thành 278/300 8 7.5 38 99 tỷ
+
+Chuẩn
+
+Đối tác
+
+Bảy Hiền
+
+16:34 - 1/6/2026
+
+Nguyễn Trí Dũng
+
+Đầu chủ - Phát Lộc
+
+Mới
+Bảo lãnh hoa hồng
+Độc quyền
+
+269 Hoàng Hoa Thám 98/110 8 6.2 17 65 tỷ
+
+Chuẩn
+
+Đối tác
+
+Bảy Hiền
+
+16:21 - 1/6/2026
+
+Nguyễn Trí Dũng
+
+Đầu chủ - Phát Lộc
+
+Giảm chào
+Mới
+
+243.9.12E3 Tô Hiến Thành 80 5 4 20 23 tỷ
+
+Chuẩn
+
+Đầu chủ
+
+Hòa Hưng
+
+22:43 - 2/6/2026
+
+Lê Trọng Duy
+
+Trưởng Phòng - Gia Huy
+
+Giảm chào
+Bảo lãnh hoa hồng
+
+63 đường 6D phước Bình 351 2 12 30 35 tỷ
+
+Chuẩn
+
+Đối tác
+
+Phước Long
+
+15:47 - 25/5/2026
+
+Nguyễn Thành Tâm
+
+Đầu chủ - Vạn Gia TĐ
+
+Giảm chào
+Bảo lãnh hoa hồng
+
+A4 Cư xá Nguyễn Văn Trỗi 57/80 2 8 7.5 4.05 tỷ
+
+Chuẩn
+
+Đầu chủ
+
+Phú Nhuận
+
+07:17 - 15/5/2026
+
+Nguyễn Trí Dũng
+
+Đầu chủ - Phát Lộc
+
+Mới
+Bảo lãnh hoa hồng
+
+26 Đường 13 736 5 15 
+Found 21 matching titles:
+  - 20.19 Núi Thành 278/300 8 7.5 38 99 tỷ
+  - 269 Hoàng Hoa Thám 98/110 8 6.2 17 65 tỷ
+  - 243.9.12E3 Tô Hiến Thành 80 5 4 20 23 tỷ
+  - 63 đường 6D phước Bình 351 2 12 30 35 tỷ
+  - A4 Cư xá Nguyễn Văn Trỗi 57/80 2 8 7.5 4.05 tỷ
+  - 26 Đường 13 736 5 15 50 70 tỷ
+  - 57 Ngô Chí Quốc 140/190 1 8.1 24 26 tỷ
+  - 163 Phan Đăng Lưu Phan Đăng Lưu 172/343 2 6.5 26 25 tỷ
+  - 19-21 Đường 909 Tạ Quang Bửu 144 5 8 19.2 27.5 tỷ
+  - 622 - 624 Trường Sa 65 5 5 15 13.5 tỷ
+Saved screenshot to scratch/sources_page_screenshot.png
+Saved page content to scratch/sources_page_body.html

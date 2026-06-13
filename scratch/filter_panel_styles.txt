@@ -1,0 +1,475 @@
+Position 65952:
+2px;
+      }
+
+      /* US-074: Laptop layout optimization for filter panel and admin modal */
+      #filterPanel {
+        display: grid !important;
+        grid-template-columns: 160px 1fr;
+        gap: 12px 24px;
+        align-items: center;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 24px !important;
+        border-bottom: none !important;
+        transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
+      }
+
+      #filterPanel.open {
+        max-height: 75vh !important;
+        padding: 16px 24px !important;
+        overflow-y: auto !important;
+        border-bottom: 1.5px solid #e2ded6 !important;
+      }
+
+      .filter-scroll-cont
+--------------------------------------------------
+Position 66342:
+
+        transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
+      }
+
+      #filterPanel.open {
+        max-height: 75vh !important;
+        padding: 16px 24px !important;
+        overflow-y: auto !important;
+        border-bottom: 1.5px solid #e2ded6 !important;
+      }
+
+      .filter-scroll-content {
+        display: contents;
+      }
+
+      #filterPanel > .filter-section-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl {
+        grid-column: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-self: center;
+      }
+
+      #filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content
+--------------------------------------------------
+Position 66612:
+2ded6 !important;
+      }
+
+      .filter-scroll-content {
+        display: contents;
+      }
+
+      #filterPanel > .filter-section-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl {
+        grid-column: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-self: center;
+      }
+
+      #filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-co
+--------------------------------------------------
+Position 66654:
+croll-content {
+        display: contents;
+      }
+
+      #filterPanel > .filter-section-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl {
+        grid-column: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-self: center;
+      }
+
+      #filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl
+--------------------------------------------------
+Position 66844:
+    margin: 0 !important;
+        padding: 0 !important;
+        align-self: center;
+      }
+
+      #filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed
+--------------------------------------------------
+Position 66872:
+      padding: 0 !important;
+        align-self: center;
+      }
+
+      #filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed-specs-container,
+      #fil
+--------------------------------------------------
+Position 66917:
+lf: center;
+      }
+
+      #filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed
+--------------------------------------------------
+Position 66970:
+  #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
+        grid-column: 1 / -1;
+     
+--------------------------------------------------
+Position 67135:
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
+        grid-column: 1 / -1;
+        padding: 4px 0 !important;
+      }
+
+      #filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-col
+--------------------------------------------------
+Position 67192:
+     padding: 0 !important;
+      }
+
+      #filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
+        grid-column: 1 / -1;
+        padding: 4px 0 !important;
+      }
+
+      #filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #fil
+--------------------------------------------------
+Position 67432:
+2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
+        grid-column: 1 / -1;
+        padding: 4px 0 !important;
+      }
+
+      #filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > .filter-footer-a
+--------------------------------------------------
+Position 67480:
+
+        margin-top: 8px !important;
+      }
+
+      #filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
+        grid-column: 1 / -1;
+        padding: 4px 0 !important;
+      }
+
+      #filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > .filter-footer-actions {
+        grid-column: 1 / -1;
+        bo
+--------------------------------------------------
+Position 67627:
+ed-specs-container {
+        grid-column: 1 / -1;
+        padding: 4px 0 !important;
+      }
+
+      #filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > .filter-footer-actions {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 0 0 !important;
+        margin-top: 8px !important;
+      }
+
+      /* Admin Curation Modal g
+--------------------------------------------------
+Position 67669:
+1 / -1;
+        padding: 4px 0 !important;
+      }
+
+      #filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > .filter-footer-actions {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 0 0 !important;
+        margin-top: 8px !important;
+      }
+
+      /* Admin Curation Modal grid optimization */
+      .admin-quick-lin
+--------------------------------------------------
+Position 67800:
+ontent > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > .filter-footer-actions {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 0 0 !important;
+        margin-top: 8px !important;
+      }
+
+      /* Admin Curation Modal grid optimization */
+      .admin-quick-link-bar {
+        grid-column: 1 / -1;
+      }
+
+      #accPool {
+        grid-column: 1;
+        margin-bottom: 0 !important;
+      }
+--------------------------------------------------
+Position 67862:
+ margin: 0 !important;
+      }
+
+      #filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > .filter-footer-actions {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 0 0 !important;
+        margin-top: 8px !important;
+      }
+
+      /* Admin Curation Modal grid optimization */
+      .admin-quick-link-bar {
+        grid-column: 1 / -1;
+      }
+
+      #accPool {
+        grid-column: 1;
+        margin-bottom: 0 !important;
+      }
+
+      .admin-accordion {
+        grid-column: 2;
+        mar
+--------------------------------------------------
+Position 68013:
+nly:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+
+      #filterPanel > .filter-footer-actions {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 0 0 !important;
+        margin-top: 8px !important;
+      }
+
+      /* Admin Curation Modal grid optimization */
+      .admin-quick-link-bar {
+        grid-column: 1 / -1;
+      }
+
+      #accPool {
+        grid-column: 1;
+        margin-bottom: 0 !important;
+      }
+
+      .admin-accordion {
+        grid-column: 2;
+        margin-bottom: 0 !important;
+      }
+    }
+
+    /* US-074: Modal width expansion on large screens */
+    @media (min-width: 1200px) {
+      .sheet {
+     
+--------------------------------------------------
+Position 283886:
+// Tránh tự động đóng trên mobile do bàn phím ảo hay gợi ý autocomplete
+      if (e.target.closest('#filterPanel')) return;
+      if (!e.target.closest('header')) closeFilter();
+    });
+
+    // ============================================================
+    //  🔑 GOOGLE OAUTH2 & SECURE FACADE IMAGE FETCHING (US-024)
+    // ============================================================
+    let gCodeClient = null;
+
+    function saveGoogleClientId() {
+      const input = document.getElementById('gClientIdInput');
+      if (!input) return;
+      const val = input.value.trim();
+      if (!val) {
+        alert("Vui lòng nhập Client ID hợp lệ!");
+        return;
+      }
+      localStorage.setItem('gClientId', v
+--------------------------------------------------

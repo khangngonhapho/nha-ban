@@ -1,0 +1,142 @@
+Row 4:
+  Col 0: 
+  Col 1: 339.36C Lê Văn Sỹ 46 4 4.6 10 12.8 tỷ Nhiêu Lộc Quận 3
+  Col 2: 
+  Col 3: BWBCIBScISVL
+  Col 4: HXH Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp lô góc 4PN
+  Col 5: 46
+  Col 6: 4
+  Col 7: 4.6
+  Col 8: 12.8
+  Col 9: 3
+  Col 10: Nhiêu Lộc
+  Col 11: Hẻm
+  Col 12: -
+  Col 13: -
+  Col 14: 4
+  Col 15: Bình thường
+  Col 16: 
+  Col 17: Không
+  Col 18: Không
+  Col 19: #ERROR!
+  Col 20: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/ce6jpetoj2tigakbnp27.jpg
+  Col 21: https://res.cloudinary.com/deru9p712/image/upload/v1779910763/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/s2nzy0fw2nur1uh7ycq5.jpg
+  Col 22: https://res.cloudinary.com/deru9p712/image/upload/v1779910763/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/upzxkpixqpb2i4y0kmbm.jpg
+  Col 23: https://res.cloudinary.com/deru9p712/image/upload/v1779910766/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/hbhzrfpj5osa1aflfji1.jpg
+  Col 24: https://res.cloudinary.com/deru9p712/image/upload/v1779910766/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/oevhl1dgdxydtkxzh6t1.jpg
+  Col 25: https://res.cloudinary.com/deru9p712/image/upload/v1779910766/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/itxec347krnaajirsneg.jpg
+  Col 26: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/nlltd0zdw90pubvfrozy.jpg
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/kwbcl0kmwgglbnutbgm0.jpg
+  Col 28: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/l1l455i1tudpdtlw13sf.jpg
+  Col 29: 
+  Col 30: 2026-05-30T11:45:10.527Z
+  Col 31: Phường 13
+  Col 32: 4
+  Col 33: 4
+  Col 34: Lê Văn Sỹ
+  Col 35: 
+  Col 36: 
+  Col 37: SYS-MP75438B-O8
+  Col 38: 
+  Col 39: HXH Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp lô góc 4PN
+Row 51:
+  Col 0: 
+  Col 1: 5.3 Nguyễn Ngọc Lộc 37 5 3.2 11 9.36 tỷ Diên Hồng Quận 10
+  Col 2: 
+  Col 3: NWIBILNN
+  Col 4: HXH Nguyễn Ngọc Lộc - 37m2 - 3.2x11 - 5 tầng - 9.36T | Hiếm, 5PN, gần chợ
+  Col 5: 37
+  Col 6: 5
+  Col 7: 3.2
+  Col 8: 9.36
+  Col 9: 10
+  Col 10: Diên Hồng
+  Col 11: Hẻm
+  Col 12: 
+  Col 13: 
+  Col 14: 5
+  Col 15: Bình thường
+  Col 16: 
+  Col 17: 
+  Col 18: 
+  Col 19: + Vị trí: Quận 10, Phường Diên Hồng. Căn nhà nằm trong hẻm rộng 5m, thuận tiện cho xe hơi ra vào, mang lại sự riêng tư và an ninh cho cư dân. Vị trí trung tâm, dễ dàng di chuyển đến các khu vực lân cận.  
+
++ Kết cấu: Căn nhà được xây dựng 5 tầng với 5 phòng ngủ và 4 WC, phù hợp cho gia đình đông người hoặc cho thuê. Thiết kế hiện đại, không gian thoáng đãng, đầy đủ tiện nghi.  
+
++ Kết nối & Tiện ích: Nằm gần các trục đường lớn như 3/2, khu vực này nổi tiếng với sự sầm uất và nhộn nhịp. Dân trí cao, an ninh tốt, dễ dàng tiếp cận các dịch vụ tiện ích xung quanh mà không cần đi xa.  
+
++ Pháp lý: Sổ hồng chính chủ, pháp lý rõ ràng, công chứng nhanh chóng. Căn nhà đã hoàn công, sẵn sàng chuyển nhượng.
+  Col 20: https://res.cloudinary.com/deru9p712/image/upload/v1779846410/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/hx77lsu6j6zislgsrowv.jpg
+  Col 21: https://res.cloudinary.com/deru9p712/image/upload/v1779846413/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/fvqehkyegxwzk9tdle0r.jpg
+  Col 22: https://res.cloudinary.com/deru9p712/image/upload/v1779846417/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/edn0tzoybadyam7l1fax.jpg
+  Col 23: https://res.cloudinary.com/deru9p712/image/upload/v1779846420/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/vxsu0macofvtpr6y54oy.jpg
+  Col 24: https://res.cloudinary.com/deru9p712/image/upload/v1779846422/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/lo6datjftf41wojgnrdo.jpg
+  Col 25: https://res.cloudinary.com/deru9p712/image/upload/v1779846425/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/xvtpijulyitdfq0ln3ix.jpg
+  Col 26: https://res.cloudinary.com/deru9p712/image/upload/v1779846428/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/ujs0okvv3q7av8qkcb21.jpg
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1779846431/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/wh27yhhe7ebqmhi8mowb.jpg
+  Col 28: https://res.cloudinary.com/deru9p712/image/upload/v1779846434/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/o2byuo4yoaylo1r3lpua.jpg
+  Col 29: https://res.cloudinary.com/deru9p712/image/upload/v1779846437/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/jcarpicwo9ikeec6u9pl.jpg
+  Col 30: 5/20/2026
+  Col 31: Phường 14
+  Col 32: 5
+  Col 33: 4
+  Col 34: Nguyễn Ngọc Lộc
+  Col 35: 
+  Col 36: 
+  Col 37: SYS-MP76IY2O-KA
+Row 112:
+  Col 0: 
+  Col 1: 9.36A Phạm Văn Hai 108 4  5.2 21 24 tỷ Tân Bình
+  Col 2: 
+  Col 3: CWIBSaIHVP
+  Col 4: CHDV Phạm Văn Hai Tân Bình - 108m2 (5.2x21) 4 Tầng - 24 Tỷ | Khu VIP Cư xá Ngân Hàng - Ô tô tránh (Ở, Văn phòng hoặc CHDV)
+  Col 5: 108
+  Col 6: 4
+  Col 7: 5.2
+  Col 8: 24
+  Col 9: TB
+  Col 10: 
+  Col 11: Hẻm
+  Col 12: -
+  Col 13: -
+  Col 14: -
+  Col 15: 
+  Col 16: 
+  Col 17: Không
+  Col 18: Không
+  Col 19: 🏩 HÀNG HIẾM CƯ XÁ NGÂN HÀNG - PHẠM VĂN HAI - BIỆT THỰ ĐỒNG BỘ - 2 Ô TÔ TRÁNH NHAU - CHỈ 24 TỶ.
+Mô tả:
+– Vị trí: Ngay Cư xá Ngân Hàng Phạm Văn Hai, P.3, Tân Bình - nay là P. Tân Sơn Hoà. Khu VIP bậc nhất lõi trung tâm, sát vách công viên Hoàng Văn Thụ, trục Nguyễn Văn Trỗi, đi sân bay chỉ 3 phút.
+– Hẻm 12m: Đường nhựa nội bộ rộng lớn, 2 ô tô tránh nhau thoải mái, thông thoáng sạch sẽ, khu dân trí cao cấp, an ninh tuyệt đối, 100m ra mặt tiền, vị trí cực kỳ khan hiếm nhà bán. Khu này VIP nhất Quận Tân Bình (toàn nhà giàu, khá giả, ô tô, biệt thự sinh sống).
+– Kết cấu: 4 tầng đúc BTCT kiên cố, kiến trúc bề thế vững chắc. 
+- Thiết kế công năng lớn gồm 8 phòng ngủ rộng rãi, 8WC khép kín, phù hợp vừa ở thượng lưu vừa làm trụ sở văn phòng công ty hoặc khai thác tòa CHDV cao cấp.
+– Diện tích: 108m² (5.2x21), thông số vàng với bề ngang lớn hơn 5m cực kỳ bề thế, khuôn đất vuông vức, chiều dài sâu hun hút giúp bố trí không gian cực thoáng.
+– Pháp lý: Sạch, hoàn công đầy đủ, sổ hồng riêng cất két, công chứng ngay.
+– GIÁ: 24 tỷ (TL).
+
+PHÂN TÍCH TƯ DUY ĐẦU TƯ & DÒNG TIỀN:
+• Bất động sản tọa lạc tại Cư xá Ngân Hàng - khu VIP thương gia đồng bộ hàng đầu Tân Bình. Nơi đây quy tụ giới tri thức và doanh nhân, quỹ đất đã hoàn chỉnh nên biên độ giữ tiền cực kỳ an toàn, tài sản chỉ có tăng trưởng theo thời gian chứ không bao giờ sụt giảm.
+• Khuôn đất lớn hơn 100m² với bề ngang 5.2m lý tưởng, khu vực cho phép cải tạo hoặc xây mới tòa CHDV cao 6 - 7 tầng đồ sộ. Đây là lợi thế tuyệt đối để tối ưu hóa số lượng phòng, đẩy doanh thu khai thác dòng tiền chạm mốc đỉnh tối đa.
+• Vị trí vàng tiếp giáp trực tiếp các trục đường ngoại giao, dễ dàng định vị phân khúc CHDV hạng sang hướng đến tệp khách thuê cao cấp từ khu VIP Nguyễn Văn Trỗi và khu VIP Lê Văn Sỹ. Đảm bảo tỷ lệ lấp đầy luôn đạt 100% với giá thuê cực cao từ phi công, chuyên gia nước ngoài và nhân sự cấp cao.
+• Lợi thế bề ngang lớn 5.2m kết hợp hẻm lớn 12m, 2 ô tô tránh nhau là những tiêu chí vàng mang lại tính thanh khoản tuyệt đối cho tài sản, giúp nhà đầu tư thiết lập tư duy tích sản sinh lãi kép bền vững và sở hữu một bất động sản di sản đắt giá tại quận trung tâm.
+  Col 20: https://res.cloudinary.com/deru9p712/image/upload/q_auto,f_auto/Zalo_JbdDFUWK7b_x5lxo0
+  Col 21: https://proptech.thienkhoi.com/_next/image?url=https%3A%2F%2Fdms3amyi97gvv.cloudfront.net%2FProperty%2Ff33b76bf-b55f-4cfa-9459-4742f16e43d1_1780292852191_87afb479.jpg%3FExpires%3D1780385441%26Key-Pair-Id%3DKX5HYW72PVJI2%26Signature%3DSzkCrhVO3GF5vMZOr0oewEdY4-K5kiOH7sqo9HGT3UM5rmTKr2sjlE43CaSYA5j6FVheX3riV5ys-4pm0WiauFkPLdcTZPe~2MRmUTWtBzUOsIhVoGxaJ3H8oCZbaeZJJL3YyfXpuU-569VC1uUcRv3WfIXr~nyl8BNCMp2KiCYgtOSxLheC1WZn8pzLeHjFwYuI9w3l7bDpFAoYC4dUnYVBkTCSBLBPD1s6oyfybdqmXKayS5L5Na4dbJAwh4F8hngPvSMMIJEHykbPICuEH4g5yubO6C12Yc3Q1cYFiQhjd95KASlmJSMXgHsUURNQaFEDIhd4qhepCnJ40TyUGw__&w=64&q=75
+  Col 22: https://dms3amyi97gvv.cloudfront.net/Property/5c491765-df7d-4da9-8d6d-d3f1088e1095_1780292851285_fcb45b31.jpg?Expires=1780385441&Key-Pair-Id=KX5HYW72PVJI2&Signature=XPAxZ~sDlpAXS09QDlD7Fj7I-1PWMVbcRp4oe-kyV6AAL7F2zIsoc6pimomRzpzIBRaeJnsX58~rOM8i0zE7-QltnJuhMwzMUeoMBSNvI-5wF0Z8r8vH0A-OSr2-t42djiT9jrRBSlWqPEvs5o6-P61GCVxfMTTgZFcWskyUFceN5YxKOdI5FEpR-4TckA1Irl2aLBCCzqGWNA3N6CL2oGzIFm95Gp8fkMqEVswQAzzP24kpAtl7Nfj-zoREypJLGrDNxgz5~qkjSIB020r3cbjqJNkMWaP-wMoeKOiEcug2fGNyOPT5TGhNfapqrKIsA~U9GSgZiEtMtnta4sHNCg__
+  Col 23: https://dms3amyi97gvv.cloudfront.net/Property/264a23bb-7b9a-419d-97d5-8b2c6e0bc2d9_1780292851471_0ec359fb.jpg?Expires=1780385441&Key-Pair-Id=KX5HYW72PVJI2&Signature=EvrB3Pke0ylAePCcZ0pKp-76HsCm2HpoXrVBtD6-dE7i4-2-LWM6B5YyYPhAY07php2Q~L~uX6KrsfPsw0PiKY7bSf-WnfrODZZSbbXH4VKZwymbgTr3tWdjHIU2rIKXkE7G55i250rLc9rKVatEuFSfMjb9J9y5NnZGM1FLhyL3hctgncbRebl7~tbjd2kMa7kUuuryX7uiV8J~7LN2ymZuClvnAIBpNvgNjkvRVQXwFG~YTO-GjaRHZMoieYx9aeOWfPejqx-OiFMp8Ici9Tv3zPSwljy2nHj2aJsRTXDj0UqiLSe5NyrMTX0uHmnAaR5ZSIvFSeoZXBCG5iBb-g__
+  Col 24: https://proptech.thienkhoi.com/_next/image?url=https%3A%2F%2Fdms3amyi97gvv.cloudfront.net%2FProperty%2F04b67105-2527-436f-8611-7559d0817653_1780292933782_c96c73f1.jpg%3FExpires%3D1780385441%26Key-Pair-Id%3DKX5HYW72PVJI2%26Signature%3DrmbeX4EtlEHC-uW3SRUAHSUFSue2mKNk6CpXZNoCdW1LWCo212YUejKwK6QUIehRX7KQuR~h8XuKJssOb-1Ms3BYfObBcm1MN605B2ve241vZvjz2SMah5FMrGIPcYbk0p8kjYTqT~C5c1I6C5RKO9S1ag9u15e3nWGImC14LSVQZW2gfI0YueDuPvK2Hhdam61G1UKdMuGe8cm6im5Aho-RGyTNUwKs~7G~gH0efvDtBmH21sPW8eB1kF6dwcNYiDP5c05mH7IL5NFrlDtno~rq8j5hNjJI9gjikRh90fnXY9kAwa3RZO9qNxo178bC9Q8xjFjxzYHGXT0VhDZM9w__&w=64&q=75
+  Col 25: https://dms3amyi97gvv.cloudfront.net/Property/eff0897b-a356-4304-8df9-63d1f0419ef0_1780292854082_c3e5729a.jpg?Expires=1780385441&Key-Pair-Id=KX5HYW72PVJI2&Signature=sOZS0nUi16jLUS58EXxfHhCY8BZt2hWlKV1MfnFyZoXTRN9sxdGJsi0z1eZQEPuhe-3FCg3ZzPg~pgg~Vn1LZzaN6PjbJ4iithP51jtaqAARaf7dBdpELWFEdbj2AdGRCHhCfF7y2e7OU2Q3qNiT1JqnDT3oEPWO~lrDNvcBCHiLtKyEJAtm6N7bB7Q5WYUw-PYByJ6HbYhIh6v66PLpxV3BSDs1Af2AQPp--ayR7vjKHNvfvNaHhetdR~cTer6ckYsPFcU6O-M9hKKFLwd66hgeszzEdGeTTviTBvs-kMKfS1OERPUYMc3VZ6GFmT4iEI7n5s6VRJ~xDATeRZUcow__
+  Col 26: https://res.cloudinary.com/deru9p712/image/upload/q_auto,f_auto/Zalo_OqxoNckMlt_ogb9a0
+  Col 27: 
+  Col 28: 
+  Col 29: 
+  Col 30: 2026-06-03T18:23:19.365Z
+  Col 31: Phường 1
+  Col 32: 8
+  Col 33: 8
+  Col 34: Phạm Văn Hai
+  Col 35: 
+  Col 36: 
+  Col 37: SYS-20261929-300
+  Col 38: 
+  Col 39: CHDV Phạm Văn Hai Tân Bình - 108m2 (5.2x21) 4 Tầng - 24 Tỷ | Khu VIP Cư xá Ngân Hàng - Hẻm Ô tô tránh.
+  Col 40: FALSE

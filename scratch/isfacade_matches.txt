@@ -1,0 +1,179 @@
+Found 20 matches for isFacadeUrl
+Line 6655: ool_row_data[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
+      const cleanRawNoiDungChinh = (te
+--------------------------------------------------
+Line 7014: filter(url => {
+          return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
+        });
+        const sortedImgs = cleanImgs.sort((a, b) => {
+          const aVis = (a.includes('facebook.com') || a.includes('fb.watch') || a.includes('fb.gg')) ? 1 : 0;
+      
+--------------------------------------------------
+Line 7131:   const norm = normalizeImgUrl(url);
+            return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+          });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
+          setupScrollCarousel('carouselSo', sImgs, true);
+
+          // Sự kiện input reactive Live Preview
+--------------------------------------------------
+Line 10258:  poolRowData[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
+      if (poolRowData) {
+        const
+--------------------------------------------------
+Line 10282:         if (publicCover && ((window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) || isFacadeUrl(publicCover))) {
+          publicCover = '';
+        }
+        if (!publicCover) {
+          const candidates = [];
+          const interior1Idx = window.getPoolInteriorColIdx(1);
+        
+--------------------------------------------------
+Line 10288: or1Idx] && (!window.isListingSodoUrl || !window.isListingSodoUrl(poolRowData[interior1Idx], p)) && !isFacadeUrl(poolRowData[interior1Idx])) {
+            candidates.push(poolRowData[interior1Idx]);
+          }
+          // poolRowData[29] (raw facade) is completely excluded!
+          for (let i = 0
+--------------------------------------------------
+Line 10294: ces[i])];
+            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+              candidates.push(url);
+              break;
+            }
+          }
+          publicCover = candidates[0] || '';
+        }
+
+        if (publicCover && (!window.isLis
+--------------------------------------------------
+Line 10302:       if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+          finalImages.push(publicCover);
+        }
+        
+        const maxHem = 2;
+        let addedHem = 0;
+        for (let i = 0; i < hemIndices.length && addedHem < 
+--------------------------------------------------
+Line 10311: dx)];
+          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p)) && !isFacadeUrl(hemUrl)) {
+            finalImages.push(hemUrl);
+            addedHem++;
+          }
+        }
+        
+        for (let i = 0; i < noithatIndices.length; i++) {
+          const imgIdx = n
+--------------------------------------------------
+Line 10320:  && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+            finalImages.push(imgUrl);
+          }
+        }
+        return finalImages.filter(Boolean);
+      } else {
+        const finalImages = [];
+--------------------------------------------------
+Line 10328:       if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+          finalImages.push(publicCover);
+        }
+        
+        if (p.imgs) {
+          p.imgs.forEach(url => {
+            if (url && url !== publicCover && !finalImag
+--------------------------------------------------
+Line 10334: && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+              finalImages.push(url);
+            }
+          });
+        }
+        return finalImages.slice(0, 15).filter(Boolean);
+      }
+    };
+
+    window.setupScrollCarousel =
+--------------------------------------------------
+Line 10617: rl(customCoverUrl || p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : ''));
+        const isFacadeUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          return norm !== '' && norm === normMatTien;
+        };
+
+        // Chỉ cập nhật lại mả
+--------------------------------------------------
+Line 10645: verUrl = customCoverUrl || p.original_row_data[38] || '';
+          if (isSodoUrl(cleanCoverUrl) || isFacadeUrl(cleanCoverUrl)) {
+            cleanCoverUrl = '';
+          }
+          p.original_row_data[38] = cleanCoverUrl;
+          p.img_mat_tien = cleanCoverUrl;
+
+          if (isSodoUrl(p.origin
+--------------------------------------------------
+Line 10651: Url;
+          p.img_mat_tien = cleanCoverUrl;
+
+          if (isSodoUrl(p.original_row_data[20]) || isFacadeUrl(p.original_row_data[20])) {
+            let newCover = '';
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !i
+--------------------------------------------------
+Line 10654:  i <= 29; i++) {
+              if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
+                newCover = p.original_row_data[i];
+                break;
+              }
+            }
+            if (!newCover) {
+              for (let i = 4
+--------------------------------------------------
+Line 10661:  <= 45; i++) {
+                if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
+                  newCover = p.original_row_data[i];
+                  break;
+                }
+              }
+            }
+            p.original_row_data[20]
+--------------------------------------------------
+Line 10673: ; i++) {
+            const url = p.original_row_data[i];
+            if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
+              cleanPublicImages.push(url);
+            }
+          }
+          for (let i = 41; i <= 45; i++) {
+            const url = p.origin
+--------------------------------------------------
+Line 10679: ; i++) {
+            const url = p.original_row_data[i];
+            if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
+              cleanPublicImages.push(url);
+            }
+          }
+          
+          if (publicCoverUrl && !isSodoUrl(publicCoverUrl) && !i
+--------------------------------------------------
+Line 10684:             }
+          }
+          
+          if (publicCoverUrl && !isSodoUrl(publicCoverUrl) && !isFacadeUrl(publicCoverUrl)) {
+            if (!cleanPublicImages.includes(publicCoverUrl)) {
+              cleanPublicImages.unshift(publicCoverUrl);
+            } else {
+              const idx = cl
+--------------------------------------------------

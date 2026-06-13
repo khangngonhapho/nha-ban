@@ -1,0 +1,28 @@
+URL: https://sheets.googleapis.com/v4/spreadsheets/1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE/values/Source!A94:AT94?valueInputOption=USER_ENTERED
+Test 1 (Length 46) response status: 200
+Response: {
+  "spreadsheetId": "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE",
+  "updatedRange": "Source!A94:AT94",
+  "updatedRows": 1,
+  "updatedColumns": 46,
+  "updatedCells": 46
+}
+
+Test 2 (Length 38) response status: 200
+Response: {
+  "spreadsheetId": "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE",
+  "updatedRange": "Source!A94:AL94",
+  "updatedRows": 1,
+  "updatedColumns": 38,
+  "updatedCells": 38
+}
+
+Test 3 (Bad URL) response status: 400
+Response: {
+  "error": {
+    "code": 400,
+    "message": "Unable to parse range: Source!Aundefined:ATundefined",
+    "status": "INVALID_ARGUMENT"
+  }
+}
+

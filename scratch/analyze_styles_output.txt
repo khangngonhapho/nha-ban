@@ -1,0 +1,378 @@
+=== Searching for selector: \bfilter-panel\b ===
+Media context: Global (No Media Query)
+/* ── Collapsible filter panel ── */
+    .filter-panel {
+      display: block;
+      background: #f9f8f6; /* Nền kem ngọc trai nhạt siêu sang */
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      padding: 0 16px;
+      margin: 0 -16px;
+      max-height: 0;
+      overflow-y: auto;
+      transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
+      color: #2c2c2e; /* Chữ màu xám than chì tối tương phản tốt */
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel.open {
+      max-height: 75vh;
+      border-bottom: 1.5px solid #e2ded6;
+      padding: 10px 16px;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+/* Nhãn phần mục trong filter panel đổi sang màu xám thẫm mờ */
+    .filter-panel .filter-section-lbl {
+      color: rgba(44, 44, 46, 0.6) !important;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+/* Tiêu đề các bộ lọc chi tiết con */
+    .filter-panel .filter-section-sublbl {
+      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(44, 44, 46, 0.7) !important;
+      font-family: inherit;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+/* Tinh chỉnh màu bong bóng (bubble) bên trong Filter Panel theo tone Warm Cream & Red */
+    .filter-panel .tab {
+      background: #ffffff;
+      color: #3a3a3c;
+      border: 1.5px solid #e2ded6;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel .tab:hover {
+      background: #f5f4f0;
+      border-color: #c5bfb2;
+      color: #1c1c1e;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel .tab.on {
+      background: var(--red); /* Nền Đỏ chủ đạo */
+      color: #ffffff; /* Chữ Trắng tinh */
+      border-color: var(--red);
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel .tab.on:hover {
+      background: #a93224; /* Đỏ sẫm hơn khi hover */
+      border-color: #a93224;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+/* Các ô nhập thông số range-box đổi sang nền trắng viền xám kem chữ đen */
+    .filter-panel .range-box {
+      background: #ffffff;
+      border: 1.5px solid #e2ded6;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel .range-box:focus-within {
+      border-color: var(--red);
+      background: #ffffff;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel .range-box input {
+      color: #2c2c2e;
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel .range-box input::placeholder {
+      color: rgba(44, 44, 46, 0.35);
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.filter-panel .tab {
+      font-size: 13px !important;
+    }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+.filter-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh !important;
+        max-height: 100dvh !important;
+        background: #ffffff !important;
+        z-index: 1000;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+.filter-panel.open {
+        transform: translateX(0) !important;
+        padding: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+.filter-panel > .tabs,
+      .filter-scroll-content > .tabs {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 8px 16px !important;
+        margin: 0 !important;
+        flex-shrink: 0 !important;
+        min-height: 52px !important;
+        height: auto !important;
+      }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+.filter-panel .tab,
+      .filter-scroll-content .tab {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 13px !important;
+        padding: 7px 16px !important;
+        min-height: 36px !important;
+        margin: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+.filter-panel > .filter-section-lbl,
+      .filter-scroll-content > .filter-section-lbl {
+        margin-top: 12px !important;
+        margin-bottom: 6px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+.filter-panel > .multiselect-container,
+      .filter-scroll-content > .multiselect-container {
+        width: calc(100% - 32px) !important;
+        margin-left: 16px !important;
+        margin-right: 16px !important;
+        margin-top: 4px !important;
+        margin-bottom: 12px !important;
+      }
+--------------------------------------------------
+=== Searching for selector: #filterPanel\b ===
+Media context: @media (min-width: 768px)
+/* US-074: Laptop layout optimization for filter panel and admin modal */
+      #filterPanel {
+        display: grid !important;
+        grid-template-columns: 160px 1fr;
+        gap: 12px 24px;
+        align-items: center;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 24px !important;
+        border-bottom: none !important;
+        transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel.open {
+        max-height: 75vh !important;
+        padding: 16px 24px !important;
+        overflow-y: auto !important;
+        border-bottom: 1.5px solid #e2ded6 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .filter-section-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl {
+        grid-column: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-self: center;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .filter-section-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl {
+        grid-column: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-self: center;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .tabs,
+      #filterPanel > .multiselect-container,
+      #filterPanel > .filter-scroll-content > .tabs,
+      #filterPanel > .filter-scroll-content > .multiselect-container {
+        grid-column: 2;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .filter-section-lbl.full-width-lbl,
+      #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 4px 0 !important;
+        margin-top: 8px !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
+        grid-column: 1 / -1;
+        padding: 4px 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .detailed-specs-container,
+      #filterPanel > .filter-scroll-content > .detailed-specs-container {
+        grid-column: 1 / -1;
+        padding: 4px 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > #collectionsManager,
+      #filterPanel > .filter-scroll-content > #collectionsManager {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > div.admin-only:not(#collectionsManager),
+      #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+        grid-column: 2;
+        margin: 0 !important;
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+#filterPanel > .filter-footer-actions {
+        grid-column: 1 / -1;
+        border-top: 1.5px solid #e2ded6;
+        padding: 16px 0 0 0 !important;
+        margin-top: 8px !important;
+      }
+--------------------------------------------------
+=== Searching for selector: \bsheet\b ===
+Media context: Global (No Media Query)
+.sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 540px;
+      max-height: 98dvh;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      animation: su .3s cubic-bezier(.22, 1, .36, 1);
+      overflow: hidden
+    }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+.sheet {
+        width: 850px;
+        max-width: 95vw;
+        max-height: 80vh;
+        border-radius: 24px;
+        animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+--------------------------------------------------
+Media context: @media (min-width: 1200px)
+/* US-074: Modal width expansion on large screens */
+    @media (min-width: 1200px) {
+      .sheet {
+        width: 1100px !important;
+      }
+--------------------------------------------------
+=== Searching for selector: \boverlay\b ===
+Media context: Global (No Media Query)
+.overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center
+    }
+--------------------------------------------------
+Media context: Global (No Media Query)
+.overlay.open {
+      display: flex
+    }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+/* Biến Bottom Sheet thành Modal giữa màn hình */
+      .overlay {
+        align-items: center;
+        padding: 20px;
+      }
+--------------------------------------------------

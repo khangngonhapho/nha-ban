@@ -1,0 +1,4 @@
+Line 3484: const idxTy = parts.findIndex(part => part.toLowerCase().includes('tỷ'));
+Line 4836: ${String(adminTitle).includes(p.gia + ' tỷ') ? adminTitle : adminTitle + ' ' + p.gia + ' tỷ'}
+Line 4868: <div class="ititle">${String(p.t).includes(p.gia + ' tỷ') ? p.t : p.t + ' ' + p.gia + ' tỷ'}</div>
+Line 5673: const displayTieuDeVal = tieuDeVal ? (String(tieuDeVal).includes(p.gia + ' tỷ') ? tieuDeVal : `${tieuDeVal} ${p.gia} tỷ`) : '';

@@ -1,0 +1,342 @@
+Line 2961: #filterPanel {
+Context:
+    2953:       }
+    2954: 
+    2955:       .lb-thumb,
+    2956:       .lb-thumb-vid {
+    2957:         width: 72px;
+    2958:       }
+    2959: 
+    2960:       /* US-074: Laptop layout optimization for filter panel and admin modal */
+--> 2961:       #filterPanel {
+    2962:         display: grid !important;
+    2963:         grid-template-columns: 160px 1fr;
+    2964:         gap: 12px 24px;
+    2965:         align-items: center;
+    2966:         max-height: 0 !important;
+    2967:         overflow: hidden !important;
+    2968:         padding: 0 24px !important;
+============================================================
+Line 2973: #filterPanel.open {
+Context:
+    2965:         align-items: center;
+    2966:         max-height: 0 !important;
+    2967:         overflow: hidden !important;
+    2968:         padding: 0 24px !important;
+    2969:         border-bottom: none !important;
+    2970:         transition: max-height .38s cubic-bezier(.4, 0, .2, 1), padding 0.38s ease;
+    2971:       }
+    2972: 
+--> 2973:       #filterPanel.open {
+    2974:         max-height: 75vh !important;
+    2975:         padding: 16px 24px !important;
+    2976:         overflow-y: auto !important;
+    2977:         border-bottom: 1.5px solid #e2ded6 !important;
+    2978:       }
+    2979: 
+    2980:       .filter-scroll-content {
+============================================================
+Line 2984: #filterPanel > .filter-section-lbl,
+Context:
+    2976:         overflow-y: auto !important;
+    2977:         border-bottom: 1.5px solid #e2ded6 !important;
+    2978:       }
+    2979: 
+    2980:       .filter-scroll-content {
+    2981:         display: contents;
+    2982:       }
+    2983: 
+--> 2984:       #filterPanel > .filter-section-lbl,
+    2985:       #filterPanel > .filter-scroll-content > .filter-section-lbl {
+    2986:         grid-column: 1;
+    2987:         margin: 0 !important;
+    2988:         padding: 0 !important;
+    2989:         align-self: center;
+    2990:       }
+    2991: 
+============================================================
+Line 2985: #filterPanel > .filter-scroll-content > .filter-section-lbl {
+Context:
+    2977:         border-bottom: 1.5px solid #e2ded6 !important;
+    2978:       }
+    2979: 
+    2980:       .filter-scroll-content {
+    2981:         display: contents;
+    2982:       }
+    2983: 
+    2984:       #filterPanel > .filter-section-lbl,
+--> 2985:       #filterPanel > .filter-scroll-content > .filter-section-lbl {
+    2986:         grid-column: 1;
+    2987:         margin: 0 !important;
+    2988:         padding: 0 !important;
+    2989:         align-self: center;
+    2990:       }
+    2991: 
+    2992:       #filterPanel > .tabs,
+============================================================
+Line 2992: #filterPanel > .tabs,
+Context:
+    2984:       #filterPanel > .filter-section-lbl,
+    2985:       #filterPanel > .filter-scroll-content > .filter-section-lbl {
+    2986:         grid-column: 1;
+    2987:         margin: 0 !important;
+    2988:         padding: 0 !important;
+    2989:         align-self: center;
+    2990:       }
+    2991: 
+--> 2992:       #filterPanel > .tabs,
+    2993:       #filterPanel > .multiselect-container,
+    2994:       #filterPanel > .filter-scroll-content > .tabs,
+    2995:       #filterPanel > .filter-scroll-content > .multiselect-container {
+    2996:         grid-column: 2;
+    2997:         margin: 0 !important;
+    2998:         padding: 0 !important;
+    2999:       }
+============================================================
+Line 2993: #filterPanel > .multiselect-container,
+Context:
+    2985:       #filterPanel > .filter-scroll-content > .filter-section-lbl {
+    2986:         grid-column: 1;
+    2987:         margin: 0 !important;
+    2988:         padding: 0 !important;
+    2989:         align-self: center;
+    2990:       }
+    2991: 
+    2992:       #filterPanel > .tabs,
+--> 2993:       #filterPanel > .multiselect-container,
+    2994:       #filterPanel > .filter-scroll-content > .tabs,
+    2995:       #filterPanel > .filter-scroll-content > .multiselect-container {
+    2996:         grid-column: 2;
+    2997:         margin: 0 !important;
+    2998:         padding: 0 !important;
+    2999:       }
+    3000: 
+============================================================
+Line 2994: #filterPanel > .filter-scroll-content > .tabs,
+Context:
+    2986:         grid-column: 1;
+    2987:         margin: 0 !important;
+    2988:         padding: 0 !important;
+    2989:         align-self: center;
+    2990:       }
+    2991: 
+    2992:       #filterPanel > .tabs,
+    2993:       #filterPanel > .multiselect-container,
+--> 2994:       #filterPanel > .filter-scroll-content > .tabs,
+    2995:       #filterPanel > .filter-scroll-content > .multiselect-container {
+    2996:         grid-column: 2;
+    2997:         margin: 0 !important;
+    2998:         padding: 0 !important;
+    2999:       }
+    3000: 
+    3001:       #filterPanel > .filter-section-lbl.full-width-lbl,
+============================================================
+Line 2995: #filterPanel > .filter-scroll-content > .multiselect-container {
+Context:
+    2987:         margin: 0 !important;
+    2988:         padding: 0 !important;
+    2989:         align-self: center;
+    2990:       }
+    2991: 
+    2992:       #filterPanel > .tabs,
+    2993:       #filterPanel > .multiselect-container,
+    2994:       #filterPanel > .filter-scroll-content > .tabs,
+--> 2995:       #filterPanel > .filter-scroll-content > .multiselect-container {
+    2996:         grid-column: 2;
+    2997:         margin: 0 !important;
+    2998:         padding: 0 !important;
+    2999:       }
+    3000: 
+    3001:       #filterPanel > .filter-section-lbl.full-width-lbl,
+    3002:       #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+============================================================
+Line 3001: #filterPanel > .filter-section-lbl.full-width-lbl,
+Context:
+    2993:       #filterPanel > .multiselect-container,
+    2994:       #filterPanel > .filter-scroll-content > .tabs,
+    2995:       #filterPanel > .filter-scroll-content > .multiselect-container {
+    2996:         grid-column: 2;
+    2997:         margin: 0 !important;
+    2998:         padding: 0 !important;
+    2999:       }
+    3000: 
+--> 3001:       #filterPanel > .filter-section-lbl.full-width-lbl,
+    3002:       #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+    3003:         grid-column: 1 / -1;
+    3004:         border-top: 1.5px solid #e2ded6;
+    3005:         padding: 16px 0 4px 0 !important;
+    3006:         margin-top: 8px !important;
+    3007:       }
+    3008: 
+============================================================
+Line 3002: #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+Context:
+    2994:       #filterPanel > .filter-scroll-content > .tabs,
+    2995:       #filterPanel > .filter-scroll-content > .multiselect-container {
+    2996:         grid-column: 2;
+    2997:         margin: 0 !important;
+    2998:         padding: 0 !important;
+    2999:       }
+    3000: 
+    3001:       #filterPanel > .filter-section-lbl.full-width-lbl,
+--> 3002:       #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+    3003:         grid-column: 1 / -1;
+    3004:         border-top: 1.5px solid #e2ded6;
+    3005:         padding: 16px 0 4px 0 !important;
+    3006:         margin-top: 8px !important;
+    3007:       }
+    3008: 
+    3009:       #filterPanel > .detailed-specs-container,
+============================================================
+Line 3009: #filterPanel > .detailed-specs-container,
+Context:
+    3001:       #filterPanel > .filter-section-lbl.full-width-lbl,
+    3002:       #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+    3003:         grid-column: 1 / -1;
+    3004:         border-top: 1.5px solid #e2ded6;
+    3005:         padding: 16px 0 4px 0 !important;
+    3006:         margin-top: 8px !important;
+    3007:       }
+    3008: 
+--> 3009:       #filterPanel > .detailed-specs-container,
+    3010:       #filterPanel > .filter-scroll-content > .detailed-specs-container {
+    3011:         grid-column: 1 / -1;
+    3012:         padding: 4px 0 !important;
+    3013:       }
+    3014: 
+    3015:       #filterPanel > #collectionsManager,
+    3016:       #filterPanel > .filter-scroll-content > #collectionsManager {
+============================================================
+Line 3010: #filterPanel > .filter-scroll-content > .detailed-specs-container {
+Context:
+    3002:       #filterPanel > .filter-scroll-content > .filter-section-lbl.full-width-lbl {
+    3003:         grid-column: 1 / -1;
+    3004:         border-top: 1.5px solid #e2ded6;
+    3005:         padding: 16px 0 4px 0 !important;
+    3006:         margin-top: 8px !important;
+    3007:       }
+    3008: 
+    3009:       #filterPanel > .detailed-specs-container,
+--> 3010:       #filterPanel > .filter-scroll-content > .detailed-specs-container {
+    3011:         grid-column: 1 / -1;
+    3012:         padding: 4px 0 !important;
+    3013:       }
+    3014: 
+    3015:       #filterPanel > #collectionsManager,
+    3016:       #filterPanel > .filter-scroll-content > #collectionsManager {
+    3017:         grid-column: 2;
+============================================================
+Line 3015: #filterPanel > #collectionsManager,
+Context:
+    3007:       }
+    3008: 
+    3009:       #filterPanel > .detailed-specs-container,
+    3010:       #filterPanel > .filter-scroll-content > .detailed-specs-container {
+    3011:         grid-column: 1 / -1;
+    3012:         padding: 4px 0 !important;
+    3013:       }
+    3014: 
+--> 3015:       #filterPanel > #collectionsManager,
+    3016:       #filterPanel > .filter-scroll-content > #collectionsManager {
+    3017:         grid-column: 2;
+    3018:         margin: 0 !important;
+    3019:       }
+    3020: 
+    3021:       #filterPanel > div.admin-only:not(#collectionsManager),
+    3022:       #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+============================================================
+Line 3016: #filterPanel > .filter-scroll-content > #collectionsManager {
+Context:
+    3008: 
+    3009:       #filterPanel > .detailed-specs-container,
+    3010:       #filterPanel > .filter-scroll-content > .detailed-specs-container {
+    3011:         grid-column: 1 / -1;
+    3012:         padding: 4px 0 !important;
+    3013:       }
+    3014: 
+    3015:       #filterPanel > #collectionsManager,
+--> 3016:       #filterPanel > .filter-scroll-content > #collectionsManager {
+    3017:         grid-column: 2;
+    3018:         margin: 0 !important;
+    3019:       }
+    3020: 
+    3021:       #filterPanel > div.admin-only:not(#collectionsManager),
+    3022:       #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+    3023:         grid-column: 2;
+============================================================
+Line 3021: #filterPanel > div.admin-only:not(#collectionsManager),
+Context:
+    3013:       }
+    3014: 
+    3015:       #filterPanel > #collectionsManager,
+    3016:       #filterPanel > .filter-scroll-content > #collectionsManager {
+    3017:         grid-column: 2;
+    3018:         margin: 0 !important;
+    3019:       }
+    3020: 
+--> 3021:       #filterPanel > div.admin-only:not(#collectionsManager),
+    3022:       #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+    3023:         grid-column: 2;
+    3024:         margin: 0 !important;
+    3025:       }
+    3026: 
+    3027:       #filterPanel > .filter-footer-actions {
+    3028:         grid-column: 1 / -1;
+============================================================
+Line 3022: #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+Context:
+    3014: 
+    3015:       #filterPanel > #collectionsManager,
+    3016:       #filterPanel > .filter-scroll-content > #collectionsManager {
+    3017:         grid-column: 2;
+    3018:         margin: 0 !important;
+    3019:       }
+    3020: 
+    3021:       #filterPanel > div.admin-only:not(#collectionsManager),
+--> 3022:       #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+    3023:         grid-column: 2;
+    3024:         margin: 0 !important;
+    3025:       }
+    3026: 
+    3027:       #filterPanel > .filter-footer-actions {
+    3028:         grid-column: 1 / -1;
+    3029:         border-top: 1.5px solid #e2ded6;
+============================================================
+Line 3027: #filterPanel > .filter-footer-actions {
+Context:
+    3019:       }
+    3020: 
+    3021:       #filterPanel > div.admin-only:not(#collectionsManager),
+    3022:       #filterPanel > .filter-scroll-content > div.admin-only:not(#collectionsManager) {
+    3023:         grid-column: 2;
+    3024:         margin: 0 !important;
+    3025:       }
+    3026: 
+--> 3027:       #filterPanel > .filter-footer-actions {
+    3028:         grid-column: 1 / -1;
+    3029:         border-top: 1.5px solid #e2ded6;
+    3030:         padding: 16px 0 0 0 !important;
+    3031:         margin-top: 8px !important;
+    3032:       }
+    3033: 
+    3034:       /* Admin Curation Modal grid optimization */
+============================================================
+Line 7896: if (e.target.closest('#filterPanel')) return;
+Context:
+    7888:       lastScrollY = currentScrollY;
+    7889:       lastScrollTime = currentScrollTime;
+    7890:     }, { passive: true });
+    7891: 
+    7892:     // Bấm ra ngoài header → tự động đóng bộ lọc (chỉ áp dụng trên Desktop)
+    7893:     document.addEventListener('click', (e) => {
+    7894:       if (!filterOpen) return;
+    7895:       if (window.innerWidth < 768) return; // Tránh tự động đóng trên mobile do bàn phím ảo hay gợi ý autocomplete
+--> 7896:       if (e.target.closest('#filterPanel')) return;
+    7897:       if (!e.target.closest('header')) closeFilter();
+    7898:     });
+    7899: 
+    7900:     // ============================================================
+    7901:     //  🔑 GOOGLE OAUTH2 & SECURE FACADE IMAGE FETCHING (US-024)
+    7902:     // ============================================================
+    7903:     let gCodeClient = null;
+============================================================

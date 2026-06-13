@@ -1,0 +1,111 @@
+7040:                 <div class="admin-raw-cell">
+7041:                   <span class="label">Chiều ngang:</span>
+7042:                   <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
+7043:                 </div>
+7044:                 <div class="admin-raw-cell">
+7045:                   <span class="label">Chiều dài:</span>
+7046:                   <span class="value dotted">${p.dai_nha || '-'} m</span>
+7047:                 </div>
+7048:                 <div class="admin-raw-cell">
+7049:                   <span class="label">Đường trước nhà:</span>
+7050:                   <span class="value dotted">${p.raw_duong_truoc_nha || p.duong_truoc_nha || '-'} m</span>
+7051:                 </div>
+7052:                 <div class="admin-raw-cell">
+7053:                   <span class="label">Số tầng:</span>
+7054:                   <span class="value dotted">${p.raw_so_tang || p.tang || '-'} tầng</span>
+7055:                 </div>
+7056:                 <div class="admin-raw-cell">
+7057:                   <span class="label">Số phòng ngủ:</span>
+7058:                   <span class="value dotted">${p.raw_so_pn || p.so_pn || '-'} PN</span>
+7059:                 </div>
+7060:                 <div class="admin-raw-cell">
+7061:                   <span class="label">Số WC:</span>
+7062:                   <span class="value dotted">${p.raw_so_wc || '-'} WC</span>
+7063:                 </div>
+7064:                 <div class="admin-raw-cell">
+7065:                   <span class="label">Giá chào:</span>
+7066:                   <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia || '-'} tỷ</span>
+7067:                 </div>
+7068:                 <div class="admin-raw-cell">
+7069:                   <span class="label">Trích thưởng:</span>
+7070:                   <span class="value dotted" style="color:#27ae60; font-weight:800;">${extractCommission(p)}</span>
+7071:                 </div>
+7072:               </div>
+7073:             </div>
+7074: 
+7075:             <div class="admin-raw-section" style="margin-top: 14px;">
+7076:               <div class="admin-raw-title">Thông tin nguồn</div>
+7077:               <div class="admin-raw-source">
+7078:                 <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+7079:                   <span style="color:#57606f;">Nguồn:</span>
+7080:                   <span style="font-weight:700;">${extractSource(p.raw_noi_dung_chinh)}</span>
+7081:                 </div>
+7082:                 <div style="display:flex; justify-content:space-between;">
+7083:                   <span style="color:#57606f;">Link Facebook:</span>
+7084:                   <span>
+7085:                     ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" class="dotted-val" style="color:var(--blue);">Xem FB Đầu Chủ ↗</a>` : '-'}
+7086:                   </span>
+7087:                 </div>
+7088:               </div>
+7089:             </div>
+7090: 
+7091:             <div class="admin-raw-section" style="margin-top: 14px;">
+7092:               <div class="admin-raw-title">Thông tin đầu chủ</div>
+7093:               <div class="admin-raw-source">
+7094:                 <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+7095:                   <span style="color:#57606f;">Tên đầu chủ:</span>
+7096:                   <span style="font-weight:700;">${p.raw_ten_dau_chu || '-'}</span>
+7097:                 </div>
+7098:                 <div style="display:flex; justify-content:space-between;">
+7099:                   <span style="color:#57606f;">SĐT đầu chủ:</span>
+7100:                   <span>
+7101:                     ${p.raw_dt_dau_chu ? `<a href="tel:${formatPhone(p.raw_dt_dau_chu)}" class="dotted-val" style="color:var(--blue); font-weight:700;">${formatPhone(p.raw_dt_dau_chu)}</a>` : '-'}
+7102:                   </span>
+7103:                 </div>
+7104:               </div>
+7105:             </div>
+7106: 
+7107:             <!-- Google Maps Embed -->
+7108:             <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
+7109:             <div class="admin-map-container"></div>
+7110:           </div>
+7111: 
+7112:           <div class="admin-accordion">
+7113:             <!-- ACCORDION 2: BIÊN TẬP CUSTOM - SOURCE -->
+7114:             <div class="accordion-item" id="accSource">
+7115:               <div class="accordion-header is-red" onclick="toggleAdminAccordion(this)">
+7116:                 <span>BIÊN TẬP</span>
+7117:                 <span class="arrow">▶</span>
+7118:               </div>
+7119:               <div class="accordion-content">
+7120:                 <form class="admin-edit-form" onsubmit="event.preventDefault()">
+7121:                   <div class="admin-edit-group">
+7122:                     <label for="editNote">Ghi chú riêng (Note - Chỉ Admin thấy):</label>
+7123:                     <textarea id="editNote" rows="3" placeholder="Nhập ghi chú riêng..." style="font-size: 10px; font-weight: 500; font-family: inherit; padding: 6px; line-height: 1.4;">${p.note || ''}</textarea>
+7124:                   </div>
+7125: 
+7126:                   <div class="admin-edit-group">
+7127:                     <label for="editMaKhangNgo">Mã Khang Ngô (ID):</label>
+7128:                     <input type="text" id="editMaKhangNgo" value="${p.isFromPoolOnly ? (generateMaKhangNgo(p.raw_so_nha, p.raw_ten_duong) || p.id) : p.id}" placeholder="Mã Khang Ngô..." style="font-weight: 700; color: var(--red);">
+7129:                   </div>
+7130: 
+7131:                   <div class="admin-edit-group">
+7132:                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+7133:                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+7134:                       ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+7135:                     </div>
+7136:                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+7137:                   </div>
+7138: 
+7139:                   <div class="admin-edit-group">
+7140:                     <label for="editMoTaBds">Mô tả public:</label>
+7141:                     <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+7142:                   </div>
+7143: 
+7144:                   ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+7145: 
+7146:                   ${renderImageEditorWidget(p)}
+7147: 
+7148:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+7149:                     <div class="admin-edit-group">
+7150:                       <label for="editHuong">Hướng nhà:</label>

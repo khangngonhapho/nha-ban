@@ -1,0 +1,711 @@
+Row 4:
+  Col 0: TK-D45312
+  Col 1: 
+  Col 2: Tp. Hồ Chí Minh
+  Col 3: Quận 3
+  Col 4: Nhiêu Lộc
+  Col 5: Lê Văn Sỹ
+  Col 6: 339.36C
+  Col 7: Dòng tiền ổn định, Hiếm, View hồ - công viên, Nội thất đẹp - giá trị, Để ở, Để kinh doanh, Lãi vốn (rẻ), Chủ cần bán gấp, Hẻm ô tô, Chính chủ, Lô góc
+  Col 8: 
+  Col 9: 339.36C Lê Văn Sỹ 46 4 4.6 10 12.8 tỷ Nhiêu Lộc Quận 3 10-15 tỷ HĐ Trần Thanh Chương Đại Nam 0931938649 H3GB nguồn Đầu chủ Trần Thanh Chương - Đại Nam
+  Col 10: 🚗🏡 HOT QUẬN 3- LÊ VĂN SỸ- NHỈNH 12 TỶ 🌹🌹🌹+ HĐĐT chính chủ, HKĐC.
+
+✅ Vị trí đẹp, trung tâm, con đường thời trang Lê Văn Sỹ.
+
+✅ Hẻm xe hơi đỗ cửa, gần Mặt tiền.
+
+✅ Nhà 1 trệt 3 lầu, 4 phòng ngủ, lô góc thoáng mát, ngang lớn là 1 lợi thế. Nhà mới vào là ở luôn.
+
+✅ Sổ đẹp, hoàn công đủ, pháp lý sạch.
+  Col 11: 12,800
+  Col 12: 
+  Col 13: 46
+  Col 14: 46
+  Col 15: 4
+  Col 16: 4.6
+  Col 17: 
+  Col 18: Nguyễn Thị Thu Hiền
+  Col 19: xxxxxx9290
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: Chuẩn
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1780165024/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/vtscroqouctveqtqfn1e.jpg
+  Col 28: 
+  Col 29: https://res.cloudinary.com/deru9p712/image/upload/v1779910763/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/ldqaldhz42ec0ag8meg1.jpg
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/v1779910766/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/oevhl1dgdxydtkxzh6t1.jpg
+  Col 41: https://res.cloudinary.com/deru9p712/image/upload/v1779910766/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/itxec347krnaajirsneg.jpg
+  Col 42: https://res.cloudinary.com/deru9p712/image/upload/v1779910766/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/jwkw2ybk3tz7euevbrlr.jpg
+  Col 43: https://res.cloudinary.com/deru9p712/image/upload/v1779910766/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/p35sktxsrxoiyjxoy9s3.jpg
+  Col 44: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/nlltd0zdw90pubvfrozy.jpg
+  Col 45: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/kwbcl0kmwgglbnutbgm0.jpg
+  Col 46: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/ce6jpetoj2tigakbnp27.jpg
+  Col 47: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/ap3dlskr1phyo1d5oqjp.jpg
+  Col 48: https://res.cloudinary.com/deru9p712/image/upload/v1779910769/BDS-KhangNgo/f11wg2-mlheid3v-9bd45312/l1l455i1tudpdtlw13sf.jpg
+  Col 49: 
+  Col 50: 
+  Col 51: 
+  Col 52: 
+  Col 53: 
+  Col 54: 
+  Col 55: BWBCIBScISVL
+  Col 56: HXH Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp lô góc 4PN
+  Col 57: #ERROR!
+  Col 58: 12,800
+  Col 59: 
+  Col 60: 4
+  Col 61: Bình thường
+  Col 62: 3,4,6,7,8,11,12,13,15
+  Col 63: 
+  Col 64: 4
+  Col 65: 4
+  Col 66: Phường 13
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: FALSE
+  Col 71: Lỗi: Bạn chưa chọn Ảnh Nội thất an toàn!
+  Col 72: SYS-MP75438B-O8
+  Col 73: https://data.thienkhoi.com/Hang/Detail/f11wg2-mlheid3v-9bd45312
+  Col 74: 931938649
+  Col 75: Trần Thanh Chương
+  Col 76: https://www.facebook.com/chuong.cook
+Row 51:
+  Col 0: TK-EE8CEF
+  Col 1: 
+  Col 2: Tp. Hồ Chí Minh
+  Col 3: Quận 10
+  Col 4: Diên Hồng
+  Col 5: Nguyễn Ngọc Lộc
+  Col 6: 5.3
+  Col 7: Hiếm, Để kinh doanh, Hẻm ô tô, Chính chủ
+  Col 8: 
+  Col 9: 5.3 Nguyễn Ngọc Lộc 37 5 3.2 11 9.36 tỷ Diên Hồng Quận 10 5-10 tỷ HĐ Lưu Thiệu Khang_ĐC Kim Long 0982119233 H3GB nguồn Đầu chủ Lưu Thiệu Khang_ĐC - Kim Long
+  Col 10: TRUNG TÂM Q10, HẺM XE HƠI VÀO NHÀ, 5 TẦNG, 5PN, 4WC, Chỉ Nhỉnh 9 tỷ.
+
+
+
+
+5.3 Nguyễn Ngọc Lộc 37 5 3.2 11 9.36 tỷ Phường 14, Quận 10, 9 đến 15, HĐ TKV Khang, 0982119233, HH 3%. Nguồn TKV Khang - TK36.
+
+
+
+
+💥 Mô tả:
+
++ Trệt, lửng, 2 lầu, 2 sân thượng trước sau, 5PN, 4WC.
+
++ Nhà mới đẹp vô ở liền.
+
++ Khu vực xung quanh xây cao tầng.
+
++ Cửa chính sử dụng khóa vân tay.
+
++ Sát mặt tiền 3/2, gần Chợ, gần trường học.
+
++ Mọi tiện ích xung quanh ko thiếu gì.
+
++ Nhà chủ đang làm hoàn công.
+
++ Sổ vuông nở hậu nhẹ, pháp lý chuẩn, công chứng nhanh.
+
+
+
+
+Lưu ý: Chủ làm công trình, xem nhà sau 18h.
+
+https://www.facebook.com/share/1AxFXnR1Q5/
+
+
+
+
+💥 ACE dẫn khách chuẩn quy trình, seo phi lấy sổ, và báo TKV trước 60 phút để cùng thu Bông nhe.
+  Col 11: 9,360
+  Col 12: 
+  Col 13: 37
+  Col 14: 37
+  Col 15: 5
+  Col 16: 3.2
+  Col 17: 
+  Col 18: Huỳnh Văn Lượm
+  Col 19: xxxxxx8682
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: Chuẩn
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1780164149/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/qe2c9rtyybuurujkrbmv.jpg
+  Col 28: 
+  Col 29: 
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/v1779846428/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/ujs0okvv3q7av8qkcb21.jpg
+  Col 41: https://res.cloudinary.com/deru9p712/image/upload/v1779846431/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/wh27yhhe7ebqmhi8mowb.jpg
+  Col 42: https://res.cloudinary.com/deru9p712/image/upload/v1779846434/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/o2byuo4yoaylo1r3lpua.jpg
+  Col 43: https://res.cloudinary.com/deru9p712/image/upload/v1779846437/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/jcarpicwo9ikeec6u9pl.jpg
+  Col 44: https://res.cloudinary.com/deru9p712/image/upload/v1779846440/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/t1ikhljfmftyemylwcuy.jpg
+  Col 45: https://res.cloudinary.com/deru9p712/image/upload/v1779846443/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/pkmxqorrao39poh1q4lw.jpg
+  Col 46: https://res.cloudinary.com/deru9p712/image/upload/v1779846447/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/ogju06vhzhu5q9ne186q.jpg
+  Col 47: https://res.cloudinary.com/deru9p712/image/upload/v1779846450/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/vkysuwc42er5vgfgamm1.jpg
+  Col 48: https://res.cloudinary.com/deru9p712/image/upload/v1779846453/BDS-KhangNgo/g8q81t-moa71oq5-bee8cef/kj95cxpuslltvayn40ke.jpg
+  Col 49: 
+  Col 50: 
+  Col 51: 
+  Col 52: 
+  Col 53: 
+  Col 54: 
+  Col 55: NWIBILNN
+  Col 56: HXH Nguyễn Ngọc Lộc - 37m2 - 3.2x11 - 5 tầng - 9.36T | Hiếm, 5PN, gần chợ
+  Col 57: #ERROR!
+  Col 58: 9,360
+  Col 59: 
+  Col 60: 5
+  Col 61: Bình thường
+  Col 62: 
+  Col 63: 
+  Col 64: 5
+  Col 65: 4
+  Col 66: Phường 14
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: TRUE
+  Col 71: Đã đồng bộ
+  Col 72: SYS-MP76IY2O-KA
+  Col 73: https://data.thienkhoi.com/Hang/Detail/g8q81t-moa71oq5-bee8cef
+  Col 74: 982119233
+  Col 75: Lưu Thiệu Khang_ĐC
+  Col 76: https://www.facebook.com/thieukhangl
+Row 209:
+  Col 0: TK-4E3031
+  Col 1: 
+  Col 2: Tp. Hồ Chí Minh
+  Col 3: Quận 11
+  Col 4: Hòa Bình
+  Col 5: Lạc Long Quân
+  Col 6: 416.19.36
+  Col 7: 
+  Col 8: 
+  Col 9: 416.19.36 Lạc Long Quân 175.9/176 4 5 26 24 tỷ Phường 5 Quận 11 15-25 tỷ HĐ Trưởng phòng Hằng - TK ĐC Nguyệt Đức 0899656808 H3GB nguồn Đầu chủ Trưởng phòng Hằng - TK ĐC - Nguyệt Đức
+  Col 10: HẺM BA GÁC - TRUNG TÂM QUẬN 11 - DIỆN TÍCH KHỦNG, KHÔNG CÓ CĂN THỨ 2 - PHÙ HỢP ĐẦU TƯ KINH DOANH CHDV. 
+
+416.19.36 Lạc Long Quân 176 4 5/6.7 26  24Tỷ - Phường 05, Quận 11,  20 đến 30 - HĐ Q.TP Hằng - Phòng Nguyệt Đức - 0899656808 hoa hồng 3% giá bán, 10% nguồn đối tác.
+
+Mô tả: 
++ Hẻm thông tứ tung, cách giáo xứ Vĩnh Hoà chỉ 30m. 
++ Gần chợ , trường học, dân cư đông đúc.  Tiện ích, công năng đầy đủ.
++ Kết cấu: trệt, 2 lầu, sân thượng. Có 16 phòng nhỏ đang cho thuê , lối đi riêng.  Bên ngoài chủ nhà ở, gồm phòng khách, phòng bếp, 2PN, 2WC, ban công, sân thượng…
++ Chủ nhiệt bán ( rất hợp tác ). Muốn bán nhanh để chia tài sản cho các con ( sẵn sàng gia lộc và chỉ tiếp người thiện chí ) chìa khoá trao tay ngay và luôn.
++ Phù hợp xây mới kinh doanh CHDV là tuyệt đỉnh. 
++ Chính chủ 1 đời chưa qua đầu tư, pháp lý chuẩn. Công chứng trong một nốt nhạc.
++ Anh chị em dẫn khách vui lòng báo TP Hằng trước 60 phút.  Ký phiếu YCCCDV và chụp hình với khách đúng quy trình. 📲/Zalo: 0899656808+ Face Trưởng phòng Hằng -> Đỗ Phương Hằng+ https://www.facebook.com/profile.php?id=100027770710205&mibextid=LQQJ4d✍️ "Facebook của Trưởng phòng Hằng hiện tại đang ở chế độ giới hạn kết bạn. ACE vui lòng nhấn "Theo dõi" và tiếp tục gửi tin nhắn bình thường. Trưởng phòng sẽ vẫn nhận được và tương tác với ACE ngay. Trưởng phòng Hằng xin chân thành cảm ơn.MẪU BÁO CÁO...+ Tôi, Chuyên viên A, Phòng B..., SĐT: .......,- Dẫn A/C/Em: ......., sinh năm: .......,- CCCD: ......., SĐT: ....... (4 số cuối),- Xem ngoài/trong căn: .......,- Lúc ..... giờ ..... ngày ..../..../2025- Mục đích của khách mua: .......,- Phản hồi của khách: .......,- Đánh giá Đầu khách về khách: .......,- Đánh giá Đầu khách về chủ nhà: .......,- VIDEO, HÌNH ẢNH KHÁCH XEM NHÀ.,.💁‍♀️ Chúc ACE liên hoàn chốt và sớm cán mốc thu nhập Tỷ phú tại Thiên Khôi 💐
+  Col 11: 24,000
+  Col 12: 
+  Col 13: 176
+  Col 14: 175.9
+  Col 15: 4
+  Col 16: 5
+  Col 17: 
+  Col 18: NGUYỄN THỊ ỔI
+  Col 19: xxxxxx3955
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: Chuẩn
+  Col 27: 
+  Col 28: 
+  Col 29: 
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/v1779967181/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/ipapa2qdzvbxnlzkpjfm.jpg
+  Col 41: https://res.cloudinary.com/deru9p712/image/upload/v1779967182/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/dryfdig1vq5oo0cxpwof.jpg
+  Col 42: https://res.cloudinary.com/deru9p712/image/upload/v1779967182/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/eqnfzizm9lyykjmz7luh.jpg
+  Col 43: https://res.cloudinary.com/deru9p712/image/upload/v1779967182/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/qo1txv7mqb6bkgh6ka2j.jpg
+  Col 44: https://res.cloudinary.com/deru9p712/image/upload/v1779967181/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/abwlwxqbeywwdsctbzvi.jpg
+  Col 45: https://res.cloudinary.com/deru9p712/image/upload/v1779967186/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/zifiwhnvu4uwsrnnja2m.jpg
+  Col 46: https://res.cloudinary.com/deru9p712/image/upload/v1779967186/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/oa6d7pt8yhlosxfcizie.jpg
+  Col 47: https://res.cloudinary.com/deru9p712/image/upload/v1779967186/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/gonobvenovxwytcqkoez.jpg
+  Col 48: https://res.cloudinary.com/deru9p712/image/upload/v1779967186/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/mz2z2cxyncgun0ljiruz.jpg
+  Col 49: https://res.cloudinary.com/deru9p712/image/upload/v1779967187/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/tgmfzv2p3lz6obhsdp1c.jpg
+  Col 50: https://res.cloudinary.com/deru9p712/image/upload/v1779967189/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/evujlb6r5uo9v4fdpixw.jpg
+  Col 51: https://res.cloudinary.com/deru9p712/image/upload/v1779967189/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/milpmogjoleq9npi1gnc.jpg
+  Col 52: https://res.cloudinary.com/deru9p712/image/upload/v1779967190/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/gh9f8plo5pxm1befxowf.jpg
+  Col 53: https://res.cloudinary.com/deru9p712/image/upload/v1779967190/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/tppey2swdnfwk9u7tma6.jpg
+  Col 54: https://res.cloudinary.com/deru9p712/image/upload/v1779967191/BDS-KhangNgo/88a868a1-f7f3-4e83-b934-6bcf474e3031/pszljzfokmemftetctjk.jpg
+  Col 55: 
+  Col 56: 
+  Col 57: 
+  Col 58: 24,000
+  Col 59: 
+  Col 60: 3
+  Col 61: Bình thường
+  Col 62: 
+  Col 63: 
+  Col 64: 
+  Col 65: 
+  Col 66: 
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: 
+  Col 71: 
+  Col 72: SYS-20263627-890
+  Col 73: https://data.thienkhoi.com/Hang/Detail/88a868a1-f7f3-4e83-b934-6bcf474e3031
+  Col 74: 899656808
+  Col 75: Q.TP Hằng
+  Col 76: https://www.facebook.com/ophuonghang.32845
+Row 1514:
+  Col 0: TK-208336
+  Col 1: 
+  Col 2: Tp. Hồ Chí Minh
+  Col 3: Quận 3
+  Col 4: Bàn Cờ
+  Col 5: Nguyễn Đình Chiểu
+  Col 6: 399.36.7
+  Col 7: 
+  Col 8: 
+  Col 9: 399.36.7 Nguyễn Đình Chiểu 63/55 3 4.5 14 15.5 tỷ Phường 5 Quận 3 15-25 tỷ HĐ Hoàng Viết Cường Tứ Đại Nam 0981796969 H3GB nguồn Đầu chủ Hoàng Viết Cường Tứ - Đại Nam
+  Col 10: GIÁ MỚI 15.5 TỶ.🌹🌹🌹HÀNG NÓNG Q3 - 63M2 - 3 TẦNG - LÔ GÓC THOÁNG MÁT - XE HƠI NGỦ TRONG NHÀ - CHỈ 16.xxx TỶ.✈️✈️✈️399.36.7 Nguyễn Đình Chiểu 63/55 3 4.5 14 16.2 tỷ Phường 5 Quận 3 10 đến 20 HĐ PP Hoàng Tứ - P. Đại Nam - 0981796969, H3%, nguồn PP Hoàng Tứ.Mô tả:+ Quận 3 Nguyễn Đình Chiểu, cư xá Đô Thành, ngay chợ, siêu thị, trường học, bệnh viện, vị trí đắc địa, hiếm nhà bán.+ Chủ thiết kế rất sang trọng, 3 tầng, 4 Phòng, 4WC, có phòng thờ, sân thượng rộng thoáng mát, xe hơi ngủ trong nhà, hàng xóm dân trí cao.+ Pháp lý chuẩn, hoàn công đủ, công chứng ngay.=> ACE KHẢO SÁT - DẪN KHÁCH - KÝ PHIẾU YCCCDV - CHỤP HÌNH KHÁCH ĐÚNG CHUẨN THEO QUY TRÌNH CÔNG TY. BÁO TRƯỚC 36’ ĐỂ ĐƯỢC HỖ TRỢ TỐT NHẤT. 🥰
+  Col 11: 15,500
+  Col 12: 
+  Col 13: 55
+  Col 14: 63
+  Col 15: 3
+  Col 16: 4.5
+  Col 17: 
+  Col 18: Hương
+  Col 19: xxxxxx8118
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: Chuẩn
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1780167864/BDS-KhangNgo/g8jbe1-m760s8tm-cd208336/zdwlfaeyseppl5mhptrf.jpg
+  Col 28: https://res.cloudinary.com/deru9p712/image/upload/v1780167868/BDS-KhangNgo/g8jbe1-m760s8tm-cd208336/tqgj5xh1h3ktgeoqfg5j.jpg
+  Col 29: 
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/v1780280077/BDS-KhangNgo/g8jbe1-m760s8tm-cd208336/r2324iszny4oadrvs90o.jpg
+  Col 41: https://res.cloudinary.com/deru9p712/image/upload/v1780280077/BDS-KhangNgo/g8jbe1-m760s8tm-cd208336/dvujkn2arpzjxuivtign.jpg
+  Col 42: https://res.cloudinary.com/deru9p712/image/upload/v1780280079/BDS-KhangNgo/g8jbe1-m760s8tm-cd208336/lbhziywjrle8fxkvwqrg.jpg
+  Col 43: https://res.cloudinary.com/deru9p712/image/upload/v1780280080/BDS-KhangNgo/g8jbe1-m760s8tm-cd208336/izrptkey5t9sv8thigk0.jpg
+  Col 44: https://res.cloudinary.com/deru9p712/image/upload/v1780280080/BDS-KhangNgo/g8jbe1-m760s8tm-cd208336/tbulccaahh8aaculgbij.jpg
+  Col 45: 
+  Col 46: 
+  Col 47: 
+  Col 48: 
+  Col 49: 
+  Col 50: 
+  Col 51: 
+  Col 52: 
+  Col 53: 
+  Col 54: 
+  Col 55: 
+  Col 56: 
+  Col 57: 
+  Col 58: 15,500
+  Col 59: 
+  Col 60: 6
+  Col 61: Bình thường
+  Col 62: 
+  Col 63: 
+  Col 64: 4
+  Col 65: 4
+  Col 66: 
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: 
+  Col 71: 
+  Col 72: SYS-20262427-733
+  Col 73: https://data.thienkhoi.com/Hang/Detail/g8jbe1-m760s8tm-cd208336
+  Col 74: 981796969
+  Col 75: Hoàng Viết Cường Tứ
+  Col 76: https://www.facebook.com/profile.php?id=100011205515455
+Row 1583:
+  Col 0: TK-CD52F3
+  Col 1: 
+  Col 2: Tp. Hồ Chí Minh
+  Col 3: Bình Thạnh
+  Col 4: Gia Định
+  Col 5: Võ Trường Toản
+  Col 6: 9.36 + 9.38 + 9.40
+  Col 7: 
+  Col 8: 
+  Col 9: 9.36 + 9.38 + 9.40 Võ Trường Toản 240/260 2 8 30 32 tỷ Gia Định Bình Thạnh 25-50 tỷ HĐ Trần Nguyễn Phúc Khương_ĐC Hắc Long 0977686535 H3GB nguồn Đối tác
+  Col 10: Ngày 11/07/2025 chủ giảm chào 1 tỷ, giá chào mới 32 tỷ. 🔥[BÌNH THẠNH] LÔ ĐẤT VIP OTO NGỦ NHÀ - CHỢ BÀ CHIỂU 260M2 THỰC - ĐƯỢC XÂY 6TẦNG - 32 TỶ TL 🔥Mô tả:✅Hẻm xe hơi tránh nhau, lô góc, nở hậu, không quy hoạch. Khu vực được phép xây cao tầng. ✅ Kết cấu: nhà cũ, bán chia tàn sản. Rất phù hợp khách mua về xây chdv. Hiện tại 3 PN + 3WC. ✅Vị trí đẹp, ngay chợ Bà Chiểu kinh doanh sầm uất. ✅Pháp lý: Chuẩn. Sổ hồng công chứng ngay.👏AE khảo sát báo cáo dẫn khách đúng quy trình Cty ký phiếu YCCCDV, Khách xem báo trước Phó phòng Khương 60 phút để chuẩn bị tốt nhất. 💥Chúc ACE chốt nhà bùng nổ. Mong kết duyên cùng AE.
+  Col 11: 32,000
+  Col 12: 
+  Col 13: 260
+  Col 14: 240
+  Col 15: 2
+  Col 16: 8
+  Col 17: 
+  Col 18: Trịnh Thị Huệ
+  Col 19: xxxxxx8801
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: Chuẩn
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1780167810/BDS-KhangNgo/f0pist-m82la0im-1dcd52f3/j2ck0kphsatojgchwxkz.jpg
+  Col 28: 
+  Col 29: 
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/v1779947461/BDS-KhangNgo/f0pist-m82la0im-1dcd52f3/qkus2gnp5l3jhwdpgdpi.jpg
+  Col 41: https://res.cloudinary.com/deru9p712/image/upload/v1779947461/BDS-KhangNgo/f0pist-m82la0im-1dcd52f3/yvkpoxrp6gbhkqwoyg7r.jpg
+  Col 42: https://res.cloudinary.com/deru9p712/image/upload/v1779947460/BDS-KhangNgo/f0pist-m82la0im-1dcd52f3/hftimpsxdtdrjfwxm0pr.jpg
+  Col 43: https://res.cloudinary.com/deru9p712/image/upload/v1779947461/BDS-KhangNgo/f0pist-m82la0im-1dcd52f3/w5pynxpwucrcpo84blah.jpg
+  Col 44: https://res.cloudinary.com/deru9p712/image/upload/v1779947463/BDS-KhangNgo/f0pist-m82la0im-1dcd52f3/sl69gpxi3zd3j8p9dbsu.jpg
+  Col 45: 
+  Col 46: 
+  Col 47: 
+  Col 48: 
+  Col 49: 
+  Col 50: 
+  Col 51: 
+  Col 52: 
+  Col 53: 
+  Col 54: 
+  Col 55: 
+  Col 56: 
+  Col 57: 
+  Col 58: 32,000
+  Col 59: 
+  Col 60: 7
+  Col 61: Bình thường
+  Col 62: 
+  Col 63: 
+  Col 64: 3
+  Col 65: 3
+  Col 66: 
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: 
+  Col 71: 
+  Col 72: SYS-20261827-737
+  Col 73: https://data.thienkhoi.com/Hang/Detail/f0pist-m82la0im-1dcd52f3
+  Col 74: 977686535
+  Col 75: Trần Nguyễn Phúc Khương_ĐC
+  Col 76: https://www.facebook.com/profile.php?id=61567038946010
+Row 4475:
+  Col 0: TK-491FF1
+  Col 1: 
+  Col 2: Tp. Hồ Chí Minh
+  Col 3: Phú Nhuận
+  Col 4: Cầu Kiệu
+  Col 5: Nguyễn Đình Chính
+  Col 6: 69.36D
+  Col 7: 
+  Col 8: 
+  Col 9: 69.36D Nguyễn Đình Chính 26 4 3.6 7 5.8 tỷ Cầu Kiệu Phú Nhuận 5-10 tỷ HĐ Nguyễn Tuấn Kiệt_ĐC Phương Đông HCM 0939398383 H3GB nguồn Đầu chủ Nguyễn Tuấn Kiệt_ĐC - Phương Đông HCM
+  Col 10: 🏡 4 TẦNG HOÀNG CÔNG CHUẨN - NGAY TRỤC NGUYỄN TRỌNG TUYỂN vs NGUYỄN VĂN TRỖI - KHU AN NINH - 2PN 3WC ST THOÁNG - 5.8 Tỷ TL📍 Địa chỉ: 69.36D Nguyễn Đình Chính, P. Cầu Kiệu, TP.HCMSổ tại nhà cc ngay✨ Thông tin chi tiết: • Diện tích: 3.6 x 6.6m (nở hậu 4m) – 26m² • Kết cấu: 1 trệt, 2 lầu, sân thượng + chuồng cu • Công năng:• 2 phòng ngủ master• 3 WC• Có thể nâng cấp thành 3 phòng ngủ🌟 Khu vực VIP, dân trí cao, cực kỳ hiếm nhà bán🌟 Phù hợp ở hoặc đầu tư giữ tài sản💰 Giá bán: 5.8 tỷ (thương lượng)📞 Liên hệ ngay: 09.3939.8383
+  Col 11: 5,800
+  Col 12: 
+  Col 13: 26
+  Col 14: 26
+  Col 15: 4
+  Col 16: 3.6
+  Col 17: 
+  Col 18: Thạch
+  Col 19: xxxxxx5080
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: Chuẩn
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1780164355/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/vjlidndhhewtxcaqe6oh.jpg
+  Col 28: 
+  Col 29: 
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/v1779863552/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/lj6rqbtyujoh9ffu0dmg.jpg
+  Col 41: https://res.cloudinary.com/deru9p712/image/upload/v1779863555/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/t9kenagaefsc7b3geayh.jpg
+  Col 42: https://res.cloudinary.com/deru9p712/image/upload/v1779863558/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/muqfsn7ondstbvo4q8h3.jpg
+  Col 43: https://res.cloudinary.com/deru9p712/image/upload/v1779863561/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/jmmzdtjn4st6fnlkgydo.jpg
+  Col 44: https://res.cloudinary.com/deru9p712/image/upload/v1779863564/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/pvniup4qtz1f2kprdb5j.jpg
+  Col 45: https://res.cloudinary.com/deru9p712/image/upload/v1779863567/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/af5wvkrl9li9dgx4ypcm.jpg
+  Col 46: https://res.cloudinary.com/deru9p712/image/upload/v1779863570/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/f6xfsjnplwcbfo1bvd0d.jpg
+  Col 47: https://res.cloudinary.com/deru9p712/image/upload/v1779863572/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/fwqxqm7er7f1iwcpms1l.jpg
+  Col 48: https://res.cloudinary.com/deru9p712/image/upload/v1779863575/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/jul5hszhngysens3sbm4.jpg
+  Col 49: https://res.cloudinary.com/deru9p712/image/upload/v1779863578/BDS-KhangNgo/6hianw-mnsia41o-eb491ff1/o5nj6fsp29gdmpqx1jgt.jpg
+  Col 50: 
+  Col 51: 
+  Col 52: 
+  Col 53: 
+  Col 54: 
+  Col 55: 
+  Col 56: 
+  Col 57: 
+  Col 58: 5,800
+  Col 59: 
+  Col 60: 2.5
+  Col 61: Bình thường
+  Col 62: 
+  Col 63: 
+  Col 64: 
+  Col 65: 
+  Col 66: 
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: 
+  Col 71: 
+  Col 72: SYS-20262827-415
+  Col 73: https://data.thienkhoi.com/Hang/Detail/6hianw-mnsia41o-eb491ff1
+  Col 74: 939398383
+  Col 75: Nguyễn Tuấn Kiệt_ĐC
+  Col 76: https://www.facebook.com/nguyentuan.kiet.391
+Row 4626:
+  Col 0: TK-1F2D15
+  Col 1: 
+  Col 2: Tp. Hồ Chí Minh
+  Col 3: Quận 10
+  Col 4: Vườn Lài
+  Col 5: lý thái tổ
+  Col 6: 399.36.1
+  Col 7: 
+  Col 8: 
+  Col 9: 399.36.1 lý thái tổ 26 3 3.5 8 5.1 tỷ Vườn Lài Quận 10 5-10 tỷ HĐ Diệp Duy Thắng Thiên Địa 0907673831 H3GB nguồn Đầu chủ Diệp Duy Thắng - Thiên Địa
+  Col 10: TRUNG TÂM QUẬN 10 - NHÀ 3 TẦNG ĐẸP MUA Ở NGAY - 3PN 3 WC - FULL NỘI THẤT - MUA Ở HAY CHO THUÊ ĐỀU TỐT - HOÀN CÔNG ĐỦ - NHỈNH 5 TỶ399.36.1 Lý Thái Tổ 26 3 3.5 8 5.1 tỷ Vườn Lài Quận 10 3 đến 6 HĐ Đầu chủ Thắng Phòng Đại Nam, 0907673831, H3%, nguồn Đầu chủ Thắng.Mô tả :- Nhà 2 mặt hẽm thông thoáng. Hẽm ba gác thông khu vực- Vị trí trung tâm quận 10. Đối diện Bệnh viên Nhi Đồng tiện ích không thiếu gì.- Nhà cực đẹp full nội thất mua ở ngay, có sẵn nội thất tặng hết. Có 3PN 3 WC rất công năng cho gia đình khu vực trung tâm. - Diện tích công nhận 26m2. - Sổ hồng hoàn công đủ, công chứng ngay, hỗ trợ vay ok
+  Col 11: 5,100
+  Col 12: 
+  Col 13: 26
+  Col 14: 26
+  Col 15: 3
+  Col 16: 3.5
+  Col 17: 
+  Col 18: Nh
+  Col 19: xxxxxx6658
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: Chuẩn
+  Col 27: https://res.cloudinary.com/deru9p712/image/upload/v1780164193/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/sy6xmweaqqnji1ge7crp.jpg
+  Col 28: 
+  Col 29: 
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/v1779848650/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/imau37wuqsrldlkfsu5g.jpg
+  Col 41: https://res.cloudinary.com/deru9p712/image/upload/v1779848653/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/udwqcuw0vh01isiy5jod.jpg
+  Col 42: https://res.cloudinary.com/deru9p712/image/upload/v1779848656/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/u0uzw2eywoaunt8ojrox.jpg
+  Col 43: https://res.cloudinary.com/deru9p712/image/upload/v1779848658/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/howatktpqdhecezsprxc.jpg
+  Col 44: https://res.cloudinary.com/deru9p712/image/upload/v1779848661/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/dsfftsnlwmdzv3tj3lrj.jpg
+  Col 45: https://res.cloudinary.com/deru9p712/image/upload/v1779848663/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/iurumwvabjvxgzrhhso9.jpg
+  Col 46: https://res.cloudinary.com/deru9p712/image/upload/v1779848666/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/hpu07ta7spg1i9qfm54b.jpg
+  Col 47: https://res.cloudinary.com/deru9p712/image/upload/v1779848669/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/smj0va1i0n5sg4s17na1.jpg
+  Col 48: https://res.cloudinary.com/deru9p712/image/upload/v1779848672/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/q5vpxsuqghrdlvhxcbor.jpg
+  Col 49: https://res.cloudinary.com/deru9p712/image/upload/v1779848674/BDS-KhangNgo/d4iov9-mo76w71l-db1f2d15/tnsmwf8ysjywlziwc8bb.jpg
+  Col 50: 
+  Col 51: 
+  Col 52: 
+  Col 53: 
+  Col 54: 
+  Col 55: 
+  Col 56: 
+  Col 57: 
+  Col 58: 5,100
+  Col 59: 
+  Col 60: 3
+  Col 61: Bình thường
+  Col 62: 
+  Col 63: 
+  Col 64: 3
+  Col 65: 3
+  Col 66: 
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: 
+  Col 71: 
+  Col 72: SYS-20261127-973
+  Col 73: https://data.thienkhoi.com/Hang/Detail/d4iov9-mo76w71l-db1f2d15
+  Col 74: 907673831
+  Col 75: Diệp Duy Thắng
+  Col 76: https://www.facebook.com/mr.thang.0904
+Row 5726:
+  Col 0: 
+  Col 1: 
+  Col 2: 
+  Col 3: Tân Bình
+  Col 4: 
+  Col 5: Phạm Văn Hai
+  Col 6: 9.36A
+  Col 7: 
+  Col 8: 
+  Col 9: 9.36A Phạm Văn Hai 108 4  5.2 21 24 tỷ Tân Bình
+  Col 10: 🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥
+
+💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh nhau thoải mái, dân trí cao, an ninh, vị trí cực kỳ khan hiếm nhà bán.
+
+🏡 Diện tích đẹp: 108m² (5.2m x 21m)
+🏢 Kết cấu: 4 tầng kiên cố
+🛏️ 8 phòng ngủ – 8 WC
+📚 Phù hợp ở kết hợp cho thuê căn hộ dịch vụ, văn phòng công ty hoặc khai thác dòng tiền ổn định.
+
+📍 Vị trí đắc địa ngay khu Cư Xá Ngân Hàng – Phạm Văn Hai:
+✔ Kết nối nhanh sân bay Tân Sơn Nhất
+✔ Thuận tiện Quận 1, Quận 3, Phú Nhuận
+✔ Xung quanh đầy đủ tiện ích cao cấp
+
+⭐ Khu vực cực hiếm sản phẩm tương tự xuất hiện trên thị trường.
+⭐ Nhà diện tích lớn, ngang 5m bề thế, giá trị giữ tài sản và tăng trưởng rất tốt.
+
+💰 Giá bán: 24 tỷ thương lượng chính chủ
+  Col 11: 24,000
+  Col 12: 
+  Col 13: 108
+  Col 14: 108
+  Col 15: 4
+  Col 16: 5.2
+  Col 17: 
+  Col 18: 
+  Col 19: 
+  Col 20: 
+  Col 21: 
+  Col 22: 
+  Col 23: 
+  Col 24: 
+  Col 25: 
+  Col 26: 
+  Col 27: https://dms3amyi97gvv.cloudfront.net/Property/b7ed44ca-0736-4152-89ca-d541688fdfe8_1780292843955_c7f5509d.jpg?Expires=1780386215&Key-Pair-Id=KX5HYW72PVJI2&Signature=xbpW1YI19vGP4iMV2C3PCf4cWEC7JB8QMbnyVqWtI6aopvcv~yOTGuoBc7yrI2wQQqmNjDsxL6q2IoC3Vqp-3Kuts75RIYxgGYWzDCkJ41QMYeN3eQ4NorEu~Bm8V~BhTZFil-1Q2~IgmoZasEHGd~gyTxxPT55p5VzmmHyZBI0vkddHXJoPsJR24LaDvXv2hivmS97pbALYFIftAI~1KVUyFaRfsR46LBV4Hhc8GoUUKs9mS49eG7YHNRfRZPAGM1C78fHR0kAVNtdEDEIl87wDUkbzFKeRasxDxSZYTArrdzklF20c0A1mKasvtjrIg1630kXrhpKrVyEzJo3RJg__
+  Col 28: 
+  Col 29: https://res.cloudinary.com/deru9p712/image/upload/q_auto,f_auto/Zalo_8TBMEbgJxw_oru1kh
+  Col 30: 
+  Col 31: 
+  Col 32: 
+  Col 33: 
+  Col 34: 
+  Col 35: 
+  Col 36: 
+  Col 37: 
+  Col 38: 
+  Col 39: 
+  Col 40: https://res.cloudinary.com/deru9p712/image/upload/q_auto,f_auto/Zalo_JbdDFUWK7b_x5lxo0
+  Col 41: https://proptech.thienkhoi.com/_next/image?url=https%3A%2F%2Fdms3amyi97gvv.cloudfront.net%2FProperty%2Ff33b76bf-b55f-4cfa-9459-4742f16e43d1_1780292852191_87afb479.jpg%3FExpires%3D1780385441%26Key-Pair-Id%3DKX5HYW72PVJI2%26Signature%3DSzkCrhVO3GF5vMZOr0oewEdY4-K5kiOH7sqo9HGT3UM5rmTKr2sjlE43CaSYA5j6FVheX3riV5ys-4pm0WiauFkPLdcTZPe~2MRmUTWtBzUOsIhVoGxaJ3H8oCZbaeZJJL3YyfXpuU-569VC1uUcRv3WfIXr~nyl8BNCMp2KiCYgtOSxLheC1WZn8pzLeHjFwYuI9w3l7bDpFAoYC4dUnYVBkTCSBLBPD1s6oyfybdqmXKayS5L5Na4dbJAwh4F8hngPvSMMIJEHykbPICuEH4g5yubO6C12Yc3Q1cYFiQhjd95KASlmJSMXgHsUURNQaFEDIhd4qhepCnJ40TyUGw__&w=64&q=75
+  Col 42: https://dms3amyi97gvv.cloudfront.net/Property/5c491765-df7d-4da9-8d6d-d3f1088e1095_1780292851285_fcb45b31.jpg?Expires=1780385441&Key-Pair-Id=KX5HYW72PVJI2&Signature=XPAxZ~sDlpAXS09QDlD7Fj7I-1PWMVbcRp4oe-kyV6AAL7F2zIsoc6pimomRzpzIBRaeJnsX58~rOM8i0zE7-QltnJuhMwzMUeoMBSNvI-5wF0Z8r8vH0A-OSr2-t42djiT9jrRBSlWqPEvs5o6-P61GCVxfMTTgZFcWskyUFceN5YxKOdI5FEpR-4TckA1Irl2aLBCCzqGWNA3N6CL2oGzIFm95Gp8fkMqEVswQAzzP24kpAtl7Nfj-zoREypJLGrDNxgz5~qkjSIB020r3cbjqJNkMWaP-wMoeKOiEcug2fGNyOPT5TGhNfapqrKIsA~U9GSgZiEtMtnta4sHNCg__
+  Col 43: https://dms3amyi97gvv.cloudfront.net/Property/264a23bb-7b9a-419d-97d5-8b2c6e0bc2d9_1780292851471_0ec359fb.jpg?Expires=1780385441&Key-Pair-Id=KX5HYW72PVJI2&Signature=EvrB3Pke0ylAePCcZ0pKp-76HsCm2HpoXrVBtD6-dE7i4-2-LWM6B5YyYPhAY07php2Q~L~uX6KrsfPsw0PiKY7bSf-WnfrODZZSbbXH4VKZwymbgTr3tWdjHIU2rIKXkE7G55i250rLc9rKVatEuFSfMjb9J9y5NnZGM1FLhyL3hctgncbRebl7~tbjd2kMa7kUuuryX7uiV8J~7LN2ymZuClvnAIBpNvgNjkvRVQXwFG~YTO-GjaRHZMoieYx9aeOWfPejqx-OiFMp8Ici9Tv3zPSwljy2nHj2aJsRTXDj0UqiLSe5NyrMTX0uHmnAaR5ZSIvFSeoZXBCG5iBb-g__
+  Col 44: https://proptech.thienkhoi.com/_next/image?url=https%3A%2F%2Fdms3amyi97gvv.cloudfront.net%2FProperty%2F04b67105-2527-436f-8611-7559d0817653_1780292933782_c96c73f1.jpg%3FExpires%3D1780385441%26Key-Pair-Id%3DKX5HYW72PVJI2%26Signature%3DrmbeX4EtlEHC-uW3SRUAHSUFSue2mKNk6CpXZNoCdW1LWCo212YUejKwK6QUIehRX7KQuR~h8XuKJssOb-1Ms3BYfObBcm1MN605B2ve241vZvjz2SMah5FMrGIPcYbk0p8kjYTqT~C5c1I6C5RKO9S1ag9u15e3nWGImC14LSVQZW2gfI0YueDuPvK2Hhdam61G1UKdMuGe8cm6im5Aho-RGyTNUwKs~7G~gH0efvDtBmH21sPW8eB1kF6dwcNYiDP5c05mH7IL5NFrlDtno~rq8j5hNjJI9gjikRh90fnXY9kAwa3RZO9qNxo178bC9Q8xjFjxzYHGXT0VhDZM9w__&w=64&q=75
+  Col 45: https://dms3amyi97gvv.cloudfront.net/Property/eff0897b-a356-4304-8df9-63d1f0419ef0_1780292854082_c3e5729a.jpg?Expires=1780385441&Key-Pair-Id=KX5HYW72PVJI2&Signature=sOZS0nUi16jLUS58EXxfHhCY8BZt2hWlKV1MfnFyZoXTRN9sxdGJsi0z1eZQEPuhe-3FCg3ZzPg~pgg~Vn1LZzaN6PjbJ4iithP51jtaqAARaf7dBdpELWFEdbj2AdGRCHhCfF7y2e7OU2Q3qNiT1JqnDT3oEPWO~lrDNvcBCHiLtKyEJAtm6N7bB7Q5WYUw-PYByJ6HbYhIh6v66PLpxV3BSDs1Af2AQPp--ayR7vjKHNvfvNaHhetdR~cTer6ckYsPFcU6O-M9hKKFLwd66hgeszzEdGeTTviTBvs-kMKfS1OERPUYMc3VZ6GFmT4iEI7n5s6VRJ~xDATeRZUcow__
+  Col 46: https://res.cloudinary.com/deru9p712/image/upload/q_auto,f_auto/Zalo_8TBMEbgJxw_oru1kh
+  Col 47: https://res.cloudinary.com/deru9p712/image/upload/q_auto,f_auto/Zalo_OqxoNckMlt_ogb9a0
+  Col 48: https://res.cloudinary.com/deru9p712/image/upload/q_auto,f_auto/Zalo_JbdDFUWK7b_x5lxo0
+  Col 49: 
+  Col 50: 
+  Col 51: 
+  Col 52: 
+  Col 53: 
+  Col 54: 
+  Col 55: CWIBSaIHVP
+  Col 56: CHDV Phạm Văn Hai Tân Bình - 108m2 (5.2x21) 4 Tầng - 24 Tỷ | Khu VIP Cư xá Ngân Hàng - Ô tô tránh (Ở, Văn phòng hoặc CHDV)
+  Col 57: 🏩 HÀNG HIẾM CƯ XÁ NGÂN HÀNG - PHẠM VĂN HAI - BIỆT THỰ ĐỒNG BỘ - 2 Ô TÔ TRÁNH NHAU - CHỈ 24 TỶ.
+Mô tả:
+– Vị trí: Ngay Cư xá Ngân Hàng Phạm Văn Hai, P.3, Tân Bình - nay là P. Tân Sơn Hoà. Khu VIP bậc nhất lõi trung tâm, sát vách công viên Hoàng Văn Thụ, trục Nguyễn Văn Trỗi, đi sân bay chỉ 3 phút.
+– Hẻm 12m: Đường nhựa nội bộ rộng lớn, 2 ô tô tránh nhau thoải mái, thông thoáng sạch sẽ, khu dân trí cao cấp, an ninh tuyệt đối, 100m ra mặt tiền, vị trí cực kỳ khan hiếm nhà bán. Khu này VIP nhất Quận Tân Bình (toàn nhà giàu, khá giả, ô tô, biệt thự sinh sống).
+– Kết cấu: 4 tầng đúc BTCT kiên cố, kiến trúc bề thế vững chắc. Thiết kế công năng lớn gồm 8 phòng ngủ rộng rãi, 8WC khép kín, phù hợp vừa ở thượng lưu vừa làm trụ sở văn phòng công ty hoặc khai thác tòa CHDV cao cấp.
+– Diện tích: 108m² (5.2x21), thông số vàng với bề ngang lớn hơn 5m cực kỳ bề thế, khuôn đất vuông vức, chiều dài sâu hun hút giúp bố trí không gian cực thoáng.
+– Pháp lý: Sạch, hoàn công đầy đủ, sổ hồng riêng cất két, công chứng ngay.
+– GIÁ: 24 tỷ (TL).
+
+PHÂN TÍCH TƯ DUY ĐẦU TƯ & DÒNG TIỀN:
+• Bất động sản tọa lạc tại Cư xá Ngân Hàng - khu VIP thương gia đồng bộ hàng đầu Tân Bình. Nơi đây quy tụ giới tri thức và doanh nhân, quỹ đất đã hoàn chỉnh nên biên độ giữ tiền cực kỳ an toàn, tài sản chỉ có tăng trưởng theo thời gian chứ không bao giờ sụt giảm.
+• Khuôn đất lớn hơn 100m² với bề ngang 5.2m lý tưởng, khu vực cho phép cải tạo hoặc xây mới tòa CHDV cao 6 - 7 tầng đồ sộ. Đây là lợi thế tuyệt đối để tối ưu hóa số lượng phòng, đẩy doanh thu khai thác dòng tiền chạm mốc đỉnh tối đa.
+• Vị trí vàng tiếp giáp trực tiếp các trục đường ngoại giao, dễ dàng định vị phân khúc CHDV hạng sang hướng đến tệp khách thuê cao cấp từ khu VIP Nguyễn Văn Trỗi và khu VIP Lê Văn Sỹ. Đảm bảo tỷ lệ lấp đầy luôn đạt 100% với giá thuê cực cao từ phi công, chuyên gia nước ngoài và nhân sự cấp cao.
+• Lợi thế bề ngang lớn 5.2m kết hợp hẻm lớn 12m, 2 ô tô tránh nhau là những tiêu chí vàng mang lại tính thanh khoản tuyệt đối cho tài sản, giúp nhà đầu tư thiết lập tư duy tích sản sinh lãi kép bền vững và sở hữu một bất động sản di sản đắt giá tại quận trung tâm.
+  Col 58: 24,000
+  Col 59: 
+  Col 60: 
+  Col 61: 
+  Col 62: 2,3,4,5,6,8,9
+  Col 63: 
+  Col 64: 8
+  Col 65: 8
+  Col 66: Phường 1
+  Col 67: 
+  Col 68: 
+  Col 69: 
+  Col 70: TRUE
+  Col 71: Đã đồng bộ
+  Col 72: SYS-20261929-300
+  Col 73: https://proptech.thienkhoi.com/warehouse/sources/4f92db9e-de71-4df3-91f6-cc198e84d1d3
+  Col 74: 941151187
+  Col 75: Nguyễn Hoàng Nam
+  Col 76: https://www.facebook.com/hoang.nam.151187/

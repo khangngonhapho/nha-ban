@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết căn nhà - TKQK1W9A</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-color: #38bdf8;
+            --accent-color: #f43f5e;
+            --success-color: #10b981;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            background-image: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.03) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .tag-status {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        
+        .grid-info {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-info {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .info-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: top;
+        }
+        
+        .info-table td.label {
+            color: var(--text-muted);
+            width: 40%;
+            font-weight: 500;
+        }
+        
+        .info-table td.value {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        
+        .description-box {
+            white-space: pre-wrap;
+            color: #cbd5e1;
+            font-size: 15px;
+            margin-bottom: 16px;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        
+        .usp-box {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #a7f3d0;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .grid-criteria {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .criteria-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .criteria-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+        
+        .criteria-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .image-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            aspect-ratio: 4/3;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .image-wrapper:hover img {
+            transform: scale(1.05);
+        }
+        
+        .diagram-grid .image-wrapper {
+            aspect-ratio: auto;
+            max-height: 500px;
+        }
+        
+        .diagram-grid .image-wrapper img {
+            object-fit: contain;
+            height: auto;
+            max-height: 500px;
+        }
+        
+        .btn-link {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #0f172a;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn-link:hover {
+            background: #7dd3fc;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-title">
+                <h1>TKQK1W9A / SYS-20260611-812</h1>
+                <p>Địa chỉ gốc: 28 Phan Tây Hồ, Phường Cầu Kiệu, Phú Nhuận</p>
+            </div>
+            <div>
+                <span class="tag-status">Chế độ: LISTINGS_V2</span>
+            </div>
+        </div>
+        
+        <!-- INFO GRID -->
+        <div class="grid-info">
+            <!-- LEFT COLUMN: CONTENT -->
+            <div class="card">
+                <div class="usp-box"><strong>Nội dung chính (USP):</strong><br>28 Phan Tây Hồ, 54m2, 5 tầng, mt 5.5m, sâu 11m, giá 13.5 tỷ, Phường Cầu Kiệu Phú Nhuận</div>
+                
+                <div class="section-title">Mô tả chi tiết căn nhà</div>
+                <div class="description-box">MẶT TIỀN TRUNG TÂM VIP PHÚ NHUẬN - NHÀ LÔ GÓC 2 MẶT THOÁNG Ô TÔ VÀO VI VU - XÂY DỰNG 5 TẦNG ĐẸP, HIỆN ĐẠI, THANG MÁY XỊN XÒ - ĐANG CÓ DÒNG TIỀN THUÊ 35TR/THÁNG.
+
+28 Phan Tây Hồ 54 5 4/5.5 11 13.5 tỷ Phường 7 Phú Nhuận 10 đến 20 HĐ Đầu chủ Thắng Phòng Thiên Địa, 0907673831,H3%, nguồn Đầu chủ Thắng.
+ 
+Mô tả:
+
+- Mặt tiền đường Vip Phú Nhuận kế bên Phan Xích Long. Vị trí đẹp lô gốc 2 mặt thoáng có trổ cửa hông cực thông thoáng, ô tô vào vi vu. Đang có dòng tiền cho thuê 35tr/tháng. Thang máy xịn xò.
+
+- Nhà đẹp, hiện đại 1 trệt, 4 lầu: Tổng 4PN lớn + WC khép kín, bếp, phòng khách, có ban công thoáng mát. Có thể thiết kế thêm phòng. 
+
+- Thuận tiện đi lại các Quận trung tâm khác. Khu vực dân trí tốt, an ninh. Toàn nhà cao tầng. Gần sân bay TSN
+
+- Tiện ích xung quanh đầy đủ: gần trường học các cấp, chợ, bệnh viện, siêu thị...
+
+- Sổ hồng chính chủ công chứng ngay</div>
+                
+                
+            </div>
+            
+            <!-- RIGHT COLUMN: SPECS -->
+            <div class="card" style="height: fit-content;">
+                <div class="section-title">Thông số kỹ thuật</div>
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Giá chào</td>
+                        <td class="value" style="color: var(--accent-color); font-size: 18px;">13.5 Tỷ</td>
+                    </tr>
+                    <tr>
+                        <td class="label">DT Thực tế</td>
+                        <td class="value">54 m²</td>
+                    </tr>
+                    <tr>
+                        <td class="label">DT Trên sổ</td>
+                        <td class="value">54 m²</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Số Tầng</td>
+                        <td class="value">5 Tầng</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Mặt Tiền</td>
+                        <td class="value">5.5 m</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Chiều Dài</td>
+                        <td class="value">11 m</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Hướng</td>
+                        <td class="value">N/A</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Hẻm trước nhà</td>
+                        <td class="value">N/A m</td>
+                    </tr>
+                </table>
+                
+                <div class="section-title" style="margin-top: 24px;">Thông tin liên hệ</div>
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Chủ nhà</td>
+                        <td class="value">nguyễn trường giang</td>
+                    </tr>
+                    <tr>
+                        <td class="label">SĐT Chủ</td>
+                        <td class="value" style="color: var(--success-color);">N/A</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Đầu chủ</td>
+                        <td class="value">N/A</td>
+                    </tr>
+                    <tr>
+                        <td class="label">SĐT Đầu chủ</td>
+                        <td class="value">0907673831</td>
+                    </tr>
+                </table>
+                
+                <a href="https://proptech.thienkhoi.com/warehouse/sources/3d296527-12f8-4796-b759-c501ca421f6b" target="_blank" class="btn-link">Mở Link Gốc Nguồn Tin</a>
+            </div>
+        </div>
+        
+        <!-- IMAGES -->
+        <div class="card" style="margin-bottom: 40px;">
+            <div class="section-title">Sơ đồ thửa đất / Bản vẽ</div><div class="image-grid diagram-grid"><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/692309a3-d14a-4812-895c-0ea14f60785a_1768487825045_da911e9e.jpeg?Expires=1781195157&Key-Pair-Id=KX5HYW72PVJI2&Signature=IasWo9ajJhflutRZ7k6Vbu0gCWvocqGF4bskHkPjvLq0qfgXik51gZTEMMUR-5O0hTP7jAr1-IJPHgrtTHJBOulruDHvZAiq8aAceBF8MVn2S-TYpXE8cr15dfd3nCX8d4HI0fsnwO1QfRimJoShen0XzM7zMsBN8PGouhvDgMYlPYXaCwra8HnjTv1cg7Is~6W5iQZYbv8hEAiVSTZHOTyh7A3-h077EtVrPROWpjDzK7P9cDx3Pr~xEYCJ5CwiUsStt4LlzW4UxxO51O7h0dybqTkGJT55gsZ6VbgW~mJtMue7zyTG8HitKK~gbQ6GeJbHwcSxWGw6La9TIOpYYA__" alt="Sơ đồ thửa đất" onerror="this.src='https://placehold.co/400x300?text=Loi+anh+so+do'"></div></div><div class="section-title">Hình ảnh Nội thất / Chi tiết</div><div class="image-grid interior-grid"><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/564ad66c-25ad-42aa-838f-42a7ffa4075f_1768487826058_fdc1133f.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=c-Y7Qip6XZCdI95ZPvkl3wwphCv22aHJScwgOE9nBGPxsPMiiGUx5IMNFAVueJUobOOiVwM~XN2gy2XoSN~Ma6YO5AVUhEtYTAi0D2kQ0oQhv9yDPF5iY2LOM0B2PW-6~jxoYMyXuGzOpcdzQlNx5KhtLsmtpVzZHy-5B-Caf9YTfs2V3wuQNnosc9Fi5EadlaT~SN07ZhYixiwoDrB8OAOk95sFjNxYhVs-wD2a6Oq0KRGfz1CvaRj5DCQi1s6u5ZPKZMqkyjdCFjcbQqmzQJIs8URm2V5zyx5pJkbJQsRa1JW7YeOGARq4A1nJKQTX~yu0DGLJU8SEx2v2TS6tLw__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/f8c00997-2cf2-42c9-b7f3-7fc1b13fe659_1768487826058_1e432767.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=qhumHhcWGxFyluuR2di4ep7u~5fGrr7mNEF9Cupw2IS9QlzWQmFzW1h4lztuhUKz7LGlkK1cSav~KnnaWRt~8h1O7JAXLfuzdNVoTTrVV3a0SFGBlHn9MuRMmf7gryfWcoVhojZthEj2DcLSn8W9F1EEPn07KCON~BPZsWs2X-TF1juePG8T8-jOOEZcyiLmaoAgdn864Kz0rZTkBJ0cn2WOK5O4u2zWuCCCQwv18jEF-Zhl8k4VzGrxUPnVXEHTFcERSkPbx-fkVuLLGBBDRFloXNvFUKNzzmmzdBVUBmE0qSe5nHF1Co8H4-qIpf9DSa1qcqdvglsUhsXFn-LCkw__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/f50cfa46-8094-4cc5-9542-60032a6c248d_1768487826058_3770d4d8.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=NTAFSbkNY-awA3gCGfaEXCmJ3sdg7iigbV6Es1aeo-1zym8RyKNFbWrcXWsU7hHLYJi7eVKspqAPSH88OHN4XXCORnd1BwNbrVaAyE7Rqx8H8CSoDjhM-rSGCue4UUTw9FseolMa2-6rIj0LN7MrSyH9HTLv-2czjF~ZXfXGvupgFQUMLIyHFWxTnk8~KI2EPUNR5SNP2N0EbuAIYhHAuJEPfvN0Mm8nuEkBtYc5mzimfbX65W8JcDJa0Huc5-UuQEWOdZ-XUscGsObcv3kjOG9s0709cesFPkxtMEXcEwtkhIE-0EFALBE8aoZxnj-veNwVlEdtzUDnovFyC4XSSg__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/757b842c-1178-4c81-afca-fe7ca664d721_1768487826058_ccac89fd.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=PBc3gM9Tvl658dX8KP7Ly2TuTm92LQTVLO39dvC6w7m1YPx~uKRgz~1-kKS1GhA~LSt3o8W0kNqH3HU-dXWYGAJ1-XMZUsXrOp-qC0p3cQpXG96WFDS0r~5MIMxXGOqlzEkHr9SYEw4mmrtKb~YqZ6SSF1dec~402PBgurLPespICZ7UxwHM35fiyQa2dPj8MsQmol3eKlGACMApts0dkyxluugH2lN8C0eu5DzbHwLHBGAlBjBzgYTtlrXtqPdO1-mdTDbSntDM78UuLjdyRlbszUpxyVcefY0CLWOu1igpfCkI4nO4I0IZnVHWCz7T6G24sgAFe18sgkmVWrjDjQ__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/69f5f4fc-d3c7-4b89-9f09-351fc350a0e3_1768487826058_30d19169.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=eq1gMfMGPnb9-ph5SlSpgFtxKZTKknUEqbFPNlOA-oU6tISbmxxYB2GMUYZX9lxUYPQ8qG9VboQrZ0Qv4ibIbsJ5WKS-kGvK-WHipp2zzDZKfBJ~zGp4R~QtSh79PDCevY4u7cRlCajYAAhQe2KD3IR5b9-76OpAQHeNf0aT13omLIu6AD1ePvMyCTrJwJIXU6aWT7CK9Fze2qAN9g-PG7BZNwOOnNZNnc3lOapDa82xShmtzgeEJCzq169anttRDEg8B0rdF8AC~kWbAHf~Tm0kgE609GgzHGmaLo2HGPmfuSplzgP3ULz16RzD59kXbJ~llZNdbhAqXwnaJWqOUw__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/60845e95-8eb9-46d4-92d3-22b13ebfc37b_1768487826058_535f2203.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=vSh9dwl06blKI3Ljtz0p5pl5yz-HQsRDxK59igRnqWm5VTdRmfQUk3NepOwR0vrUyHKVDGCPJUQR97pVuwRIqentsA9w48jYJ3nDLRV~XLceGqqcYBsCWCpcepG9iGKFrxjtbU-UHBVg3Tch9MIUvUMcWxWXK7f65tLHmcxVc-Ggi~2FwcdRwzGjZ2HQlOjqK8xv2QioJeH6-ygp0QGVSF~x7~pgvJ8QN9g~5PjhbIQmfHIZZ2OpfTtA3FVtcJJnJktOUBcV-8E43UC9A-ufnQlK3VJN6bZZLwHjJ4SVh6GY7zCYGmMvngNUC5tm2IVZRZmNmmntoNLrDqw08n2sNg__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/73db5b9c-fee3-4be4-b070-5b1f0faf3267_1768487826058_95030f36.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=F9~2KAeJnlKxfkEapDpRPGF441UQ2fpkqoxtgUHtS8hpvpi3HfdxrgdKaMY4xu-kKSJU-nMwWaxuxQKi7IOjypzDr9cFXFKCSsCwi4J45VJADhASKh7I0rm4xakGZYqx~RfVZIQATSUVECSLLSHT7Bp~dRB-gv-LGX0BZtxdfIfwkOlPLnM5zvxQJX3ufghF5WDwbugZGToh1KDJ-EslCN1Wzf7kXrZzitJEIs1WKA9UbqpXFisj-ZcYrCM8Rhl~s~mGSTFFj9dVjLp081XshwLe2snWZyOkom9XIqY3L-8GB1cf5s2pzhBbQUBDfjFhUU4OyvietLymh3IE0vYMVA__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/9628b568-b6b5-49da-8e29-a43b97d28d2e_1768487826058_89b6cbd9.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=nGVN4EzJ5BubuYsyqxTOZR2uRxiN~f3gkAPq~ClJ17Qgo~hywKY3k3FHxRLQhuPjaaQZcmDoQXSX25VnsdxmvePqotJ~8dgyRH5JlgbjDMFwTF3D-Uyl6HDsy8ifMtKJ7cy8p0yTHaSvYP5qAY5WO5Bb4tbYsil5SELMB4gGR182d68~d4Cr62XnFUu-cTF~juo~9KTvPRK5wRTyMbKvAZL33TMxtU5yXk0lw46V0fnTMvu99mX0gWDG1i5jIoFgP2wNVaxR6vy9HayR4aoNEUr9e85dGqxjmc4wK7TopER5GAmdBOxPJ2X7TP0pTKY4W~CXdBrp0~hqJcw~1eXldw__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/53dfcc27-d627-4910-ac11-2bfcecf94364_1768487826058_678ad7c8.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=TnwYeH1tc8t9MgClzHU0lAZIH-PfkEkCwamxYgLa-1zAQ7ueyPSIAy40lNiHGJKE6HNHVfsqUThKp1JfZwBaTxtClZzxcdV~9NFSeh07MzKRLCdlxG3TIHw-cqk1Gg1Yc0ykiZquHahm~UR0hu054fYdhiYzFUT~sIPxvjlYL1TWx6E-ERZzHVMCc4fJn44TOhM4ZE4p9bX8iqgyrAg6B9mt0sE9d0HIE9KhQpKkFrR-INHdMVfWEvMSIZ867t4stArCfoEbRf1vMS6kDeAfryp8kg3z90y6IcJx0DYNwtSKEpsX8E1nsNhYNNHTCJimyHqTDCcQtuyIO7tkUdTqlQ__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/e2c82f77-5c09-422e-bf77-d1f563506acd_1768487826058_d2c5d273.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=sCRZU9RV7h0RnfoKvKyduxFYFNvnEfP8gZ6hcr53lmJOkxJ1nHzJaHxrNW3WtKPwoL1-~7QGxQP1~tswPoXftIxfCCXA9MVhKbrW6TcRPrn-GZ9SO-ujOk1BZHqQiIUgHgxW3b2fIkiuZc6LtUFOG1~ZVbERJBK17jYzhz98xfO-ajlj8GSJJTAmhv9-tscwAY53Wf-E68rlivj3eEmN210dxXQayjKCwAQFETlQtv~H-PK5jOTFne5rjADzJbtv9GvOWBx4XDMv4kCdXTRT0sVLO54wIhJ1-J~hn2qYTceo-AJAfYmtkQi8~jvd1C1Mp-KzIdFIlosTfQAuLK3GRg__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/e342bcf6-b9f4-4a0e-b9e3-4cc0972a3738_1768487826058_fd52a67a.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=pJANard2~AFN2PsO1JqNS4s62Pyb7BdlpKromc0tAaU6CFX-GoH6ZnoncHMjL-vOWIG2brNjvsUEz6O2O~~Ckw2ihF3~tCy6CquWmN9uiZgrF73GzwGzT71t7QsSJMc0-igjJQJvDahq88e9RD2JRQLtsFyZLCt9Mb2a~k1L90bXidHp6ke23l5uIM2tXeb-Jakosla3CESgmMqEqU9Kp~dBkp2PvKb5Q9ivk4rYA1gY9dcUXiR0ozseIzz~sYQqeOF19NAalOIAU1ylwJc9Ejb7WYity6I800cDo3jxvZHB~omPUs31cUtDusZ0CweUSktPjRgiTENnmkU6LzrxrA__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/e2c15106-5d64-4afe-89c4-d7fd93dee240_1768487826058_0b050fc1.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=ijOMO5BQyL7usGkdQcDX4YIf6HMhVWeDUmdXsHXsYV~7jWyHZwPVmgm2W8qU2wyJ5U6wWW0uF62Ip0Jz6pdB~DV41vYAkEubAZC6Xw6xd3wVT3iyXih4XNpAulb79wmh-ZYZoyrt6KFgLJdiVUnU0ri19RnWSVfBrKTWMaf53zA1JSUfSEXx9G51y3mS48lenvACfL170HNno7xaG9Fr1Vr8epXQbQ1ClxIT-vrIlXAozJoKQbHjF3CsKHWZ9KnQb3oSfeGBF6F5117JkkJsLtTjGriez0c7LqTArqjFxUViaTRzxoGTUoZQSXoMj38JqFWGwRv9tJrhe-uVz5nzZw__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/8844f731-779d-4f9e-879b-eb0eeb9c74e2_1768487826058_f86ca1c5.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=EuFpOnVzauNw-NDzj3XIHxbt5NqopbqvRICbgoN0CuzlX1wJlp0ZErh4thz4lqUMyRZctbNP0UeACxL1dYv5VGa9WYW2nnnhXoDGZo~NjW3GepyhRww0f~BVKERHrum3UGIoS9MG~5xkJ~e9guEtgmIyCCspvbZFEwQGWH8sAe~CpGXbm5k4MKBohxyXo-12BrxK3komx3bEvKtGjGlo9j59HOlsGa6m1HSJqDP3Tmy1BTNpcKyLqsc2iYOHa0Vh-miR-mFub0SB9LiisPJbfln6UrpWVptDAe26InAGMwOOW0fnYQWUlqUqPd3L5aah7bg1tynO6u7evtVZDeNsRA__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div><div class="image-wrapper"><img src="https://dms3amyi97gvv.cloudfront.net/Property/a26f8f90-14f9-4677-9183-42f34192dd59_1768487826058_cf2f8be0.jpeg?Expires=1781194540&Key-Pair-Id=KX5HYW72PVJI2&Signature=HXEB5KlKHVohducvZe0f2UvpD8k-I28XCG-KCtGit3CuNtlITI~oMVC6nmb7JkmbV~nO7qGi8HI9Q1fl1l5F41CMzt00c9LoFapAicb~XWm44~mi67tsFdjfjJ0XEcLA7IyjNBl1mgLPJeTOFiJZiotTViFaOoU8iacvHtIGdkCAdQ2DLPqokJ9npFUA0sCL8kUtPoqFYzDuMcE~mtcmeF7Ofl0C2wTSOmbnO8urNDt2yOwYyI2Ah~x6rj4fo00wYF3Uyxy36iKNwkGZnPOE~TPSk2u4RHgsOV19GicsDia3BiKnrizO0k2gybX9Y~Npcl0PC2h0mqEguVdrRqC7kQ__" alt="Ảnh nội thất" onerror="this.src='https://placehold.co/400x300?text=Loi+hinh+anh'"></div></div>
+        </div>
+    </div>
+</body>
+</html>

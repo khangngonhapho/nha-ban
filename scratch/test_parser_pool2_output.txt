@@ -1,0 +1,51 @@
+=== Parsed Root Fields ===
+tk_id: 4f92db9e-de71-4df3-91f6-cc198e84d1d3
+code: TKQLMB8Q
+isSigned: True
+status: qualified
+commissionAgent: None
+ownerSideUserId: bfee5234-3121-4a6f-aef3-56e5c32ff842
+certificateSeries: AA02117649
+latitude: 10.79647240413559
+longitude: 106.6647604107857
+placeName: 15, 1 Phạm Văn Hai, Tân Sơn Hòa, Hồ Chí Minh, Việt Nam
+streetName: phạm văn hai
+bedrooms: None
+restrooms: None
+balconies: None
+sidewalk: None
+behindOpenSpace: None
+sideOpenSpace: None
+minimumRoadWidth: 5
+createdAt: None
+updatedAt: 2026-06-01T05:57:57.439Z
+createdBy: bfee5234-3121-4a6f-aef3-56e5c32ff842
+updatedBy: bfee5234-3121-4a6f-aef3-56e5c32ff842
+commissionType: percentage
+commissionValue: 3
+isDispute: False
+createdAtSigned: 2026-06-01T05:57:55.057Z
+CCCD_Dau_Chu: 001087022988
+Kenh_tin_TK: Thiên Khôi
+The_tags_TK: Mới
+
+=== Parsed Criteria Columns ===
+Criteria_Tiem_nang_Rui_ro: Chính chủ
+Criteria_Duong_truoc_nha: Ngõ 2 ô tô tránh (5 - 7m)
+Criteria_Loai_BDS: Nhà trong ngõ, ngách, hẻm
+Criteria_Giay_to_phap_ly: Giấy CNQSDD - Sổ đỏ - Sổ hồng
+Criteria_Hinh_dang_dat: Vuông
+Criteria_Tinh_trang_xay_dung: Xây 10-15 năm
+Criteria_Cau_truc_nha: Nhà tường chịu lực
+Criteria_Noi_that: Nội thất cơ bản
+Criteria_Thang_may: 
+Criteria_Loai_ngo: Ngõ thông
+Criteria_Vi_tri_tinh_thue: Vị trí số 2
+Criteria_Mat_thoang: Chỉ có 1 mặt tiền
+Criteria_Khoang_cach_bai_do_xe: Dưới 100m
+Criteria_Kinh_doanh_Dong_tien: Khu vực thuần ở, Khu vực kinh doanh nhỏ, Khu vực kinh doanh văn phòng
+Criteria_Tien_ich: Gần trường học mầm non, Gần trường học cấp 1, Gần trường học cấp 2, Gần trường học cấp 3, Gần trường Đại học, Gần công viên, Gần bệnh viện, Khu dân trí cao, Gần trung tâm thương mại, khu đô thị, Gần chợ
+Criteria_Phong_thuy: Không, Không có
+Criteria_Huong_nha: 
+Criteria_Vi_tri_trong_ngo: 
+Criteria_Khoang_cach_duong_oto: 

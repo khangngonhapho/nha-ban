@@ -1,0 +1,41 @@
+Line 3734: <div class="filter-panel" id="filterPanel">
+    3734:     <div class="filter-panel" id="filterPanel">
+    3735:       <!-- Mobile Filter Header (US-076.3) -->
+    3736:       <div class="mobile-filter-header">
+    3737:         <button class="mobile-filter-back-btn" onclick="toggleFilter()">
+    3738:           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    3739:             <polyline points="15 18 9 12 15 6"></polyline>
+    3740:           </svg>
+    3741:         </button>
+    3742:         <span class="mobile-filter-title">Tìm kiếm</span>
+    3743:       </div>
+    3744: 
+    3745:       <div class="filter-scroll-content">
+    3746: 
+    3747:       <!-- TIÊU CHÍ BĐS Checklist (US-076.3) -->
+    3748:       <div class="criteria-section">
+    3749:         <div class="criteria-title">TIÊU CHÍ BĐS *</div>
+    3750:         <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
+    3751:         <div class="criteria-grid"></div>
+    3752:       </div>
+    3753: 
+    3754:       <div class="filter-divider"></div>
+    3755: 
+    3756:       <div class="filter-section-lbl" id="districtLbl" style="margin-top:4px;">Quận / TP</div>
+    3757:       <div class="multiselect-container" id="districtMulti">
+    3758:         <div class="multiselect-trigger" onclick="toggleMultiselect('districtMulti')">
+    3759:           <span class="multiselect-placeholder" id="districtPlaceholder">Tất cả</span>
+    3760:           <svg class="multiselect-arrow" viewBox="0 0 24 24">
+    3761:             <polyline points="6 9 12 15 18 9"></polyline>
+    3762:           </svg>
+    3763:         </div>
+    3764:         <div class="multiselect-options" id="districtOptions"></div>
+    3765:       </div>
+    3766: 
+    3767:       <div class="filter-section-lbl" id="wardLbl" style="display:none">Phường</div>
+    3768:       <div class="multiselect-container" id="wardMulti" style="display:none">
+    3769:         <div class="multiselect-trigger" onclick="toggleMultiselect('wardMulti')">
+    3770:           <span class="multiselect-placeholder" id="wardPlaceholder">Tất cả</span>
+    3771:           <svg class="multiselect-arrow" viewBox="0 0 24 24">
+    3772:             <polyline points="6 9 12 15 18 9"></polyline>
+    3773:           </svg>

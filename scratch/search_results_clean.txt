@@ -1,0 +1,154 @@
+
+=== MATCHES IN index.html ===
+Line 3343 (matched ['tieuDe']): const editTieuDe = document.getElementById('editTieuDeBds');
+Line 3347 (matched ['tieu_de', 'tieu_de_public', 'tieuDe']): if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
+Line 3351 (matched ['tieuDe']): if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
+Line 3596 (matched ['tieu_de', 'tieu_de_public']): raw_tieu_de_public: row[56] || '',
+Line 4055 (matched ['tieu_de', 'tieu_de_public', 'Tiêu đề Public']): p.raw_tieu_de_public = poolRow[56] || '';    // Tiêu đề Public - Index 56, Column BE
+Line 4080 (matched ['tieu_de', 'tieu_de_public']): p.raw_tieu_de_public = '';
+Line 5390 (matched ['Tiêu đề Public', 'tieuDe']): <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+Line 5393 (matched ['tieu_de', 'tieu_de_public', 'tieuDe']): <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.... [TRUNCATED]
+Line 5401 (matched ['Tiêu đề Public']): ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; bor... [TRUNCATED]
+Line 5489 (matched ['tieu_de', 'tieu_de_public', 'Tiêu đề Public']): <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.isFromPoolOnly ? (p.raw_tieu_de_public || generateAutoTitle(p)) : (p.t || p.raw_tieu_de_public ||... [TRUNCATED]
+Line 5547 (matched ['tieu_de', 'tieu_de_public', 'Tiêu đề Public']): <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
+Line 5662 (matched ['tieuDe']): const editTieuDe = document.getElementById('editTieuDeBds');
+Line 5667 (matched ['tieuDe']): const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
+Line 5669 (matched ['tieuDe']): const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
+Line 5673 (matched ['tieuDe']): const displayTieuDeVal = tieuDeVal ? (String(tieuDeVal).includes(p.gia + ' tỷ') ? tieuDeVal : `${tieuDeVal} ${p.gia} tỷ`) : '';
+Line 5702 (matched ['tieuDe']): if (previewTitle) previewTitle.textContent = displayTieuDeVal;
+Line 5713 (matched ['Tiêu đề Public']): poolSaveNotice.innerHTML = '⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡';
+Line 5724 (matched ['Tiêu đề Public', 'tieuDe']): if (previewTitle) previewTitle.textContent = displayTieuDeVal || 'Chưa có tiêu đề public.';
+Line 5730 (matched ['tieuDe']): if (editTieuDe && editMoTa) {
+Line 5731 (matched ['tieuDe']): editTieuDe.addEventListener('input', updateLivePreview);
+Line 7388 (matched ['tieu_de', 'tieu_de_public']): raw_tieu_de_public: row[56] || '',
+Line 7680 (matched ['tieu_de']): matchedRow[55],                // 4: tieu_de (Cột E)
+Line 7715 (matched ['Tiêu đề BDS']): "",                            // 39: Tiêu đề BDS (Cột AN)
+Line 8377 (matched ['tieuDe']): const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+Line 8540 (matched ['tieuDe']): p.original_row_data[39] = tieuDeBds;
+Line 8712 (matched ['tieuDe']): const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+Line 8878 (matched ['tieu_de', 'tieuDe']): tieuDeBds || matchedRow[55],   // 4: tieu_de (Cột E)
+Line 8913 (matched ['Tiêu đề BDS', 'tieuDe']): tieuDeBds,                     // 39: Tiêu đề BDS (Cột AN)
+
+=== MATCHES IN api/index.js ===
+
+=== MATCHES IN curator_server.py ===
+Line 162 (matched ['tieu_de', 'tieu_de_public']): "Tieu_de_Public": ["Tieu_de_Public", "Ti_u____Public"],
+Line 261 (matched ['Tiêu đề Public', 'tieuDe']): "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH TIÊU ĐỀ PUBLIC (tieuDe):\n"
+Line 318 (matched ['tieuDe']): "  \"tieuDe\": \"Nội dung tiêu đề\",\n"
+Line 354 (matched ['tieu_de']): def trim_tieu_de_bds(tieu_de):
+Line 355 (matched ['tieu_de']): if not tieu_de:
+Line 357 (matched ['tieu_de']): tieu_de = tieu_de.strip()
+Line 359 (matched ['tieu_de']): idx_bar = tieu_de.find(" | ")
+Line 362 (matched ['tieu_de']): if tieu_de.upper().startswith("HXH ") and idx_bar != -1:
+Line 363 (matched ['tieu_de']): tech_part = tieu_de[:idx_bar]
+Line 364 (matched ['tieu_de']): usp_part = tieu_de[idx_bar + 3:].strip()
+Line 383 (matched ['tieu_de']): tieu_de = tech_part
+Line 387 (matched ['tieu_de']): tieu_de = tech_part + " | " + cleaned_usp
+Line 388 (matched ['tieu_de']): idx_bar = tieu_de.find(" | ")
+Line 392 (matched ['tieu_de']): tech_part = tieu_de[:idx_bar]
+Line 393 (matched ['tieu_de']): usp_part = tieu_de[idx_bar + 3:].strip()
+Line 396 (matched ['tieu_de']): tieu_de = tech_part + " | " + usp_part
+Line 399 (matched ['tieu_de']): if len(tieu_de) <= 99:
+Line 400 (matched ['tieu_de']): return tieu_de
+Line 403 (matched ['tieu_de']): tech_part = tieu_de[:idx_bar]
+Line 404 (matched ['tieu_de']): usp_part = tieu_de[idx_bar + 3:].strip()
+Line 410 (matched ['tieu_de']): tieu_de = tech_part + " | " + usp_part[:allowed_usp_len].strip()
+Line 412 (matched ['tieu_de']): tieu_de = tieu_de[:99].strip()
+Line 414 (matched ['tieu_de']): tieu_de = tieu_de[:99].strip()
+Line 416 (matched ['tieu_de']): return tieu_de
+Line 1034 (matched ['tieu_de', 'Tiêu đề Public']): col_tieu_de = get_safe_col_name("Tiêu đề Public")
+Line 1042 (matched ['tieu_de', 'tieu_de_public']): tieu_de_public = row[col_tieu_de] if col_tieu_de in row.keys() else ""
+Line 1056 (matched ['tieu_de', 'tieu_de_public']): update_fields[col_tieu_de] = tieu_de_public or ""
+Line 1201 (matched ['tieu_de', 'tieu_de_public']): "tieu_de_public": title,
+Line 1290 (matched ['tieu_de']): tieu_de_raw = ""
+Line 1291 (matched ['tieu_de', 'tieu_de_public', 'tieuDe', 'tieuDePublic']): for k in ["tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "tieu de", "Tiêu đề", "tiêu đề"]:
+Line 1293 (matched ['tieu_de']): tieu_de_raw = ai_data[k]
+Line 1295 (matched ['tieu_de']): if not tieu_de_raw:
+Line 1296 (matched ['tieu_de']): tieu_de_raw = next((v for k, v in ai_data.items() if "tieu" in k.lower()), "")
+Line 1314 (matched ['tieu_de']): tieu_de_clean = trim_tieu_de_bds(tieu_de_raw)
+Line 1316 (matched ['tieu_de', 'tieu_de_public']): "tieu_de_public": tieu_de_clean,
+Line 1420 (matched ['tieu_de']): tieu_de_raw = ""
+Line 1421 (matched ['tieu_de', 'tieu_de_public', 'tieuDe', 'tieuDePublic']): for k in ["tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "tieu de", "Tiêu đề", "tiêu đề"]:
+Line 1423 (matched ['tieu_de']): tieu_de_raw = ai_data[k]
+Line 1425 (matched ['tieu_de']): if not tieu_de_raw:
+Line 1426 (matched ['tieu_de']): tieu_de_raw = next((v for k, v in ai_data.items() if "tieu" in k.lower()), "")
+Line 1444 (matched ['tieu_de']): tieu_de_clean = trim_tieu_de_bds(tieu_de_raw)
+Line 1448 (matched ['tieu_de', 'tieu_de_public']): "tieu_de_public": tieu_de_clean,
+Line 1827 (matched ['tieu_de', 'tieu_de_public', 'Tiêu đề Public']): "Tiêu đề Public": trim_tieu_de_bds(data.get("tieu_de_public")),
+Line 2210 (matched ['Tiêu đề Public']): "Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Giá Public",
+Line 2434 (matched ['Tiêu đề Public']): elif header in ["Tiêu đề Public", "Mô tả Public", "Last Sync"]:
+
+=== MATCHES IN pool_backend_v3.gs ===
+Line 119 (matched ['Tiêu đề Public']): "",                 // Tiêu đề Public (Admin tự điền)
+Line 166 (matched ['Tiêu đề Public']): var colsToKeep = ["Tiêu đề Public", "Mô tả Public", "Giá Public", "Phường cũ (AI)", "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)", "System ID", "Trạng thái Public", "Duyệt Public"];
+Line 447 (matched ['tieu_de', 'Tiêu đề Public']): getVal("Tiêu đề Public"),    // 4: tieu_de (Cột E)
+Line 482 (matched ['Tiêu đề BDS']): "",                          // 39: Tiêu đề BDS (Cột AN) - Rỗng mặc định để Admin tự biên tập hoặc dùng AI SEO
+Line 514 (matched ['Tiêu đề Public']): // 1: Cú pháp (Cột B), 2: Note (Cột C), 4: Tiêu đề Public (Cột E),
+Line 517 (matched ['Tiêu đề BDS']): // 20-29: Ảnh 1 đến Ảnh 10 (Cột U đến AD), 39: Tiêu đề BDS (Cột AN), 40: Đăng BDS (Cột AO)
+Line 580 (matched ['Tiêu đề Public']): "Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Giá Public",
+Line 671 (matched ['tieu_de', 'Tiêu đề Public']): * US-030: Chỉ đồng bộ cột "Tiêu đề Public" sang cột "tieu_de" (Cột E) bên Source hàng loạt theo dòng chọn.
+Line 694 (matched ['Tiêu đề Public', 'tieuDe']): var tieuDePoolCol = headers.indexOf("Tiêu đề Public");
+Line 696 (matched ['tieuDe']): if (sysIdPoolCol === -1 || tieuDePoolCol === -1) {
+Line 697 (matched ['Tiêu đề Public']): SpreadsheetApp.getUi().alert("Lỗi: Không tìm thấy cột 'System ID' hoặc 'Tiêu đề Public' trong Pool!");
+Line 724 (matched ['tieuDe']): var tieuDeVal = row[tieuDePoolCol].toString().trim();
+Line 726 (matched ['tieuDe']): if (!sysId || !tieuDeVal) continue;
+Line 731 (matched ['tieu_de']): // Ghi duy nhất cột E (Cột thứ 5 - tieu_de) bên Source
+Line 732 (matched ['tieuDe']): sourceSheet.getRange(foundRow, 5).setValue(tieuDeVal);
+Line 1005 (matched ['Tiêu đề Public', 'tieuDe']): phuongCuOut: getIdx("Phường cũ (AI)"), tieuDeOut: getIdx("Tiêu đề Public"), moTaOut: getIdx("Mô tả Public")
+Line 1008 (matched ['tieuDe']): if (cols.tieuDeOut === -1 || cols.moTaOut === -1 || cols.phuongCuOut === -1) {
+Line 1009 (matched ['Tiêu đề Public']): SpreadsheetApp.getUi().alert("Không tìm thấy đủ các cột: Tiêu đề Public, Mô tả Public, Phường cũ (AI).");
+Line 1026 (matched ['Tiêu đề Public', 'tieuDe']): "🚨 CÁC QUY TẮC BẮT BUỘC KHI SINH TIÊU ĐỀ PUBLIC (tieuDe):\n" +
+Line 1083 (matched ['tieuDe']): "  \"tieuDe\": \"Nội dung tiêu đề\",\n" +
+Line 1092 (matched ['tieuDe']): if (rowData[cols.tieuDeOut] && rowData[cols.moTaOut] && rowData[cols.phuongCuOut]) {
+Line 1140 (matched ['tieuDe']): if (resultObj.tieuDe && !rowData[cols.tieuDeOut]) {
+Line 1142 (matched ['tieuDe']): var cleanTitle = trimTieuDeBds(resultObj.tieuDe);
+Line 1143 (matched ['tieuDe']): sheet.getRange(startRow + i, cols.tieuDeOut + 1).setValue(cleanTitle);
+Line 1158 (matched ['tieuDe']): function trimTieuDeBds(tieuDe) {
+Line 1159 (matched ['tieuDe']): if (!tieuDe) return "";
+Line 1160 (matched ['tieuDe']): tieuDe = tieuDe.trim();
+Line 1162 (matched ['tieuDe']): var idxBar = tieuDe.indexOf(" | ");
+Line 1165 (matched ['tieuDe']): if (tieuDe.startsWith("HXH ") && idxBar !== -1) {
+Line 1166 (matched ['tieuDe']): var techPart = tieuDe.substring(0, idxBar);
+Line 1167 (matched ['tieuDe']): var uspPart = tieuDe.substring(idxBar + 3).trim();
+Line 1187 (matched ['tieuDe']): tieuDe = techPart;
+Line 1191 (matched ['tieuDe']): tieuDe = techPart + " | " + cleanUsp;
+Line 1192 (matched ['tieuDe']): idxBar = tieuDe.indexOf(" | ");
+Line 1198 (matched ['tieuDe']): var techPart = tieuDe.substring(0, idxBar);
+Line 1199 (matched ['tieuDe']): var uspPart = tieuDe.substring(idxBar + 3).trim();
+Line 1203 (matched ['tieuDe']): tieuDe = techPart + " | " + uspPart;
+Line 1207 (matched ['tieuDe']): if (tieuDe.length <= 99) {
+Line 1208 (matched ['tieuDe']): return tieuDe;
+Line 1212 (matched ['tieuDe']): var techPart = tieuDe.substring(0, idxBar);
+Line 1213 (matched ['tieuDe']): var uspPart = tieuDe.substring(idxBar + 3).trim();
+Line 1220 (matched ['tieuDe']): tieuDe = techPart + " | " + uspPart.substring(0, allowedUspLen).trim();
+Line 1222 (matched ['tieuDe']): tieuDe = tieuDe.substring(0, 99).trim();
+Line 1225 (matched ['tieuDe']): tieuDe = tieuDe.substring(0, 99).trim();
+Line 1227 (matched ['tieuDe']): return tieuDe;
+
+=== MATCHES IN SOURCE_OF_TRUTH.md ===
+Line 141 (matched ['tieu_de']): | B | `r.c[1]` | `t` | `tieu_de` | E (index 4) | Tiêu đề hiển thị |
+Line 167 (matched ['Tiêu đề BDS', 'tieu_de']): | AK | `r.c[36]` | `tieu_de_bds` | `Tiêu đề BDS` | AN (index 39) | Tiêu đề BDS AI |
+Line 463 (matched ['Tiêu đề Public']): *   **V5 Scrubber & Copy Fallback UI:** Tích hợp bộ dọn dẹp chống trùng lặp hẻm/xe hơi trên tiêu đề public và giao diện copy mảng 79 cột tab-separated nếu chưa cấu hình `credentials.json`.
+Line 536 (matched ['tieu_de', 'tieuDe']): - Tích hợp bộ dọn dẹp hậu xử lý (post-processing scrubber) trong cả JavaScript (`trimTieuDeBds`) và Python (`trim_tieu_de_bds`).
+Line 738 (matched ['Tiêu đề BDS']): - [x] **US-025:** Cấu trúc Tiêu đề BDS AI mới cho batdongsan.com.vn (Bao gồm bộ dọn dẹp Scrubber chống trùng lặp)
+Line 739 (matched ['Tiêu đề BDS']): - [x] **US-026:** Giới hạn độ dài Tiêu đề BDS AI & Auto-Trimmer
+
+=== MATCHES IN docs/data_dictionary.md ===
+Line 38 (matched ['Tiêu đề Public']): | 54 | `Tiêu đề Public` | BB (index 53) | Tiêu đề tối ưu SEO sinh bởi AI | AI ghi vào đây sau khi curation. Độ dài < 85 ký tự. |
+
+=== MATCHES IN Schema Sheet Source.md ===
+Line 19 (matched ['tieu_de', 'Tiêu đề Public']): | 5 | `tieu_de` | text | ✅ | Tiêu đề Public phục vụ website tìm nhà. |
+Line 45 (matched ['Tiêu đề BDS']): | 40 | `Tiêu đề BDS` | text | ⬜ | **[NEW]** Tiêu đề tin đăng ngắn gọn dưới 85 ký tự (Admin viết tay hoặc dùng AI SEO Tools). |
+Line 57 (matched ['Tiêu đề Public']): - Tiêu đề Public (Cột 5)
+Line 66 (matched ['Tiêu đề BDS']): - **Tiêu đề BDS** (Cột 40, index 39)
+
+=== MATCHES IN Schema Sheet Public.md ===
+Line 21 (matched ['tieu_de']): | 2 | `tieu_de` | `r.c[1]` | text | ✅ | E (index 4) | Tiêu đề ngắn gọn 1 dòng. KHÔNG chứa số nhà thật. |
+Line 47 (matched ['Tiêu đề BDS']): | 37 | `Tiêu đề BDS` | `r.c[36]` | text | ⬜ | AN (index 39) | Tiêu đề BDS AI phục vụ Bot đăng tin. |
+Line 56 (matched ['tieu_de']): tieu_de         : Tô Hiến Thành (gần Trường Sơn) 50.2m2 5 tầng 4x13 - 12.9 tỷ Hẻm xe tải
+
+=== MATCHES IN Schema Sheet Raw.md ===
+Line 72 (matched ['tieu_de']): | 29 | `tieu_de` | text | ✅ | Tiêu đề ngắn gọn 1 dòng cho Public. KHÔNG có số nhà thật. | ✅ |
+Line 94 (matched ['tieu_de']): | `tieu_de`          | `tieu_de`          | copy nguyên (đã viết lại sẵn ở Raw) |
+Line 152 (matched ['tieu_de']): tieu_de           : Tô Hiến Thành (gần Trường Sơn) 50.2m2 5 tầng 4x13 - 12.9 tỷ Hẻm xe tải
+Line 167 (matched ['tieu_de']): - **`tieu_de` và `mo_ta` không được chứa `so_nha_that` hoặc `ten_duong_that`** — script kiểm tra trước khi sync sang Public.

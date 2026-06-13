@@ -1,0 +1,16 @@
+8: Lưu trữ đệm SQLite 76 cột đồng nhất với Pool Sheet
+65: # 76 CỘT NGHIỆP VỤ ĐỒNG NHẤT VỚI POOL SHEET SCHEMA
+86: "Last Crawl", "Last Sync"
+666:                     # Gom ảnh nội thất và sơ đồ lưu thô (GĐ2 sẽ di cư lên Google Drive/Cloudinary)
+1083: # LUỒNG 2: TẢI ẢNH & UPLOAD GOOGLE DRIVE CHẠY NGẦM
+1087:     print("\n[+] KHỞI ĐỘNG LUỒNG DI CƯ HÌNH ẢNH: GOOGLE DRIVE UPLOAD (Throttled Mode)")
+1112:             # Tạo thư mục con và upload qua API Google Drive thực tế (setup credentials.json sau)
+1119:                 # Upload lên Google Drive
+1120:                 # file_id = upload_to_drive(drive_service, img_data, f"img_{idx+1}.jpg", folder_id)
+1124:                 direct_link = f"https://lh3.googleusercontent.com/d/{mock_file_id}"
+1138:             print(f"  => Hoàn thành {tk_id}: Đã đẩy {len(drive_links)} ảnh lên Google Drive và cập nhật SQLite status = 'raw_complete'.")
+1147:     print(f"\n[🏁 HOÀN TẤT] Đã di cư thành công ảnh của {migrated_count} căn lên Google Drive.")
+1248:     print("Do phiên đăng nhập bảo mật hoặc Google Chrome mã hóa App-Bound v20,")
+1286:     parser.add_argument("--action", type=str, required=True, choices=["crawl", "upload", "status"], help="Hành động: crawl (Cào text), upload (Up ảnh lên Drive), status (Xem trạng thái)")
+1305:     elif args.action == "upload":
+1327:         print(f"✅ Đã biên tập & xuất bản lên Sheets (status='published'): {published}")

@@ -1,0 +1,314 @@
+Line 7538:
+btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+          `;
+        } else {
+          actionsEl.innerHTML = `
+            <button class="dial-btn-item download-images-btn" onclick="downloadAllListingImages('${p.id}')" title="Tải toàn bộ ảnh" style="background:#2ecc71 !important; color:white !important; font-size:18px !important;">📥</button>
+            <button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+            <button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>
+          `;
+        }
+      } else {
+        activeDetailListing = null;
+        // Đóng menu nếu đang mở
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình danh sách chính
+        actionsEl.innerHTML = `
+          <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+          <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+          <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+            🔗
+            <span class="share-count" id="shareCount">0</span>
+          </button>
+        `;
+        updateShareUI();
+      }
+    }
+
+    // Xử lý hỏi Zalo thông minh
+    function askZalo(id, title) {
+      const msg = `Chào Khang Ngô Nhà Phố, tôi quan tâm căn nhà mã #${id}: ${title}. Tư vấn giúp tôi nhé!`;
+
+      // Cố gắng copy vào clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã copy mã sản phẩm -> bạn nhớ dán vào Zalo để gửi cho Khang nhé!');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
+    }
+
+    // Xử lý ẩn hiện Header khi cuộn trang (Nâng cấp: Cuộn nhanh/mạnh mới hiện menu)
+    let lastScrollY = window.scrollY;
+    let lastScrollTime = Date.now();
+    const headerEl = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      if (filterOpen) return; // Không đóng bộ lọc khi đang mở lọc (sửa lỗi iOS tự động cuộn khi mở bàn phím)
+      const currentScrollY = window.scrollY;
+      const currentScrollTime = Date.now();
+
+      if (currentScrollY < 120) {
+        headerEl.classList.remove('hide');
+        lastScrollY = currentScrollY;
+        lastScrollTime = currentScrollTime;
+        return;
+      }
+
+      const deltaY = lastScrollY - currentScrollY; // > 0 khi cuộn lên, < 0 khi cuộn xuống
+      const deltaTime = currentScrollTime - lastScrollTime;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Cuộn xuống: ẩn header và tự động đóng bộ lọc
+        headerEl.classList.add('hide');
+        closeFilter();
+ 
+================================================================================
+Line 7543:
+item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+            <button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>
+          `;
+        }
+      } else {
+        activeDetailListing = null;
+        // Đóng menu nếu đang mở
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình danh sách chính
+        actionsEl.innerHTML = `
+          <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+          <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+          <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+            🔗
+            <span class="share-count" id="shareCount">0</span>
+          </button>
+        `;
+        updateShareUI();
+      }
+    }
+
+    // Xử lý hỏi Zalo thông minh
+    function askZalo(id, title) {
+      const msg = `Chào Khang Ngô Nhà Phố, tôi quan tâm căn nhà mã #${id}: ${title}. Tư vấn giúp tôi nhé!`;
+
+      // Cố gắng copy vào clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã copy mã sản phẩm -> bạn nhớ dán vào Zalo để gửi cho Khang nhé!');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
+    }
+
+    // Xử lý ẩn hiện Header khi cuộn trang (Nâng cấp: Cuộn nhanh/mạnh mới hiện menu)
+    let lastScrollY = window.scrollY;
+    let lastScrollTime = Date.now();
+    const headerEl = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      if (filterOpen) return; // Không đóng bộ lọc khi đang mở lọc (sửa lỗi iOS tự động cuộn khi mở bàn phím)
+      const currentScrollY = window.scrollY;
+      const currentScrollTime = Date.now();
+
+      if (currentScrollY < 120) {
+        headerEl.classList.remove('hide');
+        lastScrollY = currentScrollY;
+        lastScrollTime = currentScrollTime;
+        return;
+      }
+
+      const deltaY = lastScrollY - currentScrollY; // > 0 khi cuộn lên, < 0 khi cuộn xuống
+      const deltaTime = currentScrollTime - lastScrollTime;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Cuộn xuống: ẩn header và tự động đóng bộ lọc
+        headerEl.classList.add('hide');
+        closeFilter();
+      } else if (deltaY > 10) {
+        // Cuộn lên: Chỉ hiện menu khi quét/vuốt lên cực kỳ nhanh và dứt khoát
+        // Bắt buộc deltaY > 10px để loại bỏ các vi-điều chỉnh (micro-jitter)
+        const velocity = deltaTime > 0 ? (deltaY / deltaTime) : 0;
+
+        // Ngưỡng dứt khoát: Vận tốc vuốt cực nhanh (velocity > 1.6 px/ms) HOẶC cuộn kéo lên cực lớn trong 1 lần (> 150px)
+        if (velocity > 1.6 || deltaY > 150) {
+          headerEl.classList.remove('hide');
+        }
+      }
+
+      lastScrollY = currentScrollY;
+      lastScrollTime = currentScrollTime;
+    }
+================================================================================
+Line 10561:
+      }, 300);
+      }, 3000);
+    };
+
+    window.saveSourceChanges = async function(id) {
+      const p = DATA.find(x => String(x.id) === String(id));
+      if (!p) {
+        showToast("Không tìm thấy thông tin căn nhà!", "error");
+        return;
+      }
+
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveSourceBtn') || document.getElementById('saveBtn');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '⌛';
+      }
+
+      try {
+        const note = document.getElementById('editNote').value.trim();
+        const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+        const moTaBds = document.getElementById('editMoTaBds').value.trim();
+        const huong = document.getElementById('editHuong').value;
+        const duong = document.getElementById('editDuong').value;
+        const danhGia = document.getElementById('editDanhGia').value;
+        const tinhTrang = document.getElementById('editTinhTrang').value;
+        const rongHem = p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
+        const soPn = document.getElementById('editSoPn').value.trim();
+        const soWc = document.getElementById('editSoWc').value.trim();
+        const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
+        const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
+
+        // Đọc dữ liệu hình ảnh được chọn từ form biên tập hình ảnh trực quan
+        const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
+        const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
+        const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+        const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+        const sodo2Url = document.getElementById('editSodo2Url').value.trim();
+        const sodo3Url = document.getElementById('editSodo3Url').value.trim();
+        const sodo4Url = document.getElementById('editSodo4Url').value.trim();
+        const sodo5Url = document.getElementById('editSodo5Url').value.trim();
+
+        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
+        
+        const isSodoUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          if (norm === '') return false;
+          return normSodos.includes(norm);
+        };
+
+        const normMatTien = normalizeImgUrl(customCoverUrl || p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : ''));
+        const isFacadeUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          return norm !== '' && norm === normMatTien;
+        };
+
+        // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
+        if (p.pool_row_data) {
+          const finalImages = window.getPublicImagesFromForm(p);
+          while (finalImages.length < 15) finalImages.push("");
+
+          // Pad original_row_data to 46 columns
+          while (p.original_row_data.length < 46) p.original_row_data.push("");
+
+          // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
+          for (let i = 0; i < 10; i++) 
+================================================================================
+Line 10916:
+rHTML = '💾';
+        }
+      }
+    };
+
+    window.saveNewListingFromPool = async function(systemId, btnElement) {
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
+        return;
+      }
+      
+      let oldText = "";
+      if (btnElement) {
+        oldText = btnElement.innerHTML;
+        btnElement.disabled = true;
+        btnElement.innerHTML = '⌛';
+      }
+      
+      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      
+      try {
+        // Step 1: Đọc Sheet Pool để lấy dòng gốc
+        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:CO`;
+        const poolRes = await fetch(poolUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!poolRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Pool (Mã: ${poolRes.status}).`);
+        }
+        
+        const poolData = await poolRes.json();
+        const rows = poolData.values || [];
+        rows.forEach(r => {
+          while (r.length < 93) r.push("");
+        });
+        
+        const matchedRow = rows.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+        if (!matchedRow) {
+          throw new Error("Không tìm thấy căn nhà này trong kho Pool hoặc không khớp System ID.");
+        }
+
+        const p = window.activeCurationListing;
+        if (p && p.pool_row_data) {
+          matchedRow[27] = p.pool_row_data[27] || "";
+          matchedRow[28] = p.pool_row_data[28] || "";
+          matchedRow[80] = p.pool_row_data[80] || "";
+          matchedRow[81] = p.pool_row_data[81] || "";
+          matchedRow[82] = p.pool_row_data[82] || "";
+          for (let c = 30; c <= 39; c++) matchedRow[c] = p.pool_row_data[c] || "";
+          for (let c = 40; c <= 54; c++) matchedRow[c] = p.pool_row_data[c] || "";
+          for (let c = 83; c <= 92; c++) matchedRow[c] = p.pool_row_data[c] || "";
+        }
+
+        // Đọc dữ liệu từ form trong modal
+        const note = document.getElementById('editNote').value.trim();
+        const maKhangNgo = document.getElementById('editMaKhangNgo').value.trim();
+        const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+        const moTaBds = document.getElementById('editMoTaBds').value.trim();
+        const huong = document.getElementById('editHuong').value;
+        const duong = document.getElementById('editDuong').value;
+        const danhGia = document.getElementById('editDanhGia').value;
+        const tinhTrang = document.getElementById('editTinhTrang').value;
+        const rongHem = matchedRow[59] || '';
+        const soPn = document.getElementById('editSoPn').value.trim();
+        const soWc = document.getElementById('editSoWc').value.trim();
+        const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
+        const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
+
+        if (!maKhangNgo) {
+          throw new Error("Vui lòng điền Mã Khang Ngô!");
+        }
+        
+        // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AT`;
+        const sourceRes = await fetch(sourceUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }
+================================================================================

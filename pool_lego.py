@@ -65,6 +65,9 @@ LISTINGS_V2_COLS = [
     "Link_Goc", "Last_Crawl", "Last_Sync"
 ]
 
+
+
+
 def remove_accents(input_str):
     """
     Khử toàn bộ dấu tiếng Việt từ chuỗi đầu vào.
@@ -111,6 +114,115 @@ def get_safe_col_name(header):
     cleaned = re.sub(r'_+', '_', cleaned)
     cleaned = cleaned.strip('_')
     return cleaned
+
+# ==================================================
+# POOL2 HEADERS DEFINITIONS
+# ==================================================
+
+# 19 cột tiêu chí Criteria_... tường minh
+EXPLICIT_CRITERIA_COLS = [
+    "Criteria_Tiem_nang_Rui_ro",
+    "Criteria_Duong_truoc_nha",
+    "Criteria_Loai_BDS",
+    "Criteria_Giay_to_phap_ly",
+    "Criteria_Hinh_dang_dat",
+    "Criteria_Tinh_trang_xay_dung",
+    "Criteria_Cau_truc_nha",
+    "Criteria_Noi_that",
+    "Criteria_Thang_may",
+    "Criteria_Loai_ngo",
+    "Criteria_Vi_tri_tinh_thue",
+    "Criteria_Mat_thoang",
+    "Criteria_Khoang_cach_bai_do_xe",
+    "Criteria_Kinh_doanh_Dong_tien",
+    "Criteria_Tien_ich",
+    "Criteria_Phong_thuy",
+    "Criteria_Huong_nha",
+    "Criteria_Vi_tri_trong_ngo",
+    "Criteria_Khoang_cach_duong_oto"
+]
+
+# Danh sách cột cho File 1 Raw (tab Listings)
+RAW_LISTINGS_HEADERS = [
+    "tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"
+] + [col for col in LISTINGS_V2_COLS if col not in ["tk_id", "status"]] + EXPLICIT_CRITERIA_COLS
+
+# Đảm bảo không trùng cột trong RAW_LISTINGS_HEADERS và chuẩn hóa tên cột SQLite
+_seen = set()
+_raw_dedup = []
+for _col in RAW_LISTINGS_HEADERS:
+    _name = get_safe_col_name(_col)
+    if _name not in _seen:
+        _seen.add(_name)
+        _raw_dedup.append(_name)
+RAW_LISTINGS_HEADERS = _raw_dedup
+
+# Danh sách cột cho File 2 Custom (tab Custom)
+CUSTOM_HEADERS = [
+    "System_ID", "Ma_Khang_Ngo", "Gia_Public", "Tieu_De_Public", "Mo_ta_Public",
+    "Note_Noi_Bo", "Trang_Thai_Giao_Dich", "Ngu_Tret", "CHDV", "Trang_Thai_KN",
+    "images_metadata_json", "Dia_Chi_That", "So_Nha", "Ten_Duong", "Quan",
+    "Phuong", "Duong", "Ngo_So_nha", "bedrooms", "restrooms", "minimumRoadWidth",
+    "Noi_dung_chinh", "Mo_ta_chi_tiet", "Gia_chao", "DT_Thuc_te", "DT_Tren_so",
+    "So_Tang", "Mat_Tien", "Chieu_dai", "Huong", "Criteria_Duong_truoc_nha",
+    "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
+    "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien",
+    "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"
+]
+
+# Danh sách cột cho File 3 Public (tab Public)
+PUBLIC_WHITELIST_HEADERS_BASE = [
+    "System_ID",
+    "Ma_Khang_Ngo",
+    "Tieu_De_Public",
+    "Mo_ta_Public",
+    "Gia_Public",
+    "Trang_Thai_Giao_Dich",
+    "Ngu_Tret",
+    "CHDV",
+    "Trang_Thai_KN",
+    "Ten_Duong",
+    "Quan",
+    "Phuong",
+    "Duong",
+    "bedrooms",
+    "restrooms",
+    "minimumRoadWidth",
+    "DT_Thuc_te",
+    "DT_Tren_so",
+    "So_Tang",
+    "Mat_Tien",
+    "Chieu_dai",
+    "Huong",
+    "Criteria_Duong_truoc_nha",
+    "Criteria_Noi_that",
+    "Criteria_Thang_may",
+    "Criteria_Loai_ngo",
+    "Criteria_Khoang_cach_bai_do_xe",
+    "Criteria_Kinh_doanh_Dong_tien",
+    "Criteria_Huong_nha",
+    "Criteria_Khoang_cach_duong_oto",
+    "Last updated"
+]
+
+def build_row_data(headers, data_dict):
+    """
+    Phân giải chỉ số cột động: Nhận mảng headers thực tế từ sheet và data_dict dữ liệu,
+    trả về mảng 1 dòng dữ liệu đã map đúng vị trí header.
+    """
+    row = []
+    for h in headers:
+        val = ""
+        safe_h = get_safe_col_name(h)
+        keys_to_try = [h, safe_h, f"custom_{safe_h}", f"custom_{h}"]
+        for k in keys_to_try:
+            if k in data_dict:
+                val = data_dict[k]
+                break
+        if val is None:
+            val = ""
+        row.append(str(val))
+    return row
 
 def gen_id_khang_ngo_python(so_nha, duong, quan):
     """
@@ -727,24 +839,9 @@ def escape_tsv_field(val):
         return f'"{val_str}"'
     return val_str
 
-def publish_listing(tk_id, get_google_credentials, load_config, add_log_message, db_file=None):
+def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_message, db_file=None):
     """
-    Thực hiện đồng bộ xuất bản dữ liệu của một căn nhà từ SQLite local lên Google Sheets trực tuyến.
-    Tự động kiểm tra trùng Mã Hàng để chép đè có chọn lọc hoặc chèn dòng mới ở cuối bảng Table.
-    Đồng thời đồng bộ mã ID Khang Ngô mới sang sheet Source và cập nhật trạng thái trong SQLite.
-    
-    Args:
-        tk_id (str): Mã căn cần xuất bản.
-        get_google_credentials (func): Hàm callback lấy credentials xác thực Google Cloud.
-        load_config (func): Hàm callback nạp cấu hình hệ thống settings.
-        add_log_message (func): Hàm callback ghi log.
-        db_file (str/None): Tên file database.
-        
-    Returns:
-        dict: Chứa status ('success'/'warning'), published_to_cloud (bool), message và row_data.
-        
-    Storage:
-        Cập nhật Google Sheets trực tuyến và cập nhật status, Last_Sync trong SQLite.
+    Đồng bộ dữ liệu chế độ Pool2 lên 3 file Google Sheets độc lập (Raw, Custom, Public).
     """
     if not db_file:
         db_file = get_db_file()
@@ -752,7 +849,317 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
     if not os.path.exists(db_file):
         return {"status": "error", "message": "Database không tồn tại"}
         
-    # Xác định bảng listings động
+    conn = sqlite3.connect(db_file, timeout=30.0)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # 1. Đọc dữ liệu thô từ listings_v2
+    raw_row = cursor.execute("SELECT * FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
+    if not raw_row:
+        conn.close()
+        return {"status": "error", "message": f"Mã căn {tk_id} không tồn tại trong SQLite"}
+        
+    d_v2 = dict(raw_row)
+    system_id = d_v2.get("System_ID")
+    if not system_id:
+        system_id = f"SYS-{datetime.now().strftime('%Y%m%d').upper()}-{random.randint(100, 999)}"
+        cursor.execute("UPDATE listings_v2 SET System_ID = ? WHERE tk_id = ?", (system_id, tk_id))
+        conn.commit()
+        d_v2["System_ID"] = system_id
+        
+    # 2. Kiểm tra/Tự khởi tạo dữ liệu Custom
+    custom_row = cursor.execute("SELECT * FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)).fetchone()
+    if not custom_row:
+        add_log_message(f"[ℹ] Tự động tạo dữ liệu Custom mặc định cho System ID {system_id}...")
+        # Lọc danh sách ảnh an toàn (loại bỏ facade và diagram)
+        cursor.execute(
+            "SELECT image_url, cloudinary_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC", 
+            (tk_id,)
+        )
+        img_rows = cursor.fetchall()
+        safe_images = []
+        for img_url, cld_url, role in img_rows:
+            url = cld_url if cld_url else img_url
+            if not url:
+                continue
+            if role not in ["facade", "cover", "diagram", "deleted", "hidden"]:
+                safe_images.append({"url": url, "role": role or "interior"})
+                
+        ma_khang_ngo = gen_id_khang_ngo_python(d_v2.get("Ngo_So_nha", ""), d_v2.get("streetName", ""), d_v2.get("Quan", ""))
+        
+        custom_fields = {
+            "System_ID": system_id,
+            "Ma_Khang_Ngo": ma_khang_ngo,
+            "Gia_Public": d_v2.get("Gia_chao", ""),
+            "Tieu_De_Public": d_v2.get("Noi_dung_chinh", ""),
+            "Mo_ta_Public": d_v2.get("Mo_ta_chi_tiet", ""),
+            "Note_Noi_Bo": "",
+            "Trang_Thai_Giao_Dich": d_v2.get("status_nguon", "Đang bán"),
+            "Ngu_Tret": "N",
+            "CHDV": "N",
+            "Trang_Thai_KN": "Hàng Ngon",
+            "images_metadata_json": json.dumps(safe_images),
+            "Dia_Chi_That": f"{d_v2.get('Ngo_So_nha', '')} {d_v2.get('streetName', '')}, {d_v2.get('Phuong', '')}, {d_v2.get('Quan', '')}",
+            "So_Nha": d_v2.get("Ngo_So_nha", ""),
+            "Ten_Duong": d_v2.get("streetName", ""),
+            "Quan": d_v2.get("Quan", ""),
+            "Phuong": d_v2.get("Phuong", ""),
+            "Duong": d_v2.get("streetName", ""),
+            "Ngo_So_nha": d_v2.get("Ngo_So_nha", ""),
+            "bedrooms": d_v2.get("bedrooms", ""),
+            "restrooms": d_v2.get("restrooms", ""),
+            "minimumRoadWidth": d_v2.get("minimumRoadWidth", ""),
+            "Noi_dung_chinh": d_v2.get("Noi_dung_chinh", ""),
+            "Mo_ta_chi_tiet": d_v2.get("Mo_ta_chi_tiet", ""),
+            "Gia_chao": d_v2.get("Gia_chao", ""),
+            "DT_Thuc_te": d_v2.get("DT_Thuc_te", ""),
+            "DT_Tren_so": d_v2.get("DT_Tren_so", ""),
+            "So_Tang": d_v2.get("So_Tang", ""),
+            "Mat_Tien": d_v2.get("Mat_Tien", ""),
+            "Chieu_dai": d_v2.get("Chieu_dai", ""),
+            "Huong": d_v2.get("Huong", ""),
+            "Criteria_Duong_truoc_nha": d_v2.get("Criteria_Duong_truoc_nha", ""),
+            "Criteria_Noi_that": d_v2.get("Criteria_Noi_that", ""),
+            "Criteria_Thang_may": d_v2.get("Criteria_Thang_may", ""),
+            "Criteria_Loai_ngo": d_v2.get("Criteria_Loai_ngo", ""),
+            "Criteria_Khoang_cach_bai_do_xe": d_v2.get("Criteria_Khoang_cach_bai_do_xe", ""),
+            "Criteria_Kinh_doanh_Dong_tien": d_v2.get("Criteria_Kinh_doanh_Dong_tien", ""),
+            "Criteria_Huong_nha": d_v2.get("Criteria_Huong_nha", ""),
+            "Criteria_Khoang_cach_duong_oto": d_v2.get("Criteria_Khoang_cach_duong_oto", "")
+        }
+        
+        cursor.execute("PRAGMA table_info(listings_custom_v2)")
+        custom_db_cols = [r[1] for r in cursor.fetchall()]
+        valid_custom_fields = {k: v for k, v in custom_fields.items() if k in custom_db_cols}
+        
+        cols = list(valid_custom_fields.keys())
+        vals = [valid_custom_fields[k] for k in cols]
+        placeholders = ", ".join(["?"] * len(cols))
+        cursor.execute(
+            f"INSERT INTO listings_custom_v2 ({', '.join([f'`{c}`' for c in cols])}) VALUES ({placeholders})",
+            vals
+        )
+        conn.commit()
+        custom_row = cursor.execute("SELECT * FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)).fetchone()
+        
+    d_custom = dict(custom_row)
+    conn.close()
+    
+    # 3. Lấy cấu hình các Spreadsheet ID
+    creds = get_google_credentials()
+    cfg = load_config()
+    raw_sheet_id = cfg.get("pool2_raw_sheet_id")
+    custom_sheet_id = cfg.get("pool2_custom_sheet_id")
+    public_sheet_id = cfg.get("pool2_public_sheet_id")
+    
+    if not (creds and raw_sheet_id and custom_sheet_id and public_sheet_id):
+        add_log_message("[❌ LỖI] Thiếu cấu hình Spreadsheet IDs Pool2 trong settings.json")
+        return {"status": "error", "message": "Thiếu Spreadsheet IDs Pool2 trong settings.json"}
+        
+    import gspread
+    client = gspread.authorize(creds)
+    
+    # helper lấy chữ cái cột
+    def get_col_letter(col_idx):
+        return gspread.utils.rowcol_to_a1(1, col_idx).replace("1", "")
+        
+    # --- ĐỒNG BỘ FILE 1 RAW ---
+    try:
+        add_log_message(f"[⚡] Đang đồng bộ File 1 Raw (ID: {raw_sheet_id})...")
+        raw_spreadsheet = client.open_by_key(raw_sheet_id)
+        try:
+            raw_sheet = raw_spreadsheet.worksheet("Listings")
+        except Exception:
+            raw_sheet = raw_spreadsheet.get_worksheet(0)
+            raw_sheet.update_title("Listings")
+            
+        raw_values = raw_sheet.get_all_values()
+        if not raw_values:
+            raw_headers = RAW_LISTINGS_HEADERS
+            raw_sheet.insert_row(raw_headers, index=1, value_input_option='USER_ENTERED')
+        else:
+            raw_headers = raw_values[0]
+            missing = [c for c in RAW_LISTINGS_HEADERS if c not in raw_headers]
+            if missing:
+                add_log_message(f"[🛠️ SCHEMA] Bổ sung cột cho File 1 Raw: {missing}")
+                for col in missing:
+                    raw_headers.append(col)
+                    raw_sheet.add_cols(1)
+                    raw_sheet.update_cell(1, len(raw_headers), col)
+                    
+        raw_row_data = build_row_data(raw_headers, d_v2)
+        tk_id_col = raw_headers.index("tk_id") + 1 if "tk_id" in raw_headers else 1
+        
+        found_raw_idx = -1
+        col_vals = raw_sheet.col_values(tk_id_col)
+        col_cleaned = [str(x).strip() for x in col_vals]
+        if tk_id.strip() in col_cleaned:
+            found_raw_idx = col_cleaned.index(tk_id.strip()) + 1
+            
+        if found_raw_idx > 0:
+            col_letter = get_col_letter(len(raw_headers))
+            raw_sheet.update(range_name=f"A{found_raw_idx}:{col_letter}{found_raw_idx}", values=[raw_row_data], value_input_option='USER_ENTERED')
+        else:
+            raw_sheet.append_row(raw_row_data, value_input_option='USER_ENTERED')
+            
+    except Exception as e_raw:
+        add_log_message(f"[❌ LỖI] Lỗi đồng bộ File 1 Raw: {str(e_raw)}")
+        return {"status": "error", "message": f"Lỗi đồng bộ File 1 Raw: {str(e_raw)}"}
+        
+    # --- ĐỒNG BỘ FILE 2 CUSTOM ---
+    try:
+        add_log_message(f"[⚡] Đang đồng bộ File 2 Custom (ID: {custom_sheet_id})...")
+        custom_spreadsheet = client.open_by_key(custom_sheet_id)
+        try:
+            custom_sheet = custom_spreadsheet.worksheet("Custom")
+        except Exception:
+            custom_sheet = custom_spreadsheet.get_worksheet(0)
+            custom_sheet.update_title("Custom")
+            
+        custom_values = custom_sheet.get_all_values()
+        if not custom_values:
+            custom_headers = CUSTOM_HEADERS
+            custom_sheet.insert_row(custom_headers, index=1, value_input_option='USER_ENTERED')
+        else:
+            custom_headers = custom_values[0]
+            missing = [c for c in CUSTOM_HEADERS if c not in custom_headers]
+            if missing:
+                add_log_message(f"[🛠️ SCHEMA] Bổ sung cột cho File 2 Custom: {missing}")
+                for col in missing:
+                    custom_headers.append(col)
+                    custom_sheet.add_cols(1)
+                    custom_sheet.update_cell(1, len(custom_headers), col)
+                    
+        custom_row_data = build_row_data(custom_headers, d_custom)
+        sys_col = custom_headers.index("System_ID") + 1 if "System_ID" in custom_headers else 1
+        
+        found_cust_idx = -1
+        col_vals = custom_sheet.col_values(sys_col)
+        col_cleaned = [str(x).strip() for x in col_vals]
+        if system_id.strip() in col_cleaned:
+            found_cust_idx = col_cleaned.index(system_id.strip()) + 1
+            
+        if found_cust_idx > 0:
+            col_letter = get_col_letter(len(custom_headers))
+            custom_sheet.update(range_name=f"A{found_cust_idx}:{col_letter}{found_cust_idx}", values=[custom_row_data], value_input_option='USER_ENTERED')
+        else:
+            custom_sheet.append_row(custom_row_data, value_input_option='USER_ENTERED')
+            
+    except Exception as e_custom:
+        add_log_message(f"[❌ LỖI] Lỗi đồng bộ File 2 Custom: {str(e_custom)}")
+        return {"status": "error", "message": f"Lỗi đồng bộ File 2 Custom: {str(e_custom)}"}
+        
+    # --- ĐỒNG BỘ FILE 3 PUBLIC ---
+    try:
+        add_log_message(f"[⚡] Đang đồng bộ File 3 Public (ID: {public_sheet_id})...")
+        public_spreadsheet = client.open_by_key(public_sheet_id)
+        try:
+            public_sheet = public_spreadsheet.worksheet("Public")
+        except Exception:
+            public_sheet = public_spreadsheet.get_worksheet(0)
+            public_sheet.update_title("Public")
+            
+        public_values = public_sheet.get_all_values()
+        if not public_values:
+            public_headers = list(PUBLIC_WHITELIST_HEADERS_BASE)
+            public_sheet.insert_row(public_headers, index=1, value_input_option='USER_ENTERED')
+        else:
+            public_headers = public_values[0]
+            missing = [c for c in PUBLIC_WHITELIST_HEADERS_BASE if c not in public_headers]
+            if missing:
+                add_log_message(f"[🛠️ SCHEMA] Bổ sung cột cơ bản cho File 3 Public: {missing}")
+                for col in missing:
+                    if "Last updated" in public_headers:
+                        last_updated_idx = public_headers.index("Last updated")
+                        public_headers.insert(last_updated_idx, col)
+                        public_sheet.insert_cols([[col]], col=last_updated_idx + 1)
+                    else:
+                        public_headers.append(col)
+                        public_sheet.add_cols(1)
+                        public_sheet.update_cell(1, len(public_headers), col)
+                        
+        safe_images = []
+        try:
+            safe_images = json.loads(d_custom.get("images_metadata_json") or "[]")
+        except Exception:
+            pass
+            
+        num_images = len(safe_images)
+        required_image_cols = [f"Ảnh {i+1}" for i in range(num_images)]
+        missing_image_cols = [c for c in required_image_cols if c not in public_headers]
+        if missing_image_cols:
+            add_log_message(f"[🛠️ SCHEMA] Thêm {len(missing_image_cols)} cột ảnh ở đuôi sheet Public: {missing_image_cols}")
+            for col in missing_image_cols:
+                public_headers.append(col)
+                public_sheet.add_cols(1)
+                public_sheet.update_cell(1, len(public_headers), col)
+                
+        # Chuẩn bị dữ liệu dòng Public
+        public_data_dict = {}
+        for key in PUBLIC_WHITELIST_HEADERS_BASE:
+            if key == "Last updated":
+                public_data_dict[key] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            else:
+                public_data_dict[key] = d_custom.get(key) or ""
+                
+        for i, img_obj in enumerate(safe_images):
+            img_url = img_obj.get("url") if isinstance(img_obj, dict) else str(img_obj)
+            public_data_dict[f"Ảnh {i+1}"] = img_url
+            
+        public_row_data = build_row_data(public_headers, public_data_dict)
+        sys_col_pub = public_headers.index("System_ID") + 1 if "System_ID" in public_headers else 1
+        
+        found_pub_idx = -1
+        col_vals = public_sheet.col_values(sys_col_pub)
+        col_cleaned = [str(x).strip() for x in col_vals]
+        if system_id.strip() in col_cleaned:
+            found_pub_idx = col_cleaned.index(system_id.strip()) + 1
+            
+        if found_pub_idx > 0:
+            col_letter = get_col_letter(len(public_headers))
+            public_sheet.update(range_name=f"A{found_pub_idx}:{col_letter}{found_pub_idx}", values=[public_row_data], value_input_option='USER_ENTERED')
+        else:
+            public_sheet.append_row(public_row_data, value_input_option='USER_ENTERED')
+            
+    except Exception as e_pub:
+        add_log_message(f"[❌ LỖI] Lỗi đồng bộ File 3 Public: {str(e_pub)}")
+        return {"status": "error", "message": f"Lỗi đồng bộ File 3 Public: {str(e_pub)}"}
+        
+    # --- CẬP NHẬT TRẠNG THÁI DB LOCAL ---
+    try:
+        conn = sqlite3.connect(db_file, timeout=30.0)
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE listings_v2 SET status = 'published', `Last_Sync` = ? WHERE tk_id = ?",
+            (datetime.now().strftime("%d/%m/%Y %H:%M:%S"), tk_id)
+        )
+        conn.commit()
+        conn.close()
+    except Exception as e_db:
+        add_log_message(f"[⚠️ WARNING] Lỗi cập nhật SQLite: {str(e_db)}")
+        
+    add_log_message(f"[✅] ĐÃ ĐỒNG BỘ THÀNH CÔNG CAN {tk_id} SANG 3 FILE GOOGLE SHEETS!")
+    row_data_escaped = [escape_tsv_field(str(x)) for x in public_row_data]
+    return {
+        "status": "success",
+        "published_to_cloud": True,
+        "message": "Đã xuất bản thành công trực tiếp lên 3 file Google Sheets Pool2!",
+        "row_data": row_data_escaped
+    }
+
+def publish_listing(tk_id, get_google_credentials, load_config, add_log_message, db_file=None):
+    """
+    Thực hiện đồng bộ xuất bản dữ liệu của một căn nhà từ SQLite local lên Google Sheets trực tuyến.
+    Tự động kiểm tra trùng Mã Hàng để chép đè có chọn lọc hoặc chèn dòng mới ở cuối bảng Table.
+    Đồng bộ mã ID Khang Ngô mới sang sheet Source và cập nhật trạng thái trong SQLite.
+    """
+    if not db_file:
+        db_file = get_db_file()
+        
+    if not os.path.exists(db_file):
+        return {"status": "error", "message": "Database không tồn tại"}
+        
+    # Xác định pool system đang hoạt động
     is_pool2 = False
     try:
         config_file = "settings.json"
@@ -763,7 +1170,10 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     is_pool2 = True
     except Exception:
         pass
-    listings_table = "listings_v2" if is_pool2 else "listings"
+        
+    if is_pool2:
+        return publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_message, db_file)
+
 
     conn = sqlite3.connect(db_file, timeout=30.0)
     conn.row_factory = sqlite3.Row

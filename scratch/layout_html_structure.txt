@@ -1,0 +1,298 @@
+body_start: 85070
+list_start: 99265
+filter_start: 88874
+--- Structure between body and first layout element ---
+<body>
+  <div id="welcomeBanner"
+    style="display:none; background: #27ae60; color: white; padding: 10px 16px; font-weight: 600; font-size: 14px; text-align: center;">
+  </div>
+  <header>
+    <div class="hdr-top">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge" id="totalBadge">...</span>
+        <button class="sort-icon-btn admin-only" id="sortNewBtn" onclick="toggleSortNew()"
+          title="Sắp xếp thời gian">⏱️</button>
+        <button class="sort-icon-btn admin-only" id="sortPriceBtn" onclick="toggleSortPrice()"
+          title="Sắp xếp giá">💰</button>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="admin-only" id="gLoginBtn" onclick="handleGoogleLoginClick()"
+          style="display: none; align-items: center; justify-content: center; width: 34px; height: 34px; background: #fff; border: 1.5px solid #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.15); padding: 0;"
+          title="Đăng nhập Google">
+          <svg style="width:14px; height:14px; display:block;" viewBox="0 0 24 24">
+            <path fill="#EA4335"
+              d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.66 15.02 1 12 1 7.35 1 3.39 3.65 1.39 7.5l3.85 2.99C6.18 7.37 8.87 5.04 12 5.04z" />
+            <path fill="#4285F4"
+              d="M23.49 12.27c0-.82-.07-1.6-.2-2.36H12v4.51h6.44c-.28 1.48-1.12 2.74-2.38 3.59l3.7 2.87c2.16-1.99 3.73-4.92 3.73-8.61z" />
+            <path fill="#FBBC05"
+              d="M5.24 14.49c-.25-.76-.4-1.56-.4-2.39s.15-1.63.4-2.39L1.39 6.72C.5 8.49 0 10.49 0 12.5s.5 4.01 1.39 5.78l3.85-2.99z" />
+            <path fill="#34A853"
+              d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.7-2.87c-1.03.69-2.35 1.1-4.26 1.1-3.13 0-5.82-2.33-6.76-5.46L1.39 15.85C3.39 19.7 7.35 23 12 23z" />
+          </svg>
+          <span id="gLoginText" style="display:none"></span>
+        </button>
+        <div style="position: relative;">
+          <button class="hdr-icon-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="Yêu thích">♡</button>
+          <span class="fav-count-badge" id="favCount" style="display:none">0</span>
+        </div>
+        <button class="hdr-icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()" title="Tìm kiếm">
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+        </button>
+        <button class="hdr-icon-btn" id="filterBtn" onclick="toggleFilter()" title="Bộ lọc">
+          <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="search-bar" id="searchBar">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8" />
+        <path d="M21 21l-4.35-4.35" />
+      </svg>
+      <input type="text" id="bdsSearchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()" autocomplete="off" spellcheck="false">
+      <span class="search-clear" id="searchClear" onclick="clearSearchInput()" style="display:none">✕</span>
+    </div>
+    <!-- Admin: thông tin bộ lọc hiện tại -->
+    <div class="filter-bar" id="filterBar" style="display:none">
+      <span class="filter-summary" id="filterSummary">Tất cả</span>
+      <button class="reset-btn" id="resetBtn" onclick="resetFilters()" style="display:none">↺ Xóa lọc</button>
+    </div>
+    <!-- Collapsible panel -->
+    <div class="filter-panel" 
+--- Structure between first and last layout element ---
+id="filterPanel">
+      <!-- Mobile Filter Header (US-076.3) -->
+      <div class="mobile-filter-header">
+        <button class="mobile-filter-back-btn" onclick="toggleFilter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <span class="mobile-filter-title">Tìm kiếm</span>
+      </div>
+
+      <div class="filter-scroll-content">
+
+      <!-- TIÊU CHÍ BĐS Checklist (US-076.3) -->
+      <div class="criteria-section">
+        <div class="criteria-title">TIÊU CHÍ BĐS *</div>
+        <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
+        <div class="criteria-grid"></div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-section-lbl" id="districtLbl" style="margin-top:4px;">Quận / TP</div>
+      <div class="multiselect-container" id="districtMulti">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('districtMulti')">
+          <span class="multiselect-placeholder" id="districtPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="districtOptions"></div>
+      </div>
+
+      <div class="filter-section-lbl" id="wardLbl" style="display:none">Phường</div>
+      <div class="multiselect-container" id="wardMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('wardMulti')">
+          <span class="multiselect-placeholder" id="wardPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="wardOptions"></div>
+      </div>
+
+      <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
+      <div class="multiselect-container" id="duongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('duongMulti')">
+          <span class="multiselect-placeholder" id="duongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="duongOptions"></div>
+      </div>
+      <div class="filter-section-lbl" id="giaLbl">Khoảng giá</div>
+      <div class="tabs" id="giaTabs">
+        <button class="tab on" data-val="all" onclick="tGia('all')">Tất cả</button>
+        <button class="tab" data-val="lt7" onclick="tGia('lt7')">Dưới 7 tỷ</button>
+        <button class="tab" data-val="7-10" onclick="tGia('7-10')">7–10 tỷ</button>
+        <button class="tab" data-val="10-15" onclick="tGia('10-15')">10–15 tỷ</button>
+        <button class="tab" data-val="15-20" onclick="tGia('15-20')">15–20 tỷ</button>
+        <button class="tab" data-val="gt20" onclick="tGia('gt20')">Trên 20 tỷ</button>
+      </div>
+      <div class="filter-section-lbl" id="huongLbl" style="display:none">Hướng nhà</div>
+      <div class="multiselect-container" id="huongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('huongMulti')">
+          <span class="multiselect-placeholder" id="huongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="huongOptions"></div>
+      </div>
+      <div class="filter-section-lbl" id="danhGiaLbl">Đánh giá</div>
+      <div class="tabs" id="danhGiaTabs">
+        <button class="tab on" data-val="all" onclick="tDanhGia('all')">Tất cả</button>
+        <button class="tab" data-val="Hàng Ngon" style="background:var(--gold);color:#fff"
+          onclick="tDanhGia('Hàng Ngon')">💎 Ngon</button>
+        <button class="tab" data-val="Hàng Lỗi" style="background:#7f8c8d;color:#fff" onclick="tDanhGia('Hàng Lỗi')">⚠️
+          Lỗi</button>
+      </div>
+      <div class="detailed-specs-title">Tìm kiếm mở rộng</div>
+      <div class="detailed-specs-container">
+        <div class="detailed-specs-card">
+          <div class="detailed-specs-grid">
+            <!-- Khoảng giá -->
+            <div class="spec-item">
+              <span class="spec-label">Giá chào:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterGiaMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterGiaMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">tỷ</span>
+              </div>
+            </div>
+
+            <!-- Diện tích thực tế -->
+            <div class="spec-item">
+              <span class="spec-label">Diện tích thực tế:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterDtThucTeMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterDtThucTeMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m²</span>
+              </div>
+            </div>
+
+            <!-- Diện tích sổ -->
+            <div class="spec-item">
+              <span class="spec-label">Diện tích trên sổ:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterDtTrenSoMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterDtTrenSoMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m²</span>
+              </div>
+            </div>
+
+            <!-- Ngang (mặt tiền) -->
+            <div class="spec-item">
+              <span class="spec-label">Mặt tiền:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterNgangMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterNgangMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m</span>
+              </div>
+            </div>
+
+            <!-- Rộng hẻm -->
+            <div class="spec-item">
+              <span class="spec-label">Rộng hẻm:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterHemMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterHemMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m</span>
+              </div>
+            </div>
+
+            <!-- Số phòng ngủ -->
+            <div class="spec-item">
+              <span class="spec-label">Số phòng ngủ:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterPhongMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterPhongMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">pn</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
+      <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(0,0,0,0.03); border: 1.5px solid #e2ded6; border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; align-items: center;"></div>
+
+      </div>
+
+      <!-- Action Button Footer (US-076.3) -->
+      <div class="filter-footer-actions">
+        <button class="btn-filter-clear" onclick="clearAllFilters()">
+          <span>Xóa điều kiện</span>
+        </button>
+        <button class="btn-filter-apply" onclick="toggleFilter()">
+          <span>Tìm kiếm</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="active-col-bar" id="activeColBar" style="display:none;">
+    <span>📂 Đang xem BST: <span id="activeColNameText"></span></span>
+    <button onclick="exitCollectionView()">✕ Hủy xem</button>
+  </div>
+
+  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: none; justify-content: flex-end; align-items: center; background: #f8f9fa; padding: 10px 16px; border-bottom: 1px solid var(--border);">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 11px; font-weight: 700; color: #57606f;">CĂN LÊN SÓNG</span>
+      <label class="admin-toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 22px; margin-bottom: 0;">
+        <input type="checkbox" id="onAirToggle" onchange="toggleShowOnAirOnly(this.checked)" style="opacity: 0; width: 0; height: 0;">
+        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 22px;"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="sn" id="sTong">-</div>
+      <div class="sl">Căn</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sGia">-</div>
+      <div class="sl">Tỷ</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sDt">-</div>
+      <div class="sl">m²</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sTang">-</div>
+      <div class="sl">Tầng</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sQuan">-</div>
+      <div class="sl">Quận</div>
+    </div>
+  </div>
+
+  <main id="list">
+    <div class="loading">
+      <div class="spinner"></div>
+      <div>Đang tải dữ liệu...</div>
+    </div>
+  </main>
+
+
+  <!-- Lightbox (Full Screen Media Viewer) -->
+  <div class="lightbox" id="lbOverlay">
+    <div class="lb-close" onclick="closeLb()">✕</div>
+    <div class="lb-main" id="lbMain">
+    </div>
+    <button class="garr al" style="z-index:9999;" id="lbPrev" onclick="lbMove(-1)">‹</button>
+    <button class="garr ar" style="z-index:9999;" id="lbNext" onclick="lbMove(1)">›</

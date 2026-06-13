@@ -1,0 +1,6434 @@
+// --- SCRIPT BLOCK 0 ---
+
+
+// --- SCRIPT BLOCK 1 ---
+
+    // ============================================================
+    // [Latest Update / User Story]
+    // - US-029: Sắp xếp theo Sản phẩm mới thêm mặc định trên danh sách, thêm nút xếp thời gian ⏱️ kế bên xếp giá 💰 trên thanh điều khiển của Admin (Cập nhật ngày 2026-05-25)
+    // - US-028: Đồng bộ cơ chế nén Bitmask gửi khách nhiều căn (?b=...) siêu ngắn cho cả hai luồng Admin, giữ URL cực ngắn tránh bị Zalo/Messenger cắt ngắn (Cập nhật ngày 2026-05-25)
+    // ============================================================
+    //  ⚙️  KIỂM TRA QUYỀN TRUY CẬP & GIAI ĐOẠN 1 TRACKING
+    // ============================================================
+    const ADMIN_PASSWORD = 'trang';
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Auto-detect admin from active valid Google token in localStorage (US-049.2)
+    const token = localStorage.getItem('g_access_token');
+    const expiry = localStorage.getItem('g_token_expiry');
+    const now = Date.now();
+    const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+
+    // Check persistent admin session flag in localStorage (US-049.2 Refinement)
+    const hasAdminParam = urlParams.get('pwd') === ADMIN_PASSWORD || urlParams.get('pw') === ADMIN_PASSWORD;
+    if (hasAdminParam) {
+      localStorage.setItem('isAdminSession', 'true');
+    }
+    const isSavedAdmin = localStorage.getItem('isAdminSession') === 'true';
+
+    const isAdmin = hasAdminParam || isTokenValid || isSavedAdmin;
+
+    const shareToken = urlParams.get('s');
+
+    // Giai đoạn 1: Giải mã tên khách hàng
+    let displayCustomerName = "";
+    let trackingCustomerName = "";
+    const customerToken = urlParams.get('c');
+    if (customerToken) {
+      try {
+        let safeToken = customerToken.replace(/ /g, '+');
+        // Khôi phục padding = cho Base64URL nếu bị thiếu
+        while (safeToken.length % 4) {
+          safeToken += '=';
+        }
+        const decoded = decodeURIComponent(escape(window.atob(safeToken)));
+        const parts = decoded.split("|").map(p => p.trim());
+        displayCustomerName = parts[0];
+        trackingCustomerName = `${parts[0]}${parts[1] ? ' - ' + parts[1] : ''}`;
+
+        // GIẢI MÃ & CẬP NHẬT TIÊU ĐỀ TRANG TÙY CHỈNH (US-033)
+        const customPageTitle = parts[2] || "";
+        if (customPageTitle) {
+          document.title = customPageTitle;
+        } else {
+          document.title = "Giỏ hàng độc quyền - Khang Ngô Nhà Phố";
+        }
+      } catch (e) {
+        displayCustomerName = "Khách Hàng";
+        trackingCustomerName = "Khách Hàng";
+        document.title = "Giỏ hàng độc quyền - Khang Ngô Nhà Phố";
+      }
+    } else {
+      document.title = "Khang Ngô Nhà Phố";
+    }
+
+    // Giai đoạn 1: Hàm Tracking gửi data về Google Apps Script
+    // Đã cấu hình Tracking API thực tế
+    const TRACKING_URL = 'https://script.google.com/macros/s/AKfycbxsFXAQiX11LaSAslvefiv7ncWcHVgeyyd8Gi2pgRAneHhyZpE0AZKjP4rRrHD15oNN1g/exec';
+
+    function trackAction(action, details = "") {
+      if (isAdmin || !trackingCustomerName) return; // Không track Admin
+      try {
+        fetch(TRACKING_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer: trackingCustomerName,
+            action: action,
+            details: details
+          })
+        }).catch(e => { });
+      } catch (error) { }
+    }
+
+    if (displayCustomerName) {
+      const banner = document.getElementById('welcomeBanner');
+      if (banner) {
+        banner.innerHTML = `👋 Xin chào <b>${displayCustomerName}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;
+        banner.style.display = 'block';
+      }
+    }
+
+    if (isAdmin) {
+      document.body.classList.add('is-admin');
+      const sInput = document.getElementById('bdsSearchInput');
+      if (sInput) {
+        sInput.placeholder = "Tìm mã căn, đường, tên đầu chủ, ĐT...";
+      }
+    }
+
+    // Logic chia sẻ: giải mã danh sách ID từ URL
+    let sharedIds = null;
+    const shareBitmask = urlParams.get('b'); // Format cũ: bitmask
+    if (shareToken) {
+      try {
+        if (shareToken.includes(',') || !shareToken.includes('[')) {
+          // Token có thể chứa list mã tạm (VD: 1,5,12) hoặc list Mã căn cũ (VD: q3-10,pn-05)
+          sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
+        } else {
+          const decoded = atob(shareToken);
+          const parsed = JSON.parse(decoded);
+          if (Array.isArray(parsed)) sharedIds = parsed;
+        }
+      } catch (e) {
+        sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
+      }
+    }
+    // Hàm giải mã danh sách ID Base64 (gọi sau khi load data)
+    function decodeBitmask(encoded, allIds) {
+      try {
+        let safeToken = encoded.replace(/ /g, '+').replace(/-/g, '+').replace(/_/g, '/');
+        while (safeToken.length % 4) {
+          safeToken += '=';
+        }
+        const decoded = atob(safeToken);
+        const idListRegex = /^[A-Za-z0-9_\-]+(,[A-Za-z0-9_\-]+)*$/;
+        if (idListRegex.test(decoded)) {
+          return decoded.split(',').map(s => s.trim()).filter(Boolean);
+        }
+      } catch (e) {
+        console.error("Lỗi giải mã danh sách ID:", e);
+      }
+      return [];
+    }
+
+    //  ⚙️  CẤU HÌNH 
+    const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    const SDT = '0979841573';
+    // ============================================================
+
+    // Cập nhật số điện thoại tự động
+    document.querySelectorAll('[href*="0979841573"]').forEach(el => {
+      el.href = el.href.replace(/0979841573/g, SDT);
+    });
+
+    // Hàm dọn dẹp dòng trống thừa (US-039.7)
+    function cleanConsecutiveNewlines(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .replace(/\n\s*\n\s*\n+/g, '\n\n') // Thay thế từ 2 dòng trống liên tiếp trở lên bằng 1 dòng trống đơn
+        .trim();
+    }
+
+    // Hàm phân tích và định dạng giá tiền (US-039.7)
+    function parseGia(val) {
+      if (!val) return 0;
+      let s = String(val).trim();
+      if (s.includes(',')) {
+        s = s.replace(/,/g, '.');
+      }
+      let num = parseFloat(s);
+      if (isNaN(num)) return 0;
+      if (num > 100) num = num / 1000;
+      return Math.round(num * 1000) / 1000;
+    }
+
+    // Hàm sinh tiêu đề Admin thống nhất từ Nội dung chính (US-039.7)
+    function generateAdminTitleFromNộiDungChinh(p) {
+      if (!p) return '';
+      let poolItem = p;
+      if (!p.isFromPoolOnly && POOL_ROWS && POOL_ROWS.length && p.system_id) {
+        const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
+        if (row) {
+          poolItem = {
+            raw_noi_dung_chinh: String(row[9] || ''),
+            raw_so_nha: String(row[6] || ''),
+            raw_ten_duong: String(row[5] || ''),
+            t: String(row[56] || row[55] || row[9] || '')
+          };
+        }
+      }
+      const text = String(poolItem.raw_noi_dung_chinh || '').trim();
+      const titleStr = String(poolItem.t || '');
+      if (!text) {
+        const cleanedT = titleStr.includes('|') ? titleStr.substring(titleStr.indexOf('|') + 1).trim() : titleStr;
+        const soNhaStr = String(poolItem.raw_so_nha || '');
+        const duongStr = String(poolItem.raw_ten_duong || '');
+        return `${soNhaStr ? soNhaStr + ' ' : ''}${duongStr ? duongStr : cleanedT}`;
+      }
+      const priceRegex = /\b\d+(?:[\.,-]\d+)?\s*(?:tỷ|ty|tỉ)(?!\w)/i;
+      const match = text.match(priceRegex);
+      if (match) {
+        return text.substring(0, match.index).trim().replace(/\s+/g, ' ');
+      }
+      return text.replace(/\s+/g, ' ');
+    }
+
+    let DATA = [];
+    let POOL_ROWS = [];
+    let activeMode = isAdmin ? 'pool' : 'source'; // Mặc định Pool cho Admin khi vào trang (US-039.7)
+    let showOnAirOnly = false; // Trạng thái của nút gạt chỉ lọc căn Public (US-039.7)
+    let MAPPED_POOL_DATA = [];
+    let secureLoadAttempted = false;
+    let isSecureLoaded = false;
+    let isDataLoaded = false;
+    window.CURRENT_EDITING_LISTING = null;
+
+    window.autoFillCurationDetails = function() {
+      const editTieuDe = document.getElementById('editTieuDeBds');
+      const editMoTa = document.getElementById('editMoTaBds');
+      if (window.CURRENT_EDITING_LISTING) {
+        const p = window.CURRENT_EDITING_LISTING;
+        if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
+        if (editMoTa) editMoTa.value = p.m || p.raw_mo_ta_public || generateAutoDescription(p);
+        
+        // Kích hoạt event input để cập nhật live preview
+        if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
+        if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+      }
+    };
+    const selDistricts = new Set();
+    const selWards = new Set();
+    const selDuongs = new Set();
+    const selHuong = new Set();
+    const selGia = new Set();
+    const selDanhGia = new Set();
+    let filterOpen = false;
+    let currentSortType = 'newest'; // 'newest' or 'price'
+    let currentSortDir = 'desc'; // 'desc' = high/newest first, 'asc' = low/oldest first
+    let showFavOnly = false;
+    let favs = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
+    let collections = JSON.parse(localStorage.getItem('adminCollections') || '{}');
+    let activeCollectionName = null; // null | 'favorites' | '[Tên BST tự tạo]'
+
+    // ── Multi-select helper ──
+    function tSel(set, val) {
+      if (val === 'all') { set.clear(); return; }
+      if (set.has(val)) set.delete(val); else set.add(val);
+    }
+    function syncTabUI(containerId, set) {
+      document.querySelectorAll('#' + containerId + ' .tab').forEach(btn => {
+        const v = btn.getAttribute('data-val');
+        btn.classList.toggle('on', v === 'all' ? set.size === 0 : set.has(v));
+      });
+    }
+    function applyGia(arr) {
+      if (!selGia.size) return arr;
+      return arr.filter(p => {
+        const g = parseFloat(p.gia) || 0;
+        return [...selGia].some(r => {
+          if (r === 'lt7') return g < 7;
+          if (r === '7-10') return g >= 7 && g <= 10;
+          if (r === '10-15') return g > 10 && g <= 15;
+          if (r === '15-20') return g > 15 && g <= 20;
+          if (r === 'gt20') return g > 20;
+          return false;
+        });
+      });
+    }
+    function toggleSearchClearBtn() {
+      const sInput = document.getElementById('bdsSearchInput');
+      const clearBtn = document.getElementById('searchClear');
+      if (sInput && clearBtn) {
+        clearBtn.style.display = sInput.value.trim() ? 'flex' : 'none';
+      }
+    }
+    function clearSearchInput() {
+      const sInput = document.getElementById('bdsSearchInput');
+      if (sInput) {
+        sInput.value = '';
+        onSearchInput();
+      }
+    }
+    let searchDebounceTimeout = null;
+    function onSearchInput() {
+      toggleSearchClearBtn();
+      if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout);
+      searchDebounceTimeout = setTimeout(() => {
+        updateStats();
+        applyFilter();
+        saveState();
+      }, 250);
+    }
+
+    function toggleSearchBar() {
+      const bar = document.getElementById('searchBar');
+      const btn = document.getElementById('searchToggleBtn');
+      const input = document.getElementById('bdsSearchInput');
+      if (!bar || !btn || !input) return;
+      const isOpen = bar.classList.toggle('open');
+      btn.classList.toggle('active', isOpen);
+      if (isOpen) {
+        setTimeout(() => input.focus(), 150);
+      } else {
+        input.value = '';
+        onSearchInput();
+      }
+    }
+
+    function formatPhone(phone) {
+      if (!phone) return '';
+      let s = String(phone).trim().replace(/[\s\.-]/g, '');
+      if (/^[1-9]\d{8}$/.test(s)) {
+        return '0' + s;
+      }
+      return s;
+    }
+
+    function cutTitleToDistrict(title) {
+      if (!title) return '';
+      let s = String(title).trim();
+      // Match "Quận [name/number]" or "Q.[name/number]" or "Q[number]"
+      const regex = /^(.*?\b(Quận\s+[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ]+|Q\.\s*[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ]+|Q\d+)\b)/i;
+      const match = s.match(regex);
+      if (match) {
+        return match[1].trim();
+      }
+      return s;
+    }
+
+    function formatRawDescription(text) {
+      if (!text) return '';
+      let s = String(text).trim();
+      s = s.replace(/(\.|\!|\?)\s+(?=[A-ZÂĂĐÊÔƠƯàáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬĐÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ0-9\-+*•👉✅⚡🔥])/g, '$1\n');
+      s = s.replace(/\s*([\-+*•👉✅⚡🔥])\s*/g, '\n$1 ');
+      
+      // Split into lines, trim and filter out lines that only contain punctuation/signs without text/digits
+      const lines = s.split('\n')
+        .map(line => line.trim())
+        .filter(line => /[a-zA-Z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬĐÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]/.test(line));
+        
+      return lines.join('\n');
+    }
+
+    function extractCommission(p) {
+      const text = (p.raw_noi_dung_chinh || '').trim();
+      if (!text) return '-';
+      const matchH = text.match(/\b(H\d(?:GB|GB-N|N|)?)\b/i);
+      if (matchH) return matchH[1].toUpperCase();
+      const matchPct = text.match(/\b(\d+(?:\.\d+)?%)\b/);
+      if (matchPct) return matchPct[1];
+      if (p.raw_loai_hd && p.raw_loai_hd !== '-') return p.raw_loai_hd;
+      return '-';
+    }
+
+    function getDaiNha(p) {
+      // 1. Thử trích xuất từ cú pháp cu_phap (Cột B Source)
+      if (p.cu_phap) {
+        const parts = String(p.cu_phap).trim().split(/\s+/);
+        const idxTy = parts.findIndex(part => part.toLowerCase().includes('tỷ'));
+        if (idxTy >= 3) {
+          const possibleDai = parseFloat(parts[idxTy - 2]);
+          const possibleNgang = parseFloat(parts[idxTy - 3]);
+          if (possibleDai > 0 && possibleNgang > 0 && Math.abs(possibleDai * possibleNgang - parseFloat(p.dt)) / parseFloat(p.dt) < 0.25) {
+            return possibleDai;
+          }
+        }
+      }
+      
+      // 2. Thử trích xuất từ tiêu đề hoặc mô tả (dạng Ngang x Dài)
+      const textToSearch = ((p.t || '') + ' ' + (p.m || '')).toLowerCase();
+      const matchX = textToSearch.match(/(?:[^\d]|^)(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)(?:[^\d]|$)/);
+      if (matchX) {
+        const possibleNgang = parseFloat(matchX[1]);
+        const possibleDai = parseFloat(matchX[2]);
+        if (possibleDai > 0 && possibleNgang > 0 && Math.abs(possibleDai * possibleNgang - parseFloat(p.dt)) / parseFloat(p.dt) < 0.25) {
+          return possibleDai;
+        }
+      }
+      
+      // 3. Tính toán tự động từ diện tích và chiều ngang mặt tiền
+      const dtVal = parseFloat(p.dt) || 0;
+      const ngangVal = parseFloat(p.mat) || 0;
+      if (dtVal > 0 && ngangVal > 0) {
+        return Math.round((dtVal / ngangVal) * 10) / 10;
+      }
+      return 0;
+    }
+
+    function getMappedPoolData() {
+      if (MAPPED_POOL_DATA.length === POOL_ROWS.length && MAPPED_POOL_DATA.length > 0) {
+        return MAPPED_POOL_DATA;
+      }
+      if (!POOL_ROWS || !POOL_ROWS.length) return [];
+      
+      MAPPED_POOL_DATA = POOL_ROWS.map((row, index) => {
+        const systemId = row[72] || row[71] || '';
+        const dt = parseFloat(row[13] || row[14]) || 0;
+        const gia = parseGia(row[11] || row[58]);
+        const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+
+        let rawQ = row[3] || '';
+        let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+        if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+        const cleanQLower = cleanQ.toLowerCase();
+        if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+        else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+        else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+        else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+        else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+        else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+        else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+        else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+        else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+        else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+        else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+
+        const poolImgs = [];
+        for (let c = 40; c <= 54; c++) {
+          if (row[c]) poolImgs.push(row[c]);
+        }
+
+        const p = {
+          temp_id: index + 1,
+          id: row[55] || row[54] || systemId || '',
+          cu_phap: "",
+          t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
+          dt: row[13] || row[14] || '',
+          tang: row[15] || '',
+          mat: row[16] || '',
+          gia: gia,
+          q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+          ql: cleanQ.toUpperCase(),
+          phuong: row[4] || '-',
+          loai_hinh: (row[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
+          huong: row[17] || '-',
+          duong_truoc_nha: row[59] || '-',
+          rong_hem: row[60] || '-',
+          tinh_trang: row[61] || '-',
+          danh_gia: row[67] || '',
+          is_invisible: false,
+          ngu_tang_tret: row[68] || '-',
+          chdv: row[69] || '-',
+          giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+          m: cleanConsecutiveNewlines(row[57] || ''),
+          imgs: poolImgs,
+          system_id: systemId,
+          so_pn: row[64] || '-',
+          img_mat_tien: row[29] || '',
+
+          raw_ten_dau_chu: row[75] || '',
+          raw_dt_dau_chu: row[74] || '',
+          raw_link_fb: row[76] || '',
+          raw_noi_dung_chinh: row[9] || '',
+          raw_mo_ta_chi_tiet: cleanConsecutiveNewlines(row[10] || ''),
+           raw_sodo1: row[27] || '',
+           raw_sodo2: row[28] || '',
+            raw_sodo3: row[80] || '',
+            raw_sodo4: row[81] || '',
+            raw_sodo5: row[82] || '',
+           raw_so_nha: row[6] || '',
+           raw_ten_duong: row[5] || '',
+          raw_dt_thuc_te: row[13] || '',
+          raw_dt_tren_so: row[14] || '',
+          raw_gia_chao: row[11] || row[58] || '',
+          raw_so_tang: row[15] || '',
+          raw_mat_tien: row[16] || '',
+          raw_duong_truoc_nha: row[59] || '',
+          raw_do_rong_hem: row[60] || '',
+          raw_so_pn: row[64] || '',
+          raw_so_wc: row[65] || '',
+          raw_tieu_de_public: row[56] || '',
+          raw_mo_ta_public: row[57] || '',
+          pool_row_index: POOL_ROWS.indexOf(row) + 2,
+
+          isFromPoolOnly: true,
+          pool_row_data: row
+        };
+        p.dai_nha = getDaiNha(p);
+        return p;
+      });
+      return MAPPED_POOL_DATA;
+    }
+
+    function getFiltered() {
+      let a = (isAdmin && activeMode === 'pool') ? getMappedPoolData() : DATA;
+      
+      // Lọc động: Chỉ hiện căn Public (US-039.7)
+      if (isAdmin && activeMode === 'pool' && showOnAirOnly) {
+        a = a.filter(p => DATA.some(x => 
+          (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
+          (x.id && p.id && String(x.id).trim() === String(p.id).trim())
+        ));
+      }
+      
+      const sv = (document.getElementById('bdsSearchInput')?.value || '').trim();
+      if (sv) {
+        // Helper to remove accents / diacritics for Vietnamese search
+        function removeAccents(str) {
+          if (str === null || str === undefined) return '';
+          const s = String(str);
+          if (!s) return '';
+          return s
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D')
+            .toLowerCase()
+            .trim();
+        }
+
+        if (isAdmin) {
+          // Combined Multi-condition AND Search for Admin
+          const subQueries = sv.split('+').map(s => s.trim()).filter(Boolean);
+          
+          // Helper to normalize street queries (Rule 1 of BDS-AGENTS.md)
+          function normalizeStreetQuery(street) {
+            let s = removeAccents(street);
+            if (!s) return '';
+            s = s.replace(/cach\s+mang\s+thang\s+8|cach\s+mang\s+thang\s+tam|cmt8/g, 'ttmc');
+            s = s.replace(/ba\s+thang\s+hai|3\/2|3-2|3\s+thang\s+2/g, 'htb');
+            s = s.replace(/duong\s+so\s+7/g, '7sd');
+            return s;
+          }
+
+          // Helper to match Vietnamese complex house numbers
+          function matchHouseNumber(rawSoNha, querySoNha) {
+            const cleanRaw = String(rawSoNha || '').trim().toLowerCase();
+            const cleanQuery = String(querySoNha || '').trim().toLowerCase();
+            if (!cleanQuery) return true;
+            if (!cleanRaw) return false;
+            
+            // Rule 2: compound numbers "1168.42+44" -> "1168.42"
+            const normalizedRaw = cleanRaw.split('+')[0].trim();
+            
+            // Nếu người dùng gõ prefix có dấu chấm ở cuối (e.g. "95.")
+            if (cleanQuery.endsWith('.')) {
+              if (normalizedRaw.startsWith(cleanQuery)) return true;
+            }
+            
+            if (normalizedRaw === cleanQuery) return true;
+            if (normalizedRaw.startsWith(cleanQuery + '/')) return true;
+            
+            const suffixRegex = new RegExp('^' + cleanQuery + '[a-z]$');
+            if (suffixRegex.test(normalizedRaw)) return true;
+            
+            return false;
+          }
+          
+          a = a.filter(p => {
+            return subQueries.every(sub => {
+              const subCleaned = removeAccents(sub);
+              
+              // 1. Match Price query: e.g. "25 tỷ", "25.5 tỷ"
+              const priceMatch = sub.match(/^([\d,.]+)\s*tỷ$/i) || sub.match(/([\d,.]+)\s*tỷ/i);
+              if (priceMatch) {
+                const numStr = priceMatch[1].replace(',', '.');
+                const num = parseFloat(numStr);
+                const pGia = parseFloat(p.gia) || 0;
+                if (numStr.includes('.')) {
+                  // Decimal price: exact match
+                  return Math.abs(pGia - num) < 0.001;
+                } else {
+                  // Integer price: prefix match range [num, num+1)
+                  return pGia >= num && pGia < num + 1;
+                }
+              }
+              
+              // 2. Match House Number + Street: starts with a digit
+              const houseStreetMatch = sub.match(/^(\d+[\d/a-zA-Z.]*)\s*(.*)$/);
+              if (houseStreetMatch) {
+                const houseNumQuery = houseStreetMatch[1];
+                const streetQuery = houseStreetMatch[2].trim();
+                
+                let hnMatch = matchHouseNumber(p.raw_so_nha, houseNumQuery);
+                if (!hnMatch && p.cu_phap) {
+                  const cuPhapMatch = p.cu_phap.trim().match(/^(\d+[\d/a-zA-Z.]*)\s*(.*)$/);
+                  if (cuPhapMatch) {
+                    hnMatch = matchHouseNumber(cuPhapMatch[1], houseNumQuery);
+                  }
+                }
+                if (!hnMatch) return false;
+                
+                if (streetQuery) {
+                  const normStreetQ = normalizeStreetQuery(streetQuery);
+                  const normRawDuong = normalizeStreetQuery(p.raw_ten_duong);
+                  const normDuongTruoc = normalizeStreetQuery(p.duong_truoc_nha);
+                  const normTenDuong = normalizeStreetQuery(p.ten_duong);
+                  const titleMatch = removeAccents(p.t).includes(removeAccents(streetQuery));
+                  return normRawDuong.includes(normStreetQ) || normDuongTruoc.includes(normStreetQ) || normTenDuong.includes(normStreetQ) || titleMatch;
+                }
+                return true;
+              }
+              
+              // 3. Fallback: General text match
+              const normSub = normalizeStreetQuery(sub);
+              const streetMatch = normalizeStreetQuery(p.raw_ten_duong).includes(normSub) || 
+                                  normalizeStreetQuery(p.duong_truoc_nha).includes(normSub) ||
+                                  normalizeStreetQuery(p.ten_duong).includes(normSub);
+              const titleMatch = removeAccents(p.t).includes(subCleaned);
+              const pMatch = removeAccents(p.phuong).includes(subCleaned);
+              const idMatch = removeAccents(p.id).includes(subCleaned);
+              const qMatch = removeAccents(p.q).includes(subCleaned) ||
+                             removeAccents(p.ql).includes(subCleaned) ||
+                             (subCleaned === 'phu nhuan' && p.q === 'pn') ||
+                             (subCleaned === 'tan binh' && p.q === 'tb') ||
+                             (subCleaned === 'binh thanh' && p.q === 'bt') ||
+                             (subCleaned === 'go vap' && p.q === 'gv') ||
+                             (subCleaned === 'quan 3' && p.q === 'q3') ||
+                             (subCleaned === 'quan 10' && p.q === 'q10');
+                             
+              const dauChuMatch = removeAccents(p.raw_ten_dau_chu).includes(subCleaned);
+              const dtMatch = removeAccents(p.raw_dt_dau_chu).includes(subCleaned);
+              const cpMatch = removeAccents(p.cu_phap).includes(subCleaned);
+              const soNhaMatch = removeAccents(p.raw_so_nha).includes(subCleaned) || (p.cu_phap && removeAccents(p.cu_phap.split(' ')[0]).includes(subCleaned));
+              const duongMatch = removeAccents(p.raw_ten_duong).includes(subCleaned) || removeAccents(p.ten_duong).includes(subCleaned);
+              
+              return idMatch || titleMatch || streetMatch || pMatch || qMatch ||
+                     dauChuMatch || dtMatch || cpMatch || soNhaMatch || duongMatch;
+            });
+          });
+        } else {
+          // Regular client search logic with accent-free search support
+          const svCleaned = removeAccents(sv);
+          a = a.filter(p => {
+            const idMatch = removeAccents(p.id).includes(svCleaned);
+            const tMatch = removeAccents(p.t).includes(svCleaned);
+            const dMatch = removeAccents(p.duong_truoc_nha).includes(svCleaned) || 
+                           removeAccents(p.ten_duong).includes(svCleaned) || 
+                           removeAccents(p.raw_ten_duong).includes(svCleaned);
+            const pMatch = removeAccents(p.phuong).includes(svCleaned);
+            const qMatch = removeAccents(p.q).includes(svCleaned) ||
+              removeAccents(p.ql).includes(svCleaned) ||
+              (svCleaned === 'phu nhuan' && p.q === 'pn') ||
+              (svCleaned === 'tan binh' && p.q === 'tb') ||
+              (svCleaned === 'binh thanh' && p.q === 'bt') ||
+              (svCleaned === 'go vap' && p.q === 'gv') ||
+              (svCleaned === 'quan 3' && p.q === 'q3') ||
+              (svCleaned === 'quan 10' && p.q === 'q10');
+            return idMatch || tMatch || dMatch || pMatch || qMatch;
+          });
+        }
+      }
+
+      // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT
+      const dtMin = document.getElementById('filterDtMin')?.value || '';
+      const dtMax = document.getElementById('filterDtMax')?.value || '';
+      const ngangMin = document.getElementById('filterNgangMin')?.value || '';
+      const ngangMax = document.getElementById('filterNgangMax')?.value || '';
+      const daiMin = document.getElementById('filterDaiMin')?.value || '';
+      const daiMax = document.getElementById('filterDaiMax')?.value || '';
+      const phongMin = document.getElementById('filterPhongMin')?.value || '';
+      const phongMax = document.getElementById('filterPhongMax')?.value || '';
+
+      if (dtMin !== '' || dtMax !== '') {
+        a = a.filter(p => {
+          const val = parseFloat(p.raw_dt_tren_so || p.dt) || 0;
+          if (dtMin !== '' && val < parseFloat(dtMin)) return false;
+          if (dtMax !== '' && val > parseFloat(dtMax)) return false;
+          return true;
+        });
+      }
+
+      if (ngangMin !== '' || ngangMax !== '') {
+        a = a.filter(p => {
+          const val = parseFloat(p.raw_mat_tien || p.mat) || 0;
+          if (ngangMin !== '' && val < parseFloat(ngangMin)) return false;
+          if (ngangMax !== '' && val > parseFloat(ngangMax)) return false;
+          return true;
+        });
+      }
+
+      if (daiMin !== '' || daiMax !== '') {
+        a = a.filter(p => {
+          const val = parseFloat(p.dai_nha) || 0;
+          if (daiMin !== '' && val < parseFloat(daiMin)) return false;
+          if (daiMax !== '' && val > parseFloat(daiMax)) return false;
+          return true;
+        });
+      }
+
+      if (phongMin !== '' || phongMax !== '') {
+        a = a.filter(p => {
+          const val = parseInt(p.raw_so_pn || p.so_pn) || 0;
+          if (phongMin !== '' && val < parseInt(phongMin, 10)) return false;
+          if (phongMax !== '' && val > parseInt(phongMax, 10)) return false;
+          return true;
+        });
+      }
+
+      if (showFavOnly) a = a.filter(p => favs.has(String(p.id)));
+      if (selDistricts.size) a = a.filter(p => selDistricts.has(p.q));
+      if (selWards.size) a = a.filter(p => selWards.has(p.phuong));
+      if (selDuongs.size) a = a.filter(p => selDuongs.has(p.duong_truoc_nha));
+      if (selHuong.size) a = a.filter(p => selHuong.has(p.huong));
+      a = applyGia(a);
+      if (selDanhGia.size) a = a.filter(p => selDanhGia.has(p.danh_gia));
+
+      // LỌC THEO BỘ SƯU TẬP HOẶC DANH SÁCH YÊU THÍCH CỦA ADMIN
+      if (activeCollectionName) {
+        if (activeCollectionName === 'favorites') {
+          a = a.filter(p => favs.has(String(p.id)));
+        } else if (collections[activeCollectionName]) {
+          const colIds = new Set(collections[activeCollectionName]);
+          a = a.filter(p => colIds.has(String(p.id)));
+        }
+      }
+      return a;
+    }
+    const SELECTED_IDS = new Set();
+
+    // Lấy giá trị ô từ Google Sheets JSON (xử lý null do lỗi mixed type của gviz)
+    function cv(cell) { return cell ? (cell.v ?? cell.f ?? '') : ''; }
+
+    // Tự động convert link Google Drive → ảnh có thể nhúng với kích thước tùy chỉnh
+    function fixImgUrl(url, sz = 'w800') {
+      if (!url) return '';
+      if (url.includes('res.cloudinary.com')) {
+        const width = sz.replace('w', '');
+        // Tối ưu hóa Cloudinary: chất lượng tự động (q_auto), định dạng tự động (f_auto), và tự động xoay đúng chiều EXIF (a_auto)
+        return url.replace('/image/upload/', `/image/upload/q_auto,f_auto,a_auto,c_limit,w_${width}/`);
+      }
+      if (url.includes('thumbnail') || url.includes('uc?export')) {
+        // Nếu là link thumbnail cũ, cập nhật lại kích thước
+        return url.replace(/sz=w\d+/, `sz=${sz}`);
+      }
+      const m1 = url.match(/drive\.google\.com\/file\/d\/([^/?\s]+)/);
+      if (m1) return `https://drive.google.com/thumbnail?id=${m1[1]}&sz=${sz}`;
+      const m2 = url.match(/[?&]id=([^&\s]+)/);
+      if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=${sz}`;
+      return url;
+    }
+
+    // Dùng JSONP thay fetch để tránh lỗi CORS khi mở file:// cục bộ
+    async function loadData() {
+      // Xóa script cũ nếu có
+      const old = document.getElementById('_gs');
+      if (old) old.remove();
+      const oldAdmin = document.getElementById('_gs_admin');
+      if (oldAdmin) oldAdmin.remove();
+
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+      const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+
+      if (isAdmin && !isTokenValid) {
+        console.log("Admin accessed without valid Google token. Displaying Auth Screen...");
+        document.body.classList.add('is-locked');
+        showGoogleLoginButtonState(false);
+        const listContainer = document.getElementById('list');
+        if (listContainer) {
+          listContainer.innerHTML = `
+            <div class="admin-auth-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(255, 191, 36, 0.25); border-radius: 20px; margin: 40px auto; max-width: 420px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+              <div style="font-size: 50px; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(255,191,36,0.35));">🔒</div>
+              <h2 style="font-size: 18px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; font-family: inherit;">Hệ Thống Quản Trị Viên</h2>
+              <p style="font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.5; margin-bottom: 24px; font-family: inherit;">
+                Chào mừng bạn đến với trang quản trị Khang Ngô Nhà Phố.<br>Vui lòng liên kết tài khoản Google để truy cập kho <b>Pool bảo mật</b> và sử dụng các công cụ curation nâng cao.
+              </p>
+              <button onclick="handleGoogleLoginClick()" style="background: var(--gold); color: #1c1c1e; border: none; padding: 14px 28px; border-radius: 12px; font-size: 13.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(255,191,36,0.3); font-family: inherit; width: 100%;">
+                <svg style="width:16px; height:16px; display:block;" viewBox="0 0 24 24">
+                  <path fill="#1c1c1e" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.478 0-6.3-2.823-6.3-6.3s2.822-6.3 6.3-6.3c1.706 0 3.24.685 4.378 1.8l3.273-3.27C19.673 2.66 16.527 1.5 12.24 1.5 6.31 1.5 1.5 6.31 1.5 12.24s4.81 10.74 10.74 10.74c6.19 0 10.74-4.35 10.74-10.74 0-.724-.072-1.414-.18-2.072H12.24z"/>
+                </svg>
+                <span>⚡ ĐĂNG NHẬP GOOGLE ADMIN</span>
+              </button>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      if (isAdmin && isTokenValid && !secureLoadAttempted) {
+        console.log("Loading parallel Admin data...");
+        document.body.classList.remove('is-locked');
+        secureLoadAttempted = true;
+        const listContainer = document.getElementById('list');
+        if (listContainer) {
+          listContainer.innerHTML = '<div style="text-align:center; padding: 40px; font-weight: 700; color: var(--red);">🏠 ĐANG NẠP DỮ LIỆU BẢO MẬT ADMIN SONG SONG...</div>';
+        }
+
+        const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+        const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
+
+          const [sourceRes, poolRes] = await Promise.all([
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:ZZ`, {
+              headers: { 'Authorization': `Bearer ${token}` },
+              signal: controller.signal
+            }),
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:ZZ`, {
+              headers: { 'Authorization': `Bearer ${token}` },
+              signal: controller.signal
+            })
+          ]);
+
+          clearTimeout(timeoutId);
+
+          if (!sourceRes.ok || !poolRes.ok) {
+            if (sourceRes.status === 401 || sourceRes.status === 403 || poolRes.status === 401 || poolRes.status === 403) {
+              console.warn("OAuth token invalid or unauthorized. Cleared from storage.");
+              localStorage.removeItem('g_access_token');
+              localStorage.removeItem('g_token_expiry');
+              showGoogleLoginButtonState(false);
+            }
+            throw new Error(`Lỗi tải API Google Sheets (Source: ${sourceRes.status}, Pool: ${poolRes.status})`);
+          }
+
+          const sourceDataJson = await sourceRes.json();
+          const poolDataJson = await poolRes.json();
+
+          const sourceRows = sourceDataJson.values || [];
+          const poolRows = poolDataJson.values || [];
+          POOL_ROWS = poolRows;
+
+          const fullList = sourceRows
+            .map((sr, index) => {
+              if (!sr[3] && !sr[4]) return null;
+              
+              const targetRowNumber = index + 2;
+              const dt = parseFloat(sr[5]) || 0;
+              const gia = parseGia(sr[8]);
+              const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+              
+              let rawQ = sr[9] || '';
+              let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+              if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+              
+              const cleanQLower = cleanQ.toLowerCase();
+              if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+              else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+              else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+              else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+              else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+              else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+              else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+              else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+              else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+              else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+              else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+               const srSystemId = sr[37] || '';
+              const srId = sr[3] || '';
+
+              const poolRow = poolRows.find(pr => {
+                const prSystemId = pr[72] || ''; // System ID (Index 72, STT 73)
+                const prId = pr[55] || '';       // Mã Khang Ngô (ID) (Index 55, STT 56)
+                return (srSystemId && prSystemId === srSystemId) || 
+                       (srId && prId === srId) ||
+                       (srSystemId && prId === srSystemId);
+              });
+
+              const poolImgs = [];
+              if (poolRow) {
+                // Lấy Ảnh 1 đến Ảnh 25 từ Pool (chỉ số 40 đến 54 và 80 đến 89)
+                for (let c = 40; c <= 54; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
+                for (let c = 83; c <= 92; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
+              }
+
+              const sourcePublicImgs = [
+                sr[20], sr[21], sr[22], sr[23], sr[24],
+                sr[25], sr[26], sr[27], sr[28], sr[29],
+                sr[41], sr[42], sr[43], sr[44], sr[45]
+              ].filter(Boolean);
+
+              const allImgs = poolRow ? [
+                ...poolImgs,
+                ...sourcePublicImgs
+              ] : sourcePublicImgs;
+              const uniqueImgs = [...new Set(allImgs)];
+
+              const p = {
+                temp_id: index + 1,
+                id: sr[3] || '',
+                cu_phap: sr[1] || '',
+                t: sr[4] || '',
+                dt: sr[5] || '',
+                tang: sr[6] || '',
+                mat: sr[7] || '',
+                gia: gia,
+                q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+                ql: cleanQ.toUpperCase(),
+                phuong: sr[10] || '-',
+                loai_hinh: sr[11] || 'Hẻm',
+                huong: sr[12] || '-',
+                duong_truoc_nha: sr[13] || '-',
+                rong_hem: sr[14] || '-',
+                tinh_trang: sr[15] || '-',
+                danh_gia: sr[16] || '',
+                is_invisible: (sr[15] || '').toLowerCase().includes('ẩn') ||
+                              (sr[15] || '').toLowerCase().includes('đã bán') ||
+                              (sr[15] || '').toLowerCase().includes('invisible'),
+                ngu_tang_tret: sr[17] || '-',
+                chdv: sr[18] || '-',
+                giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+                m: cleanConsecutiveNewlines(sr[19] || ''),
+                imgs: uniqueImgs,
+                system_id: sr[37] || (index + 1).toString(),
+                so_pn: sr[32] || '-',
+                img_mat_tien: sr[38] || '',
+                ten_duong: sr[34] || '',
+                
+                original_row_data: sr,
+                source_row_index: targetRowNumber
+              };
+              p.dai_nha = getDaiNha(p);
+
+              if (poolRow) {
+                p.raw_ten_dau_chu = poolRow[75] || '';       // Tên Đầu Chủ (Hợp đồng) - Index 75, Column BX
+                p.raw_dt_dau_chu = poolRow[74] || '';        // Điện thoại Đầu Chủ - Index 74, Column BW
+                p.raw_link_fb = poolRow[76] || '';           // Điểm Facebook / Link Facebook - Index 76, Column BY
+                p.raw_noi_dung_chinh = poolRow[9] || '';     // Nội dung chính - Index 9, Column J
+                p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
+                p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
+                p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
+                p.raw_sodo3 = poolRow[80] || '';             // Sơ đồ thửa đất 3 - Index 80, Column CC
+                p.raw_sodo4 = poolRow[81] || '';             // Sơ đồ thửa đất 4 - Index 81, Column CD
+                p.raw_sodo5 = poolRow[82] || '';             // Sơ đồ thửa đất 5 - Index 82, Column CE
+                p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
+                p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
+                p.raw_dt_tren_so = poolRow[14] || '';        // DT Trên sổ - Index 14, Column O
+                p.raw_gia_chao = poolRow[11] || poolRow[58] || '';          // Giá chào - Index 11, Column L
+                p.raw_so_tang = poolRow[15] || '';           // Số Tầng - Index 15, Column P
+                p.raw_mat_tien = poolRow[16] || '';          // Mặt Tiền - Index 16, Column Q
+                p.raw_duong_truoc_nha = poolRow[60] || '';   // Đường trước nhà (m) - Index 60, Column BI
+                p.raw_do_rong_hem = poolRow[61] || '';       // Phân loại Hẻm - Index 61, Column BJ
+                p.raw_so_pn = poolRow[64] || '';             // Số phòng ngủ - Index 64, Column BM
+                p.raw_so_wc = poolRow[65] || '';             // Số nhà vệ sinh - Index 65, Column BN
+                p.raw_tieu_de_public = poolRow[56] || '';    // Tiêu đề Public - Index 56, Column BE
+                p.raw_mo_ta_public = poolRow[57] || '';      // Mô tả Public - Index 57, Column BF
+                p.pool_row_index = poolRows.indexOf(poolRow) + 2;
+                p.pool_row_data = poolRow;
+              } else {
+                p.raw_ten_dau_chu = '';
+                p.raw_dt_dau_chu = '';
+                p.raw_link_fb = '';
+                p.raw_noi_dung_chinh = '';
+                p.raw_mo_ta_chi_tiet = '';
+                p.raw_sodo1 = '';
+                p.raw_sodo2 = '';
+                p.raw_sodo3 = '';
+                p.raw_sodo4 = '';
+                p.raw_sodo5 = '';
+                p.raw_so_nha = '';
+                p.raw_ten_duong = p.ten_duong || '';
+                p.raw_dt_tren_so = p.dt || '';
+                p.raw_gia_chao = p.gia || '';
+                p.raw_so_tang = p.tang || '';
+                p.raw_mat_tien = p.mat || '';
+                p.raw_duong_truoc_nha = p.duong_truoc_nha || '';
+                p.raw_do_rong_hem = p.rong_hem || '';
+                p.raw_so_pn = p.so_pn || '';
+                p.raw_so_wc = '';
+                p.raw_tieu_de_public = '';
+                p.raw_mo_ta_public = '';
+                p.pool_row_index = null;
+                p.pool_row_data = null;
+              }
+
+              return p;
+            })
+            .filter(Boolean);
+
+          isSecureLoaded = true;
+          finalizeData(fullList);
+        } catch (err) {
+          console.error("Error loading secure admin data, falling back to public:", err);
+          if (err.name === 'AbortError') {
+            console.warn("Secure fetch timed out after 8s. Falling back to public.");
+          }
+          loadPublicDataFallback();
+        }
+      } else {
+        if (isSecureLoaded) {
+          console.log("Secure admin data already loaded, skipping public fallback.");
+          return;
+        }
+        if (isDataLoaded) {
+          console.log("Data already loaded, skipping public reload.");
+          return;
+        }
+        loadPublicDataFallback();
+      }
+    }
+
+    function loadPublicDataFallback() {
+      window.__gsCallback = function (response) {
+        try {
+          const rows = response.table.rows;
+          const QUAN_FULL = { pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp' };
+          const fullList = rows
+            .filter(r => r.c[0] && r.c[0].v)
+            .map((r, index) => {
+              const dt = parseFloat(cv(r.c[2])) || 0;
+              const gia = parseFloat(cv(r.c[5])) || 0;
+              const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+              let rawQ = cv(r.c[6]);
+              if (!rawQ) {
+                const titleLower = String(cv(r.c[1])).toLowerCase();
+                const phuongLower = String(cv(r.c[7])).toLowerCase();
+                if (titleLower.includes('phú nhuận') || titleLower.includes('pn') || phuongLower.includes('phú nhuận') || phuongLower.includes('pn') || phuongLower.includes('cầu kiệu')) rawQ = 'PN';
+                else if (titleLower.includes('tân bình') || titleLower.includes('tb') || phuongLower.includes('tân bình') || phuongLower.includes('tb') || phuongLower.includes('tân sơn nhất') || phuongLower.includes('tân hòa')) rawQ = 'TB';
+                else if (titleLower.includes('bình thạnh') || titleLower.includes('bt') || phuongLower.includes('bình thạnh') || phuongLower.includes('bt')) rawQ = 'BT';
+                else if (titleLower.includes('gò vấp') || titleLower.includes('gv') || phuongLower.includes('gò vấp') || phuongLower.includes('gv')) rawQ = 'GV';
+              }
+              let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+              if (cleanQ.endsWith('.0')) {
+                cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+              }
+
+              const cleanQLower = cleanQ.toLowerCase();
+              if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+              else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+              else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+              else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+              else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+              else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+              else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+              else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+              else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+              else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+              else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+              else if (cleanQLower.includes('cần giờ') || cleanQLower === 'cg') cleanQ = 'cg';
+              else if (cleanQLower === '1' || cleanQLower === 'q1') cleanQ = '1';
+              else if (cleanQLower === '2' || cleanQLower === 'q2') cleanQ = '2';
+              else if (cleanQLower === '3' || cleanQLower === 'q3') cleanQ = '3';
+              else if (cleanQLower === '4' || cleanQLower === 'q4') cleanQ = '4';
+              else if (cleanQLower === '5' || cleanQLower === 'q5') cleanQ = '5';
+              else if (cleanQLower === '6' || cleanQLower === 'q6') cleanQ = '6';
+              else if (cleanQLower === '7' || cleanQLower === 'q7') cleanQ = '7';
+              else if (cleanQLower === '8' || cleanQLower === 'q8') cleanQ = '8';
+              else if (cleanQLower === '9' || cleanQLower === 'q9') cleanQ = '9';
+              else if (cleanQLower === '10' || cleanQLower === 'q10') cleanQ = '10';
+              else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
+              else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
+              const p = {
+                temp_id: index + 1,
+                id: cv(r.c[0]),
+                cu_phap: '',
+                t: cv(r.c[1]),
+                dt: cv(r.c[2]),
+                tang: cv(r.c[3]),
+                mat: cv(r.c[4]),
+                gia: cv(r.c[5]),
+                q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+                ql: cleanQ.toUpperCase(),
+                phuong: cv(r.c[7]) || '-',
+                loai_hinh: cv(r.c[8]) || 'Hẻm',
+                huong: cv(r.c[9]) || '-',
+                duong_truoc_nha: cv(r.c[10]) || '-',
+                rong_hem: cv(r.c[11]) || '-',
+                tinh_trang: cv(r.c[12]) || '-',
+                danh_gia: cv(r.c[13]) || '',
+                is_invisible: (cv(r.c[12]) || '').toLowerCase().includes('ẩn') ||
+                  (cv(r.c[12]) || '').toLowerCase().includes('đã bán') ||
+                  (cv(r.c[12]) || '').toLowerCase().includes('invisible'),
+                ngu_tang_tret: cv(r.c[14]) || '-',
+                chdv: cv(r.c[15]) || '-',
+                giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+                m: cv(r.c[16]),
+                imgs: [
+                  cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]),
+                  cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26]),
+                  cv(r.c[38]), cv(r.c[39]), cv(r.c[40]), cv(r.c[41]), cv(r.c[42])
+                ].filter(Boolean),
+                system_id: cv(r.c[34]) || (index + 1).toString(),
+                so_pn: cv(r.c[29]) || '-',
+                img_mat_tien: cv(r.c[35]) || ''
+              };
+              p.dai_nha = getDaiNha(p);
+              return p;
+            });
+
+          finalizeData(fullList);
+          
+          // Securely load frontage images via serverless API proxy in the background if Admin is logged in (US-024)
+          if (isAdmin) {
+            console.log("Admin session detected in public fallback. Initiating background facade images retrieval...");
+            fetchFacadeImages();
+          }
+        } catch (e) {
+          showError('Lỗi parse dữ liệu: ' + e.message);
+        }
+      };
+
+      const s = document.createElement('script');
+      s.id = '_gs';
+      s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback`;
+      s.onerror = () => showError('Không kết nối được Google Sheets. Kiểm tra SHEET_ID và quyền truy cập.');
+      document.head.appendChild(s);
+    }
+
+    window.toggleShowOnAirOnly = function(isChecked) {
+      if (!isAdmin) return;
+      showOnAirOnly = isChecked;
+      updateStats();
+      applyFilter();
+      saveState();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    function updateSwitcherCounts() {
+      const poolEl = document.getElementById('countPool');
+      if (poolEl) poolEl.textContent = POOL_ROWS ? POOL_ROWS.length : '0';
+    }
+
+    function finalizeData(fullList) {
+      isDataLoaded = true;
+      if (shareBitmask) {
+        const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
+        sharedIds = decodeBitmask(shareBitmask, allIds);
+      }
+      
+      if (sharedIds) {
+        sharedIds = sharedIds.map(tk => {
+          if (tk.startsWith('SYS-')) {
+            const house = fullList.find(h => h.system_id === tk);
+            return house ? String(house.id) : null;
+          }
+          if (/^\d+$/.test(tk)) {
+            const idx = parseInt(tk, 10) - 1;
+            return fullList[idx] ? String(fullList[idx].id) : null;
+          }
+          return tk;
+        }).filter(Boolean);
+      }
+
+      if (sharedIds) {
+        DATA = fullList.filter(p => sharedIds.map(String).includes(String(p.id)) && !p.is_invisible);
+      } else if (!isAdmin) {
+        DATA = [];
+        showError('Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.');
+      } else {
+        DATA = fullList.filter(p => !p.is_invisible);
+      }
+
+      // KIỂM TRA ĐĂNG KÝ THÔNG TIN KHÁCH HÀNG (US-059)
+      const isClientView = (shareBitmask || sharedIds) && !isAdmin;
+      if (isClientView) {
+        const savedName = localStorage.getItem('client_name');
+        const savedPhone = localStorage.getItem('client_phone');
+        if (savedName && savedPhone) {
+          displayCustomerName = savedName;
+          trackingCustomerName = `${savedName} - ${savedPhone}`;
+          // Update welcome banner (US-059)
+          const banner = document.getElementById('welcomeBanner');
+          if (banner) {
+            banner.innerHTML = `👋 Xin chào <b>${displayCustomerName}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;
+            banner.style.display = 'block';
+          }
+        } else {
+          // Hiện modal đăng ký thông tin
+          const leadModal = document.getElementById('leadCaptureModal');
+          if (leadModal) {
+            leadModal.style.display = 'flex';
+            leadModal.classList.add('open');
+            // Nếu URL có sẵn tên thì pre-fill
+            if (displayCustomerName) {
+              const leadNameInput = document.getElementById('leadCustName');
+              if (leadNameInput) leadNameInput.value = displayCustomerName;
+            }
+          }
+        }
+      }
+
+      if (DATA.length > 0) {
+        trackAction("Mở danh sách nhà", `Số lượng hiển thị: ${DATA.length} căn`);
+      }
+
+      buildDistrictTabs();
+      restoreState();
+      updateSortButtonsUI();
+
+      buildWardTabs();
+      buildDuongTabs();
+      buildHuongTabs();
+      updateFilterSummary();
+      updateStats();
+      render();
+      updateSwitcherCounts();
+      if (isAdmin) {
+        autoLoginOrSilentRefresh();
+      }
+
+      // US-049: Tự động mở modal Curation Pool thô nếu Admin mở link của căn chưa public
+      if (isAdmin && shareToken && shareToken.startsWith('SYS-')) {
+        const isOnAir = fullList.some(h => h.system_id === shareToken);
+        if (!isOnAir && POOL_ROWS && POOL_ROWS.length) {
+          const poolRow = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(shareToken).trim());
+          if (poolRow) {
+            setTimeout(() => {
+              openPoolS(shareToken);
+            }, 800);
+            return;
+          }
+        }
+      }
+
+      // Check if there is an active auto-expand preview flag in localStorage (US-046.2)
+      if (isAdmin) {
+        const autoPreviewId = localStorage.getItem('auto_preview_listing_id');
+        if (autoPreviewId) {
+          localStorage.removeItem('auto_preview_listing_id');
+          setTimeout(() => {
+            openS(autoPreviewId, null, true);
+          }, 850);
+        }
+
+        const autoShareId = localStorage.getItem('auto_share_zalo_listing_id');
+        if (autoShareId) {
+          localStorage.removeItem('auto_share_zalo_listing_id');
+          setTimeout(() => {
+            if (confirm(`🎉 Căn nhà #${autoShareId} đã LÊN SÓNG thành công và đang hiển thị trên Customer View!\n\nBạn có muốn tạo Link chia sẻ gửi Zalo cho khách hàng ngay bây giờ không?`)) {
+              shareZaloFromAdminDetail(autoShareId);
+            }
+          }, 1250);
+        }
+      }
+    }
+
+    window.triggerAdminAuthPrompt = function() {
+      const pw = prompt("Nhập mật khẩu Admin để đăng nhập:");
+      if (pw === null) return;
+      if (pw.trim() === ADMIN_PASSWORD) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('pwd', ADMIN_PASSWORD);
+        url.searchParams.delete('c');
+        url.searchParams.delete('b');
+        url.searchParams.delete('s');
+        window.location.href = url.toString();
+      } else {
+        alert("Sai mật khẩu Admin!");
+      }
+    };
+
+    function showError(msg) {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      
+      const adminLoginLink = !isAdmin ? `
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.08);">
+          <span onclick="triggerAdminAuthPrompt()" style="font-size: 12px; color: var(--sub); cursor: pointer; opacity: 0.4; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-weight: 500;" onmouseover="this.style.opacity=0.8; this.style.color='var(--gold)'" onmouseout="this.style.opacity=0.4; this.style.color='var(--sub)'">
+            🔒 Đăng nhập Admin
+          </span>
+        </div>
+      ` : '';
+
+      list.insertAdjacentHTML('beforeend', `
+    <div class="err-box">
+      <h3>🏠 Thông báo</h3>
+      <p style="font-size: 15px; font-weight: 500;">Vui lòng liên hệ <b>Khang Ngô Nhà Phố</b> để được cung cấp thông tin.</p>
+      ${adminLoginLink}
+    </div>`);
+    }
+
+    // ── Local Storage State ──
+    function saveState() {
+      if (!isAdmin || shareBitmask || shareToken) return;
+      const state = {
+        districts: [...selDistricts],
+        wards: [...selWards],
+        duongs: [...selDuongs],
+        huongs: [...selHuong],
+        gia: [...selGia],
+        danhGia: [...selDanhGia],
+        selectedIds: [...SELECTED_IDS],
+        favOnly: showFavOnly,
+        showOnAirOnly: showOnAirOnly,
+        search: document.getElementById('bdsSearchInput')?.value || ''
+      };
+      localStorage.setItem('adminState', JSON.stringify(state));
+    }
+
+    function restoreState() {
+      if (!isAdmin || shareBitmask || shareToken) return;
+      try {
+        const saved = localStorage.getItem('adminState');
+        if (!saved) return;
+        const state = JSON.parse(saved);
+
+        state.districts?.forEach(x => selDistricts.add(x));
+        state.wards?.forEach(x => selWards.add(x));
+        state.duongs?.forEach(x => selDuongs.add(x));
+        state.huongs?.forEach(x => selHuong.add(x));
+        state.gia?.forEach(x => selGia.add(x));
+        state.danhGia?.forEach(x => selDanhGia.add(x));
+        state.selectedIds?.forEach(x => SELECTED_IDS.add(x));
+
+        if (state.favOnly !== undefined) showFavOnly = state.favOnly;
+        if (state.showOnAirOnly !== undefined) {
+          showOnAirOnly = state.showOnAirOnly;
+          const toggle = document.getElementById('onAirToggle');
+          if (toggle) toggle.checked = showOnAirOnly;
+        }
+
+        const sInput = document.getElementById('bdsSearchInput');
+        if (sInput && state.search) {
+          sInput.value = state.search;
+          toggleSearchClearBtn();
+        }
+
+        syncTabUI('districtTabs', selDistricts);
+        syncTabUI('giaTabs', selGia);
+        syncTabUI('danhGiaTabs', selDanhGia);
+
+        updateSortButtonsUI();
+        updateFavBtnUI();
+
+        const sc = document.getElementById('shareCount');
+        if (sc) sc.textContent = SELECTED_IDS.size;
+      } catch (e) {
+        console.error('Lỗi restore state:', e);
+      }
+    }
+
+    function updateStats() {
+      const arr = getFiltered();
+      if (!arr.length) {
+        const totalBadge = document.getElementById('totalBadge');
+        if (totalBadge) totalBadge.textContent = '0 BĐS';
+        
+        const sTong = document.getElementById('sTong');
+        if (sTong) sTong.textContent = '0';
+        
+        const sTang = document.getElementById('sTang');
+        if (sTang) sTang.textContent = '-';
+        
+        const sGia = document.getElementById('sGia');
+        if (sGia) sGia.textContent = '-';
+        
+        const sDt = document.getElementById('sDt');
+        if (sDt) sDt.textContent = '-';
+        
+        const sQuan = document.getElementById('sQuan');
+        if (sQuan) sQuan.textContent = '-';
+        return;
+      }
+      const gias = arr.map(p => parseFloat(p.gia)).filter(Boolean);
+      const dts = arr.map(p => parseFloat(p.dt)).filter(Boolean);
+      const tangs = arr.map(p => parseFloat(p.tang)).filter(Boolean);
+      const quans = [...new Set(arr.map(p => p.q).filter(Boolean))].length;
+      
+      const sTong = document.getElementById('sTong');
+      if (sTong) sTong.textContent = arr.length;
+      
+      const sTang = document.getElementById('sTang');
+      if (sTang) sTang.textContent = tangs.length ? `${Math.min(...tangs)}–${Math.max(...tangs)}` : '-';
+      
+      const sGia = document.getElementById('sGia');
+      if (sGia) sGia.textContent = gias.length ? `${Math.min(...gias).toFixed(1)}–${Math.max(...gias).toFixed(1)}` : '-';
+      
+      const sDt = document.getElementById('sDt');
+      if (sDt) sDt.textContent = dts.length ? `${Math.min(...dts)}–${Math.max(...dts)}` : '-';
+      
+      const sQuan = document.getElementById('sQuan');
+      if (sQuan) sQuan.textContent = quans || '-';
+      
+      const totalBadge = document.getElementById('totalBadge');
+      if (totalBadge) totalBadge.textContent = `${arr.length} BĐS`;
+    }
+
+    // ── Filter panel toggle ──
+    function toggleFilter() {
+      filterOpen = !filterOpen;
+      document.getElementById('filterPanel').classList.toggle('open', filterOpen);
+      const btn = document.getElementById('filterBtn');
+      btn.classList.toggle('active', filterOpen);
+    }
+    function closeFilter() {
+      if (!filterOpen) return;
+      filterOpen = false;
+      document.getElementById('filterPanel').classList.remove('open');
+      const btn = document.getElementById('filterBtn');
+      const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size);
+      btn.classList.toggle('active', anyActive);
+    }
+
+    // ── Build district tabs dynamically ──
+    function buildDistrictTabs() {
+      const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+      const dNamesFull = {
+        q1: 'Quận 1', q2: 'Quận 2', q3: 'Quận 3', q4: 'Quận 4', q5: 'Quận 5', q6: 'Quận 6',
+        q7: 'Quận 7', q8: 'Quận 8', q9: 'Quận 9', q10: 'Quận 10', q11: 'Quận 11', q12: 'Quận 12',
+        pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp',
+        tp: 'Tân Phú', btan: 'Bình Tân', td: 'Thủ Đức',
+        hm: 'Hóc Môn', nb: 'Nhà Bè', bc: 'Bình Chánh', cc: 'Củ Chi', cg: 'Cần Giờ'
+      };
+
+      const order = ['q3', 'q10', 'pn', 'tb', 'bt', 'gv', 'q1', 'q2', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q11', 'q12', 'tp', 'btan', 'td', 'hm', 'nb', 'bc', 'cc', 'cg'];
+      
+      districtsInPool.sort((a, b) => {
+        let idxA = order.indexOf(a);
+        let idxB = order.indexOf(b);
+        if (idxA === -1) idxA = 999;
+        if (idxB === -1) idxB = 999;
+        return idxA - idxB;
+      });
+
+      const container = document.getElementById('districtTabs');
+      if (!container) return;
+
+      container.innerHTML = `<button class="tab ${selDistricts.size === 0 ? 'on' : ''}" data-val="all" onclick="tDistrict('all')">Tất cả</button>`
+        + districtsInPool.map(d => {
+            const name = dNamesFull[d] || d.toUpperCase();
+            return `<button class="tab ${selDistricts.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDistrict('${d}')">${name}</button>`;
+          }).join('');
+    }
+
+    // ── Build ward tabs dynamically ──
+    const STATIC_WARD_MAP = {
+      q3: ["Xuân Hòa", "Bàn Cờ", "Nhiêu Lộc"],
+      q10: ["Vườn Lài", "Hòa Hưng", "Diên Hồng"],
+      bt: ["Gia Định", "Bình Thạnh", "Thạnh Mỹ Tây", "Bình Quới", "Bình Lợi Trung"],
+      tb: ["Tân Sơn Hòa", "Tân Sơn Nhất", "Tân Hòa", "Bảy Hiền", "Tân Bình", "Tân Sơn"],
+      pn: ["Phú Nhuận", "Cầu Kiệu", "Đức Nhuận"]
+    };
+
+    function buildWardTabs() {
+      let wards = [];
+      if (selDistricts.size === 1) {
+        const d = [...selDistricts][0];
+        if (STATIC_WARD_MAP[d]) {
+          wards = [...STATIC_WARD_MAP[d]];
+        }
+      }
+      if (wards.length === 0) {
+        const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+        wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
+      }
+      const wt = document.getElementById('wardTabs');
+      const wl = document.getElementById('wardLbl');
+      if (!wards.length) { wt.classList.remove('has-wards'); wl.style.display = 'none'; return; }
+      wl.style.display = 'block';
+      wt.innerHTML = `<button class="tab ${selWards.size === 0 ? 'on' : ''}" data-val="all" onclick="tWard('all')">Tất cả</button>`
+        + wards.map(w => `<button class="tab ${selWards.has(w) ? 'on' : ''}" data-val="${w}" onclick="tWard('${w}')">${w}</button>`).join('');
+      wt.classList.add('has-wards');
+    }
+
+    // ── Build duong tabs dynamically ──
+    function buildDuongTabs() {
+      let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+      if (selWards.size) pool = pool.filter(p => selWards.has(p.phuong));
+      const duongs = [...new Set(pool.map(p => p.duong_truoc_nha).filter(d => d && d !== '-'))].sort();
+      const dt = document.getElementById('duongTabs');
+      const dl = document.getElementById('duongLbl');
+      if (!duongs.length) { dt.classList.remove('has-duong'); dl.style.display = 'none'; return; }
+      dl.style.display = 'block';
+      dt.innerHTML = `<button class="tab ${selDuongs.size === 0 ? 'on' : ''}" data-val="all" onclick="tDuong('all')">Tất cả</button>`
+        + duongs.map(d => `<button class="tab ${selDuongs.has(d) ? 'on' : ''}" data-val="${d}" onclick="tDuong('${d}')">${d}</button>`).join('');
+      dt.classList.add('has-duong');
+    }
+
+    // ── Build huong (direction) tabs dynamically ──
+    function buildHuongTabs() {
+      let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+      if (selWards.size) pool = pool.filter(p => selWards.has(p.phuong));
+      const huongs = [...new Set(pool.map(p => p.huong).filter(h => h && h !== '-'))].sort();
+      const ht = document.getElementById('huongTabs');
+      const hl = document.getElementById('huongLbl');
+      if (!huongs.length) { ht.classList.remove('has-huong'); hl.style.display = 'none'; return; }
+      hl.style.display = 'block';
+      ht.innerHTML = `<button class="tab ${selHuong.size === 0 ? 'on' : ''}" data-val="all" onclick="tHuong('all')">Tất cả</button>`
+        + huongs.map(h => `<button class="tab ${selHuong.has(h) ? 'on' : ''}" data-val="${h}" onclick="tHuong('${h}')">${h}</button>`).join('');
+      ht.classList.add('has-huong');
+    }
+
+    // ── Toggle functions (multi-select) ──
+    function tDistrict(val) {
+      tSel(selDistricts, val); syncTabUI('districtTabs', selDistricts);
+      selWards.clear(); selDuongs.clear(); selHuong.clear();
+      buildWardTabs(); buildDuongTabs(); buildHuongTabs();
+      updateFilterSummary(); updateStats(); applyFilter();
+    }
+    function tWard(val) {
+      tSel(selWards, val); syncTabUI('wardTabs', selWards);
+      selDuongs.clear(); selHuong.clear(); buildDuongTabs(); buildHuongTabs();
+      updateFilterSummary(); updateStats(); applyFilter();
+    }
+    function tDuong(val) {
+      tSel(selDuongs, val); syncTabUI('duongTabs', selDuongs);
+      updateFilterSummary(); updateStats(); applyFilter();
+    }
+    function tGia(val) {
+      tSel(selGia, val); syncTabUI('giaTabs', selGia);
+      updateFilterSummary(); updateStats(); applyFilter();
+    }
+    function tDanhGia(val) {
+      tSel(selDanhGia, val); syncTabUI('danhGiaTabs', selDanhGia);
+      updateFilterSummary(); updateStats(); applyFilter();
+    }
+    function tHuong(val) {
+      tSel(selHuong, val); syncTabUI('huongTabs', selHuong);
+      updateFilterSummary(); updateStats(); applyFilter();
+    }
+
+    function updateFilterSummary() {
+      const dNames = {
+        q1: 'Q.1', q2: 'Q.2', q3: 'Q.3', q4: 'Q.4', q5: 'Q.5', q6: 'Q.6',
+        q7: 'Q.7', q8: 'Q.8', q9: 'Q.9', q10: 'Q.10', q11: 'Q.11', q12: 'Q.12',
+        pn: 'P.Nhuận', tb: 'T.Bình', bt: 'B.Thạnh', gv: 'G.Vấp',
+        tp: 'T.Phú', btan: 'B.Tân', td: 'T.Đức',
+        hm: 'H.Môn', nb: 'N.Bè', bc: 'B.Chánh', cc: 'C.Chi', cg: 'C.Giờ'
+      };
+      const gNames = { 'lt7': '<7t', '7-10': '7-10t', '10-15': '10-15t', '15-20': '15-20t', 'gt20': '>20t' };
+      const parts = [];
+      if (selDistricts.size) parts.push([...selDistricts].map(d => dNames[d] || d).join('+'));
+      if (selWards.size) parts.push('P.' + [...selWards].join('+'));
+      if (selDuongs.size) parts.push([...selDuongs].join('+'));
+      if (selHuong.size) parts.push('🧭' + [...selHuong].join('+'));
+      if (selGia.size) parts.push([...selGia].map(g => gNames[g] || g).join('+'));
+      if (selDanhGia.size) parts.push([...selDanhGia].map(d => d === 'Hàng Ngon' ? '💎' : '⚠️').join(''));
+      document.getElementById('filterSummary').textContent = parts.length ? parts.join(' · ') : 'Tất cả';
+      const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size);
+      document.getElementById('filterBtn').classList.toggle('active', anyActive || filterOpen);
+      document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';
+
+      // Hiển thị dòng thứ 2 (bộ lọc hiện tại) chỉ khi có filter hoạt động
+      const bar = document.getElementById('filterBar');
+      if (bar) {
+        bar.style.display = (isAdmin && anyActive) ? 'flex' : 'none';
+      }
+
+      saveState();
+    }
+
+    function resetFilters() {
+      selDistricts.clear(); selWards.clear(); selDuongs.clear(); selHuong.clear(); selGia.clear(); selDanhGia.clear();
+      buildDistrictTabs();
+      syncTabUI('districtTabs', selDistricts);
+      syncTabUI('giaTabs', selGia);
+      syncTabUI('danhGiaTabs', selDanhGia);
+
+      // Xóa ô tìm kiếm
+      const sInput = document.getElementById('bdsSearchInput');
+      if (sInput) sInput.value = '';
+      toggleSearchClearBtn();
+
+      // Xóa các ô lọc thông số chi tiết nâng cao
+      const advInputs = [
+        'filterDtMin', 'filterDtMax',
+        'filterNgangMin', 'filterNgangMax',
+        'filterDaiMin', 'filterDaiMax',
+        'filterPhongMin', 'filterPhongMax'
+      ];
+      advInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
+      // Ward, Duong & Huong tabs cần rebuild vì là dynamic
+      buildWardTabs(); buildDuongTabs(); buildHuongTabs();
+      updateFilterSummary(); updateStats(); applyFilter();
+    }
+
+    function clearAllFilters() {
+      resetFilters();
+      saveState();
+    }
+
+    function updateSortButtonsUI() {
+      const btnNew = document.getElementById('sortNewBtn');
+      const btnPrice = document.getElementById('sortPriceBtn');
+      if (!btnNew || !btnPrice) return;
+
+      if (currentSortType === 'newest') {
+        btnNew.classList.add('active');
+        btnNew.textContent = currentSortDir === 'desc' ? '⏱️⬇' : '⏱️⬆';
+        btnPrice.classList.remove('active');
+        btnPrice.textContent = '💰';
+      } else {
+        btnPrice.classList.add('active');
+        btnPrice.textContent = currentSortDir === 'desc' ? '💰⬇' : '💰⬆';
+        btnNew.classList.remove('active');
+        btnNew.textContent = '⏱️';
+      }
+    }
+
+    function toggleSortNew() {
+      if (currentSortType === 'newest') {
+        currentSortDir = currentSortDir === 'desc' ? 'asc' : 'desc';
+      } else {
+        currentSortType = 'newest';
+        currentSortDir = 'desc';
+      }
+      updateSortButtonsUI();
+      saveState();
+      render();
+    }
+
+    function toggleSortPrice() {
+      if (currentSortType === 'price') {
+        currentSortDir = currentSortDir === 'desc' ? 'asc' : 'desc';
+      } else {
+        currentSortType = 'price';
+        currentSortDir = 'desc';
+      }
+      updateSortButtonsUI();
+      saveState();
+      render();
+    }
+
+    function updateFavBtnUI() {
+      const btn = document.getElementById('favFilterBtn');
+      const badge = document.getElementById('favCount');
+      if (!btn || !badge) return;
+      btn.classList.toggle('active', showFavOnly);
+      btn.innerHTML = showFavOnly ? '♥' : '♡';
+      if (favs.size > 0) {
+        badge.textContent = favs.size;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function toggleFavFilter() {
+      if (!isAdmin) {
+        showFavOnly = !showFavOnly;
+        updateFavBtnUI();
+        saveState();
+        updateStats(); applyFilter();
+      } else {
+        openColViewModal();
+      }
+    }
+
+    function render() {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      
+      // Sửa lỗi: Render dựa trên danh sách đã lọc (getFiltered()) thay vì danh sách thô (sourceArr)
+      // Điều này khắc phục triệt để việc tìm kiếm BĐS vượt quá 200 căn trong Kho Pool không hiển thị
+      const filteredArr = getFiltered();
+      const arr = filteredArr.slice().sort((a, b) => {
+        if (currentSortType === 'newest') {
+          let ta, tb;
+          if (isAdmin && activeMode === 'pool' && showOnAirOnly) {
+            const ma = DATA.find(x => 
+              (x.system_id && a.system_id && String(x.system_id).trim() === String(a.system_id).trim()) ||
+              (x.id && a.id && String(x.id).trim() === String(a.id).trim())
+            );
+            const mb = DATA.find(x => 
+              (x.system_id && b.system_id && String(x.system_id).trim() === String(b.system_id).trim()) ||
+              (x.id && b.id && String(x.id).trim() === String(b.id).trim())
+            );
+            ta = ma ? parseInt(ma.temp_id, 10) || 0 : 0;
+            tb = mb ? parseInt(mb.temp_id, 10) || 0 : 0;
+          } else {
+            ta = parseInt(a.temp_id, 10) || 0;
+            tb = parseInt(b.temp_id, 10) || 0;
+          }
+          return currentSortDir === 'asc' ? ta - tb : tb - ta;
+        } else {
+          const ga = parseFloat(a.gia) || 0, gb = parseFloat(b.gia) || 0;
+          return currentSortDir === 'asc' ? ga - gb : gb - ga;
+        }
+      });
+
+      if (!arr.length) {
+        if (isAdmin && activeMode === 'pool') {
+          list.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;">Không có bất động sản nào trong Kho Pool khớp với bộ lọc hiện tại.</div>');
+        } else {
+          list.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;">Vui lòng liên hệ Khang Ngô Nhà Phố để được cung cấp thông tin.</div>');
+        }
+        return;
+      }
+
+      const isPool = (isAdmin && activeMode === 'pool');
+      const maxRender = isPool ? 200 : arr.length;
+      const itemsToRender = arr.slice(0, maxRender);
+
+      const frag = document.createDocumentFragment();
+      itemsToRender.forEach((p, i) => {
+        const curatedListing = isAdmin ? DATA.find(x => 
+          (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
+          (x.id && p.id && String(x.id).trim() === String(p.id).trim())
+        ) : null;
+
+        const imgUrls = p.imgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
+        const cleanImgUrls = imgUrls.filter(u => !(window.isListingSodoUrl && window.isListingSodoUrl(u, p)));
+        let thumbUrl = '';
+        
+        const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
+        if (effectiveImgMatTien) {
+          thumbUrl = effectiveImgMatTien;
+        } else {
+          thumbUrl = cleanImgUrls[0] || imgUrls[0];
+        }
+        const thumb = thumbUrl ? fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
+        const isOnAir = !!curatedListing;
+
+        const c = document.createElement('div');
+        c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
+        c.dataset.pid = String(p.id);
+        c.setAttribute('onclick', (p.isFromPoolOnly && !isOnAir) ? `openPoolS('${p.system_id}')` : `openS('${curatedListing ? curatedListing.id : p.id}')`);
+
+        const adminTitle = generateAdminTitleFromNộiDungChinh(p);
+
+        if (isAdmin) {
+          c.innerHTML = `
+        <div class="crow">
+          <div class="ibox">
+            ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
+            <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+            <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>
+            <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+          </div>
+          <div class="card-right">
+            <div class="info">
+              <div class="ititle" style="color: var(--red); font-weight: 850; font-size: 14.5px; line-height: 1.35; margin-bottom: 6px;">
+                ${String(adminTitle).includes(p.gia + ' tỷ') ? adminTitle : adminTitle + ' ' + p.gia + ' tỷ'}
+              </div>
+              <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                <span>📍</span> P.${p.phuong}, Q.${p.ql}
+              </div>
+              <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <span>👤</span> ${p.raw_ten_dau_chu || 'Chưa rõ đầu chủ'}
+              </div>
+              <div style="font-size: 12.5px; color: var(--red); font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                <span>📞</span> 
+                ${p.raw_dt_dau_chu ? `<a href="tel:${formatPhone(p.raw_dt_dau_chu)}" onclick="event.stopPropagation();" style="color: var(--red); text-decoration: underline; font-weight: 800;">${formatPhone(p.raw_dt_dau_chu)}</a>` : 'Chưa có SĐT'}
+              </div>
+            </div>
+            <div class="cfoot" style="margin-top: 6px;">
+              ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
+              <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 6px;">
+                <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${p.gia} tỷ</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+        } else {
+          c.innerHTML = `
+        <div class="crow">
+          <div class="ibox">
+            ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
+            <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+            ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>` : ''}
+            <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+          </div>
+          <div class="card-right">
+            <div class="info">
+              <div class="ititle">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
+              <div class="chips">
+                <span class="chip">📐 ${p.dt}m²</span>
+                <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
+                <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
+              </div>
+              <div class="pr-loc">
+                <div class="pr"><span class="pv">${p.gia} tỷ</span></div>
+                <div class="loc">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                  P.${p.phuong}, Q.${p.ql}
+                </div>
+              </div>
+            </div>
+            <div class="cfoot">
+              ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
+              <div class="id-large">#${p.id}</div>
+            </div>
+          </div>
+        </div>`;
+        }
+        frag.appendChild(c);
+      });
+      list.appendChild(frag);
+
+      if (isPool && arr.length > maxRender) {
+        list.insertAdjacentHTML('beforeend', `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 24px; color: rgba(255,255,255,0.45); font-size: 13px; font-weight: 500; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 15px; line-height: 1.5;">
+            📦 Đang hiển thị <b>200</b> trên tổng số <b>${arr.length}</b> căn trong Kho Pool.<br>
+            <span style="font-size:12px; color: var(--gold); font-weight: 600;">Vui lòng chọn Quận/Phường hoặc điền Khoảng Giá/Diện Tích để thu hẹp tìm kiếm!</span>
+          </div>
+        `);
+      }
+
+      applyFilter();
+    }
+
+    // Lọc bằng cách tạo lại DOM để giải quyết triệt để giới hạn hiển thị 200 căn trong Kho Pool
+    let inApplyFilter = false;
+    function applyFilter() {
+      if (inApplyFilter) {
+        // Đây là cuộc gọi đệ quy từ render() -> applyFilter().
+        // Tại thời điểm này, DOM đã được vẽ sạch sẽ theo danh sách lọc.
+        // Chúng ta chỉ cần thực hiện kiểm tra trạng thái hiển thị, no-result và Smart Pool Fallback.
+        const cards = document.querySelectorAll('#list .card');
+        const visibleCount = cards.length;
+        
+        let noResult = document.getElementById('noResultMsg');
+        if (!visibleCount) {
+          if (!noResult) {
+            const d = document.createElement('div');
+            d.id = 'noResultMsg';
+            d.style.cssText = 'text-align:center;padding:60px 20px;color:var(--sub);font-weight:500;';
+            d.textContent = 'Không tìm thấy căn nào phù hợp.';
+            document.getElementById('list').appendChild(d);
+          }
+        } else if (noResult) {
+          noResult.remove();
+        }
+
+        // US-039.3: Smart Pool Fallback khi không có kết quả
+        checkPoolFallbackSearch(visibleCount);
+        updateShareUI();
+        return;
+      }
+
+      inApplyFilter = true;
+      try {
+        render();
+      } finally {
+        inApplyFilter = false;
+      }
+    }
+
+    function checkPoolFallbackSearch(visibleCount) {
+      const fallbackContainer = document.getElementById('poolFallbackArea');
+      if (fallbackContainer) fallbackContainer.remove();
+      
+      if (!isAdmin || activeMode === 'pool' || visibleCount > 0) return;
+      
+      const searchVal = (document.getElementById('bdsSearchInput')?.value || '').trim();
+      
+      if (!searchVal) return;
+      
+      const list = document.getElementById('list');
+      const d = document.createElement('div');
+      d.id = 'poolFallbackArea';
+      d.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 24px; background: rgba(255, 191, 36, 0.06); border: 1.5px dashed var(--gold); border-radius: 16px; margin: 15px 0; color: #fff;';
+      
+      d.innerHTML = `
+        <div style="font-size: 14px; font-weight: 800; margin-bottom: 6px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px;">🔍 KHÔNG CÓ KẾT QUẢ TRÊN SÓNG</div>
+        <div style="font-size: 12.5px; color: rgba(255,255,255,0.75); margin-bottom: 16px; line-height: 1.45;">
+          Không tìm thấy căn nào đã lên sóng khớp với từ khóa <b>"${searchVal}"</b>.<br>Bạn có muốn quét và tìm kiếm trong kho <b>Pool thô</b> không?
+        </div>
+        <button onclick="executePoolFallbackSearch('${searchVal.replace(/'/g, "\\'")}')" 
+          style="background: var(--gold); color: #1c1c1e; border: none; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform 0.2s;">
+          ⚡ QUÉT TRONG POOL THÔ
+        </button>
+        <div id="poolFallbackResults" style="margin-top: 20px; display: flex; flex-direction: column; gap: 8px; text-align: left;"></div>
+      `;
+      list.appendChild(d);
+    }
+
+    window.executePoolFallbackSearch = function(query) {
+      const resultsContainer = document.getElementById('poolFallbackResults');
+      if (!resultsContainer) return;
+      resultsContainer.innerHTML = '';
+      
+      const matched = searchPoolRows(query);
+      if (matched.length === 0) {
+        resultsContainer.innerHTML = '<div style="font-size: 13px; color: rgba(255,255,255,0.5); text-align: center; padding: 10px;">❌ Vẫn không tìm thấy căn nào trong Pool thô khớp từ khóa này.</div>';
+        return;
+      }
+      
+      resultsContainer.innerHTML = `<div style="font-size: 11.5px; font-weight: 800; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📦 TÌM THẤY ${matched.length} CĂN TRONG POOL THÔ:</div>`;
+      
+      matched.slice(0, 15).forEach(row => {
+        const isAlready = isPoolRowOnAir(row);
+        const systemId = row[72] || row[71] || '';
+        const id = row[55] || row[54] || '';
+        const soNha = row[6] || '';
+        const duong = row[5] || '';
+        const gia = row[11] || row[58] || '';
+        const dt = row[14] || '';
+        const dauChu = row[75] || '';
+        const sdt = row[74] || '';
+        const ndChinh = row[9] || '';
+
+        const div = document.createElement('div');
+        div.style.cssText = 'padding: 12px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s;';
+        
+        div.onmouseenter = () => div.style.background = 'rgba(255,255,255,0.08)';
+        div.onmouseleave = () => div.style.background = 'rgba(255,255,255,0.04)';
+        
+        if (isAlready) {
+          // If already on air, click card to open standard detail view (openS)
+          div.onclick = () => openS(id);
+        } else {
+          // If not yet on air, click card to open raw curation detail view (openPoolS)
+          div.onclick = () => openPoolS(systemId);
+        }
+        
+        div.innerHTML = `
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 13px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              🏠 ${soNha} ${duong}
+            </div>
+            <div style="font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 4px; line-height: 1.4;">
+              💰 Giá chào: <b style="color:var(--gold);">${gia} tỷ</b> - 📐 Diện tích: <b>${dt} m²</b><br>
+              👤 Đầu chủ: <b>${dauChu}</b> (${sdt})<br>
+              📝 Nội dung: <span style="font-style: italic; color: rgba(255,255,255,0.55);">${ndChinh.substring(0, 75)}...</span>
+            </div>
+          </div>
+          <div style="flex-shrink: 0;">
+            ${isAlready ? `
+              <span style="font-size: 10.5px; font-weight: 700; color: #2ecc71; background: rgba(46, 204, 113, 0.15); padding: 5px 10px; border-radius: 6px; white-space: nowrap;">✅ Đã lên sóng</span>
+            ` : `
+              <button onclick="pullListingFromPoolRow(event, '${systemId}', '${id}', '${soNha.replace(/'/g, "\\'")}', '${duong.replace(/'/g, "\\'")}')" 
+                style="background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; font-family: inherit;">
+                ⚡ Lên sóng
+              </button>
+            `}
+          </div>
+        `;
+        resultsContainer.appendChild(div);
+      });
+    };
+
+
+
+    function th(id, b, e) {
+      if (e) e.stopPropagation();
+      const sid = String(id);
+      if (favs.has(sid)) {
+        favs.delete(sid);
+        b.classList.remove('on');
+        b.textContent = '♡';
+      } else {
+        favs.add(sid);
+        b.classList.add('on');
+        b.textContent = '♥';
+      }
+      localStorage.setItem('favs', JSON.stringify([...favs]));
+      updateFavBtnUI();
+      if (showFavOnly) { updateStats(); render(); }
+    }
+
+    // ── Lightbox Logic ──
+    let lbIdx = 0;
+    let currentImgs = [];
+    function openLb(i) {
+      lbIdx = i;
+      document.getElementById('lbOverlay').classList.add('open');
+      renderLbMain(); renderLbThumbs();
+    }
+    function closeLb() {
+      document.getElementById('lbOverlay').classList.remove('open');
+      document.getElementById('lbMain').innerHTML = ''; // Stop video
+    }
+    function lbMove(d) {
+      lbIdx = (lbIdx + d + currentImgs.length) % currentImgs.length;
+      renderLbMain(); updateLbThumbsUI();
+    }
+    function goToLb(i) {
+      lbIdx = i; renderLbMain(); updateLbThumbsUI();
+    }
+    function renderLbMain() {
+      const s = currentImgs[lbIdx];
+      const main = document.getElementById('lbMain');
+      if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
+        const encoded = encodeURIComponent(s);
+        main.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=1" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+      } else {
+        main.innerHTML = `<img src="${fixImgUrl(s, 'w1200')}" alt="Ảnh phóng to">`;
+      }
+    }
+    function renderLbThumbs() {
+      document.getElementById('lbThumbs').innerHTML = currentImgs.map((s, i) => {
+        if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
+          return `<div class="lb-thumb-vid ${i === lbIdx ? 'on' : ''}" onclick="goToLb(${i})" id="lbt-${i}">▶</div>`;
+        } else {
+          const thumbSrc = fixImgUrl(s, 'w200');
+          return `<img src="${thumbSrc}" class="lb-thumb ${i === lbIdx ? 'on' : ''}" onclick="goToLb(${i})" id="lbt-${i}">`;
+        }
+      }).join('');
+    }
+    function updateLbThumbsUI() {
+      document.querySelectorAll('.lb-thumb, .lb-thumb-vid').forEach((el, i) => {
+        el.classList.toggle('on', i === lbIdx);
+        if (i === lbIdx) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
+    }
+
+    // Global keyboard listener for Lightbox navigation (US-050)
+    document.addEventListener('keydown', (e) => {
+      const lb = document.getElementById('lbOverlay');
+      if (lb && lb.classList.contains('open') && currentImgs && currentImgs.length > 0) {
+        if (e.key === 'ArrowRight') {
+          lbMove(1);
+        } else if (e.key === 'ArrowLeft') {
+          lbMove(-1);
+        } else if (e.key === 'Escape') {
+          closeLb();
+        }
+      }
+    });
+
+    window.openLightboxForCarousel = function(imageUrls, index) {
+      currentImgs = imageUrls;
+      openLb(index);
+    };
+
+    // ── Gallery ──
+    let gI = 0, gN = 0, tx = 0;
+    function buildG(imgs) {
+      gI = 0; gN = imgs.length; currentImgs = imgs;
+      const gt = document.getElementById('gt'), gd = document.getElementById('gd');
+      gt.innerHTML = ''; gd.innerHTML = '';
+      if (!imgs.length) { document.getElementById('gw').style.display = 'none'; return; }
+      document.getElementById('gw').style.display = '';
+      imgs.forEach((s, i) => {
+        const sl = document.createElement('div'); sl.className = 'gslide';
+        if (s.includes('facebook.com') || s.includes('fb.watch') || s.includes('fb.gg')) {
+          const encoded = encodeURIComponent(s);
+          sl.innerHTML = `
+        <div onclick="openLb(${i})" style="position:absolute; inset:0; z-index:10; cursor:pointer;"></div>
+        <iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+        } else {
+          sl.innerHTML = `<img src="${fixImgUrl(s, 'w800')}" alt="Ảnh ${i + 1}" loading="${i === 0 ? 'eager' : 'lazy'}" onclick="openLb(${i})">`;
+        }
+        gt.appendChild(sl);
+        const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' on' : '');
+        gd.appendChild(d);
+      });
+      gt.style.transform = 'translateX(0)'; ua();
+      const gw = document.getElementById('gw');
+
+      // Xử lý vuốt ảnh mượt mà và chặn lệnh "Back" của iPhone
+      gw.ontouchstart = e => {
+        tx = e.touches[0].clientX;
+        ty = e.touches[0].clientY;
+      };
+
+      gw.ontouchmove = e => {
+        const dx = tx - e.touches[0].clientX;
+        const dy = ty - e.touches[0].clientY;
+        // Nếu vuốt ngang nhiều hơn vuốt dọc -> Chặn lệnh của trình duyệt
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (e.cancelable) e.preventDefault();
+        }
+      };
+
+      gw.ontouchend = e => {
+        const dx = tx - e.changedTouches[0].clientX;
+        if (Math.abs(dx) > 40) gm(dx > 0 ? 1 : -1);
+      };
+    }
+    function gm(d) {
+      gI = Math.max(0, Math.min(gN - 1, gI + d));
+      document.getElementById('gt').style.transform = `translateX(-${gI * 100}%)`;
+      document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === gI));
+      ua();
+    }
+    function ua() {
+      document.getElementById('al').style.display = gI === 0 ? 'none' : 'flex';
+      document.getElementById('ar').style.display = gI === gN - 1 ? 'none' : 'flex';
+    }
+
+    function openS(id, tempP = null, autoExpandPreview = false) {
+      const p = tempP || DATA.find(x => String(x.id) === String(id));
+      if (!p) return;
+      window.activeCurationListing = p;
+
+      const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
+      const cleanRawNoiDungChinh = (text) => {
+        if (!text) return '';
+        const keyword = 'nguồn';
+        const idx = text.toLowerCase().indexOf(keyword);
+        if (idx !== -1) {
+          return text.substring(0, idx).trim();
+        }
+        return text.trim();
+      };
+      const cleanedNoiDungChinh = cleanRawNoiDungChinh(p.raw_noi_dung_chinh);
+
+      const extractSource = (text) => {
+        if (!text) return 'Đầu chủ';
+        const lower = text.toLowerCase();
+        if (lower.includes('nguồn đối tác') || lower.includes('nguon doi tac') || lower.includes('nguon i tc') || lower.includes('nguồn đt') || lower.includes('nguon dt')) {
+          return 'Đối tác';
+        }
+        if (lower.includes('nguồn đầu chủ') || lower.includes('nguon dau chu') || lower.includes('nguon u ch')) {
+          return 'Đầu chủ';
+        }
+        const match = text.match(/nguồn\s+([a-zàáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ\s]+)/i);
+        if (match) return match[1].trim();
+        const matchNguon = text.match(/nguon\s+([A-Za-z\s]+)/i);
+        if (matchNguon) return matchNguon[1].trim();
+        return 'Đầu chủ';
+      };
+
+      // Tracking: Xem chi tiết căn nhà
+      if (p.id) {
+        trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
+      }
+
+      const mID = document.getElementById('mID');
+      const cleanTitle = cutTitleToDistrict(p.t);
+      const cleanAddressTitle = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}`.trim() || cleanTitle;
+      document.getElementById('mT').textContent = cleanAddressTitle;
+
+      const floatActions = document.getElementById('adminDetailFloatActions');
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        if (mID) mID.style.display = 'none';
+        if (floatActions) {
+          floatActions.style.display = 'none';
+          floatActions.innerHTML = ''; // Keep empty to avoid duplicate IDs
+        }
+        // Gọi hàm cấu hình lại các nút Speed Dial hành động chi tiết
+        renderSpeedDialActions('detail', p);
+      } else {
+        if (mID) {
+          mID.style.display = 'block';
+          mID.textContent = `#${p.id}`;
+        }
+        if (floatActions) {
+          floatActions.style.display = 'none';
+          floatActions.innerHTML = '';
+        }
+      }
+      
+      const sbody = document.getElementById('sbody');
+      const scta = document.querySelector('.scta');
+
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        if (scta) scta.style.display = 'none';
+        
+        sbody.innerHTML = `
+          <!-- QUICK LINK COPY BAR (US-049) -->
+          <div style="margin-bottom: 16px; text-align: right;">
+            <button type="button" onclick="copyQuickClientLink('${p.system_id}')" style="background: var(--gold); color: #1c1c1e; border: none; padding: 7px 14px; border-radius: 16px; font-size: 11px; font-weight: 850; cursor: pointer; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 10px rgba(255, 191, 36, 0.15);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+              Copy link nhanh
+            </button>
+          </div>
+
+          <!-- THÔNG TIN THÔ - POOL (HIỂN THỊ PHẲNG TRỰC TIẾP) -->
+          <div id="accPool" style="margin-bottom: 24px; padding: 0 4px;">
+            <!-- Carousels -->
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+              <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
+                <div id="carouselNha" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ${(p.raw_sodo1 || p.raw_sodo2) ? `
+              <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
+                <div id="carouselSo" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+
+            <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
+            <div class="admin-mota-box red-text" style="margin-top:14px; margin-bottom:8px; font-size:12px;">${formatRawDescription(cleanedNoiDungChinh) || 'Chưa có nội dung chính.'}</div>
+            <div class="admin-mota-box black-text" id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet || p.m) || 'Chưa có mô tả chi tiết.'}</div>
+
+            <!-- Technical Specs Dotted Grid -->
+            <div class="admin-raw-section">
+              <div class="admin-raw-title">Thông tin</div>
+              <div class="admin-raw-grid">
+                <div class="admin-raw-cell">
+                  <span class="label">Diện tích thực tế:</span>
+                  <span class="value dotted">${p.raw_dt_thuc_te || p.dt || '-'} m²</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Diện tích trên sổ:</span>
+                  <span class="value dotted">${p.raw_dt_tren_so || p.dt || '-'} m²</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Chiều ngang:</span>
+                  <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Chiều dài:</span>
+                  <span class="value dotted">${p.dai_nha || '-'} m</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Đường trước nhà:</span>
+                  <span class="value dotted">${p.raw_duong_truoc_nha || p.duong_truoc_nha || '-'} m</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Số tầng:</span>
+                  <span class="value dotted">${p.raw_so_tang || p.tang || '-'} tầng</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Số phòng ngủ:</span>
+                  <span class="value dotted">${p.raw_so_pn || p.so_pn || '-'} PN</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Số WC:</span>
+                  <span class="value dotted">${p.raw_so_wc || '-'} WC</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Giá chào:</span>
+                  <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia || '-'} tỷ</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Trích thưởng:</span>
+                  <span class="value dotted" style="color:#27ae60; font-weight:800;">${extractCommission(p)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-raw-section" style="margin-top: 14px;">
+              <div class="admin-raw-title">Thông tin nguồn</div>
+              <div class="admin-raw-source">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                  <span style="color:#57606f;">Nguồn:</span>
+                  <span style="font-weight:700;">${extractSource(p.raw_noi_dung_chinh)}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:#57606f;">Link Facebook:</span>
+                  <span>
+                    ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" class="dotted-val" style="color:var(--blue);">Xem FB Đầu Chủ ↗</a>` : '-'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-raw-section" style="margin-top: 14px;">
+              <div class="admin-raw-title">Thông tin đầu chủ</div>
+              <div class="admin-raw-source">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                  <span style="color:#57606f;">Tên đầu chủ:</span>
+                  <span style="font-weight:700;">${p.raw_ten_dau_chu || '-'}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:#57606f;">SĐT đầu chủ:</span>
+                  <span>
+                    ${p.raw_dt_dau_chu ? `<a href="tel:${formatPhone(p.raw_dt_dau_chu)}" class="dotted-val" style="color:var(--blue); font-weight:700;">${formatPhone(p.raw_dt_dau_chu)}</a>` : '-'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Google Maps Embed -->
+            <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
+            <div class="admin-map-container"></div>
+          </div>
+
+          <div class="admin-accordion">
+            <!-- ACCORDION 2: BIÊN TẬP CUSTOM - SOURCE -->
+            <div class="accordion-item" id="accSource">
+              <div class="accordion-header is-red" onclick="toggleAdminAccordion(this)">
+                <span>BIÊN TẬP</span>
+                <span class="arrow">▶</span>
+              </div>
+              <div class="accordion-content">
+                <form class="admin-edit-form" onsubmit="event.preventDefault()">
+                  <div class="admin-edit-group">
+                    <label for="editNote">Ghi chú riêng (Note - Chỉ Admin thấy):</label>
+                    <textarea id="editNote" rows="3" placeholder="Nhập ghi chú riêng..." style="font-size: 10px; font-weight: 500; font-family: inherit; padding: 6px; line-height: 1.4;">${p.note || ''}</textarea>
+                  </div>
+
+                  <div class="admin-edit-group">
+                    <label for="editMaKhangNgo">Mã Khang Ngô (ID):</label>
+                    <input type="text" id="editMaKhangNgo" value="${p.isFromPoolOnly ? (generateMaKhangNgo(p.raw_so_nha, p.raw_ten_duong) || p.id) : p.id}" placeholder="Mã Khang Ngô..." style="font-weight: 700; color: var(--red);">
+                  </div>
+
+                  <div class="admin-edit-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                      <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+                      ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+                    </div>
+                    <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+                  </div>
+
+                  <div class="admin-edit-group">
+                    <label for="editMoTaBds">Mô tả public:</label>
+                    <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+                  </div>
+
+                  ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+
+                  ${renderImageEditorWidget(p)}
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editHuong">Hướng nhà:</label>
+                      <select id="editHuong">
+                        <option value="-">Chưa xác định</option>
+                        <option value="Đông">Đông</option>
+                        <option value="Tây">Tây</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Bắc">Bắc</option>
+                        <option value="Đông Nam">Đông Nam</option>
+                        <option value="Đông Bắc">Đông Bắc</option>
+                        <option value="Tây Nam">Tây Nam</option>
+                        <option value="Tây Bắc">Tây Bắc</option>
+                      </select>
+                    </div>
+                    
+                    <div class="admin-edit-group">
+                      <label for="editDuong">Đường trước nhà:</label>
+                      <select id="editDuong">
+                        <option value="-">Chưa xác định</option>
+                        <option value="Hẻm ba gác">Hẻm ba gác</option>
+                        <option value="Hẻm ô tô lý thuyết">Hẻm ô tô lý thuyết</option>
+                        <option value="Hẻm ô tô">Hẻm ô tô</option>
+                        <option value="Mặt tiền đường">Mặt tiền đường</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editDanhGia">Đánh giá:</label>
+                      <select id="editDanhGia">
+                        <option value="">Bình thường</option>
+                        <option value="Hàng Ngon">💎 Ngon</option>
+                        <option value="Hàng Lỗi">⚠️ Lỗi</option>
+                      </select>
+                    </div>
+
+                    <div class="admin-edit-group">
+                      <label for="editTinhTrang">Tình trạng:</label>
+                      <select id="editTinhTrang">
+                        <option value="Bình thường">Bình thường</option>
+                        <option value="Mới">Mới</option>
+                        <option value="Nát">Nát</option>
+                        <option value="Đã bán">Đã bán</option>
+                        <option value="Ẩn">Ẩn</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editSoPn">Số phòng ngủ:</label>
+                      <input type="number" id="editSoPn" value="${p.so_pn !== '-' ? p.so_pn : ''}" placeholder="Số phòng...">
+                    </div>
+
+                    <div class="admin-edit-group">
+                      <label for="editSoWc">Số WC:</label>
+                      <input type="number" id="editSoWc" value="${(p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || '')}" placeholder="Số WC...">
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+                    <div class="admin-edit-group row-group">
+                      <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checked' : ''}>
+                      <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+                    </div>
+
+                    <div class="admin-edit-group row-group">
+                      <input type="checkbox" id="editChdv" ${p.chdv === 'Có' ? 'checked' : ''}>
+                      <label for="editChdv" style="font-weight:700;">Có CHDV</label>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- ACCORDION 3: PREVIEW KHÁCH HÀNG -->
+            <div class="accordion-item" id="accPreview">
+              <div class="accordion-header is-red" onclick="toggleAdminAccordion(this)">
+                <span>📄 PREVIEW KHÁCH HÀNG</span>
+                <span class="arrow">▶</span>
+              </div>
+              <div class="accordion-content">
+                <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.isFromPoolOnly ? (p.raw_tieu_de_public || generateAutoTitle(p)) : (p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.')}</div>
+                <!-- PREVIEW CAROUSEL -->
+                <div id="carouselClientPreview" style="position: relative; margin-bottom: 12px;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+                <div class="admin-raw-grid" style="margin-bottom: 12px;">
+                  <div class="admin-raw-cell">
+                    <span class="label">Giá bán:</span>
+                    <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Diện tích:</span>
+                    <span class="value dotted">${p.dt} m²</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Đơn giá:</span>
+                    <span class="value dotted" style="color:var(--gold); font-weight:800;">${p.giabq}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Quận/TP:</span>
+                    <span class="value dotted">${p.ql}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Phường:</span>
+                    <span class="value dotted">${p.phuong}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Loại:</span>
+                    <span class="value dotted">${p.loai_hinh}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Đường trước:</span>
+                    <span class="value dotted">${p.duong_truoc_nha}</span>
+                  </div>
+                  <div class="admin-raw-cell">
+                    <span class="label">Kết cấu:</span>
+                    <span class="value dotted">${p.tang} tầng</span>
+                  </div>
+                </div>
+                <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.')}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        if (scta) scta.style.display = 'none';
+        
+        const cleanImgs = (p.imgs || []).filter(url => {
+          return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
+        });
+        const sortedImgs = cleanImgs.sort((a, b) => {
+          const aVis = (a.includes('facebook.com') || a.includes('fb.watch') || a.includes('fb.gg')) ? 1 : 0;
+          const bVis = (b.includes('facebook.com') || b.includes('fb.watch') || b.includes('fb.gg')) ? 1 : 0;
+          return bVis - aVis;
+        });
+        
+        sbody.innerHTML = `
+          <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
+          <div id="carouselClientDetail" style="position: relative; margin-bottom: 12px;">
+            <div class="admin-scroll-carousel"></div>
+            <div class="admin-carousel-dots"></div>
+          </div>
+          <div class="admin-raw-grid" style="margin-bottom: 12px;">
+            <div class="admin-raw-cell">
+              <span class="label">Giá bán:</span>
+              <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Diện tích:</span>
+              <span class="value dotted">${p.dt} m²</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Đơn giá:</span>
+              <span class="value dotted" style="color:var(--gold); font-weight:800;">${p.giabq}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Quận/TP:</span>
+              <span class="value dotted">${p.ql}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Phường:</span>
+              <span class="value dotted">${p.phuong}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Loại:</span>
+              <span class="value dotted">${p.loai_hinh}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Đường trước:</span>
+              <span class="value dotted">${p.duong_truoc_nha}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Kết cấu:</span>
+              <span class="value dotted">${p.tang} tầng</span>
+            </div>
+          </div>
+          <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
+          
+          <!-- KHUNG TƯƠNG TÁC PHẢN HỒI (US-059) -->
+          <div class="client-feedback-box">
+            <h4>🏡 Căn nhà này thế nào với anh/chị?</h4>
+            <div class="client-feedback-btns">
+              <button onclick="scheduleViewing('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-feedback-btn primary">
+                📅 Hẹn đi xem nhà
+              </button>
+              <button onclick="showRequirementForm('${p.id}')" class="client-feedback-btn secondary">
+                ✏️ Cần tìm căn khác, gửi lại nhu cầu
+              </button>
+            </div>
+            
+            <!-- Form ghi nhu cầu khác -->
+            <div id="clientReqForm_${p.id}" class="client-req-form" style="display: none;">
+              <p>Hãy chia sẻ mong muốn tìm nhà của anh/chị (Khu vực, tài chính, số phòng ngủ, hướng nhà...):</p>
+              <textarea id="clientReqText_${p.id}" class="client-req-textarea" placeholder="Ví dụ: Cần tìm nhà Quận 3 hoặc Phú Nhuận, hẻm xe hơi, giá tầm 10 tỷ..."></textarea>
+              <button onclick="submitClientRequirement('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-req-submit-btn">
+                🚀 Gửi nhu cầu cho Khang Ngô
+              </button>
+            </div>
+          </div>
+        `;
+        setupScrollCarousel('carouselClientDetail', sortedImgs, false);
+      }
+
+      const btnZalo = document.getElementById('mZalo');
+      if (btnZalo) {
+        btnZalo.textContent = `💬 Tư vấn ngay căn này`;
+        btnZalo.onclick = () => askZalo(p.id, p.t);
+      }
+
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        window.CURRENT_EDITING_LISTING = p;
+        setTimeout(() => {
+          const editHuong = document.getElementById('editHuong');
+          if (editHuong) editHuong.value = p.huong || '-';
+
+          const editDuong = document.getElementById('editDuong');
+          if (editDuong) editDuong.value = p.duong_truoc_nha || '-';
+
+          const editDanhGia = document.getElementById('editDanhGia');
+          if (editDanhGia) editDanhGia.value = p.danh_gia || '';
+
+          const editTinhTrang = document.getElementById('editTinhTrang');
+          if (editTinhTrang) editTinhTrang.value = p.tinh_trang || 'Bình thường';
+
+          const mapContainer = document.querySelector('.admin-map-container');
+          if (mapContainer) {
+            const fullAddress = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
+            mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
+          }
+
+          const sImgs = [];
+          const s1 = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+          const s2 = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+          const s3 = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+          const s4 = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
+          const s5 = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+          if (s1) sImgs.push(s1);
+          if (s2) sImgs.push(s2);
+          if (s3) sImgs.push(s3);
+          if (s4) sImgs.push(s4);
+          if (s5) sImgs.push(s5);
+
+          const sodoUrls = sImgs.map(url => normalizeImgUrl(url));
+          const nImgs = (p.imgs || []).filter(url => {
+            const norm = normalizeImgUrl(url);
+            return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+          });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
+          setupScrollCarousel('carouselSo', sImgs, true);
+
+          // Sự kiện input reactive Live Preview (US-039.7)
+          const editTieuDe = document.getElementById('editTieuDeBds');
+          const editMoTa = document.getElementById('editMoTaBds');
+          const accPreview = document.getElementById('accPreview');
+
+          const updateLivePreview = () => {
+            const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
+            const moTaVal = (editMoTa ? editMoTa.value : '').trim();
+            const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
+            const floatActions = document.getElementById('adminDetailFloatActions');
+
+            // Keep public title exact and without price appending
+            const displayTieuDeVal = tieuDeVal;
+
+            // Update the preview carousel dynamically
+            setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
+
+            if (p.isFromPoolOnly) {
+              const savePoolBtn = document.getElementById('savePoolBtn');
+              const poolSaveNotice = document.getElementById('poolSaveNotice');
+              if (isFilled) {
+                if (accPreview) {
+                  accPreview.style.display = 'block';
+                  accPreview.classList.add('expanded');
+                  const content = accPreview.querySelector('.accordion-content');
+                  if (content) content.style.display = 'block';
+                  const arrow = accPreview.querySelector('.arrow');
+                  if (arrow) arrow.textContent = '▼';
+                }
+                if (floatActions) floatActions.style.display = 'flex';
+                if (savePoolBtn) savePoolBtn.style.display = 'flex';
+
+                if (poolSaveNotice) {
+                  poolSaveNotice.style.color = '#27ae60';
+                  poolSaveNotice.style.background = 'rgba(39,174,96,0.08)';
+                  poolSaveNotice.style.borderColor = 'rgba(39,174,96,0.3)';
+                  poolSaveNotice.innerHTML = '✅ Đã đủ điều kiện! Nút Lên sóng ⚡ đã sẵn sàng ở góc dưới bên phải.';
+                }
+                
+                const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
+                const previewDesc = accPreview.querySelector('.desc');
+                if (previewTitle) previewTitle.textContent = displayTieuDeVal;
+                if (previewDesc) previewDesc.textContent = moTaVal;
+              } else {
+                if (accPreview) accPreview.style.display = 'none';
+                if (floatActions) floatActions.style.display = 'none';
+                if (savePoolBtn) savePoolBtn.style.display = 'none';
+
+                if (poolSaveNotice) {
+                  poolSaveNotice.style.color = '#e74c3c';
+                  poolSaveNotice.style.background = 'rgba(231,76,60,0.08)';
+                  poolSaveNotice.style.borderColor = 'rgba(231,76,60,0.3)';
+                  poolSaveNotice.innerHTML = '⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡';
+                }
+              }
+            } else {
+              if (accPreview) accPreview.style.display = 'block';
+              if (floatActions) floatActions.style.display = 'flex';
+              const saveSourceBtn = document.getElementById('saveSourceBtn');
+              if (saveSourceBtn) saveSourceBtn.style.display = 'flex';
+              
+              const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
+              const previewDesc = accPreview.querySelector('.desc');
+              if (previewTitle) previewTitle.textContent = displayTieuDeVal || 'Chưa có tiêu đề public.';
+              if (previewDesc) previewDesc.textContent = moTaVal || 'Chưa có mô tả public.';
+            }
+          };
+          window.updateLivePreview = updateLivePreview;
+
+          if (editTieuDe && editMoTa) {
+            editTieuDe.addEventListener('input', updateLivePreview);
+            editMoTa.addEventListener('input', updateLivePreview);
+            updateLivePreview();
+          }
+
+          // Auto expand preview accordion if flagged (US-046.2)
+          if (autoExpandPreview) {
+            const accPreview = document.getElementById('accPreview');
+            const accSource = document.getElementById('accSource');
+            if (accPreview) {
+              accPreview.classList.add('expanded');
+              const content = accPreview.querySelector('.accordion-content');
+              if (content) content.style.display = 'block';
+              const arrow = accPreview.querySelector('.arrow');
+              if (arrow) arrow.textContent = '▼';
+              
+              // Smooth scroll to the preview section
+              setTimeout(() => {
+                accPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 150);
+            }
+            if (accSource) {
+              accSource.classList.remove('expanded');
+              const content = accSource.querySelector('.accordion-content');
+              if (content) content.style.display = 'none';
+              const arrow = accSource.querySelector('.arrow');
+              if (arrow) arrow.textContent = '▶';
+            }
+          }
+        }, 50);
+      }
+
+      document.getElementById('ov').classList.add('open');
+      document.getElementById('sbody').scrollTop = 0;
+      document.body.style.overflow = 'hidden';
+
+      // Push history state so browser Back button closes the modal instead of exiting the page
+      if (!window.preventPushState) {
+        history.pushState({ detailOpen: true }, "");
+      }
+      window.preventPushState = false;
+    }
+    function closeS(fromPopState = false) { 
+      document.getElementById('ov').classList.remove('open'); 
+      document.body.style.overflow = ''; 
+      
+      // If closed manually (fromPopState = false), pop history if state was pushed
+      if (!fromPopState && history.state && history.state.detailOpen) {
+        history.back();
+      }
+
+      // Khôi phục lại các nút chính của danh sách rổ hàng trên Speed Dial
+      if (isAdmin) {
+        renderSpeedDialActions('list');
+      }
+    }
+    function bgC(e) { if (e.target === document.getElementById('ov')) closeS(false); }
+
+    // Listen to popstate event (e.g. Back button pressed)
+    window.addEventListener('popstate', function(event) {
+      if (document.getElementById('ov').classList.contains('open')) {
+        closeS(true);
+      }
+    });
+
+    // Admin Tools
+    function toggleSelect(id, el) {
+      if (el.checked) SELECTED_IDS.add(String(id));
+      else SELECTED_IDS.delete(String(id));
+      updateShareUI();
+      saveState();
+    }
+
+    async function generateShareLink() {
+      try {
+        if (SELECTED_IDS.size === 0) {
+          alert('Vui lòng chọn ít nhất 1 căn nhà!');
+          return;
+        }
+
+        const baseUrl = window.location.origin + window.location.pathname;
+        const count = SELECTED_IDS.size;
+        let shareUrl = '';
+
+        if (count === 1) {
+          // Lấy duy nhất 1 ID được chọn để kích hoạt dynamic preview trên Vercel
+          const singleId = [...SELECTED_IDS][0];
+          const house = DATA.find(p => String(p.id) === String(singleId));
+          const systemId = house ? house.system_id : singleId;
+          shareUrl = `${baseUrl}?s=${systemId}`;
+        } else {
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}`;
+        }
+
+        // Dùng Web Share API trên điện thoại
+        if (navigator.share) {
+          navigator.share({
+            title: 'Khang Ngô Nhà Phố - ' + count + ' căn',
+            url: shareUrl
+          }).catch(() => { });
+          return;
+        }
+
+        // Desktop: copy
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('Đã copy link gửi khách!\n(' + count + ' căn)\n\nDán link này vào Zalo để gửi cho khách nhé.');
+      } catch (e) {
+        alert('Có lỗi xảy ra: ' + e.message);
+      }
+    }
+
+    // Giai đoạn 1: Tạo Link kèm Tên Khách (Hiển thị Form Modal)
+    function promptGenerateLink() {
+      if (SELECTED_IDS.size === 0) {
+        alert('Vui lòng chọn ít nhất 1 căn nhà để tạo link!');
+        return;
+      }
+      document.getElementById('linkModalCount').textContent = SELECTED_IDS.size;
+      document.getElementById('linkCustName').value = '';
+      document.getElementById('linkCustTitle').value = ''; // Reset tiêu đề tùy chỉnh
+      document.getElementById('linkCustNote').value = '';
+      document.getElementById('linkModal').classList.add('open');
+    }
+
+    // Xử lý tạo link sau khi điền Form
+    function executeGenerateLink() {
+      const cName = document.getElementById('linkCustName').value.trim();
+      if (!cName) {
+        alert("Vui lòng nhập Tên khách hàng!");
+        return;
+      }
+
+      const cTitle = document.getElementById('linkCustTitle').value.trim();
+      const cNote = document.getElementById('linkCustNote').value.trim();
+
+      // Tối ưu hóa chuỗi ghép bằng phân tách '|' và loại bỏ trường trống ở đuôi (US-034)
+      let parts = [cName];
+      if (cTitle) {
+        parts.push(cNote || "");
+        parts.push(cTitle);
+      } else if (cNote) {
+        parts.push(cNote);
+      }
+      const compactCustomerString = parts.join('|');
+
+      try {
+        // Encode và loại bỏ hoàn toàn dấu padding '=' (Base64URL)
+        const encodedName = window.btoa(unescape(encodeURIComponent(compactCustomerString))).replace(/=/g, '');
+        const baseUrl = window.location.origin + window.location.pathname;
+        const count = SELECTED_IDS.size;
+        let shareUrl = '';
+
+        if (count === 1) {
+          // Lấy duy nhất 1 ID được chọn để kích hoạt dynamic preview trên Vercel
+          const singleId = [...SELECTED_IDS][0];
+          const house = DATA.find(p => String(p.id) === String(singleId));
+          const systemId = house ? house.system_id : singleId;
+          shareUrl = `${baseUrl}?s=${systemId}&c=${encodeURIComponent(encodedName)}`;
+        } else {
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}&c=${encodeURIComponent(encodedName)}`;
+        }
+
+        // Đóng Modal
+        document.getElementById('linkModal').classList.remove('open');
+
+        // Dùng Web Share API trên điện thoại
+        if (navigator.share) {
+          navigator.share({
+            title: `Khang Ngô Nhà Phố - ${count} căn (Khách: ${cName})`,
+            url: shareUrl
+          }).catch(() => { });
+          return;
+        }
+
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert(`Đã copy link cá nhân hoá cho khách: ${cName}!\n(Gồm ${count} căn)\n\nDán link này vào Zalo để gửi cho khách nhé.`);
+      } catch (e) {
+        alert('Có lỗi xảy ra: ' + e.message);
+      }
+    }
+
+    function executeGenerateQuickLink() {
+      if (SELECTED_IDS.size === 0) {
+        alert('Vui lòng chọn ít nhất 1 căn nhà để tạo link!');
+        return;
+      }
+      try {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const count = SELECTED_IDS.size;
+        let shareUrl = '';
+
+        if (count === 1) {
+          const singleId = [...SELECTED_IDS][0];
+          const house = DATA.find(p => String(p.id) === String(singleId));
+          const systemId = house ? house.system_id : singleId;
+          shareUrl = `${baseUrl}?s=${systemId}`;
+        } else {
+          // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+          const sysIdList = Array.from(SELECTED_IDS).map(id => {
+            const house = DATA.find(p => String(p.id) === String(id));
+            return house && house.system_id ? house.system_id : id;
+          }).join(',');
+          const encodedIds = window.btoa(sysIdList)
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+          shareUrl = `${baseUrl}?b=${encodedIds}`;
+        }
+
+        // Đóng Modal
+        document.getElementById('linkModal').classList.remove('open');
+
+        // Sao chép link vào clipboard
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        
+        alert(`Đã copy link Công Khai Nhanh thành công!\n(Gồm ${count} căn)\n\nKhách mở link này sẽ tự nhập Tên và Số điện thoại để mở khóa xem nhà.`);
+      } catch (e) {
+        alert('Có lỗi xảy ra: ' + e.message);
+      }
+    }
+
+    // Thêm Speed Dial Menu nếu là admin
+    if (isAdmin) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="admin-speed-dial" id="adminSpeedDial">
+          <button class="dial-main-btn" id="dialMainBtn" onclick="toggleSpeedDial()" title="Quản lý rổ hàng">⚙️</button>
+          <div class="dial-actions" id="dialActions">
+            <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+            <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+            <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+              🔗
+              <span class="share-count" id="shareCount">0</span>
+            </button>
+          </div>
+        </div>
+      `);
+    }
+
+    function toggleSelectAll() {
+      const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+      const visibleIds = visibleCards.map(c => c.dataset.pid);
+      const allSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
+
+      if (allSelected || (visibleIds.length === 0 && SELECTED_IDS.size > 0)) {
+        // UNCHECK ALL: Clear everything globally
+        SELECTED_IDS.clear();
+        document.querySelectorAll('.card-sel').forEach(cb => cb.checked = false);
+      } else {
+        // CHECK ALL: Select all visible
+        visibleIds.forEach(id => SELECTED_IDS.add(id));
+        visibleCards.forEach(c => {
+          const cb = c.querySelector('.card-sel');
+          if (cb) cb.checked = true;
+        });
+      }
+      updateShareUI();
+      saveState();
+    }
+
+    function toggleSpeedDial() {
+      const mainBtn = document.getElementById('dialMainBtn');
+      const actions = document.getElementById('dialActions');
+      if (mainBtn && actions) {
+        const isOpen = actions.classList.toggle('open');
+        mainBtn.classList.toggle('active', isOpen);
+      }
+    }
+
+    document.addEventListener('click', function(event) {
+      const dial = document.getElementById('adminSpeedDial');
+      const actions = document.getElementById('dialActions');
+      const mainBtn = document.getElementById('dialMainBtn');
+      if (dial && actions && mainBtn && !dial.contains(event.target)) {
+        actions.classList.remove('open');
+        mainBtn.classList.remove('active');
+      }
+    });
+
+    let activeDetailListing = null;
+
+    function renderSpeedDialActions(mode, p = null) {
+      const actionsEl = document.getElementById('dialActions');
+      if (!actionsEl) return;
+
+      if (mode === 'detail' && p) {
+        activeDetailListing = p;
+        // Đóng menu nếu đang mở để người dùng chủ động mở rộng
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình chi tiết
+        if (p.isFromPoolOnly) {
+          actionsEl.innerHTML = `
+            <button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+          `;
+        } else {
+          actionsEl.innerHTML = `
+            <button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>
+            <button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${p.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>
+          `;
+        }
+      } else {
+        activeDetailListing = null;
+        // Đóng menu nếu đang mở
+        const mainBtn = document.getElementById('dialMainBtn');
+        if (mainBtn) mainBtn.classList.remove('active');
+        actionsEl.classList.remove('open');
+
+        // Màn hình danh sách chính
+        actionsEl.innerHTML = `
+          <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+          <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+          <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+            🔗
+            <span class="share-count" id="shareCount">0</span>
+          </button>
+        `;
+        updateShareUI();
+      }
+    }
+
+    // Xử lý hỏi Zalo thông minh
+    function askZalo(id, title) {
+      const msg = `Chào Khang Ngô Nhà Phố, tôi quan tâm căn nhà mã #${id}: ${title}. Tư vấn giúp tôi nhé!`;
+
+      // Cố gắng copy vào clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã copy mã sản phẩm -> bạn nhớ dán vào Zalo để gửi cho Khang nhé!');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
+    }
+
+    // Xử lý ẩn hiện Header khi cuộn trang (Nâng cấp: Cuộn nhanh/mạnh mới hiện menu)
+    let lastScrollY = window.scrollY;
+    let lastScrollTime = Date.now();
+    const headerEl = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      const currentScrollTime = Date.now();
+
+      if (currentScrollY < 120) {
+        headerEl.classList.remove('hide');
+        lastScrollY = currentScrollY;
+        lastScrollTime = currentScrollTime;
+        return;
+      }
+
+      const deltaY = lastScrollY - currentScrollY; // > 0 khi cuộn lên, < 0 khi cuộn xuống
+      const deltaTime = currentScrollTime - lastScrollTime;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Cuộn xuống: ẩn header và tự động đóng bộ lọc
+        headerEl.classList.add('hide');
+        closeFilter();
+      } else if (deltaY > 10) {
+        // Cuộn lên: Chỉ hiện menu khi quét/vuốt lên cực kỳ nhanh và dứt khoát
+        // Bắt buộc deltaY > 10px để loại bỏ các vi-điều chỉnh (micro-jitter)
+        const velocity = deltaTime > 0 ? (deltaY / deltaTime) : 0;
+
+        // Ngưỡng dứt khoát: Vận tốc vuốt cực nhanh (velocity > 1.6 px/ms) HOẶC cuộn kéo lên cực lớn trong 1 lần (> 150px)
+        if (velocity > 1.6 || deltaY > 150) {
+          headerEl.classList.remove('hide');
+        }
+      }
+
+      lastScrollY = currentScrollY;
+      lastScrollTime = currentScrollTime;
+    }, { passive: true });
+
+    // Bấm ra ngoài header → tự động đóng bộ lọc
+    document.addEventListener('click', (e) => {
+      if (!filterOpen) return;
+      if (!e.target.closest('header')) closeFilter();
+    });
+
+    // ============================================================
+    //  🔑 GOOGLE OAUTH2 & SECURE FACADE IMAGE FETCHING (US-024)
+    // ============================================================
+    let gTokenClient = null;
+
+    function saveGoogleClientId() {
+      const input = document.getElementById('gClientIdInput');
+      if (!input) return;
+      const val = input.value.trim();
+      if (!val) {
+        alert("Vui lòng nhập Client ID hợp lệ!");
+        return;
+      }
+      localStorage.setItem('gClientId', val);
+      alert("Đã lưu Client ID thành công! Đang khởi tạo bộ xác thực Google...");
+      initGoogleAuth();
+    }
+
+    // Hàng đợi lưu các resolver đang chờ token hợp lệ (US-061)
+    window.tokenResolvers = window.tokenResolvers || [];
+
+    function initGoogleAuth() {
+      let clientId = localStorage.getItem('gClientId');
+      if (!clientId) {
+        clientId = '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+        localStorage.setItem('gClientId', clientId);
+      }
+      const gClientIdInput = document.getElementById('gClientIdInput');
+      if (gClientIdInput) gClientIdInput.value = clientId;
+
+      try {
+        gTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: clientId,
+          scope: 'https://www.googleapis.com/auth/spreadsheets',
+          callback: (tokenResponse) => {
+            if (tokenResponse.error !== undefined) {
+              console.error("OAuth2 error:", tokenResponse.error);
+              showGoogleLoginButtonState(false);
+              
+              // Nếu đang có tác vụ chờ token (Save/Pull), hiển thị đăng nhập popup thay vì thất bại âm thầm
+              if (window.tokenResolvers && window.tokenResolvers.length > 0) {
+                promptInteractiveLogin();
+              }
+              return;
+            }
+            const token = tokenResponse.access_token;
+            const expiry = Date.now() + (tokenResponse.expires_in - 60) * 1000;
+            localStorage.setItem('g_access_token', token);
+            localStorage.setItem('g_token_expiry', expiry);
+            localStorage.setItem('isAdminSession', 'true'); // Save admin session flag (US-049.2 Refinement)
+            showGoogleLoginButtonState(true);
+            document.body.classList.remove('is-locked');
+            secureLoadAttempted = false;
+            
+            // Xử lý và giải phóng các resolvers đang đợi token (US-061)
+            const resolvers = window.tokenResolvers || [];
+            window.tokenResolvers = [];
+            
+            if (resolvers.length > 0) {
+              console.log("Đã tự động gia hạn token ngầm thành công cho tác vụ đang chờ.");
+              resolvers.forEach(r => r.resolve(token));
+            } else {
+              // Chỉ reload dữ liệu nếu không có tác vụ nào đang đợi token ghi sheets (tránh reset form admin)
+              isSecureLoaded = false;
+              isDataLoaded = false;
+              loadData();
+            }
+          }
+        });
+        console.log("Google Auth GSI Client initialized successfully.");
+        // Auto silent refresh on initialization if Admin (US-049.2 Refinement)
+        autoLoginOrSilentRefresh();
+      } catch (e) {
+        console.error("Error initializing Google Auth GSI:", e);
+      }
+    }
+
+    function handleGoogleLoginClick() {
+      const clientId = localStorage.getItem('gClientId');
+      if (!clientId) {
+        alert("Vui lòng nhập Google OAuth Client ID của bạn ở mục 'Cấu hình Google Admin' trong Bộ lọc trước!");
+        if (!filterOpen) toggleFilter();
+        setTimeout(() => {
+          const input = document.getElementById('gClientIdInput');
+          if (input) input.focus();
+        }, 300);
+        return;
+      }
+
+      if (!gTokenClient) {
+        initGoogleAuth();
+      }
+
+      if (gTokenClient) {
+        try {
+          gTokenClient.requestAccessToken();
+        } catch (e) {
+          console.error("Error requesting access token:", e);
+          alert("Lỗi yêu cầu token. Vui lòng kiểm tra lại Client ID hoặc kết nối mạng.");
+        }
+      } else {
+        alert("Không thể khởi tạo Client xác thực. Vui lòng tải lại trang.");
+      }
+    }
+
+    function showGoogleLoginButtonState(isLoggedIn) {
+      const gLoginBtn = document.getElementById('gLoginBtn');
+      const gLoginText = document.getElementById('gLoginText');
+      if (!gLoginBtn || !gLoginText) return;
+      if (isLoggedIn) {
+        gLoginBtn.style.background = '#27ae60';
+        gLoginBtn.style.color = '#fff';
+        gLoginBtn.style.borderColor = '#27ae60';
+        gLoginText.innerText = "Đã liên kết Gmail";
+      } else {
+        gLoginBtn.style.background = '#fff';
+        gLoginBtn.style.color = '#1c1c1e';
+        gLoginBtn.style.borderColor = '#fff';
+        const clientId = localStorage.getItem('gClientId');
+        gLoginText.innerText = clientId ? "Đăng nhập" : "Cấu hình API";
+      }
+    }
+
+    function autoLoginOrSilentRefresh() {
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (token && expiry && parseInt(expiry, 10) > now) {
+        console.log("Found valid access token in LocalStorage. Expiry in:", Math.round((parseInt(expiry, 10) - now) / 1000), "s");
+        showGoogleLoginButtonState(true);
+        loadData();
+      } else {
+        const clientId = localStorage.getItem('gClientId');
+        if (clientId) {
+          console.log("Access token expired or missing. Attempting Silent Auto-Login...");
+          const checkAndRefresh = () => {
+            if (gTokenClient) {
+              try {
+                gTokenClient.requestAccessToken({ prompt: 'none' });
+              } catch (e) {
+                console.warn("Silent token request failed:", e);
+                showGoogleLoginButtonState(false);
+              }
+            } else {
+              setTimeout(checkAndRefresh, 300);
+            }
+          };
+          checkAndRefresh();
+        } else {
+          showGoogleLoginButtonState(false);
+        }
+      }
+    }
+
+    // Kiểm tra thời hạn token, làm mới ngầm hoặc hỏi popup đăng nhập lại nếu mất phiên (US-061)
+    window.ensureValidGoogleToken = function() {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem('g_access_token');
+        const expiry = localStorage.getItem('g_token_expiry');
+        const now = Date.now();
+
+        // Nếu token còn hạn trên 5 phút, trả về ngay lập tức
+        if (token && expiry && parseInt(expiry, 10) > now + 300 * 1000) {
+          return resolve(token);
+        }
+
+        window.tokenResolvers = window.tokenResolvers || [];
+        window.tokenResolvers.push({ resolve, reject });
+
+        // Nếu đã có một tiến trình refresh token đang chạy, chỉ cần đợi callback
+        if (window.tokenResolvers.length > 1) {
+          return;
+        }
+
+        const clientId = localStorage.getItem('gClientId');
+        if (!clientId) {
+          window.tokenResolvers = [];
+          reject(new Error("Chưa cấu hình Google Client ID trong Bộ lọc!"));
+          return;
+        }
+
+        if (!gTokenClient) {
+          initGoogleAuth();
+        }
+
+        if (gTokenClient) {
+          console.log("Token đã hết hạn hoặc sắp hết hạn. Đang tự động làm mới ngầm...");
+          try {
+            gTokenClient.requestAccessToken({ prompt: 'none' }); // Silent refresh
+          } catch (e) {
+            console.warn("Silent refresh failed synchronously, calling fallback:", e);
+            promptInteractiveLogin();
+          }
+        } else {
+          window.tokenResolvers = [];
+          reject(new Error("Không thể khởi tạo client xác thực Google!"));
+        }
+      });
+    };
+
+    function promptInteractiveLogin() {
+      if (confirm("Phiên đăng nhập Google đã hết hiệu lực. Nhấp OK để liên kết lại tài khoản Gmail và tự động hoàn thành lưu dữ liệu!")) {
+        try {
+          gTokenClient.requestAccessToken(); // Mở popup đăng nhập tương tác
+        } catch (e) {
+          console.error("Interactive login request failed:", e);
+          const resolvers = window.tokenResolvers || [];
+          window.tokenResolvers = [];
+          resolvers.forEach(r => r.reject(e));
+        }
+      } else {
+        const resolvers = window.tokenResolvers || [];
+        window.tokenResolvers = [];
+        resolvers.forEach(r => r.reject(new Error("Người dùng từ chối đăng nhập lại")));
+      }
+    }
+
+    // Thiết lập timer chạy ngầm kiểm tra và làm mới token ngầm định kỳ (US-061)
+    setInterval(() => {
+      if (!isAdmin) return;
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (token && expiry) {
+        const timeRemaining = parseInt(expiry, 10) - now;
+        // Nếu token sắp hết hạn trong dưới 15 phút, kích hoạt silent refresh ngầm
+        if (timeRemaining > 0 && timeRemaining < 15 * 60 * 1000) {
+          console.log("Token sắp hết hạn trong", Math.round(timeRemaining / 1000), "giây. Đang làm mới ngầm định kỳ...");
+          if (gTokenClient) {
+            try {
+              gTokenClient.requestAccessToken({ prompt: 'none' });
+            } catch (e) {
+              console.warn("Background silent refresh failed:", e);
+            }
+          }
+        }
+      }
+    }, 5 * 60 * 1000); // Kiểm tra mỗi 5 phút
+
+    async function fetchFacadeImages() {
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        console.warn("Could not retrieve valid Google token for background facade images:", err);
+        return;
+      }
+      if (!token) return;
+      const url = `/api/get-facade-images`;
+
+      fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(res => {
+          if (!res.ok) {
+            if (res.status === 401 || res.status === 403) {
+              console.warn("OAuth token invalid or unauthorized. Cleared from storage.");
+              localStorage.removeItem('g_access_token');
+              localStorage.removeItem('g_token_expiry');
+              showGoogleLoginButtonState(false);
+            }
+            throw new Error(`Google Sheets API returned status ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          const values = data.values || [];
+          const facadeMap = {};
+          values.forEach(row => {
+            if (row.length >= 1) {
+              const id = row[0];
+              const img = row[35] || ''; // AM is the 36th column in D2:AM range (index 35)
+              if (id && img) {
+                facadeMap[id] = img;
+              }
+            }
+          });
+
+          // Merge facade images
+          DATA.forEach(p => {
+            if (facadeMap[p.id]) {
+              p.img_mat_tien = facadeMap[p.id];
+            }
+          });
+
+          console.log("Securely fetched and merged", Object.keys(facadeMap).length, "facade images.");
+          render();
+        })
+        .catch(err => {
+          console.error("Error fetching facade images from private sheet:", err);
+        });
+    }
+    // ⚡ REAL-TIME POOL CURATION & PULL UTILITIES
+    // ============================================================
+    // Accents removal for road name abbreviation
+    function stripVietnameseAccents(str) {
+      if (!str) return "";
+      return str.normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D");
+    }
+
+    function abbreviateAndReverseRoad(roadName) {
+      if (!roadName) return "";
+      const cleanRoad = stripVietnameseAccents(roadName);
+      const words = cleanRoad.trim().split(/\s+/).filter(w => w.length > 0);
+      const abbr = words.map(w => w[0].toUpperCase()).join('');
+      return abbr.split('').reverse().join('');
+    }
+
+    function mapSoNha(soNha) {
+      if (!soNha) return "";
+      const map = { '1': 'M', '2': 'H', '3': 'B', '4': 'A', '5': 'N', '6': 'S', '7': 'Z', '8': 'T', '9': 'C', '0': 'O', '/': 'I', '.': 'I' };
+      let res = "";
+      for (const char of String(soNha)) {
+        const lowerChar = char.toLowerCase();
+        if (map[lowerChar]) {
+          res += map[lowerChar];
+        } else if (/[a-z]/i.test(char)) {
+          res += lowerChar;
+        }
+      }
+      return res;
+    }
+
+    function generateMaKhangNgo(soNha, duong) {
+      const soNhaCode = mapSoNha(soNha);
+      const duongCode = abbreviateAndReverseRoad(duong);
+      if (!soNhaCode || !duongCode) return "";
+      const base = soNhaCode + 'I' + duongCode;
+      return base.substring(0, 1) + 'W' + base.substring(1);
+    }
+
+    function generateAutoTitle(p) {
+      const typeStr = (p.raw_so_nha && (p.raw_so_nha.includes('/') || p.raw_so_nha.includes('.'))) ? "Hẻm" : "Mặt tiền";
+      const phuongStr = p.phuong ? (p.phuong.toLowerCase().startsWith('p') ? p.phuong : 'P.' + p.phuong) : '';
+      const quanStr = p.ql ? ('Q.' + p.ql) : '';
+      const dtStr = (p.dt || p.raw_dt_tren_so) ? ((p.dt || p.raw_dt_tren_so) + 'm²') : '';
+      return `${typeStr} ${phuongStr}, ${quanStr} - ${dtStr}`.trim().replace(/,\s*$/, '');
+    }
+
+    function generateAutoDescription(p) {
+      const typeStr = (p.raw_so_nha && (p.raw_so_nha.includes('/') || p.raw_so_nha.includes('.'))) ? "HẺM XE HƠI SẠCH SẼ" : "MẶT TIỀN KINH DOANH SẦM UẤT";
+      const dt = p.dt || p.raw_dt_tren_so || "-";
+      const ngang = p.mat || p.raw_mat_tien || "-";
+      const dai = p.dai_nha || "-";
+      const ketCau = p.tang || p.raw_so_tang || "-";
+      const huong = p.huong || "-";
+      const gia = p.gia || p.raw_gia_chao || "-";
+      const phuong = p.phuong || "-";
+      const quan = p.ql || "-";
+
+      return `🔥 CHÍNH CHỦ CẦN BÁN GẤP CĂN NHÀ SIÊU ĐẸP - VỊ TRÍ ĐẮC ĐỊA 🔥\n\n📍 Vị trí: ${typeStr}, thuộc Phường ${phuong}, Quận ${quan}.\n📐 Thông số vàng: Diện tích ${dt}m² (Ngang ${ngang}m x Dài ${dai}m).\n🏗️ Kết cấu: ${ketCau} tầng kiên cố, công năng đầy đủ, nhà sạch dọn vào ở ngay.\n🧭 Hướng: ${huong}.\n💎 Pháp lý: Sổ hồng chính chủ, hoàn công đầy đủ, sang tên công chứng trong ngày.\n💰 Giá bán chỉ: ${gia} tỷ (Thương lượng chính chủ).\n\n📞 Liên hệ ngay Khang Ngô Nhà Phố để xem nhà thực tế và sở hữu bất động sản tốt nhất Quận ${quan}!`;
+    }
+
+    window.copyQuickClientLink = function(systemId) {
+      if (!systemId) {
+        showToast("Không tìm thấy System ID của căn nhà này!", "error");
+        return;
+      }
+      const baseUrl = window.location.origin + window.location.pathname;
+      const shareUrl = `${baseUrl}?s=${systemId}`;
+      
+      const ta = document.createElement('textarea');
+      ta.value = shareUrl;
+      ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast("Đã sao chép link gửi nhanh!", "success");
+      } catch (err) {
+        showToast("Không thể tự động sao chép link!", "error");
+      }
+      document.body.removeChild(ta);
+    };
+
+    window.shareZaloFromAdminDetail = function(id) {
+      SELECTED_IDS.clear();
+      SELECTED_IDS.add(String(id));
+      updateShareUI();
+      promptGenerateLink();
+    };
+
+    function normalizeImgUrl(url) {
+      if (!url) return '';
+      const cleanUrl = String(url).trim();
+      
+      // Google Drive ID match
+      const m1 = cleanUrl.match(/drive\.google\.com\/file\/d\/([^/?\s&]+)/);
+      if (m1) return m1[1];
+      const m2 = cleanUrl.match(/[?&]id=([^&\s]+)/);
+      if (m2) return m2[1];
+      
+      // Support CDN uploads path match: extract the filename base
+      const m3 = cleanUrl.match(/\/uploads\/([^/?\s&.]+)/);
+      if (m3) return m3[1];
+      
+      // General path match: fallback to filename without extension
+      const filenameMatch = cleanUrl.match(/\/([^/?\s]+)$/);
+      if (filenameMatch) {
+        const filename = filenameMatch[1];
+        const dotIdx = filename.indexOf('.');
+        return dotIdx !== -1 ? filename.substring(0, dotIdx) : filename;
+      }
+      
+      return cleanUrl;
+    }
+
+    window.isListingSodoUrl = function(url, p) {
+      if (!url || !p) return false;
+      const norm = normalizeImgUrl(url);
+      if (norm === '') return false;
+      
+      // 1. Nhận diện theo mẫu tên file Cloudinary được uploader tạo ra (cực kỳ tối ưu và nhanh)
+      const urlLower = String(url).toLowerCase();
+      if (urlLower.includes('/sodo1_') || urlLower.includes('/sodo2_') || 
+          urlLower.includes('/sodo3_') || urlLower.includes('/sodo4_') || urlLower.includes('/sodo5_')) {
+        return true;
+      }
+
+      // 2. Lấy 5 giá trị sodo hiện có của căn nhà
+      const sodo1Val = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+      const sodo2Val = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+      const sodo3Val = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+      const sodo4Val = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
+      const sodo5Val = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+
+      const normS1 = normalizeImgUrl(sodo1Val);
+      const normS2 = normalizeImgUrl(sodo2Val);
+      const normS3 = normalizeImgUrl(sodo3Val);
+      const normS4 = normalizeImgUrl(sodo4Val);
+      const normS5 = normalizeImgUrl(sodo5Val);
+
+      if (norm === normS1 || norm === normS2 || norm === normS3 || norm === normS4 || norm === normS5) {
+        return true;
+      }
+      return false;
+    };
+
+    function renderImageEditorWidget(p) {
+      const cards = [];
+      
+      const sodo1Url = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+      if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url });
+      
+      const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+      if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+
+      const sodo3Url = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+      if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
+
+      const sodo4Url = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
+      if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
+
+      const sodo5Url = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+      if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
+      
+      const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
+      if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
+      
+      for (let i = 1; i <= 25; i++) {
+        const idx = i <= 15 ? (39 + i) : (67 + i);
+        const url = p.pool_row_data ? p.pool_row_data[idx] : (p.imgs && p.imgs[i - 1]);
+        if (url) cards.push({ type: "interior", index: i, url: url });
+      }
+      
+      for (let i = 1; i <= 10; i++) {
+        const url = p.pool_row_data ? p.pool_row_data[29 + i] : null;
+        if (url) cards.push({ type: "alley", index: i, url: url });
+      }
+
+      const isSodoUrl = (url) => {
+        return window.isListingSodoUrl(url, p);
+      };
+
+      // Priority duplicate filtering:
+      // - Original slots (interior 2-15, alley 1-10) take absolute priority.
+      // - Role slots (interior 1 (cover), sodo 1-5, facade 0) are evaluated last.
+      // If a role slot has the same URL as an already rendered slot, it is hidden.
+      const priorityList = [
+        ...cards.filter(c => (c.type === 'interior' && c.index > 1) || c.type === 'alley'),
+        ...cards.filter(c => (c.type === 'interior' && c.index === 1) || c.type === 'sodo' || c.type === 'facade')
+      ];
+
+      const renderedUrls = new Set();
+      priorityList.forEach(c => {
+        const normUrl = normalizeImgUrl(c.url);
+        if (!normUrl) {
+          c.shouldRender = false;
+          return;
+        }
+
+        // If it is an interior or alley slot, but its URL is classified as a Sổ (diagram),
+        // we must NOT render it as an interior/alley card. It should only render as a Sổ card!
+        if ((c.type === 'interior' || c.type === 'alley') && isSodoUrl(c.url)) {
+          c.shouldRender = false;
+          return;
+        }
+
+        if (!renderedUrls.has(normUrl)) {
+          c.shouldRender = true;
+          renderedUrls.add(normUrl);
+        } else {
+          c.shouldRender = false;
+        }
+      });
+
+      let html = `
+        <div class="admin-edit-group" style="margin-top: 10px;">
+          <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CỌ SƠN CHỌN NHANH 🎨)</label>
+          
+          <!-- LOCAL IMAGE UPLOADER (US-053) -->
+          <div class="local-uploader-panel" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 191, 36, 0.08); padding: 8px 12px; border-radius: 10px; border: 1.5px solid rgba(255, 191, 36, 0.2); margin-bottom: 10px; flex-wrap: wrap; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); width: 100%; box-sizing: border-box;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 4px;">
+              📁 TẢI LÊN:
+            </div>
+            <select id="localUploadType" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,191,36,0.3); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; font-family: inherit;">
+              <option value="interior">Ảnh thường (Có nén)</option>
+              <option value="sodo">Ảnh sổ (Ko nén)</option>
+            </select>
+            <button type="button" id="uploadLocalBtn" onclick="document.getElementById('localImageFileInput').click()" style="background: var(--gold); color: #1c1c1e; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; font-family: inherit; text-transform: uppercase;">
+              ➕ UP ẢNH
+            </button>
+            <input type="file" id="localImageFileInput" multiple accept="image/*" style="display: none;" onchange="window.handleLocalImageUpload(event)" />
+            <div id="localUploadProgress" style="font-size: 11px; font-weight: 700; color: #fff; margin-left: auto; display: none;">
+              ⌛ Đang tải: <span id="localUploadProgressTxt">0/0</span>
+            </div>
+          </div>
+
+          <!-- IMAGE EDITOR TOOLBAR -->
+          <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: nowrap; width: 100%; box-sizing: border-box;">
+            <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              🔒 Mặt Tiền
+            </button>
+            <button type="button" id="toolCoverBtn" onclick="selectImageEditorTool('cover')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              ⭐ Nền
+            </button>
+            <button type="button" id="toolSodoBtn" onclick="selectImageEditorTool('sodo')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              🔒 Sổ
+            </button>
+            ${!p.isFromPoolOnly ? `
+            <button type="button" id="toolUncheckAllBtn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.2); border: 1px solid var(--red); color: var(--red); padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+              ✕ Bỏ All
+            </button>
+            ` : ''}
+            <button type="button" id="toolClearBtn" onclick="selectImageEditorTool('none')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; display: none; justify-content: center; flex: 0.8;">
+              ✕ Hủy
+            </button>
+          </div>
+          <div style="font-size: 9.5px; color: var(--gold); text-align: center; margin-top: -6px; margin-bottom: 10px; font-weight: 600;">
+            💡 Mẹo: Bấm chọn cọ ở trên $\rightarrow$ click vào ảnh để gán Mặt Tiền/Nền/Sổ. Click ảnh bình thường để Ẩn/Hiện!
+          </div>
+
+          <div id="imageEditorGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; padding: 6px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+      `;
+
+      // Recover current selected public interior/alley indices
+      let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || '');
+      let currentPublicCover = '';
+      if (!p.isFromPoolOnly) {
+        if (p.pool_row_data) {
+          currentPublicCover = p.pool_row_data[40] || ''; // Index 40 is Ảnh 1 in Pool
+        } else if (p.imgs && p.imgs.length > 0) {
+          currentPublicCover = p.imgs[0]; // First public image
+        }
+      }
+      
+      let currentInteriorIndices = '';
+      let currentAlleyIndices = '';
+
+      if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+        currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
+        currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
+      } else if (!p.isFromPoolOnly && p.pool_row_data) {
+        // Fallback for legacy listings without saved indices: reconstruct from Source URLs
+        const cleanPublicImages = [];
+        if (p.original_row_data) {
+          for (let i = 20; i <= 29; i++) {
+            if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+          }
+        } else {
+          cleanPublicImages.push(...(p.imgs || []));
+        }
+        const normPublic = cleanPublicImages.map(url => normalizeImgUrl(url));
+
+        const intIndices = [];
+        for (let i = 1; i <= 15; i++) {
+          const url = p.pool_row_data[39 + i];
+          if (url) {
+            let isMatched = normPublic.includes(normalizeImgUrl(url));
+            if (isMatched) {
+              intIndices.push(i);
+            }
+          }
+        }
+        currentInteriorIndices = intIndices.join(',');
+
+        const alleyIndices = [];
+        for (let i = 1; i <= 10; i++) {
+          const url = p.pool_row_data[29 + i];
+          if (url) {
+            let isMatched = normPublic.includes(normalizeImgUrl(url));
+            if (isMatched) {
+              alleyIndices.push(i);
+            }
+          }
+        }
+        currentAlleyIndices = alleyIndices.join(',');
+      } else if (!p.isFromPoolOnly) {
+        const intIndices = [];
+        if (p.imgs) {
+          p.imgs.forEach((url, idx) => {
+            intIndices.push(idx + 1);
+          });
+        }
+        currentInteriorIndices = intIndices.join(',');
+      }
+
+      // Sort cards: Sổ (1) -> Mặt tiền (2) -> Nền (3) -> Public Checked (4) -> Unchecked (5)
+      const renderedCards = cards.filter(c => c.shouldRender);
+      
+      const getCardSortWeight = (c) => {
+        const normUrl = normalizeImgUrl(c.url);
+        if (!normUrl) return 99;
+
+        // 1. Sổ
+        if (isSodoUrl(c.url)) return 1;
+
+        // 2. Mặt tiền
+        const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+        if (targetMatTien && normUrl === normalizeImgUrl(targetMatTien)) return 2;
+
+        // 3. Nền
+        let targetNen = '';
+        if (!p.isFromPoolOnly) {
+          if (p.pool_row_data) {
+            targetNen = p.pool_row_data[40] || '';
+          } else if (p.original_row_data) {
+            targetNen = p.original_row_data[20] || '';
+          } else if (p.imgs && p.imgs.length > 0) {
+            targetNen = p.imgs[0] || '';
+          }
+        }
+        if (targetNen && normUrl === normalizeImgUrl(targetNen)) return 3;
+
+        // 4. Các hình chọn public khác
+        let isPublic = false;
+        if (!p.isFromPoolOnly) {
+          if (c.type === "interior") {
+            const indices = currentInteriorIndices.split(',').map(s => s.trim());
+            isPublic = indices.includes(String(c.index));
+          } else if (c.type === "alley") {
+            const indices = currentAlleyIndices.split(',').map(s => s.trim());
+            isPublic = indices.includes(String(c.index));
+          }
+        }
+        if (isPublic) return 4;
+
+        // 5. Các hình còn lại
+        return 5;
+      };
+
+      renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+
+      renderedCards.forEach(c => {
+        html += renderImageCardForEdit(c.type, c.index, c.url, p);
+      });
+
+      html += `
+          </div>
+          <!-- Hidden Inputs to hold current selections -->
+          <input type="hidden" id="editCoverImgUrl" value="${currentCover}">
+          <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
+          <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
+          <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
+          <input type="hidden" id="editSodo1Url" value="${p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || '')}">
+          <input type="hidden" id="editSodo2Url" value="${p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || '')}">
+          <input type="hidden" id="editSodo3Url" value="${p.pool_row_data ? (p.pool_row_data[80] || '') : (p.raw_sodo3 || '')}">
+          <input type="hidden" id="editSodo4Url" value="${p.pool_row_data ? (p.pool_row_data[81] || '') : (p.raw_sodo4 || '')}">
+          <input type="hidden" id="editSodo5Url" value="${p.pool_row_data ? (p.pool_row_data[82] || '') : (p.raw_sodo5 || '')}">
+        </div>
+      `;
+
+      return html;
+    }
+
+    function renderImageCardForEdit(type, index, url, p) {
+      const normUrl = normalizeImgUrl(url);
+      
+      let isMatTien = false;
+      const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+      isMatTien = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetMatTien);
+
+      let isAnhNen = false;
+      let targetNen = '';
+      if (!p.isFromPoolOnly) {
+        if (p.pool_row_data) {
+          targetNen = p.pool_row_data[40] || '';
+        } else if (p.original_row_data) {
+          targetNen = p.original_row_data[20] || '';
+        } else if (p.imgs && p.imgs.length > 0) {
+          targetNen = p.imgs[0] || '';
+        }
+      }
+      isAnhNen = type !== 'sodo' && normUrl !== '' && normUrl === normalizeImgUrl(targetNen);
+
+      // Check if this image is Sổ 1 to Sổ 5
+      let sodo1Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '');
+      let sodo2Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '');
+      let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3) || '');
+      let sodo4Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4) || '');
+      let sodo5Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5) || '');
+      
+      let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
+      let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
+      let isSodo3 = normUrl !== '' && normUrl === normalizeImgUrl(sodo3Val);
+      let isSodo4 = normUrl !== '' && normUrl === normalizeImgUrl(sodo4Val);
+      let isSodo5 = normUrl !== '' && normUrl === normalizeImgUrl(sodo5Val);
+      let isSodo = isSodo1 || isSodo2 || isSodo3 || isSodo4 || isSodo5;
+      
+      if (isSodo) {
+        isAnhNen = false;
+        isMatTien = false;
+      }
+
+      let isPublic = false;
+      if (p.isFromPoolOnly) {
+        isPublic = false;
+      } else if (type === "facade" || type === "sodo") {
+        isPublic = false; // Mặt tiền thô và ảnh sổ không hiển thị trong carousel công khai mặc định
+      } else if (type === "interior") {
+        if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+          const publicIntStr = String(p.pool_row_data[62] || '').trim();
+          const indices = publicIntStr.split(',').map(s => s.trim());
+          isPublic = indices.includes(String(index));
+        } else {
+          // Fallback matching by Source URL
+          const cleanPublicImages = [];
+          if (p.original_row_data) {
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+            }
+          } else {
+            cleanPublicImages.push(...(p.imgs || []));
+          }
+          const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+          isPublic = normPublic.includes(normUrl);
+        }
+      } else if (type === "alley") {
+        if (p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+          const publicAlleyStr = String(p.pool_row_data[63] || '').trim();
+          const indices = publicAlleyStr.split(',').map(s => s.trim());
+          isPublic = indices.includes(String(index));
+        } else {
+          // Fallback matching by Source URL
+          const cleanPublicImages = [];
+          if (p.original_row_data) {
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i]) cleanPublicImages.push(p.original_row_data[i]);
+            }
+          } else {
+            cleanPublicImages.push(...(p.imgs || []));
+          }
+          const normPublic = cleanPublicImages.map(u => normalizeImgUrl(u));
+          isPublic = normPublic.includes(normUrl);
+        }
+      }
+
+      const typeBadge = type === "facade" ? "Mặt Tiền" : (type === "sodo" ? `Sổ ${index}` : (type === "interior" ? `Nội Thất ${index}` : `Hẻm ${index}`));
+      const badgeColor = type === "facade" ? "var(--red)" : (type === "sodo" ? "#8e44ad" : (type === "interior" ? "var(--green)" : "var(--blue)"));
+      
+      const cardBorder = isMatTien ? '2px solid var(--red)' : (isAnhNen ? '2px solid var(--gold)' : (isSodo ? '2px solid #8e44ad' : (isPublic ? 'rgba(39, 174, 96, 0.5)' : 'transparent')));
+
+      return `
+        <div class="edit-img-card ${isMatTien ? 'is-mattien' : ''} ${isAnhNen ? 'is-anhnen' : ''} ${isSodo ? 'is-sodo' : ''} ${isPublic ? 'is-public' : ''}" 
+          data-type="${type}" data-index="${index}" data-url="${url}"
+          style="position: relative; background: #000; border: ${cardBorder}; border-radius: 8px; overflow: hidden; display: block; width: 100%; box-sizing: border-box;">
+          <div class="edit-img-card-wrap" style="position: relative; width: 100%; height: 0; padding-top: 75%; overflow: hidden; cursor: pointer;" 
+            onclick="window.onImageCardClick(event, this.closest('.edit-img-card'))">
+            <img src="${fixImgUrl(url, 'w200')}" alt="Ảnh ${index}" loading="lazy"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+            <span style="position: absolute; top: 4px; left: 4px; font-size: 8.5px; font-weight: 700; background: ${badgeColor}; color: white; padding: 2px 4px; border-radius: 4px; z-index: 5;">
+              ${typeBadge}
+            </span>
+            ${isMatTien ? `
+              <span class="mattien-lock-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Mặt Tiền</span>
+            ` : ''}
+            ${isAnhNen && !isMatTien && !isSodo ? `
+              <span class="cover-star-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;">⭐ Nền</span>
+            ` : ''}
+            ${isSodo1 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 1</span>` : ''}
+            ${isSodo2 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 2</span>` : ''}
+            ${isSodo3 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 3</span>` : ''}
+            ${isSodo4 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 4</span>` : ''}
+            ${isSodo5 ? `<span class="sodo-badge" style="position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;">🔒 Sổ 5</span>` : ''}
+            ${type !== "facade" && type !== "sodo" ? `
+              <label onclick="event.stopPropagation()" style="position: absolute; bottom: 4px; right: 4px; display: flex; align-items: center; background: rgba(0,0,0,0.65); padding: 4px; border-radius: 6px; cursor: pointer; margin: 0; z-index: 10; line-height: 0;">
+                <input type="checkbox" class="edit-img-pub-cb" ${isPublic ? 'checked' : ''} onchange="window.toggleImagePublic(this)" 
+                  style="margin: 0; transform: scale(1.1); cursor: pointer;">
+              </label>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    window.currentImageEditorTool = 'none';
+    window.selectImageEditorTool = function(tool) {
+      window.currentImageEditorTool = tool;
+      const facadeBtn = document.getElementById('toolFacadeBtn');
+      const coverBtn = document.getElementById('toolCoverBtn');
+      const sodoBtn = document.getElementById('toolSodoBtn');
+      const clearBtn = document.getElementById('toolClearBtn');
+      if (!facadeBtn || !coverBtn || !clearBtn) return;
+      
+      // Reset to dark transparent
+      facadeBtn.style.background = 'rgba(0,0,0,0.5)';
+      facadeBtn.style.color = '#fff';
+      facadeBtn.style.borderColor = 'rgba(255,255,255,0.15)';
+      facadeBtn.style.boxShadow = 'none';
+      
+      coverBtn.style.background = 'rgba(0,0,0,0.5)';
+      coverBtn.style.color = '#fff';
+      coverBtn.style.borderColor = 'rgba(255,255,255,0.15)';
+      coverBtn.style.boxShadow = 'none';
+
+      if (sodoBtn) {
+        sodoBtn.style.background = 'rgba(0,0,0,0.5)';
+        sodoBtn.style.color = '#fff';
+        sodoBtn.style.borderColor = 'rgba(255,255,255,0.15)';
+        sodoBtn.style.boxShadow = 'none';
+      }
+      
+      if (tool === 'facade') {
+        facadeBtn.style.background = 'var(--red)';
+        facadeBtn.style.borderColor = 'var(--red)';
+        facadeBtn.style.boxShadow = '0 0 8px rgba(231, 76, 60, 0.6)';
+        clearBtn.style.display = 'flex'; // Show cancel button
+      } else if (tool === 'cover') {
+        coverBtn.style.background = 'var(--gold)';
+        coverBtn.style.borderColor = 'var(--gold)';
+        coverBtn.style.color = '#000';
+        coverBtn.style.boxShadow = '0 0 8px rgba(241, 196, 15, 0.6)';
+        clearBtn.style.display = 'flex'; // Show cancel button
+      } else if (tool === 'sodo') {
+        if (sodoBtn) {
+          sodoBtn.style.background = '#8e44ad';
+          sodoBtn.style.borderColor = '#8e44ad';
+          sodoBtn.style.boxShadow = '0 0 8px rgba(142, 68, 173, 0.6)';
+        }
+        clearBtn.style.display = 'flex'; // Show cancel button
+      } else {
+        clearBtn.style.display = 'none'; // Hide cancel button
+      }
+    };
+
+    window.onImageCardClick = function(event, card) {
+      if (event) event.stopPropagation();
+      const tool = window.currentImageEditorTool || 'none';
+      
+      if (tool === 'facade') {
+        window.setImageAsMatTien(event, card);
+      } else if (tool === 'cover') {
+        window.setImageAsAnhNen(event, card);
+      } else if (tool === 'sodo') {
+        window.setImageAsSodo(event, card);
+      } else {
+        // Toggle public visibility
+        const cb = card.querySelector('.edit-img-pub-cb');
+        if (cb) {
+          cb.checked = !cb.checked;
+          window.toggleImagePublic(cb);
+        }
+      }
+    };
+
+    window.sortCurationImageGrid = function() {
+      const grid = document.getElementById('imageEditorGrid');
+      if (!grid) return;
+
+      // Save scroll positions of all scrollable ancestors
+      const scrollStates = [];
+      let parent = grid.parentElement;
+      while (parent) {
+        scrollStates.push({
+          element: parent,
+          scrollTop: parent.scrollTop,
+          scrollLeft: parent.scrollLeft
+        });
+        parent = parent.parentElement;
+      }
+      const windowScrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowScrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+      // Track active element to prevent auto-scrolling on re-focus
+      const activeEl = document.activeElement;
+      const activeIsInside = grid.contains(activeEl);
+
+      const cards = Array.from(grid.querySelectorAll('.edit-img-card'));
+
+      const getCardWeight = (card) => {
+        if (card.classList.contains('is-sodo')) return 1;
+        if (card.classList.contains('is-mattien')) return 2;
+        if (card.classList.contains('is-anhnen')) return 3;
+        if (card.classList.contains('is-public')) return 4;
+        return 5;
+      };
+
+      cards.sort((a, b) => getCardWeight(a) - getCardWeight(b));
+
+      // Temporarily blur active element inside grid to block browser auto-scroll-to-focus
+      if (activeIsInside && activeEl && typeof activeEl.blur === 'function') {
+        activeEl.blur();
+      }
+
+      cards.forEach(card => grid.appendChild(card));
+
+      // Restore active element focus without scrolling
+      if (activeIsInside && activeEl && typeof activeEl.focus === 'function') {
+        activeEl.focus({ preventScroll: true });
+      }
+
+      // Restore all ancestor scroll positions
+      scrollStates.forEach(state => {
+        state.element.scrollTop = state.scrollTop;
+        state.element.scrollLeft = state.scrollLeft;
+      });
+      window.scrollTo(windowScrollLeft, windowScrollTop);
+    };
+
+    window.setImageAsMatTien = function(event, card) {
+      if (event) event.stopPropagation();
+      const url = card.dataset.url;
+
+      document.querySelectorAll('.edit-img-card').forEach(c => {
+        c.classList.remove('is-mattien');
+        const lock = c.querySelector('.mattien-lock-badge');
+        if (lock) lock.remove();
+      });
+
+      card.classList.add('is-mattien');
+
+      const imgWrapper = card.querySelector('.edit-img-card-wrap');
+      if (imgWrapper) {
+        const lockSpan = document.createElement('span');
+        lockSpan.className = 'mattien-lock-badge';
+        lockSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(192, 57, 43, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;';
+        lockSpan.innerHTML = '🔒 Mặt Tiền';
+        imgWrapper.appendChild(lockSpan);
+      }
+
+      // Remove cover badge on this card if any
+      const star = card.querySelector('.cover-star-badge');
+      if (star) star.remove();
+
+      // Auto-uncheck "Hiện" checkbox for facade image
+      const cb = card.querySelector('.edit-img-pub-cb');
+      if (cb && cb.checked) {
+        cb.checked = false;
+        window.toggleImagePublic(cb);
+      }
+
+      document.getElementById('editCoverImgUrl').value = url;
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+      window.sortCurationImageGrid();
+    };
+
+    window.setImageAsAnhNen = function(event, card) {
+      if (event) event.stopPropagation();
+      const url = card.dataset.url;
+
+      document.querySelectorAll('.edit-img-card').forEach(c => {
+        c.classList.remove('is-anhnen');
+        const star = c.querySelector('.cover-star-badge');
+        if (star) star.remove();
+      });
+
+      card.classList.add('is-anhnen');
+
+      if (!card.classList.contains('is-mattien')) {
+        const imgWrapper = card.querySelector('.edit-img-card-wrap');
+        if (imgWrapper) {
+          const starSpan = document.createElement('span');
+          starSpan.className = 'cover-star-badge';
+          starSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(0,0,0,0.75); padding: 2px 5px; border-radius: 4px; color: var(--gold); z-index: 5;';
+          starSpan.innerHTML = '⭐ Ảnh Nền';
+          imgWrapper.appendChild(starSpan);
+        }
+      }
+
+      document.getElementById('editPublicCoverUrl').value = url;
+
+      // Auto-check "Hiện" checkbox for public cover
+      const cb = card.querySelector('.edit-img-pub-cb');
+      if (cb && !cb.checked) {
+        cb.checked = true;
+        window.toggleImagePublic(cb);
+      }
+      window.sortCurationImageGrid();
+    };
+
+    window.setImageAsSodo = function(event, card) {
+      if (event) event.stopPropagation();
+      const url = card.dataset.url;
+      const sodoInputs = [
+        document.getElementById('editSodo1Url'),
+        document.getElementById('editSodo2Url'),
+        document.getElementById('editSodo3Url'),
+        document.getElementById('editSodo4Url'),
+        document.getElementById('editSodo5Url')
+      ];
+      if (sodoInputs.some(input => !input)) return;
+
+      const normUrl = normalizeImgUrl(url);
+      const vals = sodoInputs.map(input => input.value.trim());
+      const normVals = vals.map(val => normalizeImgUrl(val));
+
+      // If already marked as any Sổ, toggle it off!
+      const existingIdx = normUrl !== '' ? normVals.indexOf(normUrl) : -1;
+      if (existingIdx !== -1) {
+        sodoInputs[existingIdx].value = "";
+        card.classList.remove('is-sodo', `is-sodo${existingIdx + 1}`);
+        const badge = card.querySelector('.sodo-badge');
+        if (badge) badge.remove();
+        card.style.borderColor = 'transparent';
+      } else {
+        // Assign to the first empty slot
+        let assigned = false;
+        let badgeNum = 1;
+        const emptyIdx = vals.indexOf("");
+        if (emptyIdx !== -1) {
+          sodoInputs[emptyIdx].value = url;
+          assigned = true;
+          badgeNum = emptyIdx + 1;
+        } else {
+          // All filled, overwrite Sổ 1
+          sodoInputs[0].value = url;
+          assigned = true;
+          badgeNum = 1;
+          // Clear styling on the previous Sổ 1 card
+          const prevS1Url = normVals[0];
+          document.querySelectorAll('.edit-img-card').forEach(c => {
+            if (normalizeImgUrl(c.dataset.url) === prevS1Url) {
+              c.classList.remove('is-sodo', 'is-sodo1');
+              const badge = c.querySelector('.sodo-badge');
+              if (badge) badge.remove();
+              c.style.borderColor = 'transparent';
+            }
+          });
+        }
+
+        if (assigned) {
+          card.classList.add('is-sodo', `is-sodo${badgeNum}`);
+          card.style.borderColor = '#8e44ad';
+          const imgWrapper = card.querySelector('.edit-img-card-wrap');
+          if (imgWrapper) {
+            const badgeSpan = document.createElement('span');
+            badgeSpan.className = 'sodo-badge';
+            badgeSpan.style.cssText = 'position: absolute; top: 4px; right: 4px; font-size: 8px; font-weight: 700; background: rgba(142, 68, 173, 0.95); padding: 2px 5px; border-radius: 4px; color: white; z-index: 5;';
+            badgeSpan.innerHTML = `🔒 Sổ ${badgeNum}`;
+            imgWrapper.appendChild(badgeSpan);
+          }
+
+          // Sodo images are private, auto-uncheck public visibility check box
+          const cb = card.querySelector('.edit-img-pub-cb');
+          if (cb && cb.checked) {
+            cb.checked = false;
+            window.toggleImagePublic(cb);
+          }
+        }
+      }
+
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+      window.sortCurationImageGrid();
+    };
+
+    // --- CLOUDINARY LOCAL UPLOADER HELPERS (US-053) ---
+    const CLOUDINARY_CLOUD_NAME = "deru9p712";
+    const CLOUDINARY_API_KEY = "127963624723617";
+    const CLOUDINARY_API_SECRET = "5WyIQlmssDMR4Cu69g4114py6HU";
+    const CLOUDINARY_FOLDER = "BDS-KhangNgo";
+
+    async function sha1(string) {
+      const utf8 = new TextEncoder().encode(string);
+      const hashBuffer = await crypto.subtle.digest('SHA-1', utf8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+
+    function compressImageClientSide(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 1600;
+
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  const compressedFile = new File([blob], file.name, {
+                    type: "image/jpeg",
+                    lastModified: Date.now()
+                  });
+                  resolve(compressedFile);
+                } else {
+                  reject(new Error("Canvas toBlob failed"));
+                }
+              },
+              "image/jpeg",
+              0.8
+            );
+          };
+          img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+      });
+    }
+
+    async function uploadFileToCloudinary(file, type = "interior", listingId = "") {
+      const timestamp = Math.round(Date.now() / 1000);
+      let sodoIndex = 1;
+      if (type === "sodo") {
+        for (let i = 1; i <= 5; i++) {
+          const val = document.getElementById(`editSodo${i}Url`)?.value.trim();
+          if (!val) {
+            sodoIndex = i;
+            break;
+          }
+        }
+      }
+
+      const publicId = type === "sodo" 
+        ? `${listingId}_sodo${sodoIndex}_${Date.now()}`
+        : `${listingId}_interior_${Date.now()}`;
+
+      const strToSign = `folder=${CLOUDINARY_FOLDER}&public_id=${publicId}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
+      const signature = await sha1(strToSign);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", CLOUDINARY_FOLDER);
+      formData.append("public_id", publicId);
+      formData.append("timestamp", timestamp);
+      formData.append("api_key", CLOUDINARY_API_KEY);
+      formData.append("signature", signature);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || "Lỗi tải ảnh lên Cloudinary");
+      }
+
+      const data = await response.json();
+      return data.secure_url;
+    }
+
+    window.handleLocalImageUpload = async function(event) {
+      const files = Array.from(event.target.files);
+      if (!files.length) return;
+
+      const p = window.activeCurationListing;
+      if (!p) {
+        showToast("Không tìm thấy thông tin căn nhà hiện hành!", "error");
+        return;
+      }
+
+      const uploadType = document.getElementById("localUploadType").value;
+      const progressDiv = document.getElementById("localUploadProgress");
+      const progressTxt = document.getElementById("localUploadProgressTxt");
+
+      if (progressDiv) progressDiv.style.display = "block";
+      if (progressTxt) progressTxt.innerText = `0/${files.length}`;
+
+      const uploadLocalBtn = document.getElementById("uploadLocalBtn");
+      if (uploadLocalBtn) uploadLocalBtn.disabled = true;
+
+      let successCount = 0;
+
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        if (progressTxt) progressTxt.innerText = `${i + 1}/${files.length}`;
+
+        try {
+          if (uploadType === "interior") {
+            file = await compressImageClientSide(file);
+          }
+
+          let sodoIndex = 1;
+          if (uploadType === "sodo") {
+            for (let s = 1; s <= 5; s++) {
+              const val = document.getElementById(`editSodo${s}Url`)?.value.trim();
+              if (!val) {
+                sodoIndex = s;
+                break;
+              }
+            }
+          }
+
+          const uploadedUrl = await uploadFileToCloudinary(file, uploadType, p.id || p.system_id);
+
+          if (uploadType === "sodo") {
+            const sodoInput = document.getElementById(`editSodo${sodoIndex}Url`);
+            if (sodoInput) {
+              sodoInput.value = uploadedUrl;
+              
+              const pIdx = sodoIndex <= 2 ? (26 + sodoIndex) : (77 + sodoIndex);
+              if (p.pool_row_data) p.pool_row_data[pIdx] = uploadedUrl;
+              p[`raw_sodo${sodoIndex}`] = uploadedUrl;
+
+              showToast(`Tải lên Sổ ${sodoIndex} thành công!`, "success");
+              successCount++;
+            }
+          } else {
+            let assignedIdx = -1;
+            if (p.pool_row_data) {
+              while (p.pool_row_data.length < 90) p.pool_row_data.push("");
+
+              for (let j = 1; j <= 25; j++) {
+                const colIdx = j <= 15 ? (39 + j) : (67 + j);
+                if (!p.pool_row_data[colIdx]) {
+                  p.pool_row_data[colIdx] = uploadedUrl;
+                  assignedIdx = j;
+                  break;
+                }
+              }
+            }
+
+            if (assignedIdx === -1) {
+              if (!p.imgs) p.imgs = [];
+              p.imgs.push(uploadedUrl);
+              assignedIdx = p.imgs.length;
+            }
+
+            const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
+            if (publicInteriorInput && assignedIdx <= 15) {
+              let currentVal = publicInteriorInput.value.trim();
+              let indices = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
+              if (!indices.includes(String(assignedIdx))) {
+                indices.push(String(assignedIdx));
+                publicInteriorInput.value = indices.join(',');
+              }
+            }
+
+            showToast(`Tải lên Ảnh Nội Thất ${assignedIdx} thành công!`, "success");
+            successCount++;
+          }
+        } catch (err) {
+          console.error("Lỗi upload file:", err);
+          showToast(`Lỗi upload file ${file.name}: ${err.message}`, "error");
+        }
+      }
+
+      event.target.value = "";
+      if (progressDiv) progressDiv.style.display = "none";
+      if (uploadLocalBtn) uploadLocalBtn.disabled = false;
+
+      const editGroup = document.querySelector(".admin-edit-group");
+      if (editGroup) {
+        const parent = editGroup.parentNode;
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = renderImageEditorWidget(p);
+        parent.replaceChild(tempDiv.firstElementChild, editGroup);
+        
+        window.sortCurationImageGrid();
+        if (typeof window.updateLivePreview === "function") {
+          window.updateLivePreview();
+        }
+      }
+    };
+
+    window.toggleImagePublic = function(cb) {
+      const card = cb.closest('.edit-img-card');
+      const type = card.dataset.type;
+      const index = card.dataset.index;
+      const isChecked = cb.checked;
+
+      card.classList.toggle('is-public', isChecked);
+      if (!card.classList.contains('is-cover') && !card.classList.contains('is-mattien') && !card.classList.contains('is-anhnen') && !card.classList.contains('is-sodo')) {
+        card.style.borderColor = isChecked ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
+      }
+
+      if (type === "interior") {
+        const publicIntInput = document.getElementById('editPublicInteriorIndices');
+        let indices = publicIntInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (isChecked) {
+          if (!indices.includes(index)) indices.push(index);
+        } else {
+          indices = indices.filter(i => i !== index);
+        }
+        indices.sort((a, b) => parseInt(a) - parseInt(b));
+        publicIntInput.value = indices.join(',');
+      } else if (type === "alley") {
+        const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+        let indices = publicAlleyInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (isChecked) {
+          if (!indices.includes(index)) indices.push(index);
+        } else {
+          indices = indices.filter(i => i !== index);
+        }
+        indices.sort((a, b) => parseInt(a) - parseInt(b));
+        publicAlleyInput.value = indices.join(',');
+      }
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+      window.sortCurationImageGrid();
+    };
+
+    window.uncheckAllCurationImages = function() {
+      const agree = confirm("Bạn có đồng ý xóa hết tất cả các hình đã chọn (bao gồm hình mặt tiền, hình sổ, hình nền và các hình public) để chọn lại từ đầu không?");
+      if (!agree) return;
+
+      const coverInput = document.getElementById('editCoverImgUrl');
+      const publicCoverInput = document.getElementById('editPublicCoverUrl');
+      const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
+      const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+      const sodo1Input = document.getElementById('editSodo1Url');
+      const sodo2Input = document.getElementById('editSodo2Url');
+      const sodo3Input = document.getElementById('editSodo3Url');
+      const sodo4Input = document.getElementById('editSodo4Url');
+      const sodo5Input = document.getElementById('editSodo5Url');
+
+      if (coverInput) coverInput.value = '';
+      if (publicCoverInput) publicCoverInput.value = '';
+      if (publicInteriorInput) publicInteriorInput.value = '';
+      if (publicAlleyInput) publicAlleyInput.value = '';
+      if (sodo1Input) sodo1Input.value = '';
+      if (sodo2Input) sodo2Input.value = '';
+      if (sodo3Input) sodo3Input.value = '';
+      if (sodo4Input) sodo4Input.value = '';
+      if (sodo5Input) sodo5Input.value = '';
+
+      document.querySelectorAll('.edit-img-card').forEach(card => {
+        card.classList.remove('is-mattien', 'is-anhnen', 'is-sodo', 'is-sodo1', 'is-sodo2', 'is-sodo3', 'is-sodo4', 'is-sodo5', 'is-public');
+        card.style.borderColor = 'transparent';
+
+        const badges = card.querySelectorAll('.mattien-lock-badge, .cover-star-badge, .sodo-badge');
+        badges.forEach(b => b.remove());
+
+        const cb = card.querySelector('.edit-img-pub-cb');
+        if (cb) cb.checked = false;
+      });
+
+      if (typeof window.selectImageEditorTool === 'function') {
+        window.selectImageEditorTool('none');
+      }
+      if (typeof window.updateLivePreview === 'function') {
+        window.updateLivePreview();
+      }
+
+      showToast("Đã bỏ chọn toàn bộ hình ảnh!", "success");
+      window.sortCurationImageGrid();
+    };
+
+    window.openPoolS = function(systemId) {
+      if (!POOL_ROWS || !POOL_ROWS.length) {
+        showToast("Dữ liệu Pool chưa được nạp!", "error");
+        return;
+      }
+      
+      // Kiểm tra xem căn pool này đã lên sóng (ở Source) chưa (US-039.7)
+      const curatedListing = DATA.find(x => x.system_id && String(x.system_id).trim() === String(systemId).trim());
+      if (curatedListing) {
+        openS(curatedListing.id);
+        return;
+      }
+      
+      const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+      if (!row) {
+        showToast("Không tìm thấy căn nhà này trong Pool thô!", "error");
+        return;
+      }
+
+      // Map row to p structure
+      const dt = parseFloat(row[13] || row[14]) || 0;
+      const gia = parseGia(row[11] || row[58]);
+      const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+
+      let rawQ = row[3] || '';
+      let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+      if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+      const cleanQLower = cleanQ.toLowerCase();
+      if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+      else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+      else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+      else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+      else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+      else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+      else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+      else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+      else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+      else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+      else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+
+      const poolImgs = [];
+      for (let c = 40; c <= 54; c++) {
+        if (row[c]) poolImgs.push(row[c]);
+      }
+      for (let c = 83; c <= 92; c++) {
+        if (row[c]) poolImgs.push(row[c]);
+      }
+
+      const p = {
+        temp_id: "pool_" + systemId,
+        id: row[55] || row[54] || systemId || '',
+        cu_phap: "",
+        t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
+        dt: row[13] || row[14] || '',
+        tang: row[15] || '',
+        mat: row[16] || '',
+        gia: gia,
+        q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+        ql: cleanQ.toUpperCase(),
+        phuong: row[4] || '-',
+        loai_hinh: (row[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
+        huong: row[17] || '-',
+        duong_truoc_nha: row[59] || '-',
+        rong_hem: row[60] || '-',
+        tinh_trang: row[61] || '-',
+        danh_gia: row[67] || '',
+        is_invisible: false,
+        ngu_tang_tret: row[68] || '-',
+        chdv: row[69] || '-',
+        giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+        m: row[57] || '',
+        imgs: poolImgs,
+        system_id: systemId,
+        so_pn: row[64] || '-',
+        img_mat_tien: row[29] || '',
+
+        raw_ten_dau_chu: row[75] || '',
+        raw_dt_dau_chu: row[74] || '',
+        raw_link_fb: row[76] || '',
+        raw_noi_dung_chinh: row[9] || '',
+        raw_mo_ta_chi_tiet: row[10] || '',
+        raw_sodo1: row[27] || '',
+        raw_sodo2: row[28] || '',
+        raw_sodo3: row[80] || '',
+        raw_sodo4: row[81] || '',
+        raw_sodo5: row[82] || '',
+        raw_so_nha: row[6] || '',
+        raw_ten_duong: row[5] || '',
+        raw_dt_thuc_te: row[13] || '',
+        raw_dt_tren_so: row[14] || '',
+        raw_gia_chao: row[11] || row[58] || '',
+        raw_so_tang: row[15] || '',
+        raw_mat_tien: row[16] || '',
+        raw_duong_truoc_nha: row[59] || '',
+        raw_do_rong_hem: row[60] || '',
+        raw_so_pn: row[64] || '',
+        raw_so_wc: row[65] || '',
+        raw_tieu_de_public: row[56] || '',
+        raw_mo_ta_public: row[57] || '',
+        pool_row_index: POOL_ROWS.indexOf(row) + 2,
+
+        isFromPoolOnly: true,
+        pool_row_data: row
+      };
+      p.dai_nha = getDaiNha(p);
+
+      openS(null, p);
+    };
+
+    function searchPoolRows(query) {
+      if (!query || !POOL_ROWS.length) return [];
+      const q = query.toLowerCase().trim();
+      return POOL_ROWS.filter(row => {
+        const soNha = String(row[6] || '').toLowerCase();
+        const duong = String(row[5] || '').toLowerCase();
+        const ma = String(row[55] || '').toLowerCase();
+        const dauChu = String(row[75] || '').toLowerCase();
+        const sdt = String(row[74] || '').toLowerCase();
+        const ndChinh = String(row[9] || '').toLowerCase();
+        
+        return soNha.includes(q) || duong.includes(q) || ma.includes(q) || dauChu.includes(q) || sdt.includes(q) || ndChinh.includes(q);
+      });
+    }
+
+    function isPoolRowOnAir(row) {
+      const systemId = row[72] || row[71] || '';
+      const maKN = row[55] || row[54] || '';
+      return DATA.some(p => (systemId && String(p.system_id) === String(systemId)) || (maKN && String(p.id) === String(maKN)));
+    }
+
+    window.onPoolSearchToolKeyup = function() {
+      const query = document.getElementById('poolSearchToolInput').value.trim();
+      const resultsContainer = document.getElementById('poolSearchToolResults');
+      if (!resultsContainer) return;
+      resultsContainer.innerHTML = '';
+
+      if (!query) return;
+
+      const matched = searchPoolRows(query);
+      if (matched.length === 0) {
+        resultsContainer.innerHTML = '<div style="font-size: 12px; color: rgba(255,255,255,0.4); text-align: center; padding: 10px;">Không tìm thấy căn nào trong Pool thô</div>';
+        return;
+      }
+
+      matched.slice(0, 10).forEach(row => {
+        const isAlready = isPoolRowOnAir(row);
+        const systemId = row[72] || row[71] || '';
+        const id = row[55] || row[54] || '';
+        const soNha = row[6] || '';
+        const duong = row[5] || '';
+        const gia = row[11] || row[58] || '';
+        const dt = row[14] || '';
+        const dauChu = row[75] || '';
+        const sdt = row[74] || '';
+
+        const div = document.createElement('div');
+        div.style.cssText = 'padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.2s;';
+        
+        div.onmouseenter = () => div.style.background = 'rgba(255,255,255,0.1)';
+        div.onmouseleave = () => div.style.background = 'rgba(255,255,255,0.05)';
+        
+        if (isAlready) {
+          // If already on air, click card to open standard detail view (openS)
+          div.onclick = () => openS(id);
+        } else {
+          // If not yet on air, click card to open raw curation detail view (openPoolS)
+          div.onclick = () => openPoolS(systemId);
+        }
+        
+        div.innerHTML = `
+          <div style="flex: 1; min-width: 0; text-align: left;">
+            <div style="font-size: 12px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              🏠 ${soNha} ${duong}
+            </div>
+            <div style="font-size: 10.5px; color: rgba(255,255,255,0.65); margin-top: 2px;">
+              💰 ${gia} tỷ - 📐 ${dt} m² - 📞 ${dauChu} (${sdt})
+            </div>
+          </div>
+          <div style="flex-shrink: 0;">
+            ${isAlready ? `
+              <span style="font-size: 10.5px; font-weight: 700; color: #2ecc71; background: rgba(46, 204, 113, 0.15); padding: 4px 8px; border-radius: 6px; white-space: nowrap;">✅ Đã lên sóng</span>
+            ` : `
+              <button onclick="pullListingFromPoolRow(event, '${systemId}', '${id}', '${soNha.replace(/'/g, "\\'")}', '${duong.replace(/'/g, "\\'")}')" 
+                style="background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; font-family: inherit;">
+                ⚡ Lên sóng
+              </button>
+            `}
+          </div>
+        `;
+        resultsContainer.appendChild(div);
+      });
+    };
+
+    window.pullListingFromPoolRow = async function(event, systemId, id, soNha, duong) {
+      if (event) event.stopPropagation();
+      if (!confirm(`Bạn có chắc chắn muốn lên sóng căn nhà này từ Pool không?\nĐịa chỉ: ${soNha} ${duong}`)) {
+        return;
+      }
+      const btnElement = event.target;
+      await executePullFromPool(systemId, id, soNha, duong, btnElement);
+    };
+
+    async function executePullFromPool(systemId, id, soNha, duong, btnElement) {
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        alert("Không thể xác thực Google. Lên sóng thất bại: " + err.message);
+        return;
+      }
+      
+      let oldText = "";
+      if (btnElement) {
+        oldText = btnElement.innerHTML;
+        btnElement.disabled = true;
+        btnElement.innerHTML = '⌛...';
+      }
+      
+      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      
+      try {
+        // Step 1: Đọc toàn bộ Sheet Pool
+        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`;
+        const poolRes = await fetch(poolUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!poolRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Pool (Mã: ${poolRes.status}). Kiểm tra quyền truy cập Sheet!`);
+        }
+        
+        const poolData = await poolRes.json();
+        const rows = poolData.values || [];
+        
+        // Helper chuẩn hóa địa chỉ để so khớp thông minh
+        const norm = (str) => {
+          if (!str) return "";
+          return str.toString()
+                    .toLowerCase()
+                    .replace(/cách mạng tháng (tám|8)|cmt8/g, "cmt8")
+                    .replace(/ba tháng hai|3 tháng 2|3\/2|3\-2/g, "3/2")
+                    .replace(/đường số /g, "ds")
+                    .replace(/\s+/g, "")
+                    .trim();
+        };
+        
+        const targetSystemId = systemId ? systemId.trim() : "";
+        const targetId = id ? id.trim() : "";
+        const targetSoNha = norm(soNha);
+        const targetDuong = norm(duong);
+        
+        const matchedRow = rows.find(r => {
+          const rowSysId = r[72] || r[71] || ''; // System ID
+          const rowId = r[55] || r[54] || ''; // Mã KN
+          const rowSoNha = norm(r[6]);
+          const rowDuong = norm(r[5]);
+          return (targetSystemId && rowSysId === targetSystemId) || 
+                 (targetId && rowId === targetId) ||
+                 (rowSoNha === targetSoNha && rowDuong === targetDuong);
+        });
+        
+        if (!matchedRow) {
+          throw new Error(`Căn nhà này chưa được cào về kho Pool hoặc không khớp địa chỉ.`);
+        }
+        
+        // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
+        const sourceRes = await fetch(sourceUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!sourceRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}). Kiểm tra quyền truy cập Sheet!`);
+        }
+        
+        const sourceData = await sourceRes.json();
+        const sourceRows = sourceData.values || [];
+        
+        const sysIdMatched = matchedRow[72] || matchedRow[71] || '';
+        if (!sysIdMatched) {
+          throw new Error("Dữ liệu căn nhà trong Pool thiếu System ID.");
+        }
+        
+        const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
+        const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+        
+        // Step 3: Map dữ liệu 78 cột từ Pool -> 41 cột sang Source
+        const finalImages = [];
+        const anhDuocChon = (matchedRow[61] || "").toString().replace(/\s/g, '');
+        const anhHemDuocChon = (matchedRow[62] || "").toString().replace(/\s/g, '');
+        
+        if (anhDuocChon === "") {
+          alert("⚠️ Căn nhà này chưa được dán nhãn ảnh nội thất an toàn ở Curator App! Vui lòng nhờ Trang biên tập ảnh trước.");
+          if (btnElement) {
+            btnElement.disabled = false;
+            btnElement.innerHTML = oldText;
+          }
+          return;
+        }
+        
+        const noithatIndices = anhDuocChon.split(',');
+        
+        // 1. Cover
+        const firstNoithatIdx = parseInt(noithatIndices[0]);
+        if (!isNaN(firstNoithatIdx) && firstNoithatIdx >= 1 && firstNoithatIdx <= 15) {
+          const coverImgUrl = matchedRow[39 + firstNoithatIdx];
+          if (coverImgUrl) finalImages.push(coverImgUrl);
+        }
+        
+        // 2. Alley
+        const maxHem = 2;
+        if (anhHemDuocChon !== "") {
+          const hemIndices = anhHemDuocChon.split(',');
+          let addedHem = 0;
+          for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+            const hemIdx = parseInt(hemIndices[i]);
+            if (!isNaN(hemIdx) && hemIdx >= 1 && hemIdx <= 10) {
+              const hemUrl = matchedRow[29 + hemIdx];
+              if (hemUrl) {
+                finalImages.push(hemUrl);
+                addedHem++;
+              }
+            }
+          }
+        } else {
+          const availableHem = [];
+          for (let i = 1; i <= 10; i++) {
+            const hemUrl = matchedRow[29 + i];
+            if (hemUrl) availableHem.push(hemUrl);
+          }
+          for (let i = availableHem.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = availableHem[i];
+            availableHem[i] = availableHem[j];
+            availableHem[j] = temp;
+          }
+          for (let i = 0; i < Math.min(maxHem, availableHem.length); i++) {
+            finalImages.push(availableHem[i]);
+          }
+        }
+        
+        // 3. Nội thất khác
+        for (let i = 1; i < noithatIndices.length; i++) {
+          const imgIdx = parseInt(noithatIndices[i]);
+          if (!isNaN(imgIdx) && imgIdx >= 1 && imgIdx <= 15) {
+            const imgUrl = matchedRow[39 + imgIdx];
+            if (imgUrl) finalImages.push(imgUrl);
+          }
+        }
+        
+        while (finalImages.length < 15) finalImages.push("");
+        
+        // Xử lý Cú pháp (Lấy từ Nội dung chính thô)
+        const noiDungChinh = matchedRow[9] || "";
+        let cuPhap = noiDungChinh;
+        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
+        if (matchCuPhap) {
+          cuPhap = matchCuPhap[1].trim();
+        }
+        
+        // Xử lý Quận
+        const formatQuan = (q) => {
+          if (!q) return "";
+          const qLower = q.toLowerCase();
+          if (qLower.includes("quận 3")) return "3";
+          if (qLower.includes("quận 10")) return "10";
+          if (qLower.includes("phú nhuận")) return "PN";
+          if (qLower.includes("tân bình")) return "TB";
+          return q;
+        };
+        
+        // Xử lý Giá
+        const formatGia = (g) => {
+          if (!g) return "";
+          const val = parseFloat(g.toString().replace(/,/g, ''));
+          if (isNaN(val)) return g;
+          if (val > 100) return val / 1000;
+          return val;
+        };
+        
+        const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
+        
+        // Xây dựng publicRowData 46 cột cho Sheet Source
+        const publicRowData = [
+          `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+          cuPhap,                        // 1: Cu_phap (Cột B)
+          "",                            // 2: Note (Cột C)
+          matchedRow[55],                // 3: id (Cột D)
+          matchedRow[56],                // 4: tieu_de (Cột E)
+          matchedRow[13],                // 5: dien_tich (Cột F)
+          matchedRow[15],                // 6: so_tang (Cột G)
+          matchedRow[16],                // 7: mat_tien (Cột H)
+          formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
+          formatQuan(matchedRow[3]),     // 9: quan (Cột J)
+          matchedRow[4],                 // 10: phuong (Cột K)
+          loaiHinh,                      // 11: loai_hinh (Cột L)
+          matchedRow[17],                // 12: huong_nha (Cột M)
+          matchedRow[59],                // 13: duong_truoc_nha (Cột N)
+          matchedRow[60],                // 14: do_rong_hem (Cột O)
+          matchedRow[61],                // 15: tinh_trang_nha (Cột P)
+          matchedRow[67],                // 16: danh_gia (Cột Q)
+          matchedRow[68],                // 17: ngu_tang_tret (Cột R)
+          matchedRow[69],                // 18: chdv (Cột S)
+          matchedRow[57],                // 19: mo_ta (Cột T)
+          finalImages[0],                // 20: anh_1 (Cột U)
+          finalImages[1],                // 21: anh_2 (Cột V)
+          finalImages[2],                // 22: anh_3 (Cột W)
+          finalImages[3],                // 23: anh_4 (Cột X)
+          finalImages[4],                // 24: anh_5 (Cột Y)
+          finalImages[5],                // 25: anh_6 (Cột Z)
+          finalImages[6],                // 26: anh_7 (Cột AA)
+          finalImages[7],                // 27: anh_8 (Cột AB)
+          finalImages[8],                // 28: anh_9 (Cột AC)
+          finalImages[9],                // 29: anh_10 (Cột AD)
+          new Date().toISOString(),      // 30: Last updated (Cột AE)
+          matchedRow[66],                // 31: phuong_cu (Cột AF)
+          matchedRow[64],                // 32: so_pn (Cột AG)
+          matchedRow[65],                // 33: so_wc (Cột AH)
+          matchedRow[5],                 // 34: ten_duong (Cột AI)
+          "",                            // 35: gio_dang (Cột AJ)
+          "",                            // 36: trang_thai (Cột AK)
+          sysIdMatched,                  // 37: System ID (Cột AL)
+          matchedRow[29],                // 38: Hình Mặt Tiền (Cột AM)
+          "",                            // 39: Tiêu đề BDS (Cột AN)
+          false,                         // 40: Đăng BDS (Cột AO)
+          finalImages[10] || "",         // 41: anh_11 (Cột AP)
+          finalImages[11] || "",         // 42: anh_12 (Cột AQ)
+          finalImages[12] || "",         // 43: anh_13 (Cột AR)
+          finalImages[13] || "",         // 44: anh_14 (Cột AS)
+          finalImages[14] || ""          // 45: anh_15 (Cột AT)
+        ];
+        
+        // Step 4: Ghi đè/Thêm mới vào Sheet Source
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AT${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeRes = await fetch(writeUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [publicRowData] })
+        });
+        
+        if (!writeRes.ok) {
+          let detail = "";
+          try {
+            const errJson = await writeRes.json();
+            detail = ": " + (errJson.error?.message || JSON.stringify(errJson));
+          } catch (e) {}
+          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
+        }
+        
+        // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
+        try {
+          const poolRowNumber = rows.indexOf(matchedRow) + 2;
+          const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ values: [[syncDateStr]] })
+          });
+        } catch (e) {
+          console.warn("Không thể ghi nhận Last Sync vào Pool:", e);
+        }
+        
+        alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[55]} (${matchedRow[56]})!`);
+        
+        // Reset ô tìm kiếm Pool trong Bộ lọc
+        const pullInput = document.getElementById('poolSearchToolInput');
+        if (pullInput) pullInput.value = '';
+        const pullResults = document.getElementById('poolSearchToolResults');
+        if (pullResults) pullResults.innerHTML = '';
+
+        // Tải lại dữ liệu web
+        secureLoadAttempted = false;
+        isSecureLoaded = false;
+        isDataLoaded = false;
+        loadData();
+        
+      } catch (err) {
+        alert(`❌ Lỗi đồng bộ: ${err.message}`);
+        console.error(err);
+      } finally {
+        if (btnElement) {
+          btnElement.disabled = false;
+          btnElement.innerHTML = oldText;
+        }
+      }
+    }
+
+    // ============================================================
+    // [COLLECTIONS MANAGEMENT HELPERS]
+    // ============================================================
+    function updateShareUI() {
+      const shareCountEl = document.getElementById('shareCount');
+      if (shareCountEl) shareCountEl.textContent = SELECTED_IDS.size;
+      
+      const colFloatBtn = document.getElementById('colFloatBtn');
+      if (colFloatBtn) {
+        colFloatBtn.style.display = SELECTED_IDS.size > 0 ? 'flex' : 'none';
+      }
+
+      // Cập nhật trạng thái nút Chọn tất cả (☐/☑) dựa trên các căn đang hiển thị
+      const btn = document.getElementById('selAllBtn');
+      if (btn) {
+        const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+        const visibleIds = visibleCards.map(c => c.dataset.pid);
+        const isNowAllSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
+        btn.textContent = isNowAllSelected ? '☑' : '☐';
+        btn.classList.toggle('all-on', isNowAllSelected);
+      }
+    }
+
+    function openColViewModal() {
+      const viewList = document.getElementById('colViewList');
+      if (!viewList) return;
+      viewList.innerHTML = '';
+      
+      // 1. Thêm bộ sưu tập Mặc định: Yêu thích (Thích)
+      const favCount = favs.size;
+      const favItem = document.createElement('div');
+      favItem.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; transition:background 0.2s;';
+      favItem.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;" onclick="viewCollection('favorites')">
+          <span style="font-size:16px;">❤️</span>
+          <span style="font-weight:600; font-size:14px;">Căn nhà đã thích</span>
+          <span style="font-size:12px; color:var(--sub);">(${favCount} căn)</span>
+        </div>
+      `;
+      favItem.onclick = () => {
+        viewCollection('favorites');
+        document.getElementById('colViewModal').classList.remove('open');
+      };
+      viewList.appendChild(favItem);
+      
+      // 2. Thêm các bộ sưu tập tự tạo
+      Object.keys(collections).forEach(name => {
+        const count = collections[name].length;
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; transition:background 0.2s; margin-top:8px;';
+        item.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; flex:1;" onclick="viewCollection('${name.replace(/'/g, "\\'")}')">
+            <span style="font-size:16px;">📁</span>
+            <span style="font-weight:600; font-size:14px; word-break:break-all;">${name}</span>
+            <span style="font-size:12px; color:var(--sub);">(${count} căn)</span>
+          </div>
+          <button onclick="deleteCollection('${name.replace(/'/g, "\\'")}', event)" style="background:none; border:none; color:var(--sub); font-size:14px; cursor:pointer; padding:4px 8px; display:flex; align-items:center; justify-content:center; transition:color 0.15s;" title="Xóa bộ sưu tập">🗑️</button>
+        `;
+        item.querySelector('div').onclick = () => {
+          viewCollection(name);
+          document.getElementById('colViewModal').classList.remove('open');
+        };
+        viewList.appendChild(item);
+      });
+      
+      document.getElementById('colViewModal').classList.add('open');
+    }
+
+    function openColSaveModal() {
+      if (SELECTED_IDS.size === 0) {
+        alert('Vui lòng chọn ít nhất 1 căn nhà!');
+        return;
+      }
+      
+      document.getElementById('colSaveModalCount').textContent = SELECTED_IDS.size;
+      document.getElementById('newColName').value = '';
+      
+      const saveList = document.getElementById('colSaveList');
+      if (!saveList) return;
+      saveList.innerHTML = '';
+      
+      const colNames = Object.keys(collections);
+      if (colNames.length === 0) {
+        saveList.innerHTML = '<div style="text-align:center; padding:12px; font-size:13px; color:var(--sub);">Chưa có bộ sưu tập nào. Hãy tạo bộ sưu tập đầu tiên ở trên nhé!</div>';
+      } else {
+        colNames.forEach(name => {
+          const count = collections[name].length;
+          const btn = document.createElement('button');
+          btn.style.cssText = 'width:100%; text-align:left; padding:12px 16px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-weight:600; font-size:13px; cursor:pointer; font-family:inherit; transition:background 0.2s; margin-bottom:8px;';
+          btn.innerHTML = `📁 ${name} <span style="font-size:11px; color:var(--sub); font-weight:normal;">(${count} căn)</span>`;
+          btn.onclick = () => {
+            saveToExistingCollection(name);
+            document.getElementById('colSaveModal').classList.remove('open');
+          };
+          saveList.appendChild(btn);
+        });
+      }
+      
+      document.getElementById('colSaveModal').classList.add('open');
+    }
+
+    function createNewCollection() {
+      const name = document.getElementById('newColName').value.trim();
+      if (!name) {
+        alert('Vui lòng nhập tên bộ sưu tập!');
+        return;
+      }
+      
+      if (collections[name]) {
+        if (!confirm(`Bộ sưu tập "${name}" đã tồn tại. Bạn có muốn ghi đè/nạp thêm vào bộ sưu tập này không?`)) {
+          return;
+        }
+      }
+      
+      const idsToSave = Array.from(SELECTED_IDS);
+      collections[name] = idsToSave;
+      localStorage.setItem('adminCollections', JSON.stringify(collections));
+      
+      // Xóa check sau khi lưu
+      SELECTED_IDS.clear();
+      updateShareUI();
+      
+      renderCollectionsManager();
+      
+      alert(`Đã tạo bộ sưu tập "${name}" với ${idsToSave.length} căn thành công!`);
+      document.getElementById('colSaveModal').classList.remove('open');
+      
+      if (activeCollectionName === name) {
+        viewCollection(name);
+      } else {
+        render();
+      }
+    }
+
+    function saveToExistingCollection(name) {
+      if (!collections[name]) return;
+      
+      const currentIds = collections[name];
+      const newIds = Array.from(SELECTED_IDS);
+      
+      const merged = Array.from(new Set([...currentIds, ...newIds]));
+      const addedCount = merged.length - currentIds.length;
+      
+      collections[name] = merged;
+      localStorage.setItem('adminCollections', JSON.stringify(collections));
+      
+      SELECTED_IDS.clear();
+      updateShareUI();
+      
+      renderCollectionsManager();
+      
+      alert(`Đã lưu thêm ${addedCount} căn mới vào bộ sưu tập "${name}" thành công! (Tổng số: ${merged.length} căn)`);
+      
+      if (activeCollectionName === name) {
+        viewCollection(name);
+      } else {
+        render();
+      }
+    }
+
+    function viewCollection(name) {
+      activeCollectionName = name;
+      
+      SELECTED_IDS.clear();
+      updateShareUI();
+      
+      const bar = document.getElementById('activeColBar');
+      const text = document.getElementById('activeColNameText');
+      if (bar && text) {
+        let count = 0;
+        let displayName = '';
+        if (name === 'favorites') {
+          count = favs.size;
+          displayName = '❤️ Căn nhà đã thích';
+        } else {
+          count = collections[name] ? collections[name].length : 0;
+          displayName = `📂 ${name}`;
+        }
+        text.innerHTML = `<b>${displayName}</b> (${count} căn)`;
+        bar.style.display = 'flex';
+      }
+      
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function exitCollectionView() {
+      activeCollectionName = null;
+      
+      const bar = document.getElementById('activeColBar');
+      if (bar) bar.style.display = 'none';
+      
+      render();
+    }
+
+    function deleteCollection(name, event) {
+      if (event) event.stopPropagation();
+      if (!confirm(`Bạn có chắc chắn muốn xóa bộ sưu tập "${name}" không?`)) {
+        return;
+      }
+      
+      delete collections[name];
+      localStorage.setItem('adminCollections', JSON.stringify(collections));
+      
+      renderCollectionsManager();
+      
+      if (activeCollectionName === name) {
+        exitCollectionView();
+      } else {
+        openColViewModal();
+      }
+    }
+
+    function removeFromCol(id, colName, event) {
+      if (event) event.stopPropagation();
+      
+      if (colName === 'favorites') {
+        favs.delete(String(id));
+        localStorage.setItem('favs', JSON.stringify(Array.from(favs)));
+        updateFavBtnUI();
+      } else if (collections[colName]) {
+        collections[colName] = collections[colName].filter(x => String(x) !== String(id));
+        localStorage.setItem('adminCollections', JSON.stringify(collections));
+        renderCollectionsManager();
+      }
+      
+      viewCollection(colName);
+    }
+
+    function renderCollectionsManager() {
+      const manager = document.getElementById('collectionsManager');
+      if (!manager) return;
+      manager.innerHTML = '';
+      
+      const colNames = Object.keys(collections);
+      if (colNames.length === 0) {
+        manager.innerHTML = '<span style="font-size:12px; color:rgba(44,44,46,0.5); padding:6px 6px;">Chưa có bộ sưu tập. Chọn căn & bấm 📁 để tạo.</span>';
+        return;
+      }
+      
+      colNames.forEach(name => {
+        const count = collections[name].length;
+        const chip = document.createElement('div');
+        chip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#ffffff; border:1.5px solid #e2ded6; border-radius:16px; padding:6px 12px; font-size:12px; font-weight:600; color:#3a3a3c; cursor:pointer; transition:all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);';
+        
+        chip.innerHTML = `
+          <span onclick="viewCollection('${name.replace(/'/g, "\\'")}')" style="display:inline-flex; align-items:center; gap:4px;">📁 ${name} (${count})</span>
+          <span onclick="deleteCollection('${name.replace(/'/g, "\\'")}', event)" style="color:rgba(44,44,46,0.5); font-size:11px; padding-left:6px; border-left:1px solid #e2ded6; margin-left:2px;" title="Xóa">✕</span>
+        `;
+        manager.appendChild(chip);
+      });
+    }
+
+    // ============================================================
+    //  ⚡ ADMIN CURATION DASHBOARD EXTRA HELPERS (US-039)
+    // ============================================================
+    window.toggleAdminAccordion = function(header) {
+      const item = header.closest('.accordion-item');
+      const arrow = header.querySelector('.arrow');
+      const isExpanded = item.classList.contains('expanded');
+      
+      if (isExpanded) {
+        item.classList.remove('expanded');
+        if (arrow) arrow.textContent = '▶';
+      } else {
+        item.classList.add('expanded');
+        if (arrow) arrow.textContent = '▼';
+      }
+    };
+
+    window.getPublicImagesFromForm = function(p) {
+      if (!p) return [];
+      const customCoverUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+      const publicCoverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
+      const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
+
+      const targetMatTien = customCoverUrl || p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
+      if (p.pool_row_data) {
+        const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
+        const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+
+        const sodo1Url = (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '').trim();
+        const sodo2Url = (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '').trim();
+        const normSodo1 = normalizeImgUrl(sodo1Url);
+        const normSodo2 = normalizeImgUrl(sodo2Url);
+        const isSodoUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          return norm !== '' && (norm === normSodo1 || norm === normSodo2);
+        };
+
+        const finalImages = [];
+        let publicCover = publicCoverUrl;
+        if (publicCover && ((window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) || isFacadeUrl(publicCover))) {
+          publicCover = '';
+        }
+        if (!publicCover) {
+          const candidates = [];
+          if (p.pool_row_data[40] && (!window.isListingSodoUrl || !window.isListingSodoUrl(p.pool_row_data[40], p)) && !isFacadeUrl(p.pool_row_data[40])) {
+            candidates.push(p.pool_row_data[40]);
+          }
+          // p.pool_row_data[29] (raw facade) is completely excluded!
+          for (let i = 0; i < noithatIndices.length; i++) {
+            const url = p.pool_row_data[39 + noithatIndices[i]];
+            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+              candidates.push(url);
+              break;
+            }
+          }
+          publicCover = candidates[0] || '';
+        }
+
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+          finalImages.push(publicCover);
+        }
+        
+        const maxHem = 2;
+        let addedHem = 0;
+        for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+          const hemIdx = hemIndices[i];
+          const hemUrl = p.pool_row_data[29 + hemIdx];
+          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p)) && !isFacadeUrl(hemUrl)) {
+            finalImages.push(hemUrl);
+            addedHem++;
+          }
+        }
+        
+        for (let i = 0; i < noithatIndices.length; i++) {
+          const imgIdx = noithatIndices[i];
+          const imgUrl = p.pool_row_data[39 + imgIdx];
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 10) {
+            finalImages.push(imgUrl);
+          }
+        }
+        return finalImages.filter(Boolean);
+      } else {
+        const finalImages = [];
+        const publicCover = publicCoverUrl || (p.imgs && p.imgs[0]);
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+          finalImages.push(publicCover);
+        }
+        
+        if (p.imgs) {
+          p.imgs.forEach(url => {
+            if (url && url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+              finalImages.push(url);
+            }
+          });
+        }
+        return finalImages.filter(Boolean);
+      }
+    };
+
+    window.setupScrollCarousel = function(containerId, imageUrls, isLegalImg = false) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const track = container.querySelector('.admin-scroll-carousel');
+      const dotsContainer = container.querySelector('.admin-carousel-dots');
+      if (!track || !dotsContainer) return;
+
+      track.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      if (imageUrls.length === 0) {
+        track.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--sub); font-size:12.5px; font-weight:600; background:#f8f9fa;">Chưa có hình ảnh</div>`;
+        return;
+      }
+
+      imageUrls.forEach((url, idx) => {
+        const cleanUrl = fixImgUrl(url, 'w800');
+        const item = document.createElement('div');
+        item.className = 'admin-carousel-item';
+        item.onclick = () => {
+          window.openLightboxForCarousel(imageUrls, idx);
+        };
+        item.style.cursor = 'zoom-in';
+        item.innerHTML = `<img src="${cleanUrl}" alt="Hình ${idx + 1}" loading="lazy">`;
+        track.appendChild(item);
+
+        const dot = document.createElement('div');
+        dot.className = 'admin-dot' + (idx === 0 ? ' on' : '');
+        dotsContainer.appendChild(dot);
+      });
+
+      track.onscroll = () => {
+        const width = track.clientWidth;
+        const scrollLeft = track.scrollLeft;
+        const activeIdx = Math.round(scrollLeft / (width * 0.85));
+        const dots = dotsContainer.querySelectorAll('.admin-dot');
+        dots.forEach((dot, dIdx) => {
+          dot.classList.toggle('on', dIdx === activeIdx);
+        });
+      };
+    };
+
+    window.openZoomOverlay = function(url) {
+      let overlay = document.getElementById('zoomOverlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'zoomOverlay';
+        overlay.style.cssText = `
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.95);
+          z-index: 100000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+        `;
+        overlay.innerHTML = `
+          <div style="position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; cursor: pointer; z-index: 100001;" onclick="closeZoomOverlay()">✕</div>
+          <img src="" style="max-width: 95%; max-height: 90%; object-fit: contain; transition: transform 0.15s ease-out; transform-origin: center center;" id="zoomImg">
+        `;
+        document.body.appendChild(overlay);
+
+        const img = overlay.querySelector('#zoomImg');
+        let scale = 1;
+        let startDist = 0;
+        let lastScale = 1;
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let posX = 0, posY = 0;
+
+        img.ontouchstart = (e) => {
+          if (e.touches.length === 2) {
+            startDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+          } else if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - posX;
+            startY = e.touches[0].clientY - posY;
+          }
+        };
+
+        img.ontouchmove = (e) => {
+          if (e.touches.length === 2 && startDist > 0) {
+            const dist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            scale = Math.max(1, Math.min(4, lastScale * (dist / startDist)));
+            img.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+          } else if (e.touches.length === 1 && isDragging && scale > 1) {
+            posX = e.touches[0].clientX - startX;
+            posY = e.touches[0].clientY - startY;
+            img.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+          }
+        };
+
+        img.ontouchend = (e) => {
+          lastScale = scale;
+          isDragging = false;
+          if (scale <= 1.05) {
+            posX = 0; posY = 0; scale = 1; lastScale = 1;
+            img.style.transform = 'translate(0px, 0px) scale(1)';
+          }
+        };
+
+        overlay.onclick = (e) => {
+          if (e.target === overlay) closeZoomOverlay();
+        };
+      }
+
+      const img = overlay.querySelector('#zoomImg');
+      img.src = url;
+      img.style.transform = 'translate(0px, 0px) scale(1)';
+      
+      overlay.style.pointerEvents = 'auto';
+      overlay.style.opacity = '1';
+      
+      window.closeZoomOverlay = function() {
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+      };
+    };
+
+    window.checkMoTaCollapse = function() {
+      const box = document.getElementById('adminMotaGocBox');
+      const btn = document.getElementById('btnExpandMotaGoc');
+      if (!box || !btn) return;
+      
+      box.classList.remove('expanded');
+      btn.textContent = 'Xem thêm ▼';
+      
+      const scrollHeight = box.scrollHeight;
+      if (scrollHeight > 165) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    };
+    
+    window.toggleMotaGocCollapse = function() {
+      const box = document.getElementById('adminMotaGocBox');
+      const btn = document.getElementById('btnExpandMotaGoc');
+      if (!box || !btn) return;
+      
+      const isExpanded = box.classList.contains('expanded');
+      if (isExpanded) {
+        box.classList.remove('expanded');
+        btn.textContent = 'Xem thêm ▼';
+        document.getElementById('sbody').scrollTop -= 100;
+      } else {
+        box.classList.add('expanded');
+        btn.textContent = 'Thu gọn ▲';
+      }
+    };
+
+    window.showToast = function(msg, type = 'success') {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = `
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 200000;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          pointer-events: none;
+          width: 90%;
+          max-width: 320px;
+        `;
+        document.body.appendChild(container);
+      }
+
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      `;
+      toast.innerHTML = `
+        <span>${type === 'success' ? '✅' : '❌'}</span>
+        <span>${msg}</span>
+      `;
+      container.appendChild(toast);
+
+      toast.offsetHeight;
+
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    };
+
+    window.saveSourceChanges = async function(id) {
+      const p = DATA.find(x => String(x.id) === String(id));
+      if (!p) {
+        showToast("Không tìm thấy thông tin căn nhà!", "error");
+        return;
+      }
+
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveSourceBtn') || document.getElementById('saveBtn');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '⌛';
+      }
+
+      try {
+        const note = document.getElementById('editNote').value.trim();
+        const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+        const moTaBds = document.getElementById('editMoTaBds').value.trim();
+        const huong = document.getElementById('editHuong').value;
+        const duong = document.getElementById('editDuong').value;
+        const danhGia = document.getElementById('editDanhGia').value;
+        const tinhTrang = document.getElementById('editTinhTrang').value;
+        const rongHem = p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
+        const soPn = document.getElementById('editSoPn').value.trim();
+        const soWc = document.getElementById('editSoWc').value.trim();
+        const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
+        const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
+
+        // Đọc dữ liệu hình ảnh được chọn từ form biên tập hình ảnh trực quan
+        const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
+        const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
+        const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+        const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+        const sodo2Url = document.getElementById('editSodo2Url').value.trim();
+        const sodo3Url = document.getElementById('editSodo3Url').value.trim();
+        const sodo4Url = document.getElementById('editSodo4Url').value.trim();
+        const sodo5Url = document.getElementById('editSodo5Url').value.trim();
+
+        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
+        
+        const isSodoUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          if (norm === '') return false;
+          return normSodos.includes(norm);
+        };
+
+        const normMatTien = normalizeImgUrl(customCoverUrl || p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : ''));
+        const isFacadeUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          return norm !== '' && norm === normMatTien;
+        };
+
+        // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
+        if (p.pool_row_data) {
+          const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
+          const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+
+          const finalImages = [];
+          
+          let publicCover = publicCoverUrl;
+          if (isSodoUrl(publicCover) || isFacadeUrl(publicCover)) {
+            publicCover = '';
+          }
+          if (!publicCover) {
+            const candidates = [];
+            if (p.pool_row_data[40] && !isSodoUrl(p.pool_row_data[40]) && !isFacadeUrl(p.pool_row_data[40])) {
+              candidates.push(p.pool_row_data[40]);
+            }
+            for (let i = 0; i < noithatIndices.length; i++) {
+              const imgIdx = noithatIndices[i];
+              const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+              const url = p.pool_row_data[colIdx];
+              if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
+                candidates.push(url);
+                break;
+              }
+            }
+            publicCover = candidates[0] || '';
+          }
+
+          if (publicCover && !isSodoUrl(publicCover) && !isFacadeUrl(publicCover)) {
+            finalImages.push(publicCover);
+          }
+          
+          const maxHem = 2;
+          let addedHem = 0;
+          for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+            const hemIdx = hemIndices[i];
+            const hemUrl = p.pool_row_data[29 + hemIdx];
+            if (hemUrl && !isSodoUrl(hemUrl) && !isFacadeUrl(hemUrl)) {
+              finalImages.push(hemUrl);
+              addedHem++;
+            }
+          }
+          
+          for (let i = 0; i < noithatIndices.length; i++) {
+            const imgIdx = noithatIndices[i];
+            const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+            const imgUrl = p.pool_row_data[colIdx];
+            if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+              finalImages.push(imgUrl);
+            }
+          }
+
+          while (finalImages.length < 15) finalImages.push("");
+
+          // Pad original_row_data to 46 columns
+          while (p.original_row_data.length < 46) p.original_row_data.push("");
+
+          // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
+          for (let i = 0; i < 10; i++) {
+            p.original_row_data[20 + i] = finalImages[i];
+          }
+          for (let i = 10; i < 15; i++) {
+            p.original_row_data[31 + i] = finalImages[i];
+          }
+          
+          p.imgs = finalImages.filter(Boolean);
+        }
+
+        if (p.original_row_data) {
+          while (p.original_row_data.length < 46) p.original_row_data.push("");
+          let cleanCoverUrl = customCoverUrl || p.original_row_data[38] || '';
+          if (isSodoUrl(cleanCoverUrl) || isFacadeUrl(cleanCoverUrl)) {
+            cleanCoverUrl = '';
+          }
+          p.original_row_data[38] = cleanCoverUrl;
+          p.img_mat_tien = cleanCoverUrl;
+
+          if (isSodoUrl(p.original_row_data[20]) || isFacadeUrl(p.original_row_data[20])) {
+            let newCover = '';
+            for (let i = 20; i <= 29; i++) {
+              if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
+                newCover = p.original_row_data[i];
+                break;
+              }
+            }
+            if (!newCover) {
+              for (let i = 41; i <= 45; i++) {
+                if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
+                  newCover = p.original_row_data[i];
+                  break;
+                }
+              }
+            }
+            p.original_row_data[20] = newCover;
+          }
+
+          const cleanPublicImages = [];
+          for (let i = 20; i <= 29; i++) {
+            const url = p.original_row_data[i];
+            if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
+              cleanPublicImages.push(url);
+            }
+          }
+          for (let i = 41; i <= 45; i++) {
+            const url = p.original_row_data[i];
+            if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
+              cleanPublicImages.push(url);
+            }
+          }
+          
+          if (publicCoverUrl && !isSodoUrl(publicCoverUrl) && !isFacadeUrl(publicCoverUrl)) {
+            if (!cleanPublicImages.includes(publicCoverUrl)) {
+              cleanPublicImages.unshift(publicCoverUrl);
+            } else {
+              const idx = cleanPublicImages.indexOf(publicCoverUrl);
+              if (idx !== -1) cleanPublicImages.splice(idx, 1);
+              cleanPublicImages.unshift(publicCoverUrl);
+            }
+          }
+
+          while (cleanPublicImages.length < 15) {
+            cleanPublicImages.push("");
+          }
+          
+          for (let i = 0; i < 10; i++) {
+            p.original_row_data[20 + i] = cleanPublicImages[i];
+          }
+          for (let i = 10; i < 15; i++) {
+            p.original_row_data[31 + i] = cleanPublicImages[i];
+          }
+          p.imgs = cleanPublicImages.filter(Boolean);
+        }
+
+        p.original_row_data[2] = note;
+        p.original_row_data[12] = huong;
+        p.original_row_data[13] = duong;
+        p.original_row_data[14] = rongHem || '-';
+        p.original_row_data[15] = tinhTrang;
+        p.original_row_data[16] = danhGia;
+        p.original_row_data[17] = nguTret;
+        p.original_row_data[18] = chdv;
+        p.original_row_data[19] = moTaBds;
+        p.original_row_data[30] = new Date().toISOString();
+        p.original_row_data[32] = soPn || '-';
+        p.original_row_data[33] = soWc || '-';
+        p.original_row_data[4] = tieuDeBds;
+        p.t = tieuDeBds;
+        p.original_row_data[39] = "";
+
+        p.note = note;
+        p.huong = huong;
+        p.duong_truoc_nha = duong;
+        p.rong_hem = rongHem || '-';
+        p.tinh_trang = tinhTrang;
+        p.danh_gia = danhGia;
+        p.ngu_tang_tret = nguTret;
+        p.chdv = chdv;
+        p.so_pn = soPn || '-';
+        p.m = moTaBds;
+
+        const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AT${p.source_row_index}?valueInputOption=USER_ENTERED`;
+
+        const writeRes = await fetch(writeUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [p.original_row_data] })
+        });
+
+        if (!writeRes.ok) {
+          let detail = "";
+          try {
+            const errJson = await writeRes.json();
+            detail = ": " + (errJson.error?.message || JSON.stringify(errJson));
+          } catch (e) {}
+          throw new Error(`Google Sheets API returned status ${writeRes.status}${detail}`);
+        }
+
+        // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
+        if (p.pool_row_index && p.pool_row_data) {
+          const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+          
+          // 1. Đồng bộ các ảnh Sổ thửa đất (cột AB:AC)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${p.pool_row_index}:AC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
+            });
+            p.pool_row_data[27] = sodo1Url;
+            p.pool_row_data[28] = sodo2Url;
+            p.raw_sodo1 = sodo1Url;
+            p.raw_sodo2 = sodo2Url;
+          } catch (e) {
+            console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
+          }
+
+          // 1b. Đồng bộ Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${p.pool_row_index}:AD${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[customCoverUrl]] })
+            });
+            p.pool_row_data[29] = customCoverUrl;
+            p.img_mat_tien = customCoverUrl;
+          } catch (e) {
+            console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
+          }
+
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:AO${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[publicCoverUrl]] })
+            });
+            p.pool_row_data[40] = publicCoverUrl;
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
+          }
+
+          // 1a. Đồng bộ Sổ 3-5 (CC:CE)
+          try {
+            const sodo3Url = document.getElementById('editSodo3Url').value.trim();
+            const sodo4Url = document.getElementById('editSodo4Url').value.trim();
+            const sodo5Url = document.getElementById('editSodo5Url').value.trim();
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${p.pool_row_index}:CE${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[sodo3Url, sodo4Url, sodo5Url]] })
+            });
+            p.pool_row_data[80] = sodo3Url;
+            p.pool_row_data[81] = sodo4Url;
+            p.pool_row_data[82] = sodo5Url;
+            p.raw_sodo3 = sodo3Url;
+            p.raw_sodo4 = sodo4Url;
+            p.raw_sodo5 = sodo5Url;
+          } catch (e) {
+            console.warn("Không thể đồng bộ thay đổi Sổ 3-5 sang Pool thô:", e);
+          }
+
+          // 1b. Đồng bộ Ảnh Nội Thất 1-15 sang Pool (cột AO:BC)
+          try {
+            const int1_15 = [];
+            for (let c = 40; c <= 54; c++) {
+              int1_15.push(p.pool_row_data[c] || "");
+            }
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:BC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [int1_15] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Nội Thất 1-15 sang Pool:", e);
+          }
+
+          // 1c. Đồng bộ Ảnh Nội Thất 16-25 sang Pool (cột CF:CO)
+          try {
+            const int16_25 = [];
+            for (let c = 83; c <= 92; c++) {
+              int16_25.push(p.pool_row_data[c] || "");
+            }
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${p.pool_row_index}:CO${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [int16_25] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Nội Thất 16-25 sang Pool:", e);
+          }
+
+          // 2. Đồng bộ chỉ số ảnh public (cột BK:BL)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${p.pool_row_index}:BL${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+            });
+            
+            // Cập nhật lại biến client-side để đồng bộ
+            p.pool_row_data[62] = publicIntStr;
+            p.pool_row_data[63] = publicAlleyStr;
+          } catch (e) {
+            console.warn("Không thể đồng bộ thay đổi hình ảnh sang Pool thô:", e);
+          }
+        }
+
+        showToast("Đã lưu thay đổi lên Google Sheets thành công!", "success");
+        
+        // Re-render list cards in the background to reflect changes in-place
+        if (typeof render === 'function') {
+          render();
+        }
+
+        // Focus and expand the Customer Preview section in-place without page reload (US-046.4)
+        const accPreview = document.getElementById('accPreview');
+        if (accPreview) {
+          accPreview.classList.add('expanded');
+          const content = accPreview.querySelector('.accordion-content');
+          if (content) content.style.maxHeight = content.scrollHeight + 'px';
+          const arrow = accPreview.querySelector('.arrow');
+          if (arrow) arrow.style.transform = 'rotate(180deg)';
+          
+          setTimeout(() => {
+            accPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 300);
+        }
+      } catch (err) {
+        console.error("Lỗi lưu dữ liệu:", err);
+        showToast(`Lỗi lưu thay đổi: ${err.message}`, "error");
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '💾';
+        }
+      }
+    };
+
+    window.saveNewListingFromPool = async function(systemId, btnElement) {
+      let token;
+      try {
+        token = await ensureValidGoogleToken();
+      } catch (err) {
+        showToast("Không thể xác thực Google. Lưu thất bại: " + err.message, "error");
+        return;
+      }
+      
+      let oldText = "";
+      if (btnElement) {
+        oldText = btnElement.innerHTML;
+        btnElement.disabled = true;
+        btnElement.innerHTML = '⌛';
+      }
+      
+      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      
+      try {
+        // Step 1: Đọc Sheet Pool để lấy dòng gốc
+        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:CO`;
+        const poolRes = await fetch(poolUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!poolRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Pool (Mã: ${poolRes.status}).`);
+        }
+        
+        const poolData = await poolRes.json();
+        const rows = poolData.values || [];
+        rows.forEach(r => {
+          while (r.length < 93) r.push("");
+        });
+        
+        const matchedRow = rows.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+        if (!matchedRow) {
+          throw new Error("Không tìm thấy căn nhà này trong kho Pool hoặc không khớp System ID.");
+        }
+
+        // Đọc dữ liệu từ form trong modal
+        const note = document.getElementById('editNote').value.trim();
+        const maKhangNgo = document.getElementById('editMaKhangNgo').value.trim();
+        const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+        const moTaBds = document.getElementById('editMoTaBds').value.trim();
+        const huong = document.getElementById('editHuong').value;
+        const duong = document.getElementById('editDuong').value;
+        const danhGia = document.getElementById('editDanhGia').value;
+        const tinhTrang = document.getElementById('editTinhTrang').value;
+        const rongHem = matchedRow[59] || '';
+        const soPn = document.getElementById('editSoPn').value.trim();
+        const soWc = document.getElementById('editSoWc').value.trim();
+        const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
+        const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
+
+        if (!maKhangNgo) {
+          throw new Error("Vui lòng điền Mã Khang Ngô!");
+        }
+        
+        // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AT`;
+        const sourceRes = await fetch(sourceUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!sourceRes.ok) {
+          throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}).`);
+        }
+        
+        const sourceData = await sourceRes.json();
+        const sourceRows = sourceData.values || [];
+        
+        const sysIdMatched = matchedRow[72] || matchedRow[71] || '';
+        if (!sysIdMatched) {
+          throw new Error("Dữ liệu căn nhà trong Pool thiếu System ID.");
+        }
+        
+        const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
+        const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+        
+        // Map 15 ảnh nội thất sạch và ảnh hẻm từ biên tập viên hình ảnh trực quan
+        const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
+        const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
+        const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+        const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+        const sodo2Url = document.getElementById('editSodo2Url').value.trim();
+        const sodo3Url = document.getElementById('editSodo3Url').value.trim();
+        const sodo4Url = document.getElementById('editSodo4Url').value.trim();
+        const sodo5Url = document.getElementById('editSodo5Url').value.trim();
+
+        if (publicIntStr === "") {
+          alert("⚠️ Vui lòng tích chọn ít nhất 1 ảnh nội thất công khai làm Hình Public!");
+          if (btnElement) {
+            btnElement.disabled = false;
+            btnElement.innerHTML = oldText;
+          }
+          return;
+        }
+
+        const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
+        const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+
+        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
+        
+        const isSodoUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          if (norm === '') return false;
+          return normSodos.includes(norm);
+        };
+
+        const normMatTien = normalizeImgUrl(customCoverUrl || matchedRow[29] || '');
+        const isFacadeUrl = (url) => {
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          return norm !== '' && norm === normMatTien;
+        };
+
+        const finalImages = [];
+        
+        // 1. Cover (Public cover goes to index 0 of finalImages -> Ảnh 1 / Cột U)
+        let publicCover = publicCoverUrl;
+        if (isSodoUrl(publicCover) || isFacadeUrl(publicCover)) {
+          publicCover = '';
+        }
+        if (!publicCover) {
+          const candidates = [];
+          if (matchedRow[40] && !isSodoUrl(matchedRow[40]) && !isFacadeUrl(matchedRow[40])) {
+            candidates.push(matchedRow[40]);
+          }
+          for (let i = 0; i < noithatIndices.length; i++) {
+            const imgIdx = noithatIndices[i];
+            const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+            const url = matchedRow[colIdx];
+            if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
+              candidates.push(url);
+              break;
+            }
+          }
+          publicCover = candidates[0] || '';
+        }
+        
+        if (publicCover && !isSodoUrl(publicCover) && !isFacadeUrl(publicCover)) {
+          finalImages.push(publicCover);
+        }
+        
+        // 2. Alley
+        const maxHem = 2;
+        let addedHem = 0;
+        for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
+          const hemIdx = hemIndices[i];
+          const hemUrl = matchedRow[29 + hemIdx];
+          if (hemUrl && !isSodoUrl(hemUrl) && !isFacadeUrl(hemUrl)) {
+            finalImages.push(hemUrl);
+            addedHem++;
+          }
+        }
+        
+        // 3. Nội thất khác
+        for (let i = 0; i < noithatIndices.length; i++) {
+          const imgIdx = noithatIndices[i];
+          const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
+          const imgUrl = matchedRow[colIdx];
+          if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+            finalImages.push(imgUrl);
+          }
+        }
+
+        while (finalImages.length < 15) finalImages.push("");
+        
+        // Xử lý Cú pháp
+        const noiDungChinh = matchedRow[9] || "";
+        let cuPhap = noiDungChinh;
+        const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
+        if (matchCuPhap) {
+          cuPhap = matchCuPhap[1].trim();
+        }
+        
+        // Xử lý Quận
+        const formatQuan = (q) => {
+          if (!q) return "";
+          const qLower = q.toLowerCase();
+          if (qLower.includes("quận 3")) return "3";
+          if (qLower.includes("quận 10")) return "10";
+          if (qLower.includes("phú nhuận")) return "PN";
+          if (qLower.includes("tân bình")) return "TB";
+          return q;
+        };
+        
+        // Xử lý Giá
+        const formatGia = (g) => {
+          if (!g) return "";
+          const val = parseFloat(g.toString().replace(/,/g, ''));
+          if (isNaN(val)) return g;
+          if (val > 100) return val / 1000;
+          return val;
+        };
+        
+        const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
+        
+        let finalCoverUrl = customCoverUrl || matchedRow[29] || '';
+        if (isSodoUrl(finalCoverUrl)) {
+          finalCoverUrl = '';
+        }
+
+        // Xây dựng publicRowData 46 cột cho Sheet Source
+        const publicRowData = [
+          `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+          cuPhap,                        // 1: Cu_phap (Cột B)
+          note,                          // 2: Note (Cột C)
+          maKhangNgo,                    // 3: id (Cột D)
+          tieuDeBds || matchedRow[56],   // 4: tieu_de (Cột E)
+          matchedRow[13],                // 5: dien_tich (Cột F)
+          matchedRow[15],                // 6: so_tang (Cột G)
+          matchedRow[16],                // 7: mat_tien (Cột H)
+          formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
+          formatQuan(matchedRow[3]),     // 9: quan (Cột J)
+          matchedRow[4],                 // 10: phuong (Cột K)
+          loaiHinh,                      // 11: loai_hinh (Cột L)
+          huong,                         // 12: huong_nha (Cột M)
+          duong,                         // 13: duong_truoc_nha (Cột N)
+          rongHem || '-',                // 14: do_rong_hem (Cột O)
+          tinhTrang,                     // 15: tinh_trang_nha (Cột P)
+          danhGia,                       // 16: danh_gia (Cột Q)
+          nguTret,                       // 17: ngu_tang_tret (Cột R)
+          chdv,                          // 18: chdv (Cột S)
+          moTaBds,                       // 19: mo_ta (Cột T)
+          finalImages[0],                // 20: anh_1 (Cột U)
+          finalImages[1],                // 21: anh_2 (Cột V)
+          finalImages[2],                // 22: anh_3 (Cột W)
+          finalImages[3],                // 23: anh_4 (Cột X)
+          finalImages[4],                // 24: anh_5 (Cột Y)
+          finalImages[5],                // 25: anh_6 (Cột Z)
+          finalImages[6],                // 26: anh_7 (Cột AA)
+          finalImages[7],                // 27: anh_8 (Cột AB)
+          finalImages[8],                // 28: anh_9 (Cột AC)
+          finalImages[9],                // 29: anh_10 (Cột AD)
+          new Date().toISOString(),      // 30: Last updated (Cột AE)
+          matchedRow[66],                // 31: phuong_cu (Cột AF)
+          soPn || '-',                   // 32: so_pn (Cột AG)
+          soWc || '-',                   // 33: so_wc (Cột AH)
+          matchedRow[5],                 // 34: ten_duong (Cột AI)
+          "",                            // 35: gio_dang (Cột AJ)
+          "",                            // 36: trang_thai (Cột AK)
+          sysIdMatched,                  // 37: System ID (Cột AL)
+          finalCoverUrl,                 // 38: Hình Mặt Tiền (Cột AM)
+          "",                            // 39: Tiêu đề BDS (Cột AN)
+          false,                         // 40: Đăng BDS (Cột AO)
+          finalImages[10] || "",         // 41: Ảnh 11 (Cột AP)
+          finalImages[11] || "",         // 42: Ảnh 12 (Cột AQ)
+          finalImages[12] || "",         // 43: Ảnh 13 (Cột AR)
+          finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
+          finalImages[14] || ""          // 45: Ảnh 15 (Cột AT)
+        ];
+        
+        // Step 4: Ghi đè/Thêm mới vào Sheet Source
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AT${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeRes = await fetch(writeUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [publicRowData] })
+        });
+        
+        if (!writeRes.ok) {
+          let detail = "";
+          try {
+            const errJson = await writeRes.json();
+            detail = ": " + (errJson.error?.message || JSON.stringify(errJson));
+          } catch (e) {}
+          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
+        }
+        
+        // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
+        try {
+          const poolRowNumber = rows.indexOf(matchedRow) + 2;
+          const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+          
+          // 0. Cập nhật Sổ 1 & 2 (AB:AC)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${poolRowNumber}:AC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
+          }
+
+          // 0b. Cập nhật Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${poolRowNumber}:AD${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[customCoverUrl]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
+          }
+
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:AO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[publicCoverUrl]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
+          }
+
+          // 0c. Cập nhật Sổ 3-5 (CC:CE)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${poolRowNumber}:CE${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[sodo3Url, sodo4Url, sodo5Url]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Sổ 3-5 sang Pool:", e);
+          }
+
+          // 1b. Cập nhật Ảnh Nội Thất 1-15 (AO:BC) và 16-25 (CC:CL) sang Pool thô
+          try {
+            const int1_15 = [];
+            for (let c = 40; c <= 54; c++) {
+              int1_15.push(matchedRow[c] || "");
+            }
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:BC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [int1_15] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Nội Thất 1-15 sang Pool:", e);
+          }
+
+          try {
+            const int16_25 = [];
+            for (let c = 83; c <= 92; c++) {
+              int16_25.push(matchedRow[c] || "");
+            }
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${poolRowNumber}:CO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [int16_25] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Ảnh Nội Thất 16-25 sang Pool:", e);
+          }
+
+          // 1. Cập nhật anhDuocChon (BK) và anhHemDuocChon (BL)
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${poolRowNumber}:BL${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+          });
+          
+          // 2. Cập nhật Last Sync (CA)
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ values: [[syncDateStr]] })
+          });
+        } catch (e) {
+          console.warn("Không thể ghi nhận thay đổi hình ảnh hoặc Last Sync vào Pool:", e);
+        }
+        
+        showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}! Đang tải lại trang...`);
+        
+        // Reset các ô tìm kiếm Pool
+        const pullInput = document.getElementById('poolSearchToolInput');
+        if (pullInput) pullInput.value = '';
+        const pullResults = document.getElementById('poolSearchToolResults');
+        if (pullResults) pullResults.innerHTML = '';
+
+        localStorage.setItem('auto_preview_listing_id', maKhangNgo);
+        localStorage.setItem('auto_share_zalo_listing_id', maKhangNgo);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+        
+      } catch (err) {
+        showToast(`❌ Lỗi đồng bộ: ${err.message}`, "error");
+        console.error(err);
+      } finally {
+        if (btnElement) {
+          btnElement.disabled = false;
+          btnElement.innerHTML = oldText;
+        }
+      }
+    };
+
+    window.submitLeadCapture = function() {
+      const nameInput = document.getElementById('leadCustName');
+      const phoneInput = document.getElementById('leadCustPhone');
+      const name = nameInput ? nameInput.value.trim() : "";
+      let phone = phoneInput ? phoneInput.value.trim() : "";
+      
+      if (!name) {
+        alert("Vui lòng nhập Tên của anh/chị!");
+        if (nameInput) nameInput.focus();
+        return;
+      }
+      if (!phone) {
+        alert("Vui lòng nhập Số điện thoại liên hệ!");
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+      
+      const phoneClean = phone.replace(/[\s\.-]/g, "");
+      if (!/^(0\d{9}|[1-9]\d{8})$/.test(phoneClean)) {
+        alert("Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại di động Việt Nam gồm 10 chữ số.");
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+      
+      phone = formatPhone(phoneClean);
+      localStorage.setItem('client_name', name);
+      localStorage.setItem('client_phone', phone);
+      
+      displayCustomerName = name;
+      trackingCustomerName = `${name} - ${phone}`;
+      
+      const leadModal = document.getElementById('leadCaptureModal');
+      if (leadModal) {
+        leadModal.style.display = 'none';
+        leadModal.classList.remove('open');
+      }
+      
+      const banner = document.getElementById('welcomeBanner');
+      if (banner) {
+        banner.innerHTML = `👋 Xin chào <b>${displayCustomerName}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;
+        banner.style.display = 'block';
+      }
+      
+      trackAction("Khách tự đăng ký", `Tên: ${name} - SĐT: ${phone}`);
+      if (DATA.length > 0) {
+        trackAction("Mở danh sách nhà", `Số lượng hiển thị: ${DATA.length} căn`);
+      }
+    };
+
+    window.scheduleViewing = function(id, title) {
+      trackAction("Hẹn lịch xem nhà", `Mã căn: #${id} - ${title}`);
+      const name = localStorage.getItem('client_name') || displayCustomerName || "Khách hàng";
+      const phone = localStorage.getItem('client_phone') || "";
+      const phoneStr = phone ? ` (SĐT: ${phone})` : "";
+      const msg = `Chào anh Khang Ngô, tôi là ${name}${phoneStr}. Tôi quan tâm căn nhà mã #${id}: ${title}. Tôi muốn hẹn lịch đi xem nhà thực tế nhé!`;
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã copy tin nhắn đặt lịch! Anh/chị hãy dán (Paste) gửi qua Zalo sắp mở ra nhé.');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
+    };
+
+    window.showRequirementForm = function(id) {
+      const form = document.getElementById(`clientReqForm_${id}`);
+      if (form) {
+        const isHidden = form.style.display === 'none';
+        form.style.display = isHidden ? 'block' : 'none';
+        trackAction("Mở form nhu cầu khác", `Mã căn: #${id}`);
+        if (isHidden) {
+          setTimeout(() => {
+            const textarea = document.getElementById(`clientReqText_${id}`);
+            if (textarea) textarea.focus();
+          }, 100);
+        }
+      }
+    };
+
+    window.submitClientRequirement = function(id, title) {
+      const textEl = document.getElementById(`clientReqText_${id}`);
+      if (!textEl) return;
+      const reqText = textEl.value.trim();
+      if (!reqText) {
+        alert("Vui lòng ghi lại nhu cầu tìm nhà của anh/chị!");
+        textEl.focus();
+        return;
+      }
+      
+      trackAction("Gửi nhu cầu khác", `Xem căn #${id} chưa phù hợp. Nhu cầu: ${reqText}`);
+      const name = localStorage.getItem('client_name') || displayCustomerName || "Khách hàng";
+      const phone = localStorage.getItem('client_phone') || "";
+      const phoneStr = phone ? ` (SĐT: ${phone})` : "";
+      const msg = `Chào anh Khang Ngô, tôi là ${name}${phoneStr}. Tôi xem căn #${id} chưa phù hợp. Nhu cầu thực tế của tôi là: ${reqText}. Anh tìm giúp tôi căn phù hợp nhé!`;
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(() => {
+          alert('Đã ghi nhận nhu cầu! Lời nhắn đã được copy, anh/chị hãy dán (Paste) gửi qua Zalo cho Khang nhé.');
+          window.location.href = `https://zalo.me/${SDT}`;
+        }).catch(() => {
+          window.location.href = `https://zalo.me/${SDT}`;
+        });
+      } else {
+        window.location.href = `https://zalo.me/${SDT}`;
+      }
+      
+      textEl.value = "";
+      const form = document.getElementById(`clientReqForm_${id}`);
+      if (form) form.style.display = 'none';
+    };
+
+    // Khởi động
+    updateFavBtnUI();
+    if (isAdmin) {
+      updateShareUI();
+      renderCollectionsManager();
+      setTimeout(initGoogleAuth, 800);
+    }
+    loadData();
+  
+

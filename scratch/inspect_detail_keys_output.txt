@@ -1,0 +1,87 @@
+--- Root Level Keys and Sample Values ---
+- id: '4f92db9e-de71-4df3-91f6-cc198e84d1d3'
+- isSigned: True
+- status: 'qualified'
+- commissionAgent: None
+- ownerSideUserId: 'bfee5234-3121-4a6f-aef3-56e5c32ff842'
+- certificateSeries: 'AA02117649'
+- address: '9.36A'
+- latitude: 10.79647240413559
+- longitude: 106.6647604107857
+- placeId: None
+- placeName: '15, 1 Phạm Văn Hai, Tân Sơn Hòa, Hồ Chí Minh, Việt Nam'
+- street: None
+- streetName: 'phạm văn hai'
+- area: 108
+- actualArea: 108
+- floors: 4
+- wide: 5.2
+- depth: 21
+- bedrooms: None
+- restrooms: None
+- balconies: None
+- sidewalk: None
+- behindOpenSpace: None
+- sideOpenSpace: None
+- minimumRoadWidth: 5
+- offeringPrice: 24
+- description: '🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥\n\n💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh nhau thoải mái, dân trí cao, an ninh, vị trí cực kỳ khan hiếm nhà bán.\n\n🏡 Diện tích đẹp: 108m² (5.2m x 21m)\n🏢 Kết cấu: 4 tầng kiên cố\n🛏️ 8 phòng ngủ – 8 WC\n📚 Phù hợp ở kết hợp cho thuê căn hộ dịch vụ, văn phòng công ty hoặc khai thác dòng tiền ổn định.\n\n📍 Vị trí đắc địa ngay khu Cư Xá Ngân Hàng – Phạm Văn Hai:\n✔ Kết nối nhanh sân bay Tân Sơn Nhất\n✔ Thuận tiện Quận 1, Quận 3, Phú Nhuận\n✔ Xung quanh đầy đủ tiện ích cao cấp\n\n⭐ Khu vực cực hiếm sản phẩm tương tự xuất hiện trên thị trường.\n⭐ Nhà diện tích lớn, ngang 5m bề thế, giá trị giữ tài sản và tăng trưởng rất tốt.\n\n💰 Giá bán: 24 tỷ thương lượng chính chủ'
+- createdAt: None
+- updatedAt: '2026-06-01T05:57:57.439Z'
+- createdBy: 'bfee5234-3121-4a6f-aef3-56e5c32ff842'
+- updatedBy: 'bfee5234-3121-4a6f-aef3-56e5c32ff842'
+- propertyType: None
+- commissionType: 'percentage'
+- commissionValue: 3
+- contractType: 'paper'
+- soldType: None
+- finalPrice: None
+- customerSideUserId: None
+- isDispute: False
+- statusReason: None
+- actionDescription: 'Cập nhật thông tin'
+- pauseSaleLimit: 2
+- pauseSaleTo: None
+- blacklistReason: None
+- criteria: list of 27 items
+- district: dict
+- wardId: 215
+- ward: dict
+- channels: list
+- property: dict
+- canVisitReport: True
+- canExtendWFS: False
+- canDelete: False
+- canUpdate: False
+- canSign: False
+- canDispute: False
+- canRemove: False
+- canRemoveManager: False
+- canDeposit: False
+- canUnDeposite: False
+- canSold: False
+- canSuspend: False
+- canUnsuspend: False
+- canRestore: False
+- canPauseSale: False
+- canChangeQualifiable: False
+- canPropose: False
+- canProposeInvestment: False
+- canMarkInvestment: False
+- canDeleteMarkInvestment: False
+- canViewRelatedVisitReports: True
+- canViewDiaryProperty: False
+- createdAtSigned: '2026-06-01T05:57:55.057Z'
+- depositSoldInfo: dict
+- code: 'TKQLMB8Q'
+- type: 'owner_side'
+- listedAt: None
+- tags: list
+- personalNote: ''
+- isFavorite: True
+- media: list of 15 items
+- sourceSenderUser: None
+- ownerSideUser: dict with keys ['name', 'position', 'avatar', 'numberId', 'fbLink', 'phone', 'createdAt', 'userId', 'department']
+- homeOwner: list of 1 items
+- customerSideUser: None
+- canViewCertificateImage: False

@@ -1,0 +1,159 @@
+Line 7086:
+huận, hẻm xe hơi, giá tầm 10 tỷ..."></textarea>
+              <button onclick="submitClientRequirement('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-req-submit-btn">
+                🚀 Gửi nhu cầu cho Khang Ngô
+              </button>
+            </div>
+          </div>
+        `;
+        setupScrollCarousel('carouselClientDetail', sortedImgs, false);
+      }
+
+      const btnZalo = document.getElementById('mZalo');
+      if (btnZalo) {
+        btnZalo.textContent = `💬 Tư vấn ngay căn này`;
+        btnZalo.onclick = () => askZalo(p.id, p.t);
+      }
+
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        window.CURRENT_EDITING_LISTING = p;
+        setTimeout(() => {
+          const editHuong = document.getElementById('editHuong');
+          if (editHuong) editHuong.value = p.huong || '-';
+
+          const editDuong = document.getElementById('editDuong');
+          if (editDuong) editDuong.value = p.duong_truoc_nha || '-';
+
+          const editDanhGia = document.getElementById('editDanhGia');
+          if (editDanhGia) editDanhGia.value = p.danh_gia || '';
+
+          const editTinhTrang = document.getElementById('editTinhTrang');
+          if (editTinhTrang) editTinhTrang.value = p.tinh_trang || 'Bình thường';
+
+          const mapContainer = document.qu
+================================================================================
+Line 7134:
+if (s5) sImgs.push(s5);
+
+          const sodoUrls = sImgs.map(url => normalizeImgUrl(url));
+          const nImgs = (p.imgs || []).filter(url => {
+            const norm = normalizeImgUrl(url);
+            return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+          });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
+          setupScrollCarousel('carouselSo', sImgs, true);
+
+          // Sự kiện input reactive Live Preview (US-039.7)
+          const editTieuDe = document.getElementById('editTieuDeBds');
+          const editMoTa = document.getElementById('editMoTaBds');
+          const accPreview = document.getElementById('accPreview');
+
+          const updateLivePreview = () => {
+            const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
+            const moTaVal = (editMoTa ? editMoTa.value : '').trim();
+            const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
+            const floatActions = document.getElementById('adminDetailFloatActions');
+
+            // Keep public title exact and without price appending
+            const displayTieuDeVal = tieuDeVal;
+
+            // Update the preview carousel dynamically
+            setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
+
+            
+================================================================================
+Line 7135:
+p(url => normalizeImgUrl(url));
+          const nImgs = (p.imgs || []).filter(url => {
+            const norm = normalizeImgUrl(url);
+            return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+          });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
+          setupScrollCarousel('carouselSo', sImgs, true);
+
+          // Sự kiện input reactive Live Preview (US-039.7)
+          const editTieuDe = document.getElementById('editTieuDeBds');
+          const editMoTa = document.getElementById('editMoTaBds');
+          const accPreview = document.getElementById('accPreview');
+
+          const updateLivePreview = () => {
+            const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
+            const moTaVal = (editMoTa ? editMoTa.value : '').trim();
+            const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
+            const floatActions = document.getElementById('adminDetailFloatActions');
+
+            // Keep public title exact and without price appending
+            const displayTieuDeVal = tieuDeVal;
+
+            // Update the preview carousel dynamically
+            setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
+
+            if (p.isFromPoolOnly) {
+              const savePoolBtn = do
+================================================================================
+Line 7152:
+gth > 0 && moTaVal.length > 0;
+            const floatActions = document.getElementById('adminDetailFloatActions');
+
+            // Keep public title exact and without price appending
+            const displayTieuDeVal = tieuDeVal;
+
+            // Update the preview carousel dynamically
+            setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
+
+            if (p.isFromPoolOnly) {
+              const savePoolBtn = document.getElementById('savePoolBtn');
+              const poolSaveNotice = document.getElementById('poolSaveNotice');
+              if (isFilled) {
+                if (accPreview) {
+                  accPreview.style.display = 'block';
+                  accPreview.classList.add('expanded');
+                  const content = accPreview.querySelector('.accordion-content');
+                  if (content) content.style.display = 'block';
+                  const arrow = accPreview.querySelector('.arrow');
+                  if (arrow) arrow.textContent = '▼';
+                }
+                if (floatActions) floatActions.style.display = 'flex';
+                if (savePoolBtn) savePoolBtn.style.display = 'flex';
+
+                if (poolSaveNotice) {
+                  poolSaveNotice.style.color = '#27ae60';
+                  poolSaveNotic
+================================================================================
+Line 10343:
+ url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+              finalImages.push(url);
+            }
+          });
+        }
+        return finalImages.slice(0, 15).filter(Boolean);
+      }
+    };
+
+    window.setupScrollCarousel = function(containerId, imageUrls, isLegalImg = false) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const track = container.querySelector('.admin-scroll-carousel');
+      const dotsContainer = container.querySelector('.admin-carousel-dots');
+      if (!track || !dotsContainer) return;
+
+      track.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      if (imageUrls.length === 0) {
+        track.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--sub); font-size:12.5px; font-weight:600; background:#f8f9fa;">Chưa có hình ảnh</div>`;
+        return;
+      }
+
+      imageUrls.forEach((url, idx) => {
+        const cleanUrl = fixImgUrl(url, 'w800');
+        const item = document.createElement('div');
+        item.className = 'admin-carousel-item';
+        item.onclick = () => {
+          window.openLightboxForCarousel(imageUrls, idx);
+        };
+ 
+================================================================================

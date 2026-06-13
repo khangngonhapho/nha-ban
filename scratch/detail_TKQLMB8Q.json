@@ -1,0 +1,572 @@
+{
+  "statusCode": 200,
+  "timestamp": "2026-06-03T12:55:56.024Z",
+  "message": "OK",
+  "data": {
+    "id": "4f92db9e-de71-4df3-91f6-cc198e84d1d3",
+    "isSigned": true,
+    "status": "qualified",
+    "commissionAgent": null,
+    "ownerSideUserId": "bfee5234-3121-4a6f-aef3-56e5c32ff842",
+    "certificateSeries": "AA02117649",
+    "address": "9.36A",
+    "latitude": 10.79647240413559,
+    "longitude": 106.6647604107857,
+    "placeId": null,
+    "placeName": "15, 1 Phạm Văn Hai, Tân Sơn Hòa, Hồ Chí Minh, Việt Nam",
+    "street": null,
+    "streetName": "phạm văn hai",
+    "area": 108,
+    "actualArea": 108,
+    "floors": 4,
+    "wide": 5.2,
+    "depth": 21,
+    "bedrooms": null,
+    "restrooms": null,
+    "balconies": null,
+    "sidewalk": null,
+    "behindOpenSpace": null,
+    "sideOpenSpace": null,
+    "minimumRoadWidth": 5,
+    "offeringPrice": 24,
+    "description": "🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥\n\n💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh nhau thoải mái, dân trí cao, an ninh, vị trí cực kỳ khan hiếm nhà bán.\n\n🏡 Diện tích đẹp: 108m² (5.2m x 21m)\n🏢 Kết cấu: 4 tầng kiên cố\n🛏️ 8 phòng ngủ – 8 WC\n📚 Phù hợp ở kết hợp cho thuê căn hộ dịch vụ, văn phòng công ty hoặc khai thác dòng tiền ổn định.\n\n📍 Vị trí đắc địa ngay khu Cư Xá Ngân Hàng – Phạm Văn Hai:\n✔ Kết nối nhanh sân bay Tân Sơn Nhất\n✔ Thuận tiện Quận 1, Quận 3, Phú Nhuận\n✔ Xung quanh đầy đủ tiện ích cao cấp\n\n⭐ Khu vực cực hiếm sản phẩm tương tự xuất hiện trên thị trường.\n⭐ Nhà diện tích lớn, ngang 5m bề thế, giá trị giữ tài sản và tăng trưởng rất tốt.\n\n💰 Giá bán: 24 tỷ thương lượng chính chủ",
+    "createdAt": null,
+    "updatedAt": "2026-06-01T05:57:57.439Z",
+    "createdBy": "bfee5234-3121-4a6f-aef3-56e5c32ff842",
+    "updatedBy": "bfee5234-3121-4a6f-aef3-56e5c32ff842",
+    "propertyType": null,
+    "commissionType": "percentage",
+    "commissionValue": 3,
+    "contractType": "paper",
+    "soldType": null,
+    "finalPrice": null,
+    "customerSideUserId": null,
+    "isDispute": false,
+    "statusReason": null,
+    "actionDescription": "Cập nhật thông tin",
+    "pauseSaleLimit": 2,
+    "pauseSaleTo": null,
+    "blacklistReason": null,
+    "criteria": [
+      {
+        "id": 17,
+        "name": "Chính chủ",
+        "parentId": null,
+        "groupId": 1,
+        "groupCode": "PROPERTY_CRITERIA",
+        "groupName": "Tiềm năng - Rủi ro"
+      },
+      {
+        "id": 36,
+        "name": "Ngõ 2 ô tô tránh (5 - 7m)",
+        "parentId": null,
+        "groupId": 3,
+        "groupCode": "ROAD_TYPE",
+        "groupName": "Đường trước nhà"
+      },
+      {
+        "id": 41,
+        "name": "Nhà trong ngõ, ngách, hẻm",
+        "parentId": null,
+        "groupId": 4,
+        "groupCode": "PROPERTY_TYPE",
+        "groupName": "Loại hình bất động sản"
+      },
+      {
+        "id": 53,
+        "name": "Giấy CNQSDD - Sổ đỏ - Sổ hồng",
+        "parentId": 52,
+        "groupId": 5,
+        "groupCode": "LEGAL_DOCUMENT",
+        "groupName": "Giấy tờ pháp lý"
+      },
+      {
+        "id": 62,
+        "name": "Vuông",
+        "parentId": null,
+        "groupId": 6,
+        "groupCode": "LAND_PLOT_SHAPE",
+        "groupName": "Hình dạng thửa đất"
+      },
+      {
+        "id": 70,
+        "name": "Xây 10-15 năm",
+        "parentId": null,
+        "groupId": 7,
+        "groupCode": "CONSTRUCTION_STATUS",
+        "groupName": "Tình trạng xây dựng"
+      },
+      {
+        "id": 73,
+        "name": "Nhà tường chịu lực",
+        "parentId": null,
+        "groupId": 8,
+        "groupCode": "HOUSE_STRUCTURE",
+        "groupName": "Cấu trúc nhà"
+      },
+      {
+        "id": 76,
+        "name": "Nội thất cơ bản",
+        "parentId": null,
+        "groupId": 9,
+        "groupCode": "INTERIOR",
+        "groupName": "Nội thất"
+      },
+      {
+        "id": 80,
+        "name": "Ngõ thông",
+        "parentId": null,
+        "groupId": 11,
+        "groupCode": "ALLEY_TYPE",
+        "groupName": "Loại ngõ"
+      },
+      {
+        "id": 85,
+        "name": "Vị trí số 2",
+        "parentId": null,
+        "groupId": 13,
+        "groupCode": "TAX_CALCULATION_POSITION",
+        "groupName": "Vị trí tính thuế theo quy định của Nhà nước"
+      },
+      {
+        "id": 88,
+        "name": "Chỉ có 1 mặt tiền",
+        "parentId": null,
+        "groupId": 14,
+        "groupCode": "OPEN_SPACE",
+        "groupName": "Mặt thoáng"
+      },
+      {
+        "id": 111,
+        "name": "Dưới 100m",
+        "parentId": null,
+        "groupId": 18,
+        "groupCode": "DISTANCE_TO_PARKING_LOT",
+        "groupName": "Khoảng cách ra bãi đỗ xe oto"
+      },
+      {
+        "id": 115,
+        "name": "Khu vực thuần ở",
+        "parentId": null,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+      },
+      {
+        "id": 118,
+        "name": "Khu vực kinh doanh nhỏ",
+        "parentId": 116,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+      },
+      {
+        "id": 119,
+        "name": "Khu vực kinh doanh văn phòng",
+        "parentId": 116,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+      },
+      {
+        "id": 125,
+        "name": "Gần trường học mầm non",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 126,
+        "name": "Gần trường học cấp 1",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 127,
+        "name": "Gần trường học cấp 2",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 128,
+        "name": "Gần trường học cấp 3",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 129,
+        "name": "Gần trường Đại học",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 130,
+        "name": "Gần công viên",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 131,
+        "name": "Gần bệnh viện",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 132,
+        "name": "Khu dân trí cao",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 134,
+        "name": "Không",
+        "parentId": 133,
+        "groupId": 21,
+        "groupCode": "PROPERTY_CRITERIA_GEOMANCY",
+        "groupName": "Phong thủy"
+      },
+      {
+        "id": 138,
+        "name": "Không có",
+        "parentId": 137,
+        "groupId": 21,
+        "groupCode": "PROPERTY_CRITERIA_GEOMANCY",
+        "groupName": "Phong thủy"
+      },
+      {
+        "id": 141,
+        "name": "Gần trung tâm thương mại, khu đô thị",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      },
+      {
+        "id": 142,
+        "name": "Gần chợ",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+      }
+    ],
+    "district": {
+      "id": 45,
+      "name": "Tân Bình",
+      "provinceId": 2,
+      "provinceName": "TP Hồ Chí Minh"
+    },
+    "wardId": 215,
+    "ward": {
+      "id": 215,
+      "name": "Tân Sơn Hòa",
+      "province": {
+        "id": 2,
+        "name": "TP Hồ Chí Minh"
+      }
+    },
+    "channels": [
+      {
+        "channel": {
+          "name": "Thiên Khôi"
+        }
+      }
+    ],
+    "property": {
+      "proposes": []
+    },
+    "canVisitReport": true,
+    "canExtendWFS": false,
+    "canDelete": false,
+    "canUpdate": false,
+    "canSign": false,
+    "canDispute": false,
+    "canRemove": false,
+    "canRemoveManager": false,
+    "canDeposit": false,
+    "canUnDeposite": false,
+    "canSold": false,
+    "canSuspend": false,
+    "canUnsuspend": false,
+    "canRestore": false,
+    "canPauseSale": false,
+    "canChangeQualifiable": false,
+    "canPropose": false,
+    "canProposeInvestment": false,
+    "canMarkInvestment": false,
+    "canDeleteMarkInvestment": false,
+    "canViewRelatedVisitReports": true,
+    "canViewDiaryProperty": false,
+    "createdAtSigned": "2026-06-01T05:57:55.057Z",
+    "depositSoldInfo": {},
+    "code": "TKQLMB8Q",
+    "type": "owner_side",
+    "listedAt": null,
+    "tags": [
+      {
+        "name": "Mới",
+        "type": "property_tag"
+      }
+    ],
+    "personalNote": "",
+    "isFavorite": true,
+    "media": [
+      {
+        "id": 10463364,
+        "index": 0,
+        "type": "checkin_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/033ca742-bfa1-4bb4-b31a-001220d3fea9_1780292842701_51197f05.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=e2eJ1la0amtnHMZ3v7GwdzCDrVxGIZdC-Dzx6Cc1vBOboyEbPU2gQUDxRR-QzS6YXPUBmp~URojR7EWJRk0ylA~v8jTMsPvsrhGkHAFhVHCYIL-KpKuxGqIDHGD2-8N8HcrTJNbZJu1Tt2j9TzMqwHHUC9vaIZmOgI9JNKXOSM8eF-z7wrhEq9OitQWZzarNw1CDGw~72~AwHSUh5Kzlw1T~ISQLQnMn5DDVG04zjZPfaxKm~MtcJTmMXTZszBTk1tgWAGfZd9f4x3gJn~fRu9bbt9D~KAyfZKajnlhbv9l7z8BFSL4ZlLmX35ChA-mQMuV5pjH89NoEpcsbBZEh9A__",
+        "fileName": "033CA742-BFA1-4BB4-B31A-001220D3FEA9.jpg",
+        "path": "Property/033ca742-bfa1-4bb4-b31a-001220d3fea9_1780292842701_51197f05.jpg"
+      },
+      {
+        "id": 10463362,
+        "index": 0,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/a76ed957-07c9-403c-971e-7db37446f213_1780292852496_4a6d1aed.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=i1VczJYMAS4P9CR0eqOG8z9KGUbdb7Amq2Xw1PV7drZMQbeNyftTuLUeD3DUxm3ONP8gKcQ~WY52l8xDL2xMe8h0s3Lfhd8EVShwoYTLp2vDCOhliwUg16TR-IzebhjUllB2miLFAqWpGnrtEL7Or~3-8B5cy~g8waCkQKBNYbxnNOqfVw39CqCOGqGDtNTRada9lHGpkiC0qjcdNei~HiX8FJz2gSr43ID2dVB5jPzQH0rxLam6AIpbOO-TbfdZyFUjFiyU4p8nn4q5ic~Zb8tyvvtQwje4ZP3WIHGPNKkd60~hgiG3RQe2dQeOm7F4FLCHB7egYlMdyR6qFGYlZg__",
+        "fileName": "A76ED957-07C9-403C-971E-7DB37446F213.jpg",
+        "path": "Property/a76ed957-07c9-403c-971e-7db37446f213_1780292852496_4a6d1aed.jpg"
+      },
+      {
+        "id": 10463365,
+        "index": 1,
+        "type": "parcel_map",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/b7ed44ca-0736-4152-89ca-d541688fdfe8_1780292843955_c7f5509d.jpg?Expires=1780492181&Key-Pair-Id=KX5HYW72PVJI2&Signature=E69LjClEDRRPzrgBrKMCFC-Ip7HYKg71TEkUD6lEdDQ0PPfst03meBu1P6LTHmyPihAjirPgV-cbSQhjksizOdDcAtxgo6GQu4ACZvOnzz0f0u6mo112AGYUGwJ1Tc3RysJ7I4y5874IoSN6bjIldRa7MXCq9Hu~HYTPKYLbyH6yY8TSJJ13hl3vrXaoDuYLVJ3bNFNcKY8t7TBznsk9ahfHSTyi5wzgvwo~f6wbgT327Zba7Er1B6dNX5Hz5mSSav3LFdzDyC~irOpq1eaPeVj1f6kE4F5SVECQXt9zEd0NveBH6frOljgWxHIR5GWiYUrjRth4SCErFzaZnm6q5Q__",
+        "fileName": "B7ED44CA-0736-4152-89CA-D541688FDFE8.jpg",
+        "path": "Property/b7ed44ca-0736-4152-89ca-d541688fdfe8_1780292843955_c7f5509d.jpg"
+      },
+      {
+        "id": 10463367,
+        "index": 1,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/1366f83a-4ba6-4f69-b8cd-a72f5a057cae_1780292852140_de3ef906.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=cAKotJBMFesBjnku-xBMycmWVyOwFaIL38qbfsnopwdAf6gQabZC2oqoSJ15AVpiDR7exAwpzIx-2162Kvs1E4Vc33GTqFvwUV2bCNdh2wUbAEGra4Df39nl~8xYYYScGmUyMWzaxgmLQB87kzjdOisElnTNdm04kJ7L6-mkT6p1Mhcufpg-u-O7VB81APnSy5BWVkeRLnDW-qdYNOpgZtlLb4W41vpo-S-4tiho1oihB2~LkHEyDMTM5m9hUnhELpcN-BuMwpHPWxHKFXmVup32owU9M9a~7Ura~0xHOJa~5T1VaV~EUbGai~k7~qAP8cjkrgXa6ZHAbZfuUX2MSg__",
+        "fileName": "1366F83A-4BA6-4F69-B8CD-A72F5A057CAE.jpg",
+        "path": "Property/1366f83a-4ba6-4f69-b8cd-a72f5a057cae_1780292852140_de3ef906.jpg"
+      },
+      {
+        "id": 10463368,
+        "index": 2,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/f33b76bf-b55f-4cfa-9459-4742f16e43d1_1780292852191_87afb479.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=IPMOUvBT~wiFj4we17NfRS1WedQAIffYALuD6tr1zKQxgcDlu~YnZu~CIid45vpTIUDoLsJnn5iLstuAkRAhgfY9JXyRrwr79YKmHMlASSKSqR2IgRs1VlC1S5t0fGJNn3VgWuWCaicSf7DVYjPKhozQVrkb5uRk2WnR7poZpPDyxAFIrhaRKy4qQGpDeZTYR0PbZaT1tGmaFyumvzQfUUvTs~SkusatktUYueRo2BzpetUeLrzjs2Z0xRQr2aN9osDsDMAYZWwyRsfMtgtmcTjLItTIb~gXy5UF-dUNh9b7YbcNQ7YTjnUPrVVSLO5i3Hd0MpT10Mlbv4Lb6KQASA__",
+        "fileName": "F33B76BF-B55F-4CFA-9459-4742F16E43D1.jpg",
+        "path": "Property/f33b76bf-b55f-4cfa-9459-4742f16e43d1_1780292852191_87afb479.jpg"
+      },
+      {
+        "id": 10463369,
+        "index": 3,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/501f8ffc-1741-4bd7-af21-cd34e81900cf_1780292851877_47110337.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=uTMvqk1MYJvzeZn10SZAy03qJGUDeGJ3fYG9-~cFSaFc4j2vft2NPQg03y-wqMJCf5rEixor9NwnM5pmAnGNvnSIRVF9rFXCE7lRkdPU~pFS8DLDrCEMZ5T2WQ8a3w5vuv6Tg63fhD8~3ETMeiFSXkJPSncDpV6Ezyu9z-EgHHaoGwzp9gbNrptMa9qqC4zfls8lYTLqIPfu-nIQt4WIzIlWoYyf2tJIVR8l7SiQPtlhfJGvB8zcRpO7QehR-T4Jevj7J2FO6LuEZKJo5fF2kL0f0PQrjsAKdFRohxEYPS-ZN-nr9lMicDbzYSEsDViety137fWj5iUIcOiM6kA2Xw__",
+        "fileName": "501F8FFC-1741-4BD7-AF21-CD34E81900CF.jpg",
+        "path": "Property/501f8ffc-1741-4bd7-af21-cd34e81900cf_1780292851877_47110337.jpg"
+      },
+      {
+        "id": 10463370,
+        "index": 4,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/5c491765-df7d-4da9-8d6d-d3f1088e1095_1780292851285_fcb45b31.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=oDCiLX5dMYrkI1z~dEQE1vGGh41qfq1IyEMw9cW~e6tzO0JLLWL5kmVyRExJ5tdXo-IgwpYDh2WCOOHTFm6Tc-SVwoos8PnppKO~s~SwQwraZPIo7nSCFaBR8eLxredMxE-JyyCujKTcTXoXKwcdFRBUEmjguyRwyfGxCv1yKbJVdU3qyiJK-u4bN-KPAI4O4e8L3mHWKEpPbiE1gPMq3fKhxBnl1jNd2c-5JUJb8tEQ-FDP~aiPo8dcJLYEeU4ZLCemsxTJhcgllvMcU0CeAaMWSg0cNGu39X-5kZTjW8dUqqWx7myfwqdUKHO7l-eGZOJocnvmsgi5L6PA2IoDbQ__",
+        "fileName": "5C491765-DF7D-4DA9-8D6D-D3F1088E1095.jpg",
+        "path": "Property/5c491765-df7d-4da9-8d6d-d3f1088e1095_1780292851285_fcb45b31.jpg"
+      },
+      {
+        "id": 10463371,
+        "index": 5,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/264a23bb-7b9a-419d-97d5-8b2c6e0bc2d9_1780292851471_0ec359fb.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=e0einp4EerjABu-pEHcsnfsecxwgj9PmSdb4rg8NbaABFLGNNrTBmwUvDlp2tyCygFjRf5xyDz4jX4VX2YYuTEdxTasLI07OdBm7KZphkgkQOA6IvxHO~q5V-Mrm0E7Fk-J1p-IQqqRMVcF~po2Sj51ZDRgrjfcQEz4UrHWvgZ7FV~yUr-smg-4COWZMiqpjWoe5q~DprK956h0akscbSf8qCB~PcqAgxKqCK9gxJc0SxCfh464V2FQfnmhtJFyEutr4UmOfQkC~T6rz5-FCcTs~xJhgSuJJsncXPxRPryVvzSafxpFcVdXgWDVTFWxDevElenA5LaNbyqIPftkFfw__",
+        "fileName": "264A23BB-7B9A-419D-97D5-8B2C6E0BC2D9.jpg",
+        "path": "Property/264a23bb-7b9a-419d-97d5-8b2c6e0bc2d9_1780292851471_0ec359fb.jpg"
+      },
+      {
+        "id": 10463372,
+        "index": 6,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/8f1d8105-a4ee-422e-918d-f72837c34ee0_1780292856686_2f0d8737.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=A4cTb2lb63T38zQPNTjpy6ntzFFVzhrNIAumUe7KknTJGBuulT-LJ5sN7PmFqRv9emOMvSf8X6rGn-198cDebk9FdP6NdnH~RAEqm24V71QSycZyMY1lOr8-ZaNMllCd9kctRqm~BUkezYtv~DlJBhhjKFkgqghK7WICngpyCPXX-3N1WuX5ZJdKj6A~337~zFSmK-ZC2KuTUEntBVoQbN~k6gR0Q89RA-nIb4gtgwfYW6SVdGJGFYF~S7wvoS0sk0Nn6CWTerXE5rvApF15ZhoC-zTpZ7BZkwJDlz5CGhdWkX3k04aQ93rLYnDf74w3ijdY7MZ-XYMIbrVNjy8vFw__",
+        "fileName": "8F1D8105-A4EE-422E-918D-F72837C34EE0.jpg",
+        "path": "Property/8f1d8105-a4ee-422e-918d-f72837c34ee0_1780292856686_2f0d8737.jpg"
+      },
+      {
+        "id": 10463373,
+        "index": 7,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/1e26d2bd-b820-4725-a078-d8c28d7f46a4_1780292856494_91b64dfe.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=oG97zw9aiOKoLVN6C0X01xsObomz6Guo2j2dAX2LsQR-OdRtUJWYzBOQ67Wd~I1IXjI~7hJurKFP3nJowNrYd8RiXbFftj6CdrJQQCiyDJYvXbtUhWw76f9URFRf5SxdnRW7kujt1mvxf7qhu2xzWU11rUwBqQh6s2pAkVlkTjnYv3mgBiCbBw3UOP1FT0vcojNx8oKrB1mEumHfC8kfFqPrr89Pb3JeKsDsx7HIU8JfeFMCtH6OWB~YgGMUgczIqTLjigfUkgFe8kxR6paPTD-MTVQqkCQMrk9rLPT7CGf56bqNxWWV~X0xBqhHIkXH7W0CM8wPt0Tchd8jTQux5w__",
+        "fileName": "1E26D2BD-B820-4725-A078-D8C28D7F46A4.jpg",
+        "path": "Property/1e26d2bd-b820-4725-a078-d8c28d7f46a4_1780292856494_91b64dfe.jpg"
+      },
+      {
+        "id": 10463374,
+        "index": 8,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/04b67105-2527-436f-8611-7559d0817653_1780292933782_c96c73f1.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=Jv86uyw34wEmCY9Uni5-78P4H7P1xVFLbIW9JZ4CgdsLsoHqdxaG-O4vPZHFfPvTL48ZUE942NG41PjmQsuzCTpslsaPT5P0dvCaNUb3r29aTSDwtCQYY9xrpea7tKUEcOBJlEKYEEvAq-kAR64D5Em9l0xeaK1T9Z~95D-WGCrT0m3EmcZhZjm96W3ehESrX4raVX~zeCGy1SHKWM5F2rewBG2axk5uIK2RaW8DPl2L78Wi0HMAxGvCI-Nl56bhA1UCUSW8uP62--tm-dhBUCB3cIErA6V0zRgpyAVhBb1wF88ut7xtCFDmgfmn519a0KlqryrS5royrCv1mYWDjA__",
+        "fileName": "04B67105-2527-436F-8611-7559D0817653.jpg",
+        "path": "Property/04b67105-2527-436f-8611-7559d0817653_1780292933782_c96c73f1.jpg"
+      },
+      {
+        "id": 10463375,
+        "index": 9,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/05886bfc-6c26-4418-8830-bfff6d609966_1780292855691_a43e1a0f.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=Vfs6nBKU7j4vMg-GeCtS5f7KuSP69v9JjSh0llVUaVZON~WNvkOucoO6hGq-vRUZgQXLrTlPXl3kay4t6ziZPPnMXMagwPXMY3RpGn7FqCqrQKnh-msjiEurycEvkReysup~iD6Nf14wAM0odRcH4fyE~d4yMcEPYSIBXtMxaLjd5iQJn0izmiCTBnsh6NLy5UtrI3D0O9grrpAEZwwMjBt1ykJeqePJXvU7w8pm7XRHBUgwP8LdoCO1cVIsYLco5MNuFckmMF0UDV-v-KkQ2MLeu6mQmOAFNijbG7~ibZlBlg0Mrvxx1tGJivhk223vo-a1osbZS7yjDsjeNH044g__",
+        "fileName": "05886BFC-6C26-4418-8830-BFFF6D609966.jpg",
+        "path": "Property/05886bfc-6c26-4418-8830-bfff6d609966_1780292855691_a43e1a0f.jpg"
+      },
+      {
+        "id": 10463376,
+        "index": 10,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/e03bba54-5d01-4da1-8f1f-21b88909836b_1780292855361_a2b3c877.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=ekOablYRr6mhqWOwKepYP3lKR1C32jAQtPuL-FqFls4TVPQmu93rRTF2QBG3oZniUkXjdql98fGJIbtsKVNy2bIVQ5dn8ZK7nzTL7wVkXK7fFsbTOPwQ7IEumlJp-GM~DOWTdLyIyvCySEY-xd19CqLxahVL6pj8VWvXo0LH7rST-LWN85~c5PEwNtpm3Ry5cSDvs-sB~mqdDmrBgnL9baA40MERvrAebx1wmjSUQsv85ziU3Ty1DyGv3Ln949vESg5ayrHY-um0wMUoEc7yr3HpyhtixUYKPxD6V7SMF7A--r4~cCcmFfuOzAqKlPWr41x3AgK-awMNI1r-Np6lVw__",
+        "fileName": "E03BBA54-5D01-4DA1-8F1F-21B88909836B.jpg",
+        "path": "Property/e03bba54-5d01-4da1-8f1f-21b88909836b_1780292855361_a2b3c877.jpg"
+      },
+      {
+        "id": 10463377,
+        "index": 11,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/eff0897b-a356-4304-8df9-63d1f0419ef0_1780292854082_c3e5729a.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=Q83AXSm3Q7OV~sNfX2ZQhpGujEVrVcmdraM8P-WWo9aLzhTPC96ZHvUwVc6gxJR8R6MuCMeA4AF0XrIUciygb10V~HwHkoh6QXwzvpAOhiHaZdiodHOiUpA9u3UxD3pS4OLGQeh8D4kgHUtvw~iGcnkgdi1nSoVzidKJ3Ze4K7bNTMIaPAgH-YDBqzm1Syjj9xo8rcxL64Aa06xiftoPGsqYLiNJOXZ7~9Ca98m26En7h~djG4whSDpNlSHiksjOu34h-Iry6h3UeUjTMMbr~ZunbD93bAkO5EYgXtw9ClBv9B~Mk0vvHwrSy~2674Dmfwph7y3uXjGrfKVnrDuT7w__",
+        "fileName": "EFF0897B-A356-4304-8DF9-63D1F0419EF0.jpg",
+        "path": "Property/eff0897b-a356-4304-8df9-63d1f0419ef0_1780292854082_c3e5729a.jpg"
+      },
+      {
+        "id": 10463378,
+        "index": 12,
+        "type": "property_image",
+        "mediaType": "image",
+        "url": "https://dms3amyi97gvv.cloudfront.net/Property/96612013-88a9-4130-8ca5-7184090d7217_1780292934945_06295da2.jpg?Expires=1780491784&Key-Pair-Id=KX5HYW72PVJI2&Signature=sPH72KBRY9ELdV5GACjkexmNn92XQVYF4PvLizLqipoQLJB5AdDgLv~xIP1ctIu2ygyB57b3si05x5-KPXeQIVjU5UGhc6DoLnGNn5ekmpMu7hxTBqTF5Uft~mmQeSN4Y8wCqjInCcc~RMEKQCVaw7ByMZvV8~JqVF-f0SsR9hs~7n9N1EFer-~oPXOlZs2Rr06H7ntBH3GkBdmhXeiGUyAkb3ZXCQa9DON07IkqD-s1RTMzeogOxQN5nkHe4GkMon133FSoCq~niGMyGmOfk3WUNFbZTlP0COQ15JFqTcs2jpN1Iz7QxfoMEfkhcOmy-Cazife9gWaIxkPQemWZ-g__",
+        "fileName": "96612013-88A9-4130-8CA5-7184090D7217.jpg",
+        "path": "Property/96612013-88a9-4130-8ca5-7184090d7217_1780292934945_06295da2.jpg"
+      }
+    ],
+    "sourceSenderUser": null,
+    "ownerSideUser": {
+      "name": "Nguyễn Hoàng Nam",
+      "position": "Đầu chủ",
+      "avatar": "",
+      "numberId": "001087022988",
+      "fbLink": "https://www.facebook.com/profile.php?id=100087711362374",
+      "phone": "0941151187",
+      "createdAt": "2026-06-01T05:57:55.973Z",
+      "userId": "bfee5234-3121-4a6f-aef3-56e5c32ff842",
+      "department": [
+        [
+          {
+            "id": 6,
+            "type": "MIEN",
+            "name": "Miền Nam",
+            "level": 0
+          },
+          {
+            "id": 12,
+            "type": "CHI_NHANH",
+            "name": "Trung tâm Sài Gòn",
+            "parent_id": 6,
+            "parent_name": "Miền Nam",
+            "parent_type": "MIEN",
+            "level": 1
+          }
+        ],
+        [
+          {
+            "id": 6,
+            "type": "MIEN",
+            "name": "Miền Nam",
+            "level": 0
+          },
+          {
+            "id": 1212,
+            "type": "KINH_DO",
+            "name": "Thiên khôi 36",
+            "parent_id": 6,
+            "parent_name": "Miền Nam",
+            "parent_type": "MIEN",
+            "level": 1
+          }
+        ],
+        [
+          {
+            "id": 12,
+            "type": "CHI_NHANH",
+            "name": "Trung tâm Sài Gòn",
+            "parent_id": 6,
+            "parent_name": "Miền Nam",
+            "parent_type": "MIEN",
+            "level": 0
+          }
+        ],
+        [
+          {
+            "id": 76,
+            "type": "KHOI",
+            "name": "Bảo Tín",
+            "level": 0
+          },
+          {
+            "id": 246,
+            "type": "PHONG",
+            "name": "Bảo Tín",
+            "parent_id": 76,
+            "parent_name": "Bảo Tín",
+            "parent_type": "KHOI",
+            "level": 1
+          }
+        ],
+        [
+          {
+            "id": 246,
+            "type": "PHONG",
+            "name": "Bảo Tín",
+            "parent_id": 76,
+            "parent_name": "Bảo Tín",
+            "parent_type": "KHOI",
+            "level": 0
+          }
+        ],
+        [
+          {
+            "id": 1212,
+            "type": "KINH_DO",
+            "name": "Thiên khôi 36",
+            "parent_id": 6,
+            "parent_name": "Miền Nam",
+            "parent_type": "MIEN",
+            "level": 0
+          }
+        ]
+      ]
+    },
+    "homeOwner": [
+      {
+        "name": "Nguyễn Thị Soi",
+        "id": 45479,
+        "index": 0
+      }
+    ],
+    "customerSideUser": null,
+    "canViewCertificateImage": false
+  }
+}

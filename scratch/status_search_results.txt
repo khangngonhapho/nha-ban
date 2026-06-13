@@ -1,0 +1,8 @@
+749:                     count = cursor.execute("SELECT COUNT(*) FROM listings WHERE status = 'raw_text'").fetchone()[0]
+793:     rows = cursor.execute("SELECT * FROM listings WHERE status = 'raw_text'").fetchall()
+1089:                 f"UPDATE listings SET {', '.join(cols_sql)}, raw_drive_images_json = ?, status = 'raw_complete' WHERE id = ?",
+1703:     status_filter = request.args.get("status")
+1730:     if status_filter:
+1732:         params.append(status_filter)
+1769:                 c = cursor_count.execute("SELECT COUNT(*) FROM listings WHERE status = ?", (s,)).fetchone()[0]
+2458:                 "UPDATE listings SET status = 'published', `Last_Sync` = ? WHERE tk_id = ?",

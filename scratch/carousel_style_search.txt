@@ -1,0 +1,179 @@
+Match for 'carouselNha' at line 7008:
+div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
+                <div id="carouselNha" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ${(p.raw_sodo1 || p.raw_sodo2) ? `
+              <div>
+                <div class=
+----------------------------------------
+Match for 'carouselNha' at line 7401:
+ '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+          });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
+          setupScrollCarousel('carouselSo', sImgs, true);
+
+          // Sự kiện input reactive Live Preview (US-039.7)
+          const editTieuDe = document.getElementById('editTieuDeBds');
+          const editMoTa = document.getElementById('editMoTaBds');
+          cons
+----------------------------------------
+Match for 'carouselSo' at line 7016:
+-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
+                <div id="carouselSo" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+
+            <!-- Mô tả chi tiết (gộp, không tiêu đề) --
+----------------------------------------
+Match for 'carouselSo' at line 7402:
+    });
+
+          setupScrollCarousel('carouselNha', nImgs, false);
+          setupScrollCarousel('carouselSo', sImgs, true);
+
+          // Sự kiện input reactive Live Preview (US-039.7)
+          const editTieuDe = document.getElementById('editTieuDeBds');
+          const editMoTa = document.getElementById('editMoTaBds');
+          const accPreview = document.getElementById('accPreview');
+
+     
+----------------------------------------
+Match for 'accPool' at line 3039:
+dal grid optimization */
+      .admin-quick-link-bar {
+        grid-column: 1 / -1;
+      }
+
+      #accPool {
+        grid-column: 1;
+        margin-bottom: 0 !important;
+      }
+
+      .admin-accordion {
+        grid-column: 2;
+        margin-bottom: 0 !important;
+      }
+    }
+
+    /* US-074: Modal width expansion on large screens */
+    @media (min-width: 1200px) {
+      .sheet {
+        width:
+----------------------------------------
+Match for 'accPool' at line 7003:
+      </div>
+
+          <!-- THÔNG TIN THÔ - POOL (HIỂN THỊ PHẲNG TRỰC TIẾP) -->
+          <div id="accPool" style="margin-bottom: 24px; padding: 0 4px;">
+            <!-- Carousels -->
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+              <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
+     
+----------------------------------------
+Match for 'admin-scroll-carousel' at line 1956:
+accordion-content {
+      display: block;
+    }
+
+    /* CSS Scroll Snap Carousels with Peek */
+    .admin-scroll-carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      gap: 10px;
+      padding: 0 20px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 4px;
+    }
+
+    .admin-scroll-ca
+----------------------------------------
+Match for 'admin-scroll-carousel' at line 1968:
+rollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 4px;
+    }
+
+    .admin-scroll-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .admin-carousel-item {
+      flex: 0 0 85%;
+      scroll-snap-align: center;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f2;
+      box-shadow: 0 2px
+----------------------------------------
+Match for 'admin-scroll-carousel' at line 7009:
+v>
+                <div id="carouselNha" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ${(p.raw_sodo1 || p.raw_sodo2) ? `
+              <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đ
+----------------------------------------
+Match for 'admin-scroll-carousel' at line 7017:
+iv>
+                <div id="carouselSo" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+
+            <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
+            <div class="admin-mota-box red-text" style="margin-top:14
+----------------------------------------
+Match for 'admin-scroll-carousel' at line 7235:
+ouselClientPreview" style="position: relative; margin-bottom: 12px;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+                <div class="admin-raw-grid" style="margin-bottom: 12px;">
+                  <div class="admin-raw-cell">
+                    <span class="label">Giá bán:</span>
+            
+----------------------------------------
+Match for 'admin-scroll-carousel' at line 7292:
+id="carouselClientDetail" style="position: relative; margin-bottom: 12px;">
+            <div class="admin-scroll-carousel"></div>
+            <div class="admin-carousel-dots"></div>
+          </div>
+          <div class="admin-raw-grid" style="margin-bottom: 12px;">
+            <div class="admin-raw-cell">
+              <span class="label">Giá bán:</span>
+              <span class="value dotted" s
+----------------------------------------
+Match for 'admin-scroll-carousel' at line 10914:
+mentById(containerId);
+      if (!container) return;
+
+      const track = container.querySelector('.admin-scroll-carousel');
+      const dotsContainer = container.querySelector('.admin-carousel-dots');
+      if (!track || !dotsContainer) return;
+
+      track.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      if (imageUrls.length === 0) {
+        track.innerHTML = `<div style="width:100%; h
+----------------------------------------

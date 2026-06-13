@@ -1,0 +1,61 @@
+6985:       const sbody = document.getElementById('sbody');
+6986:       const scta = document.querySelector('.scta');
+6987: 
+6988:       if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+6989:         if (scta) scta.style.display = 'none';
+6990: 
+6991:         sbody.innerHTML = `
+6992:           <!-- QUICK LINK COPY BAR (US-049) -->
+6993:           <div class="admin-quick-link-bar" style="margin-bottom: 16px; display: flex; justify-content: flex-end; gap: 8px;">
+6994:             <button type="button" onclick="downloadAllListingImages('${p.id || p.system_id}')" style="background: #27ae60; color: #fff; border: none; padding: 7px 14px; border-radius: 16px; font-size: 11px; font-weight: 850; cursor: pointer; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.15);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+6995:               📥 Tải toàn bộ ảnh
+6996:             </button>
+6997:             <button type="button" onclick="copyQuickClientLink('${p.system_id}')" style="background: var(--gold); color: #1c1c1e; border: none; padding: 7px 14px; border-radius: 16px; font-size: 11px; font-weight: 850; cursor: pointer; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 10px rgba(255, 191, 36, 0.15);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+6998:               Copy link nhanh
+6999:             </button>
+7000:           </div>
+7001: 
+7002:           <!-- THÔNG TIN THÔ - POOL (HIỂN THỊ PHẲNG TRỰC TIẾP) -->
+7003:           <div id="accPool" style="margin-bottom: 24px; padding: 0 4px;">
+7004:             <!-- Carousels -->
+7005:             <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+7006:               <div>
+7007:                 <div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
+7008:                 <div id="carouselNha" style="position: relative;">
+7009:                   <div class="admin-scroll-carousel"></div>
+7010:                   <div class="admin-carousel-dots"></div>
+7011:                 </div>
+7012:               </div>
+7013:               ${(p.raw_sodo1 || p.raw_sodo2) ? `
+7014:               <div>
+7015:                 <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
+7016:                 <div id="carouselSo" style="position: relative;">
+7017:                   <div class="admin-scroll-carousel"></div>
+7018:                   <div class="admin-carousel-dots"></div>
+7019:                 </div>
+7020:               </div>
+7021:               ` : ''}
+7022:             </div>
+7023: 
+7024:             <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
+7025:             <div class="admin-mota-box red-text" style="margin-top:14px; margin-bottom:8px; font-size:12px; white-space:normal;">${(cleanedNoiDungChinh || 'Chưa có nội dung chính.').replace(/\r/g,'').replace(/\n/g,' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+7026:             <div class="admin-mota-box black-text" id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet || p.m) || 'Chưa có mô tả chi tiết.'}</div>
+7027: 
+7028:             <!-- Technical Specs Dotted Grid -->
+7029:             <div class="admin-raw-section">
+7030:               <div class="admin-raw-title">Thông tin</div>
+7031:               <div class="admin-raw-grid">
+7032:                 <div class="admin-raw-cell">
+7033:                   <span class="label">Diện tích thực tế:</span>
+7034:                   <span class="value dotted">${p.raw_dt_thuc_te || p.dt || '-'} m²</span>
+7035:                 </div>
+7036:                 <div class="admin-raw-cell">
+7037:                   <span class="label">Diện tích trên sổ:</span>
+7038:                   <span class="value dotted">${p.raw_dt_tren_so || p.dt || '-'} m²</span>
+7039:                 </div>
+7040:                 <div class="admin-raw-cell">
+7041:                   <span class="label">Chiều ngang:</span>
+7042:                   <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
+7043:                 </div>
+7044:                 <div class="admin-raw-cell">
+7045:                   <span class="label">Chiều dài:</span>

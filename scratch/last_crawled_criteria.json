@@ -1,0 +1,258 @@
+[
+    {
+        "id": 3,
+        "name": "Hiếm",
+        "parentId": null,
+        "groupId": 1,
+        "groupCode": "PROPERTY_CRITERIA",
+        "groupName": "Tiềm năng - Rủi ro"
+    },
+    {
+        "id": 9,
+        "name": "Giấy phép xây dựng",
+        "parentId": null,
+        "groupId": 1,
+        "groupCode": "PROPERTY_CRITERIA",
+        "groupName": "Tiềm năng - Rủi ro"
+    },
+    {
+        "id": 14,
+        "name": "Phòng cháy cháy nổ",
+        "parentId": null,
+        "groupId": 1,
+        "groupCode": "PROPERTY_CRITERIA",
+        "groupName": "Tiềm năng - Rủi ro"
+    },
+    {
+        "id": 17,
+        "name": "Chính chủ",
+        "parentId": null,
+        "groupId": 1,
+        "groupCode": "PROPERTY_CRITERIA",
+        "groupName": "Tiềm năng - Rủi ro"
+    },
+    {
+        "id": 36,
+        "name": "Ngõ 2 ô tô tránh (5 - 7m)",
+        "parentId": null,
+        "groupId": 3,
+        "groupCode": "ROAD_TYPE",
+        "groupName": "Đường trước nhà"
+    },
+    {
+        "id": 42,
+        "name": "Nhà mặt phố",
+        "parentId": null,
+        "groupId": 4,
+        "groupCode": "PROPERTY_TYPE",
+        "groupName": "Loại hình bất động sản"
+    },
+    {
+        "id": 53,
+        "name": "Giấy CNQSDD - Sổ đỏ - Sổ hồng",
+        "parentId": 52,
+        "groupId": 5,
+        "groupCode": "LEGAL_DOCUMENT",
+        "groupName": "Giấy tờ pháp lý"
+    },
+    {
+        "id": 63,
+        "name": "Nở hậu",
+        "parentId": null,
+        "groupId": 6,
+        "groupCode": "LAND_PLOT_SHAPE",
+        "groupName": "Hình dạng thửa đất"
+    },
+    {
+        "id": 68,
+        "name": "Xây < 5 năm",
+        "parentId": null,
+        "groupId": 7,
+        "groupCode": "CONSTRUCTION_STATUS",
+        "groupName": "Tình trạng xây dựng"
+    },
+    {
+        "id": 72,
+        "name": "Nhà khung cột",
+        "parentId": null,
+        "groupId": 8,
+        "groupCode": "HOUSE_STRUCTURE",
+        "groupName": "Cấu trúc nhà"
+    },
+    {
+        "id": 76,
+        "name": "Nội thất cơ bản",
+        "parentId": null,
+        "groupId": 9,
+        "groupCode": "INTERIOR",
+        "groupName": "Nội thất"
+    },
+    {
+        "id": 78,
+        "name": "Có",
+        "parentId": null,
+        "groupId": 10,
+        "groupCode": "ELEVATOR",
+        "groupName": "Thang máy"
+    },
+    {
+        "id": 84,
+        "name": "Vị trí số 1",
+        "parentId": null,
+        "groupId": 13,
+        "groupCode": "TAX_CALCULATION_POSITION",
+        "groupName": "Vị trí tính thuế theo quy định của Nhà nước"
+    },
+    {
+        "id": 90,
+        "name": "Lô góc 2 mặt thoáng",
+        "parentId": null,
+        "groupId": 14,
+        "groupCode": "OPEN_SPACE",
+        "groupName": "Mặt thoáng"
+    },
+    {
+        "id": 111,
+        "name": "Dưới 100m",
+        "parentId": null,
+        "groupId": 18,
+        "groupCode": "DISTANCE_TO_PARKING_LOT",
+        "groupName": "Khoảng cách ra bãi đỗ xe oto"
+    },
+    {
+        "id": 115,
+        "name": "Khu vực thuần ở",
+        "parentId": null,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+    },
+    {
+        "id": 118,
+        "name": "Khu vực kinh doanh nhỏ",
+        "parentId": 116,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+    },
+    {
+        "id": 119,
+        "name": "Khu vực kinh doanh văn phòng",
+        "parentId": 116,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+    },
+    {
+        "id": 122,
+        "name": "Văn phòng",
+        "parentId": 120,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+    },
+    {
+        "id": 123,
+        "name": "Kinh doanh",
+        "parentId": 120,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+    },
+    {
+        "id": 124,
+        "name": "Kết hợp Văn phòng + Kinh doanh",
+        "parentId": 120,
+        "groupId": 19,
+        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
+        "groupName": "Kinh doanh - Dòng tiền"
+    },
+    {
+        "id": 125,
+        "name": "Gần trường học mầm non",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 126,
+        "name": "Gần trường học cấp 1",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 127,
+        "name": "Gần trường học cấp 2",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 128,
+        "name": "Gần trường học cấp 3",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 129,
+        "name": "Gần trường Đại học",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 131,
+        "name": "Gần bệnh viện",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 132,
+        "name": "Khu dân trí cao",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 134,
+        "name": "Không",
+        "parentId": 133,
+        "groupId": 21,
+        "groupCode": "PROPERTY_CRITERIA_GEOMANCY",
+        "groupName": "Phong thủy"
+    },
+    {
+        "id": 138,
+        "name": "Không có",
+        "parentId": 137,
+        "groupId": 21,
+        "groupCode": "PROPERTY_CRITERIA_GEOMANCY",
+        "groupName": "Phong thủy"
+    },
+    {
+        "id": 141,
+        "name": "Gần trung tâm thương mại, khu đô thị",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    },
+    {
+        "id": 142,
+        "name": "Gần chợ",
+        "parentId": null,
+        "groupId": 20,
+        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
+        "groupName": "Tiện ích"
+    }
+]

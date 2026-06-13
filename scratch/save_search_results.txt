@@ -1,0 +1,114 @@
+Line 8573:
+    });
+
+      html += `
+          </div>
+          <!-- Hidden Inputs to hold current selections -->
+          <input type="hidden" id="editCoverImgUrl" value="${currentCover}">
+          <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
+          <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
+          <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
+          <input type="hidden" id="editSodo1Url" value="${p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || '')}">
+          <input type="hidden" id="editSodo2Url" value="${p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || '')}">
+          <input type="hidden" id="editSodo3Url" value="${p.pool_row_data ? (p.pool_row_d
+================================================================================
+Line 9363:
+   break;
+                }
+              }
+            }
+
+            if (assignedIdx === -1) {
+              if (!p.imgs) p.imgs = [];
+              p.imgs.push(uploadedUrl);
+              assignedIdx = p.imgs.length;
+            }
+
+            const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
+            if (publicInteriorInput && assignedIdx <= 15) {
+              let currentVal = publicInteriorInput.value.trim();
+              let indices = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
+              if (!indices.includes(String(assignedIdx))) {
+                indices.push(String(assignedIdx));
+                publicInteriorInput.value = indices.join(',');
+              }
+            }
+
+            showToast(`Tải lên Ảnh Nộ
+================================================================================
+Line 9412:
+lassList.contains('is-mattien') && !card.classList.contains('is-anhnen') && !card.classList.contains('is-sodo')) {
+        card.style.borderColor = isChecked ? 'rgba(39, 174, 96, 0.5)' : 'transparent';
+      }
+
+      if (type === "interior") {
+        const publicIntInput = document.getElementById('editPublicInteriorIndices');
+        let indices = publicIntInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (isChecked) {
+          if (!indices.includes(index)) indices.push(index);
+        } else {
+          indices = indices.filter(i => i !== index);
+        }
+        indices.sort((a, b) => parseInt(a) - parseInt(b));
+        publicIntInput.value = indices.join(',');
+      } else if (type === "alley") {
+        const publicAlleyInput = document.getElementById('editPublic
+================================================================================
+Line 9444:
+hình sổ, hình nền và các hình public) để chọn lại từ đầu không?");
+      if (!agree) return;
+
+      const coverInput = document.getElementById('editCoverImgUrl');
+      const publicCoverInput = document.getElementById('editPublicCoverUrl');
+      const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
+      const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+      const sodo1Input = document.getElementById('editSodo1Url');
+      const sodo2Input = document.getElementById('editSodo2Url');
+      const sodo3Input = document.getElementById('editSodo3Url');
+      const sodo4Input = document.getElementById('editSodo4Url');
+      const sodo5Input = document.getElementById('editSodo5Url');
+
+      if (coverInput) coverInput.value = '';
+      if (pub
+================================================================================
+Line 10253:
+t poolRowData = customPoolRowData || p.pool_row_data;
+      const customCoverUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+      const publicCoverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
+      const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
+
+      const targetMatTien = customCoverUrl || p.img_mat_tien || (poolRowData ? poolRowData[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      const isFacadeUrl = (url) => {
+        if (!url) return false;
+        const norm = normalizeImgUrl(url);
+        return norm !== '' && norm === normMatTien;
+      };
+
+      i
+================================================================================
+Line 10599:
+Đọc dữ liệu hình ảnh được chọn từ form biên tập hình ảnh trực quan
+        const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
+        const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
+        const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+        const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+        const sodo2Url = document.getElementById('editSodo2Url').value.trim();
+        const sodo3Url = document.getElementById('editSodo3Url').value.trim();
+        const sodo4Url = document.getElementById('editSodo4Url').value.trim();
+        const sodo5Url = document.getElementByI
+================================================================================
+Line 11012:
+5 ảnh nội thất sạch và ảnh hẻm từ biên tập viên hình ảnh trực quan
+        const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
+        const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
+        const publicIntStr = document.getElementById('editPublicInteriorIndices').value.trim();
+        const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+        const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+        const sodo2Url = document.getElementById('editSodo2Url').value.trim();
+        const sodo3Url = document.getElementById('editSodo3Url').value.trim();
+        const sodo4Url = document.getElementById('editSodo4Url').value.trim();
+        const sodo5Url = document.getElementByI
+================================================================================

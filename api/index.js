@@ -751,10 +751,25 @@ module.exports = async (req, res) => {
   }
 
   let html = '';
-  try {
-    html = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf8');
-  } catch (err) {
-    console.error('Error reading index.html:', err);
+  const htmlPaths = [
+    path.join(__dirname, '..', 'index.html'),
+    path.join(process.cwd(), 'index.html'),
+    path.join(__dirname, 'index.html')
+  ];
+  let lastErr = null;
+  for (const p of htmlPaths) {
+    try {
+      if (fs.existsSync(p)) {
+        html = fs.readFileSync(p, 'utf8');
+        break;
+      }
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+
+  if (!html) {
+    console.error('Error reading index.html, last error:', lastErr);
     return res.status(500).send('Internal Server Error: Missing index.html');
   }
 

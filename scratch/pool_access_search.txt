@@ -1,0 +1,3 @@
+2222:     Truy vấn API Google Sheets để lấy endRowIndex của Table trên sheet tên 'Pool' (hoặc sheet đầu tiên).
+2244:                 if properties.get('title') == 'Pool' or properties.get('sheetId') == 0:
+2328:                 sheet = spreadsheet.worksheet("Pool")

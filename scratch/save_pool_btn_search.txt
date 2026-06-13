@@ -1,0 +1,5 @@
+Line 2331: .admin-detail-float-actions .admin-icon-btn.save-pool-btn {
+Line 5684: const savePoolBtn = document.getElementById('savePoolBtn');
+Line 5696: if (savePoolBtn) savePoolBtn.style.display = 'flex';
+Line 5712: if (savePoolBtn) savePoolBtn.style.display = 'none';
+Line 6066: <button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${p.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>

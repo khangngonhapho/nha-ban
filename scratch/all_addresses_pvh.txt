@@ -1,0 +1,84 @@
+1. ID: 174 | So nha: 154.48.20 | Ma KN:  | SysID: SYS-20263927-846 | Title:  | ND: 154.48.20 Phạm Văn Hai 102 3 4.2 24 13.5 tỷ Tân Sơn Hòa Tân Bình 10-15 tỷ HĐ Lục
+2. ID: 224 | So nha: Thửa 427 | Ma KN:  | SysID: SYS-20263427-734 | Title:  | ND: Thửa 427 tờ 100 16,479 1 175 93 79.9 tỷ Vĩnh Lộc Bình Chánh 50-100 tỷ HĐ Cao Văn
+3. ID: 269 | So nha: 1025.35G | Ma KN:  | SysID: SYS-20263027-179 | Title:  | ND: 1025.35G cách mạng tháng 8 50 4 3.5 15 10.5 tỷ Phường 7 Tân Bình 10-15 tỷ HĐ Hoà
+4. ID: 279 | So nha: 1A227.1 | Ma KN:  | SysID: SYS-20262827-186 | Title:  | ND: 1A227.1 Vĩnh Lộc 457 2 9 61 25 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ HĐ Lê Viết Ph
+5. ID: 437 | So nha: Thửa đất số 152 + 570 tờ bản đồ số 7 | Ma KN:  | SysID: SYS-20261227-515 | Title:  | ND: Thửa đất số 152 + 570 tờ bản đồ số 7 Vĩnh Lộc 1,557 1 31 50 49 tỷ Phạm Văn Hai B
+6. ID: 474 | So nha: 128.25A | Ma KN:  | SysID: SYS-20260927-779 | Title:  | ND: 128.25A Phạm Văn Hai 48 5 5.8 9 12.8 tỷ Phường 3 Tân Bình 10-15 tỷ HĐ Trưởng phò
+7. ID: 631 | So nha: THUA342-139-138-125TO25 | Ma KN:  | SysID: SYS-20265327-860 | Title:  | ND: THUA342-139-138-125TO25 ĐT 830 7,900 1 60 130 75 tỷ Phạm Văn Hai Bình Chánh 50-1
+8. ID: 782 | So nha: 202.47.5 | Ma KN:  | SysID: SYS-20263827-213 | Title:  | ND: 202.47.5 Phạm Văn Hai 45 2 3.5 15 8 tỷ Phường 5 Tân Bình 5-10 tỷ HĐ Đinh Công Ho
+9. ID: 784 | So nha: 274 | Ma KN:  | SysID: SYS-20263827-520 | Title:  | ND: 274 Phạm Văn Hai 16.9 3 2.5 7 7.6 tỷ Phường 5 Tân Bình 5-10 tỷ HĐ Nguyễn Minh Đứ
+10. ID: 810 | So nha: 190 | Ma KN:  | SysID: SYS-20263527-224 | Title:  | ND: 190 Thanh Niên 3,335/3,334 1 30 130 43 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ HĐ Vũ
+11. ID: 811 | So nha: 190 | Ma KN:  | SysID: SYS-20263527-372 | Title:  | ND: 190 Thanh Niên 3,335 1 30 130 43 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ HĐ Vũ Văn T
+12. ID: 842 | So nha: 766.95.27 | Ma KN:  | SysID: SYS-20263227-585 | Title:  | ND: 766.95.27 Cách Mạnh Tháng 8 70 5 4.7 15 16.5 tỷ Tân Sơn Nhất Tân Bình 15-25 tỷ H
+13. ID: 851 | So nha: 194A | Ma KN:  | SysID: SYS-20263227-505 | Title:  | ND: 194A Bùi Thị Xuân 73 2 3.4 21 13.4 tỷ Tân Sơn Hòa Tân Bình 10-15 tỷ HĐ Bùi Đức S
+14. ID: 1073 | So nha: 48 | Ma KN:  | SysID: SYS-20260827-132 | Title:  | ND: 48 Phạm Văn Hai 41 6 3.2 13 16 tỷ Phường 2 Tân Bình 15-25 tỷ HĐ Đặng Đình Trung 
+15. ID: 1135 | So nha: thửa 521 tờ 90 Ấp 1 | Ma KN:  | SysID: SYS-20260227-879 | Title:  | ND: thửa 521 tờ 90 Ấp 1 Vĩnh Lộc 1,056 1 20 52 28 tỷ Phạm Văn Hai Bình Chánh 25-50 t
+16. ID: 1149 | So nha: 1239.2 | Ma KN:  | SysID: SYS-20260127-325 | Title:  | ND: 1239.2 Hoàng Sa 47 4 3.5 12 9.4 tỷ Phường 5 Tân Bình 5-10 tỷ HĐ Trần Thị Kim Duy
+17. ID: 1331 | So nha: 71.2.107.17 | Ma KN:  | SysID: SYS-20264327-963 | Title:  | ND: 71.2.107.17 Nguyễn Bặc 44 5 4.1 11 11.3 tỷ Tân Sơn Hòa Tân Bình 10-15 tỷ HĐ Hà C
+18. ID: 1403 | So nha: 67.16 | Ma KN:  | SysID: SYS-20263627-280 | Title:  | ND: 67.16 Phạm Văn Hai 30 5 3.5 9 5.8 tỷ Phường 3 Tân Bình 5-10 tỷ HĐ Trần Thanh Chư
+19. ID: 1435 | So nha: 71.45 | Ma KN:  | SysID: SYS-20263327-959 | Title:  | ND: 71.45 Nguyễn Bặc 49.9 3 4.2 12 8.35 tỷ Phường 3 Tân Bình 5-10 tỷ HĐ Phạm Thanh D
+20. ID: 1471 | So nha: 207.25.18 | Ma KN:  | SysID: SYS-20262927-953 | Title:  | ND: 207.25.18 Phạm Văn Hai 160 7 8 20 22 tỷ Phường 5 Tân Bình 15-25 tỷ HĐ Nguyễn Thị
+21. ID: 1485 | So nha: 128.25.16L | Ma KN:  | SysID: SYS-20262727-235 | Title:  | ND: 128.25.16L phạm văn hai 12 2 3 4 2.5 tỷ Tây Sơn Hòa Tân Bình < 5 tỷ HĐ Nguyễn Vă
+22. ID: 1491 | So nha: 38 | Ma KN:  | SysID: SYS-20262627-678 | Title:  | ND: 38 Phạm Văn Hai 52 4 3.5 15 17.5 tỷ Phường 2 Tân Bình 15-25 tỷ HĐ Võ Thị Thơm Tâ
+23. ID: 1503 | So nha: 207.25.18A | Ma KN:  | SysID: SYS-20262527-501 | Title:  | ND: 207.25.18A Phạm Văn Hai 160/180 7 8 20 22 tỷ Phường 5 Tân Bình 15-25 tỷ HĐ Nguyễ
+24. ID: 1564 | So nha: 107.13 | Ma KN:  | SysID: SYS-20261927-237 | Title:  | ND: 107.13 Phạm Văn Hai 125/134 1 4 20 17.5 tỷ Phường 3 Tân Bình 15-25 tỷ HĐ Trần Vă
+25. ID: 1566 | So nha: 149.20 | Ma KN:  | SysID: SYS-20261927-857 | Title:  | ND: 149.20 Bành Văn Trân 178 2 10 20 31 tỷ Phường 7 Tân Bình 25-50 tỷ HĐ Võ Đình Tha
+26. ID: 1617 | So nha: 360B | Ma KN:  | SysID: SYS-20261427-366 | Title:  | ND: 360B Lê Văn Sỹ 58 1 3.2 21 8 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Phạm Phương Thảo
+27. ID: 1703 | So nha: 1235 | Ma KN:  | SysID: SYS-20260527-359 | Title:  | ND: 1235 An Hạ 1,224.4 2 20 62 27 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ HĐ Lê Thanh Hậ
+28. ID: 1735 | So nha: 107.32.1D | Ma KN:  | SysID: SYS-20260227-666 | Title:  | ND: 107.32.1D PHẠM VĂN HAI 42 3 4.2 10 7.7 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Lâm Ho
+29. ID: 1999 | So nha: 1594 | Ma KN:  | SysID: SYS-20263627-679 | Title:  | ND: 1594 Trần Văn Giàu 1,455.3 1 25.8 66 80 tỷ Vĩnh Lộc Bình Chánh 50-100 tỷ HĐ Mai 
+30. ID: 2115 | So nha: 107.68 | Ma KN:  | SysID: SYS-20261027-670 | Title:  | ND: 107.68 Phạm văn Hai 56 5 4.4 13 7.98 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Nguyễn T
+31. ID: 2119 | So nha: 24 (SC: 46.28) | Ma KN:  | SysID: SYS-20260927-283 | Title:  | ND: 24 (SC: 46.28) Bành Văn Trân 95 3 6.6 15 13.5 tỷ Tân Hòa Tân Bình 10-15 tỷ HĐ Võ
+32. ID: 2120 | So nha: 32.11A - 32.13 + 250.21.7 | Ma KN:  | SysID: SYS-20260927-257 | Title:  | ND: 32.11A - 32.13 + 250.21.7 phan sào nam 301 3 7.8 38 40.5 tỷ Phường 11 Tân Bình 2
+33. ID: 2121 | So nha: 32.13 - 32.11A + 250.21.7 | Ma KN:  | SysID: SYS-20260927-274 | Title:  | ND: 32.13 - 32.11A + 250.21.7 phan sào nam 301 3 7.8 38 40.5 tỷ Phường 11 Tân Bình 2
+34. ID: 2122 | So nha: 250.21.7 + 32.11 - 32.13 | Ma KN:  | SysID: SYS-20260927-195 | Title:  | ND: 250.21.7 + 32.11 - 32.13 bàu cát 301 3 7.8 38 40.5 tỷ Phường 11 Tân Bình 25-50 t
+35. ID: 2128 | So nha: 56 | Ma KN:  | SysID: SYS-20260927-149 | Title:  | ND: 56 Ngô Thị Thu Minh 33.3 5 2.9 12 12.5 tỷ Tân Sơn Hòa Tân Bình 10-15 tỷ HĐ Bùi Q
+36. ID: 2193 | So nha: 62.19 | Ma KN:  | SysID: SYS-20260227-615 | Title:  | ND: 62.19 Bùi Thị Xuân 93.3 4 4.6 22 11.2 tỷ Tân Sơn Nhất Tân Bình 10-15 tỷ HĐ Vương
+37. ID: 2215 | So nha: 1014.62.12 | Ma KN:  | SysID: SYS-20260027-548 | Title:  | ND: 1014.62.12 Cách Mạng Tháng 8 36/40 2 4.5 10 5.5 tỷ Tân Sơn Nhất Tân Bình 5-10 tỷ
+38. ID: 2263 | So nha: 35 | Ma KN:  | SysID: SYS-20265527-344 | Title:  | ND: 35 Phạm Văn Hai 60/66 4 3 22 15.5 tỷ Tân Sơn Hòa Tân Bình 15-25 tỷ HĐ Trần Văn K
+39. ID: 2275 | So nha: 5B35.5 | Ma KN:  | SysID: SYS-20265427-767 | Title:  | ND: 5B35.5 Trần Văn Giầu 418 3 8.3 58 37.2 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ HĐ Vă
+40. ID: 2292 | So nha: 36 | Ma KN:  | SysID: SYS-20265227-875 | Title:  | ND: 36 tân sơn hòa 58 3 3.8 15 22.2 tỷ Phường 2 Tân Bình 15-25 tỷ HĐ Lê Thị Kim Uyên
+41. ID: 2336 | So nha: 1025.44G | Ma KN:  | SysID: SYS-20264827-896 | Title:  | ND: 1025.44G Cám Mạng Tháng Tám 49.5 4 3.4 14 11.5 tỷ Phường 7 Tân Bình 10-15 tỷ HĐ 
+42. ID: 2342 | So nha: 10 | Ma KN:  | SysID: SYS-20264727-483 | Title:  | ND: 10 Bùi Thị Xuân 86.2/103 3 5.5 21 11.4 tỷ Phường 2 Tân Bình 10-15 tỷ HĐ Nguyễn T
+43. ID: 2637 | So nha: 71.15.20.8 | Ma KN:  | SysID: SYS-20261727-757 | Title:  | ND: 71.15.20.8 Nguyễn Bặc 93.2/94 4 4.7 18 12.3 tỷ Tân Sơn Hòa Tân Bình 10-15 tỷ HĐ 
+44. ID: 2655 | So nha: Lô số 35, khu B | Ma KN:  | SysID: SYS-20261627-456 | Title:  | ND: Lô số 35, khu B KCN An Hạ 6,505 1 67 97 29 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ H
+45. ID: 2858 | So nha: 1A.109 | Ma KN:  | SysID: SYS-20265127-435 | Title:  | ND: 1A.109 Vĩnh Lộc 476 2 15 36 29.5 tỷ Vĩnh Lộc Bình Chánh 25-50 tỷ HĐ Hà Chí Thiện
+46. ID: 2871 | So nha: 107.2.15 | Ma KN:  | SysID: SYS-20264927-762 | Title:  | ND: 107.2.15 Phạm Văn Hai 56 2 5 11 6.7 tỷ Tân Bình 5-10 tỷ HĐ Phạm Thanh Hải Tâm Đứ
+47. ID: 2917 | So nha: 6A82 | Ma KN:  | SysID: SYS-20264527-792 | Title:  | ND: 6A82 Phạm Văn Hai 295/1,264 1 20.5 62 26 tỷ Tân Vĩnh Lộc Bình Chánh 25-50 tỷ HĐ 
+48. ID: 2918 | So nha: Thửa 321, tờ 64 | Ma KN:  | SysID: SYS-20264427-270 | Title:  | ND: Thửa 321, tờ 64 Phạm Văn Hai 1,592 1 26 66 31 tỷ Tân An Hội Bình Tân 25-50 tỷ HĐ
+49. ID: 2923 | So nha: 154.30.50D | Ma KN:  | SysID: SYS-20264427-147 | Title:  | ND: 154.30.50D Phạm Văn Hai 21 2 4.5 5 2.7 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ HĐ Hoàng V
+50. ID: 2943 | So nha: 71.162 | Ma KN:  | SysID: SYS-20264227-671 | Title:  | ND: 71.162 Nguyễn Bặc 63.9 5 6.5 10 11.3 tỷ Tân Sơn Hòa Tân Bình 10-15 tỷ HĐ Bùi Qua
+51. ID: 2992 | So nha: 152 | Ma KN:  | SysID: SYS-20263727-811 | Title:  | ND: 152 Bùi Thị Xuân 93 3 5.6 16 20 tỷ Tân Sơn Hòa Tân Bình 15-25 tỷ HĐ Trần Văn Kiề
+52. ID: 3121 | So nha: 147.24.6 | Ma KN:  | SysID: SYS-20262427-104 | Title:  | ND: 147.24.6 Phạm Văn Hai 168.7 1 7.5 25 22 tỷ Tân Sơn Hòa Tân Bình 15-25 tỷ HĐ Cao 
+53. ID: 3219 | So nha: 71.7 | Ma KN:  | SysID: SYS-20261427-793 | Title:  | ND: 71.7 nguyễn bặc 11.4 2 3.6 4 3.5 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ HĐ Nguyễn Văn Sa
+54. ID: 3262 | So nha: 71.15.26 | Ma KN:  | SysID: SYS-20260627-558 | Title:  | ND: 71.15.26 nguyễn bặc 12/16.5 2 3.1 5 3.5 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ HĐ Nguyễn
+55. ID: 3356 | So nha: 225.1c | Ma KN:  | SysID: SYS-20265627-867 | Title:  | ND: 225.1c bùi thị xuân 47 2 7 7 8.8 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Nguyễn Văn S
+56. ID: 3466 | So nha: 109 | Ma KN:  | SysID: SYS-20264527-878 | Title:  | ND: 109 phạm văn hai 84.8 5 4.5 18 24.5 tỷ Tân Sơn Hòa Tân Bình 15-25 tỷ HĐ Từ Ngọc 
+57. ID: 3480 | So nha: 95.4 | Ma KN:  | SysID: SYS-20264327-379 | Title:  | ND: 95.4 Phạm Văn Hai 25 3 6.3 4 4.3 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ HĐ Bùi Quang Min
+58. ID: 3502 | So nha: 107.19.53(cũ 37.9bis) | Ma KN:  | SysID: SYS-20264127-519 | Title:  | ND: 107.19.53(cũ 37.9bis) Phạm Văn Hai 20 2 3 7 3.3 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ H
+59. ID: 3513 | So nha: 1 phần tầng 3 số 91D-E | Ma KN:  | SysID: SYS-20264027-326 | Title:  | ND: 1 phần tầng 3 số 91D-E Phạm Văn Hai 36.2 3 5 8 3.6 tỷ Tân Sơn Hòa Tân Bình < 5 t
+60. ID: 3625 | So nha: 71.2.107.9 | Ma KN:  | SysID: SYS-20262927-657 | Title:  | ND: 71.2.107.9 Nguyễn Bặc 47 2 3.8 13 8.3 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Nguyễn 
+61. ID: 3626 | So nha: 71.2.107.11 | Ma KN:  | SysID: SYS-20262927-365 | Title:  | ND: 71.2.107.11 Nguyễn Bặc 50 2 4 13 8.6 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Nguyễn H
+62. ID: 3629 | So nha: 154.30.37 | Ma KN:  | SysID: SYS-20262827-420 | Title:  | ND: 154.30.37 Phạm Văn Hai 42 2 4.6 9 6.45 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Bùi Đứ
+63. ID: 3650 | So nha: 154.64 | Ma KN:  | SysID: SYS-20262627-485 | Title:  | ND: 154.64 Phạm Văn Hai 52 5 5.5 11 9.5 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Hoàng Viế
+64. ID: 3734 | So nha: 128.37A | Ma KN:  | SysID: SYS-20261827-733 | Title:  | ND: 128.37A Phạm Văn Hai 299 7 20 15 58.5 tỷ Tân Sơn Hòa Tân Bình 50-100 tỷ HĐ Hồ Xu
+65. ID: 3846 | So nha: 343.11.2 | Ma KN:  | SysID: SYS-20262227-148 | Title:  | ND: 343.11.2 Nguyễn Trọng Tuyển 71/88 3 6.6 14 11.6 tỷ Tân Sơn Hòa Tân Bình 10-15 tỷ
+66. ID: 3978 | So nha: 156.11 | Ma KN:  | SysID: SYS-20265227-879 | Title:  | ND: 156.11 bùi thị xuân 35 3 3.5 10 6.1 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Nguyễn Vă
+67. ID: 4012 | So nha: 359.1.39 | Ma KN:  | SysID: SYS-20264527-180 | Title:  | ND: 359.1.39 Lê Văn Sỹ 136 2 4.7 30 36 tỷ Nhiêu Lộc Quận 3 25-50 tỷ HĐ Tô Thăng Long
+68. ID: 4013 | So nha: 766.95.21 | Ma KN:  | SysID: SYS-20264427-990 | Title:  | ND: 766.95.21 cách mạng tháng tám 45 4 3 15 7.85 tỷ Tân Sơn Nhất Tân Bình 5-10 tỷ HĐ
+69. ID: 4063 | So nha: 71.15.20.21 | Ma KN:  | SysID: SYS-20263427-464 | Title:  | ND: 71.15.20.21 Nguyễn Bặc(số cũ: 405.15.8A Phạm Văn Hai) 26.5/27 2 3.2 8 3 tỷ Tân S
+70. ID: 4128 | So nha: Căn Hộ 240 | Ma KN:  | SysID: SYS-20265127-522 | Title:  | ND: Căn Hộ 240 Lê Văn Sỹ 17.8/46 2 3 6 2 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ HĐ Ngô Quang
+71. ID: 4247 | So nha: 71.2.3 | Ma KN:  | SysID: SYS-20262327-560 | Title:  | ND: 71.2.3 Nguyễn Bặc 52 6 3.5 14 15.5 tỷ Tân Sơn Hòa Tân Bình 15-25 tỷ HĐ Nguyễn Tu
+72. ID: 4295 | So nha: 42.5 | Ma KN:  | SysID: SYS-20261227-995 | Title:  | ND: 42.5 Bùi Thị Xuân 40 4 3.8 11 7.9 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Hoàng Viết 
+73. ID: 4330 | So nha: 107.16 | Ma KN:  | SysID: SYS-20260227-677 | Title:  | ND: 107.16 Phạm Văn Hai 133 3 5 23 20.6 tỷ Tân Sơn Hòa Tân Bình 15-25 tỷ HĐ Võ Đình 
+74. ID: 4350 | So nha: 154.59.4 | Ma KN:  | SysID: SYS-20265727-966 | Title:  | ND: 154.59.4 Phạm Văn Hai 57 2 3.1 18 7.3 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Lê Thị 
+75. ID: 4359 | So nha: 33 | Ma KN:  | SysID: SYS-20265527-973 | Title:  | ND: 33 Lưu Nhân Chú 79 4 5.3 15 21.9 tỷ Tân Sơn Nhất Tân Bình 15-25 tỷ HĐ Phan Xuân 
+76. ID: 4365 | So nha: 43 | Ma KN:  | SysID: SYS-20265427-909 | Title:  | ND: 43 Phạm Văn Hai 62.3/70 4 3.1 20 17.9 tỷ Tân Sơn Hòa Tân Bình 15-25 tỷ HĐ Nguyễn
+77. ID: 4369 | So nha: 39 | Ma KN:  | SysID: SYS-20260603-276 | Title:  | ND: 39 Lưu Nhân Chú 72/85 2 3.2 25 15 tỷ Tân Sơn Nhất Tân Bình 15-25 tỷ HĐ Cao Văn H
+78. ID: 4444 | So nha: 337.2.9 | Ma KN:  | SysID: SYS-20263527-540 | Title:  | ND: 337.2.9 Lê Văn Sỹ 121/98 2 4.5 27 36 tỷ Tân Sơn Hòa Tân Bình 25-50 tỷ HĐ Trần Ho
+79. ID: 4449 | So nha: 207.43.1 | Ma KN:  | SysID: SYS-20260603-299 | Title:  | ND: 207.43.1 Phạm Văn Hai 110.5 1 17 9 11.9 tỷ Tân Sơn Nhất Tân Bình 10-15 tỷ HĐ Phạ
+80. ID: 4516 | So nha: 184.56 | Ma KN:  | SysID: SYS-20264227-360 | Title:  | ND: 184.56 Phạm Văn Hai 38 4 3.5 11 8.35 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Phạm Tha
+81. ID: 4540 | So nha: 207.43.2B | Ma KN:  | SysID: SYS-20263427-357 | Title:  | ND: 207.43.2B Phạm Văn Hai 35.4/36.3 3 3 12 6.05 tỷ Tân Sơn Nhất Tân Bình 5-10 tỷ HĐ
+82. ID: 4608 | So nha: 202.61A | Ma KN:  | SysID: SYS-20261627-107 | Title:  | ND: 202.61A Phạm Văn Hai 61 1 4.3 14 6.5 tỷ Tân Sơn Nhất Tân Bình 5-10 tỷ HĐ Nguyễn 
+83. ID: 4796 | So nha: 224.3 | Ma KN:  | SysID: SYS-20261127-253 | Title:  | ND: 224.3 Phạm Văn Hai 95 4 5 19 17.5 tỷ Tân Sơn Nhất Tân Bình 15-25 tỷ HĐ Phan Xuân
+84. ID: 4816 | So nha: 91 | Ma KN:  | SysID: SYS-20260627-450 | Title:  | ND: 91 Phạm Văn Hai 66.3 1 7.5 9 5.35 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Đặng Thị Tr

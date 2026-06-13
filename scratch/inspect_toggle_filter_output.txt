@@ -1,0 +1,81 @@
+toggleFilter starts at line 5932
+5932:     function toggleFilter() {
+5933:       filterOpen = !filterOpen;
+5934:       document.getElementById('filterPanel').classList.toggle('open', filterOpen);
+5935:       const btn = document.getElementById('filterBtn');
+5936:       btn.classList.toggle('active', filterOpen);
+5937:       if (window.innerWidth < 768) {
+5938:         document.documentElement.classList.toggle('filter-active', filterOpen);
+5939:         document.body.classList.toggle('filter-active', filterOpen);
+5940:       }
+5941:     }
+5942:     function closeFilter() {
+5943:       if (!filterOpen) return;
+5944:       filterOpen = false;
+5945:       document.getElementById('filterPanel').classList.remove('open');
+5946:       const btn = document.getElementById('filterBtn');
+5947:       const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size || document.querySelectorAll('.filter-criterion:checked').length);
+5948:       btn.classList.toggle('active', anyActive);
+5949:       if (window.innerWidth < 768) {
+5950:         document.documentElement.classList.remove('filter-active');
+5951:         document.body.classList.remove('filter-active');
+5952:       }
+5953:     }
+5954: 
+5955:     // ── Build district tabs dynamically ──
+5956:     function buildDistrictTabs() {
+5957:       const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+5958:       const dNamesFull = {
+5959:         q1: 'Quận 1', q2: 'Quận 2', q3: 'Quận 3', q4: 'Quận 4', q5: 'Quận 5', q6: 'Quận 6',
+5960:         q7: 'Quận 7', q8: 'Quận 8', q9: 'Quận 9', q10: 'Quận 10', q11: 'Quận 11', q12: 'Quận 12',
+5961:         pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp',
+5962:         tp: 'Tân Phú', btan: 'Bình Tân', td: 'Thủ Đức',
+5963:         hm: 'Hóc Môn', nb: 'Nhà Bè', bc: 'Bình Chánh', cc: 'Củ Chi', cg: 'Cần Giờ'
+5964:       };
+5965: 
+5966:       const order = ['q3', 'q10', 'pn', 'tb', 'bt', 'gv', 'q1', 'q2', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q11', 'q12', 'tp', 'btan', 'td', 'hm', 'nb', 'bc', 'cc', 'cg'];
+5967:       
+5968:       districtsInPool.sort((a, b) => {
+5969:         let idxA = order.indexOf(a);
+5970:         let idxB = order.indexOf(b);
+5971:         if (idxA === -1) idxA = 999;
+5972:         if (idxB === -1) idxB = 999;
+5973:         return idxA - idxB;
+5974:       });
+5975: 
+5976:       const container = document.getElementById('districtOptions');
+5977:       const box = document.getElementById('districtMulti');
+5978:       const lbl = document.getElementById('districtLbl');
+5979:       if (!container || !box) return;
+5980: 
+5981:       if (districtsInPool.length === 0) {
+5982:         if (lbl) lbl.style.display = 'none';
+5983:         box.style.display = 'none';
+5984:       } else {
+5985:         if (lbl) lbl.style.display = '';
+5986:         box.style.display = 'block';
+5987:         
+5988:         container.innerHTML = districtsInPool.map(d => {
+5989:           const name = dNamesFull[d] || d.toUpperCase();
+5990:           const checked = selDistricts.has(d) ? 'checked' : '';
+5991:           return `
+5992:             <div class="multiselect-option" onclick="toggleOption('district', '${d}', event)">
+5993:               <input type="checkbox" value="${d}" ${checked} onclick="event.stopPropagation()" onchange="updateSelectionFromCheckboxes('district')">
+5994:               <span>${name}</span>
+5995:             </div>
+5996:           `;
+5997:         }).join('');
+5998:         
+5999:         updateMultiselectPlaceholder('district');
+6000:       }
+6001:     }
+6002: 
+6003:     // ── Build ward tabs dynamically ──
+6004:     const WARD_PRIORITY = [
+6005:       "Xuân Hoà", "Xuân Hòa",
+6006:       "Bàn Cờ",
+6007:       "Nhiêu Lộc",
+6008:       "Cầu Kiệu",
+6009:       "Đức Nhuận",
+6010:       "Phú Nhuận",
+6011:       "Vườn Lài",

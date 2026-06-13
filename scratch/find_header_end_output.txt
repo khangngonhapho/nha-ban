@@ -1,0 +1,16 @@
+Header ends at line 3909
+  3904:         <button class="btn-filter-apply" onclick="toggleFilter()">
+  3905:           <span>Tìm kiếm</span>
+  3906:         </button>
+  3907:       </div>
+  3908:     </div>
+  3909:   </header>
+  3910: 
+  3911:   <div class="active-col-bar" id="activeColBar" style="display:none;">
+  3912:     <span>📂 Đang xem BST: <span id="activeColNameText"></span></span>
+  3913:     <button onclick="exitCollectionView()">✕ Hủy xem</button>
+  3914:   </div>
+  3915: 
+  3916:   <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: none; justify-content: flex-end; align-items: center; background: #f8f9fa; padding: 10px 16px; border-bottom: 1px solid var(--border);">
+  3917:     <div style="display: flex; align-items: center; gap: 8px;">
+  3918:       <span style="font-size: 11px; font-weight: 700; color: #57606f;">CĂN LÊN SÓNG</span>

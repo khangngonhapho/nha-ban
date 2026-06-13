@@ -1,0 +1,33 @@
+Line 3971: const prSystemId = pr[72] || ''; // System ID (Index 72, STT 73)
+Line 3521: const systemId = row[72] || row[71] || '';
+Line 3521: const systemId = row[72] || row[71] || '';
+Line 3575: raw_ten_dau_chu: row[75] || '',
+Line 3576: raw_dt_dau_chu: row[74] || '',
+Line 3577: raw_link_fb: row[76] || '',
+Line 3582: raw_sodo3: row[80] || '',
+Line 4990: const systemId = row[72] || row[71] || '';
+Line 4990: const systemId = row[72] || row[71] || '';
+Line 4996: const dauChu = row[75] || '';
+Line 4997: const sdt = row[74] || '';
+Line 7619: raw_ten_dau_chu: row[75] || '',
+Line 7620: raw_dt_dau_chu: row[74] || '',
+Line 7621: raw_link_fb: row[76] || '',
+Line 7626: raw_sodo3: row[80] || '',
+Line 7659: const dauChu = String(row[75] || '').toLowerCase();
+Line 7660: const sdt = String(row[74] || '').toLowerCase();
+Line 7668: const systemId = row[72] || row[71] || '';
+Line 7668: const systemId = row[72] || row[71] || '';
+Line 7689: const systemId = row[72] || row[71] || '';
+Line 7689: const systemId = row[72] || row[71] || '';
+Line 7695: const dauChu = row[75] || '';
+Line 7696: const sdt = row[74] || '';
+Line 7822: const sysIdMatched = matchedRow[71] || matchedRow[72] || '';
+Line 7822: const sysIdMatched = matchedRow[71] || matchedRow[72] || '';
+Line 9083: const sysIdMatched = matchedRow[71] || matchedRow[72] || '';
+Line 9083: const sysIdMatched = matchedRow[71] || matchedRow[72] || '';
+Line 5648: const s3 = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+Line 6584: const sodo3Val = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+Line 6609: const sodo3Url = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+Line 6838: <input type="hidden" id="editSodo3Url" value="${p.pool_row_data ? (p.pool_row_data[80] || '') : (p.raw_sodo3 || '')}">
+Line 6870: let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3) || '');
+Line 8914: p.pool_row_data[80] = sodo3Url;

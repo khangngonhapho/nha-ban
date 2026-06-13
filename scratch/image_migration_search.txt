@@ -1,0 +1,341 @@
+780: 
+781: def run_image_migration_thread(limit, cookie):
+782:     """Tải và di cư hình ảnh chạy ngầm (Throttled Mode)"""
+783:     add_log_message("[🚀] KHỞI ĐỘNG TIẾN TRÌNH DI CƯ HÌNH ẢNH CHẠY NGẦM...")
+784:     
+785:     # 1. Truy vấn các căn chưa được xử lý ảnh
+786:     if not os.path.exists(DB_FILE):
+787:         add_log_message("[❌] Chưa có file Database SQLite raw_archive.db. Vui lòng cào tin trước.")
+788:         return
+789:         
+790:     conn = sqlite3.connect(DB_FILE, timeout=30.0)
+791:     conn.row_factory = sqlite3.Row
+792:     cursor = conn.cursor()
+793:     rows = cursor.execute("SELECT * FROM listings WHERE status = 'raw_text'").fetchall()
+794:     conn.close()
+795:     
+796:     if not rows:
+797:         add_log_message("[✅] Tuyệt vời! Không có căn nào ở trạng thái chờ di cư ảnh (status='raw_text').")
+798:         return
+799:         
+800:     add_log_message(f"[i] Phát hiện {len(rows)} căn thô cần di cư hình ảnh.")
+801:     
+802:     # 2. Kiểm tra cấu hình Cloud (Cloudinary hoặc Google Drive)
+803:     cfg = load_config()
+804:     
+805:     cld_cloud_name = cfg.get("cloudinary_cloud_name")
+806:     cld_api_key = cfg.get("cloudinary_api_key")
+807:     cld_api_secret = cfg.get("cloudinary_api_secret")
+808:     
+809:     use_cloudinary = bool(cld_cloud_name and cld_api_key and cld_api_secret)
+810:     
+811:     creds = None
+812:     token = None
+813:     drive_parent_folder = None
+814:     
+815:     if use_cloudinary:
+816:         add_log_message(f"[🔒] Phát hiện cấu hình Cloudinary (Cloud: {cld_cloud_name}). Ảnh sẽ được upload trực tiếp lên Cloudinary CDN siêu tốc!")
+817:     else:
+818:         creds = get_google_credentials()
+819:         token = get_google_access_token(creds)
+820:         drive_parent_folder = cfg.get("drive_folder_id")
+821:         if creds and token:
+822:             add_log_message("[🔒] Google Service Account được phát hiện. Ảnh sẽ được upload lên Google Drive 5TB!")
+823:         else:
+824:             add_log_message("[⚠️] KHÔNG phát hiện file 'credentials.json' hoặc cấu hình Cloudinary. Hệ thống tự động kích hoạt chế độ tải ảnh CỤC BỘ (Local Storage) để lưu trữ tại static/images/[tk_id]/")
+825:         
+826:     headers_tk = {
+827:         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+828:         "Cookie": cookie or ""
+829:     }
+830:     
+831:     processed = 0
+832:     for row in rows:
+833:         if limit and processed >= limit:
+834:             break
+835:             
+836:         row_db_id = row["id"]
+837:         tk_id = row["tk_id"]
+838:         d = normalize_listing_for_client(row)
+839:         raw_images_tk = d["raw_images_tk"]
+840:         
+841:         add_log_message(f"[+] Bắt đầu xử lý hình ảnh cho căn: {tk_id} ({len(raw_images_tk)} ảnh gốc)...")
+842:         
+843:         drive_links = []
+844:         house_folder_id = None
+845:         
+846:         # Nếu dùng Drive, tạo thư mục riêng cho căn nhà
+847:         if not use_cloudinary and token:
+848:             try:
+849:                 house_folder_id = create_drive_folder(f"TK_{tk_id}", drive_parent_folder, token)
+850:             except Exception as e:
+851:                 add_log_message(f"  [⚠️] Không tạo được folder Drive riêng cho {tk_id}: {str(e)}. Sẽ dùng folder cha.")
+852:                 house_folder_id = drive_parent_folder
+853:                 
+854:         # ==================================================
+855:         # TIẾN TRÌNH DI CƯ ẢNH SONG SONG ĐA LUỒNG (PARALLEL WORKER POOL - SPEEDUP 700% - 1000%)
+856:         # ==================================================
+857:         import concurrent.futures
+858:         
+859:         drive_links = ["" for _ in raw_images_tk]
+860:         
+861:         # Xác định URL ảnh sơ đồ thửa đất của căn này để bỏ qua nén
+862:         col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
+863:         col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+864:         col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
+865:         col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
+866:         col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
+867:         original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
+868:         original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
+869:         original_sodo3 = row[col_sodo3_key] if col_sodo3_key in row.keys() else None
+870:         original_sodo4 = row[col_sodo4_key] if col_sodo4_key in row.keys() else None
+871:         original_sodo5 = row[col_sodo5_key] if col_sodo5_key in row.keys() else None
+872:         
+873:         def process_single_image(args_tuple):
+874:             idx, img_url = args_tuple
+875:             try:
+876:                 img_data = download_image_with_retry(img_url, headers_tk)
+877:                 if not img_data:
+878:                     add_log_message(f"  [❌] Bỏ qua ảnh #{idx+1} của {tk_id} do lỗi tải file.")
+879:                     return idx, ""
+880:                     
+881:                 # KIỂM TRA BỎ QUA NÉN CHO ẢNH SƠ ĐỒ ĐỂ BẢO TOÀN CHI TIẾT THU PHÓNG (US-042)
+882:                 is_diagram = False
+883:                 if img_url:
+884:                     is_diagram = (img_url == original_sodo1) or (img_url == original_sodo2) or (img_url == original_sodo3) or (img_url == original_sodo4) or (img_url == original_sodo5)
+885:                 
+886:                 if is_diagram:
+887:                     orig_kb = int(len(img_data) / 1024)
+888:                     add_log_message(f"  [🛡️ Sơ đồ] Ảnh #{idx+1} của {tk_id} là ảnh Sơ đồ thửa đất ({orig_kb}KB). BỎ QUA NÉN để bảo toàn chi tiết.")
+889:                 else:
+890:                     # TỰ ĐỘNG NÉN ẢNH TỐI ƯU HÓA DUNG LƯỢNG
+891:                     img_data_original_len = len(img_data)
+892:                     img_data = compress_image(img_data)
+893:                     img_data_compressed_len = len(img_data)
+894:                     
+895:                     saved_percent = 0
+896:                     if img_data_original_len > 0:
+897:                         saved_percent = int((img_data_original_len - img_data_compressed_len) / img_data_original_len * 100)
+898:                     
+899:                     orig_kb = int(img_data_original_len / 1024)
+900:                     comp_kb = int(img_data_compressed_len / 1024)
+901:                     add_log_message(f"  [⚡ Tối ưu] Ảnh #{idx+1} của {tk_id}: {orig_kb}KB -> {comp_kb}KB (Giảm {saved_percent}%)")
+902:                 
+903:                 filename = f"img_{tk_id}_{idx+1}.jpg"
+904:                 
+905:                 # GHI LÊN CLOUDINARY, DRIVE HOẶC CỤC BỘ
+906:                 if use_cloudinary:
+907:                     cld_folder = f"BDS-KhangNgo/{tk_id}"
+908:                     img_link = upload_image_to_cloudinary(
+909:                         img_data, 
+910:                         filename, 
+911:                         cld_cloud_name, 
+912:                         cld_api_key, 
+913:                         cld_api_secret, 
+914:                         folder=cld_folder
+915:                     )
+916:                     return idx, img_link
+917:                 elif token:
+918:                     drive_link = upload_image_to_drive(img_data, filename, house_folder_id, token)
+919:                     return idx, drive_link
+920:                 else:
+921:                     # Lưu cục bộ
+922:                     local_dir = os.path.join("static", "images", tk_id)
+923:                     os.makedirs(local_dir, exist_ok=True)
+924:                     local_path = os.path.join(local_dir, filename)
+925:                     with open(local_path, "wb") as f:
+926:                         f.write(img_data)
+927:                     local_url = f"/static/images/{tk_id}/{filename}"
+928:                     return idx, local_url
+929:             except Exception as e:
+930:                 add_log_message(f"  [❌ LỖI] Xử lý ảnh #{idx+1} thất bại cho {tk_id}: {str(e)}")
+931:                 return idx, ""
+932: 
+933:         # Chạy song song tối đa 3 luồng xử lý ảnh đồng thời cho căn nhà này để tối ưu băng thông (Stealth Mode)
+934:         max_workers = min(3, len(raw_images_tk)) if raw_images_tk else 1
+935:         tasks = list(enumerate(raw_images_tk))
+936:         
+937:         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+938:             results = executor.map(process_single_image, tasks)
+939:             for idx, img_link in results:
+940:                 if img_link:
+941:                     drive_links[idx] = img_link
+942:                     
+943:         # Lọc bỏ các ảnh bị lỗi/trống trong khi giữ nguyên thứ tự sắp xếp ảnh gốc thành công
+944:         drive_links = [link for link in drive_links if link]
+945:                     
+946:         # Cập nhật SQLite, phân loại sơ đồ/ảnh thô và tự động đẩy Sheets Pool (US-040)
+947:         try:
+948:             # 1. Định vị và phân loại hình ảnh (Sơ đồ vs Ảnh sản phẩm/nội thất)
+949:             col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
+950:             col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+951:             col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
+952:             col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
+953:             col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
+954:             
+955:             original_sodo1 = row[col_sodo1_key] if col_sodo1_key in row.keys() else None
+956:             original_sodo2 = row[col_sodo2_key] if col_sodo2_key in row.keys() else None
+957:             original_sodo3 = row[col_sodo3_key] if col_sodo3_key in row.keys() else None
+958:             original_sodo4 = row[col_sodo4_key] if col_sodo4_key in row.keys() else None
+959:             original_sodo5 = row[col_sodo5_key] if col_sodo5_key in row.keys() else None
+960:             
+961:             clean_sodo1 = ""
+962:             clean_sodo2 = ""
+963:             clean_sodo3 = ""
+964:             clean_sodo4 = ""
+965:             clean_sodo5 = ""
+966:             house_links = []
+967:             
+968:             # drive_links chứa các ảnh đã upload theo đúng thứ tự của raw_images_tk
+969:             for idx, img_url in enumerate(raw_images_tk):
+970:                 if idx >= len(drive_links):
+971:                     continue
+972:                 migrated_url = drive_links[idx]
+973:                 if not migrated_url:
+974:                     continue
+975:                     
+976:                 if img_url == original_sodo1:
+977:                     clean_sodo1 = migrated_url
+978:                 elif img_url == original_sodo2:
+979:                     clean_sodo2 = migrated_url
+980:                 elif img_url == original_sodo3:
+981:                     clean_sodo3 = migrated_url
+982:                 elif img_url == original_sodo4:
+983:                     clean_sodo4 = migrated_url
+984:                 elif img_url == original_sodo5:
+985:                     clean_sodo5 = migrated_url
+986:                 else:
+987:                     house_links.append(migrated_url)
+988:             
+989:             # Tự động di cư Sơ đồ thửa đất 1 đến 5 lên Cloudinary/Drive nếu còn là link tk thô (ko nén) (US-046.6 & US-054)
+990:             headers_tk_sodo = {
+991:                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+992:                 "Cookie": cookie or ""
+993:             }
+994:             
+995:             for sodo_num, (orig_sodo, clean_sodo) in enumerate([
+996:                 (original_sodo1, clean_sodo1),
+997:                 (original_sodo2, clean_sodo2),
+998:                 (original_sodo3, clean_sodo3),
+999:                 (original_sodo4, clean_sodo4),
+1000:                 (original_sodo5, clean_sodo5)
+1001:             ], start=1):
+1002:                 if orig_sodo and orig_sodo.startswith("http") and not ("cloudinary.com" in clean_sodo or "google" in clean_sodo):
+1003:                     try:
+1004:                         add_log_message(f"  [🛡️ Sơ đồ {sodo_num}] Đang di cư Ảnh Sơ đồ thửa đất {sodo_num} của {tk_id} lên Cloud (BỎ QUA NÉN)...")
+1005:                         img_data = download_image_with_retry(orig_sodo, headers_tk_sodo)
+1006:                         if img_data:
+1007:                             filename = f"sodo{sodo_num}_{tk_id}.jpg"
+1008:                             migrated = ""
+1009:                             if use_cloudinary:
+1010:                                 cld_folder = f"BDS-KhangNgo/{tk_id}"
+1011:                                 migrated = upload_image_to_cloudinary(
+1012:                                     img_data, 
+1013:                                     filename, 
+1014:                                     cld_cloud_name, 
+1015:                                     cld_api_key, 
+1016:                                     cld_api_secret, 
+1017:                                     folder=cld_folder
+1018:                                 )
+1019:                             elif token:
+1020:                                 migrated = upload_image_to_drive(img_data, filename, house_folder_id, token)
+1021:                             
+1022:                             if migrated:
+1023:                                 if sodo_num == 1: clean_sodo1 = migrated
+1024:                                 elif sodo_num == 2: clean_sodo2 = migrated
+1025:                                 elif sodo_num == 3: clean_sodo3 = migrated
+1026:                                 elif sodo_num == 4: clean_sodo4 = migrated
+1027:                                 elif sodo_num == 5: clean_sodo5 = migrated
+1028:                                 add_log_message(f"  [🛡️ Sơ đồ {sodo_num}] Di cư Sơ đồ {sodo_num} thành công: {migrated}")
+1029:                     except Exception as e:
+1030:                         add_log_message(f"  [❌ LỖI] Di cư Sơ đồ {sodo_num} thất bại: {str(e)}")
+1031:             
+1032:             # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập (US-046.6)
+1033:             col_ma_kn = get_safe_col_name("Mã Khang Ngô (ID)")
+1034:             col_tieu_de = get_safe_col_name("Tiêu đề Public")
+1035:             col_mo_ta = get_safe_col_name("Mô tả Public")
+1036:             col_phuong_cu = get_safe_col_name("Phường cũ (AI)")
+1037:             col_mat_tien = get_safe_col_name("Hình Mặt Tiền")
+1038:             col_anh_pub = get_safe_col_name("Ảnh Public (VD: 1,3,5)")
+1039:             col_anh_hem_pub = get_safe_col_name("Ảnh Hẻm Public (VD: 1,2)")
+1040:             
+1041:             ma_khang_ngo = row[col_ma_kn] if col_ma_kn in row.keys() else ""
+1042:             tieu_de_public = row[col_tieu_de] if col_tieu_de in row.keys() else ""
+1043:             mo_ta_public = row[col_mo_ta] if col_mo_ta in row.keys() else ""
+1044:             phuong_cu_ai = row[col_phuong_cu] if col_phuong_cu in row.keys() else ""
+1045:             hinh_mat_tien = row[col_mat_tien] if col_mat_tien in row.keys() else ""
+1046:             anh_pub = row[col_anh_pub] if col_anh_pub in row.keys() else ""
+1047:             anh_hem_pub = row[col_anh_hem_pub] if col_anh_hem_pub in row.keys() else ""
+1048:             
+1049:             # 3. Ghi thông tin vào SQLite ở trạng thái 'raw_complete' trước
+1050:             conn = sqlite3.connect(DB_FILE, timeout=30.0)
+1051:             cursor = conn.cursor()
+1052:             
+1053:             update_fields = {}
+1054:             # Public/curated fields
+1055:             update_fields[col_ma_kn] = ma_khang_ngo or ""
+1056:             update_fields[col_tieu_de] = tieu_de_public or ""
+1057:             update_fields[col_mo_ta] = mo_ta_public or ""
+1058:             update_fields[col_phuong_cu] = phuong_cu_ai or ""
+1059:             update_fields[col_mat_tien] = hinh_mat_tien or ""
+1060:             
+1061:             # Diagram images
+1062:             update_fields[col_sodo1_key] = clean_sodo1
+1063:             update_fields[col_sodo2_key] = clean_sodo2
+1064:             update_fields[col_sodo3_key] = clean_sodo3
+1065:             update_fields[col_sodo4_key] = clean_sodo4
+1066:             update_fields[col_sodo5_key] = clean_sodo5
+1067:             
+1068:             # Hẻm images (Bảo toàn dữ liệu cũ)
+1069:             for i in range(10):
+1070:                 col_name = get_safe_col_name(f"Hình Hẻm {i+1}")
+1071:                 val = row[col_name] if col_name in row.keys() else None
+1072:                 update_fields[col_name] = val or ""
+1073:             
+1074:             # Ảnh 1 to Ảnh 15 (Chỉ chứa ảnh nội thất/ngoại thất thô)
+1075:             for i in range(15):
+1076:                 col_name = get_safe_col_name(f"Ảnh {i+1}")
+1077:                 val = house_links[i] if i < len(house_links) else ""
+1078:                 update_fields[col_name] = val
+1079:                 
+1080:             # Bảo toàn ảnh được chọn
+1081:             update_fields[col_anh_pub] = anh_pub or ""
+1082:             update_fields[col_anh_hem_pub] = anh_hem_pub or ""
+1083:                 
+1084:             cols_sql = [f"`{k}` = ?" for k in update_fields.keys()]
+1085:             vals = list(update_fields.values())
+1086:             vals.extend([json.dumps(drive_links), row_db_id])
+1087:             
+1088:             cursor.execute(
+1089:                 f"UPDATE listings SET {', '.join(cols_sql)}, raw_drive_images_json = ?, status = 'raw_complete' WHERE id = ?",
+1090:                 vals
+1091:             )
+1092:             conn.commit()
+1093:             conn.close()
+1094:             
+1095:             processed += 1
+1096:             add_log_message(f"[✅ SQLite] Đã cập nhật SQLite cục bộ cho {tk_id}: Sơ đồ thửa đất và nội dung AI biên tập. Trạng thái -> raw_complete")
+1097:             
+1098:             # 5. Tự động xuất bản trực tiếp lên Google Sheets Pool
+1099:             add_log_message(f"[⚡ AUTO-SHEETS] Đang tự động đẩy dòng dữ liệu 79 cột lên tab Pool của Google Sheets...")
+1100:             res_publish = execute_publish_listing(tk_id)
+1101:             if res_publish.get("status") == "success":
+1102:                 add_log_message(f"[✅ AUTO-SHEETS SUCCESS] Tự động xuất bản thành công căn {tk_id} lên Google Sheets Pool! Trạng thái SQLite -> published")
+1103:             else:
+1104:                 add_log_message(f"[⚠️ AUTO-SHEETS FAILED] Tự động đẩy Sheets thất bại: {res_publish.get('message')}. Giữ trạng thái SQLite -> raw_complete để đẩy thủ công sau.")
+1105:                 
+1106:         except Exception as e:
+1107:             add_log_message(f"[❌ LỖI] Gặp sự cố trong quy trình tự động hóa Curation & Xuất bản cho {tk_id}: {str(e)}")
+1108:             
+1109:         # Throttling tối ưu bảo vệ IP: Cloudinary CDN cực nhanh (0.5 - 1.5s), Google Drive API (1.5 - 3.0s)
+1110:         if use_cloudinary:
+1111:             sleep_time = random.uniform(0.5, 1.5)
+1112:         else:
+1113:             sleep_time = random.uniform(1.5, 3.0)
+1114:         time.sleep(sleep_time)
+1115:         
+1116:     add_log_message(f"[🏁] HOÀN TẤT LUỒNG DI CƯ: Đã xử lý {processed} căn.")
+1117: 
+1118: # ==================================================
+1119: # API ENDPOINTS
+1120: # ==================================================

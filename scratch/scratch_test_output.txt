@@ -1,0 +1,113 @@
+Line 3177: const parts = decoded.split("|").map(p => p.trim());
+Line 3347: if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
+Line 3481: // 1. Thử trích xuất từ cú pháp cu_phap (Cột B Source)
+Line 3495: const textToSearch = ((p.t || '') + ' ' + (p.m || '')).toLowerCase();
+Line 3596: raw_tieu_de_public: row[56] || '',
+Line 3701: const cuPhapMatch = p.cu_phap.trim().match(/^(\d+[\d/a-zA-Z.]*)\s*(.*)$/);
+Line 3712: const normTenDuong = normalizeStreetQuery(p.ten_duong);
+Line 3713: const titleMatch = removeAccents(p.t).includes(removeAccents(streetQuery));
+Line 3723: normalizeStreetQuery(p.ten_duong).includes(normSub);
+Line 3724: const titleMatch = removeAccents(p.t).includes(subCleaned);
+Line 3740: const duongMatch = removeAccents(p.raw_ten_duong).includes(subCleaned) || removeAccents(p.ten_duong).includes(subCleaned);
+Line 3751: const tMatch = removeAccents(p.t).includes(svCleaned);
+Line 3753: removeAccents(p.ten_duong).includes(svCleaned) ||
+Line 3913: fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:ZZ`, {
+Line 3917: fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:ZZ`, {
+Line 3932: throw new Error(`Lỗi tải API Google Sheets (Source: ${sourceRes.status}, Pool: ${poolRes.status})`);
+Line 3938: const sourceRows = sourceDataJson.values || [];
+Line 3939: const poolRows = poolDataJson.values || [];
+Line 4055: p.raw_tieu_de_public = poolRow[56] || '';    // Tiêu đề Public - Index 56, Column BE
+Line 4071: p.raw_ten_duong = p.ten_duong || '';
+Line 4074: p.raw_so_tang = p.tang || '';
+Line 4080: p.raw_tieu_de_public = '';
+Line 4465: const tangs = arr.map(p => parseFloat(p.tang)).filter(Boolean);
+Line 4829: <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+Line 4862: <img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
+Line 4868: <div class="ititle">${String(p.t).includes(p.gia + ' tỷ') ? p.t : p.t + ' ' + p.gia + ' tỷ'}</div>
+Line 4871: <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
+Line 5199: const extractSource = (text) => {
+Line 5217: trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
+Line 5221: const cleanTitle = cutTitleToDistrict(p.t);
+Line 5311: <span class="value dotted">${p.raw_so_tang || p.tang || '-'} tầng</span>
+Line 5337: <span style="font-weight:700;">${extractSource(p.raw_noi_dung_chinh)}</span>
+Line 5371: <div class="accordion-item" id="accSource">
+Line 5393: <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-fami...
+Line 5489: <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.isFromPoolOnly ? (p.raw_tieu_de_public || gener...
+Line 5526: <span class="value dotted">${p.tang} tầng</span>
+Line 5547: <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề p...
+Line 5583: <span class="value dotted">${p.tang} tầng</span>
+Line 5592: <button onclick="scheduleViewing('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-feedback-btn primary">
+Line 5604: <button onclick="submitClientRequirement('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-req-submit-btn">
+Line 5616: btnZalo.onclick = () => askZalo(p.id, p.t);
+Line 5632: if (editTinhTrang) editTinhTrang.value = p.tinh_trang || 'Bình thường';
+Line 5719: const saveSourceBtn = document.getElementById('saveSourceBtn');
+Line 5720: if (saveSourceBtn) saveSourceBtn.style.display = 'flex';
+Line 5739: const accSource = document.getElementById('accSource');
+Line 5752: if (accSource) {
+Line 5753: accSource.classList.remove('expanded');
+Line 5754: const content = accSource.querySelector('.accordion-content');
+Line 5756: const arrow = accSource.querySelector('.arrow');
+Line 6065: <button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${p.id}')" title="Lưu thay đổi" style="background:#e0a800...
+Line 6419: const values = data.values || [];
+Line 6421: values.forEach(row => {
+Line 6500: const ketCau = p.tang || p.raw_so_tang || "-";
+Line 6711: // Fallback for legacy listings without saved indices: reconstruct from Source URLs
+Line 6870: // Fallback matching by Source URL
+Line 6888: // Fallback matching by Source URL
+Line 7303: // Kiểm tra xem căn pool này đã lên sóng (ở Source) chưa (US-039.7)
+Line 7388: raw_tieu_de_public: row[56] || '',
+Line 7514: const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`;
+Line 7524: const rows = poolData.values || [];
+Line 7557: // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp
+Line 7558: const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
+Line 7564: throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}). Kiểm tra quyền truy cập Sheet!`);
+Line 7568: const sourceRows = sourceData.values || [];
+Line 7578: // Step 3: Map dữ liệu 78 cột từ Pool -> 41 cột sang Source
+Line 7674: // Xây dựng publicRowData 41 cột cho Sheet Source
+Line 7680: matchedRow[55],                // 4: tieu_de (Cột E)
+Line 7719: // Step 4: Ghi đè/Thêm mới vào Sheet Source
+Line 7720: const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AO${targetRowNumber}?valueInputOp...
+Line 7727: body: JSON.stringify({ values: [publicRowData] })
+Line 7731: throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
+Line 7738: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BZ${poolRowNumber}:BZ${poolRowNumber}?valueInputOption=USER_EN...
+Line 7744: body: JSON.stringify({ values: [[syncDateStr]] })
+Line 8354: window.saveSourceChanges = async function(id) {
+Line 8369: const saveBtn = document.getElementById('saveSourceBtn') || document.getElementById('saveBtn');
+Line 8377: const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+Line 8467: // Cập nhật lại 10 cột ảnh sạch trên Source Sheet
+Line 8540: p.original_row_data[39] = tieuDeBds;
+Line 8546: p.tinh_trang = tinhTrang;
+Line 8554: const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AO${p.source_row_index}?valueI...
+Line 8562: body: JSON.stringify({ values: [p.original_row_data] })
+Line 8575: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${p.pool_row_index}:AC${p.pool_row_index}?valueInputOption=U...
+Line 8581: body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
+Line 8593: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${p.pool_row_index}:AD${p.pool_row_index}?valueInputOption=U...
+Line 8599: body: JSON.stringify({ values: [[customCoverUrl]] })
+Line 8608: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:AO${p.pool_row_index}?valueInputOption=U...
+Line 8614: body: JSON.stringify({ values: [[publicCoverUrl]] })
+Line 8623: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${p.pool_row_index}:BL${p.pool_row_index}?valueInputOption=U...
+Line 8629: body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+Line 8692: const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`;
+Line 8702: const rows = poolData.values || [];
+Line 8712: const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+Line 8728: // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
+Line 8729: const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
+Line 8735: throw new Error(`Không thể kết nối Sheet Source (Mã: ${sourceRes.status}).`);
+Line 8739: const sourceRows = sourceData.values || [];
+Line 8872: // Xây dựng publicRowData 41 cột cho Sheet Source
+Line 8878: tieuDeBds || matchedRow[55],   // 4: tieu_de (Cột E)
+Line 8913: tieuDeBds,                     // 39: Tiêu đề BDS (Cột AN)
+Line 8917: // Step 4: Ghi đè/Thêm mới vào Sheet Source
+Line 8918: const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AO${targetRowNumber}?valueInputOp...
+Line 8925: body: JSON.stringify({ values: [publicRowData] })
+Line 8929: throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
+Line 8939: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${poolRowNumber}:AC${poolRowNumber}?valueInputOption=USER_EN...
+Line 8945: body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
+Line 8953: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${poolRowNumber}:AD${poolRowNumber}?valueInputOption=USER_EN...
+Line 8959: body: JSON.stringify({ values: [[customCoverUrl]] })
+Line 8966: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:AO${poolRowNumber}?valueInputOption=USER_EN...
+Line 8972: body: JSON.stringify({ values: [[publicCoverUrl]] })
+Line 8979: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${poolRowNumber}:BL${poolRowNumber}?valueInputOption=USER_EN...
+Line 8985: body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+Line 8989: await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BZ${poolRowNumber}:BZ${poolRowNumber}?valueInputOption=USER_EN...
+Line 8995: body: JSON.stringify({ values: [[syncDateStr]] })

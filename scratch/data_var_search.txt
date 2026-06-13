@@ -1,0 +1,6 @@
+Line 3332: let DATA = [];
+Line 3336: let MAPPED_POOL_DATA = [];
+Line 3520: MAPPED_POOL_DATA = POOL_ROWS.map((row, index) => {
+Line 4258: DATA = fullList.filter(p => sharedIds.map(String).includes(String(p.id)) && !p.is_invisible);
+Line 4260: DATA = [];
+Line 4263: DATA = fullList.filter(p => !p.is_invisible);

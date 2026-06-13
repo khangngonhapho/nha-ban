@@ -1,0 +1,84 @@
+Line 613: body {
+Context:
+    608:       padding: 0;
+    609:       box-sizing: border-box;
+    610:       -webkit-tap-highlight-color: transparent
+    611:     }
+    612: 
+--> 613:     body {
+    614:       font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+    615:       background: var(--bg);
+    616:       color: var(--text);
+    617:       -webkit-font-smoothing: antialiased;
+    618:       overscroll-behavior: none
+    619:     }
+    620: 
+    621:     header {
+    622:       background: var(--red);
+    623:       padding: calc(var(--safe-top) + 14px) 16px 0;
+    624:       position: sticky;
+    625:       top: 0;
+    626:       z-index: 90;
+    627:       transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    628:     }
+    629: 
+    630:     header.hide {
+    631:       transform: translateY(-100%);
+    632:     }
+============================================================
+Line 1478: .sbody {
+Context:
+    1473:     }
+    1474:     .xbtn:active {
+    1475:       background: rgba(255, 255, 255, 0.3);
+    1476:     }
+    1477: 
+--> 1478:     .sbody {
+    1479:       overflow-y: auto;
+    1480:       -webkit-overflow-scrolling: touch;
+    1481:       flex: 1;
+    1482:       padding: 14px 14px 8px
+    1483:     }
+    1484: 
+    1485:     .gwrap {
+    1486:       position: relative;
+    1487:       border-radius: 14px;
+    1488:       overflow: hidden;
+    1489:       background: #000;
+    1490:       margin-bottom: 12px;
+    1491:       touch-action: none; /* US-081 v2: JS kiểm soát 100%, chặn browser zoom trang */
+    1492:       aspect-ratio: 3 / 4;
+    1493:     }
+    1494: 
+    1495:     .gtrack {
+    1496:       display: flex;
+    1497:       transition: transform .28s cubic-bezier(.25, .46, .45, .94);
+============================================================
+Line 2910: .sbody {
+Context:
+    2905:         display: none;
+    2906:       }
+    2907: 
+    2908:       /* Ẩn vạch kéo trên máy tính */
+    2909: 
+--> 2910:       .sbody {
+    2911:         display: grid;
+    2912:         grid-template-columns: 1fr 1fr;
+    2913:         gap: 24px;
+    2914:         padding: 24px;
+    2915:         overflow-y: auto;
+    2916:         align-items: start;
+    2917:       }
+    2918: 
+    2919:       /* Gallery bên trái: giữ cố định, không vượt modal */
+    2920:       .gwrap {
+    2921:         margin-bottom: 0;
+    2922:         aspect-ratio: 3/4;
+    2923:         max-height: 55vh;
+    2924:         position: sticky;
+    2925:         top: 0;
+    2926:       }
+    2927: 
+    2928:       .gslide img {
+    2929:         height: 100%;
+============================================================

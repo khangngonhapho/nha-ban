@@ -1,0 +1,1386 @@
+Found position at line 267:
+ate-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .range-box {
+      position: relative;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    
+    .range-box:focus
+--------------------------------------------------
+Found position at line 523:
+percase;
+      letter-spacing: 1px;
+      padding: 6px 2px 3px;
+    }
+
+    .share-btn-float {
+      position: fixed;
+      bottom: 155px;
+      right: 20px;
+      background: #f39c12; /* Nền Vàng rực rỡ */
+      color: #1c1c1e;      /* Icon màu đen tương phản mạnh */
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-conte
+--------------------------------------------------
+Found position at line 551:
+.28);
+    }
+    .share-btn-float:active {
+      transform: scale(0.9);
+    }
+
+    .card-sel {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      width: 22px;
+      height: 22px;
+      z-index: 5;
+      accent-color: var(--gold);
+      cursor: pointer;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+    }
+
+    .share-count {
+      position: absolute;
+      top: -4px;
+     
+--------------------------------------------------
+Found position at line 563:
+: pointer;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+    }
+
+    .share-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 800;
+      border: 1.5px solid #1c1c1e;
+    }
+
+    .selall-btn-float {
+      position: fixed;
+      botto
+--------------------------------------------------
+Found position at line 576:
+px;
+      font-weight: 800;
+      border: 1.5px solid #1c1c1e;
+    }
+
+    .selall-btn-float {
+      position: fixed;
+      bottom: 85px;
+      right: 20px;
+      background: #1c1c1e;
+      color: rgba(255, 255, 255, 0.9);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(
+--------------------------------------------------
+Found position at line 624:
+   header {
+      background: var(--red);
+      padding: calc(var(--safe-top) + 14px) 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    header.hide {
+      transform: translateY(-100%);
+    }
+
+    .hdr-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-b
+--------------------------------------------------
+Found position at line 703:
+round: #fff;
+      color: var(--red);
+      border-color: #fff;
+    }
+
+    .fav-count-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    
+--------------------------------------------------
+Found position at line 723:
+;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .search-bar {
+      display: none;
+      position: relative;
+      margin-bottom: 8px;
+      animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-bar.open {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity:
+--------------------------------------------------
+Found position at line 776:
+5, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .search-bar .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+    }
+
+    .search-bar .search-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+     
+--------------------------------------------------
+Found position at line 787:
+ rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+    }
+
+    .search-bar .search-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      f
+--------------------------------------------------
+Found position at line 895:
+      box-shadow: 0 4px 15px rgba(255, 191, 36, 0.08) !important;
+    }
+    .pool-badge-tag {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: var(--gold);
+      color: #1c1c1e;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      z-index: 5;
+  
+--------------------------------------------------
+Found position at line 925:
+      transform: translateX(20px) !important;
+    }
+    .admin-toggle-switch .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    /* Hide menus/header/stats when Admin security loc
+--------------------------------------------------
+Found position at line 1083:
+ flex;
+      align-items: stretch;
+      width: 100%;
+      height: 160px;
+    }
+
+    .ibox {
+      position: relative;
+      width: 120px;
+      min-width: 120px;
+      height: auto;
+      overflow: hidden;
+      border-radius: 16px 0 0 16px;
+      background: #f0f0f2;
+    }
+
+    /* Hiệu ứng Shimmer - Chỉ hiện khi CHƯA có class .is-loaded */
+    .ibox:not(.is-loaded)::after {
+      content: "";
+ 
+--------------------------------------------------
+Found position at line 1095:
+hỉ hiện khi CHƯA có class .is-loaded */
+    .ibox:not(.is-loaded)::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      100% {
+        transform: translateX(100%);
+      }
+    
+--------------------------------------------------
+Found position at line 1122:
+ansition: opacity 0.4s ease;
+    }
+
+    .ibox img.loaded {
+      opacity: 1;
+    }
+
+    .lg {
+      position: absolute;
+      top: 7px;
+      left: 0;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px 3px 6px;
+      border-radius: 0 8px 8px 0
+    }
+
+    .lc {
+      position: absolute;
+      bottom: 7px;
+      left: 7px;
+      bac
+--------------------------------------------------
+Found position at line 1134:
+eight: 700;
+      padding: 3px 8px 3px 6px;
+      border-radius: 0 8px 8px 0
+    }
+
+    .lc {
+      position: absolute;
+      bottom: 7px;
+      left: 7px;
+      background: #1565c0;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px
+    }
+
+    .card-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justi
+--------------------------------------------------
+Found position at line 1159:
+adding: 8px 12px 6px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+
+    .mid-sub {
+      font-size: 10px;
+      color: var(--sub);
+      opacity: 0.7;
+    }
+
+    .id-large {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--sub);
+      word-break: break-all;
+      padding-right: 8px;
+    }
+
+    /* Nhãn đánh giá hàng */
+    
+--------------------------------------------------
+Found position at line 1188:
+;
+    }
+
+    .tag-loi {
+      background: #7f8c8d;
+      color: #fff;
+    }
+
+    .tag-badge {
+      position: absolute;
+      top: 10px;
+      right: 0;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      border-radius: 8px 0 0 8px;
+      z-index: 4;
+      box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .ititle {
+      font-size: 13.5px;
+      font-weight: 700;
+   
+--------------------------------------------------
+Found position at line 1289:
+    }
+
+    .bsee:active {
+      background: var(--red);
+      color: #fff
+    }
+
+    .heart {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.9);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: cent
+--------------------------------------------------
+Found position at line 1324:
+t: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 50px;
+      z-index: 85;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      animation: slideDown 0.2s both;
+    }
+    .active-col-bar button {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius:
+--------------------------------------------------
+Found position at line 1362:
+;
+    }
+    .remove-from-col-btn:hover {
+      color: var(--red);
+    }
+
+    .col-btn-float {
+      position: fixed;
+      bottom: 225px;
+      right: 20px;
+      background: #e0a800; /* Nền Vàng Gold thương hiệu */
+      color: #1c1c1e;      /* Icon màu đen tương phản mạnh */
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      jus
+--------------------------------------------------
+Found position at line 1391:
+ol-btn-float:active {
+      transform: scale(0.9);
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center
+    }
+
+    .overlay.open {
+      display: flex
+    }
+
+    .sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 540px;
+      max-height
+--------------------------------------------------
+Found position at line 1486:
+it-overflow-scrolling: touch;
+      flex: 1;
+      padding: 14px 14px 8px
+    }
+
+    .gwrap {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000;
+      margin-bottom: 12px;
+      touch-action: none; /* US-081 v2: JS kiểm soát 100%, chặn browser zoom trang */
+      aspect-ratio: 3 / 4;
+    }
+
+    .gtrack {
+      display: flex;
+      transition: trans
+--------------------------------------------------
+Found position at line 1516:
+00%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .gdots {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      pointer-events: none
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .55);
+      tran
+--------------------------------------------------
+Found position at line 1541:
+t.on {
+      background: #fff;
+      width: 16px;
+      border-radius: 3px
+    }
+
+    .garr {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, .35);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: c
+--------------------------------------------------
+Found position at line 1650:
+  background: var(--blue);
+      color: #fff
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      touch-action: none; /* US
+--------------------------------------------------
+Found position at line 1671:
+ }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lb-close {
+      position: absolute;
+      top: max(16px, env(safe-area-inset-top));
+      right: 16px;
+      color: #fff;
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.15);
+      bo
+--------------------------------------------------
+Found position at line 1804:
+th: 120px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-img-wrapper {
+      position: relative;
+      flex: 1;
+      border-radius: 16px 0 0 16px;
+      overflow: hidden;
+      background: #f0f0f2;
+    }
+
+    .admin-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+ 
+--------------------------------------------------
+Found position at line 1825:
+;
+    }
+
+    .admin-img-wrapper img.loaded {
+      opacity: 1;
+    }
+
+    .admin-status-tag {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--blue);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-align: center;
+      padding: 5px 4px;
+      z-index: 2;
+    }
+
+    .admin-card-right {
+      flex: 1;
+      padding: 12px
+--------------------------------------------------
+Found position at line 1844:
+4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      min-width: 0;
+    }
+
+    .admin-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1.35;
+      margin-bottom: 5px;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-o
+--------------------------------------------------
+Found position at line 1889:
+t-weight: 600;
+      border-bottom: 1px dotted #a4b0be;
+    }
+
+    .admin-card-right .heart {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: #bdc3c7;
+      cursor: pointer;
+      z-index: 5;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: ce
+--------------------------------------------------
+Found position at line 1978:
+l-snap-align: center;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .admin-carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .admin-carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+   
+--------------------------------------------------
+Found position at line 2012:
+er-radius: 2.5px;
+    }
+
+    /* Robust cross-device Image Editor Card */
+    .edit-img-card {
+      position: relative;
+      background: #000;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      overflow: hidden;
+      display: block; /* Change from flex to block to fix Safari flexbox aspect-ratio collapse */
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .edit-img-c
+--------------------------------------------------
+Found position at line 2035:
+en) {
+      border-color: rgba(39, 174, 96, 0.6) !important;
+    }
+
+    .edit-img-card-wrap {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-top: 75%; /* Bulletproof 4:3 aspect-ratio hack that works perfectly on iOS Safari & Chrome */
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .edit-img-card-wrap img {
+      position: absolute;
+      top: 0;
+      left: 0
+--------------------------------------------------
+Found position at line 2044:
+ Chrome */
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .edit-img-card-wrap img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .edit-img-card:hover .view-full-center-btn {
+      opacity: 1 !important;
+    }
+
+    .edit-img-actions-bar {
+      padding: 6px;
+      background: rgba(0,
+--------------------------------------------------
+Found position at line 2242:
+t-weight: 500;
+    }
+
+    .collapsible-box {
+      max-height: 160px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .collapsible-box::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+      pointer-events: none;
+      transition:
+--------------------------------------------------
+Found position at line 2247:
+ow: hidden;
+      position: relative;
+    }
+
+    .collapsible-box::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .collapsible-box.expanded {
+      max-height: none;
+    
+--------------------------------------------------
+Found position at line 2399:
+0, 0, 0.05);
+    }
+
+    /* Sticky Bottom Footer for Save Button */
+    .admin-sticky-footer {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 14px calc(10px + var(--safe-bot));
+      background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid var(--border);
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      margin: 12px -14px -8px;
+    }
+--------------------------------------------------
+Found position at line 2699:
+px 16px rgba(224, 168, 0, 0.3);
+    }
+
+    /* Speed Dial Container */
+    .admin-speed-dial {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    /* Main Action Button (Gear icon) */
+    .dial-main-btn {
+      width: 56px;
+      height: 56px;
+      b
+--------------------------------------------------
+Found position at line 2759:
+;
+    }
+    
+    /* Override individual buttons inside the speed dial */
+    .dial-btn-item {
+      position: relative !important;
+      bottom: auto !important;
+      right: auto !important;
+      left: auto !important;
+      top: auto !important;
+      margin: 0 !important;
+      width: 48px !important;
+      height: 48px !important;
+      border-radius: 50% !important;
+      display: flex !impo
+--------------------------------------------------
+Found position at line 2924:
+    .gwrap {
+        margin-bottom: 0;
+        aspect-ratio: 3/4;
+        max-height: 55vh;
+        position: sticky;
+        top: 0;
+      }
+
+      .gslide img {
+        height: 100%;
+      }
+
+      .ig {
+        margin-bottom: 0;
+      }
+
+      /* Cột phải chứa info: để tự nhiên, cuộn nếu dài */
+      .sbody>div:last-child:not(.admin-accordion) {
+        overflow-y: auto;
+        max-height: 70v
+--------------------------------------------------
+Found position at line 3115:
+nter;
+      }
+    }
+
+    /* ── Custom Multiselect Dropdown ── */
+    .multiselect-container {
+      position: relative;
+      width: 100%;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .multiselect-trigger {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #ffffff;
+      color: #2c2c2e;
+      border: 1.5px soli
+--------------------------------------------------
+Found position at line 3165:
+rrow {
+      transform: rotate(180deg);
+    }
+    .multiselect-options {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #ffffff;
+      border: 1.5px solid #e2ded6;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      z-index
+--------------------------------------------------
+Found position at line 3219:
+    box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+    .carousel-viewport-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 75%; /* 4:3 Aspect Ratio */
+      background: #0d0d0f;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .carousel-slides-track {
+--------------------------------------------------
+Found position at line 3229:
+0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .carousel-slides-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      transition: none;
+    }
+    .carousel-slides-track.has-transition {
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .carousel-slide-item {
+      width: 
+--------------------------------------------------
+Found position at line 3244:
+    }
+    .carousel-slide-item {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-slide-item img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: n
+--------------------------------------------------
+Found position at line 3259:
+ontain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 18px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      disp
+--------------------------------------------------
+Found position at line 3288:
+;
+    }
+    .carousel-nav-btn.next-btn {
+      right: 10px;
+    }
+    .carousel-slide-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 5;
+    }
+    .carousel-o
+--------------------------------------------------
+Found position at line 3301:
+ 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 5;
+    }
+    .carousel-order-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--green);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(39, 174, 96, 0.5);
+    }
+    .carousel-role-
+--------------------------------------------------
+Found position at line 3314:
+: 5;
+      box-shadow: 0 2px 8px rgba(39, 174, 96, 0.5);
+    }
+    .carousel-role-indicator {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+    
+--------------------------------------------------
+Found position at line 3330:
+: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .thumbnail-strip-wrapper {
+      position: relative;
+      margin-top: 10px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 6px;
+    }
+    .thumbnail-strip-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0;
+      -
+--------------------------------------------------
+Found position at line 3354:
+ background: rgba(255,191,36,0.3);
+      border-radius: 2px;
+    }
+    .thumbnail-item-card {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      overflow: hidden;
+      background: #000;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .thumbnail-item-card.active {
+      border-colo
+--------------------------------------------------
+Found position at line 3381:
+;
+    }
+    .thumbnail-item-card.active img {
+      opacity: 1;
+    }
+    .thumb-mini-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 9px;
+      padding: 1px 3px;
+      border-radius: 3px;
+      color: #fff;
+      font-weight: 800;
+      line-height: 1;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .thumb-mini-badge.facade-badge {
+      background: rg
+--------------------------------------------------
+Found position at line 3473:
+ body.filter-active {
+        overflow: hidden !important;
+        height: 100% !important;
+        position: fixed !important;
+        width: 100% !important;
+      }
+      body.filter-active .admin-speed-dial {
+        bottom: 120px !important;
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="tel"],
+      input[type="email"],
+      input[type="search"],
+      selec
+--------------------------------------------------
+Found position at line 3492:
+  .inline-input {
+        width: 65px !important;
+      }
+      body.filter-active header {
+        position: static !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .filter-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh !important;
+   
+--------------------------------------------------
+Found position at line 3497:
+nsform: none !important;
+        transition: none !important;
+      }
+      .filter-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh !important;
+        max-height: 100dvh !important;
+        background: #ffffff !important;
+        z-index: 1000;
+        margin: 0 !important;
+        pad
+--------------------------------------------------
+Found position at line 3534:
+ar(--red);
+        color: #ffffff;
+        padding: calc(var(--safe-top) + 12px) 16px 12px;
+        position: sticky;
+        top: 0;
+        z-index: 15;
+      }
+      .mobile-filter-back-btn {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        padding: 4px;
+        margin-right: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+--------------------------------------------------
+Found position at line 3621:
+n: 16px 0 !important;
+        padding: 0 !important;
+      }
+      .filter-footer-actions {
+        position: relative !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+        background: #ffffff !important;
+        border-top: 1px solid #e5e5ea !important;
+        padding: 12px 16px calc(env(safe-area-inset-bottom, 0px)
+--------------------------------------------------
+Found position at line 3701:
+
+          <span id="gLoginText" style="display:none"></span>
+        </button>
+        <div style="position: relative;">
+          <button class="hdr-icon-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="Yêu thích">♡</button>
+          <span class="fav-count-badge" id="favCount" style="display:none">0</span>
+        </div>
+        <button class="hdr-icon-btn" id="searchToggleBtn" onclick
+--------------------------------------------------
+Found position at line 3919:
+t-weight: 700; color: #57606f;">CĂN LÊN SÓNG</span>
+      <label class="admin-toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 22px; margin-bottom: 0;">
+        <input type="checkbox" id="onAirToggle" onchange="toggleShowOnAirOnly(this.checked)" style="opacity: 0; width: 0; height: 0;">
+        <span class="slider" style="position: absolute; cursor: pointer; to
+--------------------------------------------------
+Found position at line 3921:
+irOnly(this.checked)" style="opacity: 0; width: 0; height: 0;">
+        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 22px;"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="sn" id="sTong">-</div>
+      <div class="sl">Căn</di
+--------------------------------------------------
+Found position at line 3968:
+</div>
+  </div>
+
+  <div class="overlay" id="ov" onclick="bgC(event)">
+    <div class="sheet" style="position: relative;">
+      <div class="dh"></div>
+      <div class="shead">
+        <div class="stitle" id="mT"></div>
+        <div class="admin-header-actions" id="adminHeaderActions"></div>
+        <button class="xbtn" onclick="closeS()">✕</button>
+      </div>
+      <div class="admin-detail-floa
+--------------------------------------------------
+Found position at line 6848:
+oded = encodeURIComponent(s);
+          sl.innerHTML = `
+        <div onclick="openLb(${i})" style="position:absolute; inset:0; z-index:10; cursor:pointer;"></div>
+        <iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false" style="width:auto;height:100%;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block;border:none;overflow:hidden;" scrolling="no" fra
+--------------------------------------------------
+Found position at line 7008:
+-title" style="margin-bottom: 6px;">Bất động sản</div>
+                <div id="carouselNha" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ${(p.raw_sodo1 || p.raw_sodo2) ? `
+              <div>
+                <div class="admin-raw-title" st
+--------------------------------------------------
+Found position at line 7016:
+margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
+                <div id="carouselSo" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+
+            <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
+            <div 
+--------------------------------------------------
+Found position at line 7234:
+v>
+                <!-- PREVIEW CAROUSEL -->
+                <div id="carouselClientPreview" style="position: relative; margin-bottom: 12px;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+                <div class="admin-raw-grid" style="margin-bottom: 12px;">
+                  <div class="admin-raw-ce
+--------------------------------------------------
+Found position at line 7291:
+_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
+          <div id="carouselClientDetail" style="position: relative; margin-bottom: 12px;">
+            <div class="admin-scroll-carousel"></div>
+            <div class="admin-carousel-dots"></div>
+          </div>
+          <div class="admin-raw-grid" style="margin-bottom: 12px;">
+            <div class="admin-raw-cell">
+              <span class
+--------------------------------------------------
+Found position at line 7592:
+t ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('Đã copy link gửi khách!\n(' + count + ' căn)\n\nDán link này vào Zalo để gửi cho khách nhé.');
+
+--------------------------------------------------
+Found position at line 7677:
+t ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert(`Đã copy link cá nhân hoá cho khách: ${cName}!\n(Gồm ${count} căn)\n\nDán link này vào Zalo để g
+--------------------------------------------------
+Found position at line 7722:
+t ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        
+        alert(`Đã copy link Công Khai Nhanh thành công!\n(Gồm ${count} căn)\n\nKhách mở link này sẽ t
+--------------------------------------------------
+Found position at line 8345:
+const ta = document.createElement('textarea');
+      ta.value = shareUrl;
+      ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast("Đã sao chép link gửi nhanh!", "success");
+      } catch (err) {
+        showToast("Không thể tự động sao chép link!"
+--------------------------------------------------
+Found position at line 8501:
+t = 'margin-top:8px;background:rgba(255,255,255,0.07);border-radius:8px;overflow:hidden;height:28px;position:relative;display:flex;align-items:center;min-width:180px;max-width:280px;';
+        bar.innerHTML = '<div id="dl-progress-fill" style="height:100%;background:linear-gradient(90deg,#27ae60,#2ecc71);border-radius:8px;transition:width 0.25s ease;width:0%;"></div>' +
+          '<span id="dl-pro
+--------------------------------------------------
+Found position at line 8503:
+8px;transition:width 0.25s ease;width:0%;"></div>' +
+          '<span id="dl-progress-label" style="position:absolute;left:0;right:0;text-align:center;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);white-space:nowrap;"></span>';
+        if (btn && btn.parentNode) btn.parentNode.insertBefore(bar, btn.nextSibling);
+        else document.body.appendChild(bar);
+      }
+--------------------------------------------------
+Found position at line 10959:
+eateElement('div');
+        overlay.id = 'zoomOverlay';
+        overlay.style.cssText = `
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.95);
+          z-index: 100000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          poin
+--------------------------------------------------
+Found position at line 10971:
+ase;
+          pointer-events: none;
+        `;
+        overlay.innerHTML = `
+          <div style="position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; cursor: pointer; z-index: 100001;" onclick="closeZoomOverlay()">✕
+--------------------------------------------------
+Found position at line 11077:
+ment('div');
+        container.id = 'toastContainer';
+        container.style.cssText = `
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 200000;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          pointer-events: none;
+          width: 90%;
+          max-width: 320px;
+        `;
+  
+--------------------------------------------------

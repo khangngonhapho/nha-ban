@@ -1,0 +1,24 @@
+﻿Total listings: 5729
+Records with \n in Noi_dung_chinh: 0
+Percentage: 0.0%
+Records with \r in Noi_dung_chinh: 0
+Records with empty Noi_dung_chinh: 0
+
+=== 5 sample Noi_dung_chinh values (repr) ===
+  tk_id=fi1y4q-mjldv12d-bfe8e726 | Ma_Hang=TK-E8E726
+  repr: '67A N╞í Trang Long 77.7/112.8 5 5.5 26 27.5 tß╗╖ B├¼nh Lß╗úi Trung B├¼nh Thß║ính 25-50 tß╗╖ H─É Nguyß╗àn Thß╗ï Anh ─É├áo_─ÉC Thi├¬n Lam 0937316618 H3GB nguß╗ôn ─Éß╗æi t├íc'
+
+  tk_id=f11wg2-mlheid3v-9bd45312 | Ma_Hang=TK-D45312
+  repr: '339.36C L├¬ V─ân Sß╗╣ 46 4 4.6 10 12.8 tß╗╖ Nhi├¬u Lß╗Öc Quß║¡n 3 10-15 tß╗╖ H─É Trß║ºn Thanh Ch╞░╞íng ─Éß║íi Nam 0931938649 H3GB nguß╗ôn ─Éß║ºu chß╗º Trß║ºn Thanh Ch╞░╞íng - ─Éß║íi Nam'
+
+  tk_id=edxm07-mbkf2yty-f4e40e56 | Ma_Hang=TK-E40E56
+  repr: '546.1 ─Éiß╗çn Bi├¬n Phß╗º 38.7 4 4.1 7 8.5 tß╗╖ Ph╞░ß╗¥ng 11 Quß║¡n 10 5-10 tß╗╖ H─É Nguyß╗àn V─ân C╞░ß╗¥ng Bß║úo T├¡n 0869929639 H3GB nguß╗ôn ─Éß║ºu chß╗º Nguyß╗àn V─ân C╞░ß╗¥ng - Bß║úo T├¡n'
+
+  tk_id=enzshl-mggk09o6-6883e707 | Ma_Hang=TK-83E707
+  repr: '51.104.1 Cao Thß║»ng 29.6/32 5 3.2 10 8.5 tß╗╖ B├án Cß╗¥ Quß║¡n 3 5-10 tß╗╖ H─É L╞░╞íng Trß║ºn Tuyß║┐t Nhanh T├óy ─É├┤ 0886827513 H3GB nguß╗ôn ─Éß║ºu chß╗º L╞░╞íng Trß║ºn Tuyß║┐t Nhanh - T├óy ─É├┤'
+
+  tk_id=6hyj53-mlggscwy-93eef5a9 | Ma_Hang=TK-EEF5A9
+  repr: '457.24 C├ích mß║íng th├íng 8 44 2 3.7 12 7.5 tß╗╖ H├▓a H╞░ng Quß║¡n 10 5-10 tß╗╖ H─É Nguyß╗àn Trß║ºn Ngß╗ìc Linh T├óm ─Éß╗⌐c 0794413368 H3GB nguß╗ôn ─Éß║ºu chß╗º Nguyß╗àn Trß║ºn Ngß╗ìc Linh - T├óm ─Éß╗⌐c'
+
+=== Character analysis (first 20 chars of each) ===
+  No control characters found in first 20 records

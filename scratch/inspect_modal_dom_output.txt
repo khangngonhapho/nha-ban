@@ -1,0 +1,216 @@
+Line 3967: <div class="overlay" id="ov" onclick="bgC(event)">
+  3965:   </div>
+  3966: 
+  3967:   <div class="overlay" id="ov" onclick="bgC(event)">
+  3968:     <div class="sheet" style="position: relative;">
+  3969:       <div class="dh"></div>
+  3970:       <div class="shead">
+  3971:         <div class="stitle" id="mT"></div>
+  3972:         <div class="admin-header-actions" id="adminHeaderActions"></div>
+  3973:         <button class="xbtn" onclick="closeS()">✕</button>
+  3974:       </div>
+  3975:       <div class="admin-detail-float-actions" id="adminDetailFloatActions"></div>
+  3976:       <div id="mID"
+  3977:         style="padding: 0 20px 4px; font-size: 17px; color: var(--sub); font-weight: 800; text-align: right; word-break: break-all;">
+  3978:       </div>
+  3979:       <div class="sbody" id="sbody">
+  3980:         <div class="gwrap" id="gw">
+  3981:           <div class="gtrack" id="gt"></div>
+  3982:           <div class="gdots" id="gd"></div>
+  3983:           <button class="garr al" id="al" onclick="gm(-1)">‹</button>
+  3984:           <button class="garr ar" id="ar" onclick="gm(1)">›</button>
+  3985:         </div>
+  3986:         <div class="ig" id="mG"></div>
+==================================================
+Line 3968: <div class="sheet" style="position: relative;">
+  3966: 
+  3967:   <div class="overlay" id="ov" onclick="bgC(event)">
+  3968:     <div class="sheet" style="position: relative;">
+  3969:       <div class="dh"></div>
+  3970:       <div class="shead">
+  3971:         <div class="stitle" id="mT"></div>
+  3972:         <div class="admin-header-actions" id="adminHeaderActions"></div>
+  3973:         <button class="xbtn" onclick="closeS()">✕</button>
+  3974:       </div>
+  3975:       <div class="admin-detail-float-actions" id="adminDetailFloatActions"></div>
+  3976:       <div id="mID"
+  3977:         style="padding: 0 20px 4px; font-size: 17px; color: var(--sub); font-weight: 800; text-align: right; word-break: break-all;">
+  3978:       </div>
+  3979:       <div class="sbody" id="sbody">
+  3980:         <div class="gwrap" id="gw">
+  3981:           <div class="gtrack" id="gt"></div>
+  3982:           <div class="gdots" id="gd"></div>
+  3983:           <button class="garr al" id="al" onclick="gm(-1)">‹</button>
+  3984:           <button class="garr ar" id="ar" onclick="gm(1)">›</button>
+  3985:         </div>
+  3986:         <div class="ig" id="mG"></div>
+  3987:         <div class="desc" id="mD"></div>
+==================================================
+Line 3997: <div class="overlay" id="leadCaptureModal" style="display:none; z-index: 100000; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center;">
+  3995: 
+  3996:   <!-- Modal Bắt Buộc Nhập Thông Tin Khách Hàng (Lead Capture Form - US-059) -->
+  3997:   <div class="overlay" id="leadCaptureModal" style="display:none; z-index: 100000; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center;">
+  3998:     <div class="lead-capture-modal-content">
+  3999:       <!-- Header/Branding -->
+  4000:       <div style="text-align: center; margin-bottom: 24px;">
+  4001:         <div style="font-size: 40px; margin-bottom: 12px;">🏡</div>
+  4002:         <h3 style="margin: 0 0 8px 0; font-size: 20px; color: var(--text); font-weight: 800;">Giỏ Hàng Khang Ngô Nhà Phố</h3>
+  4003:         <p style="margin: 0; font-size: 13.5px; color: var(--sub); line-height: 1.5;">
+  4004:           Chào mừng anh/chị! Để mở khóa xem thông số chi tiết và hình ảnh đầy đủ của các căn nhà phố, vui lòng chia sẻ thông tin liên hệ nhanh bên dưới:
+  4005:         </p>
+  4006:       </div>
+  4007: 
+  4008:       <!-- Inputs -->
+  4009:       <div style="margin-bottom: 18px;">
+  4010:         <label style="font-size: 13px; color: var(--text); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Tên của anh/chị <span style="color: var(--red);">*</span></label>
+  4011:         <input type="text" id="leadCustName" class="lead-capture-input" placeholder="Tên để Khang tiện xưng hô...">
+  4012:       </div>
+  4013: 
+  4014:       <div style="margin-bottom: 24px;">
+  4015:         <label style="font-size: 13px; color: var(--text); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Số điện thoại liên hệ <span style="color: var(--red);">*</span></label>
+  4016:         <input type="tel" id="leadCustPhone" class="lead-capture-input" placeholder="Nhập số điện thoại của anh/chị...">
+==================================================
+Line 4031: <div class="overlay" id="linkModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4029: 
+  4030:   <!-- Modal Tạo Link Gửi Khách -->
+  4031:   <div class="overlay" id="linkModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4032:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4033:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">🔗 Tạo Link Gửi Khách</h3>
+  4034:       <p style="font-size:14px; color:var(--sub); text-align:center; margin-bottom:20px;">Bạn đang tạo link cho <b
+  4035:           id="linkModalCount" style="color:var(--gold)">0</b> căn nhà.</p>
+  4036: 
+  4037:       <div style="margin-bottom: 16px;">
+  4038:         <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tên khách
+  4039:           hàng <span style="color:var(--red)">*</span></label>
+  4040:         <input type="text" id="linkCustName"
+  4041:           style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+  4042:           placeholder="VD: Anh Hùng Quận 3">
+  4043:         <div style="font-size:12px; color:#888; margin-top:4px;">* Tên này sẽ hiển thị ở dòng chào mừng trên web.</div>
+  4044:       </div>
+  4045: 
+  4046:       <div style="margin-bottom: 16px;">
+  4047:         <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tiêu đề trang (hiển thị trên tab trình duyệt của khách)</label>
+  4048:         <input type="text" id="linkCustTitle"
+  4049:           style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+  4050:           placeholder="Mặc định: Giỏ hàng độc quyền - Khang Ngô Nhà Phố">
+==================================================
+Line 4032: <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4030:   <!-- Modal Tạo Link Gửi Khách -->
+  4031:   <div class="overlay" id="linkModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4032:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4033:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">🔗 Tạo Link Gửi Khách</h3>
+  4034:       <p style="font-size:14px; color:var(--sub); text-align:center; margin-bottom:20px;">Bạn đang tạo link cho <b
+  4035:           id="linkModalCount" style="color:var(--gold)">0</b> căn nhà.</p>
+  4036: 
+  4037:       <div style="margin-bottom: 16px;">
+  4038:         <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tên khách
+  4039:           hàng <span style="color:var(--red)">*</span></label>
+  4040:         <input type="text" id="linkCustName"
+  4041:           style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+  4042:           placeholder="VD: Anh Hùng Quận 3">
+  4043:         <div style="font-size:12px; color:#888; margin-top:4px;">* Tên này sẽ hiển thị ở dòng chào mừng trên web.</div>
+  4044:       </div>
+  4045: 
+  4046:       <div style="margin-bottom: 16px;">
+  4047:         <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tiêu đề trang (hiển thị trên tab trình duyệt của khách)</label>
+  4048:         <input type="text" id="linkCustTitle"
+  4049:           style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+  4050:           placeholder="Mặc định: Giỏ hàng độc quyền - Khang Ngô Nhà Phố">
+  4051:         <div style="font-size:12px; color:#888; margin-top:4px;">* Nếu để trống, trang web sẽ sử dụng tên mặc định.</div>
+==================================================
+Line 4078: <div class="overlay" id="colViewModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4076: 
+  4077:   <!-- Modal Xem Bộ sưu tập (Admin) -->
+  4078:   <div class="overlay" id="colViewModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4079:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4080:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📂 Xem Bộ Sưu Tập</h3>
+  4081:       <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Vui lòng chọn bộ sưu tập để xem rổ hàng:</p>
+  4082:       
+  4083:       <div id="colViewList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;"></div>
+  4084:       
+  4085:       <div>
+  4086:         <button onclick="document.getElementById('colViewModal').classList.remove('open')" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
+  4087:       </div>
+  4088:     </div>
+  4089:   </div>
+  4090: 
+  4091:   <!-- Modal Lưu các căn đã chọn vào BST (Admin) -->
+  4092:   <div class="overlay" id="colSaveModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4093:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4094:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📁 Lưu vào Bộ Sưu Tập</h3>
+  4095:       <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Lưu <b id="colSaveModalCount" style="color:var(--blue)">0</b> căn đang chọn vào:</p>
+  4096:       
+  4097:       <div style="margin-bottom: 20px;">
+==================================================
+Line 4079: <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4077:   <!-- Modal Xem Bộ sưu tập (Admin) -->
+  4078:   <div class="overlay" id="colViewModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4079:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4080:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📂 Xem Bộ Sưu Tập</h3>
+  4081:       <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Vui lòng chọn bộ sưu tập để xem rổ hàng:</p>
+  4082:       
+  4083:       <div id="colViewList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;"></div>
+  4084:       
+  4085:       <div>
+  4086:         <button onclick="document.getElementById('colViewModal').classList.remove('open')" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
+  4087:       </div>
+  4088:     </div>
+  4089:   </div>
+  4090: 
+  4091:   <!-- Modal Lưu các căn đã chọn vào BST (Admin) -->
+  4092:   <div class="overlay" id="colSaveModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4093:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4094:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📁 Lưu vào Bộ Sưu Tập</h3>
+  4095:       <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Lưu <b id="colSaveModalCount" style="color:var(--blue)">0</b> căn đang chọn vào:</p>
+  4096:       
+  4097:       <div style="margin-bottom: 20px;">
+  4098:         <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tạo Bộ sưu tập mới:</label>
+==================================================
+Line 4092: <div class="overlay" id="colSaveModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4090: 
+  4091:   <!-- Modal Lưu các căn đã chọn vào BST (Admin) -->
+  4092:   <div class="overlay" id="colSaveModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4093:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4094:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📁 Lưu vào Bộ Sưu Tập</h3>
+  4095:       <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Lưu <b id="colSaveModalCount" style="color:var(--blue)">0</b> căn đang chọn vào:</p>
+  4096:       
+  4097:       <div style="margin-bottom: 20px;">
+  4098:         <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tạo Bộ sưu tập mới:</label>
+  4099:         <div style="display: flex; gap: 8px;">
+  4100:           <input type="text" id="newColName" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; outline:none; font-family: inherit;" placeholder="VD: Khách Hùng Quận 3">
+  4101:           <button onclick="createNewCollection()" style="padding: 10px 16px; border-radius: 8px; border: none; background: #2980b9; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; white-space: nowrap;">Tạo</button>
+  4102:         </div>
+  4103:       </div>
+  4104:       
+  4105:       <div style="margin-bottom: 20px;">
+  4106:         <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:8px;">Hoặc lưu vào BST hiện có:</label>
+  4107:         <div id="colSaveList" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto;"></div>
+  4108:       </div>
+  4109:       
+  4110:       <div>
+  4111:         <button onclick="document.getElementById('colSaveModal').classList.remove('open')" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
+==================================================
+Line 4093: <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4091:   <!-- Modal Lưu các căn đã chọn vào BST (Admin) -->
+  4092:   <div class="overlay" id="colSaveModal" onclick="if(event.target===this) this.classList.remove('open')">
+  4093:     <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+  4094:       <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📁 Lưu vào Bộ Sưu Tập</h3>
+  4095:       <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Lưu <b id="colSaveModalCount" style="color:var(--blue)">0</b> căn đang chọn vào:</p>
+  4096:       
+  4097:       <div style="margin-bottom: 20px;">
+  4098:         <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tạo Bộ sưu tập mới:</label>
+  4099:         <div style="display: flex; gap: 8px;">
+  4100:           <input type="text" id="newColName" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; outline:none; font-family: inherit;" placeholder="VD: Khách Hùng Quận 3">
+  4101:           <button onclick="createNewCollection()" style="padding: 10px 16px; border-radius: 8px; border: none; background: #2980b9; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; white-space: nowrap;">Tạo</button>
+  4102:         </div>
+  4103:       </div>
+  4104:       
+  4105:       <div style="margin-bottom: 20px;">
+  4106:         <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:8px;">Hoặc lưu vào BST hiện có:</label>
+  4107:         <div id="colSaveList" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto;"></div>
+  4108:       </div>
+  4109:       
+  4110:       <div>
+  4111:         <button onclick="document.getElementById('colSaveModal').classList.remove('open')" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
+  4112:       </div>
+==================================================

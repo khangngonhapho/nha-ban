@@ -1,0 +1,8 @@
+--- Querying tk_id = '270.93.16' ---
+--- Querying tk_id LIKE '%270.93.16%' ---
+--- Querying Ma_Hang = '270.93.16' ---
+--- Querying Ma_Hang LIKE '%270.93.16%' ---
+--- Querying Ma_Khang_Ngo_ID = '270.93.16' ---
+--- Querying Ma_Khang_Ngo_ID LIKE '%270.93.16%' ---
+--- Querying System_ID = '270.93.16' ---
+--- Querying System_ID LIKE '%270.93.16%' ---

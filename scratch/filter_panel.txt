@@ -1,0 +1,62 @@
+Found 'quận / tp' (case-insensitive) at position 89773
+tle">Tìm kiếm</span>
+      </div>
+
+      <div class="filter-scroll-content">
+
+      <!-- TIÊU CHÍ BĐS Checklist (US-076.3) -->
+      <div class="criteria-section">
+        <div class="criteria-title">TIÊU CHÍ BĐS *</div>
+        <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
+        <div class="criteria-grid"></div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-section-lbl" id="districtLbl" style="margin-top:4px;">Quận / TP</div>
+      <div class="multiselect-container" id="districtMulti">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('districtMulti')">
+          <span class="multiselect-placeholder" id="districtPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="districtOptions"></div>
+      </div>
+
+      <div class="filter-section-lbl" id="wardLbl" style="display:none">Phường</div>
+      <div class="multiselect-container" id="wardMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('wardMulti')">
+          <span class="multiselect-placeholder" id="wardPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="wardOptions"></div>
+      </div>
+
+      <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
+      <div class="multiselect-container" id="duongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('duongMulti')">
+          <span class="multiselect-placeholder" id="duongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></po
+
+--- POTENTIAL FILTER CONTAINERS ---
+Found filter match: id="favFilterBtn" at 87094
+Found filter match: id="filterBtn" at 87668
+Found filter match: id="filterBar" at 88586
+Found filter match: id="filterSummary" at 88658
+Found filter match: id="filterPanel" at 88874
+Found filter match: id="filterGiaMin" at 93556
+Found filter match: id="filterGiaMax" at 93722
+Found filter match: id="filterDtThucTeMin" at 94152
+Found filter match: id="filterDtThucTeMax" at 94312
+Found filter match: id="filterDtTrenSoMin" at 94742
+Found filter match: id="filterDtTrenSoMax" at 94902
+Found filter match: id="filterNgangMin" at 95338
+Found filter match: id="filterNgangMax" at 95506
+Found filter match: id="filterHemMin" at 95930
+Found filter match: id="filterHemMax" at 96096
+Found filter match: id="filterPhongMin" at 96515
+Found filter match: id="filterPhongMax" at 96672

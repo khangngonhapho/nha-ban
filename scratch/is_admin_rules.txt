@@ -1,0 +1,265 @@
+Found .is-admin rule at line 43:
+-05-05: Cache Busting Fix */
+    .tabs,
+    .stats {
+      display: none !important;
+    }
+
+    body.is-admin .tabs,
+    body.is-admin .stats {
+      display: flex !important;
+    }
+
+    /* Ward multiselect: ẩn mặc định, JS tự bật khi có dữ liệu */
+    #wardMulti {
+      display: none !important;
+    }
+
+    body.is-admin #wardMulti.has-wards {
+      display: block !important;
+    }
+
+    #duongMult
+--------------------------------------------------
+Found .is-admin rule at line 44:
+ */
+    .tabs,
+    .stats {
+      display: none !important;
+    }
+
+    body.is-admin .tabs,
+    body.is-admin .stats {
+      display: flex !important;
+    }
+
+    /* Ward multiselect: ẩn mặc định, JS tự bật khi có dữ liệu */
+    #wardMulti {
+      display: none !important;
+    }
+
+    body.is-admin #wardMulti.has-wards {
+      display: block !important;
+    }
+
+    #duongMulti {
+      display: none !
+--------------------------------------------------
+Found .is-admin rule at line 53:
+c định, JS tự bật khi có dữ liệu */
+    #wardMulti {
+      display: none !important;
+    }
+
+    body.is-admin #wardMulti.has-wards {
+      display: block !important;
+    }
+
+    #duongMulti {
+      display: none !important;
+    }
+
+    body.is-admin #duongMulti.has-duong {
+      display: block !important;
+    }
+
+    #huongMulti {
+      display: none !important;
+    }
+
+    body.is-admin #huongMulti.h
+--------------------------------------------------
+Found .is-admin rule at line 61:
+ display: block !important;
+    }
+
+    #duongMulti {
+      display: none !important;
+    }
+
+    body.is-admin #duongMulti.has-duong {
+      display: block !important;
+    }
+
+    #huongMulti {
+      display: none !important;
+    }
+
+    body.is-admin #huongMulti.has-huong {
+      display: block !important;
+    }
+
+    body:not(.is-admin) header {
+      padding-bottom: 0;
+    }
+
+    .admin-only {
+    
+--------------------------------------------------
+Found .is-admin rule at line 69:
+ display: block !important;
+    }
+
+    #huongMulti {
+      display: none !important;
+    }
+
+    body.is-admin #huongMulti.has-huong {
+      display: block !important;
+    }
+
+    body:not(.is-admin) header {
+      padding-bottom: 0;
+    }
+
+    .admin-only {
+      display: none;
+    }
+
+    body.is-admin .admin-only {
+      display: block;
+    }
+
+    body.is-admin #gLoginBtn {
+      display: inline-f
+--------------------------------------------------
+Found .is-admin rule at line 73:
+  }
+
+    body.is-admin #huongMulti.has-huong {
+      display: block !important;
+    }
+
+    body:not(.is-admin) header {
+      padding-bottom: 0;
+    }
+
+    .admin-only {
+      display: none;
+    }
+
+    body.is-admin .admin-only {
+      display: block;
+    }
+
+    body.is-admin #gLoginBtn {
+      display: inline-flex !important;
+    }
+
+    body.is-admin #modeSwitcherContainer {
+      display: flex !
+--------------------------------------------------
+Found .is-admin rule at line 81:
+min) header {
+      padding-bottom: 0;
+    }
+
+    .admin-only {
+      display: none;
+    }
+
+    body.is-admin .admin-only {
+      display: block;
+    }
+
+    body.is-admin #gLoginBtn {
+      display: inline-flex !important;
+    }
+
+    body.is-admin #modeSwitcherContainer {
+      display: flex !important;
+    }
+
+    /* ── Filter toggle bar ── */
+    .filter-bar {
+      display: none;
+      align-ite
+--------------------------------------------------
+Found .is-admin rule at line 85:
+ {
+      display: none;
+    }
+
+    body.is-admin .admin-only {
+      display: block;
+    }
+
+    body.is-admin #gLoginBtn {
+      display: inline-flex !important;
+    }
+
+    body.is-admin #modeSwitcherContainer {
+      display: flex !important;
+    }
+
+    /* ── Filter toggle bar ── */
+    .filter-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 0 0 10px;
+    }
+
+ 
+--------------------------------------------------
+Found .is-admin rule at line 89:
+ block;
+    }
+
+    body.is-admin #gLoginBtn {
+      display: inline-flex !important;
+    }
+
+    body.is-admin #modeSwitcherContainer {
+      display: flex !important;
+    }
+
+    /* ── Filter toggle bar ── */
+    .filter-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 0 0 10px;
+    }
+
+    .filter-btn {
+      background: rgba(255, 255, 255, .18);
+      color: rgb
+--------------------------------------------------
+Found .is-admin rule at line 177:
+.active {
+      background: #fff;
+      color: var(--red);
+      border-color: #fff;
+    }
+
+    body.is-admin .sort-icon-btn.admin-only {
+      display: flex;
+    }
+
+    /* ── Collapsible filter panel ── */
+    .filter-panel {
+      display: block;
+      background: #f9f8f6; /* Nền kem ngọc trai nhạt siêu sang */
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+ 
+--------------------------------------------------
+Found .is-admin rule at line 1781:
+                  */
+    /* ============================================================ */
+    body.is-admin .card {
+      padding: 0;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
+    }
+
+    .admin-card-inner {
+      display: flex;
+      width: 100%;
+      min-height: 155px;
+    
+--------------------------------------------------

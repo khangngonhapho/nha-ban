@@ -1,0 +1,16 @@
+
+Keyword: Hiếm (Found 1)
+  Parent: <p class=['text-grayscale-900', 'text-sm', 'whitespace-break-spaces', 'wrap-anywhere', 'max-w-full'] id=None> text='🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥\n\n💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh nhau thoải mái, dân trí cao, an ninh, vị trí cực kỳ khan hiếm nhà bán.\n\n🏡 Diện tích đẹp: 108m² (5.2m x 21m)\n🏢 Kết cấu: 4 tầng kiên cố\n🛏️ 8 phòng ngủ – 8 WC\n📚 Phù hợp ở kết hợp cho thuê căn hộ dịch vụ, văn phòng công ty hoặc khai thác dòng tiền ổn định.\n\n📍 Vị trí đắc địa ngay khu Cư Xá Ngân Hàng – Phạm Văn Hai:\n✔ Kết nối nhanh sân bay Tân Sơn Nhất\n✔ Thuận tiện Quận 1, Quận 3, Phú Nhuận\n✔ Xung quanh đầy đủ tiện ích cao cấp\n\n⭐ Khu vực cực hiếm sản phẩm tương tự xuất hiện trên thị trường.\n⭐ Nhà diện tích lớn, ngang 5m bề thế, giá trị giữ tài sản và tăng trưởng rất tốt.\n\n💰 Giá bán: 24 tỷ thương lượng chính chủ'
+    Grandparent: <div class=['flex', 'flex-col', 'gap-2', 'max-h-[400px]']> text='Mô tả🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥\n\n💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh
+      Great-grandparent: <div class=['flex', 'flex-col', 'gap-2']>
+
+Keyword: Giấy phép xây dựng (Found 0)
+
+Keyword: Phòng cháy cháy nổ (Found 0)
+
+Keyword: Chính chủ (Found 1)
+  Parent: <p class=['text-grayscale-900', 'text-sm', 'whitespace-break-spaces', 'wrap-anywhere', 'max-w-full'] id=None> text='🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥\n\n💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh nhau thoải mái, dân trí cao, an ninh, vị trí cực kỳ khan hiếm nhà bán.\n\n🏡 Diện tích đẹp: 108m² (5.2m x 21m)\n🏢 Kết cấu: 4 tầng kiên cố\n🛏️ 8 phòng ngủ – 8 WC\n📚 Phù hợp ở kết hợp cho thuê căn hộ dịch vụ, văn phòng công ty hoặc khai thác dòng tiền ổn định.\n\n📍 Vị trí đắc địa ngay khu Cư Xá Ngân Hàng – Phạm Văn Hai:\n✔ Kết nối nhanh sân bay Tân Sơn Nhất\n✔ Thuận tiện Quận 1, Quận 3, Phú Nhuận\n✔ Xung quanh đầy đủ tiện ích cao cấp\n\n⭐ Khu vực cực hiếm sản phẩm tương tự xuất hiện trên thị trường.\n⭐ Nhà diện tích lớn, ngang 5m bề thế, giá trị giữ tài sản và tăng trưởng rất tốt.\n\n💰 Giá bán: 24 tỷ thương lượng chính chủ'
+    Grandparent: <div class=['flex', 'flex-col', 'gap-2', 'max-h-[400px]']> text='Mô tả🔥 HÀNG HIẾM CƯ XÁ NGÂN HÀNG – PHẠM VĂN HAI, TÂN BÌNH 🔥\n\n💎 Khu VIP bậc nhất, hẻm 2 ô tô tránh
+      Great-grandparent: <div class=['flex', 'flex-col', 'gap-2']>
+
+Keyword: Gần bệnh viện (Found 0)

@@ -1,0 +1,390 @@
+Match for '\.style\.display\s*=' at line 4223:
+me}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;         banner.style.display = 'block';       }     }      if (isAdmin) {       document.body.classList.add('is-admin');       const s
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 4583:
+.getElementById('searchClear');       if (sInput && clearBtn) {         clearBtn.style.display = sInput.value.trim() ? 'flex' : 'none';       }     }     function clearSearchInput() {       const sInp
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5119:
+ocument.querySelector('.criteria-section');       if (section) {         section.style.display = matchedCriteria.length > 0 ? 'block' : 'none';       }       const divider = document.querySelector('.f
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5123:
+document.querySelector('.filter-divider');       if (divider) {         divider.style.display = matchedCriteria.length > 0 ? 'block' : 'none';       }     }      // Tự động ẩn hiện các bộ lọc giá/đán
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5145:
+tnGt20 = giaTabs.querySelector('[data-val="gt20"]');          if (btnLt7) btnLt7.style.display = hasLt7 ? '' : 'none';         if (btn7_10) btn7_10.style.display = has7to10 ? '' : 'none';         if (
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5146:
+tnLt7) btnLt7.style.display = hasLt7 ? '' : 'none';         if (btn7_10) btn7_10.style.display = has7to10 ? '' : 'none';         if (btn10_15) btn10_15.style.display = has10to15 ? '' : 'none';
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5147:
+) btn7_10.style.display = has7to10 ? '' : 'none';         if (btn10_15) btn10_15.style.display = has10to15 ? '' : 'none';         if (btn15_20) btn15_20.style.display = has15to20 ? '' : 'none';
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5148:
+btn10_15.style.display = has10to15 ? '' : 'none';         if (btn15_20) btn15_20.style.display = has15to20 ? '' : 'none';         if (btnGt20) btnGt20.style.display = hasGt20 ? '' : 'none';          c
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5149:
+) btn15_20.style.display = has15to20 ? '' : 'none';         if (btnGt20) btnGt20.style.display = hasGt20 ? '' : 'none';          const hasAnyPriceOption = hasLt7 || has7to10 || has10to15 || has15to20
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5152:
+Lt7 || has7to10 || has10to15 || has15to20 || hasGt20;         if (giaLbl) giaLbl.style.display = hasAnyPriceOption ? '' : 'none';         giaTabs.style.display = hasAnyPriceOption ? 'flex' : 'none';
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5153:
+(giaLbl) giaLbl.style.display = hasAnyPriceOption ? '' : 'none';         giaTabs.style.display = hasAnyPriceOption ? 'flex' : 'none';       }        // 2. Danh gia tabs       const hasNgon = data.some
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5166:
+anhGiaTabs.querySelector('[data-val="Hàng Lỗi"]');          if (btnNgon) btnNgon.style.display = hasNgon ? '' : 'none';         if (btnLoi) btnLoi.style.display = hasLoi ? '' : 'none';          const
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5167:
+nNgon) btnNgon.style.display = hasNgon ? '' : 'none';         if (btnLoi) btnLoi.style.display = hasLoi ? '' : 'none';          const hasAnyRatingOption = hasNgon || hasLoi;         if (danhGiaLbl) da
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5170:
+const hasAnyRatingOption = hasNgon || hasLoi;         if (danhGiaLbl) danhGiaLbl.style.display = hasAnyRatingOption ? '' : 'none';         danhGiaTabs.style.display = hasAnyRatingOption ? 'flex' : 'no
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5171:
+danhGiaLbl.style.display = hasAnyRatingOption ? '' : 'none';         danhGiaTabs.style.display = hasAnyRatingOption ? 'flex' : 'none';       }     }      // Lấy giá trị ô từ Google Sheets JSON (xử lý
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5653:
+/b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;             banner.style.display = 'block';           }         } else {           // Hiện modal đăng ký thông tin           const leadMod
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5659:
+lementById('leadCaptureModal');           if (leadModal) {             leadModal.style.display = 'flex';             leadModal.classList.add('open');             // Nếu URL có sẵn tên thì pre-fill
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5982:
+|| !box) return;        if (districtsInPool.length === 0) {         if (lbl) lbl.style.display = 'none';         box.style.display = 'none';       } else {         if (lbl) lbl.style.display = '';
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5983:
+sInPool.length === 0) {         if (lbl) lbl.style.display = 'none';         box.style.display = 'none';       } else {         if (lbl) lbl.style.display = '';         box.style.display = 'block';
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5985:
+'none';         box.style.display = 'none';       } else {         if (lbl) lbl.style.display = '';         box.style.display = 'block';                  container.innerHTML = districtsInPool.map(d =
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 5986:
+ay = 'none';       } else {         if (lbl) lbl.style.display = '';         box.style.display = 'block';                  container.innerHTML = districtsInPool.map(d => {           const name = dName
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6099:
+if (!wards.length) {          box.classList.remove('has-wards');          box.style.display = 'none';         if (wl) wl.style.display = 'none';          return;        }       if (wl) wl.style.dis
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6100:
+ist.remove('has-wards');          box.style.display = 'none';         if (wl) wl.style.display = 'none';          return;        }       if (wl) wl.style.display = 'block';       box.classList.add('ha
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6103:
+if (wl) wl.style.display = 'none';          return;        }       if (wl) wl.style.display = 'block';       box.classList.add('has-wards');       box.style.display = '';        container.innerHTML
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6105:
+(wl) wl.style.display = 'block';       box.classList.add('has-wards');       box.style.display = '';        container.innerHTML = wards.map(w => {         const checked = selWards.has(w) ? 'checked' :
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6133:
+if (!duongs.length) {          box.classList.remove('has-duong');          box.style.display = 'none';         if (dl) dl.style.display = 'none';          return;        }       if (dl) dl.style.dis
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6134:
+ist.remove('has-duong');          box.style.display = 'none';         if (dl) dl.style.display = 'none';          return;        }       if (dl) dl.style.display = 'block';       box.classList.add('ha
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6137:
+if (dl) dl.style.display = 'none';          return;        }       if (dl) dl.style.display = 'block';       box.classList.add('has-duong');       box.style.display = '';        container.innerHTML
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6139:
+(dl) dl.style.display = 'block';       box.classList.add('has-duong');       box.style.display = '';        container.innerHTML = duongs.map(d => {         const checked = selDuongs.has(d) ? 'checked'
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6167:
+if (!huongs.length) {          box.classList.remove('has-huong');          box.style.display = 'none';         if (hl) hl.style.display = 'none';          return;        }       if (hl) hl.style.dis
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6168:
+ist.remove('has-huong');          box.style.display = 'none';         if (hl) hl.style.display = 'none';          return;        }       if (hl) hl.style.display = 'block';       box.classList.add('ha
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6171:
+if (hl) hl.style.display = 'none';          return;        }       if (hl) hl.style.display = 'block';       box.classList.add('has-huong');       box.style.display = '';        container.innerHTML
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6173:
+(hl) hl.style.display = 'block';       box.classList.add('has-huong');       box.style.display = '';        container.innerHTML = huongs.map(h => {         const checked = selHuong.has(h) ? 'checked'
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6217:
+le('active', anyActive || filterOpen);       document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';        // Hiển thị dòng thứ 2 (bộ lọc hiện tại) chỉ khi có filter h
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6222:
+const bar = document.getElementById('filterBar');       if (bar) {         bar.style.display = (isAdmin && anyActive) ? 'flex' : 'none';       }        saveState();     }      function resetFilters(
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6316:
+if (favs.size > 0) {         badge.textContent = favs.size;         badge.style.display = 'flex';       } else {         badge.style.display = 'none';       }     }      function toggleFavFilte
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6318:
+= favs.size;         badge.style.display = 'flex';       } else {         badge.style.display = 'none';       }     }      function toggleFavFilter() {       if (!isAdmin) {         showFavOnly = !sh
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6841:
+= ''; gd.innerHTML = '';       if (!imgs.length) { document.getElementById('gw').style.display = 'none'; return; }       document.getElementById('gw').style.display = '';       imgs.forEach((s, i) =>
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6842:
+ById('gw').style.display = 'none'; return; }       document.getElementById('gw').style.display = '';       imgs.forEach((s, i) => {         const sl = document.createElement('div'); sl.className = 'gs
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6911:
+gI));       ua();     }     function ua() {       document.getElementById('al').style.display = gI === 0 ? 'none' : 'flex';       document.getElementById('ar').style.display = gI === gN - 1 ? 'none'
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6912:
+.style.display = gI === 0 ? 'none' : 'flex';       document.getElementById('ar').style.display = gI === gN - 1 ? 'none' : 'flex';     }      function openS(id, tempP = null, autoExpandPreview = false)
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6967:
+if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {         if (mID) mID.style.display = 'none';         if (floatActions) {           floatActions.style.display = 'none';           floatActio
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6969:
+) mID.style.display = 'none';         if (floatActions) {           floatActions.style.display = 'none';           floatActions.innerHTML = ''; // Keep empty to avoid duplicate IDs         }         /
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6976:
+erSpeedDialActions('detail', p);       } else {         if (mID) {           mID.style.display = 'block';           mID.textContent = `#${p.id}`;         }         if (floatActions) {           floatA
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6980:
+ntent = `#${p.id}`;         }         if (floatActions) {           floatActions.style.display = 'none';           floatActions.innerHTML = '';         }       }              const sbody = document.ge
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 6989:
+(isAdmin && (p.original_row_data || p.isFromPoolOnly)) {         if (scta) scta.style.display = 'none';                  sbody.innerHTML = `           <!-- QUICK LINK COPY BAR (US-049) -->
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7278:
+</div>           </div>         `;       } else {         if (scta) scta.style.display = 'none';                  const cleanImgs = (p.imgs || []).filter(url => {           return (!window.isL
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7426:
+if (isFilled) {                 if (accPreview) {                   accPreview.style.display = 'block';                   accPreview.classList.add('expanded');                   const content = accP
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7429:
+view.querySelector('.accordion-content');                   if (content) content.style.display = 'block';                   const arrow = accPreview.querySelector('.arrow');                   if (arro
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7433:
+tContent = '▼';                 }                 if (floatActions) floatActions.style.display = 'flex';                 if (savePoolBtn) savePoolBtn.style.display = 'flex';                  if (poolS
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7434:
+loatActions.style.display = 'flex';                 if (savePoolBtn) savePoolBtn.style.display = 'flex';                  if (poolSaveNotice) {                   poolSaveNotice.style.color = '#27ae60'
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7448:
+ent = moTaVal;               } else {                 if (accPreview) accPreview.style.display = 'none';                 if (floatActions) floatActions.style.display = 'none';                 if (save
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7449:
+ccPreview.style.display = 'none';                 if (floatActions) floatActions.style.display = 'none';                 if (savePoolBtn) savePoolBtn.style.display = 'none';                  if (poolS
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7450:
+loatActions.style.display = 'none';                 if (savePoolBtn) savePoolBtn.style.display = 'none';                  if (poolSaveNotice) {                   poolSaveNotice.style.color = '#e74c3c'
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7460:
+}               }             } else {               if (accPreview) accPreview.style.display = 'block';               if (floatActions) floatActions.style.display = 'flex';               const saveS
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7461:
+accPreview.style.display = 'block';               if (floatActions) floatActions.style.display = 'flex';               const saveSourceBtn = document.getElementById('saveSourceBtn');               if
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7463:
+.getElementById('saveSourceBtn');               if (saveSourceBtn) saveSourceBtn.style.display = 'flex';                              const previewTitle = accPreview.querySelector('.accordion-content
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7486:
+cPreview.querySelector('.accordion-content');               if (content) content.style.display = 'block';               const arrow = accPreview.querySelector('.arrow');               if (arrow) arrow
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 7498:
+ccSource.querySelector('.accordion-content');               if (content) content.style.display = 'none';               const arrow = accSource.querySelector('.arrow');               if (arrow) arrow.t
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9469:
+ages.indexOf(normUrl);             if (orderIdx !== -1) {               orderInd.style.display = 'block';               orderInd.innerHTML = `#${orderIdx + 1}`;               orderInd.className = 'car
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9473:
+ousel-order-indicator public-order';             } else {               orderInd.style.display = 'none';             }           } else {             orderInd.style.display = 'none';           }
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9476:
+nd.style.display = 'none';             }           } else {             orderInd.style.display = 'none';           }         }                  if (roleInd) {           if (isFacade) {             rol
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9482:
+}                  if (roleInd) {           if (isFacade) {             roleInd.style.display = 'block';             roleInd.innerHTML = '🔒 Mặt Tiền';             roleInd.className = 'carousel-role-i
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9486:
+-indicator role-facade';           } else if (sodoNum > 0) {             roleInd.style.display = 'block';             roleInd.innerHTML = `📜 Sổ ${sodoNum}`;             roleInd.className = 'carousel-r
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9490:
+l-role-indicator role-sodo';           } else if (isCover) {             roleInd.style.display = 'block';             roleInd.innerHTML = '⭐ Ảnh Nền';             roleInd.className = 'carousel-role-in
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9494:
+e = 'carousel-role-indicator role-cover';           } else {             roleInd.style.display = 'none';           }         }                  const thumbCard = document.getElementById(`thumbCard-${i
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9517:
+if (miniBadge) {           if (isFacade) {             miniBadge.style.display = 'flex';             miniBadge.innerHTML = '🔒';             miniBadge.className = 'thumb-mini-badge badg
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9521:
+i-badge badge-facade';           } else if (sodoNum > 0) {             miniBadge.style.display = 'flex';             miniBadge.innerHTML = `S${sodoNum}`;             miniBadge.className = 'thumb-mini-
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9525:
+mb-mini-badge badge-sodo';           } else if (isCover) {             miniBadge.style.display = 'flex';             miniBadge.innerHTML = '⭐';             miniBadge.className = 'thumb-mini-badge badg
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9529:
+sName = 'thumb-mini-badge badge-cover';           } else {             miniBadge.style.display = 'none';           }         }                  if (publicBadge) {           if (isPublic || isCover) {
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9537:
+s.indexOf(normUrl);             if (orderIdx !== -1) {               publicBadge.style.display = 'flex';               publicBadge.innerHTML = `#${orderIdx + 1}`;               publicBadge.className =
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9541:
+adge public-badge active-public';             } else {               publicBadge.style.display = 'none';             }           } else {             publicBadge.style.display = 'none';           }
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9544:
+style.display = 'none';             }           } else {             publicBadge.style.display = 'none';           }         }       });              const activeIdx = window.activeImageEditorIndex;
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9911:
+nt.getElementById("localUploadProgressTxt");        if (progressDiv) progressDiv.style.display = "block";       if (progressTxt) progressTxt.innerText = `0/${files.length}`;        const uploadLocalBt
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 9996:
+}       }        event.target.value = "";       if (progressDiv) progressDiv.style.display = "none";       if (uploadLocalBtn) uploadLocalBtn.disabled = false;        if (lastUploadedUrl) {
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 10554:
+ment.getElementById('colFloatBtn');       if (colFloatBtn) {         colFloatBtn.style.display = SELECTED_IDS.size > 0 ? 'flex' : 'none';       }        // Cập nhật trạng thái nút Chọn tất cả (☐/☑) dự
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 10724:
+}         text.innerHTML = `<b>${displayName}</b> (${count} căn)`;         bar.style.display = 'flex';       }              render();       window.scrollTo({ top: 0, behavior: 'smooth' });     }
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 10735:
+const bar = document.getElementById('activeColBar');       if (bar) bar.style.display = 'none';              render();     }      function deleteCollection(name, event) {       if (event) eve
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 11049:
+nst scrollHeight = box.scrollHeight;       if (scrollHeight > 165) {         btn.style.display = 'block';       } else {         btn.style.display = 'none';       }     };          window.toggleMotaGo
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 11051:
+lHeight > 165) {         btn.style.display = 'block';       } else {         btn.style.display = 'none';       }     };          window.toggleMotaGocCollapse = function() {       const box = document.
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 11854:
+ent.getElementById('leadCaptureModal');       if (leadModal) {         leadModal.style.display = 'none';         leadModal.classList.remove('open');       }              const banner = document.getEle
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 11861:
+me}</b>, đây là danh sách nhà Khang Ngô chọn riêng cho anh/chị!`;         banner.style.display = 'block';       }              trackAction("Khách tự đăng ký", `Tên: ${name} - SĐT: ${phone}`);       if
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 11892:
+mentById(`clientReqForm_${id}`);       if (form) {         const isHidden = form.style.display === 'none';         form.style.display = isHidden ? 'block' : 'none';         trackAction("Mở form nhu cầ
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 11893:
+if (form) {         const isHidden = form.style.display === 'none';         form.style.display = isHidden ? 'block' : 'none';         trackAction("Mở form nhu cầu khác", `Mã căn: #${id}`);         if
+--------------------------------------------------
+Match for '\.style\.display\s*=' at line 11933:
+onst form = document.getElementById(`clientReqForm_${id}`);       if (form) form.style.display = 'none';     };      // Khởi động     updateFavBtnUI();     if (isAdmin) {       updateShareUI();
+--------------------------------------------------
+Match for '\.style\.width\s*=' at line 8510:
+labelEl = document.getElementById('dl-progress-label');       if (fillEl) fillEl.style.width = pct + '%';       if (labelEl) labelEl.textContent = '\uD83D\uDDBC\uFE0F ' + current + '/' + total + '...'
+--------------------------------------------------
+Match for 'classList\.add' at line 4228:
+.style.display = 'block';       }     }      if (isAdmin) {       document.body.classList.add('is-admin');       const sInput = document.getElementById('bdsSearchInput');       if (sInput) {         s
+--------------------------------------------------
+Match for 'classList\.add' at line 5243:
+without valid Google token. Displaying Auth Screen...");         document.body.classList.add('is-locked');         showGoogleLoginButtonState(false);         const listContainer = document.getElement
+--------------------------------------------------
+Match for 'classList\.add' at line 5660:
+eadModal) {             leadModal.style.display = 'flex';             leadModal.classList.add('open');             // Nếu URL có sẵn tên thì pre-fill             if (displayCustomerName) {
+--------------------------------------------------
+Match for 'classList\.add' at line 6104:
+;          return;        }       if (wl) wl.style.display = 'block';       box.classList.add('has-wards');       box.style.display = '';        container.innerHTML = wards.map(w => {         const ch
+--------------------------------------------------
+Match for 'classList\.add' at line 6138:
+;          return;        }       if (dl) dl.style.display = 'block';       box.classList.add('has-duong');       box.style.display = '';        container.innerHTML = duongs.map(d => {         const c
+--------------------------------------------------
+Match for 'classList\.add' at line 6172:
+;          return;        }       if (hl) hl.style.display = 'block';       box.classList.add('has-huong');       box.style.display = '';        container.innerHTML = huongs.map(h => {         const c
+--------------------------------------------------
+Match for 'classList\.add' at line 6272:
+|| !btnPrice) return;        if (currentSortType === 'newest') {         btnNew.classList.add('active');         btnNew.textContent = currentSortDir === 'desc' ? '⏱️⬇' : '⏱️⬆';         btnPrice.classL
+--------------------------------------------------
+Match for 'classList\.add' at line 6277:
+('active');         btnPrice.textContent = '💰';       } else {         btnPrice.classList.add('active');         btnPrice.textContent = currentSortDir === 'desc' ? '💰⬇' : '💰⬆';         btnNew.classLis
+--------------------------------------------------
+Match for 'classList\.add' at line 6416:
+<img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">             <input type="checkbox" class="card-sel" onclick=
+--------------------------------------------------
+Match for 'classList\.add' at line 6416:
+.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">             <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchang
+--------------------------------------------------
+Match for 'classList\.add' at line 6449:
+<img src="${thumb}" alt="${p.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">             ${isAdmin ? `<input type="checkbox" class="card-
+--------------------------------------------------
+Match for 'classList\.add' at line 6449:
+.t}" loading="lazy" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">             ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagati
+--------------------------------------------------
+Match for 'classList\.add' at line 6634:
+);         b.textContent = '♡';       } else {         favs.add(sid);         b.classList.add('on');         b.textContent = '♥';       }       localStorage.setItem('favs', JSON.stringify([...favs]));
+--------------------------------------------------
+Match for 'classList\.add' at line 6697:
+unction openLb(i) {       lbIdx = i;       document.getElementById('lbOverlay').classList.add('open');       buildLbTrack();       renderLbThumbs();       updateLbThumbsUI();     }     function closeL
+--------------------------------------------------
+Match for 'classList\.add' at line 7427:
+accPreview.style.display = 'block';                   accPreview.classList.add('expanded');                   const content = accPreview.querySelector('.accordion-content');
+--------------------------------------------------
+Match for 'classList\.add' at line 7484:
+lementById('accSource');             if (accPreview) {               accPreview.classList.add('expanded');               const content = accPreview.querySelector('.accordion-content');               i
+--------------------------------------------------
+Match for 'classList\.add' at line 7509:
+}           }         }, 50);       }        document.getElementById('ov').classList.add('open');       document.getElementById('sbody').scrollTop = 0;       document.body.style.overflow = 'hidde
+--------------------------------------------------
+Match for 'classList\.add' at line 7613:
+mentById('linkCustNote').value = '';       document.getElementById('linkModal').classList.add('open');     }      // Xử lý tạo link sau khi điền Form     function executeGenerateLink() {       const c
+--------------------------------------------------
+Match for 'classList\.add' at line 7875:
+80) {         // Cuộn xuống: ẩn header và tự động đóng bộ lọc         headerEl.classList.add('hide');         closeFilter();       } else if (deltaY > 10) {         // Cuộn lên: Chỉ hiện menu khi qué
+--------------------------------------------------
+Match for 'classList\.add' at line 9019:
+enableTransition})]`;         }         if (enableTransition) {           track.classList.add('has-transition');         } else {           track.classList.remove('has-transition');         }
+--------------------------------------------------
+Match for 'classList\.add' at line 9028:
+tem-card').forEach((card, cidx) => {         if (cidx === idx) {           card.classList.add('active');           card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+--------------------------------------------------
+Match for 'classList\.add' at line 10610:
+pendChild(item);       });              document.getElementById('colViewModal').classList.add('open');     }      function openColSaveModal() {       if (SELECTED_IDS.size === 0) {         alert('Vui
+--------------------------------------------------
+Match for 'classList\.add' at line 10643:
+(btn);         });       }              document.getElementById('colSaveModal').classList.add('open');     }      function createNewCollection() {       const name = document.getElementById('newColNam
+--------------------------------------------------
+Match for 'classList\.add' at line 10810:
+nded');         if (arrow) arrow.textContent = '▶';       } else {         item.classList.add('expanded');         if (arrow) arrow.textContent = '▼';       }     };      window.getPublicImagesFromFor
+--------------------------------------------------
+Match for 'classList\.add' at line 11066:
+document.getElementById('sbody').scrollTop -= 100;       } else {         box.classList.add('expanded');         btn.textContent = 'Thu gọn ▲';       }     };      window.showToast = function(msg, t
+--------------------------------------------------
+Match for 'classList\.add' at line 11446:
+nt.getElementById('accPreview');         if (accPreview) {           accPreview.classList.add('expanded');           const content = accPreview.querySelector('.accordion-content');           if (conte
+--------------------------------------------------
+Match for 'classList\.toggle' at line 4468:
+').forEach(btn => {         const v = btn.getAttribute('data-val');         btn.classList.toggle('on', v === 'all' ? set.size === 0 : set.has(v));       });     }      // ── Custom Multiselect Event H
+--------------------------------------------------
+Match for 'classList\.toggle' at line 4479:
+{         if (other !== el) other.classList.remove('open');       });       el.classList.toggle('open');     };      window.toggleOption = function(category, val, event) {       if (event && event.ta
+--------------------------------------------------
+Match for 'classList\.toggle' at line 4609:
+archInput');       if (!bar || !btn || !input) return;       const isOpen = bar.classList.toggle('open');       btn.classList.toggle('active', isOpen);       if (isOpen) {         setTimeout(() => inp
+--------------------------------------------------
+Match for 'classList\.toggle' at line 4610:
+|| !input) return;       const isOpen = bar.classList.toggle('open');       btn.classList.toggle('active', isOpen);       if (isOpen) {         setTimeout(() => input.focus(), 150);       } else {
+--------------------------------------------------
+Match for 'classList\.toggle' at line 5934:
+{       filterOpen = !filterOpen;       document.getElementById('filterPanel').classList.toggle('open', filterOpen);       const btn = document.getElementById('filterBtn');       btn.classList.toggle
+--------------------------------------------------
+Match for 'classList\.toggle' at line 5936:
+filterOpen);       const btn = document.getElementById('filterBtn');       btn.classList.toggle('active', filterOpen);       if (window.innerWidth < 768) {         document.documentElement.classList.
+--------------------------------------------------
+Match for 'classList\.toggle' at line 5938:
+terOpen);       if (window.innerWidth < 768) {         document.documentElement.classList.toggle('filter-active', filterOpen);         document.body.classList.toggle('filter-active', filterOpen);
+--------------------------------------------------
+Match for 'classList\.toggle' at line 5939:
+entElement.classList.toggle('filter-active', filterOpen);         document.body.classList.toggle('filter-active', filterOpen);       }     }     function closeFilter() {       if (!filterOpen) return;
+--------------------------------------------------
+Match for 'classList\.toggle' at line 5948:
+ze || document.querySelectorAll('.filter-criterion:checked').length);       btn.classList.toggle('active', anyActive);       if (window.innerWidth < 768) {         document.documentElement.classList.r
+--------------------------------------------------
+Match for 'classList\.toggle' at line 6216:
+|| selGia.size || selDanhGia.size);       document.getElementById('filterBtn').classList.toggle('active', anyActive || filterOpen);       document.getElementById('resetBtn').style.display = anyActive
+--------------------------------------------------
+Match for 'classList\.toggle' at line 6312:
+ocument.getElementById('favCount');       if (!btn || !badge) return;       btn.classList.toggle('active', showFavOnly);       btn.innerHTML = showFavOnly ? '♥' : '♡';       if (favs.size > 0) {
+--------------------------------------------------
+Match for 'classList\.toggle' at line 6811:
+nt.querySelectorAll('.lb-thumb, .lb-thumb-vid').forEach((el, i) => {         el.classList.toggle('on', i === lbIdx);         if (i === lbIdx) el.scrollIntoView({ behavior: 'smooth', block: 'nearest',
+--------------------------------------------------
+Match for 'classList\.toggle' at line 6890:
+đứt transition)           document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === gI));           ua();           // Double-rAF: frame 1 = vẽ vị trí drag, frame 2 = bật tran
+--------------------------------------------------
+Match for 'classList\.toggle' at line 6907:
+eX(${-gI * cw}px)`;       document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === gI));       ua();     }     function ua() {       document.getElementById('al').style.displ
+--------------------------------------------------
+Match for 'classList\.toggle' at line 7776:
+('dialActions');       if (mainBtn && actions) {         const isOpen = actions.classList.toggle('open');         mainBtn.classList.toggle('active', isOpen);       }     }      document.addEventListen
+--------------------------------------------------
+Match for 'classList\.toggle' at line 7777:
+ons) {         const isOpen = actions.classList.toggle('open');         mainBtn.classList.toggle('active', isOpen);       }     }      document.addEventListener('click', function(event) {       const
+--------------------------------------------------
+Match for 'classList\.toggle' at line 10564:
+S.has(id));         btn.textContent = isNowAllSelected ? '☑' : '☐';         btn.classList.toggle('all-on', isNowAllSelected);       }     }      function openColViewModal() {       const viewList = do
+--------------------------------------------------
+Match for 'classList\.toggle' at line 10948:
+ySelectorAll('.admin-dot');         dots.forEach((dot, dIdx) => {           dot.classList.toggle('on', dIdx === activeIdx);         });       };     };      window.openZoomOverlay = function(url) {
+--------------------------------------------------

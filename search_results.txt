@@ -1,22 +1,35 @@
-3266:           img_mat_tien: row[29] || '',
-3281:           raw_mat_tien: row[16] || '',
-3363:           const val = parseFloat(p.raw_mat_tien || p.mat) || 0;
-3591:                 img_mat_tien: sr[38] || '',
-3611:                 p.raw_mat_tien = poolRow[16] || '';          // Mặt Tiền - Index 16, Column Q
-3633:                 p.raw_mat_tien = p.mat || '';
-3751:                 img_mat_tien: cv(r.c[35]) || ''
-4261:         if (p.img_mat_tien && !isListingSodoUrl(p.img_mat_tien, p)) {
-4262:           thumbUrl = p.img_mat_tien;
-4754:                   <span class="value dotted">${p.raw_mat_tien || p.mat || '-'} m</span>
-5624:               p.img_mat_tien = facadeMap[p.id];
-5688:       const ngang = p.mat || p.raw_mat_tien || "-";
-5863:       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
-5885:       let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
-5978:       const targetMatTien = p.isFromPoolOnly && p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || '');
-6459:         img_mat_tien: row[29] || '',
-6474:         raw_mat_tien: row[16] || '',
-6768:           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
-6775:           matchedRow[16],                // 7: mat_tien (Cột H)
-7566:           p.img_mat_tien = cleanCoverUrl;
-7936:           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
-7943:           matchedRow[16],                // 7: mat_tien (Cột H)
+172: def parse_criteria_groups(criteria_list):
+174:     Phân loại các đặc tính (criteria) theo groupCode của TK thành 19 nhóm Tiếng Việt tương ứng.
+177:         criteria_list (list): Danh sách các criteria từ API TK.
+180:         dict: Ánh xạ cột Criteria_... và giá trị.
+183:         'PROPERTY_CRITERIA': 'Criteria_Tiem_nang_Rui_ro',
+184:         'ROAD_TYPE': 'Criteria_Duong_truoc_nha',
+185:         'PROPERTY_TYPE': 'Criteria_Loai_BDS',
+186:         'LEGAL_DOCUMENT': 'Criteria_Giay_to_phap_ly',
+187:         'LAND_PLOT_SHAPE': 'Criteria_Hinh_dang_dat',
+188:         'CONSTRUCTION_STATUS': 'Criteria_Tinh_trang_xay_dung',
+189:         'HOUSE_STRUCTURE': 'Criteria_Cau_truc_nha',
+190:         'INTERIOR': 'Criteria_Noi_that',
+191:         'ELEVATOR': 'Criteria_Thang_may',
+192:         'ALLEY_TYPE': 'Criteria_Loai_ngo',
+193:         'TAX_CALCULATION_POSITION': 'Criteria_Vi_tri_tinh_thue',
+194:         'OPEN_SPACE': 'Criteria_Mat_thoang',
+195:         'DISTANCE_TO_PARKING_LOT': 'Criteria_Khoang_cach_bai_do_xe',
+196:         'PROPERTY_CRITERIA_BUSINESS_CASH_FLOW': 'Criteria_Kinh_doanh_Dong_tien',
+197:         'PROPERTY_CRITERIA_FACILITIES': 'Criteria_Tien_ich',
+198:         'PROPERTY_CRITERIA_GEOMANCY': 'Criteria_Phong_thuy',
+199:         'HOUSE_DIRECTION': 'Criteria_Huong_nha',
+200:         'POSITION_IN_ALLEY': 'Criteria_Vi_tri_trong_ngo',
+201:         'DISTANCE_TO_MAIN_ROAD': 'Criteria_Khoang_cach_duong_oto'
+208:     for item in criteria_list or []:
+554:                         "Số nhà vệ sinh": safe_get_val(soup_detail, '#Detail_iSoToilet_show'),
+569:                     crawled_data["restrooms"] = crawled_data["Số nhà vệ sinh"]
+893:                     phan_loai_names = [c.get("name") for c in (detail_data.get("criteria") or []) if c and c.get("name")]
+973:                         "Số nhà vệ sinh": so_nha_ve_sinh,
+1004:                         "sidewalk": str(detail_data.get("sidewalk") or ""),
+1005:                         "behindOpenSpace": str(detail_data.get("behindOpenSpace") or ""),
+1006:                         "sideOpenSpace": str(detail_data.get("sideOpenSpace") or ""),
+1018:                     # Parse criteria groups and merge into crawled_data
+1019:                     criteria_list = detail_data.get("criteria") or []
+1020:                     criteria_cols = parse_criteria_groups(criteria_list)
+1021:                     crawled_data.update(criteria_cols)

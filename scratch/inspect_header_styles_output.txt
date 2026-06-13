@@ -1,0 +1,158 @@
+Media context: Global
+body:not(.is-admin) header {
+      padding-bottom: 0;
+    }
+--------------------------------------------------
+Media context: Global
+.mobile-filter-header {
+      display: none;
+    }
+--------------------------------------------------
+Media context: Global
+header {
+      background: var(--red);
+      padding: calc(var(--safe-top) + 14px) 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+--------------------------------------------------
+Media context: Global
+header.hide {
+      transform: translateY(-100%);
+    }
+--------------------------------------------------
+Media context: Global
+/* Hide menus/header/stats when Admin security lock is active (US-039.5) */
+    body.is-locked {
+      background: #121214 !important;
+    }
+--------------------------------------------------
+Media context: Global
+body.is-locked header,
+    body.is-locked .stats,
+    body.is-locked .mode-segmented-container,
+    body.is-locked .active-col-bar,
+    body.is-locked #welcomeBanner,
+    body.is-locked .selall-btn-float,
+    body.is-locked .col-btn-float,
+    body.is-locked .share-btn-float {
+      display: none !important;
+    }
+--------------------------------------------------
+Media context: Global
+.accordion-header {
+      width: 100%;
+      padding: 13px 16px;
+      background: #f8f9fa;
+      border: none;
+      text-align: left;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #1c1c1e;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: inherit;
+    }
+--------------------------------------------------
+Media context: Global
+.accordion-item.expanded .accordion-header {
+      background: #f1f2f6;
+      border-bottom: 1px solid var(--border);
+    }
+--------------------------------------------------
+Media context: Global
+/* Premium Red Accordion Headers with reduced height */
+    .accordion-header.is-red {
+      background: var(--red) !important;
+      color: #fff !important;
+      border-bottom: 1.5px solid #a93224;
+      font-weight: 850;
+      letter-spacing: -0.2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      padding: 9px 16px !important; /* Reduced height from 13px */
+    }
+--------------------------------------------------
+Media context: Global
+.accordion-item.expanded .accordion-header.is-red {
+      background: var(--red) !important;
+      color: #fff !important;
+    }
+--------------------------------------------------
+Media context: Global
+/* Dotted technical specs grid */
+    .admin-raw-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f1f2f6;
+      font-size: 13px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+--------------------------------------------------
+Media context: Global
+/* Action toolbar in header (US-039.7) */
+    .admin-header-actions {
+      display: none !important;
+    }
+--------------------------------------------------
+Media context: Global
+/* Action toolbar in header (US-039.7) */
+    .admin-header-actions {
+      display: none !important;
+    }
+--------------------------------------------------
+Media context: Global
+/* Listing Detail Modal Display Overrides */
+    .accordion-header {
+      font-size: 14.5px !important;
+    }
+--------------------------------------------------
+Media context: Global
+.accordion-header.is-red {
+      font-size: 14.5px !important;
+    }
+--------------------------------------------------
+Media context: Global
+.admin-raw-header-row {
+      font-size: 14px !important;
+    }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+/* Căn chỉnh header */
+      header {
+        padding-left: max(16px, calc((100vw - 1100px) / 2));
+        padding-right: max(16px, calc((100vw - 1100px) / 2));
+      }
+--------------------------------------------------
+Media context: @media (min-width: 768px)
+/* Căn chỉnh header */
+      header {
+        padding-left: max(16px, calc((100vw - 1100px) / 2));
+        padding-right: max(16px, calc((100vw - 1100px) / 2));
+      }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+body.filter-active header {
+        position: static !important;
+        transform: none !important;
+        transition: none !important;
+      }
+--------------------------------------------------
+Media context: @media (max-width: 767px)
+.mobile-filter-header {
+        display: flex;
+        align-items: center;
+        background: var(--red);
+        color: #ffffff;
+        padding: calc(var(--safe-top) + 12px) 16px 12px;
+        position: sticky;
+        top: 0;
+        z-index: 15;
+      }
+--------------------------------------------------

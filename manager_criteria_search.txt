@@ -1,0 +1,48 @@
+175:         if d.get("custom_Criteria_Duong_truoc_nha"): d["Criteria_Duong_truoc_nha"] = d["custom_Criteria_Duong_truoc_nha"]
+176:         if d.get("custom_Criteria_Noi_that"): d["Criteria_Noi_that"] = d["custom_Criteria_Noi_that"]
+177:         if d.get("custom_Criteria_Thang_may"): d["Criteria_Thang_may"] = d["custom_Criteria_Thang_may"]
+178:         if d.get("custom_Criteria_Loai_ngo"): d["Criteria_Loai_ngo"] = d["custom_Criteria_Loai_ngo"]
+179:         if d.get("custom_Criteria_Khoang_cach_bai_do_xe"): d["Criteria_Khoang_cach_bai_do_xe"] = d["custom_Criteria_Khoang_cach_bai_do_xe"]
+180:         if d.get("custom_Criteria_Kinh_doanh_Dong_tien"): d["Criteria_Kinh_doanh_Dong_tien"] = d["custom_Criteria_Kinh_doanh_Dong_tien"]
+181:         if d.get("custom_Criteria_Huong_nha"): d["Criteria_Huong_nha"] = d["custom_Criteria_Huong_nha"]
+182:         if d.get("custom_Criteria_Khoang_cach_duong_oto"): d["Criteria_Khoang_cach_duong_oto"] = d["custom_Criteria_Khoang_cach_duong_oto"]
+1949:                    listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+1950:                    listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+1951:                    listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+1952:                    listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+1953:                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+1954:                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+1955:                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+1956:                    listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+2057:                    listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+2058:                    listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+2059:                    listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+2060:                    listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+2061:                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+2062:                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+2063:                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+2064:                    listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+2221:                             "Criteria_Duong_truoc_nha": d_v2.get("Criteria_Duong_truoc_nha") or "",
+2222:                             "Criteria_Noi_that": d_v2.get("Criteria_Noi_that") or "",
+2223:                             "Criteria_Thang_may": d_v2.get("Criteria_Thang_may") or "",
+2224:                             "Criteria_Loai_ngo": d_v2.get("Criteria_Loai_ngo") or "",
+2225:                             "Criteria_Khoang_cach_bai_do_xe": d_v2.get("Criteria_Khoang_cach_bai_do_xe") or "",
+2226:                             "Criteria_Kinh_doanh_Dong_tien": d_v2.get("Criteria_Kinh_doanh_Dong_tien") or "",
+2227:                             "Criteria_Huong_nha": d_v2.get("Criteria_Huong_nha") or "",
+2228:                             "Criteria_Khoang_cach_duong_oto": d_v2.get("Criteria_Khoang_cach_duong_oto") or "",
+2520:                            listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+2521:                            listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+2522:                            listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+2523:                            listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+2524:                            listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+2525:                            listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+2526:                            listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+2527:                            listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+2714:                        listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+2715:                        listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+2716:                        listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+2717:                        listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+2718:                        listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+2719:                        listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+2720:                        listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+2721:                        listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto

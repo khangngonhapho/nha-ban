@@ -1,0 +1,83 @@
+Found float at line 541:
+ubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .share-btn-float:hover {
+      background: #f5b041;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+    }
+    .share-btn-fl
+--------------------------------------------------
+Found float at line 546:
+px 28px rgba(0, 0, 0, 0.28);
+    }
+    .share-btn-float:active {
+      transform: scale(0.9);
+    }
+
+    .card-sel {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      width: 22px;
+  
+--------------------------------------------------
+Found float at line 594:
+form 0.2s, box-shadow 0.2s;
+    }
+    .selall-btn-float:active {
+      transform: scale(0.9);
+    }
+
+    .selall-btn-float.all-on {
+      background: #1c1c1e;
+      color: #f1c40f;
+      border-color:
+--------------------------------------------------
+Found float at line 1380:
+ cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .col-btn-float:hover {
+      background: #f4d03f;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+    }
+    .col-btn-floa
+--------------------------------------------------
+Found float at line 1385:
+10px 28px rgba(0, 0, 0, 0.28);
+    }
+    .col-btn-float:active {
+      transform: scale(0.9);
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0
+--------------------------------------------------
+Found float at line 2787:
+important;
+    }
+    .admin-speed-dial .share-btn-float:hover {
+      background: #f5b041 !important;
+    }
+    
+    .admin-speed-dial .selall-btn-float {
+      background: #1c1c1e !important;
+      c
+--------------------------------------------------
+Found float at line 2806:
+ !important;
+    }
+    .admin-speed-dial .col-btn-float:hover {
+      background: #f4d03f !important;
+    }
+  
+
+    /* Responsive cho máy tính */
+    @media (min-width: 768px) {
+      main {
+        m
+--------------------------------------------------

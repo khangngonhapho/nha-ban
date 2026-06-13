@@ -1,0 +1,70 @@
+Match for 'Sơ đồ thửa đất' at line 5414:
+ecutiveNewlines(poolRow[10] || '');
+                p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
+                p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
+                p.raw_sodo3 = poolRow[80] || '';             // Sơ đồ thửa đất 3 - Index 80, Column CC
+                p.raw_sodo4 = poolRow[81] || '';       
+----------------------------------------
+Match for 'Sơ đồ thửa đất' at line 5415:
+đồ thửa đất 1 - Index 27, Column AB
+                p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
+                p.raw_sodo3 = poolRow[80] || '';             // Sơ đồ thửa đất 3 - Index 80, Column CC
+                p.raw_sodo4 = poolRow[81] || '';             // Sơ đồ thửa đất 4 - Index 81, Column CD
+                p.raw_sodo5 = poolRow[82] || '';       
+----------------------------------------
+Match for 'Sơ đồ thửa đất' at line 5416:
+đồ thửa đất 2 - Index 28, Column AC
+                p.raw_sodo3 = poolRow[80] || '';             // Sơ đồ thửa đất 3 - Index 80, Column CC
+                p.raw_sodo4 = poolRow[81] || '';             // Sơ đồ thửa đất 4 - Index 81, Column CD
+                p.raw_sodo5 = poolRow[82] || '';             // Sơ đồ thửa đất 5 - Index 82, Column CE
+                p.raw_so_nha = poolRow[6] || '';       
+----------------------------------------
+Match for 'Sơ đồ thửa đất' at line 5417:
+đồ thửa đất 3 - Index 80, Column CC
+                p.raw_sodo4 = poolRow[81] || '';             // Sơ đồ thửa đất 4 - Index 81, Column CD
+                p.raw_sodo5 = poolRow[82] || '';             // Sơ đồ thửa đất 5 - Index 82, Column CE
+                p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
+                p.raw_ten_duong = poolRow[5] || '';          //
+----------------------------------------
+Match for 'Sơ đồ thửa đất' at line 5418:
+đồ thửa đất 4 - Index 81, Column CD
+                p.raw_sodo5 = poolRow[82] || '';             // Sơ đồ thửa đất 5 - Index 82, Column CE
+                p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
+                p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
+                p.raw_dt_thuc_te = poolRow[13] || '';        // DT Thực tế -
+----------------------------------------
+Match for 'Bất động sản' at line 7007:
+6px;">
+              <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px;">Bất động sản</div>
+                <div id="carouselNha" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ${(p.raw_sodo1 || p.raw_sodo2) ? `
+   
+----------------------------------------
+Match for 'Sổ thửa đất' at line 7015:
+    <div>
+                <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
+                <div id="carouselSo" style="position: relative;">
+                  <div class="admin-scroll-carousel"></div>
+                  <div class="admin-carousel-dots"></div>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+
+            
+----------------------------------------
+Match for 'Sổ thửa đất' at line 11322:
+EET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+          
+          // 1. Đồng bộ các ảnh Sổ thửa đất (cột AB:AC)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${p.pool_row_index}:AC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorizati
+----------------------------------------

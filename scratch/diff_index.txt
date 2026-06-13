@@ -1,0 +1,1040 @@
+diff --git a/index.html b/index.html
+index 0ac9742..89d5cc4 100644
+--- a/index.html
++++ b/index.html
+@@ -3579,9 +3579,9 @@
+           raw_mo_ta_chi_tiet: cleanConsecutiveNewlines(row[10] || ''),
+            raw_sodo1: row[27] || '',
+            raw_sodo2: row[28] || '',
+-           raw_sodo3: row[77] || '',
+-           raw_sodo4: row[78] || '',
+-           raw_sodo5: row[79] || '',
++            raw_sodo3: row[80] || '',
++            raw_sodo4: row[81] || '',
++            raw_sodo5: row[82] || '',
+            raw_so_nha: row[6] || '',
+            raw_ten_duong: row[5] || '',
+           raw_dt_thuc_te: row[13] || '',
+@@ -3977,22 +3977,25 @@
+ 
+               const poolImgs = [];
+               if (poolRow) {
+-                // Lấy Ảnh 1 đến Ảnh 15 từ Pool (chỉ số 40 đến 54)
++                // Lấy Ảnh 1 đến Ảnh 25 từ Pool (chỉ số 40 đến 54 và 80 đến 89)
+                 for (let c = 40; c <= 54; c++) {
+                   if (poolRow[c]) poolImgs.push(poolRow[c]);
+                 }
++                for (let c = 83; c <= 92; c++) {
++                  if (poolRow[c]) poolImgs.push(poolRow[c]);
++                }
+               }
+ 
+-              const allImgs = poolRow ? [
+-                ...poolImgs,
+-                ...[
+-                  sr[20], sr[21], sr[22], sr[23], sr[24],
+-                  sr[25], sr[26], sr[27], sr[28], sr[29]
+-                ].filter(Boolean)
+-              ] : [
++              const sourcePublicImgs = [
+                 sr[20], sr[21], sr[22], sr[23], sr[24],
+-                sr[25], sr[26], sr[27], sr[28], sr[29]
++                sr[25], sr[26], sr[27], sr[28], sr[29],
++                sr[41], sr[42], sr[43], sr[44], sr[45]
+               ].filter(Boolean);
++
++              const allImgs = poolRow ? [
++                ...poolImgs,
++                ...sourcePublicImgs
++              ] : sourcePublicImgs;
+               const uniqueImgs = [...new Set(allImgs)];
+ 
+               const p = {
+@@ -4039,9 +4042,9 @@
+                 p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
+                 p.raw_sodo1 = poolRow[27] || '';             // Sơ đồ thửa đất 1 - Index 27, Column AB
+                 p.raw_sodo2 = poolRow[28] || '';             // Sơ đồ thửa đất 2 - Index 28, Column AC
+-                p.raw_sodo3 = poolRow[77] || '';             // Sơ đồ thửa đất 3 - Index 77, Column BZ
+-                p.raw_sodo4 = poolRow[78] || '';             // Sơ đồ thửa đất 4 - Index 78, Column CA
+-                p.raw_sodo5 = poolRow[79] || '';             // Sơ đồ thửa đất 5 - Index 79, Column CB
++                p.raw_sodo3 = poolRow[80] || '';             // Sơ đồ thửa đất 3 - Index 80, Column CC
++                p.raw_sodo4 = poolRow[81] || '';             // Sơ đồ thửa đất 4 - Index 81, Column CD
++                p.raw_sodo5 = poolRow[82] || '';             // Sơ đồ thửa đất 5 - Index 82, Column CE
+                 p.raw_so_nha = poolRow[6] || '';             // Ngõ/Số nhà - Index 6, Column G
+                 p.raw_ten_duong = poolRow[5] || '';          // Đường - Index 5, Column F
+                 p.raw_dt_tren_so = poolRow[14] || '';        // DT Trên sổ - Index 14, Column O
+@@ -4186,7 +4189,8 @@
+                 m: cv(r.c[16]),
+                 imgs: [
+                   cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]),
+-                  cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26])
++                  cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26]),
++                  cv(r.c[38]), cv(r.c[39]), cv(r.c[40]), cv(r.c[41]), cv(r.c[42])
+                 ].filter(Boolean),
+                 system_id: cv(r.c[34]) || (index + 1).toString(),
+                 so_pn: cv(r.c[29]) || '-',
+@@ -5176,6 +5180,7 @@
+     function openS(id, tempP = null, autoExpandPreview = false) {
+       const p = tempP || DATA.find(x => String(x.id) === String(id));
+       if (!p) return;
++      window.activeCurationListing = p;
+ 
+       const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+       const normMatTien = normalizeImgUrl(targetMatTien);
+@@ -5640,9 +5645,9 @@
+           const sImgs = [];
+           const s1 = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+           const s2 = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+-          const s3 = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+-          const s4 = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+-          const s5 = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
++          const s3 = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
++          const s4 = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
++          const s5 = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+           if (s1) sImgs.push(s1);
+           if (s2) sImgs.push(s2);
+           if (s3) sImgs.push(s3);
+@@ -6576,9 +6581,9 @@
+       // 2. Lấy 5 giá trị sodo hiện có của căn nhà
+       const sodo1Val = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
+       const sodo2Val = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+-      const sodo3Val = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
+-      const sodo4Val = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
+-      const sodo5Val = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
++      const sodo3Val = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
++      const sodo4Val = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
++      const sodo5Val = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+ 
+       const normS1 = normalizeImgUrl(sodo1Val);
+       const normS2 = normalizeImgUrl(sodo2Val);
+@@ -6601,20 +6606,21 @@
+       const sodo2Url = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
+       if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+ 
+-      const sodo3Url = p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3;
++      const sodo3Url = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
+       if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
+ 
+-      const sodo4Url = p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4;
++      const sodo4Url = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
+       if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
+ 
+-      const sodo5Url = p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5;
++      const sodo5Url = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+       if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
+       
+       const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
+       if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
+       
+-      for (let i = 1; i <= 15; i++) {
+-        const url = p.pool_row_data ? p.pool_row_data[39 + i] : (p.imgs && p.imgs[i - 1]);
++      for (let i = 1; i <= 25; i++) {
++        const idx = i <= 15 ? (39 + i) : (67 + i);
++        const url = p.pool_row_data ? p.pool_row_data[idx] : (p.imgs && p.imgs[i - 1]);
+         if (url) cards.push({ type: "interior", index: i, url: url });
+       }
+       
+@@ -6663,6 +6669,24 @@
+         <div class="admin-edit-group" style="margin-top: 10px;">
+           <label style="font-weight: 800; color: var(--gold); display: block; margin-bottom: 6px; font-size: 12px;">🖼️ BIÊN TẬP HÌNH ẢNH (CỌ SƠN CHỌN NHANH 🎨)</label>
+           
++          <!-- LOCAL IMAGE UPLOADER (US-053) -->
++          <div class="local-uploader-panel" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 191, 36, 0.08); padding: 8px 12px; border-radius: 10px; border: 1.5px solid rgba(255, 191, 36, 0.2); margin-bottom: 10px; flex-wrap: wrap; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); width: 100%; box-sizing: border-box;">
++            <div style="font-size: 11px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 4px;">
++              📁 TẢI LÊN:
++            </div>
++            <select id="localUploadType" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,191,36,0.3); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; font-family: inherit;">
++              <option value="interior">Ảnh thường (Có nén)</option>
++              <option value="sodo">Ảnh sổ (Ko nén)</option>
++            </select>
++            <button type="button" id="uploadLocalBtn" onclick="document.getElementById('localImageFileInput').click()" style="background: var(--gold); color: #1c1c1e; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; font-family: inherit; text-transform: uppercase;">
++              ➕ UP ẢNH
++            </button>
++            <input type="file" id="localImageFileInput" multiple accept="image/*" style="display: none;" onchange="window.handleLocalImageUpload(event)" />
++            <div id="localUploadProgress" style="font-size: 11px; font-weight: 700; color: #fff; margin-left: auto; display: none;">
++              ⌛ Đang tải: <span id="localUploadProgressTxt">0/0</span>
++            </div>
++          </div>
++
+           <!-- IMAGE EDITOR TOOLBAR -->
+           <div class="image-editor-toolbar" style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: nowrap; width: 100%; box-sizing: border-box;">
+             <button type="button" id="toolFacadeBtn" onclick="selectImageEditorTool('facade')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; font-family: inherit; white-space: nowrap; flex: 1; justify-content: center;">
+@@ -6809,8 +6833,11 @@
+           <input type="hidden" id="editPublicCoverUrl" value="${currentPublicCover}">
+           <input type="hidden" id="editPublicInteriorIndices" value="${currentInteriorIndices}">
+           <input type="hidden" id="editPublicAlleyIndices" value="${currentAlleyIndices}">
+-          <input type="hidden" id="editSodo1Url" value="${p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || ''))}">
+-          <input type="hidden" id="editSodo2Url" value="${p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || ''))}">
++          <input type="hidden" id="editSodo1Url" value="${p.pool_row_data ? (p.pool_row_data[27] || '') : (p.raw_sodo1 || '')}">
++          <input type="hidden" id="editSodo2Url" value="${p.pool_row_data ? (p.pool_row_data[28] || '') : (p.raw_sodo2 || '')}">
++          <input type="hidden" id="editSodo3Url" value="${p.pool_row_data ? (p.pool_row_data[80] || '') : (p.raw_sodo3 || '')}">
++          <input type="hidden" id="editSodo4Url" value="${p.pool_row_data ? (p.pool_row_data[81] || '') : (p.raw_sodo4 || '')}">
++          <input type="hidden" id="editSodo5Url" value="${p.pool_row_data ? (p.pool_row_data[82] || '') : (p.raw_sodo5 || '')}">
+         </div>
+       `;
+ 
+@@ -6840,9 +6867,9 @@
+       // Check if this image is Sổ 1 to Sổ 5
+       let sodo1Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '');
+       let sodo2Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '');
+-      let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[77] : p.raw_sodo3) || '');
+-      let sodo4Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[78] : p.raw_sodo4) || '');
+-      let sodo5Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[79] : p.raw_sodo5) || '');
++      let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3) || '');
++      let sodo4Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4) || '');
++      let sodo5Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5) || '');
+       
+       let isSodo1 = normUrl !== '' && normUrl === normalizeImgUrl(sodo1Val);
+       let isSodo2 = normUrl !== '' && normUrl === normalizeImgUrl(sodo2Val);
+@@ -7137,50 +7164,45 @@
+     window.setImageAsSodo = function(event, card) {
+       if (event) event.stopPropagation();
+       const url = card.dataset.url;
+-      const sodo1Input = document.getElementById('editSodo1Url');
+-      const sodo2Input = document.getElementById('editSodo2Url');
+-      if (!sodo1Input || !sodo2Input) return;
+-
+-      let s1 = sodo1Input.value.trim();
+-      let s2 = sodo2Input.value.trim();
++      const sodoInputs = [
++        document.getElementById('editSodo1Url'),
++        document.getElementById('editSodo2Url'),
++        document.getElementById('editSodo3Url'),
++        document.getElementById('editSodo4Url'),
++        document.getElementById('editSodo5Url')
++      ];
++      if (sodoInputs.some(input => !input)) return;
+ 
+       const normUrl = normalizeImgUrl(url);
+-      const normS1 = normalizeImgUrl(s1);
+-      const normS2 = normalizeImgUrl(s2);
+-
+-      // If already marked as Sodo 1 or 2 on this card, toggle it off!
+-      if (normUrl !== '' && normUrl === normS1) {
+-        sodo1Input.value = "";
+-        card.classList.remove('is-sodo', 'is-sodo1');
+-        const badge = card.querySelector('.sodo-badge');
+-        if (badge) badge.remove();
+-        card.style.borderColor = 'transparent';
+-      } else if (normUrl !== '' && normUrl === normS2) {
+-        sodo2Input.value = "";
+-        card.classList.remove('is-sodo', 'is-sodo2');
++      const vals = sodoInputs.map(input => input.value.trim());
++      const normVals = vals.map(val => normalizeImgUrl(val));
++
++      // If already marked as any Sổ, toggle it off!
++      const existingIdx = normUrl !== '' ? normVals.indexOf(normUrl) : -1;
++      if (existingIdx !== -1) {
++        sodoInputs[existingIdx].value = "";
++        card.classList.remove('is-sodo', `is-sodo${existingIdx + 1}`);
+         const badge = card.querySelector('.sodo-badge');
+         if (badge) badge.remove();
+         card.style.borderColor = 'transparent';
+       } else {
+-        // Assign to an empty slot
++        // Assign to the first empty slot
+         let assigned = false;
+         let badgeNum = 1;
+-        if (!s1) {
+-          sodo1Input.value = url;
++        const emptyIdx = vals.indexOf("");
++        if (emptyIdx !== -1) {
++          sodoInputs[emptyIdx].value = url;
+           assigned = true;
+-          badgeNum = 1;
+-        } else if (!s2) {
+-          sodo2Input.value = url;
+-          assigned = true;
+-          badgeNum = 2;
++          badgeNum = emptyIdx + 1;
+         } else {
+-          // Both filled, overwrite Sổ 1
+-          sodo1Input.value = url;
++          // All filled, overwrite Sổ 1
++          sodoInputs[0].value = url;
+           assigned = true;
+           badgeNum = 1;
+           // Clear styling on the previous Sổ 1 card
++          const prevS1Url = normVals[0];
+           document.querySelectorAll('.edit-img-card').forEach(c => {
+-            if (normalizeImgUrl(c.dataset.url) === normS1) {
++            if (normalizeImgUrl(c.dataset.url) === prevS1Url) {
+               c.classList.remove('is-sodo', 'is-sodo1');
+               const badge = c.querySelector('.sodo-badge');
+               if (badge) badge.remove();
+@@ -7216,7 +7238,225 @@
+       window.sortCurationImageGrid();
+     };
+ 
+-    window.toggleImagePublic = function(cb) {
++    // --- CLOUDINARY LOCAL UPLOADER HELPERS (US-053) ---
++    const CLOUDINARY_CLOUD_NAME = "deru9p712";
++    const CLOUDINARY_API_KEY = "127963624723617";
++    const CLOUDINARY_API_SECRET = "5WyIQlmssDMR4Cu69g4114py6HU";
++    const CLOUDINARY_FOLDER = "BDS-KhangNgo";
++
++    async function sha1(string) {
++      const utf8 = new TextEncoder().encode(string);
++      const hashBuffer = await crypto.subtle.digest('SHA-1', utf8);
++      const hashArray = Array.from(new Uint8Array(hashBuffer));
++      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
++      return hashHex;
++    }
++
++    function compressImageClientSide(file) {
++      return new Promise((resolve, reject) => {
++        const reader = new FileReader();
++        reader.readAsDataURL(file);
++        reader.onload = (event) => {
++          const img = new Image();
++          img.src = event.target.result;
++          img.onload = () => {
++            const canvas = document.createElement("canvas");
++            let width = img.width;
++            let height = img.height;
++            const maxDim = 1600;
++
++            if (width > maxDim || height > maxDim) {
++              if (width > height) {
++                height = Math.round((height * maxDim) / width);
++                width = maxDim;
++              } else {
++                width = Math.round((width * maxDim) / height);
++                height = maxDim;
++              }
++            }
++
++            canvas.width = width;
++            canvas.height = height;
++            const ctx = canvas.getContext("2d");
++            ctx.drawImage(img, 0, 0, width, height);
++
++            canvas.toBlob(
++              (blob) => {
++                if (blob) {
++                  const compressedFile = new File([blob], file.name, {
++                    type: "image/jpeg",
++                    lastModified: Date.now()
++                  });
++                  resolve(compressedFile);
++                } else {
++                  reject(new Error("Canvas toBlob failed"));
++                }
++              },
++              "image/jpeg",
++              0.8
++            );
++          };
++          img.onerror = (err) => reject(err);
++        };
++        reader.onerror = (err) => reject(err);
++      });
++    }
++
++    async function uploadFileToCloudinary(file, type = "interior", listingId = "") {
++      const timestamp = Math.round(Date.now() / 1000);
++      let sodoIndex = 1;
++      if (type === "sodo") {
++        for (let i = 1; i <= 5; i++) {
++          const val = document.getElementById(`editSodo${i}Url`)?.value.trim();
++          if (!val) {
++            sodoIndex = i;
++            break;
++          }
++        }
++      }
++
++      const publicId = type === "sodo" 
++        ? `${listingId}_sodo${sodoIndex}_${Date.now()}`
++        : `${listingId}_interior_${Date.now()}`;
++
++      const strToSign = `folder=${CLOUDINARY_FOLDER}&public_id=${publicId}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
++      const signature = await sha1(strToSign);
++
++      const formData = new FormData();
++      formData.append("file", file);
++      formData.append("folder", CLOUDINARY_FOLDER);
++      formData.append("public_id", publicId);
++      formData.append("timestamp", timestamp);
++      formData.append("api_key", CLOUDINARY_API_KEY);
++      formData.append("signature", signature);
++
++      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
++        method: "POST",
++        body: formData
++      });
++
++      if (!response.ok) {
++        const err = await response.json();
++        throw new Error(err.error?.message || "Lỗi tải ảnh lên Cloudinary");
++      }
++
++      const data = await response.json();
++      return data.secure_url;
++    }
++
++    window.handleLocalImageUpload = async function(event) {
++      const files = Array.from(event.target.files);
++      if (!files.length) return;
++
++      const p = window.activeCurationListing;
++      if (!p) {
++        showToast("Không tìm thấy thông tin căn nhà hiện hành!", "error");
++        return;
++      }
++
++      const uploadType = document.getElementById("localUploadType").value;
++      const progressDiv = document.getElementById("localUploadProgress");
++      const progressTxt = document.getElementById("localUploadProgressTxt");
++
++      if (progressDiv) progressDiv.style.display = "block";
++      if (progressTxt) progressTxt.innerText = `0/${files.length}`;
++
++      const uploadLocalBtn = document.getElementById("uploadLocalBtn");
++      if (uploadLocalBtn) uploadLocalBtn.disabled = true;
++
++      let successCount = 0;
++
++      for (let i = 0; i < files.length; i++) {
++        let file = files[i];
++        if (progressTxt) progressTxt.innerText = `${i + 1}/${files.length}`;
++
++        try {
++          if (uploadType === "interior") {
++            file = await compressImageClientSide(file);
++          }
++
++          let sodoIndex = 1;
++          if (uploadType === "sodo") {
++            for (let s = 1; s <= 5; s++) {
++              const val = document.getElementById(`editSodo${s}Url`)?.value.trim();
++              if (!val) {
++                sodoIndex = s;
++                break;
++              }
++            }
++          }
++
++          const uploadedUrl = await uploadFileToCloudinary(file, uploadType, p.id || p.system_id);
++
++          if (uploadType === "sodo") {
++            const sodoInput = document.getElementById(`editSodo${sodoIndex}Url`);
++            if (sodoInput) {
++              sodoInput.value = uploadedUrl;
++              
++              const pIdx = sodoIndex <= 2 ? (26 + sodoIndex) : (77 + sodoIndex);
++              if (p.pool_row_data) p.pool_row_data[pIdx] = uploadedUrl;
++              p[`raw_sodo${sodoIndex}`] = uploadedUrl;
++
++              showToast(`Tải lên Sổ ${sodoIndex} thành công!`, "success");
++              successCount++;
++            }
++          } else {
++            let assignedIdx = -1;
++            if (p.pool_row_data) {
++              while (p.pool_row_data.length < 90) p.pool_row_data.push("");
++
++              for (let j = 1; j <= 25; j++) {
++                const colIdx = j <= 15 ? (39 + j) : (67 + j);
++                if (!p.pool_row_data[colIdx]) {
++                  p.pool_row_data[colIdx] = uploadedUrl;
++                  assignedIdx = j;
++                  break;
++                }
++              }
++            }
++
++            if (assignedIdx === -1) {
++              if (!p.imgs) p.imgs = [];
++              p.imgs.push(uploadedUrl);
++              assignedIdx = p.imgs.length;
++            }
++
++            const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
++            if (publicInteriorInput && assignedIdx <= 15) {
++              let currentVal = publicInteriorInput.value.trim();
++              let indices = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
++              if (!indices.includes(String(assignedIdx))) {
++                indices.push(String(assignedIdx));
++                publicInteriorInput.value = indices.join(',');
++              }
++            }
++
++            showToast(`Tải lên Ảnh Nội Thất ${assignedIdx} thành công!`, "success");
++            successCount++;
++          }
++        } catch (err) {
++          console.error("Lỗi upload file:", err);
++          showToast(`Lỗi upload file ${file.name}: ${err.message}`, "error");
++        }
++      }
++
++      event.target.value = "";
++      if (progressDiv) progressDiv.style.display = "none";
++      if (uploadLocalBtn) uploadLocalBtn.disabled = false;
++
++      const editGroup = document.querySelector(".admin-edit-group");
++      if (editGroup) {
++        const parent = editGroup.parentNode;
++        const tempDiv = document.createElement("div");
++        tempDiv.innerHTML = renderImageEditorWidget(p);
++        parent.replaceChild(tempDiv.firstElementChild, editGroup);
++        
++        window.sortCurationImageGrid();
++        if (typeof window.updateLivePreview === "function") {
++          window.updateLivePreview();
++        }
++      }
++    };\n\n    window.toggleImagePublic = function(cb) {
+       const card = cb.closest('.edit-img-card');
+       const type = card.dataset.type;
+       const index = card.dataset.index;
+@@ -7264,6 +7504,9 @@
+       const publicAlleyInput = document.getElementById('editPublicAlleyIndices');
+       const sodo1Input = document.getElementById('editSodo1Url');
+       const sodo2Input = document.getElementById('editSodo2Url');
++      const sodo3Input = document.getElementById('editSodo3Url');
++      const sodo4Input = document.getElementById('editSodo4Url');
++      const sodo5Input = document.getElementById('editSodo5Url');
+ 
+       if (coverInput) coverInput.value = '';
+       if (publicCoverInput) publicCoverInput.value = '';
+@@ -7271,6 +7514,9 @@
+       if (publicAlleyInput) publicAlleyInput.value = '';
+       if (sodo1Input) sodo1Input.value = '';
+       if (sodo2Input) sodo2Input.value = '';
++      if (sodo3Input) sodo3Input.value = '';
++      if (sodo4Input) sodo4Input.value = '';
++      if (sodo5Input) sodo5Input.value = '';
+ 
+       document.querySelectorAll('.edit-img-card').forEach(card => {
+         card.classList.remove('is-mattien', 'is-anhnen', 'is-sodo', 'is-sodo1', 'is-sodo2', 'is-sodo3', 'is-sodo4', 'is-sodo5', 'is-public');
+@@ -7338,6 +7584,9 @@
+       for (let c = 40; c <= 54; c++) {
+         if (row[c]) poolImgs.push(row[c]);
+       }
++      for (let c = 83; c <= 92; c++) {
++        if (row[c]) poolImgs.push(row[c]);
++      }
+ 
+       const p = {
+         temp_id: "pool_" + systemId,
+@@ -7374,6 +7623,9 @@
+         raw_mo_ta_chi_tiet: row[10] || '',
+         raw_sodo1: row[27] || '',
+         raw_sodo2: row[28] || '',
++        raw_sodo3: row[80] || '',
++        raw_sodo4: row[81] || '',
++        raw_sodo5: row[82] || '',
+         raw_so_nha: row[6] || '',
+         raw_ten_duong: row[5] || '',
+         raw_dt_thuc_te: row[13] || '',
+@@ -7567,7 +7819,7 @@
+         const sourceData = await sourceRes.json();
+         const sourceRows = sourceData.values || [];
+         
+-        const sysIdMatched = matchedRow[71] || matchedRow[72] || '';
++        const sysIdMatched = matchedRow[72] || matchedRow[71] || '';
+         if (!sysIdMatched) {
+           throw new Error("Dữ liệu căn nhà trong Pool thiếu System ID.");
+         }
+@@ -7639,7 +7891,7 @@
+           }
+         }
+         
+-        while (finalImages.length < 10) finalImages.push("");
++        while (finalImages.length < 15) finalImages.push("");
+         
+         // Xử lý Cú pháp (Lấy từ Nội dung chính thô)
+         const noiDungChinh = matchedRow[9] || "";
+@@ -7671,7 +7923,7 @@
+         
+         const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
+         
+-        // Xây dựng publicRowData 41 cột cho Sheet Source
++        // Xây dựng publicRowData 46 cột cho Sheet Source
+         const publicRowData = [
+           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+           cuPhap,                        // 1: Cu_phap (Cột B)
+@@ -7713,11 +7965,16 @@
+           sysIdMatched,                  // 37: System ID (Cột AL)
+           matchedRow[29],                // 38: Hình Mặt Tiền (Cột AM)
+           "",                            // 39: Tiêu đề BDS (Cột AN)
+-          false                          // 40: Đăng BDS (Cột AO)
++          false,                         // 40: Đăng BDS (Cột AO)
++          finalImages[10] || "",         // 41: anh_11 (Cột AP)
++          finalImages[11] || "",         // 42: anh_12 (Cột AQ)
++          finalImages[12] || "",         // 43: anh_13 (Cột AR)
++          finalImages[13] || "",         // 44: anh_14 (Cột AS)
++          finalImages[14] || ""          // 45: anh_15 (Cột AT)
+         ];
+         
+         // Step 4: Ghi đè/Thêm mới vào Sheet Source
+-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AO${targetRowNumber}?valueInputOption=USER_ENTERED`;
++        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AT${targetRowNumber}?valueInputOption=USER_ENTERED`;
+         const writeRes = await fetch(writeUrl, {
+           method: 'PUT',
+           headers: {
+@@ -7728,14 +7985,19 @@
+         });
+         
+         if (!writeRes.ok) {
+-          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
++          let detail = "";
++          try {
++            const errJson = await writeRes.json();
++            detail = ": " + (errJson.error?.message || JSON.stringify(errJson));
++          } catch (e) {}
++          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
+         }
+         
+         // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
+         try {
+           const poolRowNumber = rows.indexOf(matchedRow) + 2;
+           const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+-          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BZ${poolRowNumber}:BZ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
++          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+             method: 'PUT',
+             headers: {
+               'Authorization': `Bearer ${token}`,
+@@ -8393,15 +8655,17 @@
+         const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+         const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+         const sodo2Url = document.getElementById('editSodo2Url').value.trim();
++        const sodo3Url = document.getElementById('editSodo3Url').value.trim();
++        const sodo4Url = document.getElementById('editSodo4Url').value.trim();
++        const sodo5Url = document.getElementById('editSodo5Url').value.trim();
+ 
+-        const normSodo1 = normalizeImgUrl(sodo1Url);
+-        const normSodo2 = normalizeImgUrl(sodo2Url);
++        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
+         
+         const isSodoUrl = (url) => {
+           if (!url) return false;
+           const norm = normalizeImgUrl(url);
+           if (norm === '') return false;
+-          return norm === normSodo1 || norm === normSodo2;
++          return normSodos.includes(norm);
+         };
+ 
+         const normMatTien = normalizeImgUrl(customCoverUrl || p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : ''));
+@@ -8413,7 +8677,7 @@
+ 
+         // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
+         if (p.pool_row_data) {
+-          const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
++          const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
+           const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+ 
+           const finalImages = [];
+@@ -8427,9 +8691,10 @@
+             if (p.pool_row_data[40] && !isSodoUrl(p.pool_row_data[40]) && !isFacadeUrl(p.pool_row_data[40])) {
+               candidates.push(p.pool_row_data[40]);
+             }
+-            // p.pool_row_data[29] is completely removed here as it is the raw Facade image!
+             for (let i = 0; i < noithatIndices.length; i++) {
+-              const url = p.pool_row_data[39 + noithatIndices[i]];
++              const imgIdx = noithatIndices[i];
++              const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
++              const url = p.pool_row_data[colIdx];
+               if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
+                 candidates.push(url);
+                 break;
+@@ -8455,27 +8720,31 @@
+           
+           for (let i = 0; i < noithatIndices.length; i++) {
+             const imgIdx = noithatIndices[i];
+-            const imgUrl = p.pool_row_data[39 + imgIdx];
+-            // Tránh đẩy trùng hình cover/nền và cấm ảnh Sổ/Mặt tiền
+-            if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 10) {
++            const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
++            const imgUrl = p.pool_row_data[colIdx];
++            if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+               finalImages.push(imgUrl);
+             }
+           }
+ 
+-          while (finalImages.length < 10) finalImages.push("");
++          while (finalImages.length < 15) finalImages.push("");
++
++          // Pad original_row_data to 46 columns
++          while (p.original_row_data.length < 46) p.original_row_data.push("");
+ 
+-          // Cập nhật lại 10 cột ảnh sạch trên Source Sheet
++          // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
+           for (let i = 0; i < 10; i++) {
+             p.original_row_data[20 + i] = finalImages[i];
+           }
++          for (let i = 10; i < 15; i++) {
++            p.original_row_data[31 + i] = finalImages[i];
++          }
+           
+-          // Cập nhật mảng ảnh sạch client-side của đối tượng p
+           p.imgs = finalImages.filter(Boolean);
+         }
+ 
+-        // Universal Database Security Scrub: Clean up original_row_data 10 public image columns
+         if (p.original_row_data) {
+-          // If custom cover URL is a Sổ or Facade, clear it
++          while (p.original_row_data.length < 46) p.original_row_data.push("");
+           let cleanCoverUrl = customCoverUrl || p.original_row_data[38] || '';
+           if (isSodoUrl(cleanCoverUrl) || isFacadeUrl(cleanCoverUrl)) {
+             cleanCoverUrl = '';
+@@ -8483,7 +8752,6 @@
+           p.original_row_data[38] = cleanCoverUrl;
+           p.img_mat_tien = cleanCoverUrl;
+ 
+-          // If the cover image in original_row_data[20] is a Sổ or Facade, replace it!
+           if (isSodoUrl(p.original_row_data[20]) || isFacadeUrl(p.original_row_data[20])) {
+             let newCover = '';
+             for (let i = 20; i <= 29; i++) {
+@@ -8492,10 +8760,17 @@
+                 break;
+               }
+             }
++            if (!newCover) {
++              for (let i = 41; i <= 45; i++) {
++                if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
++                  newCover = p.original_row_data[i];
++                  break;
++                }
++              }
++            }
+             p.original_row_data[20] = newCover;
+           }
+ 
+-          // Gather all non-sổ and non-facade public images
+           const cleanPublicImages = [];
+           for (let i = 20; i <= 29; i++) {
+             const url = p.original_row_data[i];
+@@ -8503,8 +8778,13 @@
+               cleanPublicImages.push(url);
+             }
+           }
++          for (let i = 41; i <= 45; i++) {
++            const url = p.original_row_data[i];
++            if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
++              cleanPublicImages.push(url);
++            }
++          }
+           
+-          // Re-update public cover if editPublicCoverUrl was set and valid
+           if (publicCoverUrl && !isSodoUrl(publicCoverUrl) && !isFacadeUrl(publicCoverUrl)) {
+             if (!cleanPublicImages.includes(publicCoverUrl)) {
+               cleanPublicImages.unshift(publicCoverUrl);
+@@ -8515,13 +8795,16 @@
+             }
+           }
+ 
+-          while (cleanPublicImages.length < 10) {
++          while (cleanPublicImages.length < 15) {
+             cleanPublicImages.push("");
+           }
+           
+           for (let i = 0; i < 10; i++) {
+             p.original_row_data[20 + i] = cleanPublicImages[i];
+           }
++          for (let i = 10; i < 15; i++) {
++            p.original_row_data[31 + i] = cleanPublicImages[i];
++          }
+           p.imgs = cleanPublicImages.filter(Boolean);
+         }
+ 
+@@ -8553,7 +8836,7 @@
+         p.m = moTaBds;
+ 
+         const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AO${p.source_row_index}?valueInputOption=USER_ENTERED`;
++        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AT${p.source_row_index}?valueInputOption=USER_ENTERED`;
+ 
+         const writeRes = await fetch(writeUrl, {
+           method: 'PUT',
+@@ -8565,7 +8848,12 @@
+         });
+ 
+         if (!writeRes.ok) {
+-          throw new Error(`Google Sheets API returned status ${writeRes.status}`);
++          let detail = "";
++          try {
++            const errJson = await writeRes.json();
++            detail = ": " + (errJson.error?.message || JSON.stringify(errJson));
++          } catch (e) {}
++          throw new Error(`Google Sheets API returned status ${writeRes.status}${detail}`);
+         }
+ 
+         // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
+@@ -8620,6 +8908,65 @@
+             console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
+           }
+ 
++          // 1a. Đồng bộ Sổ 3-5 (CC:CE)
++          try {
++            const sodo3Url = document.getElementById('editSodo3Url').value.trim();
++            const sodo4Url = document.getElementById('editSodo4Url').value.trim();
++            const sodo5Url = document.getElementById('editSodo5Url').value.trim();
++            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${p.pool_row_index}:CE${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
++              method: 'PUT',
++              headers: {
++                'Authorization': `Bearer ${token}`,
++                'Content-Type': 'application/json'
++              },
++              body: JSON.stringify({ values: [[sodo3Url, sodo4Url, sodo5Url]] })
++            });
++            p.pool_row_data[80] = sodo3Url;
++            p.pool_row_data[81] = sodo4Url;
++            p.pool_row_data[82] = sodo5Url;
++            p.raw_sodo3 = sodo3Url;
++            p.raw_sodo4 = sodo4Url;
++            p.raw_sodo5 = sodo5Url;
++          } catch (e) {
++            console.warn("Không thể đồng bộ thay đổi Sổ 3-5 sang Pool thô:", e);
++          }
++
++          // 1b. Đồng bộ Ảnh Nội Thất 1-15 sang Pool (cột AO:BC)
++          try {
++            const int1_15 = [];
++            for (let c = 40; c <= 54; c++) {
++              int1_15.push(p.pool_row_data[c] || "");
++            }
++            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${p.pool_row_index}:BC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
++              method: 'PUT',
++              headers: {
++                'Authorization': `Bearer ${token}`,
++                'Content-Type': 'application/json'
++              },
++              body: JSON.stringify({ values: [int1_15] })
++            });
++          } catch (e) {
++            console.warn("Không thể đồng bộ Ảnh Nội Thất 1-15 sang Pool:", e);
++          }
++
++          // 1c. Đồng bộ Ảnh Nội Thất 16-25 sang Pool (cột CF:CO)
++          try {
++            const int16_25 = [];
++            for (let c = 83; c <= 92; c++) {
++              int16_25.push(p.pool_row_data[c] || "");
++            }
++            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${p.pool_row_index}:CO${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
++              method: 'PUT',
++              headers: {
++                'Authorization': `Bearer ${token}`,
++                'Content-Type': 'application/json'
++              },
++              body: JSON.stringify({ values: [int16_25] })
++            });
++          } catch (e) {
++            console.warn("Không thể đồng bộ Ảnh Nội Thất 16-25 sang Pool:", e);
++          }
++
+           // 2. Đồng bộ chỉ số ảnh public (cột BK:BL)
+           try {
+             await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${p.pool_row_index}:BL${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+@@ -8691,7 +9038,7 @@
+       
+       try {
+         // Step 1: Đọc Sheet Pool để lấy dòng gốc
+-        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`;
++        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:CO`;
+         const poolRes = await fetch(poolUrl, {
+           headers: { 'Authorization': `Bearer ${token}` }
+         });
+@@ -8702,6 +9049,9 @@
+         
+         const poolData = await poolRes.json();
+         const rows = poolData.values || [];
++        rows.forEach(r => {
++          while (r.length < 93) r.push("");
++        });
+         
+         const matchedRow = rows.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+         if (!matchedRow) {
+@@ -8728,7 +9078,7 @@
+         }
+         
+         // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
+-        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
++        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AT`;
+         const sourceRes = await fetch(sourceUrl, {
+           headers: { 'Authorization': `Bearer ${token}` }
+         });
+@@ -8740,7 +9090,7 @@
+         const sourceData = await sourceRes.json();
+         const sourceRows = sourceData.values || [];
+         
+-        const sysIdMatched = matchedRow[71] || matchedRow[72] || '';
++        const sysIdMatched = matchedRow[72] || matchedRow[71] || '';
+         if (!sysIdMatched) {
+           throw new Error("Dữ liệu căn nhà trong Pool thiếu System ID.");
+         }
+@@ -8755,6 +9105,9 @@
+         const publicAlleyStr = document.getElementById('editPublicAlleyIndices').value.trim();
+         const sodo1Url = document.getElementById('editSodo1Url').value.trim();
+         const sodo2Url = document.getElementById('editSodo2Url').value.trim();
++        const sodo3Url = document.getElementById('editSodo3Url').value.trim();
++        const sodo4Url = document.getElementById('editSodo4Url').value.trim();
++        const sodo5Url = document.getElementById('editSodo5Url').value.trim();
+ 
+         if (publicIntStr === "") {
+           alert("⚠️ Vui lòng tích chọn ít nhất 1 ảnh nội thất công khai làm Hình Public!");
+@@ -8765,17 +9118,16 @@
+           return;
+         }
+ 
+-        const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 15);
++        const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
+         const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+ 
+-        const normSodo1 = normalizeImgUrl(sodo1Url);
+-        const normSodo2 = normalizeImgUrl(sodo2Url);
++        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
+         
+         const isSodoUrl = (url) => {
+           if (!url) return false;
+           const norm = normalizeImgUrl(url);
+           if (norm === '') return false;
+-          return norm === normSodo1 || norm === normSodo2;
++          return normSodos.includes(norm);
+         };
+ 
+         const normMatTien = normalizeImgUrl(customCoverUrl || matchedRow[29] || '');
+@@ -8797,9 +9149,10 @@
+           if (matchedRow[40] && !isSodoUrl(matchedRow[40]) && !isFacadeUrl(matchedRow[40])) {
+             candidates.push(matchedRow[40]);
+           }
+-          // matchedRow[29] (raw facade) is completely removed here as it is the raw Facade image!
+           for (let i = 0; i < noithatIndices.length; i++) {
+-            const url = matchedRow[39 + noithatIndices[i]];
++            const imgIdx = noithatIndices[i];
++            const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
++            const url = matchedRow[colIdx];
+             if (url && !isSodoUrl(url) && !isFacadeUrl(url)) {
+               candidates.push(url);
+               break;
+@@ -8827,14 +9180,14 @@
+         // 3. Nội thất khác
+         for (let i = 0; i < noithatIndices.length; i++) {
+           const imgIdx = noithatIndices[i];
+-          const imgUrl = matchedRow[39 + imgIdx];
+-          // Tránh đẩy trùng hình publicCover và cấm ảnh Sổ/Mặt tiền
+-          if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 10) {
++          const colIdx = imgIdx <= 15 ? (39 + imgIdx) : (64 + imgIdx);
++          const imgUrl = matchedRow[colIdx];
++          if (imgUrl && imgUrl !== publicCover && !isSodoUrl(imgUrl) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+             finalImages.push(imgUrl);
+           }
+         }
+ 
+-        while (finalImages.length < 10) finalImages.push("");
++        while (finalImages.length < 15) finalImages.push("");
+         
+         // Xử lý Cú pháp
+         const noiDungChinh = matchedRow[9] || "";
+@@ -8871,7 +9224,7 @@
+           finalCoverUrl = '';
+         }
+ 
+-        // Xây dựng publicRowData 41 cột cho Sheet Source
++        // Xây dựng publicRowData 46 cột cho Sheet Source
+         const publicRowData = [
+           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
+           cuPhap,                        // 1: Cu_phap (Cột B)
+@@ -8913,11 +9266,16 @@
+           sysIdMatched,                  // 37: System ID (Cột AL)
+           finalCoverUrl,                 // 38: Hình Mặt Tiền (Cột AM)
+           "",                            // 39: Tiêu đề BDS (Cột AN)
+-          false                          // 40: Đăng BDS (Cột AO)
++          false,                         // 40: Đăng BDS (Cột AO)
++          finalImages[10] || "",         // 41: Ảnh 11 (Cột AP)
++          finalImages[11] || "",         // 42: Ảnh 12 (Cột AQ)
++          finalImages[12] || "",         // 43: Ảnh 13 (Cột AR)
++          finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
++          finalImages[14] || ""          // 45: Ảnh 15 (Cột AT)
+         ];
+         
+         // Step 4: Ghi đè/Thêm mới vào Sheet Source
+-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AO${targetRowNumber}?valueInputOption=USER_ENTERED`;
++        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AT${targetRowNumber}?valueInputOption=USER_ENTERED`;
+         const writeRes = await fetch(writeUrl, {
+           method: 'PUT',
+           headers: {
+@@ -8928,7 +9286,12 @@
+         });
+         
+         if (!writeRes.ok) {
+-          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}).`);
++          let detail = "";
++          try {
++            const errJson = await writeRes.json();
++            detail = ": " + (errJson.error?.message || JSON.stringify(errJson));
++          } catch (e) {}
++          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
+         }
+         
+         // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
+@@ -8977,6 +9340,55 @@
+             console.warn("Không thể đồng bộ Ảnh Bìa / Ảnh 1 sang Pool:", e);
+           }
+ 
++          // 0c. Cập nhật Sổ 3-5 (CC:CE)
++          try {
++            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${poolRowNumber}:CE${poolRowNumber}?valueInputOption=USER_ENTERED`, {
++              method: 'PUT',
++              headers: {
++                'Authorization': `Bearer ${token}`,
++                'Content-Type': 'application/json'
++              },
++              body: JSON.stringify({ values: [[sodo3Url, sodo4Url, sodo5Url]] })
++            });
++          } catch (e) {
++            console.warn("Không thể đồng bộ Sổ 3-5 sang Pool:", e);
++          }
++
++          // 1b. Cập nhật Ảnh Nội Thất 1-15 (AO:BC) và 16-25 (CC:CL) sang Pool thô
++          try {
++            const int1_15 = [];
++            for (let c = 40; c <= 54; c++) {
++              int1_15.push(matchedRow[c] || "");
++            }
++            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:BC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
++              method: 'PUT',
++              headers: {
++                'Authorization': `Bearer ${token}`,
++                'Content-Type': 'application/json'
++              },
++              body: JSON.stringify({ values: [int1_15] })
++            });
++          } catch (e) {
++            console.warn("Không thể đồng bộ Ảnh Nội Thất 1-15 sang Pool:", e);
++          }
++
++          try {
++            const int16_25 = [];
++            for (let c = 83; c <= 92; c++) {
++              int16_25.push(matchedRow[c] || "");
++            }
++            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${poolRowNumber}:CO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
++              method: 'PUT',
++              headers: {
++                'Authorization': `Bearer ${token}`,
++                'Content-Type': 'application/json'
++              },
++              body: JSON.stringify({ values: [int16_25] })
++            });
++          } catch (e) {
++            console.warn("Không thể đồng bộ Ảnh Nội Thất 16-25 sang Pool:", e);
++          }
++
+           // 1. Cập nhật anhDuocChon (BK) và anhHemDuocChon (BL)
+           await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${poolRowNumber}:BL${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+             method: 'PUT',
+@@ -8987,8 +9399,8 @@
+             body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+           });
+           
+-          // 2. Cập nhật Last Sync (BZ)
+-          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BZ${poolRowNumber}:BZ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
++          // 2. Cập nhật Last Sync (CA)
++          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+             method: 'PUT',
+             headers: {
+               'Authorization': `Bearer ${token}`,

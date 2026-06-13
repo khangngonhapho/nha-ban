@@ -1,0 +1,106 @@
+3400:     .thumb-mini-badge.sodo-badge {
+3401:       background: rgba(142, 68, 173, 0.95);
+3402:     }
+3403:     .thumb-mini-badge.public-badge {
+3404:       background: rgba(39, 174, 96, 0.95);
+3405:       font-size: 8.5px;
+3406:       top: auto;
+3407:       bottom: 2px;
+3408:       right: 2px;
+3409:     }
+3410:     .image-editor-control-panel {
+3411:       margin-top: 12px;
+3412:       display: flex;
+3413:       flex-direction: column;
+3414:       gap: 10px;
+3415:       background: rgba(0, 0, 0, 0.02);
+3416:       padding: 12px;
+3417:       border-radius: 8px;
+3418:       border: 1px solid rgba(0, 0, 0, 0.08);
+3419:     }
+3420:     .control-row {
+3421:       display: flex;
+3422:       gap: 8px;
+3423:       flex-wrap: wrap;
+3424:     }
+3425:     .control-btn {
+3426:       flex: 1;
+3427:       min-width: 70px;
+3428:       min-height: 44px; /* Touch-friendly size */
+3429:       background: rgba(0, 0, 0, 0.06);
+3430:       border: 1px solid rgba(0, 0, 0, 0.15);
+3431:       color: #2f3542;
+3432:       border-radius: 8px;
+3433:       font-size: 12.5px;
+3434:       font-weight: 700;
+3435:       cursor: pointer;
+3436:       display: flex;
+3437:       align-items: center;
+3438:       justify-content: center;
+3439:       gap: 6px;
+3440:       transition: all 0.2s;
+3441:       font-family: inherit;
+3442:     }
+3443:     .control-btn:hover {
+3444:       background: rgba(0, 0, 0, 0.1);
+3445:     }
+3446:     .control-btn.active-btn-facade {
+3447:       background: rgba(192, 57, 43, 0.2);
+3448:       border-color: #e74c3c;
+3449:       color: #fc5c65;
+3450:     }
+3451:     .control-btn.active-btn-cover {
+3452:       background: rgba(243, 156, 18, 0.2);
+3453:       border-color: #f39c12;
+3454:       color: var(--gold);
+3455:     }
+3456:     .control-btn.active-btn-sodo {
+3457:       background: rgba(142, 68, 173, 0.2);
+3458:       border-color: #8e44ad;
+3459:       color: #a55eea;
+3460:     }
+3461:     .control-btn.active-btn-public {
+3462:       background: rgba(39, 174, 96, 0.2);
+3463:       border-color: #2ecc71;
+3464:       color: #2ecc71;
+3465:     }
+3466: 
+3467:     /* ── Mobile view overrides (US-076.3) ── */
+3468:     @media (max-width: 767px) {
+3469:       html.filter-active,
+3470:       body.filter-active {
+3471:         overflow: hidden !important;
+3472:         height: 100% !important;
+3473:         position: fixed !important;
+3474:         width: 100% !important;
+3475:       }
+3476:       body.filter-active .admin-speed-dial {
+3477:         bottom: 120px !important;
+3478:       }
+3479:       input[type="text"],
+3480:       input[type="number"],
+3481:       input[type="tel"],
+3482:       input[type="email"],
+3483:       input[type="search"],
+3484:       select,
+3485:       textarea {
+3486:         font-size: 16px !important;
+3487:       }
+3488:       .inline-input {
+3489:         width: 65px !important;
+3490:       }
+3491:       body.filter-active header {
+3492:         position: static !important;
+3493:         transform: none !important;
+3494:         transition: none !important;
+3495:       }
+3496:       .filter-panel {
+3497:         position: fixed;
+3498:         top: 0;
+3499:         left: 0;
+3500:         width: 100vw;
+3501:         height: 100vh;
+3502:         height: 100dvh;
+3503:         max-height: 100vh !important;
+3504:         max-height: 100dvh !important;
+3505:         background: #ffffff !important;

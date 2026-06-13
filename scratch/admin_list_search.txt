@@ -1,0 +1,391 @@
+Match for 'id="adminHeaderActions"' at line 3972:
+id="adminHeaderActions"></div>
+        <button class="xbtn" onclick="closeS()">✕</button>
+      </div>
+      <div class="admin-detail-float-actions" id="adminDetailFloatActions"></div>
+      <div id="
+----------------------------------------
+Match for 'id="adminDetailFloatActions"' at line 3975:
+id="adminDetailFloatActions"></div>
+      <div id="mID"
+        style="padding: 0 20px 4px; font-size: 17px; color: var(--sub); font-weight: 800; text-align: right; word-break: break-all;">
+      </di
+----------------------------------------
+Match for 'id="adminMotaGocBox"' at line 7026:
+id="adminMotaGocBox" style="margin-bottom:14px; font-size:12px;">${formatRawDescription(p.raw_mo_ta_chi_tiet || p.m) || 'Chưa có mô tả chi tiết.'}</div>
+
+            <!-- Technical Specs Dotted Grid -
+----------------------------------------
+Match for 'id="adminSpeedDial"' at line 7737:
+id="adminSpeedDial">
+          <button class="dial-main-btn" id="dialMainBtn" onclick="toggleSpeedDial()" title="Quản lý rổ hàng">⚙️</button>
+          <div class="dial-actions" id="dialActions">
+    
+----------------------------------------
+Match for admin variable at line 4143:
+ge
+    const isSavedAdmin = localStorage.getItem('isAdminSession') === 'true';
+    let isAdmin = isTokenValid || isSavedAdmin;
+    let hasErrorState = false;
+
+    // Check if URL has raw password para
+----------------------------------------
+Match for admin variable at line 4144:
+age.getItem('isAdminSession') === 'true';
+    let isAdmin = isTokenValid || isSavedAdmin;
+    let hasErrorState = false;
+
+    // Check if URL has raw password parameter, verify and clean it up asynchr
+----------------------------------------
+Match for admin variable at line 4152:
+_PASSWORD_HASH) {
+          localStorage.setItem('isAdminSession', 'true');
+          urlParams.delete('pwd');
+          urlParams.delete('pw');
+          urlParams.delete('c');
+          urlParams.de
+----------------------------------------
+Match for admin variable at line 4204:
+ion trackAction(action, details = "") {
+      if (isAdmin || !trackingCustomerName) return; // Không track Admin
+      try {
+        fetch(TRACKING_URL, {
+          method: 'POST',
+          mode: 'no
+----------------------------------------
+Match for admin variable at line 4227:
+r.style.display = 'block';
+      }
+    }
+
+    if (isAdmin) {
+      document.body.classList.add('is-admin');
+      const sInput = document.getElementById('bdsSearchInput');
+      if (sInput) {
+        
+----------------------------------------
+Match for admin variable at line 4348:
+ [];
+    let POOL_ROWS = [];
+    let activeMode = isAdmin ? 'pool' : 'source'; // Mặc định Pool cho Admin khi vào trang (US-039.7)
+    let showOnAirOnly = false; // Trạng thái của nút gạt chỉ lọc căn 
+----------------------------------------
+Match for admin variable at line 4798:
+   }
+
+    function getFiltered() {
+      let a = (isAdmin && activeMode === 'pool') ? getMappedPoolData() : DATA;
+      
+      // Lọc động: Chỉ hiện căn Public (US-039.7)
+      if (isAdmin && activeMo
+----------------------------------------
+Match for admin variable at line 4801:
+ọc động: Chỉ hiện căn Public (US-039.7)
+      if (isAdmin && activeMode === 'pool' && showOnAirOnly) {
+        a = a.filter(p => DATA.some(x => 
+          (x.system_id && p.system_id && String(x.syste
+----------------------------------------
+Match for admin variable at line 4824:
+ase()
+            .trim();
+        }
+
+        if (isAdmin) {
+          // Combined Multi-condition AND Search for Admin
+          const subQueries = sv.split('+').map(s => s.trim()).filter(Boolean);
+ 
+----------------------------------------
+Match for admin variable at line 5210:
+ expiry && parseInt(expiry, 10) > now;
+
+      if (isAdmin && !isTokenValid) {
+        const refreshToken = localStorage.getItem('g_refresh_token');
+        if (refreshToken) {
+          console.log("A
+----------------------------------------
+Match for admin variable at line 5241:
+a:", e);
+          }
+        }
+      }
+
+      if (isAdmin && !isTokenValid) {
+        console.log("Admin accessed without valid Google token. Displaying Auth Screen...");
+        document.body.classLi
+----------------------------------------
+Match for admin variable at line 5266:
+  `;
+        }
+        return;
+      }
+
+      if (isAdmin && isTokenValid && !secureLoadAttempted) {
+        console.log("Loading parallel Admin data...");
+        document.body.classList.remove('is-l
+----------------------------------------
+Match for admin variable at line 5581:
+ound if Admin is logged in (US-024)
+          if (isAdmin) {
+            console.log("Admin session detected in public fallback. Initiating background facade images retrieval...");
+            fetchFa
+----------------------------------------
+Match for admin variable at line 5598:
+eShowOnAirOnly = function(isChecked) {
+      if (!isAdmin) return;
+      showOnAirOnly = isChecked;
+      updateStats();
+      applyFilter();
+      saveState();
+      window.scrollTo({ top: 0, behavio
+----------------------------------------
+Match for admin variable at line 5634:
+ing(p.id)) && !p.is_invisible);
+      } else if (!isAdmin) {
+        DATA = [];
+        showError('Vui lòng liên hệ <b>Khang Ngô Nhà Phố</b> để được cung cấp thông tin.');
+      } else {
+        DATA 
+----------------------------------------
+Match for admin variable at line 5642:
+st isClientView = (shareBitmask || sharedIds) && !isAdmin;
+      if (isClientView) {
+        const savedName = localStorage.getItem('client_name');
+        const savedPhone = localStorage.getItem('cli
+----------------------------------------
+Match for admin variable at line 5687:
+render();
+      updateSwitcherCounts();
+      if (isAdmin) {
+        showGoogleLoginButtonState(true);
+      }
+
+      // US-049: Tự động mở modal Curation Pool thô nếu Admin mở link của căn chưa publi
+----------------------------------------
+Match for admin variable at line 5692:
+ô nếu Admin mở link của căn chưa public
+      if (isAdmin && shareToken && shareToken.startsWith('SYS-')) {
+        const isOnAir = fullList.some(h => h.system_id === shareToken);
+        if (!isOnAir
+----------------------------------------
+Match for admin variable at line 5706:
+preview flag in localStorage (US-046.2)
+      if (isAdmin) {
+        const autoPreviewId = localStorage.getItem('auto_preview_listing_id');
+        if (autoPreviewId) {
+          localStorage.removeIt
+----------------------------------------
+Match for admin variable at line 5746:
+IN_PASSWORD_HASH) {
+        localStorage.setItem('isAdminSession', 'true');
+        alert("Đăng nhập Admin thành công!");
+        const url = new URL(window.location.href);
+        url.searchParams.de
+----------------------------------------
+Match for admin variable at line 5765:
+erHTML = '';
+      
+      const adminLoginLink = !isAdmin ? `
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.08);">
+          <span onclick="trigger
+----------------------------------------
+Match for admin variable at line 5783:
+ge State ──
+    function saveState() {
+      if (!isAdmin || shareBitmask || shareToken) return;
+      const state = {
+        districts: [...selDistricts],
+        wards: [...selWards],
+        duong
+----------------------------------------
+Match for admin variable at line 5815:
+;
+    }
+
+    function restoreState() {
+      if (!isAdmin || shareBitmask || shareToken) return;
+      try {
+        const saved = localStorage.getItem('adminState');
+        if (!saved) return;
+     
+----------------------------------------
+Match for admin variable at line 6069:
+    };
+
+    function buildWardTabs() {
+      if (!isAdmin) return;
+      let wards = [];
+      
+      if (selDistricts.size === 0) {
+        const staticWards = [];
+        ['q3', 'pn', 'q10', 'bt', '
+----------------------------------------
+Match for admin variable at line 6122:
+lly ──
+    function buildDuongTabs() {
+      if (!isAdmin) return;
+      let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+      if (selWards.size) pool = pool.filter(p =>
+----------------------------------------
+Match for admin variable at line 6156:
+lly ──
+    function buildHuongTabs() {
+      if (!isAdmin) return;
+      let pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+      if (selWards.size) pool = pool.filter(p =>
+----------------------------------------
+Match for admin variable at line 6222:
+');
+      if (bar) {
+        bar.style.display = (isAdmin && anyActive) ? 'flex' : 'none';
+      }
+
+      saveState();
+    }
+
+    function resetFilters() {
+      selDistricts.clear(); selWards.clear()
+----------------------------------------
+Match for admin variable at line 6323:
+   }
+
+    function toggleFavFilter() {
+      if (!isAdmin) {
+        showFavOnly = !showFavOnly;
+        updateFavBtnUI();
+        saveState();
+        updateStats(); applyFilter();
+      } else {
+   
+----------------------------------------
+Match for admin variable at line 6344:
+= 'newest') {
+          let ta, tb;
+          if (isAdmin && activeMode === 'pool' && showOnAirOnly) {
+            const ma = DATA.find(x => 
+              (x.system_id && a.system_id && String(x.syst
+----------------------------------------
+Match for admin variable at line 6367:
+}
+      });
+
+      if (!arr.length) {
+        if (isAdmin && activeMode === 'pool') {
+          list.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:60px 20px;color:var(--sub);f
+----------------------------------------
+Match for admin variable at line 6375:
+ }
+        return;
+      }
+
+      const isPool = (isAdmin && activeMode === 'pool');
+      const maxRender = isPool ? 200 : arr.length;
+      const itemsToRender = arr.slice(0, maxRender);
+
+      cons
+----------------------------------------
+Match for admin variable at line 6381:
+orEach((p, i) => {
+        const curatedListing = isAdmin ? DATA.find(x => 
+          (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
+          (x.id && p.
+----------------------------------------
+Match for admin variable at line 6390:
+;
+        let thumbUrl = '';
+        
+        if (isAdmin) {
+          const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
+     
+----------------------------------------
+Match for admin variable at line 6411:
+nerateAdminTitleFromNộiDungChinh(p);
+
+        if (isAdmin) {
+          c.innerHTML = `
+        <div class="crow">
+          <div class="ibox">
+            ${p.isFromPoolOnly ? (isOnAir ? '<div class="
+----------------------------------------
+Match for admin variable at line 6450:
+'); this.classList.add('loaded');">
+            ${isAdmin ? `<input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(Strin
+----------------------------------------
+Match for admin variable at line 6533:
+er) fallbackContainer.remove();
+      
+      if (!isAdmin || activeMode === 'pool' || visibleCount > 0) return;
+      
+      const searchVal = (document.getElementById('bdsSearchInput')?.value || '').
+----------------------------------------
+Match for admin variable at line 6966:
+ElementById('adminDetailFloatActions');
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        if (mID) mID.style.display = 'none';
+        if (floatActions) {
+          floatAction
+----------------------------------------
+Match for admin variable at line 6988:
+cta = document.querySelector('.scta');
+
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        if (scta) scta.style.display = 'none';
+        
+        sbody.innerHTML = `
+          
+----------------------------------------
+Match for admin variable at line 7362:
+ck = () => askZalo(p.id, p.t);
+      }
+
+      if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        window.CURRENT_EDITING_LISTING = p;
+        setTimeout(() => {
+          const editHuo
+----------------------------------------
+Match for admin variable at line 7529:
+h của danh sách rổ hàng trên Speed Dial
+      if (isAdmin) {
+        renderSpeedDialActions('list');
+      }
+    }
+    function bgC(e) { if (e.target === document.getElementById('ov')) closeS(false); 
+----------------------------------------
+Match for admin variable at line 7735:
+
+    // Thêm Speed Dial Menu nếu là admin
+    if (isAdmin) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="admin-speed-dial" id="adminSpeedDial">
+          <button class="d
+----------------------------------------
+Match for admin variable at line 7975:
+ry', expiry);
+              localStorage.setItem('isAdminSession', 'true');
+              showGoogleLoginButtonState(true);
+              document.body.classList.remove('is-locked');
+              sec
+----------------------------------------
+Match for admin variable at line 8176:
+nh kỳ (US-061)
+    setInterval(() => {
+      if (!isAdmin) return;
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const 
+----------------------------------------
+Match for admin variable at line 11938:
+;
+
+    // Khởi động
+    updateFavBtnUI();
+    if (isAdmin) {
+      updateShareUI();
+      renderCollectionsManager();
+      setTimeout(initGoogleAuth, 800);
+    }
+    loadData();
+  </script>
+</body>
+
+
+----------------------------------------

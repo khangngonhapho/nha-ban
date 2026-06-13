@@ -249,6 +249,9 @@ def add_log_message(msg):
 # Cấu hình mặc định
 DEFAULT_CONFIG = {
     "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+    "pool2_raw_sheet_id": "",
+    "pool2_custom_sheet_id": "",
+    "pool2_public_sheet_id": "",
     "drive_folder_id": "10NcfOJ3_YBiPVc4FSK2uGGNs7MPmAFO8",
     "target_district": "",
     "search_url": "https://data.thienkhoi.com/Hang?iID_MaTinh=0&iID_HuongNha=0&iID_LoaiHang=0&iID_MaQuan=0&iID_MaPhuongXa=0&iTrangThai=0&iTuMatTien=0&iDenMatTien=0&iTuDienTich=0&iDenDienTich=0&iGiaChaoHopDong=0&iHeSoThanhTich=0&iGia=0&sGia=0&iTuGia=0&iDenGia=0&iPhanTramHoaHong=0&iDuongVao=0&iTuSoTang=0&iPhanTang=0&iDenSoTang=0&iSoPhongNgu=0&iSoToilet=0&iID_Nguon=0&sTaiKhoan=0908130555&iTaiKhoan=0&Menu=0&Page=1&PageSize=20&bCamKetChuan=False&bSigned=False&bHidden=0&iID_MaNguoiDungTao=0&iID_MaNguoiTuChoi=0&iDuAn=0&iTrangThaiSoDo=0&iBranch=0&blacklist=False&iKhoBank=0&iKhoHang=0&iID_MaNguoiDuyetBank=0&iID_MaNguoiBCDK=0&all=False&inside=False&tester=False",
@@ -844,6 +847,77 @@ def upload_image_to_cloudinary(file_content, filename, cloud_name, api_key, api_
     res_data = r.json()
     return res_data.get("secure_url") or res_data.get("url")
 
+def upload_image_to_r2(file_content, filename, content_type="image/jpeg"):
+    """Tải ảnh lên Cloudflare R2 sử dụng REST API với AWS Signature v4"""
+    import hashlib
+    import hmac
+    import datetime
+    
+    cfg = load_config()
+    r2_access_key = cfg.get("r2_access_key_id")
+    r2_secret_key = cfg.get("r2_secret_access_key")
+    r2_bucket = cfg.get("r2_bucket_name")
+    account_id = cfg.get("cloudflare_account_id")
+    r2_public_url = cfg.get("r2_public_url")
+    
+    if not (r2_access_key and r2_secret_key and r2_bucket and account_id):
+        raise Exception("Thiếu cấu hình Cloudflare R2 trong settings.json")
+        
+    host = f"{r2_bucket}.{account_id}.r2.cloudflarestorage.com"
+    endpoint = f"https://{host}"
+    key = f"BDS-KhangNgo/{filename}"
+    path = f"/{key}"
+    
+    # Date helper
+    t = datetime.datetime.utcnow()
+    amz_date = t.strftime('%Y%m%dT%H%M%SZ')
+    date_stamp = t.strftime('%Y%m%d')
+    
+    hashed_payload = hashlib.sha256(file_content).hexdigest()
+    
+    canonical_headers = f"host:{host}\nx-amz-content-sha256:{hashed_payload}\nx-amz-date:{amz_date}\n"
+    signed_headers = "host;x-amz-content-sha256;x-amz-date"
+    
+    canonical_request = f"PUT\n{path}\n\n{canonical_headers}\n{signed_headers}\n{hashed_payload}"
+    hashed_canonical_request = hashlib.sha256(canonical_request.encode('utf-8')).hexdigest()
+    
+    algorithm = "AWS4-HMAC-SHA256"
+    region = "auto"
+    service = "s3"
+    credential_scope = f"{date_stamp}/{region}/{service}/aws4_request"
+    
+    string_to_sign = f"{algorithm}\n{amz_date}\n{credential_scope}\n{hashed_canonical_request}"
+    
+    def sign(key, msg):
+        return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
+        
+    def get_signature_key(key, date_stamp, region_name, service_name):
+        k_date = hmac.new(("AWS4" + key).encode('utf-8'), date_stamp.encode('utf-8'), hashlib.sha256).digest()
+        k_region = sign(k_date, region_name)
+        k_service = sign(k_region, service_name)
+        k_signing = sign(k_service, "aws4_request")
+        return k_signing
+        
+    signing_key = get_signature_key(r2_secret_key, date_stamp, region, service)
+    signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
+    
+    authorization_header = f"{algorithm} Credential={r2_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}"
+    
+    url = f"{endpoint}{path}"
+    headers = {
+        'Host': host,
+        'Authorization': authorization_header,
+        'x-amz-date': amz_date,
+        'x-amz-content-sha256': hashed_payload,
+        'Content-Type': content_type
+    }
+    
+    r = requests.put(url, data=file_content, headers=headers, timeout=30)
+    if r.status_code != 200:
+        raise Exception(f"R2 API error {r.status_code}: {r.text}")
+        
+    return f"{r2_public_url}/BDS-KhangNgo/{filename}"
+
 def create_drive_folder(folder_name, parent_id, token):
     """Tạo thư mục con trên Drive phục vụ gom ảnh theo mã căn"""
     headers = {"Authorization": f"Bearer {token}"}
@@ -974,20 +1048,29 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
     else:
         add_log_message(f"[i] Phát hiện {len(rows)} căn thô cần di cư hình ảnh.")
     
-    # 2. Kiểm tra cấu hình Cloud (Cloudinary hoặc Google Drive)
+    # 2. Kiểm tra cấu hình Cloud (Cloudflare R2, Cloudinary hoặc Google Drive)
     cfg = load_config()
+    
+    r2_access_key = cfg.get("r2_access_key_id")
+    r2_secret_key = cfg.get("r2_secret_access_key")
+    r2_bucket = cfg.get("r2_bucket_name")
+    account_id = cfg.get("cloudflare_account_id")
+    r2_public_url = cfg.get("r2_public_url", "")
+    use_r2 = bool(r2_access_key and r2_secret_key and r2_bucket and account_id)
     
     cld_cloud_name = cfg.get("cloudinary_cloud_name")
     cld_api_key = cfg.get("cloudinary_api_key")
     cld_api_secret = cfg.get("cloudinary_api_secret")
     
-    use_cloudinary = bool(cld_cloud_name and cld_api_key and cld_api_secret)
+    use_cloudinary = bool(cld_cloud_name and cld_api_key and cld_api_secret) and not use_r2
     
     creds = None
     token = None
     drive_parent_folder = None
     
-    if use_cloudinary:
+    if use_r2:
+        add_log_message(f"[🔒] Phát hiện cấu hình Cloudflare R2 (Bucket: {r2_bucket}). Ảnh sẽ được upload trực tiếp lên Cloudflare R2 siêu tốc!")
+    elif use_cloudinary:
         add_log_message(f"[🔒] Phát hiện cấu hình Cloudinary (Cloud: {cld_cloud_name}). Ảnh sẽ được upload trực tiếp lên Cloudinary CDN siêu tốc!")
     else:
         creds = get_google_credentials()
@@ -996,7 +1079,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         if creds and token:
             add_log_message("[🔒] Google Service Account được phát hiện. Ảnh sẽ được upload lên Google Drive 5TB!")
         else:
-            add_log_message("[⚠️] KHÔNG phát hiện file 'credentials.json' hoặc cấu hình Cloudinary. Hệ thống tự động kích hoạt chế độ tải ảnh CỤC BỘ (Local Storage) để lưu trữ tại static/images/[tk_id]/")
+            add_log_message("[⚠️] KHÔNG phát hiện file 'credentials.json', cấu hình Cloudflare R2 hoặc Cloudinary. Hệ thống tự động kích hoạt chế độ tải ảnh CỤC BỘ (Local Storage) để lưu trữ tại static/images/[tk_id]/")
         
     headers_tk = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -1077,8 +1160,11 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 
                 filename = f"img_{tk_id}_{idx+1}.jpg"
                 
-                # GHI LÊN CLOUDINARY, DRIVE HOẶC CỤC BỘ
-                if use_cloudinary:
+                # GHI LÊN CLOUDFLARE R2, CLOUDINARY, DRIVE HOẶC CỤC BỘ
+                if use_r2:
+                    img_link = upload_image_to_r2(img_data, filename)
+                    return idx, img_link
+                elif use_cloudinary:
                     cld_folder = f"BDS-KhangNgo/{tk_id}"
                     img_link = upload_image_to_cloudinary(
                         img_data, 
@@ -1174,14 +1260,16 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 (original_sodo4, clean_sodo4),
                 (original_sodo5, clean_sodo5)
             ], start=1):
-                if orig_sodo and orig_sodo.startswith("http") and not ("cloudinary.com" in clean_sodo or "google" in clean_sodo):
+                if orig_sodo and orig_sodo.startswith("http") and not ("cloudinary.com" in clean_sodo or "google" in clean_sodo or "r2.dev" in clean_sodo or (r2_public_url and r2_public_url in clean_sodo)):
                     try:
                         add_log_message(f"  [🛡️ Sơ đồ {sodo_num}] Đang di cư Ảnh Sơ đồ thửa đất {sodo_num} của {tk_id} lên Cloud (BỎ QUA NÉN)...")
                         img_data = download_image_with_retry(orig_sodo, headers_tk_sodo)
                         if img_data:
                             filename = f"sodo{sodo_num}_{tk_id}.jpg"
                             migrated = ""
-                            if use_cloudinary:
+                            if use_r2:
+                                migrated = upload_image_to_r2(img_data, filename)
+                            elif use_cloudinary:
                                 cld_folder = f"BDS-KhangNgo/{tk_id}"
                                 migrated = upload_image_to_cloudinary(
                                     img_data, 

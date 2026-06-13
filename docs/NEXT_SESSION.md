@@ -18,7 +18,8 @@
 ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
 
 ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   *Hiện tại không có tính năng nào đang thực hiện dở dang.*
+*   **US-092 (Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ):** **[IN-PROGRESS]** Đã tạo User Story và lên phương án kỹ thuật chỉnh sửa cơ chế đọc tệp `index.html` động kèm cấu hình Vercel bundling. Đang chờ PO duyệt kế hoạch trước khi code.
+*   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[IN-PROGRESS]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK, tối ưu hóa các tham số nén hình ảnh cào mới thành JPEG 95% và max size 2400px. Đang chờ PO duyệt kế hoạch trước khi code và chạy khôi phục thực tế.
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **US-089B (Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist):** Tích hợp Google Sheets API v4 đồng bộ ảnh dạng dòng và metadata cho Pool2, bảo đảm các cột hình ảnh phẳng không bị đè lỗi.

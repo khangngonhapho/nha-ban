@@ -1,0 +1,72 @@
+Line 1075: .crow {
+Context:
+    1070:         opacity: 1;
+    1071:         transform: translateY(0)
+    1072:       }
+    1073:     }
+    1074: 
+--> 1075:     .crow {
+    1076:       display: flex;
+    1077:       align-items: stretch;
+    1078:       width: 100%;
+    1079:       height: 160px;
+    1080:     }
+    1081: 
+    1082:     .ibox {
+    1083:       position: relative;
+    1084:       width: 120px;
+============================================================
+Line 1082: .ibox {
+Context:
+    1077:       align-items: stretch;
+    1078:       width: 100%;
+    1079:       height: 160px;
+    1080:     }
+    1081: 
+--> 1082:     .ibox {
+    1083:       position: relative;
+    1084:       width: 120px;
+    1085:       min-width: 120px;
+    1086:       height: auto;
+    1087:       overflow: hidden;
+    1088:       border-radius: 16px 0 0 16px;
+    1089:       background: #f0f0f2;
+    1090:     }
+    1091: 
+============================================================
+Line 2845: .crow {
+Context:
+    2840:         transform: translateY(-4px);
+    2841:         box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
+    2842:       }
+    2843: 
+    2844:       /* Ảnh lớn hơn trên desktop */
+--> 2845:       .crow {
+    2846:         flex-direction: column !important;
+    2847:         height: auto !important;
+    2848:       }
+    2849: 
+    2850:       .ibox {
+    2851:         width: 100% !important;
+    2852:         min-width: 100% !important;
+    2853:         height: 220px !important;
+    2854:         border-radius: 16px 16px 0 0 !important;
+============================================================
+Line 2850: .ibox {
+Context:
+    2845:       .crow {
+    2846:         flex-direction: column !important;
+    2847:         height: auto !important;
+    2848:       }
+    2849: 
+--> 2850:       .ibox {
+    2851:         width: 100% !important;
+    2852:         min-width: 100% !important;
+    2853:         height: 220px !important;
+    2854:         border-radius: 16px 16px 0 0 !important;
+    2855:       }
+    2856: 
+    2857:       .info {
+    2858:         padding: 16px;
+    2859:       }
+============================================================

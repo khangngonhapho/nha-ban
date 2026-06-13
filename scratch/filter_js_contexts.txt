@@ -1,0 +1,190 @@
+Line 4452: let filterOpen = false;
+Context:
+    4442:           btn.style.opacity = "1";
+    4443:         }
+    4444:       }
+    4445:     };
+    4446:     const selDistricts = new Set();
+    4447:     const selWards = new Set();
+    4448:     const selDuongs = new Set();
+    4449:     const selHuong = new Set();
+    4450:     const selGia = new Set();
+    4451:     const selDanhGia = new Set();
+--> 4452:     let filterOpen = false;
+    4453:     let currentSortType = 'newest'; // 'newest' or 'price'
+    4454:     let currentSortDir = 'desc'; // 'desc' = high/newest first, 'asc' = low/oldest first
+    4455:     let showFavOnly = false;
+    4456:     let favs = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
+    4457:     let collections = JSON.parse(localStorage.getItem('adminCollections') || '{}');
+    4458:     let activeCollectionName = null; // null | 'favorites' | '[Tên BST tự tạo]'
+    4459: 
+    4460:     // ── Multi-select helper ──
+    4461:     function tSel(set, val) {
+    4462:       if (val === 'all') { set.clear(); return; }
+    4463:       if (set.has(val)) set.delete(val); else set.add(val);
+    4464:     }
+    4465:     function syncTabUI(containerId, set) {
+    4466:       document.querySelectorAll('#' + containerId + ' .tab').forEach(btn => {
+    4467:         const v = btn.getAttribute('data-val');
+    4468:         btn.classList.toggle('on', v === 'all' ? set.size === 0 : set.has(v));
+    4469:       });
+    4470:     }
+    4471: 
+    4472:     // ── Custom Multiselect Event Handlers ──
+    4473:     window.toggleMultiselect = function(containerId) {
+    4474:       const el = document.getElementById(containerId);
+    4475:       if (!el) return;
+    4476:       document.querySelectorAll('.multiselect-container').forEach(other => {
+============================================================
+Line 5932: function toggleFilter() {
+Context:
+    5922:       if (sDt) sDt.textContent = dts.length ? `${Math.min(...dts)}–${Math.max(...dts)}` : '-';
+    5923: 
+    5924:       const sQuan = document.getElementById('sQuan');
+    5925:       if (sQuan) sQuan.textContent = quans || '-';
+    5926: 
+    5927:       const totalBadge = document.getElementById('totalBadge');
+    5928:       if (totalBadge) totalBadge.textContent = `${arr.length} BĐS`;
+    5929:     }
+    5930: 
+    5931:     // ── Filter panel toggle ──
+--> 5932:     function toggleFilter() {
+    5933:       filterOpen = !filterOpen;
+    5934:       document.getElementById('filterPanel').classList.toggle('open', filterOpen);
+    5935:       const btn = document.getElementById('filterBtn');
+    5936:       btn.classList.toggle('active', filterOpen);
+    5937:       if (window.innerWidth < 768) {
+    5938:         document.documentElement.classList.toggle('filter-active', filterOpen);
+    5939:         document.body.classList.toggle('filter-active', filterOpen);
+    5940:       }
+    5941:     }
+    5942:     function closeFilter() {
+    5943:       if (!filterOpen) return;
+    5944:       filterOpen = false;
+    5945:       document.getElementById('filterPanel').classList.remove('open');
+    5946:       const btn = document.getElementById('filterBtn');
+    5947:       const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size || document.querySelectorAll('.filter-criterion:checked').length);
+    5948:       btn.classList.toggle('active', anyActive);
+    5949:       if (window.innerWidth < 768) {
+    5950:         document.documentElement.classList.remove('filter-active');
+    5951:         document.body.classList.remove('filter-active');
+    5952:       }
+    5953:     }
+    5954: 
+    5955:     // ── Build district tabs dynamically ──
+    5956:     function buildDistrictTabs() {
+============================================================
+Line 5933: filterOpen = !filterOpen;
+Context:
+    5923: 
+    5924:       const sQuan = document.getElementById('sQuan');
+    5925:       if (sQuan) sQuan.textContent = quans || '-';
+    5926: 
+    5927:       const totalBadge = document.getElementById('totalBadge');
+    5928:       if (totalBadge) totalBadge.textContent = `${arr.length} BĐS`;
+    5929:     }
+    5930: 
+    5931:     // ── Filter panel toggle ──
+    5932:     function toggleFilter() {
+--> 5933:       filterOpen = !filterOpen;
+    5934:       document.getElementById('filterPanel').classList.toggle('open', filterOpen);
+    5935:       const btn = document.getElementById('filterBtn');
+    5936:       btn.classList.toggle('active', filterOpen);
+    5937:       if (window.innerWidth < 768) {
+    5938:         document.documentElement.classList.toggle('filter-active', filterOpen);
+    5939:         document.body.classList.toggle('filter-active', filterOpen);
+    5940:       }
+    5941:     }
+    5942:     function closeFilter() {
+    5943:       if (!filterOpen) return;
+    5944:       filterOpen = false;
+    5945:       document.getElementById('filterPanel').classList.remove('open');
+    5946:       const btn = document.getElementById('filterBtn');
+    5947:       const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size || document.querySelectorAll('.filter-criterion:checked').length);
+    5948:       btn.classList.toggle('active', anyActive);
+    5949:       if (window.innerWidth < 768) {
+    5950:         document.documentElement.classList.remove('filter-active');
+    5951:         document.body.classList.remove('filter-active');
+    5952:       }
+    5953:     }
+    5954: 
+    5955:     // ── Build district tabs dynamically ──
+    5956:     function buildDistrictTabs() {
+    5957:       const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+============================================================
+Line 5942: function closeFilter() {
+Context:
+    5932:     function toggleFilter() {
+    5933:       filterOpen = !filterOpen;
+    5934:       document.getElementById('filterPanel').classList.toggle('open', filterOpen);
+    5935:       const btn = document.getElementById('filterBtn');
+    5936:       btn.classList.toggle('active', filterOpen);
+    5937:       if (window.innerWidth < 768) {
+    5938:         document.documentElement.classList.toggle('filter-active', filterOpen);
+    5939:         document.body.classList.toggle('filter-active', filterOpen);
+    5940:       }
+    5941:     }
+--> 5942:     function closeFilter() {
+    5943:       if (!filterOpen) return;
+    5944:       filterOpen = false;
+    5945:       document.getElementById('filterPanel').classList.remove('open');
+    5946:       const btn = document.getElementById('filterBtn');
+    5947:       const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size || document.querySelectorAll('.filter-criterion:checked').length);
+    5948:       btn.classList.toggle('active', anyActive);
+    5949:       if (window.innerWidth < 768) {
+    5950:         document.documentElement.classList.remove('filter-active');
+    5951:         document.body.classList.remove('filter-active');
+    5952:       }
+    5953:     }
+    5954: 
+    5955:     // ── Build district tabs dynamically ──
+    5956:     function buildDistrictTabs() {
+    5957:       const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+    5958:       const dNamesFull = {
+    5959:         q1: 'Quận 1', q2: 'Quận 2', q3: 'Quận 3', q4: 'Quận 4', q5: 'Quận 5', q6: 'Quận 6',
+    5960:         q7: 'Quận 7', q8: 'Quận 8', q9: 'Quận 9', q10: 'Quận 10', q11: 'Quận 11', q12: 'Quận 12',
+    5961:         pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp',
+    5962:         tp: 'Tân Phú', btan: 'Bình Tân', td: 'Thủ Đức',
+    5963:         hm: 'Hóc Môn', nb: 'Nhà Bè', bc: 'Bình Chánh', cc: 'Củ Chi', cg: 'Cần Giờ'
+    5964:       };
+    5965: 
+    5966:       const order = ['q3', 'q10', 'pn', 'tb', 'bt', 'gv', 'q1', 'q2', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q11', 'q12', 'tp', 'btan', 'td', 'hm', 'nb', 'bc', 'cc', 'cg'];
+============================================================
+Line 5944: filterOpen = false;
+Context:
+    5934:       document.getElementById('filterPanel').classList.toggle('open', filterOpen);
+    5935:       const btn = document.getElementById('filterBtn');
+    5936:       btn.classList.toggle('active', filterOpen);
+    5937:       if (window.innerWidth < 768) {
+    5938:         document.documentElement.classList.toggle('filter-active', filterOpen);
+    5939:         document.body.classList.toggle('filter-active', filterOpen);
+    5940:       }
+    5941:     }
+    5942:     function closeFilter() {
+    5943:       if (!filterOpen) return;
+--> 5944:       filterOpen = false;
+    5945:       document.getElementById('filterPanel').classList.remove('open');
+    5946:       const btn = document.getElementById('filterBtn');
+    5947:       const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size || document.querySelectorAll('.filter-criterion:checked').length);
+    5948:       btn.classList.toggle('active', anyActive);
+    5949:       if (window.innerWidth < 768) {
+    5950:         document.documentElement.classList.remove('filter-active');
+    5951:         document.body.classList.remove('filter-active');
+    5952:       }
+    5953:     }
+    5954: 
+    5955:     // ── Build district tabs dynamically ──
+    5956:     function buildDistrictTabs() {
+    5957:       const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+    5958:       const dNamesFull = {
+    5959:         q1: 'Quận 1', q2: 'Quận 2', q3: 'Quận 3', q4: 'Quận 4', q5: 'Quận 5', q6: 'Quận 6',
+    5960:         q7: 'Quận 7', q8: 'Quận 8', q9: 'Quận 9', q10: 'Quận 10', q11: 'Quận 11', q12: 'Quận 12',
+    5961:         pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp',
+    5962:         tp: 'Tân Phú', btan: 'Bình Tân', td: 'Thủ Đức',
+    5963:         hm: 'Hóc Môn', nb: 'Nhà Bè', bc: 'Bình Chánh', cc: 'Củ Chi', cg: 'Cần Giờ'
+    5964:       };
+    5965: 
+    5966:       const order = ['q3', 'q10', 'pn', 'tb', 'bt', 'gv', 'q1', 'q2', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q11', 'q12', 'tp', 'btan', 'td', 'hm', 'nb', 'bc', 'cc', 'cg'];
+    5967: 
+    5968:       districtsInPool.sort((a, b) => {
+============================================================

@@ -1,0 +1,57 @@
+Found body/html rule at line 613:
+body {
+      font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none
+--------------------------------------------------
+Found body/html rule at line 1478:
+body {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1;
+      padding: 14px 14px 8px
+    }
+
+    .gwrap {
+      position: relative;
+      border-radius: 14px;
+      overf
+--------------------------------------------------
+Found body/html rule at line 2444:
+body, html {
+      font-size: 14.5px;
+    }
+    
+    /* Listing Cards display text overrides */
+    .card .title {
+      font-size: 14.5px !important;
+    }
+    .card .specs {
+      font-size: 13.5px 
+--------------------------------------------------
+Found body/html rule at line 2444:
+html {
+      font-size: 14.5px;
+    }
+    
+    /* Listing Cards display text overrides */
+    .card .title {
+      font-size: 14.5px !important;
+    }
+    .card .specs {
+      font-size: 13.5px !impor
+--------------------------------------------------
+Found body/html rule at line 2910:
+body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding: 24px;
+        overflow-y: auto;
+        align-items: start;
+      }
+
+      /* Gallery bên trái
+--------------------------------------------------

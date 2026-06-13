@@ -1,0 +1,45 @@
+Line 438: def get_google_credentials():
+Line 846: creds = get_google_credentials()
+Line 2389: creds = get_google_credentials()
+
+=== Definition Block ===
+Line 438: def get_google_credentials():
+Line 439:     """Tạo credentials từ credentials.json nếu tồn tại (Hỗ trợ định vị đa cấp US-043)"""
+Line 440:     target_paths = [
+Line 441:         CREDENTIALS_FILE,
+Line 442:         os.path.abspath(os.path.join(PROJECT_ROOT, "..", "credentials.json")),
+Line 443:         os.path.abspath(os.path.join(PROJECT_ROOT, "..", "..", "credentials.json")),
+Line 444:         os.path.abspath(os.path.join(os.getcwd(), "credentials.json")),
+Line 445:         os.path.abspath(os.path.join(os.getcwd(), "..", "credentials.json"))
+Line 446:     ]
+Line 447: 
+Line 448:     # Nếu chạy dưới dạng EXE đóng gói (frozen), kiểm tra thêm các đường dẫn lân cận file thực thi
+Line 449:     if getattr(sys, 'frozen', False):
+Line 450:         exe_dir = os.path.dirname(sys.executable)
+Line 451:         target_paths.insert(0, os.path.abspath(os.path.join(exe_dir, "credentials.json")))
+Line 452:         target_paths.insert(1, os.path.abspath(os.path.join(os.path.dirname(exe_dir), "credentials.json")))
+Line 453:         target_paths.insert(2, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(exe_dir)), "credentials.json")))
+Line 454: 
+Line 455:     resolved_path = None
+Line 456:     for p in target_paths:
+Line 457:         if os.path.exists(p):
+Line 458:             resolved_path = p
+Line 459:             break
+Line 460: 
+Line 461:     if not resolved_path:
+Line 462:         # Loại bỏ các đường dẫn trùng lắp để log cho gọn
+Line 463:         unique_paths = list(dict.fromkeys(target_paths))
+Line 464:         paths_str = "\n  - ".join(f"'{p}'" for p in unique_paths)
+Line 465:         add_log_message(f"[⚠️ API WARNING] Không tìm thấy credentials.json. Các vị trí hệ thống đã quét qua:\n  - {paths_str}")
+Line 466:         return None
+Line 467: 
+Line 468:     add_log_message(f"[🔒 API] Đã tìm thấy tệp xác thực Google Sheets tại: '{resolved_path}'")
+Line 469: 
+Line 470:     try:
+Line 471:         from google.oauth2 import service_account
+Line 472:         scopes = [
+Line 473:             'https://www.googleapis.com/auth/drive.file',
+Line 474:             'https://www.googleapis.com/auth/spreadsheets'
+Line 475:         ]
+Line 476:         creds = service_account.Credentials.from_service_account_file(resolved_path, scopes=scopes)
+Line 477:         return creds

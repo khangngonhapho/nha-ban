@@ -1,0 +1,238 @@
+Line 1493: touch-action: none; /* US-081 v2: JS kiểm soát 100%, chặn browser zoom trang */
+  1491:       background: #000;
+  1492:       margin-bottom: 12px;
+  1493:       touch-action: none; /* US-081 v2: JS kiểm soát 100%, chặn browser zoom trang */
+  1494:       aspect-ratio: 3 / 4;
+  1495:     }
+  1496: 
+  1497:     .gtrack {
+  1498:       display: flex;
+  1499:       transition: transform .28s cubic-bezier(.25, .46, .45, .94);
+  1500:       height: 100%;
+  1501:       will-change: transform; /* US-081 v3: GPU composite layer */
+  1502:     }
+==================================================
+Line 1664: touch-action: none; /* US-081 v2: chặn browser zoom trang trong lightbox */
+  1662:       pointer-events: none;
+  1663:       transition: opacity 0.3s;
+  1664:       touch-action: none; /* US-081 v2: chặn browser zoom trang trong lightbox */
+  1665:     }
+  1666: 
+  1667:     .lightbox.open {
+  1668:       opacity: 1;
+  1669:       pointer-events: auto;
+  1670:     }
+  1671: 
+  1672:     .lb-close {
+  1673:       position: absolute;
+==================================================
+Line 6673: img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;touch-action:none;';
+  6671:           img.alt = `Ảnh ${i + 1}`;
+  6672:           img.loading = i === lbIdx ? 'eager' : 'lazy';
+  6673:           img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;touch-action:none;';
+  6674:           slide.appendChild(img);
+  6675:         }
+  6676:         track.appendChild(slide);
+  6677:       });
+  6678:       main.innerHTML = '';
+  6679:       main.appendChild(track);
+  6680:       // Jump to current index without animation
+  6681:       track.style.transform = `translateX(${-lbIdx * lbCw}px)`;
+  6682:     }
+==================================================
+Line 6714: lbMain.addEventListener('touchstart', e => {
+  6712:       const lbMain = document.getElementById('lbMain');
+  6713: 
+  6714:       lbMain.addEventListener('touchstart', e => {
+  6715:         e.preventDefault();
+  6716:         lbMaxTouches = Math.max(lbMaxTouches, e.touches.length);
+  6717:         if (e.touches.length === 2) {
+  6718:           // Pinch start
+  6719:           const img = document.getElementById(`lbImg-${lbIdx}`);
+  6720:           if (img) {
+  6721:             lbStartDist = Math.hypot(
+  6722:               e.touches[0].clientX - e.touches[1].clientX,
+  6723:               e.touches[0].clientY - e.touches[1].clientY
+==================================================
+Line 6737: lbMain.addEventListener('touchmove', e => {
+  6735:       }, { passive: false });
+  6736: 
+  6737:       lbMain.addEventListener('touchmove', e => {
+  6738:         e.preventDefault();
+  6739:         lbMaxTouches = Math.max(lbMaxTouches, e.touches.length);
+  6740:         const img = document.getElementById(`lbImg-${lbIdx}`);
+  6741:         const track = document.getElementById('lbTrack');
+  6742:         if (!track) return;
+  6743: 
+  6744:         if (e.touches.length === 2 && lbStartDist > 0 && img) {
+  6745:           // Pinch-to-zoom ảnh hiện tại
+  6746:           const dist = Math.hypot(
+==================================================
+Line 6768: lbMain.addEventListener('touchend', e => {
+  6766:       }, { passive: false });
+  6767: 
+  6768:       lbMain.addEventListener('touchend', e => {
+  6769:         lbDragging = false;
+  6770:         const wasMulti = lbMaxTouches >= 2;
+  6771:         if (e.touches.length === 0) {
+  6772:           lbMaxTouches = 0; lbStartDist = 0;
+  6773:         }
+  6774:         if (lbImgScale <= 1.05) {
+  6775:           lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
+  6776:           const img = document.getElementById(`lbImg-${lbIdx}`);
+  6777:           if (img) img.style.transform = 'translate(0,0) scale(1)';
+==================================================
+Line 6865: gw.ontouchstart = e => {
+  6863:       let gwMaxTouches = 0, gwCw = 0;
+  6864: 
+  6865:       gw.ontouchstart = e => {
+  6866:         gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
+  6867:         if (e.touches.length === 1 && gwMaxTouches === 1) {
+  6868:           gwCw = gw.offsetWidth;         // cache 1 lần — không read layout trong move
+  6869:           tx = e.touches[0].clientX;
+  6870:           gt.style.transition = 'none';  // tắt transition 1 lần tại đây
+  6871:         }
+  6872:       };
+  6873: 
+  6874:       gw.ontouchmove = e => {
+==================================================
+Line 6874: gw.ontouchmove = e => {
+  6872:       };
+  6873: 
+  6874:       gw.ontouchmove = e => {
+  6875:         e.preventDefault();
+  6876:         gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
+  6877:         if (gwMaxTouches >= 2 || !gwCw) return;
+  6878:         const dx = tx - e.touches[0].clientX;
+  6879:         // Chỉ set transform — không set transition (đã tắt từ touchstart)
+  6880:         gt.style.transform = `translateX(${-gI * gwCw - dx}px)`;
+  6881:       };
+  6882: 
+  6883:       gw.ontouchend = e => {
+==================================================
+Line 6879: // Chỉ set transform — không set transition (đã tắt từ touchstart)
+  6877:         if (gwMaxTouches >= 2 || !gwCw) return;
+  6878:         const dx = tx - e.touches[0].clientX;
+  6879:         // Chỉ set transform — không set transition (đã tắt từ touchstart)
+  6880:         gt.style.transform = `translateX(${-gI * gwCw - dx}px)`;
+  6881:       };
+  6882: 
+  6883:       gw.ontouchend = e => {
+  6884:         if (e.touches.length === 0) {
+  6885:           const wasPinch = gwMaxTouches >= 2;
+  6886:           gwMaxTouches = 0;
+  6887:           if (!wasPinch) {
+  6888:             const dx = tx - e.changedTouches[0].clientX;
+==================================================
+Line 6883: gw.ontouchend = e => {
+  6881:       };
+  6882: 
+  6883:       gw.ontouchend = e => {
+  6884:         if (e.touches.length === 0) {
+  6885:           const wasPinch = gwMaxTouches >= 2;
+  6886:           gwMaxTouches = 0;
+  6887:           if (!wasPinch) {
+  6888:             const dx = tx - e.changedTouches[0].clientX;
+  6889:             if (Math.abs(dx) > 50) gI = Math.max(0, Math.min(gN - 1, gI + (dx > 0 ? 1 : -1)));
+  6890:           }
+  6891:           // Cập nhật dots/arrows TRƯỚC animation (tránh reflow làm đứt transition)
+  6892:           document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === gI));
+==================================================
+Line 8912: ontouchstart="window.handleCarouselTouchStart(event)"
+  8910:           <div class="image-editor-carousel-container">
+  8911:             <div class="carousel-viewport-wrapper" id="carouselViewportWrapper" 
+  8912:                  ontouchstart="window.handleCarouselTouchStart(event)" 
+  8913:                  ontouchmove="window.handleCarouselTouchMove(event)" 
+  8914:                  ontouchend="window.handleCarouselTouchEnd(event)">
+  8915:               <div class="carousel-slides-track" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%);">
+  8916:                 ${slidesHtml}
+  8917:               </div>
+  8918:               <button type="button" class="carousel-nav-btn prev-btn" onclick="window.slideImageEditorCarousel(-1)">◀</button>
+  8919:               <button type="button" class="carousel-nav-btn next-btn" onclick="window.slideImageEditorCarousel(1)">▶</button>
+  8920:             </div>
+  8921: 
+==================================================
+Line 8913: ontouchmove="window.handleCarouselTouchMove(event)"
+  8911:             <div class="carousel-viewport-wrapper" id="carouselViewportWrapper" 
+  8912:                  ontouchstart="window.handleCarouselTouchStart(event)" 
+  8913:                  ontouchmove="window.handleCarouselTouchMove(event)" 
+  8914:                  ontouchend="window.handleCarouselTouchEnd(event)">
+  8915:               <div class="carousel-slides-track" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%);">
+  8916:                 ${slidesHtml}
+  8917:               </div>
+  8918:               <button type="button" class="carousel-nav-btn prev-btn" onclick="window.slideImageEditorCarousel(-1)">◀</button>
+  8919:               <button type="button" class="carousel-nav-btn next-btn" onclick="window.slideImageEditorCarousel(1)">▶</button>
+  8920:             </div>
+  8921: 
+  8922:             <!-- THUMBNAIL STRIP -->
+==================================================
+Line 8914: ontouchend="window.handleCarouselTouchEnd(event)">
+  8912:                  ontouchstart="window.handleCarouselTouchStart(event)" 
+  8913:                  ontouchmove="window.handleCarouselTouchMove(event)" 
+  8914:                  ontouchend="window.handleCarouselTouchEnd(event)">
+  8915:               <div class="carousel-slides-track" id="carouselSlidesTrack" style="transform: translateX(-${newActiveIdx * 100}%);">
+  8916:                 ${slidesHtml}
+  8917:               </div>
+  8918:               <button type="button" class="carousel-nav-btn prev-btn" onclick="window.slideImageEditorCarousel(-1)">◀</button>
+  8919:               <button type="button" class="carousel-nav-btn next-btn" onclick="window.slideImageEditorCarousel(1)">▶</button>
+  8920:             </div>
+  8921: 
+  8922:             <!-- THUMBNAIL STRIP -->
+  8923:             <div class="thumbnail-strip-wrapper">
+==================================================
+Line 9049: // Swipe detection is handled on touchend
+  9047: 
+  9048:     window.handleCarouselTouchMove = function(event) {
+  9049:       // Swipe detection is handled on touchend
+  9050:     };
+  9051: 
+  9052:     window.handleCarouselTouchEnd = function(event) {
+  9053:       touchEndX = event.changedTouches[0].screenX;
+  9054:       window.handleCarouselSwipe();
+  9055:     };
+  9056: 
+  9057:     window.handleCarouselSwipe = function() {
+  9058:       const minSwipeDistance = 50;
+==================================================
+Line 10986: img.ontouchstart = (e) => {
+  10984:         let posX = 0, posY = 0;
+  10985: 
+  10986:         img.ontouchstart = (e) => {
+  10987:           if (e.touches.length === 2) {
+  10988:             startDist = Math.hypot(
+  10989:               e.touches[0].clientX - e.touches[1].clientX,
+  10990:               e.touches[0].clientY - e.touches[1].clientY
+  10991:             );
+  10992:           } else if (e.touches.length === 1) {
+  10993:             isDragging = true;
+  10994:             startX = e.touches[0].clientX - posX;
+  10995:             startY = e.touches[0].clientY - posY;
+==================================================
+Line 10999: img.ontouchmove = (e) => {
+  10997:         };
+  10998: 
+  10999:         img.ontouchmove = (e) => {
+  11000:           if (e.touches.length === 2 && startDist > 0) {
+  11001:             const dist = Math.hypot(
+  11002:               e.touches[0].clientX - e.touches[1].clientX,
+  11003:               e.touches[0].clientY - e.touches[1].clientY
+  11004:             );
+  11005:             scale = Math.max(1, Math.min(4, lastScale * (dist / startDist)));
+  11006:             img.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+  11007:           } else if (e.touches.length === 1 && isDragging && scale > 1) {
+  11008:             posX = e.touches[0].clientX - startX;
+==================================================
+Line 11014: img.ontouchend = (e) => {
+  11012:         };
+  11013: 
+  11014:         img.ontouchend = (e) => {
+  11015:           lastScale = scale;
+  11016:           isDragging = false;
+  11017:           if (scale <= 1.05) {
+  11018:             posX = 0; posY = 0; scale = 1; lastScale = 1;
+  11019:             img.style.transform = 'translate(0px, 0px) scale(1)';
+  11020:           }
+  11021:         };
+  11022: 
+  11023:         overlay.onclick = (e) => {
+==================================================

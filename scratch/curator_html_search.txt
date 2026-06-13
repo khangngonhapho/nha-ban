@@ -1,0 +1,38 @@
+6:     <title>Biên Tập Viên Rổ Hàng - Khang Ngô Nhà Phố</title>
+265:         .badge-published { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+836:             <h1>KHANG NGÔ NHÀ PHỐ</h1>
+868:                 <div class="sidebar-tab" data-status="published" onclick="setSidebarStatus('published')">Đã xuất bản</div>
+876:                 <button class="btn btn-gold" id="btn-bulk-publish" onclick="bulkPublishSelected()" style="font-size: 11px; padding: 5px 12px; border-radius: 6px; height: auto; font-family: 'Outfit', sans-serif; font-weight: bold; background: linear-gradient(135deg, var(--accent-gold) 0%, #d97706 100%); border: none; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);">⚡ ĐẨY POOL (<span id="bulk-select-count">0</span>)</button>
+1101:                             <!-- PHẦN 1: BIÊN TẬP THÔNG TIN (KHANG NGÔ) -->
+1109:                                     <input type="text" id="edit-ngo-so-nha" placeholder="VD: 123/45" oninput="updateMaKhangNgoLive()">
+1113:                                     <input type="text" id="edit-duong" placeholder="VD: Sư Vạn Hạnh" oninput="updateMaKhangNgoLive()">
+1124:                                     <input type="text" id="edit-quan" placeholder="VD: Quận 10" oninput="updateMaKhangNgoLive()">
+1130:                                     <label style="color: var(--accent-gold); font-weight: bold;">🔑 MÃ KHANG NGÔ (ID)</label>
+1131:                                     <input type="text" id="edit-ma-khang-ngo" style="width: 100%; background: rgba(251, 191, 36, 0.08); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-weight: bold; font-family: monospace; font-size: 16px; letter-spacing: 1px; padding: 10px 12px; box-sizing: border-box;" placeholder="Tự động sinh...">
+1141:                                 🤖 THÔNG TIN BIÊN TẬP PUBLIC (LÊN SHEET SOURCE)
+1312:                                 <button class="btn btn-green" style="width: 100%;" onclick="publishToSheets()">🚀 XUẤT BẢN THẲNG LÊN GOOGLE SHEET</button>
+1439:         // KHANG NGÔ REAL-TIME ID & AI CURATION CORE
+1441:         function updateMaKhangNgoLive() {
+1446:             const newId = genIdKhangNgo(soNha, duong, quan);
+1447:             document.getElementById('edit-ma-khang-ngo').value = newId;
+1449:                 activeListingData.Ma_Khang_Ngo_ID = newId;
+1453:         function genIdKhangNgo(soNha, duong, quan) {
+1655:             // Tự động mở Modal Cập nhật Cookie để anh Khang tiện dán ngay lập tức
+1885:         function bulkPublishSelected() {
+1897:             // Disable bulk publish button
+1898:             const btn = document.getElementById('btn-bulk-publish');
+1901:             // Call API bulk-publish
+1902:             fetch('/api/listings/bulk-publish', {
+1961:                     const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0 };
+1965:                         published: `Đã xuất bản (${counts.published})`
+2000:                                 <span class="status-badge badge-${house.status}">${house.status === 'raw_text' ? 'Chờ Drive' : (house.status === 'raw_complete' ? 'Chờ biên tập' : 'Published')}</span>
+2219:             document.getElementById('edit-ma-khang-ngo').value = house.Ma_Khang_Ngo_ID || house.tk_id || '';
+2237:             // Tự động tính toán Mã Khang Ngô tức thời khi tải thông tin căn nhà
+2238:             updateMaKhangNgoLive();
+2455:         // SAVE & PUBLISH CORE LOGIC
+2491:                 ma_khang_ngo: document.getElementById('edit-ma-khang-ngo').value,
+2516:                     Mã_Khang_Ngô__ID_: document.getElementById('edit-ma-khang-ngo').value
+2537:                             publishToSheets();
+2546:         function publishToSheets() {
+2549:                 // Bước 2: Trigger publish lên Sheets
+2552:                 fetch(`/api/publish/${activeListingId}`, {

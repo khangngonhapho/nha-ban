@@ -1,0 +1,15 @@
+Total Pham Van Hai: 84
+ID: 224 | So nha: Thửa 427 | Ma KN:  | SysID: SYS-20263427-734 | Title:  | ND Chinh: Thửa 427 tờ 100 16,479 1 175 93 79.9 tỷ Vĩnh Lộc Bình Chánh 50-100 tỷ HĐ Cao Văn Hiệu Thiên Thạch 0934609368 H3GB nguồn 
+ID: 279 | So nha: 1A227.1 | Ma KN:  | SysID: SYS-20262827-186 | Title:  | ND Chinh: 1A227.1 Vĩnh Lộc 457 2 9 61 25 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ HĐ Lê Viết Phong_ĐC Vạn Gia 0902353644 H3GB nguồn Đối
+ID: 1617 | So nha: 360B | Ma KN:  | SysID: SYS-20261427-366 | Title:  | ND Chinh: 360B Lê Văn Sỹ 58 1 3.2 21 8 tỷ Tân Sơn Hòa Tân Bình 5-10 tỷ HĐ Phạm Phương Thảo Phương Đông HCM 0935599344 H3GB nguồn Đ
+ID: 2193 | So nha: 62.19 | Ma KN:  | SysID: SYS-20260227-615 | Title:  | ND Chinh: 62.19 Bùi Thị Xuân 93.3 4 4.6 22 11.2 tỷ Tân Sơn Nhất Tân Bình 10-15 tỷ HĐ Vương Duy Lợi Hoàng Bách 0936420206 H3GB nguồ
+ID: 2215 | So nha: 1014.62.12 | Ma KN:  | SysID: SYS-20260027-548 | Title:  | ND Chinh: 1014.62.12 Cách Mạng Tháng 8 36/40 2 4.5 10 5.5 tỷ Tân Sơn Nhất Tân Bình 5-10 tỷ HĐ Huỳnh Công Thạch_ĐC Thiên Thổ 093683
+ID: 2275 | So nha: 5B35.5 | Ma KN:  | SysID: SYS-20265427-767 | Title:  | ND Chinh: 5B35.5 Trần Văn Giầu 418 3 8.3 58 37.2 tỷ Phạm Văn Hai Bình Chánh 25-50 tỷ HĐ Văn Hữu Viên_ĐC Kinh Bắc HCM 0355270636 H3
+ID: 2292 | So nha: 36 | Ma KN:  | SysID: SYS-20265227-875 | Title:  | ND Chinh: 36 tân sơn hòa 58 3 3.8 15 22.2 tỷ Phường 2 Tân Bình 15-25 tỷ HĐ Lê Thị Kim Uyên_ĐC Vạn Phát 0902842527 H3GB nguồn Đầu c
+ID: 2858 | So nha: 1A.109 | Ma KN:  | SysID: SYS-20265127-435 | Title:  | ND Chinh: 1A.109 Vĩnh Lộc 476 2 15 36 29.5 tỷ Vĩnh Lộc Bình Chánh 25-50 tỷ HĐ Hà Chí Thiện Khôi Việt 0938087966 H3GB nguồn Đối tác
+ID: 3513 | So nha: 1 phần tầng 3 số 91D-E | Ma KN:  | SysID: SYS-20264027-326 | Title:  | ND Chinh: 1 phần tầng 3 số 91D-E Phạm Văn Hai 36.2 3 5 8 3.6 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ HĐ Nguyễn Thị Phin Phin Tâm Đức 090493
+ID: 4012 | So nha: 359.1.39 | Ma KN:  | SysID: SYS-20264527-180 | Title:  | ND Chinh: 359.1.39 Lê Văn Sỹ 136 2 4.7 30 36 tỷ Nhiêu Lộc Quận 3 25-50 tỷ HĐ Tô Thăng Long Thiên Kim 1 0937145618 H3GB nguồn Đối t
+ID: 4128 | So nha: Căn Hộ 240 | Ma KN:  | SysID: SYS-20265127-522 | Title:  | ND Chinh: Căn Hộ 240 Lê Văn Sỹ 17.8/46 2 3 6 2 tỷ Tân Sơn Hòa Tân Bình < 5 tỷ HĐ Ngô Quang Trung Vạn Gia 0908882536 H100 nguồn Đầu
+ID: 4369 | So nha: 39 | Ma KN:  | SysID: SYS-20260603-276 | Title:  | ND Chinh: 39 Lưu Nhân Chú 72/85 2 3.2 25 15 tỷ Tân Sơn Nhất Tân Bình 15-25 tỷ HĐ Cao Văn Hiệu Thiên Thạch 0934609368 H3GB nguồn Đầ
+ID: 4444 | So nha: 337.2.9 | Ma KN:  | SysID: SYS-20263527-540 | Title:  | ND Chinh: 337.2.9 Lê Văn Sỹ 121/98 2 4.5 27 36 tỷ Tân Sơn Hòa Tân Bình 25-50 tỷ HĐ Trần Hoài Phương Cát Linh 0938602837 H3GB nguồn
+ID: 4540 | So nha: 207.43.2B | Ma KN:  | SysID: SYS-20263427-357 | Title:  | ND Chinh: 207.43.2B Phạm Văn Hai 35.4/36.3 3 3 12 6.05 tỷ Tân Sơn Nhất Tân Bình 5-10 tỷ HĐ Đinh Công Hoàng Anh Vũ Nhật Phát 093400

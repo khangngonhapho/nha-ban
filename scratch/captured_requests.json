@@ -1,0 +1,551 @@
+[
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/warehouse",
+    "headers": {
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/webpack-381d0b5fd77a54e7.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/8bc54543-5ac2b3d24ff15286.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/3167-5eecfea0a6ee02b8.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/main-app-0c56e9ed403162ed.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/f03bbe2d-1d486fb531a37a71.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/7461-7a07b2c0af5ffbbd.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/7265-d453e5b207c8847a.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/8853-02f0d5a4fea1cdaa.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/8292-4e38cd964738a0ba.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/249-0e675bf59c8c1d04.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/3454-e638d88a6dd6a85b.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/8073-c3fa1f8d6cb1acf7.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/7651-cc984c554eea3bb0.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/1286-7fa2e0bc7cd8ef3a.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/5612-be4b70cf16670abc.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/9365-054b970e25702869.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/7740-6a239edfe6a132e5.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/3323-afafe23ced307340.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/3373-d9cb6e353eee2a31.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/8014-d4e2ebb0444db783.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/2576-80474afb9fdd0926.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/5088-3904a9bbbf3846f1.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/9119-d0539f1072e71e69.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/app/(default)/layout-590ffaea0cce7815.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/7404-778f03a4c4f71e3a.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/app/(default)/warehouse/page-13da443d2629d7e3.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/6270-12f285bf60766529.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/6315-17be0b3eb313d556.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/_next/static/chunks/app/layout-283de27ed6726f71.js",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://proptech.thienkhoi.com/cdn-cgi/rum?",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"memory\":{\"totalJSHeapSize\":10000000,\"usedJSHeapSize\":10000000,\"jsHeapSizeLimit\":3760000000},\"resources\":[],\"referrer\":\"\",\"eventType\":1,\"firstPaint\":1040,\"firstContentfulPaint\":1040,\"startTime\":1780489808908.9,\"versions\":{\"fl\":\"2024.11.0\",\"js\":\"2026.5.0\",\"timings\":2},\"pageloadId\":\"fad108e6-f383-4251-a552-2830411d5724\",\"location\":\"https://proptech.thienkhoi.com/warehouse\",\"nt\":\"navigate\",\"timingsV2\":{\"nextHopProtocol\":\"h2\",\"domainLookupStart\":5.300000011920929,\"domainLookupEnd\":7.9000000059604645,\"connectStart\":7.9000000059604645,\"connectEnd\":235.20000000298023,\"requestStart\":235.6000000089407,\"responseStart\":603.5,\"responseEnd\":743.7000000029802,\"domInteractive\":1007.9000000059605,\"domComplete\":1437.7000000029802,\"loadEventStart\":1437.800000011921,\"loadEventEnd\":1437.9000000059605,\"finalResponseHeadersStart\":603.5,\"firstInterimResponseStart\":0,\"transferSize\":11088,\"decodedBodySize\":43569},\"dt\":\"\",\"siteToken\":\"10b033af82cd4cd0b2daed51a57a93bd\",\"st\":2}"
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/notification?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/training-path?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/guest-report?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/buyer-management?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/black-list?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/statistic?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/events?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/warehouse/sources?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/warehouse/my-sources?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://proptech.thienkhoi.com/warehouse/my-favorite-sources?_rsc=1onkv",
+    "headers": {
+      "rsc": "1",
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://proptech.thienkhoi.com/warehouse",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+      "sec-ch-ua-mobile": "?0",
+      "next-router-prefetch": "1",
+      "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(default)%22%2C%7B%22children%22%3A%5B%22warehouse%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+      "next-url": "/warehouse",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36"
+    },
+    "post_data": null
+  }
+]
