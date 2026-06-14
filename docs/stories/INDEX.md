@@ -1,20 +1,21 @@
 # Stories Index
 
-Last updated: 2026-06-13
+Last updated: 2026-06-14
 
 ## Stats
-- Total: 96
-- backlog: 3
+- Total: 97
+- backlog: 4
 - draft: 0
-- in-progress: 1
-- done: 19
+- in-progress: 0
+- done: 20
 - accepted: 67
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-093 | Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) | done | S | 2026-06-14 | `scratch/audit_manual_images.py`, `docs/stories/_inbox/US-093_audit_manual_upload_images.md` |
 | US-092 | Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ | accepted | S | 2026-06-13 | `vercel.json`, `api/index.js`, `docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md` |
-| US-091 | Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 | in-progress | M | 2026-06-13 | `manager.py`, `restore_r2_quality.py`, `docs/stories/_inbox/US-091_fix_r2_image_quality_degradation.md` |
+| US-091 | Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 | backlog | M | 2026-06-13 | `manager.py`, `restore_r2_quality.py`, `docs/stories/_inbox/US-091_fix_r2_image_quality_degradation.md` |
 | US-090 | Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary | accepted | L | 2026-06-13 | `settings.json`, `migrate_to_r2.py`, `sync_pool_v1_sheet.py`, `list_broken_listings.py`, `docs/stories/_inbox/US-090_resolve_cloudinary_credit_limit.md` |
 | US-089D | Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công | backlog  | M    | 2026-06-11 | `settings.json`, `pool_lego.py`, `manager.py`, `fetcher.py`, `docs/stories/_inbox/US-089D_pool2_dynamic_schema.md` |
 | US-089C | Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database | backlog  | M    | 2026-06-11 | `pool_lego.py`, `manager.py`, `docs/stories/_inbox/US-089C_pool2_cross_pool_sync.md` |
@@ -114,7 +115,8 @@ Last updated: 2026-06-13
 ## By Keyword
 
 ### Crawl / Sync Tracking
-- [[US-091_fix_r2_image_quality_degradation|US-091]]: Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 (in-progress)
+- [[US-093_audit_manual_upload_images|US-093]]: Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) (done)
+- [[US-091_fix_r2_image_quality_degradation|US-091]]: Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 (backlog)
 - [[US-090_resolve_cloudinary_credit_limit|US-090]]: Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary (accepted)
 - [[US-089_pool2_data_system|US-089]]: [Decomposed] Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego (superseded)
 - [[US-089A_pool2_local_core|US-089A]]: Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ (accepted)

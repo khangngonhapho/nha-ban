@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-093 (Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên):** **[ACCEPTED - 2026-06-14]** Đã hoàn tất công cụ kiểm toán `scratch/audit_manual_images.py` quét 23 căn chứa 98 ảnh tự tải lên trong Pool1 (`raw_archive.db`), phát hiện và báo cáo 2 căn bị lỗi HTTP 503 đối với link R2. Cấu trúc lại báo cáo hợp nhất `broken_listings_report.md` thành 3 đề mục `##` collapsible.
 *   **US-092 (Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ):** **[ACCEPTED - 2026-06-13]** Khắc phục lỗi thiếu index.html trên Vercel Serverless bằng cách sử dụng fallback __dirname để Vercel NFT đóng gói tệp tĩnh và cấu hình includeFiles trong vercel.json.
 *   **US-090 (Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary):** **[ACCEPTED - 2026-06-13]** Đã hoàn tất di cư toàn bộ 5.180 ảnh từ Cloudinary sang Cloudflare R2 trên SQLite và đồng bộ lên Google Sheet Pool (v1). Giải quyết triệt để lỗi chuỗi JSON mảng trên Sheets và thiết lập báo cáo danh sách 581 căn lỗi ảnh 404 (ở cả Sheets và SQLite) kèm địa chỉ thực chi tiết.
 *   **US-089A (Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ):** **[ACCEPTED - 2026-06-12]** Đã triển khai cấu trúc CSDL SQLite v2 sạch sẽ không chứa các cột hình ảnh phẳng, lưu trữ hình ảnh độc lập có khóa ngoại và sequence_index tuần tự trong `listings_images` và `raw_images_tk_json`. Tích hợp luồng bóc tách tiêu chí thô `parse_criteria_groups` và dynamic badges DOM fallback, đồng thời thiết lập cơ chế phân nhóm hình ảnh (nội thất trước, sơ đồ sau) tự động bảo toàn trình tự. Xây dựng công cụ `query_helper.py` tra cứu nhanh và hiển thị Premium HTML Dark Mode.
@@ -19,9 +20,10 @@
 ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
 
 ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[IN-PROGRESS]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK, tối ưu hóa các tham số nén hình ảnh cào mới thành JPEG 95% và max size 2400px. Đang chờ PO duyệt kế hoạch trước khi code và chạy khôi phục thực tế.
+*   *(Không có tính năng nào đang thực hiện)*
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
+*   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên kiểm toán ảnh lỗi tự tải lên.
 *   **US-089B (Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist):** Tích hợp Google Sheets API v4 đồng bộ ảnh dạng dòng và metadata cho Pool2, bảo đảm các cột hình ảnh phẳng không bị đè lỗi.
 *   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** Đồng bộ hai chiều giữa `listings_v2` và `listings_custom_v2` khi xuất bản hoặc update từ admin curator.
 *   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** Cơ chế tự động chèn/mở rộng cột trong SQLite v2 khi schema có thay đổi đột xuất và hỗ trợ giao diện upload/rotate ảnh trong Pool2.
@@ -36,6 +38,9 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
+*   [scratch/audit_manual_images.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/audit_manual_images.py) — US-093: Script Python quét và kiểm toán ảnh tự tải lên đa luồng.
+*   [broken_listings_report.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/broken_listings_report.md) — US-093: Báo cáo hợp nhất chất lượng hình ảnh rổ hàng với 3 đề mục collapsible.
+*   [docs/stories/_inbox/US-093_audit_manual_upload_images.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-093_audit_manual_upload_images.md) — US-093: Đặc tả và nghiệm thu User Story.
 *   [vercel.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/vercel.json) — US-092: Cấu hình includeFiles đóng gói index.html.
 *   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — US-092: Thêm cơ chế đọc file tĩnh tương đối qua __dirname.
 *   [docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md) — US-092: Đặc tả và nghiệm thu User Story.
@@ -54,4 +59,4 @@
 *   [scratch/test_schema_v2_and_rich_fields.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_schema_v2_and_rich_fields.py) — US-089A: Script unit test kiểm thử schema listings_v2 sạch.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-13 (US-092 completed & Vercel index.html error resolved).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-14 (US-093 completed & Manual image audit report updated).*
