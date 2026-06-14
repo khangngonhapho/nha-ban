@@ -55,8 +55,12 @@ def verify_image(url):
     # Check if remote URL
     if url_clean.startswith("http://") or url_clean.startswith("https://"):
         try:
+            # Add browser-like User-Agent to prevent Cloudflare/CDN blocks (causing false 503/403)
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
             # Use GET with stream=True to fetch headers first (like HEAD, but wider server support)
-            res = requests.get(url_clean, timeout=5, stream=True)
+            res = requests.get(url_clean, headers=headers, timeout=5, stream=True)
             if res.status_code == 200:
                 return True, "HTTP 200 OK"
             else:
@@ -174,24 +178,26 @@ def main():
         old_content = ""
         
     # Split the old report to extract List 1 and List 2
-    # Search for heading ## 🗄️
     list1_text = ""
     list2_text = ""
     
     if old_content:
-        # Standardize the file into sections
-        # The split marker is the second heading: ## 🗄️
+        # First isolate List 1 and List 2 by stripping out any existing List 3 (## 🖼️)
+        list1_and_list2_part = old_content
+        if "## 🖼️" in old_content:
+            list1_and_list2_part = old_content.split("## 🖼️")[0].strip()
+            
         split_marker = "## 🗄️"
-        if split_marker in old_content:
-            parts = old_content.split(split_marker)
-            # Part 0 has the title and list 1
+        if split_marker in list1_and_list2_part:
+            parts = list1_and_list2_part.split(split_marker)
+            # Part 0 has list 1
             list1_part = parts[0].strip()
-            # Remove the main title from list1 if we want to format it as ## heading
-            # Let's clean up list1_part
-            # Replace main `# Báo cáo danh sách căn bị lỗi ảnh (Cloudinary 404)` with `## 📊 Danh sách 1: Các căn lỗi ảnh Cloudinary 404 trên Google Sheets Pool (v1)`
             lines_l1 = list1_part.split("\n")
             cleaned_l1_lines = []
             for line in lines_l1:
+                # Remove main title lines if they exist, to avoid duplication
+                if line.startswith("# Báo cáo tổng hợp chất lượng"):
+                    continue
                 if line.startswith("# Báo cáo danh sách căn"):
                     cleaned_l1_lines.append("## 📊 Danh sách 1: Các căn lỗi ảnh Cloudinary 404 trên Google Sheets Pool (v1)")
                 else:
@@ -199,21 +205,17 @@ def main():
             list1_text = "\n".join(cleaned_l1_lines).strip()
             
             # Part 1 has list 2
-            # Reconstruct list 2 heading
             list2_part = parts[1].strip()
-            # Let's change the heading of list 2 to include "Danh sách 2"
             lines_l2 = list2_part.split("\n")
             cleaned_l2_lines = []
-            if lines_l2 and "Danh sách căn chưa di cư" in lines_l2[0]:
-                cleaned_l2_lines.append("## 🗄️ Danh sách 2: Các căn lỗi ảnh Cloudinary 404 trong SQLite raw_archive.db")
-            else:
-                cleaned_l2_lines.append("## 🗄️ Danh sách 2: Các căn lỗi ảnh Cloudinary 404 trong SQLite raw_archive.db")
-                cleaned_l2_lines.append(lines_l2[0])
-            cleaned_l2_lines.extend(lines_l2[1:])
+            cleaned_l2_lines.append("## 🗄️ Danh sách 2: Các căn lỗi ảnh Cloudinary 404 trong SQLite raw_archive.db")
+            for line in lines_l2:
+                # Skip any duplicate headings or horizontal rules at the end of parts
+                if not line.startswith("## 🗄️") and not line.strip() == "---":
+                    cleaned_l2_lines.append(line)
             list2_text = "\n".join(cleaned_l2_lines).strip()
         else:
-            # Fallback if no split marker found
-            list1_text = "## 📊 Danh sách 1: Các căn lỗi ảnh Cloudinary 404 trên Google Sheets Pool (v1)\n\n" + old_content
+            list1_text = "## 📊 Danh sách 1: Các căn lỗi ảnh Cloudinary 404 trên Google Sheets Pool (v1)\n\n" + list1_and_list2_part
             list2_text = "## 🗄️ Danh sách 2: Các căn lỗi ảnh Cloudinary 404 trong SQLite raw_archive.db\n\n*(Chưa có dữ liệu)*"
     else:
         list1_text = "## 📊 Danh sách 1: Các căn lỗi ảnh Cloudinary 404 trên Google Sheets Pool (v1)\n\n*(Chưa có dữ liệu)*"
