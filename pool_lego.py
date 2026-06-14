@@ -12,6 +12,7 @@ import re
 import json
 import random
 import sqlite3
+import time
 from datetime import datetime
 
 # Ép mã hóa UTF-8
@@ -430,7 +431,8 @@ def init_db(db_file=None):
             "raw_images_tk_json TEXT",
             "raw_drive_images_json TEXT",
             "curated_config_json TEXT",
-            "Chieu_dai TEXT"
+            "Chieu_dai TEXT",
+            "pending_diff_json TEXT"
         ]
         for col in explicit_criteria_cols:
             columns_def.append(f"`{col}` TEXT")
@@ -456,6 +458,7 @@ def init_db(db_file=None):
             role TEXT,
             sequence_index INTEGER,
             edited_by TEXT,
+            origin TEXT DEFAULT 'crawl',
             FOREIGN KEY(tk_id) REFERENCES listings_v2(tk_id) ON DELETE CASCADE
         )
         """)
@@ -516,6 +519,10 @@ def init_db(db_file=None):
                 cursor.execute("ALTER TABLE listings_v2 ADD COLUMN Chieu_dai TEXT")
                 conn.commit()
                 
+            if "pending_diff_json" not in existing_cols:
+                cursor.execute("ALTER TABLE listings_v2 ADD COLUMN pending_diff_json TEXT")
+                conn.commit()
+                
             for col in explicit_criteria_cols:
                 if col not in existing_cols:
                     cursor.execute(f"ALTER TABLE listings_v2 ADD COLUMN `{col}` TEXT")
@@ -526,6 +533,16 @@ def init_db(db_file=None):
                 if new_col not in existing_cols and new_col not in ["tk_id", "status"] and new_col not in explicit_criteria_cols:
                     cursor.execute(f"ALTER TABLE listings_v2 ADD COLUMN `{new_col}` TEXT")
                     conn.commit()
+        except Exception:
+            pass
+
+        # Di cư tự động (Migration) cho listings_images
+        try:
+            cursor.execute("PRAGMA table_info(listings_images)")
+            existing_img_cols = [row[1] for row in cursor.fetchall()]
+            if "origin" not in existing_img_cols:
+                cursor.execute("ALTER TABLE listings_images ADD COLUMN origin TEXT DEFAULT 'crawl'")
+                conn.commit()
         except Exception:
             pass
 
@@ -1519,3 +1536,790 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             "message": "Chưa cấu hình hoặc lỗi kết nối Google Sheets. Vui lòng sao chép mảng dữ liệu 79 cột bên dưới để paste thủ công vào Google Sheets!",
             "row_data": row_data_escaped
         }
+
+
+# ==================================================
+# US-089C: CROSS-POOL SYNC & RECRAWL DIFF TRACKING
+# ==================================================
+
+def normalize_address(so_nha, duong):
+    """
+    Chuẩn hóa số nhà và tên đường phục vụ so khớp địa chỉ giữa hai Pool.
+    """
+    so_nha = str(so_nha or "").strip().lower()
+    if '+' in so_nha:
+        so_nha = so_nha.split('+')[0].strip()
+    # collapse slashes
+    so_nha = re.sub(r'\s*/\s*', '/', so_nha)
+    
+    duong = str(duong or "").strip()
+    duong_no_accent = remove_accents(duong).lower()
+    # remove prefixes
+    duong_no_accent = re.sub(r'^(duong|pho|hem|ngo|ngach)\s+', '', duong_no_accent)
+    
+    # abbreviation map
+    if re.search(r'cach mang thang (tam|8)|cmt8', duong_no_accent):
+        duong_no_accent = "cmtt"
+    elif re.search(r'ba thang hai|3 thang 2|3/2|3-2', duong_no_accent):
+        duong_no_accent = "bth"
+    elif re.search(r'duong so (\d+)', duong_no_accent):
+        match = re.search(r'duong so (\d+)', duong_no_accent)
+        duong_no_accent = "ds" + match.group(1)
+        
+    duong_no_accent = re.sub(r'\s+', ' ', duong_no_accent).strip()
+    return so_nha, duong_no_accent
+
+def get_flattened_images_pool2(cursor, tk_id):
+    """
+    Lấy hình ảnh từ Pool 2, phân loại và làm phẳng thành các cột tương thích với Pool 1.
+    """
+    cursor.execute(
+        "SELECT image_url, cloudinary_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
+        (tk_id,)
+    )
+    img_rows = cursor.fetchall()
+    diagrams = []
+    facades = []
+    alleys = []
+    interiors = []
+    for img_url, cld_url, role in img_rows:
+        url = cld_url if cld_url else img_url
+        if not url:
+            continue
+        if role == "diagram":
+            diagrams.append(url)
+        elif role in ["facade", "cover"]:
+            facades.append(url)
+        elif role == "alley":
+            alleys.append(url)
+        elif role == "interior":
+            interiors.append(url)
+            
+    hinh_mat_tien = facades[0] if facades else (interiors[0] if interiors else "")
+    
+    flat = {}
+    for i in range(1, 6):
+        flat[get_safe_col_name(f"Sơ đồ thửa đất {i}")] = diagrams[i-1] if i-1 < len(diagrams) else ""
+    flat[get_safe_col_name("Hình Mặt Tiền")] = hinh_mat_tien
+    for i in range(1, 11):
+        flat[get_safe_col_name(f"Hình Hẻm {i}")] = alleys[i-1] if i-1 < len(alleys) else ""
+    for i in range(1, 26):
+        flat[get_safe_col_name(f"Ảnh {i}")] = interiors[i-1] if i-1 < len(interiors) else ""
+        
+    return flat
+
+def sync_between_databases(source_pool, target_pool, tk_id=None, so_nha=None, duong=None, add_log_message=None):
+    """
+    Điều phối đồng bộ chéo giữa Pool 1 (raw_archive.db) và Pool 2 (raw_archive_v2.db).
+    """
+    if add_log_message is None:
+        def add_log_message(msg):
+            print(msg)
+            
+    def get_db_path(name):
+        if not name:
+            return None
+        if name == "Pool1":
+            return "raw_archive.db"
+        if name == "Pool2":
+            return "raw_archive_v2.db"
+        return name
+        
+    src_db = get_db_path(source_pool)
+    tgt_db = get_db_path(target_pool)
+    
+    if not src_db or not tgt_db:
+        return {"status": "error", "message": "Thiếu thông tin database nguồn hoặc đích."}
+        
+    if not os.path.exists(src_db):
+        return {"status": "error", "message": f"Database nguồn {src_db} không tồn tại."}
+        
+    init_db(tgt_db)
+    
+    is_p2_to_p1 = ("raw_archive_v2.db" in src_db) and ("raw_archive.db" in tgt_db)
+    is_p1_to_p2 = ("raw_archive.db" in src_db) and ("raw_archive_v2.db" in tgt_db)
+    
+    if is_p2_to_p1:
+        return sync_p2_to_p1(src_db, tgt_db, tk_id, add_log_message)
+    elif is_p1_to_p2:
+        if not so_nha or not duong:
+            return {"status": "error", "message": "Đồng bộ từ Pool1 sang Pool2 yêu cầu cung cấp số nhà và tên đường."}
+        return sync_p1_to_p2(src_db, tgt_db, so_nha, duong, add_log_message)
+    else:
+        return {"status": "error", "message": "Hướng đồng bộ không hợp lệ hoặc chưa được hỗ trợ."}
+
+def sync_p2_to_p1(src_db, tgt_db, tk_id, add_log_message):
+    add_log_message(f"[⚡] Bắt đầu đồng bộ xuôi từ Pool 2 ({src_db}) sang Pool 1 ({tgt_db})...")
+    
+    s_conn = sqlite3.connect(src_db)
+    s_conn.row_factory = sqlite3.Row
+    s_cursor = s_conn.cursor()
+    
+    t_conn = sqlite3.connect(tgt_db)
+    t_conn.row_factory = sqlite3.Row
+    t_cursor = t_conn.cursor()
+    
+    # Get target columns of listings table in Pool 1
+    t_cursor.execute("PRAGMA table_info(listings)")
+    t_cols = [row[1] for row in t_cursor.fetchall() if row[1] != 'id']
+    
+    # Query source listings
+    if tk_id:
+        s_cursor.execute("""
+            SELECT l.*, c.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, c.Gia_Public AS custom_Gia_Public,
+                   c.Tieu_De_Public AS custom_Tieu_De_Public, c.Mo_ta_Public AS custom_Mo_ta_Public,
+                   c.Note_Noi_Bo AS custom_Note_Noi_Bo, c.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich,
+                   c.Ngu_Tret AS custom_Ngu_Tret, c.CHDV AS custom_CHDV, c.Trang_Thai_KN AS custom_Trang_Thai_KN,
+                   c.images_metadata_json AS custom_images_metadata_json, c.Dia_Chi_That AS custom_Dia_Chi_That,
+                   c.So_Nha AS custom_So_Nha, c.Ten_Duong AS custom_Ten_Duong, c.Quan AS custom_Quan,
+                   c.Phuong AS custom_Phuong, c.Duong AS custom_Duong, c.Ngo_So_nha AS custom_Ngo_So_nha,
+                   c.bedrooms AS custom_bedrooms, c.restrooms AS custom_restrooms,
+                   c.minimumRoadWidth AS custom_minimumRoadWidth, c.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                   c.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet, c.Gia_chao AS custom_Gia_chao,
+                   c.DT_Thuc_te AS custom_DT_Thuc_te, c.DT_Tren_so AS custom_DT_Tren_so,
+                   c.So_Tang AS custom_So_Tang, c.Mat_Tien AS custom_Mat_Tien, c.Chieu_dai AS custom_Chieu_dai,
+                   c.Huong AS custom_Huong, c.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                   c.Criteria_Noi_that AS custom_Criteria_Noi_that, c.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                   c.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo, c.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                   c.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                   c.Criteria_Huong_nha AS custom_Criteria_Huong_nha, c.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+            FROM listings_v2 l
+            LEFT JOIN listings_custom_v2 c ON l.System_ID = c.System_ID
+            WHERE l.tk_id = ?
+        """, (tk_id,))
+        rows = s_cursor.fetchall()
+    else:
+        s_cursor.execute("""
+            SELECT l.*, c.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, c.Gia_Public AS custom_Gia_Public,
+                   c.Tieu_De_Public AS custom_Tieu_De_Public, c.Mo_ta_Public AS custom_Mo_ta_Public,
+                   c.Note_Noi_Bo AS custom_Note_Noi_Bo, c.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich,
+                   c.Ngu_Tret AS custom_Ngu_Tret, c.CHDV AS custom_CHDV, c.Trang_Thai_KN AS custom_Trang_Thai_KN,
+                   c.images_metadata_json AS custom_images_metadata_json, c.Dia_Chi_That AS custom_Dia_Chi_That,
+                   c.So_Nha AS custom_So_Nha, c.Ten_Duong AS custom_Ten_Duong, c.Quan AS custom_Quan,
+                   c.Phuong AS custom_Phuong, c.Duong AS custom_Duong, c.Ngo_So_nha AS custom_Ngo_So_nha,
+                   c.bedrooms AS custom_bedrooms, c.restrooms AS custom_restrooms,
+                   c.minimumRoadWidth AS custom_minimumRoadWidth, c.Noi_dung_chinh AS custom_Noi_dung_chinh,
+                   c.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet, c.Gia_chao AS custom_Gia_chao,
+                   c.DT_Thuc_te AS custom_DT_Thuc_te, c.DT_Tren_so AS custom_DT_Tren_so,
+                   c.So_Tang AS custom_So_Tang, c.Mat_Tien AS custom_Mat_Tien, c.Chieu_dai AS custom_Chieu_dai,
+                   c.Huong AS custom_Huong, c.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+                   c.Criteria_Noi_that AS custom_Criteria_Noi_that, c.Criteria_Thang_may AS custom_Criteria_Thang_may,
+                   c.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo, c.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+                   c.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+                   c.Criteria_Huong_nha AS custom_Criteria_Huong_nha, c.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+            FROM listings_v2 l
+            LEFT JOIN listings_custom_v2 c ON l.System_ID = c.System_ID
+        """)
+        rows = s_cursor.fetchall()
+        
+    if not rows:
+        s_conn.close()
+        t_conn.close()
+        return {"status": "success", "message": "Không tìm thấy căn nào để đồng bộ."}
+        
+    sync_count = 0
+    for r in rows:
+        r2 = dict(r)
+        curr_tk_id = r2.get('tk_id')
+        
+        p1_data = {}
+        p1_data['tk_id'] = curr_tk_id
+        p1_data['status'] = r2.get('status', 'raw_text')
+        p1_data['raw_images_tk_json'] = r2.get('raw_images_tk_json', '[]')
+        p1_data['raw_drive_images_json'] = r2.get('raw_drive_images_json', '[]')
+        p1_data['curated_config_json'] = r2.get('curated_config_json') or r2.get('custom_images_metadata_json') or '[]'
+        p1_data['Chieu_dai'] = r2.get('custom_Chieu_dai') or r2.get('Chieu_dai') or ''
+        p1_data['System_ID'] = r2.get('System_ID', '')
+        p1_data['Link_Goc'] = r2.get('Link_Goc', '')
+        p1_data['Dien_thoai_Dau_Chu'] = r2.get('Dien_thoai_Dau_Chu', '')
+        p1_data['Ten_Dau_Chu_Hop_dong'] = r2.get('Ten_Dau_Chu') or r2.get('custom_Ten_Dau_Chu') or ''
+        p1_data['Diem_Facebook'] = r2.get('Diem_Facebook', '')
+        p1_data['Last_Crawl'] = r2.get('Last_Crawl', '')
+        p1_data['Last_Sync'] = r2.get('Last_Sync', '')
+        p1_data['Ma_TK_Moi'] = curr_tk_id
+        
+        so_nha = r2.get('custom_So_Nha') or r2.get('Ngo_So_nha') or ''
+        duong = r2.get('custom_Ten_Duong') or r2.get('streetName') or ''
+        quan = r2.get('custom_Quan') or r2.get('Quan') or ''
+        phuong = r2.get('custom_Phuong') or r2.get('Phuong') or ''
+        
+        p1_data['Ngo_So_nha'] = so_nha
+        p1_data['Duong'] = duong
+        p1_data['Quan'] = quan
+        p1_data['Phuong'] = phuong
+        p1_data['T_nh'] = r2.get('placeName') or 'Hồ Chí Minh'
+        
+        ma_khang_ngo = r2.get('custom_Ma_Khang_Ngo') or r2.get('Ma_Khang_Ngo_ID') or gen_id_khang_ngo_python(so_nha, duong, quan)
+        p1_data['Ma_Khang_Ngo_ID'] = ma_khang_ngo
+        p1_data['Ma_Hang'] = r2.get('custom_Ma_Khang_Ngo') or r2.get('Ma_Hang') or f"TK-{curr_tk_id.split('-')[-1].upper()}"
+        
+        p1_data['Noi_dung_chinh'] = r2.get('custom_Noi_dung_chinh') or r2.get('Noi_dung_chinh') or ''
+        p1_data['Mo_ta_chi_tiet'] = r2.get('custom_Mo_ta_chi_tiet') or r2.get('Mo_ta_chi_tiet') or ''
+        p1_data['Gia_chao'] = r2.get('custom_Gia_chao') or r2.get('Gia_chao') or ''
+        p1_data['DT_Thuc_te'] = r2.get('custom_DT_Thuc_te') or r2.get('DT_Thuc_te') or ''
+        p1_data['DT_Tren_so'] = r2.get('custom_DT_Tren_so') or r2.get('DT_Tren_so') or ''
+        p1_data['So_Tang'] = r2.get('custom_So_Tang') or r2.get('So_Tang') or ''
+        p1_data['Mat_Tien'] = r2.get('custom_Mat_Tien') or r2.get('Mat_Tien') or ''
+        p1_data['Huong'] = r2.get('custom_Huong') or r2.get('Huong') or ''
+        p1_data['Ten_Chu_Nha'] = r2.get('Ten_Chu_Nha', '')
+        p1_data['Dien_thoai_1'] = r2.get('Dien_thoai_1', '')
+        p1_data['Trang_thai'] = r2.get('custom_Trang_Thai_Giao_Dich') or r2.get('status_nguon') or ''
+        
+        p1_data['Tieu_de_Public'] = r2.get('custom_Tieu_De_Public') or r2.get('Noi_dung_chinh') or ''
+        p1_data['Mo_ta_Public'] = r2.get('custom_Mo_ta_Public') or r2.get('Mo_ta_chi_tiet') or ''
+        p1_data['Gia_Public'] = r2.get('custom_Gia_Public') or r2.get('Gia_chao') or ''
+        p1_data['Duong_truoc_nha_m'] = r2.get('custom_minimumRoadWidth') or r2.get('minimumRoadWidth') or ''
+        p1_data['Tinh_trang_nha'] = r2.get('custom_Trang_Thai_Giao_Dich') or r2.get('status_nguon') or ''
+        p1_data['So_phong_ngu'] = r2.get('custom_bedrooms') or r2.get('bedrooms') or ''
+        p1_data['So_nha_ve_sinh'] = r2.get('custom_restrooms') or r2.get('restrooms') or ''
+        p1_data['Danh_gia_Admin'] = r2.get('custom_Trang_Thai_KN') or ''
+        p1_data['Ngu_tret_Admin'] = r2.get('custom_Ngu_Tret') or 'N'
+        p1_data['CHDV_Admin'] = r2.get('custom_CHDV') or 'N'
+        p1_data['Trang_thai_Public'] = r2.get('custom_Trang_Thai_Giao_Dich') or ''
+        p1_data['Phuong_cu_AI'] = r2.get('Phuong_cu_AI_') or r2.get('Phuong_cu_AI') or ''
+        
+        flat_imgs = get_flattened_images_pool2(s_cursor, curr_tk_id)
+        p1_data.update(flat_imgs)
+        p1_data['Hinh_Nhan_Dien'] = r2.get('Hinh_Nhan_Dien') or flat_imgs.get(get_safe_col_name("Hình Mặt Tiền")) or ''
+        
+        for col in t_cols:
+            if col not in p1_data:
+                p1_data[col] = str(r2.get(col) or '')
+                
+        p1_match = None
+        if p1_data.get('System_ID'):
+            p1_match = t_cursor.execute("SELECT id, tk_id FROM listings WHERE System_ID = ?", (p1_data['System_ID'],)).fetchone()
+        if not p1_match and p1_data.get('Ma_Khang_Ngo_ID'):
+            p1_match = t_cursor.execute("SELECT id, tk_id FROM listings WHERE Ma_Khang_Ngo_ID = ?", (p1_data['Ma_Khang_Ngo_ID'],)).fetchone()
+            
+        if p1_match:
+            set_clause = ", ".join([f"`{col}` = ?" for col in t_cols])
+            update_vals = [p1_data[col] for col in t_cols] + [p1_match[0]]
+            t_cursor.execute(f"UPDATE listings SET {set_clause} WHERE id = ?", update_vals)
+            add_log_message(f"[🔄] Đã cập nhật đè dòng cũ khớp địa chỉ/System_ID cho căn {curr_tk_id} (Dòng ID Pool1: {p1_match[0]})")
+        else:
+            col_names = ", ".join([f"`{col}`" for col in t_cols])
+            placeholders = ", ".join(["?" for _ in t_cols])
+            insert_vals = [p1_data[col] for col in t_cols]
+            t_cursor.execute(f"INSERT INTO listings ({col_names}) VALUES ({placeholders})", insert_vals)
+            add_log_message(f"[➕] Đã chèn mới dòng cho căn {curr_tk_id} vào Pool 1")
+            
+        sync_count += 1
+        
+    t_conn.commit()
+    s_conn.close()
+    t_conn.close()
+    
+    add_log_message(f"[✅] Đã đồng bộ thành công {sync_count} căn từ Pool 2 sang Pool 1.")
+    return {"status": "success", "message": f"Đồng bộ thành công {sync_count} căn sang Pool 1."}
+
+def sync_p1_to_p2(src_db, tgt_db, input_so_nha, input_duong, add_log_message):
+    add_log_message(f"[⚡] Bắt đầu đồng bộ ngược ad-hoc căn '{input_so_nha}' đường '{input_duong}' từ Pool 1 sang Pool 2...")
+    
+    s_conn = sqlite3.connect(src_db)
+    s_conn.row_factory = sqlite3.Row
+    s_cursor = s_conn.cursor()
+    
+    t_conn = sqlite3.connect(tgt_db)
+    t_conn.row_factory = sqlite3.Row
+    t_cursor = t_conn.cursor()
+    
+    target_ma_kn = gen_id_khang_ngo_python(input_so_nha, input_duong, "")
+    s_cursor.execute("SELECT * FROM listings WHERE Ma_Khang_Ngo_ID = ?", (target_ma_kn,))
+    p1_row = s_cursor.fetchone()
+    
+    if not p1_row:
+        norm_input_so_nha, norm_input_duong = normalize_address(input_so_nha, input_duong)
+        s_cursor.execute("SELECT * FROM listings")
+        for r in s_cursor.fetchall():
+            r_dict = dict(r)
+            r_so_nha, r_duong = normalize_address(r_dict.get('Ngo_So_nha'), r_dict.get('Duong'))
+            if r_so_nha == norm_input_so_nha and r_duong == norm_input_duong:
+                p1_row = r
+                break
+                
+    if not p1_row:
+        s_conn.close()
+        t_conn.close()
+        add_log_message(f"[❌ LỖI] Không tìm thấy căn nhà khớp địa chỉ '{input_so_nha} {input_duong}' trong Pool 1.")
+        return {"status": "error", "message": f"Không tìm thấy căn nhà khớp địa chỉ '{input_so_nha} {input_duong}' trong Pool 1."}
+        
+    p1_dict = dict(p1_row)
+    old_tk_id = p1_dict.get('tk_id', '')
+    new_tk_id = f"LEGACY-{old_tk_id}"
+    system_id = p1_dict.get('System_ID') or f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}"
+    ma_khang_ngo = p1_dict.get('Ma_Khang_Ngo_ID') or target_ma_kn
+    
+    add_log_message(f"[ℹ] Tìm thấy căn khớp: {old_tk_id} (System ID: {system_id}). Thực hiện di trú sang mã mới: {new_tk_id}")
+    
+    v2_fields = {}
+    v2_fields['tk_id'] = new_tk_id
+    v2_fields['status'] = 'published_legacy'
+    v2_fields['System_ID'] = system_id
+    v2_fields['Ma_Hang'] = p1_dict.get('Ma_Hang') or new_tk_id
+    v2_fields['isSigned'] = '0'
+    v2_fields['status_nguon'] = p1_dict.get('Trang_thai') or 'Đang bán'
+    v2_fields['streetName'] = p1_dict.get('Duong', '')
+    v2_fields['Quan'] = p1_dict.get('Quan', '')
+    v2_fields['Phuong'] = p1_dict.get('Phuong', '')
+    v2_fields['Ngo_So_nha'] = p1_dict.get('Ngo_So_nha', '')
+    v2_fields['Noi_dung_chinh'] = p1_dict.get('Noi_dung_chinh', '')
+    v2_fields['Mo_ta_chi_tiet'] = p1_dict.get('Mo_ta_chi_tiet', '')
+    v2_fields['Gia_chao'] = p1_dict.get('Gia_chao', '')
+    v2_fields['DT_Thuc_te'] = p1_dict.get('DT_Thuc_te', '')
+    v2_fields['DT_Tren_so'] = p1_dict.get('DT_Tren_so', '')
+    v2_fields['So_Tang'] = p1_dict.get('So_Tang', '')
+    v2_fields['Mat_Tien'] = p1_dict.get('Mat_Tien', '')
+    v2_fields['Huong'] = p1_dict.get('Huong', '')
+    v2_fields['bedrooms'] = p1_dict.get('So_phong_ngu', '')
+    v2_fields['restrooms'] = p1_dict.get('So_nha_ve_sinh', '')
+    v2_fields['minimumRoadWidth'] = p1_dict.get('Duong_truoc_nha_m', '')
+    v2_fields['Ten_Chu_Nha'] = p1_dict.get('Ten_Chu_Nha', '')
+    v2_fields['Dien_thoai_1'] = p1_dict.get('Dien_thoai_1', '')
+    v2_fields['Dien_thoai_Dau_Chu'] = p1_dict.get('Dien_thoai_Dau_Chu', '')
+    v2_fields['Ten_Dau_Chu'] = p1_dict.get('Ten_Dau_Chu_Hop_dong', '')
+    v2_fields['Link_Goc'] = p1_dict.get('Link_Goc', '')
+    v2_fields['Last_Crawl'] = p1_dict.get('Last_Crawl') or datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    v2_fields['Last_Sync'] = p1_dict.get('Last_Sync') or datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    v2_fields['Chieu_dai'] = p1_dict.get('Chieu_dai', '')
+    v2_fields['raw_images_tk_json'] = p1_dict.get('raw_images_tk_json', '[]')
+    v2_fields['raw_drive_images_json'] = p1_dict.get('raw_drive_images_json', '[]')
+    v2_fields['curated_config_json'] = p1_dict.get('curated_config_json', '[]')
+    
+    t_cursor.execute("PRAGMA table_info(listings_v2)")
+    v2_db_cols = {row[1] for row in t_cursor.fetchall()}
+    
+    v2_valid_fields = {k: v for k, v in v2_fields.items() if k in v2_db_cols}
+    cols = list(v2_valid_fields.keys())
+    vals = [v2_valid_fields[k] for k in cols]
+    placeholders = ", ".join(["?"] * len(cols))
+    t_cursor.execute(f"INSERT OR REPLACE INTO listings_v2 ({', '.join([f'`{c}`' for c in cols])}) VALUES ({placeholders})", vals)
+    
+    custom_fields = {}
+    custom_fields['System_ID'] = system_id
+    custom_fields['Ma_Khang_Ngo'] = ma_khang_ngo
+    custom_fields['Gia_Public'] = p1_dict.get('Gia_Public') or p1_dict.get('Gia_chao') or ''
+    custom_fields['Tieu_De_Public'] = p1_dict.get('Tieu_de_Public') or p1_dict.get('Noi_dung_chinh') or ''
+    custom_fields['Mo_ta_Public'] = p1_dict.get('Mo_ta_Public') or p1_dict.get('Mo_ta_chi_tiet') or ''
+    custom_fields['Note_Noi_Bo'] = ''
+    custom_fields['Trang_Thai_Giao_Dich'] = p1_dict.get('Tinh_trang_nha') or p1_dict.get('Trang_thai') or 'Đang bán'
+    custom_fields['Ngu_Tret'] = p1_dict.get('Ngu_tret_Admin') or 'N'
+    custom_fields['CHDV'] = p1_dict.get('CHDV_Admin') or 'N'
+    custom_fields['Trang_Thai_KN'] = p1_dict.get('Danh_gia_Admin') or 'Hàng Ngon'
+    custom_fields['Dia_Chi_That'] = f"{p1_dict.get('Ngo_So_nha', '')} {p1_dict.get('Duong', '')}"
+    custom_fields['So_Nha'] = p1_dict.get('Ngo_So_nha', '')
+    custom_fields['Ten_Duong'] = p1_dict.get('Duong', '')
+    custom_fields['Quan'] = p1_dict.get('Quan', '')
+    custom_fields['Phuong'] = p1_dict.get('Phuong', '')
+    custom_fields['Duong'] = p1_dict.get('Duong', '')
+    custom_fields['Ngo_So_nha'] = p1_dict.get('Ngo_So_nha', '')
+    custom_fields['bedrooms'] = p1_dict.get('So_phong_ngu', '')
+    custom_fields['restrooms'] = p1_dict.get('So_nha_ve_sinh', '')
+    custom_fields['minimumRoadWidth'] = p1_dict.get('Duong_truoc_nha_m', '')
+    custom_fields['Noi_dung_chinh'] = p1_dict.get('Noi_dung_chinh', '')
+    custom_fields['Mo_ta_chi_tiet'] = p1_dict.get('Mo_ta_chi_tiet', '')
+    custom_fields['Gia_chao'] = p1_dict.get('Gia_chao', '')
+    custom_fields['DT_Thuc_te'] = p1_dict.get('DT_Thuc_te', '')
+    custom_fields['DT_Tren_so'] = p1_dict.get('DT_Tren_so', '')
+    custom_fields['So_Tang'] = p1_dict.get('So_Tang', '')
+    custom_fields['Mat_Tien'] = p1_dict.get('Mat_Tien', '')
+    custom_fields['Chieu_dai'] = p1_dict.get('Chieu_dai', '')
+    custom_fields['Huong'] = p1_dict.get('Huong', '')
+    
+    t_cursor.execute("PRAGMA table_info(listings_custom_v2)")
+    custom_db_cols = {row[1] for row in t_cursor.fetchall()}
+    
+    images_to_insert = []
+    curated_images = []
+    if p1_dict.get('curated_config_json'):
+        try:
+            curated_data = json.loads(p1_dict['curated_config_json'])
+            if isinstance(curated_data, list):
+                for img in curated_data:
+                    url = img.get('url') if isinstance(img, dict) else str(img)
+                    if url:
+                        curated_images.append(url)
+                        origin = 'self' if ('r2.dev' in url or 'cloudinary.com' in url) else 'crawl'
+                        role = img.get('role', 'interior') if isinstance(img, dict) else 'interior'
+                        images_to_insert.append({
+                            'image_url': url,
+                            'cloudinary_url': url if origin == 'self' else '',
+                            'role': role,
+                            'origin': origin
+                        })
+        except Exception:
+            pass
+            
+    flat_mappings = [
+        ('Hinh_Mat_Tien', 'facade'),
+    ]
+    for i in range(1, 6):
+        flat_mappings.append((f'So_do_thua_dat_{i}', 'diagram'))
+    for i in range(1, 11):
+        flat_mappings.append((f'Hinh_Hem_{i}', 'alley'))
+    for i in range(1, 26):
+        flat_mappings.append((f'Anh_{i}', 'interior'))
+        
+    for col, role in flat_mappings:
+        url = p1_dict.get(col)
+        if url and url.strip():
+            url = url.strip()
+            if any(item['image_url'] == url for item in images_to_insert):
+                continue
+            origin = 'self' if ('r2.dev' in url or 'cloudinary.com' in url) else 'crawl'
+            images_to_insert.append({
+                'image_url': url,
+                'cloudinary_url': url if origin == 'self' else '',
+                'role': role,
+                'origin': origin
+            })
+            
+    custom_images_list = []
+    for img in images_to_insert:
+        if img['role'] not in ["facade", "cover", "diagram", "deleted", "hidden"]:
+            custom_images_list.append({"url": img['image_url'], "role": img['role']})
+    custom_fields['images_metadata_json'] = json.dumps(custom_images_list)
+    
+    custom_valid_fields = {k: v for k, v in custom_fields.items() if k in custom_db_cols}
+    c_cols = list(custom_valid_fields.keys())
+    c_vals = [custom_valid_fields[k] for k in c_cols]
+    c_placeholders = ", ".join(["?"] * len(c_cols))
+    t_cursor.execute(f"INSERT OR REPLACE INTO listings_custom_v2 ({', '.join([f'`{c}`' for c in c_cols])}) VALUES ({c_placeholders})", c_vals)
+    
+    t_cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (new_tk_id,))
+    for i, img in enumerate(images_to_insert):
+        t_cursor.execute("""
+            INSERT INTO listings_images (tk_id, image_url, cloudinary_url, role, sequence_index, origin)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (new_tk_id, img['image_url'], img['cloudinary_url'], img['role'], i, img['origin']))
+        
+    t_conn.commit()
+    s_conn.close()
+    t_conn.close()
+    
+    add_log_message(f"[✅] Đã đồng bộ ngược thành công căn '{input_so_nha} {input_duong}' sang Pool 2 làm legacy tin.")
+    return {"status": "success", "message": f"Đã di trú thành công căn khớp sang Pool 2 với ID {new_tk_id}."}
+
+def recrawl_all_listings(db_file=None, add_log_message=None):
+    """
+    Cào lại toàn bộ các căn trong Pool 2 (listings_v2), so sánh sự thay đổi và lưu vào pending_diff_json.
+    """
+    if add_log_message is None:
+        def add_log_message(msg):
+            print(msg)
+            
+    add_log_message("[⚡] Bắt đầu tiến trình cào lại định kỳ toàn bộ CSDL (recrawl-all)...")
+    
+    if db_file is None:
+        db_file = get_db_file()
+        
+    if not os.path.exists(db_file):
+        add_log_message(f"[❌ LỖI] Database {db_file} không tồn tại.")
+        return {"status": "error", "message": f"Database {db_file} không tồn tại."}
+        
+    # Check if listings_v2 table exists in the database
+    conn_check = sqlite3.connect(db_file)
+    cursor_check = conn_check.cursor()
+    cursor_check.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='listings_v2'")
+    has_v2 = cursor_check.fetchone()
+    conn_check.close()
+    
+    if not has_v2:
+        add_log_message(f"[❌ LỖI] Database {db_file} không phải là hệ thống Pool 2 (không có bảng listings_v2).")
+        return {"status": "error", "message": "recrawl-all chỉ hỗ trợ trên hệ thống Pool 2."}
+        
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM listings_v2")
+    listings = cursor.fetchall()
+    conn.close()
+    
+    if not listings:
+        add_log_message("[ℹ] Không có căn nào trong listings_v2 để cào lại.")
+        return {"status": "success", "message": "Không có căn nào để cào lại."}
+        
+    add_log_message(f"[ℹ] Phát hiện {len(listings)} căn trong listings_v2 cần cào lại.")
+    
+    cookie_path = "thienkhoi_cookie.txt"
+    if not os.path.exists(cookie_path):
+        add_log_message("[❌ LỖI] Không tìm thấy file thienkhoi_cookie.txt.")
+        return {"status": "error", "message": "Không tìm thấy file thienkhoi_cookie.txt."}
+        
+    with open(cookie_path, 'r', encoding='utf-8') as f:
+        cookie_str = f.read().strip()
+        
+    from fetcher import parse_criteria_groups, try_refresh_tokens, extract_tokens
+    import requests
+    
+    access_token, refresh_token, _ = extract_tokens(cookie_str)
+    if not access_token:
+        add_log_message("[❌ LỖI] Không thể bóc tách access token từ cookie.")
+        return {"status": "error", "message": "Không thể bóc tách access token từ cookie."}
+        
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/json",
+        "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
+    }
+    
+    explicit_criteria_cols = [
+        "Criteria_Tiem_nang_Rui_ro", "Criteria_Duong_truoc_nha", "Criteria_Loai_BDS",
+        "Criteria_Giay_to_phap_ly", "Criteria_Hinh_dang_dat", "Criteria_Tinh_trang_xay_dung",
+        "Criteria_Cau_truc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
+        "Criteria_Vi_tri_tinh_thue", "Criteria_Mat_thoang", "Criteria_Khoang_cach_bai_do_xe",
+        "Criteria_Kinh_doanh_Dong_tien", "Criteria_Tien_ich", "Criteria_Phong_thuy",
+        "Criteria_Huong_nha", "Criteria_Vi_tri_trong_ngo", "Criteria_Khoang_cach_duong_oto"
+    ]
+    
+    fields_to_compare = [
+        ("Gia_chao", "Giá chào"),
+        ("status_nguon", "Trạng thái nguồn"),
+        ("Mo_ta_chi_tiet", "Mô tả chi tiết"),
+        ("bedrooms", "Số phòng ngủ"),
+        ("restrooms", "Số nhà vệ sinh"),
+        ("Huong", "Hướng"),
+        ("DT_Thuc_te", "Diện tích thực tế"),
+        ("DT_Tren_so", "Diện tích trên sổ"),
+        ("So_Tang", "Số tầng"),
+        ("Mat_Tien", "Mặt tiền"),
+        ("Chieu_dai", "Chiều dài")
+    ]
+    for c in explicit_criteria_cols:
+        fields_to_compare.append((c, c.replace("Criteria_", "Tiêu chí ")))
+        
+    crawled_count = 0
+    updated_diffs_count = 0
+    
+    for idx, old_row in enumerate(listings):
+        old_dict = dict(old_row)
+        tk_id = old_dict.get('tk_id')
+        
+        if tk_id.startswith("LEGACY-"):
+            add_log_message(f"[{idx+1}/{len(listings)}] Căn {tk_id} là legacy tin, bỏ qua không cào lại.")
+            continue
+            
+        add_log_message(f"[{idx+1}/{len(listings)}] Đang cào lại căn {tk_id}...")
+        detail_api_url = f"https://backend.thienkhoi.com/product/v1/property/{tk_id}"
+        
+        time.sleep(random.uniform(1.0, 2.0))
+        
+        try:
+            r_detail = requests.get(detail_api_url, headers=headers, timeout=20)
+            if r_detail.status_code in [401, 403]:
+                add_log_message("Token hết hạn, đang cố gắng refresh...")
+                refreshed_cookie = try_refresh_tokens()
+                if refreshed_cookie:
+                    cookie_str = refreshed_cookie
+                    access_token, _, _ = extract_tokens(cookie_str)
+                    headers["Authorization"] = f"Bearer {access_token}"
+                    r_detail = requests.get(detail_api_url, headers=headers, timeout=20)
+                else:
+                    add_log_message("[❌ LỖI] Refresh token thất bại. Dừng tiến trình cào lại.")
+                    return {"status": "error", "message": "Cookie hết hạn và refresh token thất bại."}
+                    
+            if r_detail.status_code != 200:
+                add_log_message(f"[⚠️ WARNING] Lỗi HTTP {r_detail.status_code} khi tải chi tiết căn {tk_id}. Bỏ qua.")
+                continue
+                
+            detail_json = r_detail.json()
+            detail_data = detail_json.get("data") or {}
+            if not detail_data:
+                add_log_message(f"[⚠️ WARNING] Dữ liệu căn {tk_id} trống. Bỏ qua.")
+                continue
+                
+            ma_hang = detail_data.get("code") or tk_id
+            tinh = (detail_data.get("district") or {}).get("provinceName", "TP Hồ Chí Minh")
+            quan_name = (detail_data.get("district") or {}).get("name", "")
+            phuong_name = (detail_data.get("ward") or {}).get("name", "")
+            duong_name = (detail_data.get("street") or {}).get("name") if detail_data.get("street") else detail_data.get("streetName", "")
+            ngo_so_nha = detail_data.get("address", "")
+            
+            phan_loai_names = [c.get("name") for c in (detail_data.get("criteria") or []) if c and c.get("name")]
+            phan_loai = ", ".join(phan_loai_names)
+            
+            noi_dung_chinh = f"{ngo_so_nha} {duong_name}, {detail_data.get('area', '')}m2, {detail_data.get('floors', '')} tầng, mt {detail_data.get('wide', '')}m, sâu {detail_data.get('depth', '')}m, giá {detail_data.get('offeringPrice', '')} tỷ, Phường {phuong_name} {quan_name}"
+            mo_ta_chi_tiet = detail_data.get("description", "")
+            gia_chao = str(detail_data.get("offeringPrice", ""))
+            dt_thuc_te = str(detail_data.get("actualArea", ""))
+            dt_tren_so = str(detail_data.get("area", ""))
+            so_tang = str(detail_data.get("floors", ""))
+            mat_tien = str(detail_data.get("wide", ""))
+            chieu_dai = str(detail_data.get("depth", ""))
+            so_phong_ngu = str(detail_data.get("bedrooms") or "")
+            so_nha_ve_sinh = str(detail_data.get("restrooms") or "")
+            huong = detail_data.get("direction", "")
+            duong_truoc_nha = str(detail_data.get("minimumRoadWidth") or "")
+            trang_thai = detail_data.get("status", "")
+            
+            ten_chu_nha = ", ".join([o.get("name") for o in (detail_data.get("homeOwner") or []) if o and o.get("name")])
+            dien_thoai_1 = detail_data.get("contactPhoneNumber", "")
+            dt_dau_chu = (detail_data.get("ownerSideUser") or {}).get("phone", "")
+            ten_dau_chu = (detail_data.get("ownerSideUser") or {}).get("name", "")
+            link_fb = (detail_data.get("ownerSideUser") or {}).get("fbLink", "")
+            
+            media = detail_data.get("media", [])
+            property_images = []
+            sodo_images = []
+            
+            for m in media:
+                m_type = m.get("type")
+                m_url = m.get("url")
+                if not m_url:
+                    continue
+                if m_type in ["parcel_map", "certificate_image"]:
+                    sodo_images.append(m_url)
+                elif m_type in ["property_image"]:
+                    property_images.append(m_url)
+                    
+            if not property_images:
+                for m in media:
+                    if m.get("type") == "checkin_image" and m.get("url"):
+                        property_images.append(m.get("url"))
+                        
+            channels_list = detail_data.get("channels") or []
+            channels_str = ", ".join([str(c) for c in channels_list if c])
+            tags_list = detail_data.get("tags") or []
+            tags_str = ", ".join([t.get("name") if isinstance(t, dict) else str(t) for t in tags_list if t])
+            
+            raw_images_tk_ordered = [m.get("url") for m in media if m.get("url")]
+            
+            crawled_data = {
+                "raw_images_tk_ordered": raw_images_tk_ordered,
+                "Mã Hàng": ma_hang,
+                "Tỉnh": tinh,
+                "Quận": quan_name,
+                "Phường": phuong_name,
+                "Đường": duong_name,
+                "Ngõ/Số nhà": ngo_so_nha,
+                "Phân loại": phan_loai,
+                "Nội dung chính": noi_dung_chinh,
+                "Mô tả chi tiết": mo_ta_chi_tiet,
+                "Giá chào": gia_chao,
+                "Giá Public": gia_chao,
+                "DT Thực tế": dt_thuc_te,
+                "DT Trên sổ": dt_tren_so,
+                "Số Tầng": so_tang,
+                "Mặt Tiền": mat_tien,
+                "Chieu_dai": chieu_dai,
+                "Số phòng ngủ": so_phong_ngu,
+                "Số nhà vệ sinh": so_nha_ve_sinh,
+                "Hướng": huong,
+                "Đường trước nhà (m)": duong_truoc_nha,
+                "Tình trạng nhà": "Bình thường",
+                "Trạng thái": trang_thai,
+                "Tên Chủ Nhà": ten_chu_nha,
+                "Điện thoại 1": dien_thoai_1,
+                "Điện thoại Đầu Chủ": dt_dau_chu,
+                "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
+                "Ten_Dau_Chu": ten_dau_chu,
+                "Điểm Facebook": link_fb,
+                "Link Gốc": f"https://proptech.thienkhoi.com/warehouse/sources/{tk_id}",
+                "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                "bedrooms": so_phong_ngu,
+                "restrooms": so_nha_ve_sinh,
+                "minimumRoadWidth": duong_truoc_nha,
+                "isSigned": "1" if detail_data.get("isSigned") else "0",
+                "status_nguon": trang_thai,
+                "commissionAgent": str(detail_data.get("commissionAgent") or ""),
+                "ownerSideUserId": str(detail_data.get("ownerSideUserId") or ""),
+                "certificateSeries": str(detail_data.get("certificateSeries") or ""),
+                "latitude": str((detail_data.get("coordinate") or {}).get("latitude") or detail_data.get("latitude") or ""),
+                "longitude": str((detail_data.get("coordinate") or {}).get("longitude") or detail_data.get("longitude") or ""),
+                "placeName": str(detail_data.get("placeName") or ""),
+                "streetName": str(detail_data.get("streetName") or ""),
+                "balconies": str(detail_data.get("balconies") or ""),
+                "sidewalk": str(detail_data.get("sidewalk") or ""),
+                "behindOpenSpace": str(detail_data.get("behindOpenSpace") or ""),
+                "sideOpenSpace": str(detail_data.get("sideOpenSpace") or ""),
+                "createdAt": str(detail_data.get("createdAt") or ""),
+                "updatedAt": str(detail_data.get("updatedAt") or ""),
+                "commissionType": str(detail_data.get("commissionType") or ""),
+                "commissionValue": str(detail_data.get("commissionValue") or ""),
+                "isDispute": "1" if detail_data.get("isDispute") else "0",
+                "createdAtSigned": str(detail_data.get("createdAtSigned") or ""),
+                "CCCD_Dau_Chu": str((detail_data.get("ownerSideUser") or {}).get("numberId") or ""),
+                "Kenh_tin_TK": channels_str,
+                "The_tags_TK": tags_str
+            }
+            
+            criteria_list = detail_data.get("criteria") or []
+            criteria_cols = parse_criteria_groups(criteria_list)
+            crawled_data.update(criteria_cols)
+            
+            for idx, url in enumerate(sodo_images[:5]):
+                crawled_data[f"Sơ đồ thửa đất {idx+1}"] = url
+                
+            # Perform Diff comparison
+            diff = {}
+            for col_name, label in fields_to_compare:
+                old_val = str(old_dict.get(col_name) or "").strip()
+                
+                new_val_raw = None
+                if col_name in crawled_data:
+                    new_val_raw = crawled_data[col_name]
+                else:
+                    for k, v in crawled_data.items():
+                        if get_safe_col_name(k) == col_name:
+                            new_val_raw = v
+                            break
+                            
+                new_val = str(new_val_raw or "").strip()
+                if old_val != new_val:
+                    diff[col_name] = {
+                        "label": label,
+                        "old": old_val,
+                        "new": new_val
+                    }
+                    
+            pending_diff_json_val = None
+            if diff:
+                pending_diff_json_val = json.dumps({"gia_tri_thay_doi": diff}, ensure_ascii=False)
+                updated_diffs_count += 1
+                add_log_message(f"  [⚠️ KHÁC BIỆT PHÁT HIỆN] Căn {ma_hang} có {len(diff)} trường thay đổi:")
+                for col_name, chg in diff.items():
+                    add_log_message(f"    - {chg['label']}: '{chg['old']}' -> '{chg['new']}'")
+            else:
+                add_log_message(f"  [✅ KHỚP] Căn {ma_hang} không có thay đổi dữ liệu.")
+                
+            save_raw_to_sqlite(tk_id, crawled_data, property_images, db_file=db_file)
+            
+            conn_u = sqlite3.connect(db_file)
+            cursor_u = conn_u.cursor()
+            cursor_u.execute("UPDATE listings_v2 SET pending_diff_json = ? WHERE tk_id = ?", (pending_diff_json_val, tk_id))
+            conn_u.commit()
+            conn_u.close()
+            
+            crawled_count += 1
+            
+        except Exception as e_house:
+            add_log_message(f"  [❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e_house)}")
+            
+    add_log_message(f"[🏁 HOÀN TẤT] Cào lại thành công {crawled_count} căn. Phát hiện {updated_diffs_count} căn có thay đổi.")
+    return {"status": "success", "message": f"Cào lại thành công {crawled_count} căn. Có {updated_diffs_count} căn thay đổi."}
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description="KHANG NGO NHÀ PHỐ - POOL LEGO CLI ENGINE")
+    parser.add_argument('--action', required=True, choices=['sync-pool2-to-pool1', 'sync-pool1-to-pool2', 'recrawl-all'],
+                        help="Hành động đồng bộ hoặc cào lại")
+    parser.add_argument('--so_nha', help="Số nhà (dành cho sync-pool1-to-pool2)")
+    parser.add_argument('--duong', help="Tên đường (dành cho sync-pool1-to-pool2)")
+    parser.add_argument('--tk_id', help="Mã căn (tùy chọn cho sync-pool2-to-pool1)")
+    
+    args = parser.parse_args()
+    
+    if args.action == 'sync-pool2-to-pool1':
+        res = sync_between_databases("Pool2", "Pool1", tk_id=args.tk_id)
+        print(res.get("message"))
+    elif args.action == 'sync-pool1-to-pool2':
+        if not args.so_nha or not args.duong:
+            print("[❌] Thiếu tham số --so_nha hoặc --duong cho đồng bộ ngược.")
+            sys.exit(1)
+        res = sync_between_databases("Pool1", "Pool2", so_nha=args.so_nha, duong=args.duong)
+        print(res.get("message"))
+    elif args.action == 'recrawl-all':
+        res = recrawl_all_listings()
+        print(res.get("message"))
+

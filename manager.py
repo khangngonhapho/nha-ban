@@ -3136,6 +3136,117 @@ def bulk_publish_listings():
         add_log_message(f"[❌ LỖI] Lỗi trong quá trình xuất bản hàng loạt: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/api/sync-databases', methods=['POST'])
+def api_sync_databases():
+    """API đồng bộ chéo giữa các pool database cục bộ"""
+    try:
+        data = request.get_json(force=True) or {}
+        source = data.get("source")
+        target = data.get("target")
+        tk_id = data.get("tk_id")
+        so_nha = data.get("so_nha")
+        duong = data.get("duong")
+        
+        if not source or not target:
+            return jsonify({"status": "error", "message": "Thiếu tham số source hoặc target."}), 400
+            
+        res = pool_lego.sync_between_databases(source, target, tk_id, so_nha, duong, add_log_message)
+        return jsonify(res)
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Lỗi trong quá trình đồng bộ API: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/sync-databases/recrawl-all', methods=['POST'])
+def api_recrawl_all():
+    """API kích hoạt tiến trình cào lại định kỳ chạy ngầm toàn bộ CSDL và tổng hợp thay đổi"""
+    def run_recrawl():
+        try:
+            pool_lego.recrawl_all_listings(add_log_message)
+        except Exception as e:
+            add_log_message(f"[❌ LỖI] Lỗi tiến trình cào lại ngầm: {str(e)}")
+            
+    threading.Thread(target=run_recrawl, daemon=True).start()
+    return jsonify({"status": "success", "message": "Đã bắt đầu tiến trình cào lại định kỳ chạy ngầm toàn bộ CSDL."})
+
+@app.route('/api/listings/apply-diff', methods=['POST'])
+def apply_diff():
+    """API áp dụng có chọn lọc các trường thay đổi từ Raw sang Custom"""
+    try:
+        data = request.get_json(force=True) or {}
+        system_id = data.get("System_ID")
+        fields = data.get("fields", [])
+        
+        if not system_id or not fields:
+            return jsonify({"status": "error", "message": "Thiếu tham số System_ID hoặc danh sách fields."}), 400
+            
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        raw_row = cursor.execute("SELECT * FROM listings_v2 WHERE System_ID = ?", (system_id,)).fetchone()
+        if not raw_row:
+            conn.close()
+            return jsonify({"status": "error", "message": f"Không tìm thấy căn trong listings_v2 với System_ID {system_id}"}), 404
+            
+        raw_dict = dict(raw_row)
+        
+        custom_row = cursor.execute("SELECT * FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)).fetchone()
+        
+        cursor.execute("PRAGMA table_info(listings_custom_v2)")
+        custom_cols = {row[1] for row in cursor.fetchall()}
+        
+        update_fields = {}
+        for f in fields:
+            if f in custom_cols:
+                update_fields[f] = raw_dict.get(f)
+                
+        if not update_fields:
+            conn.close()
+            return jsonify({"status": "error", "message": "Không có trường hợp lệ nào để cập nhật."}), 400
+            
+        if custom_row:
+            set_clause = ", ".join([f"`{k}` = ?" for k in update_fields.keys()])
+            vals = list(update_fields.values()) + [system_id]
+            cursor.execute(f"UPDATE listings_custom_v2 SET {set_clause} WHERE System_ID = ?", vals)
+        else:
+            insert_fields = dict(update_fields)
+            insert_fields['System_ID'] = system_id
+            cols = list(insert_fields.keys())
+            vals = list(insert_fields.values())
+            placeholders = ", ".join(["?"] * len(cols))
+            cursor.execute(f"INSERT INTO listings_custom_v2 ({', '.join([f'`{c}`' for c in cols])}) VALUES ({placeholders})", vals)
+            
+        cursor.execute("UPDATE listings_v2 SET pending_diff_json = NULL WHERE System_ID = ?", (system_id,))
+        conn.commit()
+        conn.close()
+        
+        add_log_message(f"[✅] Đã áp dụng thành công các trường {fields} từ Raw sang Custom cho System ID {system_id}.")
+        return jsonify({"status": "success", "message": "Đã áp dụng thay đổi thành công."})
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Lỗi khi áp dụng diff: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/listings/clear-diff', methods=['POST'])
+def clear_diff():
+    """API bỏ qua thay đổi của đối tác và xóa pending_diff_json"""
+    try:
+        data = request.get_json(force=True) or {}
+        system_id = data.get("System_ID")
+        if not system_id:
+            return jsonify({"status": "error", "message": "Thiếu tham số System_ID."}), 400
+            
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE listings_v2 SET pending_diff_json = NULL WHERE System_ID = ?", (system_id,))
+        conn.commit()
+        conn.close()
+        
+        add_log_message(f"[✅] Đã bỏ qua thay đổi và xoá pending_diff_json cho System ID {system_id}.")
+        return jsonify({"status": "success", "message": "Đã xóa bỏ qua thay đổi thành công."})
+    except Exception as e:
+        add_log_message(f"[❌ LỖI] Lỗi khi clear diff: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 if __name__ == '__main__':
     # Tự động khởi tạo hoặc thực hiện di cư (migration) cột database SQLite cũ
     try:

@@ -4,9 +4,9 @@ Last updated: 2026-06-14
 
 ## Stats
 - Total: 97
-- backlog: 4
+- backlog: 3
 - draft: 0
-- in-progress: 0
+- in-progress: 1
 - done: 18
 - accepted: 69
 - superseded: 6
@@ -18,7 +18,7 @@ Last updated: 2026-06-14
 | US-091 | Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 | backlog | M | 2026-06-13 | `manager.py`, `restore_r2_quality.py`, `docs/stories/_inbox/US-091_fix_r2_image_quality_degradation.md` |
 | US-090 | Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary | accepted | L | 2026-06-13 | `settings.json`, `migrate_to_r2.py`, `sync_pool_v1_sheet.py`, `list_broken_listings.py`, `docs/stories/_inbox/US-090_resolve_cloudinary_credit_limit.md` |
 | US-089D | Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công | backlog  | M    | 2026-06-11 | `settings.json`, `pool_lego.py`, `manager.py`, `fetcher.py`, `docs/stories/_inbox/US-089D_pool2_dynamic_schema.md` |
-| US-089C | Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database | backlog  | M    | 2026-06-11 | `pool_lego.py`, `manager.py`, `docs/stories/_inbox/US-089C_pool2_cross_pool_sync.md` |
+| US-089C | Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database | in-progress  | M    | 2026-06-11 | `pool_lego.py`, `manager.py`, `docs/stories/_inbox/US-089C_pool2_cross_pool_sync.md` |
 | US-089B | Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist | accepted  | M    | 2026-06-11 | `settings.json`, `pool_lego.py`, `manager.py`, `docs/stories/_inbox/US-089B_pool2_cloud_publishing.md` |
 | US-089A | Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ | accepted  | M    | 2026-06-11 | `settings.json`, `pool_lego.py`, `fetcher.py`, `docs/stories/_inbox/US-089A_pool2_local_core.md` |
 | US-089 | Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego | superseded | XL   | 2026-06-11 | `docs/features/proptech_crawler_specification_v2.md`, `docs/stories/_inbox/US-089_pool2_data_system.md` |
@@ -121,7 +121,7 @@ Last updated: 2026-06-14
 - [[US-089_pool2_data_system|US-089]]: [Decomposed] Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego (superseded)
 - [[US-089A_pool2_local_core|US-089A]]: Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ (accepted)
 - [[US-089B_pool2_cloud_publishing|US-089B]]: Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist (accepted)
-- [[US-089C_pool2_cross_pool_sync|US-089C]]: Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database (backlog)
+- [[US-089C_pool2_cross_pool_sync|US-089C]]: Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database (in-progress)
 - [[US-089D_pool2_dynamic_schema|US-089D]]: Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công (backlog)
 - [[US-088_pool1_lego_migration|US-088]]: Đổi tên file và di cư tính năng cũ (Pool1) sang Lego (accepted)
 - [[US-078_admin_curation_auto_fill_ai|US-078]]: Tích hợp nút Tự động điền AI trong Pool và bảo mật số nhà trên Vercel Admin (accepted)
@@ -185,7 +185,7 @@ Last updated: 2026-06-14
 - [[US-089_pool2_data_system|US-089]]: [Decomposed] Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego (superseded)
 - [[US-089A_pool2_local_core|US-089A]]: Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ (accepted)
 - [[US-089B_pool2_cloud_publishing|US-089B]]: Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist (accepted)
-- [[US-089C_pool2_cross_pool_sync|US-089C]]: Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database (backlog)
+- [[US-089C_pool2_cross_pool_sync|US-089C]]: Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database (in-progress)
 - [[US-089D_pool2_dynamic_schema|US-089D]]: Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công (backlog)
 - [[US-088_pool1_lego_migration|US-088]]: Đổi tên file và di cư tính năng cũ (Pool1) sang Lego (accepted)
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)

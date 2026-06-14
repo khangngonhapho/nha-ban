@@ -21,11 +21,10 @@
 ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
 
 ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   *(Không có tính năng nào đang thực hiện)*
+*   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** **[IN-PROGRESS]** Đồng bộ hai chiều dữ liệu SQLite local giữa rổ hàng cũ Pool1 (`raw_archive.db`) và hệ thống mới Pool2 (`raw_archive_v2.db`).
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên kiểm toán ảnh lỗi tự tải lên.
-*   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** Đồng bộ hai chiều giữa `listings_v2` và `listings_custom_v2` khi xuất bản hoặc update từ admin curator.
 *   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** Cơ chế tự động chèn/mở rộng cột trong SQLite v2 khi schema có thay đổi đột xuất và hỗ trợ giao diện upload/rotate ảnh trong Pool2.
 *   **Lọc theo loại hình:** Bổ sung tính năng lọc theo loại hình BĐS (Mặt tiền / Hẻm) dựa trên phân tích cấu trúc dấu `.` trong Ngõ/Số nhà.
 *   **Thêm Quận mới:** Xây dựng hệ thống cấu hình động để thêm Quận mới dễ dàng khi rổ hàng mở rộng địa bàn.
