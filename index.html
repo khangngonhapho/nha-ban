@@ -8972,15 +8972,9 @@
                 </button>
               </div>
               <div class="control-row" style="margin-top: 5px;">
-                <button type="button" class="control-btn" onclick="window.activeImageRotate(90)">
-                  🔄 Xoay 90°
-                </button>
                 ${!p.isFromPoolOnly ? `
-                <button type="button" class="control-btn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red);">
+                <button type="button" class="control-btn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red); width: 100%;">
                   ✕ Bỏ hết
-                </button>
-                <button type="button" class="control-btn" onclick="window.rotateAllListingImages(90)" style="background: rgba(255,191,36,0.08); border-color: rgba(255,191,36,0.3); color: var(--gold);">
-                  🔄 Xoay hết
                 </button>
                 ` : ''}
               </div>
@@ -9395,14 +9389,7 @@
 
 
 
-    // Rotate active image
-    window.activeImageRotate = function(angleOffset) {
-      const slides = window.imageEditorSlides || [];
-      const activeIdx = window.activeImageEditorIndex;
-      const slide = slides[activeIdx];
-      if (!slide) return;
-      window.rotateSingleCurationImage(slide.type, slide.index, angleOffset);
-    };
+
 
     window.reRenderCurationEditorInPlace = function() {
       const p = window.activeCurationListing;
@@ -9647,178 +9634,6 @@
       return 29 + alleyIdx;
     };
 
-    // --- CLOUDINARY URL ROTATION HELPERS (US-083) ---
-    function rotateCloudinaryUrl(url, angleOffset = 90) {
-      if (!url || !url.includes("cloudinary.com/")) return url;
-      
-      const uploadMarker = "/upload/";
-      const index = url.indexOf(uploadMarker);
-      if (index === -1) return url;
-      
-      const prefix = url.substring(0, index + uploadMarker.length);
-      let remaining = url.substring(index + uploadMarker.length);
-      
-      const rotationRegex = /^a_(-?\d+)\//;
-      const match = remaining.match(rotationRegex);
-      
-      let currentAngle = 0;
-      if (match) {
-        currentAngle = parseInt(match[1], 10);
-        remaining = remaining.replace(rotationRegex, "");
-      }
-      
-      let newAngle = (currentAngle + angleOffset) % 360;
-      if (newAngle < 0) newAngle += 360;
-      
-      if (newAngle === 0) {
-        return prefix + remaining;
-      } else {
-        return prefix + `a_${newAngle}/` + remaining;
-      }
-    }
-
-    window.rotateSingleCurationImage = function(type, index, angleOffset) {
-      const p = window.activeCurationListing;
-      if (!p) return;
-      
-      const slides = window.imageEditorSlides || [];
-      const slide = slides.find(s => s.type === type && s.index === index);
-      if (!slide) return;
-      
-      const url = slide.url;
-      if (!url || !url.includes("cloudinary.com/")) {
-        alert("Chỉ hỗ trợ xoay ảnh đã tải lên Cloudinary!");
-        return;
-      }
-      
-      const newUrl = rotateCloudinaryUrl(url, angleOffset);
-      slide.url = newUrl;
-      
-      if (p.pool_row_data) {
-        if (type === 'interior') {
-          const colIdx = window.getPoolInteriorColIdx(index);
-          p.pool_row_data[colIdx] = newUrl;
-        } else if (type === 'alley') {
-          const colIdx = window.getPoolAlleyColIdx(index);
-          p.pool_row_data[colIdx] = newUrl;
-        } else if (type === 'sodo') {
-          const colIdx = window.getPoolSodoColIdx(index);
-          p.pool_row_data[colIdx] = newUrl;
-        } else if (type === 'facade') {
-          p.pool_row_data[29] = newUrl;
-        }
-      }
-      
-      if (p.imgs) {
-        const normOld = normalizeImgUrl(url);
-        const idxInImgs = p.imgs.findIndex(imgUrl => normalizeImgUrl(imgUrl) === normOld);
-        if (idxInImgs !== -1) {
-          p.imgs[idxInImgs] = newUrl;
-        }
-      }
-      
-      if (type === 'sodo') {
-        const input = document.getElementById(`editSodo${index}Url`);
-        if (input) input.value = newUrl;
-      }
-      
-      const coverInput = document.getElementById('editCoverImgUrl');
-      if (coverInput && normalizeImgUrl(coverInput.value) === normalizeImgUrl(url)) {
-        coverInput.value = newUrl;
-      }
-      const publicCoverInput = document.getElementById('editPublicCoverUrl');
-      if (publicCoverInput && normalizeImgUrl(publicCoverInput.value) === normalizeImgUrl(url)) {
-        publicCoverInput.value = newUrl;
-      }
-      
-      window.reRenderCurationEditorInPlace();
-      
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
-      
-      showToast(`Đã xoay ảnh này thêm ${angleOffset}°!`, "success");
-    };
-
-    window.rotateAllListingImages = function(angleOffset) {
-      const p = window.activeCurationListing;
-      if (!p) {
-        alert("Không tìm thấy thông tin căn nhà để xoay ảnh!");
-        return;
-      }
-      
-      const slides = window.imageEditorSlides || [];
-      if (slides.length === 0) {
-        alert("Không có hình ảnh nào để xoay!");
-        return;
-      }
-      
-      let count = 0;
-      slides.forEach(slide => {
-        const url = slide.url;
-        if (url && url.includes("cloudinary.com/")) {
-          const newUrl = rotateCloudinaryUrl(url, angleOffset);
-          slide.url = newUrl;
-          
-          const type = slide.type;
-          const index = parseInt(slide.index, 10);
-          
-          if (p.pool_row_data) {
-            if (type === 'interior') {
-              const colIdx = window.getPoolInteriorColIdx(index);
-              p.pool_row_data[colIdx] = newUrl;
-            } else if (type === 'alley') {
-              const colIdx = window.getPoolAlleyColIdx(index);
-              p.pool_row_data[colIdx] = newUrl;
-            } else if (type === 'sodo') {
-              const colIdx = window.getPoolSodoColIdx(index);
-              p.pool_row_data[colIdx] = newUrl;
-            } else if (type === 'facade') {
-              p.pool_row_data[29] = newUrl;
-            }
-          }
-          
-          if (type === 'sodo') {
-            const input = document.getElementById(`editSodo${index}Url`);
-            if (input) input.value = newUrl;
-          }
-          
-          count++;
-        }
-      });
-      
-      const coverInput = document.getElementById('editCoverImgUrl');
-      if (coverInput && coverInput.value) {
-        coverInput.value = rotateCloudinaryUrl(coverInput.value, angleOffset);
-      }
-      const publicCoverInput = document.getElementById('editPublicCoverUrl');
-      if (publicCoverInput && publicCoverInput.value) {
-        publicCoverInput.value = rotateCloudinaryUrl(publicCoverInput.value, angleOffset);
-      }
-      
-      window.reRenderCurationEditorInPlace();
-      
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
-      
-      showToast(`Đã xoay ${count} ảnh Cloudinary của căn nhà thêm ${angleOffset}°!`, "success");
-    };
-
-    // --- CLOUDINARY LOCAL UPLOADER HELPERS (US-053) ---
-    const CLOUDINARY_CLOUD_NAME = "deru9p712";
-    const CLOUDINARY_API_KEY = "127963624723617";
-    const CLOUDINARY_API_SECRET = "5WyIQlmssDMR4Cu69g4114py6HU";
-    const CLOUDINARY_FOLDER = "BDS-KhangNgo";
-
-    async function sha1(string) {
-      const utf8 = new TextEncoder().encode(string);
-      const hashBuffer = await crypto.subtle.digest('SHA-1', utf8);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
-    }
-
     function compressImageClientSide(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -9869,7 +9684,7 @@
       });
     }
 
-    async function uploadFileToCloudinary(file, type = "interior", listingId = "") {
+    async function uploadFileToR2(file, type = "interior", listingId = "") {
       let sodoIndex = 1;
       if (type === "sodo") {
         for (let i = 1; i <= 5; i++) {
@@ -9960,7 +9775,7 @@
             }
           }
 
-          const uploadedUrl = await uploadFileToCloudinary(file, uploadType, p.id || p.system_id);
+          const uploadedUrl = await uploadFileToR2(file, uploadType, p.id || p.system_id);
           lastUploadedUrl = uploadedUrl;
 
           if (uploadType === "sodo") {

@@ -7,6 +7,8 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** **[DONE - 2026-06-15]** Loại bỏ hoàn toàn Cloudinary khỏi dự án. Đổi tên cột CSDL `cloudinary_url` thành `r2_url` và di cư an toàn. Triển khai API/UI thêm thuộc tính động (Dynamic Schema) tự động chèn cột settings/CSDL/Sheets/Tài liệu và API tải ảnh thủ công cách ly ảnh nhạy cảm bảo mật PII.
+*   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** **[DONE - 2026-06-14]** Triển khai cơ chế đồng bộ hai chiều dữ liệu SQLite local giữa rổ hàng cũ Pool1 (`raw_archive.db`) và hệ thống mới Pool2 (`raw_archive_v2.db`). Tích hợp recrawl định kỳ và lưu log khác biệt vào cột `pending_diff_json`, sẵn sàng APIs áp dụng chọn lọc.
 *   **US-089B (Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist):** **[ACCEPTED - 2026-06-14]** Đồng bộ dữ liệu sạch và rã mảng hình ảnh an toàn thành các cột Ảnh 1..Ảnh N lên sheet Public. Giữ cột Last updated trước toàn bộ cột ảnh. Khắc phục triệt để lỗi quota API 429 bằng cơ chế gộp cập nhật thêm cột và dòng tiêu đề. Tự động đồng bộ link R2 mới vào custom metadata.
 *   **US-093 (Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên):** **[ACCEPTED - 2026-06-14]** Đã hoàn tất công cụ kiểm toán `scratch/audit_manual_images.py` quét 23 căn chứa 98 ảnh tự tải lên trong Pool1 (`raw_archive.db`), phát hiện và báo cáo 2 căn bị lỗi HTTP 503 đối với link R2. Cấu trúc lại báo cáo hợp nhất `broken_listings_report.md` thành 3 đề mục `##` collapsible.
 *   **US-092 (Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ):** **[ACCEPTED - 2026-06-13]** Khắc phục lỗi thiếu index.html trên Vercel Serverless bằng cách sử dụng fallback __dirname để Vercel NFT đóng gói tệp tĩnh và cấu hình includeFiles trong vercel.json.
@@ -21,11 +23,10 @@
 ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
 
 ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** **[IN-PROGRESS]** Đồng bộ hai chiều dữ liệu SQLite local giữa rổ hàng cũ Pool1 (`raw_archive.db`) và hệ thống mới Pool2 (`raw_archive_v2.db`).
+*(Không có)*
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên kiểm toán ảnh lỗi tự tải lên.
-*   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** Cơ chế tự động chèn/mở rộng cột trong SQLite v2 khi schema có thay đổi đột xuất và hỗ trợ giao diện upload/rotate ảnh trong Pool2.
 *   **Lọc theo loại hình:** Bổ sung tính năng lọc theo loại hình BĐS (Mặt tiền / Hẻm) dựa trên phân tích cấu trúc dấu `.` trong Ngõ/Số nhà.
 *   **Thêm Quận mới:** Xây dựng hệ thống cấu hình động để thêm Quận mới dễ dàng khi rổ hàng mở rộng địa bàn.
 

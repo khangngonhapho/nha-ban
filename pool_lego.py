@@ -454,7 +454,7 @@ def init_db(db_file=None):
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             tk_id TEXT,
             image_url TEXT,
-            cloudinary_url TEXT,
+            r2_url TEXT,
             role TEXT,
             sequence_index INTEGER,
             edited_by TEXT,
@@ -542,6 +542,9 @@ def init_db(db_file=None):
             existing_img_cols = [row[1] for row in cursor.fetchall()]
             if "origin" not in existing_img_cols:
                 cursor.execute("ALTER TABLE listings_images ADD COLUMN origin TEXT DEFAULT 'crawl'")
+                conn.commit()
+            if "cloudinary_url" in existing_img_cols and "r2_url" not in existing_img_cols:
+                cursor.execute("ALTER TABLE listings_images RENAME COLUMN cloudinary_url TO r2_url")
                 conn.commit()
         except Exception:
             pass
@@ -890,13 +893,13 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
         add_log_message(f"[ℹ] Tự động tạo dữ liệu Custom mặc định cho System ID {system_id}...")
         # Lọc danh sách ảnh an toàn (loại bỏ facade và diagram)
         cursor.execute(
-            "SELECT image_url, cloudinary_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC", 
+            "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC", 
             (tk_id,)
         )
         img_rows = cursor.fetchall()
         safe_images = []
-        for img_url, cld_url, role in img_rows:
-            url = cld_url if cld_url else img_url
+        for img_url, r2_url, role in img_rows:
+            url = r2_url if r2_url else img_url
             if not url:
                 continue
             if role not in ["facade", "cover", "diagram", "deleted", "hidden"]:
@@ -1254,7 +1257,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
         try:
             # Fetch images from listings_images since listings_v2 has no image columns
             cursor.execute(
-                "SELECT image_url, cloudinary_url, role, sequence_index FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC", 
+                "SELECT image_url, r2_url, role, sequence_index FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC", 
                 (tk_id,)
             )
             img_rows = cursor.fetchall()
@@ -1263,8 +1266,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             facades = []
             alleys = []
             interiors = []
-            for img_url, cld_url, role, seq in img_rows:
-                url = cld_url if cld_url else img_url
+            for img_url, r2_url, role, seq in img_rows:
+                url = r2_url if r2_url else img_url
                 if not url:
                     continue
                 if role == "diagram":
@@ -1574,7 +1577,7 @@ def get_flattened_images_pool2(cursor, tk_id):
     Lấy hình ảnh từ Pool 2, phân loại và làm phẳng thành các cột tương thích với Pool 1.
     """
     cursor.execute(
-        "SELECT image_url, cloudinary_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
+        "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
         (tk_id,)
     )
     img_rows = cursor.fetchall()
@@ -1582,8 +1585,8 @@ def get_flattened_images_pool2(cursor, tk_id):
     facades = []
     alleys = []
     interiors = []
-    for img_url, cld_url, role in img_rows:
-        url = cld_url if cld_url else img_url
+    for img_url, r2_url, role in img_rows:
+        url = r2_url if r2_url else img_url
         if not url:
             continue
         if role == "diagram":
@@ -1943,7 +1946,7 @@ def sync_p1_to_p2(src_db, tgt_db, input_so_nha, input_duong, add_log_message):
                         role = img.get('role', 'interior') if isinstance(img, dict) else 'interior'
                         images_to_insert.append({
                             'image_url': url,
-                            'cloudinary_url': url if origin == 'self' else '',
+                            'r2_url': url if origin == 'self' else '',
                             'role': role,
                             'origin': origin
                         })
@@ -1969,7 +1972,7 @@ def sync_p1_to_p2(src_db, tgt_db, input_so_nha, input_duong, add_log_message):
             origin = 'self' if ('r2.dev' in url or 'cloudinary.com' in url) else 'crawl'
             images_to_insert.append({
                 'image_url': url,
-                'cloudinary_url': url if origin == 'self' else '',
+                'r2_url': url if origin == 'self' else '',
                 'role': role,
                 'origin': origin
             })
@@ -1989,9 +1992,9 @@ def sync_p1_to_p2(src_db, tgt_db, input_so_nha, input_duong, add_log_message):
     t_cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (new_tk_id,))
     for i, img in enumerate(images_to_insert):
         t_cursor.execute("""
-            INSERT INTO listings_images (tk_id, image_url, cloudinary_url, role, sequence_index, origin)
+            INSERT INTO listings_images (tk_id, image_url, r2_url, role, sequence_index, origin)
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (new_tk_id, img['image_url'], img['cloudinary_url'], img['role'], i, img['origin']))
+        """, (new_tk_id, img['image_url'], img['r2_url'], img['role'], i, img['origin']))
         
     t_conn.commit()
     s_conn.close()
@@ -2298,6 +2301,189 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
             
     add_log_message(f"[🏁 HOÀN TẤT] Cào lại thành công {crawled_count} căn. Phát hiện {updated_diffs_count} căn có thay đổi.")
     return {"status": "success", "message": f"Cào lại thành công {crawled_count} căn. Có {updated_diffs_count} căn thay đổi."}
+
+def load_custom_columns():
+    """
+    Đọc các cột tùy biến tự tạo từ settings.json và thêm vào các mảng header toàn cục.
+    """
+    global LISTINGS_V2_COLS, CUSTOM_HEADERS, PUBLIC_WHITELIST_HEADERS_BASE, RAW_LISTINGS_HEADERS
+    try:
+        config_file = "settings.json"
+        if os.path.exists(config_file):
+            with open(config_file, 'r', encoding='utf-8') as f:
+                cfg = json.load(f)
+                custom_cols = cfg.get("custom_schema_columns", [])
+                for col in custom_cols:
+                    name = col.get("column_name")
+                    safe_name = get_safe_col_name(name)
+                    is_public = col.get("is_public", False)
+                    
+                    # Tránh nạp trùng lặp
+                    if safe_name not in LISTINGS_V2_COLS:
+                        LISTINGS_V2_COLS.append(safe_name)
+                    if name not in CUSTOM_HEADERS and safe_name not in CUSTOM_HEADERS:
+                        CUSTOM_HEADERS.append(name)
+                    if is_public:
+                        if "Last updated" in PUBLIC_WHITELIST_HEADERS_BASE:
+                            idx = PUBLIC_WHITELIST_HEADERS_BASE.index("Last updated")
+                            if name not in PUBLIC_WHITELIST_HEADERS_BASE and safe_name not in PUBLIC_WHITELIST_HEADERS_BASE:
+                                PUBLIC_WHITELIST_HEADERS_BASE.insert(idx, name)
+                        else:
+                            if name not in PUBLIC_WHITELIST_HEADERS_BASE and safe_name not in PUBLIC_WHITELIST_HEADERS_BASE:
+                                PUBLIC_WHITELIST_HEADERS_BASE.append(name)
+            
+            # Recompute RAW_LISTINGS_HEADERS
+            raw_headers = [
+                "tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"
+            ] + [col for col in LISTINGS_V2_COLS if col not in ["tk_id", "status"]] + EXPLICIT_CRITERIA_COLS
+            
+            _seen = set()
+            _raw_dedup = []
+            for _col in raw_headers:
+                _name = get_safe_col_name(_col)
+                if _name not in _seen:
+                    _seen.add(_name)
+                    _raw_dedup.append(_name)
+            RAW_LISTINGS_HEADERS = _raw_dedup
+    except Exception as e:
+        print(f"[⚠️ ERROR load_custom_columns] {str(e)}")
+
+def add_column_to_google_sheets_v2(safe_name, header_name, is_public, get_google_credentials, load_config, add_log_message):
+    """
+    Chèn thêm cột vào File 1 Raw, File 2 Custom, và File 3 Public (nếu is_public=True) của Pool2.
+    """
+    creds = get_google_credentials()
+    cfg = load_config()
+    raw_sheet_id = cfg.get("pool2_raw_sheet_id")
+    custom_sheet_id = cfg.get("pool2_custom_sheet_id")
+    public_sheet_id = cfg.get("pool2_public_sheet_id")
+    
+    if not creds:
+        add_log_message("[⚠️ ERROR Sheets] Không thể lấy Google Credentials để cập nhật header Sheets.")
+        return False
+        
+    import gspread
+    try:
+        client = gspread.authorize(creds)
+        
+        # 1. Thêm vào File 1 Raw
+        if raw_sheet_id:
+            try:
+                raw_spreadsheet = client.open_by_key(raw_sheet_id)
+                raw_sheet = raw_spreadsheet.worksheet("Listings")
+                raw_headers = raw_sheet.row_values(1)
+                if safe_name not in raw_headers:
+                    raw_sheet.add_cols(1)
+                    raw_headers.append(safe_name)
+                    col_letter = gspread.utils.rowcol_to_a1(1, len(raw_headers)).replace("1", "")
+                    raw_sheet.update(range_name=f"{col_letter}1", values=[[safe_name]], value_input_option='USER_ENTERED')
+                    add_log_message(f"[✅ Sheets] Đã chèn cột '{safe_name}' vào File 1 Raw.")
+            except Exception as e_raw:
+                add_log_message(f"[⚠️ ERROR Raw Sheet] {str(e_raw)}")
+                
+        # 2. Thêm vào File 2 Custom
+        if custom_sheet_id:
+            try:
+                custom_spreadsheet = client.open_by_key(custom_sheet_id)
+                custom_sheet = custom_spreadsheet.worksheet("Custom")
+                custom_headers = custom_sheet.row_values(1)
+                if header_name not in custom_headers:
+                    custom_sheet.add_cols(1)
+                    custom_headers.append(header_name)
+                    col_letter = gspread.utils.rowcol_to_a1(1, len(custom_headers)).replace("1", "")
+                    custom_sheet.update(range_name=f"{col_letter}1", values=[[header_name]], value_input_option='USER_ENTERED')
+                    add_log_message(f"[✅ Sheets] Đã chèn cột '{header_name}' vào File 2 Custom.")
+            except Exception as e_cust:
+                add_log_message(f"[⚠️ ERROR Custom Sheet] {str(e_cust)}")
+                
+        # 3. Thêm vào File 3 Public (nếu is_public=True)
+        if is_public and public_sheet_id:
+            try:
+                public_spreadsheet = client.open_by_key(public_sheet_id)
+                public_sheet = public_spreadsheet.worksheet("Public")
+                public_headers = public_sheet.row_values(1)
+                if header_name not in public_headers:
+                    if "Last updated" in public_headers:
+                        last_updated_idx = public_headers.index("Last updated")
+                        public_sheet.insert_cols([[header_name]], col=last_updated_idx + 1)
+                        add_log_message(f"[✅ Sheets] Đã chèn cột '{header_name}' trước 'Last updated' vào File 3 Public.")
+                    else:
+                        public_sheet.add_cols(1)
+                        public_headers.append(header_name)
+                        col_letter = gspread.utils.rowcol_to_a1(1, len(public_headers)).replace("1", "")
+                        public_sheet.update(range_name=f"{col_letter}1", values=[[header_name]], value_input_option='USER_ENTERED')
+                        add_log_message(f"[✅ Sheets] Đã chèn cột '{header_name}' vào cuối File 3 Public.")
+            except Exception as e_pub:
+                add_log_message(f"[⚠️ ERROR Public Sheet] {str(e_pub)}")
+                
+        return True
+    except Exception as e:
+        add_log_message(f"[❌ ERROR Sheets Sync] Gặp lỗi khi cập nhật header Sheets: {str(e)}")
+        return False
+
+def append_column_to_docs(header_name, safe_name, is_public, description):
+    """
+    Tự động thêm đặc tả cột mới vào cuối bảng markdown của docs/pool_sheet_schema.md và docs/data_dictionary.md.
+    """
+    # 1. Cập nhật docs/pool_sheet_schema.md
+    schema_path = os.path.join("docs", "pool_sheet_schema.md")
+    if os.path.exists(schema_path):
+        try:
+            with open(schema_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            lines = content.split("\n")
+            
+            # Tìm dòng cuối cùng của bảng cột
+            last_idx = -1
+            last_stt = 0
+            for idx, line in enumerate(lines):
+                if line.strip().startswith("|") and "|" in line:
+                    parts = [p.strip() for p in line.split("|")]
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        last_idx = idx
+                        last_stt = int(parts[1])
+            
+            if last_idx != -1:
+                new_stt = last_stt + 1
+                pub_check = "✅" if is_public else "❌"
+                new_row = f"| {new_stt} | `{header_name}` | `{safe_name}` | {pub_check} | {description or 'Cột thuộc tính tùy biến động'} |"
+                lines.insert(last_idx + 1, new_row)
+                with open(schema_path, "w", encoding="utf-8") as f:
+                    f.write("\n".join(lines))
+                print(f"[✅ Docs] Đã cập nhật docs/pool_sheet_schema.md cho cột '{header_name}'.")
+        except Exception as e_docs:
+            print(f"[⚠️ ERROR append_column_to_docs schema] {str(e_docs)}")
+            
+    # 2. Cập nhật docs/data_dictionary.md
+    dict_path = os.path.join("docs", "data_dictionary.md")
+    if os.path.exists(dict_path):
+        try:
+            with open(dict_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            lines = content.split("\n")
+            
+            # Tìm dòng cuối cùng của bảng Từ điển
+            last_idx = -1
+            last_stt = 0
+            for idx, line in enumerate(lines):
+                if line.strip().startswith("|") and "|" in line:
+                    parts = [p.strip() for p in line.split("|")]
+                    if len(parts) >= 2 and parts[1].isdigit():
+                        last_idx = idx
+                        last_stt = int(parts[1])
+            
+            if last_idx != -1:
+                new_stt = last_stt + 1
+                new_row = f"| {new_stt} | `{header_name}` | `{safe_name}` | {description or 'Đặc tả cột tùy biến'} | Cột thuộc tính tùy biến tự tạo (Dynamic Schema). |"
+                lines.insert(last_idx + 1, new_row)
+                with open(dict_path, "w", encoding="utf-8") as f:
+                    f.write("\n".join(lines))
+                print(f"[✅ Docs] Đã cập nhật docs/data_dictionary.md cho cột '{header_name}'.")
+        except Exception as e_docs:
+            print(f"[⚠️ ERROR append_column_to_docs dict] {str(e_docs)}")
+
+# Tự động nạp các cột tùy biến khi import module
+load_custom_columns()
 
 if __name__ == '__main__':
     import argparse

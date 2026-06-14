@@ -1,6 +1,6 @@
 ---
 id: US-089C
-status: in-progress
+status: done
 date: 2026-06-11
 size: M
 replaces: US-089

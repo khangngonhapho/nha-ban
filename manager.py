@@ -195,7 +195,7 @@ def normalize_listing_for_client(row):
             conn_img = sqlite3.connect(DB_FILE, timeout=30.0)
             cursor_img = conn_img.cursor()
             img_rows = cursor_img.execute(
-                "SELECT image_url, cloudinary_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
+                "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
                 (d.get("tk_id"),)
             ).fetchall()
             conn_img.close()
@@ -205,9 +205,9 @@ def normalize_listing_for_client(row):
                 raw_drive_all = []
                 diagrams_raw = []
                 
-                for img_url, cld_url, role in img_rows:
+                for img_url, r2_url, role in img_rows:
                     raw_tk_all.append(img_url)
-                    raw_drive_all.append(cld_url or img_url)
+                    raw_drive_all.append(r2_url or img_url)
                     if role == "diagram":
                         diagrams_raw.append(img_url)
                 
@@ -257,9 +257,6 @@ DEFAULT_CONFIG = {
     "search_url": "https://data.thienkhoi.com/Hang?iID_MaTinh=0&iID_HuongNha=0&iID_LoaiHang=0&iID_MaQuan=0&iID_MaPhuongXa=0&iTrangThai=0&iTuMatTien=0&iDenMatTien=0&iTuDienTich=0&iDenDienTich=0&iGiaChaoHopDong=0&iHeSoThanhTich=0&iGia=0&sGia=0&iTuGia=0&iDenGia=0&iPhanTramHoaHong=0&iDuongVao=0&iTuSoTang=0&iPhanTang=0&iDenSoTang=0&iSoPhongNgu=0&iSoToilet=0&iID_Nguon=0&sTaiKhoan=0908130555&iTaiKhoan=0&Menu=0&Page=1&PageSize=20&bCamKetChuan=False&bSigned=False&bHidden=0&iID_MaNguoiDungTao=0&iID_MaNguoiTuChoi=0&iDuAn=0&iTrangThaiSoDo=0&iBranch=0&blacklist=False&iKhoBank=0&iKhoHang=0&iID_MaNguoiDuyetBank=0&iID_MaNguoiBCDK=0&all=False&inside=False&tester=False",
     "crawler_limit": 5,
     "crawler_start_page": 1,
-    "cloudinary_cloud_name": "deru9p712",
-    "cloudinary_api_key": "127963624723617",
-    "cloudinary_api_secret": "5WyIQlmssDMR4Cu69g4114py6HU",
     "delay_house_min": 3.0,
     "delay_house_max": 6.0,
     "delay_page_min": 5.0,
@@ -810,43 +807,6 @@ def create_drive_folder(folder_name, parent_id, token):
         
     return r.json().get("id")
 
-def upload_image_to_cloudinary(file_content, filename, cloud_name, api_key, api_secret, folder="BDS-KhangNgo"):
-    """Tải ảnh lên Cloudinary sử dụng Signed REST API trực tiếp bằng requests"""
-    timestamp = int(time.time())
-    
-    # Cloudinary yêu cầu các tham số để sign phải được sắp xếp theo thứ tự bảng chữ cái
-    params_to_sign = {
-        "folder": folder,
-        "timestamp": timestamp
-    }
-    
-    # Tạo signature
-    # Cú pháp: parameter1=value1&parameter2=value2<api_secret>
-    sorted_params = sorted([f"{k}={v}" for k, v in params_to_sign.items()])
-    sign_string = "&".join(sorted_params) + api_secret
-    signature = hashlib.sha1(sign_string.encode('utf-8')).hexdigest()
-    
-    # Gọi REST API của Cloudinary
-    url = f"https://api.cloudinary.com/v1_1/{cloud_name}/image/upload"
-    
-    data = {
-        "api_key": api_key,
-        "timestamp": timestamp,
-        "signature": signature,
-        "folder": folder
-    }
-    
-    files = {
-        "file": (filename, file_content, "image/jpeg")
-    }
-    
-    r = requests.post(url, data=data, files=files, timeout=30)
-    if r.status_code != 200:
-        raise Exception(f"Cloudinary API error {r.status_code}: {r.text}")
-        
-    res_data = r.json()
-    return res_data.get("secure_url") or res_data.get("url")
-
 def upload_image_to_r2(file_content, filename, content_type="image/jpeg"):
     """Tải ảnh lên Cloudflare R2 sử dụng REST API với AWS Signature v4"""
     import hashlib
@@ -1048,7 +1008,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
     else:
         add_log_message(f"[i] Phát hiện {len(rows)} căn thô cần di cư hình ảnh.")
     
-    # 2. Kiểm tra cấu hình Cloud (Cloudflare R2, Cloudinary hoặc Google Drive)
+    # 2. Kiểm tra cấu hình Cloud (Cloudflare R2 hoặc Google Drive)
     cfg = load_config()
     
     r2_access_key = cfg.get("r2_access_key_id")
@@ -1058,20 +1018,12 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
     r2_public_url = cfg.get("r2_public_url", "")
     use_r2 = bool(r2_access_key and r2_secret_key and r2_bucket and account_id)
     
-    cld_cloud_name = cfg.get("cloudinary_cloud_name")
-    cld_api_key = cfg.get("cloudinary_api_key")
-    cld_api_secret = cfg.get("cloudinary_api_secret")
-    
-    use_cloudinary = bool(cld_cloud_name and cld_api_key and cld_api_secret) and not use_r2
-    
     creds = None
     token = None
     drive_parent_folder = None
     
     if use_r2:
         add_log_message(f"[🔒] Phát hiện cấu hình Cloudflare R2 (Bucket: {r2_bucket}). Ảnh sẽ được upload trực tiếp lên Cloudflare R2 siêu tốc!")
-    elif use_cloudinary:
-        add_log_message(f"[🔒] Phát hiện cấu hình Cloudinary (Cloud: {cld_cloud_name}). Ảnh sẽ được upload trực tiếp lên Cloudinary CDN siêu tốc!")
     else:
         creds = get_google_credentials()
         token = get_google_access_token(creds)
@@ -1079,7 +1031,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         if creds and token:
             add_log_message("[🔒] Google Service Account được phát hiện. Ảnh sẽ được upload lên Google Drive 5TB!")
         else:
-            add_log_message("[⚠️] KHÔNG phát hiện file 'credentials.json', cấu hình Cloudflare R2 hoặc Cloudinary. Hệ thống tự động kích hoạt chế độ tải ảnh CỤC BỘ (Local Storage) để lưu trữ tại static/images/[tk_id]/")
+            add_log_message("[⚠️] KHÔNG phát hiện file 'credentials.json' hoặc cấu hình Cloudflare R2. Hệ thống tự động kích hoạt chế độ tải ảnh CỤC BỘ (Local Storage) để lưu trữ tại static/images/[tk_id]/")
         
     headers_tk = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -1102,7 +1054,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         house_folder_id = None
         
         # Nếu dùng Drive, tạo thư mục riêng cho căn nhà
-        if not use_cloudinary and token:
+        if not use_r2 and token:
             try:
                 house_folder_id = create_drive_folder(f"TK_{tk_id}", drive_parent_folder, token)
             except Exception as e:
@@ -1160,20 +1112,9 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 
                 filename = f"img_{tk_id}_{idx+1}.jpg"
                 
-                # GHI LÊN CLOUDFLARE R2, CLOUDINARY, DRIVE HOẶC CỤC BỘ
+                # GHI LÊN CLOUDFLARE R2, DRIVE HOẶC CỤC BỘ
                 if use_r2:
                     img_link = upload_image_to_r2(img_data, filename)
-                    return idx, img_link
-                elif use_cloudinary:
-                    cld_folder = f"BDS-KhangNgo/{tk_id}"
-                    img_link = upload_image_to_cloudinary(
-                        img_data, 
-                        filename, 
-                        cld_cloud_name, 
-                        cld_api_key, 
-                        cld_api_secret, 
-                        folder=cld_folder
-                    )
                     return idx, img_link
                 elif token:
                     drive_link = upload_image_to_drive(img_data, filename, house_folder_id, token)
@@ -1260,7 +1201,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 (original_sodo4, clean_sodo4),
                 (original_sodo5, clean_sodo5)
             ], start=1):
-                if orig_sodo and orig_sodo.startswith("http") and not ("cloudinary.com" in clean_sodo or "google" in clean_sodo or "r2.dev" in clean_sodo or (r2_public_url and r2_public_url in clean_sodo)):
+                if orig_sodo and orig_sodo.startswith("http") and not ("google" in clean_sodo or "r2.dev" in clean_sodo or (r2_public_url and r2_public_url in clean_sodo)):
                     try:
                         add_log_message(f"  [🛡️ Sơ đồ {sodo_num}] Đang di cư Ảnh Sơ đồ thửa đất {sodo_num} của {tk_id} lên Cloud (BỎ QUA NÉN)...")
                         img_data = download_image_with_retry(orig_sodo, headers_tk_sodo)
@@ -1269,16 +1210,6 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                             migrated = ""
                             if use_r2:
                                 migrated = upload_image_to_r2(img_data, filename)
-                            elif use_cloudinary:
-                                cld_folder = f"BDS-KhangNgo/{tk_id}"
-                                migrated = upload_image_to_cloudinary(
-                                    img_data, 
-                                    filename, 
-                                    cld_cloud_name, 
-                                    cld_api_key, 
-                                    cld_api_secret, 
-                                    folder=cld_folder
-                                )
                             elif token:
                                 migrated = upload_image_to_drive(img_data, filename, house_folder_id, token)
                             
@@ -1371,7 +1302,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             if LISTINGS_TABLE == "listings_v2":
                 # Lấy bản đồ URL cũ để so khớp cập nhật cho listings_custom_v2
                 old_rows = cursor.execute(
-                    "SELECT image_url, cloudinary_url FROM listings_images WHERE tk_id = ?",
+                    "SELECT image_url, r2_url FROM listings_images WHERE tk_id = ?",
                     (tk_id,)
                 ).fetchall()
                 old_url_map = {r[0]: r[1] for r in old_rows if r[0]}
@@ -1381,7 +1312,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     orig_s = [original_sodo1, original_sodo2, original_sodo3, original_sodo4, original_sodo5][s_num-1]
                     if orig_s and clean_s:
                         cursor.execute(
-                            "UPDATE listings_images SET cloudinary_url = ? WHERE tk_id = ? AND image_url = ?",
+                            "UPDATE listings_images SET r2_url = ? WHERE tk_id = ? AND image_url = ?",
                             (clean_s, tk_id, orig_s)
                         )
                 # Update interior/house images
@@ -1390,11 +1321,11 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                         mig_img_url = drive_links[idx]
                         if mig_img_url:
                             cursor.execute(
-                                "UPDATE listings_images SET cloudinary_url = ? WHERE tk_id = ? AND image_url = ?",
+                                "UPDATE listings_images SET r2_url = ? WHERE tk_id = ? AND image_url = ?",
                                 (mig_img_url, tk_id, orig_img_url)
                             )
 
-                # Đồng bộ cập nhật các link mới (R2/Cloud Cloudinary mới) vào listings_custom_v2.images_metadata_json nếu đã tồn tại
+                # Đồng bộ cập nhật các link mới (R2 mới) vào listings_custom_v2.images_metadata_json nếu đã tồn tại
                 system_id = row["System_ID"] if "System_ID" in row.keys() else d.get("System_ID")
                 if system_id:
                     custom_row = cursor.execute(
@@ -1467,8 +1398,8 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         except Exception as e:
             add_log_message(f"[❌ LỖI] Gặp sự cố trong quy trình tự động hóa Curation & Xuất bản cho {tk_id}: {str(e)}")
             
-        # Throttling tối ưu bảo vệ IP: Cloudinary CDN cực nhanh (0.5 - 1.5s), Google Drive API (1.5 - 3.0s)
-        if use_cloudinary:
+        # Throttling tối ưu bảo vệ IP: Cloudflare R2 cực nhanh (0.5 - 1.5s), Google Drive API (1.5 - 3.0s)
+        if use_r2:
             sleep_time = random.uniform(0.5, 1.5)
         else:
             sleep_time = random.uniform(1.5, 3.0)
@@ -1493,6 +1424,224 @@ def index():
     resp.headers['Pragma'] = 'no-cache'
     resp.headers['Expires'] = '0'
     return resp
+
+@app.route('/index.html')
+def index_html():
+    """Trả về giao diện web client index.html"""
+    if os.path.exists("index.html"):
+        with open("index.html", "r", encoding="utf-8") as f:
+            content = f.read()
+    else:
+        return "index.html not found", 404
+    resp = Response(content, mimetype='text/html')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
+
+@app.route('/api/schema/add-column', methods=['POST'])
+def add_schema_column():
+    """
+    API thêm thuộc tính mới động (Dynamic Schema) cho Pool2.
+    Đồng bộ: settings.json, SQLite listings_v2 & listings_custom_v2, Google Sheets và tài liệu markdown.
+    """
+    data = request.json or {}
+    column_name = data.get("column_name", "").strip()
+    data_type = data.get("data_type", "TEXT").strip().upper()
+    is_public = bool(data.get("is_public", False))
+    description = data.get("description", "").strip()
+    
+    if not column_name:
+        return jsonify({"status": "error", "message": "Tên cột không được để trống"}), 400
+        
+    safe_name = pool_lego.get_safe_col_name(column_name)
+    
+    # 1. Ghi thông tin mới vào settings.json
+    cfg = load_config()
+    if "custom_schema_columns" not in cfg:
+        cfg["custom_schema_columns"] = []
+        
+    # Check if exists
+    for col in cfg["custom_schema_columns"]:
+        if pool_lego.get_safe_col_name(col.get("column_name")) == safe_name:
+            return jsonify({"status": "error", "message": f"Cột '{column_name}' đã tồn tại trong cấu hình"}), 400
+            
+    cfg["custom_schema_columns"].append({
+        "column_name": column_name,
+        "data_type": data_type,
+        "is_public": is_public,
+        "description": description
+    })
+    save_config(cfg)
+    
+    # Nạp lại cấu hình động trong pool_lego memory
+    pool_lego.load_custom_columns()
+    
+    # 2. ALTER TABLE SQLite listings_v2 & listings_custom_v2
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
+    cursor = conn.cursor()
+    try:
+        # listings_v2
+        cursor.execute("PRAGMA table_info(listings_v2)")
+        v2_cols = [r[1] for r in cursor.fetchall()]
+        if safe_name not in v2_cols:
+            cursor.execute(f"ALTER TABLE listings_v2 ADD COLUMN `{safe_name}` {data_type}")
+            
+        # listings_custom_v2 (tất cả là TEXT phục vụ đè)
+        cursor.execute("PRAGMA table_info(listings_custom_v2)")
+        custom_cols = [r[1] for r in cursor.fetchall()]
+        if safe_name not in custom_cols:
+            cursor.execute(f"ALTER TABLE listings_custom_v2 ADD COLUMN `{safe_name}` TEXT")
+            
+        conn.commit()
+    except Exception as e_db:
+        conn.close()
+        return jsonify({"status": "error", "message": f"Lỗi nâng cấp SQLite: {str(e_db)}"}), 500
+    conn.close()
+    
+    # 3. Chèn cột vào 3 Google Sheets
+    logs = []
+    def log_msg(msg):
+        logs.append(msg)
+        add_log_message(msg)
+        
+    pool_lego.add_column_to_google_sheets_v2(
+        safe_name=safe_name,
+        header_name=column_name,
+        is_public=is_public,
+        get_google_credentials=get_google_credentials,
+        load_config=load_config,
+        add_log_message=log_msg
+    )
+    
+    # 4. Ghi nhận mô tả cột vào file tài liệu markdown docs
+    pool_lego.append_column_to_docs(
+        header_name=column_name,
+        safe_name=safe_name,
+        is_public=is_public,
+        description=description
+    )
+    
+    return jsonify({
+        "status": "success", 
+        "message": f"Đã thêm thuộc tính '{column_name}' thành công!",
+        "logs": logs
+    })
+
+@app.route('/api/listings/<tk_id>/upload-image', methods=['POST'])
+def upload_manual_image(tk_id):
+    """
+    API đăng tải hình ảnh thủ công cho căn nhà (Pool2).
+    Lưu vào Cloudflare R2 (hoặc Local), cập nhật SQLite listings_images, listings_v2,
+    và đồng bộ an toàn lên Google Sheets (cách ly ảnh nhạy cảm).
+    """
+    if 'file' not in request.files:
+        return jsonify({"status": "error", "message": "Không tìm thấy file ảnh"}), 400
+        
+    file = request.files['file']
+    role = request.form.get("role", "interior").strip()
+    
+    if file.filename == '':
+        return jsonify({"status": "error", "message": "Chưa chọn file ảnh"}), 400
+        
+    img_bytes = file.read()
+    if not img_bytes:
+        return jsonify({"status": "error", "message": "File ảnh rỗng"}), 400
+        
+    cfg = load_config()
+    r2_access_key = cfg.get("r2_access_key_id")
+    r2_secret_key = cfg.get("r2_secret_access_key")
+    r2_bucket = cfg.get("r2_bucket_name")
+    account_id = cfg.get("cloudflare_account_id")
+    use_r2 = bool(r2_access_key and r2_secret_key and r2_bucket and account_id)
+    
+    is_diagram = (role == "diagram")
+    if not is_diagram:
+        try:
+            img_bytes = compress_image(img_bytes)
+        except Exception as e_comp:
+            add_log_message(f"[⚠️ Warning] Nén ảnh thủ công thất bại: {str(e_comp)}")
+            
+    ext = os.path.splitext(file.filename)[1] or ".jpg"
+    timestamp = int(time.time())
+    filename = f"SYS-{tk_id.upper()}_{role}_{timestamp}{ext}"
+    
+    img_link = ""
+    try:
+        if use_r2:
+            img_link = upload_image_to_r2(img_bytes, filename)
+        else:
+            local_dir = os.path.join("static", "images", tk_id)
+            os.makedirs(local_dir, exist_ok=True)
+            local_path = os.path.join(local_dir, filename)
+            with open(local_path, "wb") as f:
+                f.write(img_bytes)
+            img_link = f"/static/images/{tk_id}/{filename}"
+    except Exception as e_upload:
+        return jsonify({"status": "error", "message": f"Tải ảnh lên cloud thất bại: {str(e_upload)}"}), 500
+        
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
+    cursor = conn.cursor()
+    try:
+        max_seq = cursor.execute(
+            "SELECT MAX(sequence_index) FROM listings_images WHERE tk_id = ?", 
+            (tk_id,)
+        ).fetchone()[0]
+        next_seq = (max_seq + 1) if (max_seq is not None) else 0
+        
+        cursor.execute("""
+            INSERT INTO listings_images (tk_id, image_url, r2_url, role, sequence_index, edited_by, origin)
+            VALUES (?, ?, ?, ?, ?, 'Admin', 'self')
+        """, (tk_id, img_link, img_link, role, next_seq))
+        
+        all_imgs = cursor.execute(
+            "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
+            (tk_id,)
+        ).fetchall()
+        
+        curated_list = []
+        for img_url, r2_url_val, r_role in all_imgs:
+            url_to_use = r2_url_val if r2_url_val else img_url
+            curated_list.append({"url": url_to_use, "role": r_role or "interior"})
+            
+        curated_config_json = json.dumps(curated_list, ensure_ascii=False)
+        cursor.execute(
+            "UPDATE listings_v2 SET curated_config_json = ? WHERE tk_id = ?",
+            (curated_config_json, tk_id)
+        )
+        
+        sys_row = cursor.execute("SELECT System_ID FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
+        system_id = sys_row[0] if sys_row else None
+        
+        if role in ["interior", "alley", "cover"] and system_id:
+            safe_imgs = []
+            for img_url, r2_url_val, r_role in all_imgs:
+                if r_role not in ["facade", "diagram", "deleted", "hidden"]:
+                    url_to_use = r2_url_val if r2_url_val else img_url
+                    safe_imgs.append({"url": url_to_use, "role": r_role or "interior"})
+            
+            safe_json = json.dumps(safe_imgs, ensure_ascii=False)
+            cursor.execute(
+                "UPDATE listings_custom_v2 SET images_metadata_json = ? WHERE System_ID = ?",
+                (safe_json, system_id)
+            )
+            
+        conn.commit()
+    except Exception as e_db:
+        conn.close()
+        return jsonify({"status": "error", "message": f"Lỗi ghi nhận CSDL: {str(e_db)}"}), 500
+    conn.close()
+    
+    try:
+        execute_publish_listing(tk_id)
+    except Exception as e_sheet:
+        add_log_message(f"[⚠️ Warning] Đồng bộ Sheets thất bại sau khi upload ảnh: {str(e_sheet)}")
+        
+    return jsonify({
+        "status": "success",
+        "message": f"Tải lên hình ảnh vai trò '{role}' thành công!",
+        "url": img_link
+    })
 
 @app.route('/api/config', methods=['GET', 'POST'])
 def handle_config():
