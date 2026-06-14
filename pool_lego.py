@@ -982,10 +982,11 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
             missing = [c for c in RAW_LISTINGS_HEADERS if c not in raw_headers]
             if missing:
                 add_log_message(f"[🛠️ SCHEMA] Bổ sung cột cho File 1 Raw: {missing}")
+                raw_sheet.add_cols(len(missing))
                 for col in missing:
                     raw_headers.append(col)
-                    raw_sheet.add_cols(1)
-                    raw_sheet.update_cell(1, len(raw_headers), col)
+                col_letter = get_col_letter(len(raw_headers))
+                raw_sheet.update(range_name=f"A1:{col_letter}1", values=[raw_headers], value_input_option='USER_ENTERED')
                     
         raw_row_data = build_row_data(raw_headers, d_v2)
         tk_id_col = raw_headers.index("tk_id") + 1 if "tk_id" in raw_headers else 1
@@ -1025,10 +1026,11 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
             missing = [c for c in CUSTOM_HEADERS if c not in custom_headers]
             if missing:
                 add_log_message(f"[🛠️ SCHEMA] Bổ sung cột cho File 2 Custom: {missing}")
+                custom_sheet.add_cols(len(missing))
                 for col in missing:
                     custom_headers.append(col)
-                    custom_sheet.add_cols(1)
-                    custom_sheet.update_cell(1, len(custom_headers), col)
+                col_letter = get_col_letter(len(custom_headers))
+                custom_sheet.update(range_name=f"A1:{col_letter}1", values=[custom_headers], value_input_option='USER_ENTERED')
                     
         custom_row_data = build_row_data(custom_headers, d_custom)
         sys_col = custom_headers.index("System_ID") + 1 if "System_ID" in custom_headers else 1
@@ -1068,15 +1070,18 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
             missing = [c for c in PUBLIC_WHITELIST_HEADERS_BASE if c not in public_headers]
             if missing:
                 add_log_message(f"[🛠️ SCHEMA] Bổ sung cột cơ bản cho File 3 Public: {missing}")
-                for col in missing:
-                    if "Last updated" in public_headers:
-                        last_updated_idx = public_headers.index("Last updated")
+                if "Last updated" in public_headers:
+                    last_updated_idx = public_headers.index("Last updated")
+                    public_sheet.insert_cols([[col] for col in missing], col=last_updated_idx + 1)
+                    for col in missing:
                         public_headers.insert(last_updated_idx, col)
-                        public_sheet.insert_cols([[col]], col=last_updated_idx + 1)
-                    else:
+                        last_updated_idx += 1
+                else:
+                    public_sheet.add_cols(len(missing))
+                    for col in missing:
                         public_headers.append(col)
-                        public_sheet.add_cols(1)
-                        public_sheet.update_cell(1, len(public_headers), col)
+                    col_letter = get_col_letter(len(public_headers))
+                    public_sheet.update(range_name=f"A1:{col_letter}1", values=[public_headers], value_input_option='USER_ENTERED')
                         
         safe_images = []
         try:
@@ -1089,10 +1094,11 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
         missing_image_cols = [c for c in required_image_cols if c not in public_headers]
         if missing_image_cols:
             add_log_message(f"[🛠️ SCHEMA] Thêm {len(missing_image_cols)} cột ảnh ở đuôi sheet Public: {missing_image_cols}")
+            public_sheet.add_cols(len(missing_image_cols))
             for col in missing_image_cols:
                 public_headers.append(col)
-                public_sheet.add_cols(1)
-                public_sheet.update_cell(1, len(public_headers), col)
+            col_letter = get_col_letter(len(public_headers))
+            public_sheet.update(range_name=f"A1:{col_letter}1", values=[public_headers], value_input_option='USER_ENTERED')
                 
         # Chuẩn bị dữ liệu dòng Public
         public_data_dict = {}
