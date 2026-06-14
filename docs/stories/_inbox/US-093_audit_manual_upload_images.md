@@ -1,6 +1,6 @@
 ---
 id: US-093
-status: done
+status: accepted
 date: 2026-06-14
 size: S
 replaces: none
@@ -75,5 +75,23 @@ Viết script Python `audit_manual_images.py` thực hiện:
 - Kiểm toán hoạt động của script, kiểm tra mã trạng thái trả về và đảm bảo tạo ra file báo cáo `manual_uploads_audit_report.md` đầy đủ thông tin.
 
 ### Manual Verification
-- Mở xem file báo cáo `manual_uploads_audit_report.md` được sinh ra.
+- Mở xem file báo cáo `broken_listings_report.md` được sinh ra.
 - Lấy ngẫu nhiên một vài liên kết bị báo lỗi để kiểm tra thực tế trên trình duyệt xem có đúng là bị lỗi (404, 403...) không.
+
+---
+
+## 🧠 Retro, Lessons Learned & Good Practices
+
+### 🚨 Sự cố phát sinh (Incidents) & Nguyên nhân gốc rễ
+1. **Lỗi báo lỗi giả HTTP 503 (False Positive 503):**
+   - *Sự cố:* Sau khi chạy thử nghiệm ban đầu, script báo cáo 2 căn có hình ảnh tự tải lên trên Cloudflare R2 bị lỗi HTTP 503, mặc dù người dùng vẫn mở xem bình thường trên trình duyệt.
+   - *Nguyên nhân:* Mặc định thư viện `requests` của Python gửi request kèm User-Agent trống hoặc dạng `python-requests/...`. Máy chủ Cloudflare CDN/R2 đã chặn/hạn chế các User-Agent tự động này và trả về mã lỗi 503.
+2. **Lỗi thuật toán gộp danh sách làm nhân đôi dữ liệu:**
+   - *Sự cố:* Khi chạy lại script nhiều lần, phần Danh sách 3 trong báo cáo `broken_listings_report.md` bị nhân đôi/nhân ba liên tục.
+   - *Nguyên nhân:* Hàm split phân tách báo cáo cũ theo từ khóa `## 🗄️` (đầu Danh sách 2), dẫn đến toàn bộ phần nội dung sau đó (bao gồm cả Danh sách 3 cũ) được đưa vào biến lưu trữ Danh sách 2, sau đó nối thêm Danh sách 3 mới vào cuối.
+
+### 💡 Bài học kinh nghiệm & Thực tiễn Tốt (Lessons Learned & Good Practices)
+1. **Giả lập User-Agent trình duyệt khi kiểm tra liên kết từ xa:**
+   - Luôn bổ sung User-Agent trình duyệt chuẩn (như Chrome) khi gửi các HTTP HEAD/GET request kiểm tra tính khả dụng của ảnh lưu trên CDN (R2, Cloudinary, v.v.) để tránh việc bị tường lửa hoặc CDN chặn nhầm.
+2. **Tách biệt và làm sạch phân vùng báo cáo:**
+   - Khi viết parser cập nhật báo cáo tự động, cần bóc tách sạch sẽ và độc lập từng phần trước khi gộp để tránh việc dữ liệu trùng lặp từ lần chạy trước tích tụ trong các lần chạy sau.

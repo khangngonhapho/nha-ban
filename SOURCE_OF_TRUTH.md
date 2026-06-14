@@ -324,6 +324,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-14 (Nghiệm thu US-093 - Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên - TEST PASS)
+*   **Mã User Story:** `US-093`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Thiết kế công cụ kiểm toán (`scratch/audit_manual_images.py`):** Xây dựng script Python để quét toàn bộ CSDL Pool1 (`raw_archive.db` bảng `listings`), lọc ra các hình ảnh tự tải lên dựa theo các mẫu đặc tả (Local paths, Drive link, custom R2/Cloudinary chứa pattern `_interior_` / `_sodo` hoặc prefix `SYS-`).
+    - **Kiểm thử HTTP đa luồng (User-Agent fix):** Thực hiện kiểm tra tính khả dụng của ảnh từ xa sử dụng `ThreadPoolExecutor` đa luồng, tích hợp User-Agent giả lập trình duyệt Chrome để vượt qua cơ chế chống bot/rate-limit của Cloudflare R2, tránh tình trạng lỗi giả HTTP 503.
+    - **Cấu trúc lại báo cáo hợp nhất (`broken_listings_report.md`):** Tái cấu trúc báo cáo thành 3 danh sách riêng biệt dưới các tiêu đề `##` để dễ đóng/mở (collapse). Bổ sung Danh sách 3 báo cáo tình trạng toàn bộ 23 căn chứa ảnh tự tải lên (23 căn hoạt động tốt, 0 căn bị lỗi).
+*   **Được nghiệm thu trực tiếp ("test pass")** bởi Product Owner (Khang Ngô).
+
 ### 2026-06-13 (Nghiệm thu US-092 - Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ - TEST PASS)
 *   **Mã User Story:** `US-092`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1042,6 +1050,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
 - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
 - [ ] **US-089:** Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới cho SQLite và Google Sheets v2 theo kiến trúc Lego
