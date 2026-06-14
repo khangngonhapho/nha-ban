@@ -18,8 +18,12 @@ def main():
     tk_id = "3d296527-12f8-4796-b759-c501ca421f6b"
     db_file = "raw_archive_v2.db"
     
-    print(f"=== TIẾN HÀNH ĐỒNG BỘ CĂN {tk_id} LÊN GOOGLE SHEETS THỰC TẾ ===")
+    print(f"=== TIẾN HÀNH DI CƯ HÌNH ẢNH SANG R2 VÀ ĐỒNG BỘ CĂN {tk_id} ===")
     
+    # Kích hoạt di cư hình ảnh sang R2 trước để cập nhật listings_images và listings_custom_v2
+    manager.run_image_migration_thread(limit=1, cookie=None, target_tk_id=tk_id)
+    
+    print(f"\n=== TIẾN HÀNH ĐỒNG BỘ LÊN GOOGLE SHEETS THỰC TẾ CĂN {tk_id} ===")
     get_google_credentials = manager.get_google_credentials
     load_config = manager.load_config
     add_log_message = print

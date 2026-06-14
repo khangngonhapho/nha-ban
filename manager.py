@@ -1369,6 +1369,13 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             
             # If in Pool2 mode, update individual migrated images in listings_images table
             if LISTINGS_TABLE == "listings_v2":
+                # Lấy bản đồ URL cũ để so khớp cập nhật cho listings_custom_v2
+                old_rows = cursor.execute(
+                    "SELECT image_url, cloudinary_url FROM listings_images WHERE tk_id = ?",
+                    (tk_id,)
+                ).fetchall()
+                old_url_map = {r[0]: r[1] for r in old_rows if r[0]}
+
                 # Update diagram images
                 for s_num, clean_s in enumerate([clean_sodo1, clean_sodo2, clean_sodo3, clean_sodo4, clean_sodo5], start=1):
                     orig_s = [original_sodo1, original_sodo2, original_sodo3, original_sodo4, original_sodo5][s_num-1]
@@ -1386,6 +1393,62 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                                 "UPDATE listings_images SET cloudinary_url = ? WHERE tk_id = ? AND image_url = ?",
                                 (mig_img_url, tk_id, orig_img_url)
                             )
+
+                # Đồng bộ cập nhật các link mới (R2/Cloud Cloudinary mới) vào listings_custom_v2.images_metadata_json nếu đã tồn tại
+                system_id = row["System_ID"] if "System_ID" in row.keys() else d.get("System_ID")
+                if system_id:
+                    custom_row = cursor.execute(
+                        "SELECT images_metadata_json FROM listings_custom_v2 WHERE System_ID = ?",
+                        (system_id,)
+                    ).fetchone()
+                    if custom_row and custom_row[0]:
+                        try:
+                            images_meta = json.loads(custom_row[0])
+                            updated_meta = []
+                            has_meta_updates = False
+                            for img_obj in images_meta:
+                                if not isinstance(img_obj, dict):
+                                    updated_meta.append(img_obj)
+                                    continue
+                                url = img_obj.get("url")
+                                if not url:
+                                    updated_meta.append(img_obj)
+                                    continue
+
+                                new_url = url
+                                # So khớp với ảnh thô
+                                for orig_idx, orig_url in enumerate(raw_images_tk):
+                                    if orig_url and (orig_url == url or old_url_map.get(orig_url) == url):
+                                        if orig_idx < len(drive_links) and drive_links[orig_idx]:
+                                            new_url = drive_links[orig_idx]
+                                            break
+
+                                # So khớp với sơ đồ
+                                for orig_s, clean_s in [
+                                    (original_sodo1, clean_sodo1),
+                                    (original_sodo2, clean_sodo2),
+                                    (original_sodo3, clean_sodo3),
+                                    (original_sodo4, clean_sodo4),
+                                    (original_sodo5, clean_sodo5)
+                                ]:
+                                    if orig_s and (orig_s == url or old_url_map.get(orig_s) == url):
+                                        if clean_s:
+                                            new_url = clean_s
+                                            break
+
+                                if new_url != url:
+                                    img_obj["url"] = new_url
+                                    has_meta_updates = True
+                                updated_meta.append(img_obj)
+
+                            if has_meta_updates:
+                                cursor.execute(
+                                    "UPDATE listings_custom_v2 SET images_metadata_json = ? WHERE System_ID = ?",
+                                    (json.dumps(updated_meta), system_id)
+                                )
+                                add_log_message(f"  [🔄 Cập nhật Custom] Đã đồng bộ link ảnh mới vào images_metadata_json của căn {tk_id}")
+                        except Exception as e_meta:
+                            add_log_message(f"  [⚠️ WARNING] Không thể đồng bộ images_metadata_json cho {tk_id}: {str(e_meta)}")
             
             conn.commit()
             conn.close()
