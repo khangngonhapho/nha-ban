@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-089B (Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist):** **[ACCEPTED - 2026-06-14]** Đồng bộ dữ liệu sạch và rã mảng hình ảnh an toàn thành các cột Ảnh 1..Ảnh N lên sheet Public. Giữ cột Last updated trước toàn bộ cột ảnh. Khắc phục triệt để lỗi quota API 429 bằng cơ chế gộp cập nhật thêm cột và dòng tiêu đề. Tự động đồng bộ link R2 mới vào custom metadata.
 *   **US-093 (Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên):** **[ACCEPTED - 2026-06-14]** Đã hoàn tất công cụ kiểm toán `scratch/audit_manual_images.py` quét 23 căn chứa 98 ảnh tự tải lên trong Pool1 (`raw_archive.db`), phát hiện và báo cáo 2 căn bị lỗi HTTP 503 đối với link R2. Cấu trúc lại báo cáo hợp nhất `broken_listings_report.md` thành 3 đề mục `##` collapsible.
 *   **US-092 (Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ):** **[ACCEPTED - 2026-06-13]** Khắc phục lỗi thiếu index.html trên Vercel Serverless bằng cách sử dụng fallback __dirname để Vercel NFT đóng gói tệp tĩnh và cấu hình includeFiles trong vercel.json.
 *   **US-090 (Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary):** **[ACCEPTED - 2026-06-13]** Đã hoàn tất di cư toàn bộ 5.180 ảnh từ Cloudinary sang Cloudflare R2 trên SQLite và đồng bộ lên Google Sheet Pool (v1). Giải quyết triệt để lỗi chuỗi JSON mảng trên Sheets và thiết lập báo cáo danh sách 581 căn lỗi ảnh 404 (ở cả Sheets và SQLite) kèm địa chỉ thực chi tiết.
@@ -24,7 +25,6 @@
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên kiểm toán ảnh lỗi tự tải lên.
-*   **US-089B (Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist):** Tích hợp Google Sheets API v4 đồng bộ ảnh dạng dòng và metadata cho Pool2, bảo đảm các cột hình ảnh phẳng không bị đè lỗi.
 *   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** Đồng bộ hai chiều giữa `listings_v2` và `listings_custom_v2` khi xuất bản hoặc update từ admin curator.
 *   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** Cơ chế tự động chèn/mở rộng cột trong SQLite v2 khi schema có thay đổi đột xuất và hỗ trợ giao diện upload/rotate ảnh trong Pool2.
 *   **Lọc theo loại hình:** Bổ sung tính năng lọc theo loại hình BĐS (Mặt tiền / Hẻm) dựa trên phân tích cấu trúc dấu `.` trong Ngõ/Số nhà.
@@ -38,6 +38,11 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — US-089B: Batch update column headers and add columns to stay within quota limits.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — US-089B: Synchronize R2 image migration URLs to custom metadata.
+*   [scratch/publish_real_test.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/publish_real_test.py) — US-089B: Test script to verify R2 migration and cloud publishing.
+*   [scratch/test_pool2_publishing.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_pool2_publishing.py) — US-089B: Local mock unit test suite.
+*   [docs/stories/_inbox/US-089B_pool2_cloud_publishing.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-089B_pool2_cloud_publishing.md) — US-089B: Story specification and sign-off.
 *   [scratch/audit_manual_images.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/audit_manual_images.py) — US-093: Script Python quét và kiểm toán ảnh tự tải lên đa luồng.
 *   [broken_listings_report.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/broken_listings_report.md) — US-093: Báo cáo hợp nhất chất lượng hình ảnh rổ hàng với 3 đề mục collapsible.
 *   [docs/stories/_inbox/US-093_audit_manual_upload_images.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-093_audit_manual_upload_images.md) — US-093: Đặc tả và nghiệm thu User Story.

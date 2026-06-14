@@ -320,9 +320,20 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
     *   `row_data` (list): Mảng 100 cột dữ liệu đã được escape phục vụ copy tay dự phòng.
 *   **Lưu trữ:** Ghi dữ liệu trực tuyến vào Google Sheets và cập nhật trường `status`, `Last_Sync` trong SQLite.
 
----
-
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
+
+### 2026-06-14 (Nghiệm thu US-089B - Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist - TEST PASS)
+*   **Mã User Story:** `US-089B`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Phân tách 3 Google Sheets độc lập**: Tích hợp 3 Spreadsheet ID (`pool2_raw_sheet_id`, `pool2_custom_sheet_id`, `pool2_public_sheet_id`) vào cấu hình hệ thống Pool2 để ngăn ngừa lộ PII.
+    - **Đồng bộ đa quyền hạn**: 
+      - Đẩy dữ liệu thô và mảng ảnh JSON vào File 1 Raw.
+      - Đẩy dữ liệu nghiệp vụ Custom và metadata ảnh an toàn (loại bỏ facade & diagram) vào File 2 Custom.
+      - Đẩy whitelist cột sạch và rã mảng ảnh an toàn thành các cột `Ảnh 1` đến `Ảnh N` vào File 3 Public, giữ cột `Last updated` trước các cột ảnh.
+      - Hỗ trợ tự động khởi tạo dòng Custom mặc định nếu chưa có.
+    - **Tối ưu hóa tránh lỗi API Quota (429)**: Gộp các lệnh thêm cột qua `add_cols(len(missing))` / `insert_cols` và cập nhật dòng tiêu đề 1 bằng một cuộc gọi duy nhất `update()`.
+    - **Đồng bộ hóa link R2 tự động**: Cập nhật đồng bộ các link R2 mới vào trường `images_metadata_json` của bảng `listings_custom_v2` trong tiến trình di cư ảnh.
+*   **Được nghiệm thu trực tiếp ("test pass")** bởi Product Owner (Khang Ngô).
 
 ### 2026-06-14 (Nghiệm thu US-093 - Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên - TEST PASS)
 *   **Mã User Story:** `US-093`
@@ -1055,6 +1066,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
 - [ ] **US-089:** Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới cho SQLite và Google Sheets v2 theo kiến trúc Lego
 - [x] **US-089A:** Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ ✅ Done 2026-06-12
+- [x] **US-089B:** Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist ✅ Done 2026-06-14
 - [x] **US-088:** Đổi tên file và di cư tính năng cũ (Pool1) sang Lego ✅ Done 2026-06-11
 - [x] **US-085:** Sửa lỗi hiển thị và tối ưu hóa lướt vuốt trên điện thoại Android ✅ Done 2026-06-10
 
