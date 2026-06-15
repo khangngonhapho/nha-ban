@@ -461,11 +461,23 @@
               if (floatActions) floatActions.style.display = 'flex';
               const saveSourceBtn = document.getElementById('saveSourceBtn');
               if (saveSourceBtn) saveSourceBtn.style.setProperty('display', 'flex', 'important');
-              
-              const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
-              const previewDesc = accPreview.querySelector('.desc');
-              if (previewTitle) previewTitle.textContent = displayTieuDeVal || 'Chưa có tiêu đề public.';
-              if (previewDesc) previewDesc.textContent = moTaVal || 'Chưa có mô tả public.';
+
+              const iframe = accPreview.querySelector('iframe');
+              if (iframe && iframe.contentDocument) {
+                const doc = iframe.contentDocument;
+                
+                // Reactive update title inside the iframe's client detail view
+                const iframeTitle = doc.getElementById('mT');
+                if (iframeTitle) {
+                  iframeTitle.textContent = displayTieuDeVal || 'Chưa có tiêu đề public.';
+                }
+                
+                // Reactive update description inside the iframe's client detail view
+                const iframeDesc = doc.querySelector('#sbody .desc');
+                if (iframeDesc) {
+                  iframeDesc.textContent = moTaVal || 'Chưa có mô tả public.';
+                }
+              }
             }
           };
           window.updateLivePreview = updateLivePreview;
