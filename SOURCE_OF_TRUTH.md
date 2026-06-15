@@ -322,6 +322,15 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-15 (Nghiệm thu US-094A3 - Phân tách Engine Render danh sách Card BĐS - TEST PASS)
+*   **Mã User Story:** `US-094A3`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Phân tách Engine Render danh sách Card BĐS**: Triển khai `static/js/lego_render_client.js` và `static/js/lego_render_admin.js` tách biệt hoàn toàn phần render dữ liệu Card (`DocumentFragment`) ra khỏi `index.html` cho cả giao diện Khách hàng và Admin, đảm bảo tương thích ngược 100% và không làm gãy các tính năng tương tác.
+    - **Tái cấu trúc index.html**: Liên kết 2 tệp script mới trong `<head>` của `index.html` và rút gọn hàm `render()` gốc qua Event-Delegated rendering, loại bỏ hơn 200 dòng inlined HTML render card cũ dư thừa.
+    - **Tách helper function**: Di chuyển hàm `formatPhone` sang `static/js/lego_core.js` làm hàm tiện ích dùng chung và export toàn cục qua `window.formatPhone`.
+    - **Triển khai fallback phòng thủ & Cache-busting**: Tích hợp tham số cache-busting `?v=202606151500` cho tất cả script static trong head của `index.html`, đồng thời định nghĩa hàm `formatPhone` dự phòng trực tiếp tại head của `index.html` nhằm ngăn chặn tuyệt đối lỗi sập trang do trình duyệt người dùng lưu cache tệp core cũ.
+    - **Kiểm thử Playwright E2E**: Chạy bộ test Playwright E2E đa viewport (Desktop/Mobile) đạt 100% PASS và chụp ảnh minh chứng.
+
 ### 2026-06-15 (Nghiệm thu US-094A2 - Xây dựng Lego Core State Store & Tải dữ liệu - TEST PASS)
 *   **Mã User Story:** `US-094A2`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1081,6 +1090,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [ ] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic)
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
 - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15
+- [x] **US-094A3:** Phân tách Engine Render danh sách Card BĐS ✅ Done 2026-06-15
 - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
 - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
