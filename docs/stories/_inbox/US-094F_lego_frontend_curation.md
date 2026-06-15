@@ -1,8 +1,8 @@
 ---
 id: US-094F
-status: done
+status: accepted
 date: 2026-06-15
-size: M
+size: L
 ---
 
 # US-094F: Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin
@@ -87,6 +87,14 @@ Xem chi tiết tại [implementation_plan.md](file:///C:/Users/Khang%20Ngo/.gemi
   2. Kiểm tra hiển thị đầy đủ thông tin thô, accordion form chỉnh sửa, accordion preview khách hàng.
   3. Thay đổi các trường thông tin (Giá bán, tiêu đề, hướng...) -> Xác minh panel Preview Khách hàng cập nhật reactive.
   4. Thực hiện thay đổi tags ảnh (Facade/Sổ đỏ) trong Carousel Editor và lưu -> Kiểm tra dữ liệu đẩy lên mock API sheets chính xác.
+
+### Bằng chứng Kiểm thử (E2E Test Evidence)
+Bộ kiểm thử tích hợp E2E đã chạy thành công 100% trên cả Desktop và Mobile:
+
+- **Desktop View Evidence:**
+  ![Admin Desktop Pass](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/workflows/assets/admin_curation_desktop.png)
+- **Mobile View Evidence:**
+  ![Admin Mobile Pass](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/workflows/assets/admin_curation_mobile.png)
 
 ---
 

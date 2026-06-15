@@ -1128,7 +1128,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-094C:** Cô lập Module Chi tiết & Carousel thực tế của Khách hàng ✅ Done 2026-06-15
 - [x] **US-094B:** Cô lập Module Bộ lọc & Tìm kiếm thông minh ✅ Done 2026-06-15
 - [x] **US-094D:** Cô lập Module Bộ sưu tập & Lead Capture ✅ Done 2026-06-15
-- [ ] **US-094F:** Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin
+- [x] **US-094F:** Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin ✅ Done 2026-06-16
 - [ ] **US-094E:** Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html
 - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
 - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
