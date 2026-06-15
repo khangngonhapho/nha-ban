@@ -1023,7 +1023,8 @@
       }
 
       // KIỂM TRA ĐĂNG KÝ THÔNG TIN KHÁCH HÀNG (US-059)
-      const isClientView = (shareBitmask || sharedIds) && !isAdmin;
+      const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+      const isClientView = (shareBitmask || sharedIds) && !isAdmin && !isPreview;
       if (typeof window.checkLeadCapture === 'function') {
         window.checkLeadCapture(isClientView);
       }
@@ -1045,6 +1046,13 @@
       updateStats();
       render();
       updateSwitcherCounts();
+
+      // Tự động mở chi tiết nếu đang ở chế độ xem thử (preview)
+      if (isPreview && DATA.length > 0) {
+        setTimeout(() => {
+          openS(DATA[0].id);
+        }, 100);
+      }
       if (isAdmin) {
         showGoogleLoginButtonState(true);
       }

@@ -10,6 +10,10 @@
   }
 
   function checkLeadCapture(isClientView) {
+    const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+    if (isPreview) {
+      return;
+    }
     if (isClientView) {
       const savedName = localStorage.getItem('client_name');
       const savedPhone = localStorage.getItem('client_phone');
