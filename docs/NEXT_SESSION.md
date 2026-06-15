@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-094F (Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin):** **[DONE - 2026-06-15]** Tạo mới module `static/js/lego_detail_admin.js` di chuyển toàn bộ logic xem chi tiết của Admin, form curation, tabs quản lý, và Google Sheets API syncing (`saveSourceChanges`, `saveNewListingFromPool`). Tái cấu trúc `index.html` rút gọn hơn 1200 dòng JS/HTML thô, nạp script mới ở `<head>` và export các alias toàn cục trên `window` cho inline templates. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_curation.py` trên cả Desktop & Mobile.
 *   **US-094D (Cô lập Module Bộ sưu tập & Lead Capture):** **[ACCEPTED - 2026-06-15]** Tạo mới hai module `static/js/lego_collections.js` (quản lý yêu thích, danh mục bộ sưu tập và chọn hàng loạt) và `static/js/lego_lead_capture.js` (form đăng ký thông tin khách hàng, kiểm tra lead capture modal và liên kết booking/phản hồi Zalo). Làm sạch hơn 700 dòng code trong `index.html`, lưu/nạp trạng thái toàn cục tương thích ngược 100%. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_collections.py`.
 *   **US-094B (Cô lập Module Bộ lọc & Tìm kiếm thông minh):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_filters.js` chứa toàn bộ logic bộ lọc (quận, phường, đường, hướng, khoảng giá, diện tích, kết cấu, checklist tiêu chí động) và bộ máy tìm kiếm thông minh tiếng Việt AND (`+`), tự động ẩn hiện static tabs nâng cao, và quét kho Pool thô (Smart Pool Fallback). Làm sạch hơn 800 dòng lệnh trong `index.html`, lưu/nạp bộ lọc ngầm trên `window.activeMode` tương thích ngược 100%. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_filters.py`.
 *   **US-094C (Cô lập Module Chi tiết & Carousel thực tế của Khách hàng):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_detail_client.js` đóng gói toàn bộ logic xem chi tiết của Khách hàng, Swiper image carousel, lightbox phóng to ảnh (hỗ trợ zoom, vuốt, keydown, thumbnails, drag), và legacy gallery helpers. Tái cấu trúc hàm `openS` trong `index.html` để ủy quyền hoàn toàn sang `LegoDetailClient.render(p, sbody)`. Chạy thành công bộ test Playwright E2E đa vai trò (Client/Admin) và đa thiết bị đạt 100% SUCCESS.
@@ -27,7 +28,7 @@
  ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
  
  ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   **US-094F (Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin) [Size: M]:** Tách biệt logic xem chi tiết của Admin, form chỉnh sửa trực tiếp, form curation và các tabs quản lý của Admin sang `static/js/lego_detail_admin.js`.
+*   *Hiện tại không có tính năng nào đang thực hiện.*
  
  ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
  *   **Các US con tiếp theo của Epic US-094:**
@@ -52,6 +53,8 @@
 *   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Cập nhật Change Log và đánh dấu Done cho US-094D.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật thống kê và liên kết file.
 *   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật báo cáo bàn giao phiên hiện tại.
+*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — US-094F: Module Chi tiết, Preview & Curation cho Admin.
+*   [scratch/test_e2e_curation.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_curation.py) — US-094F: Bộ kiểm thử Playwright E2E Curation.
  
  ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094D completed & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094F completed & E2E tests 100% passed).*

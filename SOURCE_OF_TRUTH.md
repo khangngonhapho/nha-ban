@@ -322,6 +322,16 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+
+### 2026-06-15 (Nghiệm thu US-094F - Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin - TEST PASS)
+*   **Mã User Story:** `US-094F`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Cô lập Module Chi tiết, Preview & Curation cho Admin**: Tạo tệp `static/js/lego_detail_admin.js` chứa toàn bộ logic xem chi tiết của Admin, form curation và các tabs quản lý của Admin.
+    - **Cơ chế Preview Khách Hàng WebView Iframe**: Triển khai `<iframe>` tải thực tế giao diện khách hàng với tham số `?s=${p.system_id}&preview=true`. Nếu chưa xuất bản tin, hiển thị cảnh báo màu đỏ tương ứng.
+    - **Đấu nối Google Sheets API**: Di chuyển logic đồng bộ Google Sheets API `saveSourceChanges` và `saveNewListingFromPool` vào module và xuất ra `window` đảm bảo tương thích ngược 100% cho inline templates.
+    - **Chỉnh sửa lego_core.js**: Cập nhật logic `LegoState` để bỏ qua trạng thái Admin trong local storage nếu phát hiện URL chứa tham số `preview=true`, ngăn chặn rò rỉ session Admin vào iframe khách hàng.
+    - **Kiểm thử Playwright E2E**: Chạy kiểm thử tự động `scratch/test_e2e_curation.py` giả lập đầy luồng chỉnh sửa, auto-fill AI, chọn ảnh public/sổ đỏ và lưu sheets trên cả Desktop & Mobile đạt 100% SUCCESS.
+
 ### 2026-06-15 (Nghiệm thu US-094D - Cô lập Module Bộ sưu tập & Lead Capture - TEST PASS)
 *   **Mã User Story:** `US-094D`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**

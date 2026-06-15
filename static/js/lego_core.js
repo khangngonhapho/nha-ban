@@ -181,7 +181,15 @@ const LegoState = {
     const now = Date.now();
     this.isTokenValid = !!(token && expiry && parseInt(expiry, 10) > now);
     const isSavedAdmin = localStorage.getItem('isAdminSession') === 'true';
-    this.isAdmin = this.isTokenValid || isSavedAdmin;
+    
+    // Check if loading as client preview (webview)
+    const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+    if (isPreview) {
+      this.isTokenValid = false;
+      this.isAdmin = false;
+    } else {
+      this.isAdmin = this.isTokenValid || isSavedAdmin;
+    }
     
     this.emit('authStatusChanged', { isAdmin: this.isAdmin, isTokenValid: this.isTokenValid });
 

@@ -1,6 +1,6 @@
 ---
 id: US-094F
-status: in-progress
+status: done
 date: 2026-06-15
 size: M
 ---
@@ -13,23 +13,23 @@ size: M
 **So that** mã nguồn trong `index.html` được tối giản hóa tối đa, phân tách rõ ràng trách nhiệm giữa giao diện Client (Khách hàng) và giao diện Admin (Quản trị), bảo đảm tính bảo mật cao, dễ bảo trì và tránh lỗi hồi quy khi cập nhật các tính năng quản trị.
 
 ## Acceptance
-- [ ] Tạo mới tệp `static/js/lego_detail_admin.js` chứa module `LegoDetailAdmin`.
-- [ ] Tách biệt HTML Template hiển thị chi tiết của Admin (`sbody.innerHTML = ...` khi `isAdmin` hoạt động) ra khỏi `index.html` và chuyển vào phương thức `LegoDetailAdmin.render(p, sbody)`.
-- [ ] Di chuyển toàn bộ hệ thống hàm tương tác của Curation Image Editor:
+- [x] Tạo mới tệp `static/js/lego_detail_admin.js` chứa module `LegoDetailAdmin`.
+- [x] Tách biệt HTML Template hiển thị chi tiết của Admin (`sbody.innerHTML = ...` khi `isAdmin` hoạt động) ra khỏi `index.html` và chuyển vào phương thức `LegoDetailAdmin.render(p, sbody)`.
+- [x] Di chuyển toàn bộ hệ thống hàm tương tác của Curation Image Editor:
   - `renderImageEditorWidget()`, `reRenderCurationEditorInPlace()`, `refreshImageEditorUI()`, `activeImageMoveOrder()`, `gotoImageEditorSlide()`, `slideImageEditorCarousel()`.
   - Các hàm toggle trạng thái ảnh: `activeImageToggleFacade()`, `activeImageToggleCover()`, `activeImageToggleSodo()`, `activeImageTogglePublic()`.
   - Các trình lắng nghe thao tác vuốt carousel: `handleCarouselTouchStart()`, `handleCarouselTouchMove()`, `handleCarouselTouchEnd()`, `handleCarouselSwipe()`.
   - Các hàm xóa ảnh khỏi danh sách: `removeImageFromPublicLists()`, `removeImageFromSodo()`, `isListingSodoUrl()`.
-- [ ] Di chuyển logic tải ảnh local lên Cloudflare R2:
+- [x] Di chuyển logic tải ảnh local lên Cloudflare R2:
   - `compressImageClientSide()`, `uploadFileToR2()`, `handleLocalImageUpload()`.
-- [ ] Di chuyển logic kéo dữ liệu từ rổ thô Pool về:
+- [x] Di chuyển logic kéo dữ liệu từ rổ thô Pool về:
   - `isPoolRowOnAir()`, `pullListingFromPoolRow()`, `executePullFromPool()`, `uncheckAllCurationImages()`, `openPoolS()`, `onPoolSearchToolKeyup()`.
-- [ ] Di chuyển các hàm điều khiển giao diện chi tiết Admin phụ trợ:
+- [x] Di chuyển các hàm điều khiển giao diện chi tiết Admin phụ trợ:
   - `toggleAdminAccordion()`, `getPublicImagesFromForm()`, `openZoomOverlay()`, `closeZoomOverlay()`, `checkMoTaCollapse()`, `toggleMotaGocCollapse()`.
-- [ ] Di chuyển logic ghi đè/thêm mới dòng vào Google Sheets:
+- [x] Di chuyển logic ghi đè/thêm mới dòng vào Google Sheets:
   - `saveSourceChanges()`, `saveNewListingFromPool()`.
-- [ ] Liên kết thẻ script mới ở `<head>` của `index.html` và tích hợp alias tương thích ngược toàn diện cho tất cả các biến/hàm trên đối tượng `window`.
-- [ ] Viết bộ kiểm thử E2E Playwright chuyên biệt `scratch/test_e2e_curation.py` giả lập đầy đủ luồng chỉnh sửa, lưu thay đổi của Admin đạt 100% SUCCESS.
+- [x] Liên kết thẻ script mới ở `<head>` của `index.html` và tích hợp alias tương thích ngược toàn diện cho tất cả các biến/hàm trên đối tượng `window`.
+- [x] Viết bộ kiểm thử E2E Playwright chuyên biệt `scratch/test_e2e_curation.py` giả lập đầy đủ luồng chỉnh sửa, lưu thay đổi của Admin đạt 100% SUCCESS.
 
 ---
 
@@ -64,17 +64,17 @@ Xem chi tiết tại [implementation_plan.md](file:///C:/Users/Khang%20Ngo/.gemi
 ---
 
 ## 📝 Task Checklist (TODO)
-- [ ] **Thiết kế & Khảo sát:**
-  - [ ] Khảo sát toàn bộ các hàm Curation & Editor trong `index.html` và lập sơ đồ liên kết dữ liệu.
-- [ ] **Triển khai Code:**
-  - [ ] Tạo tệp `static/js/lego_detail_admin.js` và chuyển logic render cùng các hàm tương tác sang.
-  - [ ] Tích hợp logic upload ảnh R2 và đồng bộ Google Sheets API sang tệp mới.
-  - [ ] Làm sạch `index.html`, loại bỏ hơn 1200 dòng lệnh JS & HTML thô, nạp script mới ở đầu trang.
-  - [ ] Đăng ký các alias tương thích ngược đầy đủ trên đối tượng `window`.
-- [ ] **Kiểm thử & Bàn giao:**
-  - [ ] Viết script test E2E Playwright `scratch/test_e2e_curation.py` mô phỏng hành vi của Admin (chỉnh sửa, auto-fill AI, đổi thứ tự ảnh, và lưu sheets).
-  - [ ] Chạy bộ kiểm thử E2E đạt 100% PASS.
-  - [ ] Merge code và deploy lên Production.
+- [x] **Thiết kế & Khảo sát:**
+  - [x] Khảo sát toàn bộ các hàm Curation & Editor trong `index.html` và lập sơ đồ liên kết dữ liệu.
+- [x] **Triển khai Code:**
+  - [x] Tạo tệp `static/js/lego_detail_admin.js` và chuyển logic render cùng các hàm tương tác sang.
+  - [x] Tích hợp logic upload ảnh R2 và đồng bộ Google Sheets API sang tệp mới.
+  - [x] Làm sạch `index.html`, loại bỏ hơn 1200 dòng lệnh JS & HTML thô, nạp script mới ở đầu trang.
+  - [x] Đăng ký các alias tương thích ngược đầy đủ trên đối tượng `window`.
+- [x] **Kiểm thử & Bàn giao:**
+  - [x] Viết script test E2E Playwright `scratch/test_e2e_curation.py` mô phỏng hành vi của Admin (chỉnh sửa, auto-fill AI, đổi thứ tự ảnh, và lưu sheets).
+  - [x] Chạy bộ kiểm thử E2E đạt 100% PASS.
+  - [x] Merge code và deploy lên Production.
 
 ---
 
