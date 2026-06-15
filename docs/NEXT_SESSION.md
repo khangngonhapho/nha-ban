@@ -45,6 +45,8 @@
 
 *   [static/css/global.css](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/css/global.css) — US-094A1: Mã CSS tách biệt từ `index.html`.
 *   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094A1: Liên kết CSS tĩnh và xóa bỏ thẻ `<style>`.
+*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — US-094A1: Tích hợp middleware phục vụ file tĩnh và cấu hình CDN cache headers.
+*   [vercel.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/vercel.json) — US-094A1: Cấu hình includeFiles để đóng gói thư mục `static/`.
 *   [scratch/test_e2e_curator.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_curator.py) — US-094A1: Script kiểm thử Playwright Desktop & Mobile.
 *   [docs/stories/_inbox/US-094A1_lego_frontend_css.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094A1_lego_frontend_css.md) — US-094A1: Tài liệu nghiệm thu US con.
 *   [docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md) — US-094: Cập nhật tiến độ master.
