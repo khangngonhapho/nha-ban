@@ -250,6 +250,32 @@ module.exports = async (req, res) => {
   const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = urlObj.pathname;
 
+  // Serve static files packaged in the function bundle (e.g. global.css)
+  if (pathname.startsWith('/static/')) {
+    try {
+      const filePath = path.join(__dirname, '..', pathname);
+      if (fs.existsSync(filePath)) {
+        const ext = path.extname(filePath).toLowerCase();
+        let contentType = 'application/octet-stream';
+        if (ext === '.css') contentType = 'text/css; charset=utf-8';
+        else if (ext === '.js') contentType = 'application/javascript; charset=utf-8';
+        else if (ext === '.png') contentType = 'image/png';
+        else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+        else if (ext === '.svg') contentType = 'image/svg+xml';
+        
+        const fileContent = fs.readFileSync(filePath);
+        // Set Cache-Control for 1 year (immutable) to enable CDN static caching
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        return res.status(200).setHeader('Content-Type', contentType).send(fileContent);
+      } else {
+        return res.status(404).send('Not Found');
+      }
+    } catch (err) {
+      console.error('Error serving static file:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+  }
+
   // 1. Endpoint exchange authorization code for tokens
   if (pathname === '/api/auth/token') {
     if (req.method !== 'POST') {

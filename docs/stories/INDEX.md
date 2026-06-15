@@ -1,18 +1,27 @@
 # Stories Index
 
-Last updated: 2026-06-14
+Last updated: 2026-06-15
 
 ## Stats
-- Total: 97
-- backlog: 2
+- Total: 106
+- backlog: 10
 - draft: 0
-- in-progress: 1
+- in-progress: 2
 - done: 19
 - accepted: 69
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-094 | Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) | in-progress | XL | 2026-06-15 | `docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md` |
+| US-094A1 | Tách biệt CSS ngoài ra global.css | done | S | 2026-06-15 | `static/css/global.css`, `index.html` |
+| US-094A2 | Xây dựng Lego Core State Store & Tải dữ liệu | backlog | M | 2026-06-15 | `static/js/lego_core.js`, `index.html` |
+| US-094A3 | Phân tách Engine Render danh sách Card BĐS | backlog | M | 2026-06-15 | `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `index.html` |
+| US-094C | Cô lập Module Chi tiết & Carousel thực tế của Khách hàng | backlog | S | 2026-06-15 | `static/js/lego_detail_client.js`, `index.html` |
+| US-094B | Cô lập Module Bộ lọc & Tìm kiếm thông minh | backlog | M | 2026-06-15 | `static/js/lego_filters.js`, `index.html` |
+| US-094D | Cô lập Module Bộ sưu tập & Lead Capture | backlog | S | 2026-06-15 | `static/js/lego_collections.js`, `index.html` |
+| US-094F | Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin | backlog | M | 2026-06-15 | `static/js/lego_detail_admin.js`, `index.html` |
+| US-094E | Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html | backlog | S | 2026-06-15 | `index.html`, `vercel.json` |
 | US-093 | Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) | accepted | S | 2026-06-14 | `scratch/audit_manual_images.py`, `docs/stories/_inbox/US-093_audit_manual_upload_images.md` |
 | US-092 | Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ | accepted | S | 2026-06-13 | `vercel.json`, `api/index.js`, `docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md` |
 | US-091 | Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 | backlog | M | 2026-06-13 | `manager.py`, `restore_r2_quality.py`, `docs/stories/_inbox/US-091_fix_r2_image_quality_degradation.md` |
@@ -191,6 +200,15 @@ Last updated: 2026-06-14
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (in-progress)
+- [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (done)
+- [[US-094A2_lego_frontend_core|US-094A2]]: Xây dựng Lego Core State Store & Tải dữ liệu (backlog)
+- [[US-094A3_lego_frontend_render|US-094A3]]: Phân tách Engine Render danh sách Card BĐS (backlog)
+- [[US-094C_lego_frontend_preview|US-094C]]: Cô lập Module Chi tiết & Carousel thực tế của Khách hàng (backlog)
+- [[US-094B_lego_frontend_filters|US-094B]]: Cô lập Module Bộ lọc & Tìm kiếm thông minh (backlog)
+- [[US-094D_lego_frontend_collections|US-094D]]: Cô lập Module Bộ sưu tập & Lead Capture (backlog)
+- [[US-094F_lego_frontend_curation|US-094F]]: Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin (backlog)
+- [[US-094E_lego_frontend_integration|US-094E]]: Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html (backlog)
 - [[US-092_fix_homepage_missing_index_error|US-092]]: Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ (accepted)
 - [[US-087_fix_xoa_bo_suu_tap|US-087]]: Fix lỗi không xóa được bộ sưu tập đã tồn tại (accepted)
 - [[US-086_fix_loi_tao_bo_suu_tap|US-086]]: Fix lỗi tạo bộ sưu tập (accepted)

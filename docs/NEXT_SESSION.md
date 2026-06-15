@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-094A1 (Tách biệt CSS ngoài ra global.css):** **[DONE - 2026-06-15]** Di chuyển toàn bộ ~3,650 dòng CSS trong `index.html` sang `static/css/global.css` và liên kết qua thẻ `<link>`. Đã viết và chạy bộ test tự động Playwright `scratch/test_e2e_curator.py` trên Desktop (1280x800) và Mobile (375x812, hasTouch=True) đạt 100% PASS, giao diện và kiểu dáng được bảo toàn nguyên vẹn.
 *   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** **[DONE - 2026-06-15]** Loại bỏ hoàn toàn Cloudinary khỏi dự án. Đổi tên cột CSDL `cloudinary_url` thành `r2_url` và di cư an toàn. Triển khai API/UI thêm thuộc tính động (Dynamic Schema) tự động chèn cột settings/CSDL/Sheets/Tài liệu và API tải ảnh thủ công cách ly ảnh nhạy cảm bảo mật PII.
 *   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** **[DONE - 2026-06-14]** Triển khai cơ chế đồng bộ hai chiều dữ liệu SQLite local giữa rổ hàng cũ Pool1 (`raw_archive.db`) và hệ thống mới Pool2 (`raw_archive_v2.db`). Tích hợp recrawl định kỳ và lưu log khác biệt vào cột `pending_diff_json`, sẵn sàng APIs áp dụng chọn lọc.
 *   **US-089B (Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist):** **[ACCEPTED - 2026-06-14]** Đồng bộ dữ liệu sạch và rã mảng hình ảnh an toàn thành các cột Ảnh 1..Ảnh N lên sheet Public. Giữ cột Last updated trước toàn bộ cột ảnh. Khắc phục triệt để lỗi quota API 429 bằng cơ chế gộp cập nhật thêm cột và dòng tiêu đề. Tự động đồng bộ link R2 mới vào custom metadata.
@@ -23,45 +24,30 @@
 ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
 
 ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*(Không có)*
+*   **US-094A2 (Xây dựng Lego Core State Store & Tải dữ liệu):** **[IN-PROGRESS]** Phân tách logic quản lý dữ liệu và Silent Login Google Identity Services ra tệp `static/js/lego_core.js`. Thiết lập đối tượng toàn cục `window.LegoState` với luồng giao tiếp Event-Driven (`"rawDataLoaded"`, `"filtersChanged"`).
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
-*   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên kiểm toán ảnh lỗi tự tải lên.
-*   **Lọc theo loại hình:** Bổ sung tính năng lọc theo loại hình BĐS (Mặt tiền / Hẻm) dựa trên phân tích cấu trúc dấu `.` trong Ngõ/Số nhà.
-*   **Thêm Quận mới:** Xây dựng hệ thống cấu hình động để thêm Quận mới dễ dàng khi rổ hàng mở rộng địa bàn.
+*   **Các US con tiếp theo của Epic US-094:**
+    *   US-094A3: Phân tách Engine Render danh sách Card BĐS (`DocumentFragment`).
+    *   US-094C: Cô lập Module Chi tiết & Carousel Khách hàng.
+    *   US-094B: Cô lập Module Bộ lọc & Smart Search.
+    *   US-094D: Cô lập Module Bộ sưu tập & Lead Capture.
+    *   US-094F: Cô lập Module Chi tiết & Curation của Admin.
+    *   US-094E: Tích hợp toàn diện và cấu hình Cache Headers.
+*   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
 
 ### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX
-*   Kiểm tra tính ổn định của file chạy độc lập `dist\KhangNgoCurator\KhangNgoCurator.exe` khi cào tin và xuất bản trong môi trường thực tế dưới chế độ Pool2.
-*   Theo dõi tiến trình di cư hình ảnh lên Cloudinary và Zalo Crawler xem trước (og:image) khi chia sẻ link khách hàng.
+*   Tiếp tục chạy bộ test E2E Playwright sau mỗi US con để kiểm soát hồi quy giao diện.
 
 ---
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — US-089B: Batch update column headers and add columns to stay within quota limits.
-*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — US-089B: Synchronize R2 image migration URLs to custom metadata.
-*   [scratch/publish_real_test.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/publish_real_test.py) — US-089B: Test script to verify R2 migration and cloud publishing.
-*   [scratch/test_pool2_publishing.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_pool2_publishing.py) — US-089B: Local mock unit test suite.
-*   [docs/stories/_inbox/US-089B_pool2_cloud_publishing.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-089B_pool2_cloud_publishing.md) — US-089B: Story specification and sign-off.
-*   [scratch/audit_manual_images.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/audit_manual_images.py) — US-093: Script Python quét và kiểm toán ảnh tự tải lên đa luồng.
-*   [broken_listings_report.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/broken_listings_report.md) — US-093: Báo cáo hợp nhất chất lượng hình ảnh rổ hàng với 3 đề mục collapsible.
-*   [docs/stories/_inbox/US-093_audit_manual_upload_images.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-093_audit_manual_upload_images.md) — US-093: Đặc tả và nghiệm thu User Story.
-*   [vercel.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/vercel.json) — US-092: Cấu hình includeFiles đóng gói index.html.
-*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — US-092: Thêm cơ chế đọc file tĩnh tương đối qua __dirname.
-*   [docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md) — US-092: Đặc tả và nghiệm thu User Story.
-*   [scratch/migrate_to_r2.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/migrate_to_r2.py) — US-090: Công cụ di cư tải hình ảnh từ Cloudinary và đẩy lên Cloudflare R2 đa luồng.
-*   [scratch/sync_pool_v1_sheet.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/sync_pool_v1_sheet.py) — US-090: Cập nhật cơ chế đồng bộ Sheets Pool (v1) với so khớp chéo tên file và làm sạch JSON mảng.
-*   [scratch/list_broken_listings.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/list_broken_listings.py) — US-090: Script lập báo cáo lỗi ảnh Cloudinary 404 có trích xuất địa chỉ thực từ Google Sheets.
-*   [scratch/check_db_cloudinary.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/check_db_cloudinary.py) — US-090: Script kiểm tra lỗi di cư hình ảnh trong SQLite và nối kết quả vào báo cáo lỗi.
-*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — US-089A: Thiết lập cơ chế **phân nhóm hình ảnh (Nội thất trước, Sơ đồ sau)** và lưu sequential sequence_index.
-*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — US-089A: Đồng bộ database join thô/custom, trích xuất dữ liệu phường cũ và cập nhật API lưu kích thước/mặt tiền.
-*   [fetcher.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/fetcher.py) — US-089A: Tích hợp `parse_criteria_groups()` và cào badges tiêu chí thô qua DOM fallback.
-*   [query_helper.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/query_helper.py) — US-089A: Code mới công cụ tra cứu CSDL thô trực quan cục bộ xuất HTML Dark Mode.
-*   [TRUY_VAN_CSDL.bat](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/TRUY_VAN_CSDL.bat) — US-089A: Code mới shortcut chạy CLI query_helper.
-*   [curator.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator.html) — US-089A: Thêm trường nhập Chiều dài và Mặt tiền, cải tiến regex trích xuất UUID.
-*   [scratch/delete_phan_tay_ho.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/delete_phan_tay_ho.py) — US-089A: Công cụ xóa căn thô/custom/images để test lại luồng cào.
-*   [scratch/test_diagram_migration_mock.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_diagram_migration_mock.py) — US-089A: Script unit test kiểm thử di cư ảnh phân nhóm và sequence check.
-*   [scratch/test_schema_v2_and_rich_fields.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_schema_v2_and_rich_fields.py) — US-089A: Script unit test kiểm thử schema listings_v2 sạch.
-
+*   [static/css/global.css](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/css/global.css) — US-094A1: Mã CSS tách biệt từ `index.html`.
+*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094A1: Liên kết CSS tĩnh và xóa bỏ thẻ `<style>`.
+*   [scratch/test_e2e_curator.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_curator.py) — US-094A1: Script kiểm thử Playwright Desktop & Mobile.
+*   [docs/stories/_inbox/US-094A1_lego_frontend_css.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094A1_lego_frontend_css.md) — US-094A1: Tài liệu nghiệm thu US con.
+*   [docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md) — US-094: Cập nhật tiến độ master.
+*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật bảng mục lục user stories.
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-14 (US-093 completed & Manual image audit report updated).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094A1 completed & E2E tests 100% passed).*
