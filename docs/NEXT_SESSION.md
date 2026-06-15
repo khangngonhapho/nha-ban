@@ -46,6 +46,8 @@
 *   [static/js/lego_lead_capture.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_lead_capture.js) — US-094D: Module Lead Capture.
 *   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094D: Liên kết các file js mới và làm sạch code cũ.
 *   [scratch/test_e2e_collections.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_collections.py) — US-094D: Bộ kiểm thử Playwright E2E.
+*   [docs/stories/_inbox/US-094F_lego_frontend_curation.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094F_lego_frontend_curation.md) — US-094F: Thiết kế giải pháp và lập kế hoạch triển khai.
+
 *   [docs/stories/_inbox/US-094D_lego_frontend_collections.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094D_lego_frontend_collections.md) — US-094D: Cập nhật tài liệu User Story và nhật ký Retro.
 *   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Cập nhật Change Log và đánh dấu Done cho US-094D.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật thống kê và liên kết file.
