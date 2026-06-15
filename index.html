@@ -934,7 +934,7 @@
 
         const p = {
           temp_id: index + 1,
-          id: row[55] || row[54] || systemId || '',
+          id: row[55] || systemId || '',
           cu_phap: "",
           t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
           dt: row[13] || row[14] || '',
@@ -1438,7 +1438,7 @@
       matched.slice(0, 15).forEach(row => {
         const isAlready = isPoolRowOnAir(row);
         const systemId = row[72] || row[71] || '';
-        const id = row[55] || row[54] || '';
+        const id = row[55] || systemId || '';
         const soNha = row[6] || '';
         const duong = row[5] || '';
         const gia = row[11] || row[58] || '';
@@ -4154,7 +4154,7 @@
 
       const p = {
         temp_id: "pool_" + systemId,
-        id: row[55] || row[54] || systemId || '',
+        id: row[55] || systemId || '',
         cu_phap: "",
         t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
         dt: row[13] || row[14] || '',
@@ -4217,7 +4217,7 @@
 
     function isPoolRowOnAir(row) {
       const systemId = row[72] || row[71] || '';
-      const maKN = row[55] || row[54] || '';
+      const maKN = row[55] || systemId || '';
       return DATA.some(p => (systemId && String(p.system_id) === String(systemId)) || (maKN && String(p.id) === String(maKN)));
     }
 
@@ -4238,7 +4238,7 @@
       matched.slice(0, 10).forEach(row => {
         const isAlready = isPoolRowOnAir(row);
         const systemId = row[72] || row[71] || '';
-        const id = row[55] || row[54] || '';
+        const id = row[55] || systemId || '';
         const soNha = row[6] || '';
         const duong = row[5] || '';
         const gia = row[11] || row[58] || '';

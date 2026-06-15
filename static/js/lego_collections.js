@@ -22,6 +22,14 @@
   const SELECTED_IDS = window.SELECTED_IDS;
   const favs = window.favs;
 
+  function showNotify(msg, type = 'success') {
+    if (typeof window.showToast === 'function') {
+      window.showToast(msg, type);
+    } else {
+      alert(msg);
+    }
+  }
+
   function updateFavBtnUI() {
     const btn = document.getElementById('favFilterBtn');
     const badge = document.getElementById('favCount');
@@ -160,7 +168,7 @@
         mainBtn.classList.add('active');
       }
     } catch (err) {
-      alert(`❌ Lỗi hiển thị danh sách bộ sưu tập: ${err.message}`);
+      showNotify(`❌ Lỗi hiển thị danh sách bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
     }
   }
@@ -169,7 +177,7 @@
     console.log("DEBUG JS: openColSaveModal called, SELECTED_IDS size =", SELECTED_IDS.size);
     try {
       if (SELECTED_IDS.size === 0) {
-        alert('Vui lòng chọn ít nhất 1 căn nhà!');
+        showNotify('Vui lòng chọn ít nhất 1 căn nhà!', 'warning');
         return;
       }
       
@@ -204,7 +212,7 @@
       
       document.getElementById('colSaveModal').classList.add('open');
     } catch (err) {
-      alert(`❌ Lỗi mở form lưu: ${err.message}`);
+      showNotify(`❌ Lỗi mở form lưu: ${err.message}`, 'error');
       console.error(err);
     }
   }
@@ -217,7 +225,7 @@
     try {
       const name = document.getElementById('newColName').value.trim();
       if (!name) {
-        alert('Vui lòng nhập tên bộ sưu tập!');
+        showNotify('Vui lòng nhập tên bộ sưu tập!', 'warning');
         return;
       }
       
@@ -242,14 +250,10 @@
         updateShareUI();
         renderCollectionsManager();
         
-        alert(`Bộ sưu tập "${name}" đã tồn tại. Đã nạp thêm căn mới vào bộ sưu tập này thành công! (Tổng số: ${merged.length} căn)`);
+        showNotify(`Bộ sưu tập "${name}" đã tồn tại. Đã nạp thêm căn mới vào bộ sưu tập này thành công! (Tổng số: ${merged.length} căn)`, 'success');
         document.getElementById('colSaveModal').classList.remove('open');
         
-        if (window.activeCollectionName === name) {
-          viewCollection(name);
-        } else {
-          if (typeof window.render === 'function') window.render();
-        }
+        viewCollection(name);
         return;
       }
       
@@ -263,16 +267,12 @@
       
       renderCollectionsManager();
       
-      alert(`Đã tạo bộ sưu tập "${name}" với ${idsToSave.length} căn thành công!`);
+      showNotify(`Đã tạo bộ sưu tập "${name}" với ${idsToSave.length} căn thành công!`, 'success');
       document.getElementById('colSaveModal').classList.remove('open');
       
-      if (window.activeCollectionName === name) {
-        viewCollection(name);
-      } else {
-        if (typeof window.render === 'function') window.render();
-      }
+      viewCollection(name);
     } catch (err) {
-      alert(`❌ Lỗi tạo bộ sưu tập: ${err.message}`);
+      showNotify(`❌ Lỗi tạo bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
     }
   }
@@ -304,15 +304,11 @@
       
       renderCollectionsManager();
       
-      alert(`Đã lưu thêm ${addedCount} căn mới vào bộ sưu tập "${name}" thành công! (Tổng số: ${merged.length} căn)`);
+      showNotify(`Đã lưu thêm ${addedCount} căn mới vào bộ sưu tập "${name}" thành công! (Tổng số: ${merged.length} căn)`, 'success');
       
-      if (window.activeCollectionName === name) {
-        viewCollection(name);
-      } else {
-        if (typeof window.render === 'function') window.render();
-      }
+      viewCollection(name);
     } catch (err) {
-      alert(`❌ Lỗi lưu bộ sưu tập: ${err.message}`);
+      showNotify(`❌ Lỗi lưu bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
     }
   }
@@ -377,7 +373,7 @@
     try {
       const checkboxes = document.querySelectorAll('.col-delete-checkbox:checked');
       if (checkboxes.length === 0) {
-        alert('Vui lòng chọn ít nhất 1 bộ sưu tập để xóa!');
+        showNotify('Vui lòng chọn ít nhất 1 bộ sưu tập để xóa!', 'warning');
         return;
       }
       
@@ -405,9 +401,9 @@
       });
       
       closeColViewModal();
-      alert('Đã xóa thành công các bộ sưu tập đã chọn!');
+      showNotify('Đã xóa thành công các bộ sưu tập đã chọn!', 'success');
     } catch (err) {
-      alert(`❌ Lỗi khi xóa bộ sưu tập: ${err.message}`);
+      showNotify(`❌ Lỗi khi xóa bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
     }
   }
@@ -473,7 +469,7 @@
         }
       }
     } catch (err) {
-      alert(`❌ Lỗi xóa bộ sưu tập: ${err.message}`);
+      showNotify(`❌ Lỗi xóa bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
     }
   }
@@ -498,7 +494,7 @@
       
       viewCollection(colName);
     } catch (err) {
-      alert(`❌ Lỗi gỡ khỏi bộ sưu tập: ${err.message}`);
+      showNotify(`❌ Lỗi gỡ khỏi bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
     }
   }
