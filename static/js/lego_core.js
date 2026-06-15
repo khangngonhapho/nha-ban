@@ -484,6 +484,40 @@ const LegoState = {
 
   // Sheets Loading Logic
   async loadData() {
+    const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+    if (isPreview) {
+      try {
+        const parentListing = window.parent && window.parent.activeCurationListing;
+        if (parentListing) {
+          console.log("Preview mode: Loading listing from parent window memory:", parentListing);
+          
+          // Tạo bản sao và đồng bộ thông tin nháp hiện tại của form
+          const p = { ...parentListing };
+          
+          const editTieuDe = window.parent.document.getElementById('editTieuDeBds');
+          const editMoTa = window.parent.document.getElementById('editMoTaBds');
+          if (editTieuDe) p.t = editTieuDe.value;
+          if (editMoTa) {
+            p.m = editMoTa.value;
+            p.mo_ta = editMoTa.value;
+          }
+          
+          // Lấy danh sách ảnh công khai hiện tại từ form ở cửa sổ cha
+          if (window.parent.getPublicImagesFromForm) {
+            p.imgs = window.parent.getPublicImagesFromForm(parentListing);
+          }
+          
+          this.DATA = [p];
+          this.isDataLoaded = true;
+          this.emit('rawDataLoaded', this.DATA);
+          this.emit('publicDataLoaded');
+          return;
+        }
+      } catch (e) {
+        console.warn("Bypass parent memory read failed:", e);
+      }
+    }
+
     const old = document.getElementById('_gs');
     if (old) old.remove();
     const oldAdmin = document.getElementById('_gs_admin');
