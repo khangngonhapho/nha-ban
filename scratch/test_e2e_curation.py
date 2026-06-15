@@ -141,9 +141,10 @@ def main():
         mock_jsonp = f"__gsCallback({json.dumps(mock_data)});"
         route.fulfill(content_type="application/javascript", body=mock_jsonp)
 
+    is_headed = "--headed" in sys.argv
     with sync_playwright() as p:
         print("Launching browser...")
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=not is_headed)
         
         # --- DESKTOP VIEWPORT TEST (1280x800) ---
         print("\n--- Running Desktop Curation Test (1280x800) ---")
@@ -324,6 +325,11 @@ def main():
             screenshot_path = os.path.join(artifacts_dir, "admin_curation_desktop.png")
             admin_page.screenshot(path=screenshot_path)
             print(f"Desktop Curation screenshot saved to {screenshot_path}")
+            
+            if is_headed:
+                print("\n[Headed Debug] Desktop curation complete. Pausing for 120 seconds for manual inspection...")
+                print("Check the iframe preview loaded from memory!")
+                time.sleep(120)
             
         except Exception as e:
             print(f"[ERROR] Desktop Curation Flow Failed: {e}")
