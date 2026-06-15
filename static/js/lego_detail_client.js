@@ -350,16 +350,7 @@
   // --- LegoDetailClient Component ---
   window.LegoDetailClient = {
     render: function(p, sbody) {
-      let targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
-      // Tránh việc facade ảnh bị trôi nếu đang ở chế độ preview trong iframe
-      if (window.parent && window.parent !== window) {
-        try {
-          const el = window.parent.document.getElementById('editCoverImgUrl');
-          if (el && el.value.trim()) {
-            targetMatTien = el.value.trim();
-          }
-        } catch(e) {}
-      }
+      const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
       const normMatTien = window.normalizeImgUrl ? window.normalizeImgUrl(targetMatTien) : '';
       const isFacadeUrl = (url) => {
         if (!url) return false;

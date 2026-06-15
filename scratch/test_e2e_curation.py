@@ -231,12 +231,9 @@ def main():
             # Verify Curator panel UI accordion items
             print("Verifying curation accordion panels...")
             admin_page.wait_for_selector("#accSource", timeout=5000)
-            admin_page.wait_for_selector("#accPreview", timeout=5000)
             
-            # Verify BĐS is not published yet, showing warning message in Preview accordion
-            preview_content = admin_page.locator("#accPreview .accordion-content").inner_text()
-            print(f"Preview content warning check: {preview_content}")
-            assert "chưa được xuất bản" in preview_content, "Should warning about BĐS not published"
+            # Verify BĐS is not published yet, so Preview accordion should not be present
+            assert admin_page.locator("#accPreview").count() == 0, "Preview accordion should not be visible for unpublished listings"
             
             # Check the warning save pool notice is shown
             save_notice = admin_page.locator("#poolSaveNotice").inner_text()

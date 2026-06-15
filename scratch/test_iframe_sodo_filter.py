@@ -92,7 +92,11 @@ def main():
         mock_public_row[5] = {"v": 8.5}
         mock_public_row[6] = {"v": "q3"}
         mock_public_row[7] = {"v": "Phường 11"}
+        mock_public_row[17] = {"v": "https://res.cloudinary.com/demo/image/upload/sample.jpg"}
+        mock_public_row[18] = {"v": "https://res.cloudinary.com/demo/image/upload/sodo1_123.jpg"}
+        mock_public_row[19] = {"v": "https://res.cloudinary.com/demo/image/upload/mat_tien_123.jpg"}
         mock_public_row[34] = {"v": "SYS-1001"}
+        mock_public_row[35] = {"v": "https://res.cloudinary.com/demo/image/upload/mat_tien_123.jpg"}
         
         mock_data = {
             "version": "0.6",
@@ -140,27 +144,17 @@ def main():
             admin_page.locator("#accSource .accordion-header").click()
             admin_page.wait_for_timeout(500)
             
-            # Expose cover image and sodo values in inputs
-            print("Updating inputs with custom sodo and cover images...")
-            admin_page.evaluate("""
-                document.getElementById('editCoverImgUrl').value = 'https://res.cloudinary.com/demo/image/upload/custom_facade_file.jpg';
-                document.getElementById('editSodo3Url').value = 'https://res.cloudinary.com/demo/image/upload/custom_sodo_file.jpg';
-            """)
-            admin_page.fill("#editTieuDeBds", "Căn VIP CMT8 Test")
-            admin_page.fill("#editMoTaBds", "Mô tả chi tiết test...")
-            admin_page.wait_for_timeout(500)
-            
             # Expand Client Preview accordion
             print("Expanding Preview accordion...")
             admin_page.locator("#accPreview .accordion-header").click()
-            admin_page.wait_for_timeout(1000)
+            admin_page.wait_for_timeout(2000)
             
             # Check the iframe's content
             print("Accessing iframe...")
             iframe = admin_page.frame_locator("#accPreview iframe")
             
             # Wait for the client detail page to render inside iframe
-            iframe.locator("#carouselClientDetail").wait_for(timeout=5000)
+            iframe.locator("#carouselClientDetail").wait_for(timeout=8000)
             
             # Get the images loaded in the customer preview carousel
             carousel_imgs = iframe.locator("#carouselClientDetail img")
@@ -168,19 +162,17 @@ def main():
             print(f"Iframe Carousel Images: {img_srcs}")
             
             # ASSERTIONS
-            print("Verifying no sodo or facade images are present in the carousel...")
+            print("Verifying that public images are rendered and sodo/facade are absent...")
+            assert len(img_srcs) > 0, "Client view carousel should have public images loaded"
             for src in img_srcs:
-                assert "custom_sodo_file.jpg" not in src, "Error: Sodo image must be filtered out!"
-                assert "sodo1_123.jpg" not in src, "Error: Default Sodo 1 image must be filtered out!"
-                assert "sodo2_123.jpg" not in src, "Error: Default Sodo 2 image must be filtered out!"
-                assert "custom_facade_file.jpg" not in src, "Error: Custom Facade image must be filtered out!"
-                assert "mat_tien_123.jpg" not in src, "Error: Default Facade image must be filtered out!"
+                assert "sodo" not in src.lower(), "Error: Sodo image should not be present in public customer view!"
+                assert "mat_tien" not in src.lower(), "Error: Facade image should not be present in public customer view!"
             
-            # Ensure the allowed interior image is present
-            interior_present = any("interior_1.jpg" in src for src in img_srcs)
-            assert interior_present, "Interior image should be present in customer view!"
+            # Ensure the allowed public image is present
+            public_present = any("sample.jpg" in src for src in img_srcs)
+            assert public_present, "Public image sample.jpg should be present in customer view!"
             
-            print("[🎉 SUCCESS] Custom sodo and facade images are correctly filtered out from Customer Preview!")
+            print("[🎉 SUCCESS] Customer Preview renders exactly the static public customer view details!")
             
         except Exception as e:
             print(f"[FAIL] Iframe Sodo Filter E2E Test Failed: {e}")

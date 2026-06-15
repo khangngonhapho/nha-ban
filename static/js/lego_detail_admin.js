@@ -301,6 +301,7 @@
               </div>
             </div>
 
+            ${(p.id && !p.isFromPoolOnly) ? `
             <!-- ACCORDION 3: PREVIEW KHÁCH HÀNG -->
             <div class="accordion-item" id="accPreview">
               <div class="accordion-header is-red" onclick="toggleAdminAccordion(this)">
@@ -308,17 +309,12 @@
                 <span class="arrow">▶</span>
               </div>
               <div class="accordion-content">
-            ${(p.id && !p.isFromPoolOnly) ? `
-              <div class="preview-webview-container" style="position: relative; width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                <iframe src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" style="width: 100%; height: 100%; border: none;"></iframe>
-              </div>
-            ` : `
-              <div style="padding: 24px 12px; text-align: center; color: var(--red); font-weight: 700; background: rgba(231, 76, 60, 0.05); border-radius: 8px; border: 1px dashed var(--red); font-size: 13px;">
-                ⚠️ BĐS chưa được xuất bản (lên sóng). Hãy xuất bản tin để xem Preview Khách hàng.
-              </div>
-            `}
-        </div>
+                <div class="preview-webview-container" style="position: relative; width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+                  <iframe src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" style="width: 100%; height: 100%; border: none;"></iframe>
                 </div>
+              </div>
+            </div>
+            ` : ''}
                 <div class="admin-raw-grid" style="margin-bottom: 12px;">
                   <div class="admin-raw-cell">
                     <span class="label">Giá bán:</span>
@@ -401,27 +397,21 @@
           setupScrollCarousel('carouselNha', nImgs, false);
           setupScrollCarousel('carouselSo', sImgs, true);
 
-          // Sự kiện input reactive Live Preview (US-039.7)
+          // Kiểm tra và cập nhật trạng thái hợp lệ của Curation Form (US-039.7)
           const editTieuDe = document.getElementById('editTieuDeBds');
           const editMoTa = document.getElementById('editMoTaBds');
-          const accPreview = document.getElementById('accPreview');
 
-          const updateLivePreview = () => {
+          const validateCurationForm = () => {
             const tieuDeVal = (editTieuDe ? editTieuDe.value : '').trim();
             const moTaVal = (editMoTa ? editMoTa.value : '').trim();
             const isFilled = tieuDeVal.length > 0 && moTaVal.length > 0;
             const floatActions = document.getElementById('adminDetailFloatActions');
 
-            // Keep public title exact and without price appending
-            const displayTieuDeVal = tieuDeVal;
-
-            // Update the preview carousel dynamically
-            setupScrollCarousel('carouselClientPreview', getPublicImagesFromForm(p), false);
-
             if (p.isFromPoolOnly) {
               const savePoolBtn = document.getElementById('savePoolBtn');
               const poolSaveNotice = document.getElementById('poolSaveNotice');
               if (isFilled) {
+                const accPreview = document.getElementById('accPreview');
                 if (accPreview) {
                   accPreview.style.display = 'block';
                   accPreview.classList.add('expanded');
@@ -439,13 +429,7 @@
                   poolSaveNotice.style.borderColor = 'rgba(39,174,96,0.3)';
                   poolSaveNotice.innerHTML = '✅ Đã đủ điều kiện! Nút Lên sóng ⚡ đã sẵn sàng ở góc dưới bên phải.';
                 }
-                
-                const previewTitle = accPreview.querySelector('.accordion-content > div:first-child');
-                const previewDesc = accPreview.querySelector('.desc');
-                if (previewTitle) previewTitle.textContent = displayTieuDeVal;
-                if (previewDesc) previewDesc.textContent = moTaVal;
               } else {
-                if (accPreview) accPreview.style.display = 'block';
                 if (floatActions) floatActions.style.display = 'none';
                 if (savePoolBtn) savePoolBtn.style.setProperty('display', 'none', 'important');
 
@@ -457,35 +441,19 @@
                 }
               }
             } else {
+              const accPreview = document.getElementById('accPreview');
               if (accPreview) accPreview.style.display = 'block';
               if (floatActions) floatActions.style.display = 'flex';
               const saveSourceBtn = document.getElementById('saveSourceBtn');
               if (saveSourceBtn) saveSourceBtn.style.setProperty('display', 'flex', 'important');
-
-              const iframe = accPreview.querySelector('iframe');
-              if (iframe && iframe.contentDocument) {
-                const doc = iframe.contentDocument;
-                
-                // Reactive update title inside the iframe's client detail view
-                const iframeTitle = doc.getElementById('mT');
-                if (iframeTitle) {
-                  iframeTitle.textContent = displayTieuDeVal || 'Chưa có tiêu đề public.';
-                }
-                
-                // Reactive update description inside the iframe's client detail view
-                const iframeDesc = doc.querySelector('#sbody .desc');
-                if (iframeDesc) {
-                  iframeDesc.textContent = moTaVal || 'Chưa có mô tả public.';
-                }
-              }
             }
           };
-          window.updateLivePreview = updateLivePreview;
+          window.validateCurationForm = validateCurationForm;
 
           if (editTieuDe && editMoTa) {
-            editTieuDe.addEventListener('input', updateLivePreview);
-            editMoTa.addEventListener('input', updateLivePreview);
-            updateLivePreview();
+            editTieuDe.addEventListener('input', validateCurationForm);
+            editMoTa.addEventListener('input', validateCurationForm);
+            validateCurationForm();
           }
 
           // Auto expand preview accordion if flagged (US-046.2)
@@ -540,12 +508,6 @@
       const getSodoVal = (idx) => {
         let el = document.getElementById(`editSodo${idx}Url`);
         if (el) return el.value.trim();
-        if (window.parent && window.parent !== window) {
-          try {
-            el = window.parent.document.getElementById(`editSodo${idx}Url`);
-            if (el) return el.value.trim();
-          } catch (e) {}
-        }
         const colIdx = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(idx) : null;
         if (p.pool_row_data && colIdx !== null) return p.pool_row_data[colIdx];
         return p[`raw_sodo${idx}`] || '';
@@ -1075,9 +1037,7 @@
       }
       
       window.reRenderCurationEditorInPlace();
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
+
     };
   // === activeImageToggleCover ===
     window.activeImageToggleCover = function() {
@@ -1126,9 +1086,7 @@
       }
       
       window.reRenderCurationEditorInPlace();
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
+
     };
   // === activeImageToggleSodo ===
     window.activeImageToggleSodo = function() {
@@ -1190,9 +1148,7 @@
       }
       
       window.reRenderCurationEditorInPlace();
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
+
     };
   // === activeImageTogglePublic ===
     window.activeImageTogglePublic = function() {
@@ -1263,9 +1219,7 @@
       }
       
       window.reRenderCurationEditorInPlace();
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
+
     };
   // === activeImageMoveOrder ===
     window.activeImageMoveOrder = function(direction) {
@@ -1293,9 +1247,7 @@
           input.value = indices.join(',');
           
           window.reRenderCurationEditorInPlace();
-          if (typeof window.updateLivePreview === 'function') {
-            window.updateLivePreview();
-          }
+
         }
       } else if (slide.type === "alley") {
         const input = document.getElementById('editPublicAlleyIndices');
@@ -1314,9 +1266,7 @@
           input.value = indices.join(',');
           
           window.reRenderCurationEditorInPlace();
-          if (typeof window.updateLivePreview === 'function') {
-            window.updateLivePreview();
-          }
+
         }
       } else {
         showToast("Chỉ có thể sắp xếp thứ tự của hình Nội Thất hoặc Hẻm hiển thị public!", "warning");
@@ -1767,9 +1717,7 @@
         window.reRenderCurationEditorInPlace();
       }
 
-      if (typeof window.updateLivePreview === "function") {
-        window.updateLivePreview();
-      }
+
     };
   // === uncheckAllCurationImages ===
     window.uncheckAllCurationImages = function() {
@@ -1797,9 +1745,7 @@
       if (sodo5Input) sodo5Input.value = '';
 
       window.reRenderCurationEditorInPlace();
-      if (typeof window.updateLivePreview === 'function') {
-        window.updateLivePreview();
-      }
+
 
       showToast("Đã bỏ chọn toàn bộ hình ảnh!", "success");
     };
