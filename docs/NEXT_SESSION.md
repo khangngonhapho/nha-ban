@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-094A2 (Xây dựng Lego Core State Store & Tải dữ liệu):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_core.js` định nghĩa `window.LegoState` để đóng gói toàn bộ trạng thái lõi, logic xác thực Google OAuth (GSI Auth), tự động refresh token ngầm và luồng nạp dữ liệu Sheets API (Admin secure + public fallback). Thiết lập cơ chế Event-Driven (Pub/Sub) và liên kết các getters/setters toàn cục tương thích ngược 100% không gây lỗi hồi quy. Kiểm thử Playwright E2E đạt 100% PASS trên Desktop & Mobile.
 *   **US-094A1 (Tách biệt CSS ngoài ra global.css):** **[ACCEPTED - 2026-06-15]** Di chuyển toàn bộ ~3,650 dòng CSS trong `index.html` sang `static/css/global.css`, liên kết qua thẻ `<link>` và cấu hình static serving trên Vercel với tiêu đề `Cache-Control`. Đã chạy kiểm thử Playwright E2E đạt 100% PASS, nghiệm thu giao diện hiển thị mượt mà trên môi trường Production.
 *   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** **[DONE - 2026-06-15]** Loại bỏ hoàn toàn Cloudinary khỏi dự án. Đổi tên cột CSDL `cloudinary_url` thành `r2_url` và di cư an toàn. Triển khai API/UI thêm thuộc tính động (Dynamic Schema) tự động chèn cột settings/CSDL/Sheets/Tài liệu và API tải ảnh thủ công cách ly ảnh nhạy cảm bảo mật PII.
 *   **US-089C (Triển khai Cơ chế Đồng bộ Hai Chiều Liên Database):** **[DONE - 2026-06-14]** Triển khai cơ chế đồng bộ hai chiều dữ liệu SQLite local giữa rổ hàng cũ Pool1 (`raw_archive.db`) và hệ thống mới Pool2 (`raw_archive_v2.db`). Tích hợp recrawl định kỳ và lưu log khác biệt vào cột `pending_diff_json`, sẵn sàng APIs áp dụng chọn lọc.
@@ -24,11 +25,10 @@
 ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
 
 ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   **US-094A2 (Xây dựng Lego Core State Store & Tải dữ liệu):** **[IN-PROGRESS]** Phân tách logic quản lý dữ liệu và Silent Login Google Identity Services ra tệp `static/js/lego_core.js`. Thiết lập đối tượng toàn cục `window.LegoState` với luồng giao tiếp Event-Driven (`"rawDataLoaded"`, `"filtersChanged"`).
+*   **US-094A3 (Phân tách Engine Render danh sách Card BĐS):** **[IN-PROGRESS]** Triển khai module `static/js/lego_render_client.js` và `static/js/lego_render_admin.js` tách biệt hoàn toàn phần render dữ liệu (`DocumentFragment`) ra khỏi `index.html`.
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **Các US con tiếp theo của Epic US-094:**
-    *   US-094A3: Phân tách Engine Render danh sách Card BĐS (`DocumentFragment`).
     *   US-094C: Cô lập Module Chi tiết & Carousel Khách hàng.
     *   US-094B: Cô lập Module Bộ lọc & Smart Search.
     *   US-094D: Cô lập Module Bộ sưu tập & Lead Capture.
@@ -43,13 +43,9 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [static/css/global.css](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/css/global.css) — US-094A1: Mã CSS tách biệt từ `index.html`.
-*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094A1: Liên kết CSS tĩnh và xóa bỏ thẻ `<style>`.
-*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — US-094A1: Tích hợp middleware phục vụ file tĩnh và cấu hình CDN cache headers.
-*   [vercel.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/vercel.json) — US-094A1: Cấu hình includeFiles để đóng gói thư mục `static/`.
-*   [scratch/test_e2e_curator.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_curator.py) — US-094A1: Script kiểm thử Playwright Desktop & Mobile.
-*   [docs/stories/_inbox/US-094A1_lego_frontend_css.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094A1_lego_frontend_css.md) — US-094A1: Tài liệu nghiệm thu US con.
-*   [docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md) — US-094: Cập nhật tiến độ master.
+*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — US-094A2: Định nghĩa `LegoState` đóng gói state tập trung, Pub/Sub events, GSI OAuth, và Google Sheets loading actions.
+*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094A2: Tích hợp `lego_core.js` qua Pub/Sub events và dọn dẹp duplicate code/state/helpers.
+*   [docs/stories/_inbox/US-094A2_lego_frontend_core.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094A2_lego_frontend_core.md) — US-094A2: Cập nhật tài liệu nghiệm thu US con.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật bảng mục lục user stories.
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094A1 completed & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094A2 completed & E2E tests 100% passed).*
