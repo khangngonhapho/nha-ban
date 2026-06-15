@@ -6,9 +6,9 @@ Last updated: 2026-06-15
 - Total: 106
 - backlog: 8
 - draft: 0
-- in-progress: 2
+- in-progress: 1
 - done: 18
-- accepted: 72
+- accepted: 73
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
@@ -17,7 +17,7 @@ Last updated: 2026-06-15
 | US-094A1 | Tách biệt CSS ngoài ra global.css | accepted | S | 2026-06-15 | `static/css/global.css`, `index.html` |
 | US-094A2 | Xây dựng Lego Core State Store & Tải dữ liệu | accepted | M | 2026-06-15 | `static/js/lego_core.js`, `index.html` |
 | US-094A3 | Phân tách Engine Render danh sách Card BĐS | accepted | M | 2026-06-15 | `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `index.html` |
-| US-094C | Cô lập Module Chi tiết & Carousel thực tế của Khách hàng | in-progress | S | 2026-06-15 | `static/js/lego_detail_client.js`, `index.html` |
+| US-094C | Cô lập Module Chi tiết & Carousel thực tế của Khách hàng | accepted | S | 2026-06-15 | `static/js/lego_detail_client.js`, `index.html` |
 | US-094B | Cô lập Module Bộ lọc & Tìm kiếm thông minh | backlog | M | 2026-06-15 | `static/js/lego_filters.js`, `index.html` |
 | US-094D | Cô lập Module Bộ sưu tập & Lead Capture | backlog | S | 2026-06-15 | `static/js/lego_collections.js`, `index.html` |
 | US-094F | Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin | backlog | M | 2026-06-15 | `static/js/lego_detail_admin.js`, `index.html` |
@@ -204,7 +204,7 @@ Last updated: 2026-06-15
 - [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (accepted)
 - [[US-094A2_lego_frontend_core|US-094A2]]: Xây dựng Lego Core State Store & Tải dữ liệu (accepted)
 - [[US-094A3_lego_frontend_render|US-094A3]]: Phân tách Engine Render danh sách Card BĐS (accepted)
-- [[US-094C_lego_frontend_preview|US-094C]]: Cô lập Module Chi tiết & Carousel thực tế của Khách hàng (backlog)
+- [[US-094C_lego_frontend_preview|US-094C]]: Cô lập Module Chi tiết & Carousel thực tế của Khách hàng (accepted)
 - [[US-094B_lego_frontend_filters|US-094B]]: Cô lập Module Bộ lọc & Tìm kiếm thông minh (backlog)
 - [[US-094D_lego_frontend_collections|US-094D]]: Cô lập Module Bộ sưu tập & Lead Capture (backlog)
 - [[US-094F_lego_frontend_curation|US-094F]]: Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin (backlog)

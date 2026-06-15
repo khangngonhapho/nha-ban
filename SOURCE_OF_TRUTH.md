@@ -322,6 +322,15 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-15 (Nghiệm thu US-094C - Cô lập Module Chi tiết & Carousel thực tế của Khách hàng - TEST PASS)
+*   **Mã User Story:** `US-094C`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Cô lập Module Chi tiết & Carousel của Khách hàng**: Triển khai `static/js/lego_detail_client.js` chứa phương thức `LegoDetailClient.render(p, sbody)` dựng giao diện chi tiết công khai cho khách hàng.
+    - **Di chuyển Carousel & Lightbox**: Tách biệt hàm `setupScrollCarousel`, `openLightboxForCarousel`, và toàn bộ hệ thống biến/trình lắng nghe sự kiện của Lightbox (zoom, swipe, keydown, thumbnails, drag) sang `lego_detail_client.js`.
+    - **Di chuyển các hàm phụ trợ**: Di chuyển các hàm gallery phụ trợ (`buildG`, `gm`, `ua`) sang `lego_detail_client.js` và export toàn cục qua `window` đảm bảo 100% tương thích ngược cho giao diện Admin.
+    - **Tái cấu trúc index.html**: Rút gọn hàm `openS` bằng cách ủy nhiệm render Client detail cho `LegoDetailClient.render`, nạp script mới ở `<head>` và thêm tham số cache-busting `?v=202606151500`.
+    - **Kiểm thử Playwright E2E**: Chạy kiểm thử tự động E2E đa viewport (Desktop/Mobile) và đa phân quyền (Client/Admin) thông qua mock JSONP và Sheets API v4 đạt 100% SUCCESS.
+
 ### 2026-06-15 (Nghiệm thu US-094A3 - Phân tách Engine Render danh sách Card BĐS - TEST PASS)
 *   **Mã User Story:** `US-094A3`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1091,7 +1100,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
 - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15
 - [x] **US-094A3:** Phân tách Engine Render danh sách Card BĐS ✅ Done 2026-06-15
-- [/] **US-094C:** Cô lập Module Chi tiết & Carousel thực tế của Khách hàng ⏳ In-Progress
+- [x] **US-094C:** Cô lập Module Chi tiết & Carousel thực tế của Khách hàng ✅ Done 2026-06-15
 - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
 - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
