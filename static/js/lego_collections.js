@@ -222,7 +222,6 @@
       event.preventDefault();
       event.stopPropagation();
     }
-    console.log("DEBUG JS: createNewCollection called");
     try {
       const name = document.getElementById('newColName').value.trim();
       if (!name) {
@@ -239,7 +238,6 @@
                       (typeof window.getMappedPoolData === 'function' && window.getMappedPoolData().find(p => p && String(p.id) === String(id)));
         return house && house.system_id ? String(house.system_id) : String(id);
       });
-      console.log("DEBUG JS: idsToSave =", idsToSave);
 
       if (window.collections[name]) {
         const currentIds = window.collections[name] || [];
@@ -255,8 +253,7 @@
         showNotify(`Bộ sưu tập "${name}" đã tồn tại. Đã nạp thêm căn mới vào bộ sưu tập này thành công! (Tổng số: ${merged.length} căn)`, 'success');
         document.getElementById('colSaveModal').classList.remove('open');
         
-        console.log("DEBUG JS: calling viewCollection in existing path with setTimeout");
-        setTimeout(() => viewCollection(name), 150);
+        viewCollection(name);
         return;
       }
       
@@ -273,8 +270,7 @@
       showNotify(`Đã tạo bộ sưu tập "${name}" với ${idsToSave.length} căn thành công!`, 'success');
       document.getElementById('colSaveModal').classList.remove('open');
       
-      console.log("DEBUG JS: calling viewCollection in new path with setTimeout");
-      setTimeout(() => viewCollection(name), 150);
+      viewCollection(name);
     } catch (err) {
       showNotify(`❌ Lỗi tạo bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
@@ -282,7 +278,6 @@
   }
 
   function saveToExistingCollection(name) {
-    console.log("DEBUG JS: saveToExistingCollection called for", name);
     try {
       if (typeof window.collections !== 'object' || window.collections === null) {
         window.collections = {};
@@ -311,8 +306,7 @@
       
       showNotify(`Đã lưu thêm ${addedCount} căn mới vào bộ sưu tập "${name}" thành công! (Tổng số: ${merged.length} căn)`, 'success');
       
-      console.log("DEBUG JS: calling viewCollection in saveExisting path with setTimeout");
-      setTimeout(() => viewCollection(name), 150);
+      viewCollection(name);
     } catch (err) {
       showNotify(`❌ Lỗi lưu bộ sưu tập: ${err.message}`, 'error');
       console.error(err);
@@ -320,7 +314,6 @@
   }
 
   function viewCollection(name) {
-    console.log("DEBUG JS: viewCollection called for", name);
     try {
       window.activeCollectionName = name;
       

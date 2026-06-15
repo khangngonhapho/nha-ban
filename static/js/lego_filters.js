@@ -177,7 +177,6 @@
 
   window.getFiltered = function() {
     let a = (window.isAdmin && window.activeMode === 'pool') ? window.getMappedPoolData() : window.DATA;
-    console.log("DEBUG JS: getFiltered activeMode =", window.activeMode, "activeCollectionName =", window.activeCollectionName, "initial size =", a.length);
     
     // Lọc động: Chỉ hiện căn Public (US-039.7)
     if (window.isAdmin && window.activeMode === 'pool' && window.showOnAirOnly) {
@@ -436,15 +435,12 @@
 
     // LỌC THEO BỘ SƯU TẬP HOẶC DANH SÁCH YÊU THÍCH CỦA ADMIN
     if (window.activeCollectionName) {
-      console.log("DEBUG JS: filtering by collection", window.activeCollectionName, "col exists =", !!window.collections[window.activeCollectionName]);
       if (window.activeCollectionName === 'favorites') {
         a = a.filter(p => window.favs.has(p.system_id ? String(p.system_id) : String(p.id)));
       } else if (window.collections[window.activeCollectionName]) {
         const colIds = new Set(window.collections[window.activeCollectionName].map(String));
-        console.log("DEBUG JS: colIds =", Array.from(colIds));
         a = a.filter(p => colIds.has(p.system_id ? String(p.system_id) : String(p.id)));
       }
-      console.log("DEBUG JS: filtered size =", a.length);
     }
     return a;
   };
