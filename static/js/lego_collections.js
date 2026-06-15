@@ -4,7 +4,7 @@
   // Initialize global states on window
   window.favs = window.favs || new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
   window.SELECTED_IDS = window.SELECTED_IDS || new Set();
-  window.activeCollectionName = window.activeCollectionName || null;
+  window.activeCollectionName = window.activeCollectionName || localStorage.getItem('activeCollectionName') || null;
   
   if (!window.collections) {
     window.collections = {};
@@ -313,12 +313,23 @@
     }
   }
 
-  function viewCollection(name) {
+  function viewCollection(name, shouldRender = true) {
     try {
       window.activeCollectionName = name;
+      if (name) {
+        localStorage.setItem('activeCollectionName', name);
+      } else {
+        localStorage.removeItem('activeCollectionName');
+      }
       
       SELECTED_IDS.clear();
       updateShareUI();
+      
+      // Close any open modals
+      const colViewModal = document.getElementById('colViewModal');
+      if (colViewModal) colViewModal.classList.remove('open');
+      const colSaveModal = document.getElementById('colSaveModal');
+      if (colSaveModal) colSaveModal.classList.remove('open');
       
       const bar = document.getElementById('activeColBar');
       const text = document.getElementById('activeColNameText');
@@ -336,8 +347,10 @@
         bar.style.display = 'flex';
       }
       
-      if (typeof window.render === 'function') window.render();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (shouldRender) {
+        if (typeof window.render === 'function') window.render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } catch (err) {
       console.error("Error viewing collection:", err);
     }
@@ -347,6 +360,7 @@
     console.log("DEBUG JS: exitCollectionView called");
     try {
       window.activeCollectionName = null;
+      localStorage.removeItem('activeCollectionName');
       
       const bar = document.getElementById('activeColBar');
       if (bar) bar.style.display = 'none';
