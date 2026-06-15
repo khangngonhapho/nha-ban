@@ -562,7 +562,8 @@
         return s;
       };
     }
-    window.isAdmin = localStorage.getItem('isAdminSession') === 'true';
+    const isPreviewUrl = new URLSearchParams(window.location.search).get('preview') === 'true';
+    window.isAdmin = !isPreviewUrl && localStorage.getItem('isAdminSession') === 'true';
 
     // ============================================================
     // [Latest Update / User Story]
@@ -2272,6 +2273,7 @@
       
       return cleanUrl;
     }
+    window.normalizeImgUrl = normalizeImgUrl;
 
     async function downloadSingleImage(url, fileName) {
       try {

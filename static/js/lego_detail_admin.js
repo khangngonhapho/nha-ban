@@ -524,7 +524,9 @@
   // === isListingSodoUrl ===
     window.isListingSodoUrl = function(url, p) {
       if (!url || !p) return false;
-      const norm = normalizeImgUrl(url);
+      const normFn = window.normalizeImgUrl;
+      if (!normFn) return false;
+      const norm = normFn(url);
       if (norm === '') return false;
       
       // 1. Nhận diện theo mẫu tên file Cloudinary được uploader tạo ra (cực kỳ tối ưu và nhanh)
@@ -534,18 +536,32 @@
         return true;
       }
 
-      // 2. Lấy 5 giá trị sodo hiện có của căn nhà
-      const sodo1Val = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
-      const sodo2Val = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
-      const sodo3Val = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
-      const sodo4Val = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
-      const sodo5Val = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
+      // 2. Lấy 5 giá trị sodo hiện có của căn nhà (ưu tiên đọc từ DOM để phản hồi ngay lập tức khi thay đổi trên Form)
+      const getSodoVal = (idx) => {
+        let el = document.getElementById(`editSodo${idx}Url`);
+        if (el) return el.value.trim();
+        if (window.parent && window.parent !== window) {
+          try {
+            el = window.parent.document.getElementById(`editSodo${idx}Url`);
+            if (el) return el.value.trim();
+          } catch (e) {}
+        }
+        const colIdx = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(idx) : null;
+        if (p.pool_row_data && colIdx !== null) return p.pool_row_data[colIdx];
+        return p[`raw_sodo${idx}`] || '';
+      };
 
-      const normS1 = normalizeImgUrl(sodo1Val);
-      const normS2 = normalizeImgUrl(sodo2Val);
-      const normS3 = normalizeImgUrl(sodo3Val);
-      const normS4 = normalizeImgUrl(sodo4Val);
-      const normS5 = normalizeImgUrl(sodo5Val);
+      const sodo1Val = getSodoVal(1);
+      const sodo2Val = getSodoVal(2);
+      const sodo3Val = getSodoVal(3);
+      const sodo4Val = getSodoVal(4);
+      const sodo5Val = getSodoVal(5);
+
+      const normS1 = normFn(sodo1Val);
+      const normS2 = normFn(sodo2Val);
+      const normS3 = normFn(sodo3Val);
+      const normS4 = normFn(sodo4Val);
+      const normS5 = normFn(sodo5Val);
 
       if (norm === normS1 || norm === normS2 || norm === normS3 || norm === normS4 || norm === normS5) {
         return true;
