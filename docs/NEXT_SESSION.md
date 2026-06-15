@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-094A3 (Phân tách Engine Render danh sách Card BĐS):** **[DONE - 2026-06-15]** Tạo mới module `static/js/lego_render_client.js` và `static/js/lego_render_admin.js` tách biệt hoàn toàn phần render dữ liệu Card (`DocumentFragment`) ra khỏi `index.html` cho cả giao diện Khách hàng và Admin, bảo đảm tương thích ngược 100% và không làm gãy các tính năng tương tác. Đã chạy E2E Playwright test đạt 100% PASS.
 *   **US-094A2 (Xây dựng Lego Core State Store & Tải dữ liệu):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_core.js` định nghĩa `window.LegoState` để đóng gói toàn bộ trạng thái lõi, logic xác thực Google OAuth (GSI Auth), tự động refresh token ngầm và luồng nạp dữ liệu Sheets API (Admin secure + public fallback). Thiết lập cơ chế Event-Driven (Pub/Sub) và liên kết các getters/setters toàn cục tương thích ngược 100% không gây lỗi hồi quy. Kiểm thử Playwright E2E đạt 100% PASS trên Desktop & Mobile.
 *   **US-094A1 (Tách biệt CSS ngoài ra global.css):** **[ACCEPTED - 2026-06-15]** Di chuyển toàn bộ ~3,650 dòng CSS trong `index.html` sang `static/css/global.css`, liên kết qua thẻ `<link>` và cấu hình static serving trên Vercel với tiêu đề `Cache-Control`. Đã chạy kiểm thử Playwright E2E đạt 100% PASS, nghiệm thu giao diện hiển thị mượt mà trên môi trường Production.
 *   **US-089D (Luồng Tự động Mở rộng Schema & Đăng tải Hình ảnh Thủ công):** **[DONE - 2026-06-15]** Loại bỏ hoàn toàn Cloudinary khỏi dự án. Đổi tên cột CSDL `cloudinary_url` thành `r2_url` và di cư an toàn. Triển khai API/UI thêm thuộc tính động (Dynamic Schema) tự động chèn cột settings/CSDL/Sheets/Tài liệu và API tải ảnh thủ công cách ly ảnh nhạy cảm bảo mật PII.
@@ -25,11 +26,10 @@
 ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
 
 ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   **US-094A3 (Phân tách Engine Render danh sách Card BĐS):** **[IN-PROGRESS]** Triển khai module `static/js/lego_render_client.js` và `static/js/lego_render_admin.js` tách biệt hoàn toàn phần render dữ liệu (`DocumentFragment`) ra khỏi `index.html`.
+*   **US-094C (Cô lập Module Chi tiết & Carousel thực tế của Khách hàng):** **[IN-PROGRESS]** Triển khai module `static/js/lego_detail_client.js` tách biệt hoàn toàn phần modal chi tiết, Swiper carousel hiển thị ảnh công khai, và logic copy link/chia sẻ nhanh ra khỏi `index.html`.
 
 ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **Các US con tiếp theo của Epic US-094:**
-    *   US-094C: Cô lập Module Chi tiết & Carousel Khách hàng.
     *   US-094B: Cô lập Module Bộ lọc & Smart Search.
     *   US-094D: Cô lập Module Bộ sưu tập & Lead Capture.
     *   US-094F: Cô lập Module Chi tiết & Curation của Admin.
@@ -43,9 +43,11 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — US-094A2: Định nghĩa `LegoState` đóng gói state tập trung, Pub/Sub events, GSI OAuth, và Google Sheets loading actions.
-*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094A2: Tích hợp `lego_core.js` qua Pub/Sub events và dọn dẹp duplicate code/state/helpers.
-*   [docs/stories/_inbox/US-094A2_lego_frontend_core.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094A2_lego_frontend_core.md) — US-094A2: Cập nhật tài liệu nghiệm thu US con.
+*   [static/js/lego_render_client.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_render_client.js) — US-094A3: Module render card hiển thị cho khách hàng công khai.
+*   [static/js/lego_render_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_render_admin.js) — US-094A3: Module render card hiển thị cho quản trị viên (Admin).
+*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — US-094A3: Chuyển hàm `formatPhone` sang core để dùng chung cho render và admin.
+*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094A3: Tích hợp script render mới, xóa `formatPhone` cũ và rút gọn hàm `render()` gốc qua Event-Delegated rendering.
+*   [docs/stories/_inbox/US-094A3_lego_frontend_render.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094A3_lego_frontend_render.md) — US-094A3: Tài liệu nghiệm thu US con.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật bảng mục lục user stories.
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094A2 completed & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094A3 completed & E2E tests 100% passed).*

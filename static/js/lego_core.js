@@ -127,6 +127,15 @@ function generateAdminTitleFromNộiDungChinh(p) {
   return text.replace(/\s+/g, ' ');
 }
 
+function formatPhone(phone) {
+  if (!phone) return '';
+  let s = String(phone).trim().replace(/[\s\.-]/g, '');
+  if (/^[1-9]\d{8}$/.test(s)) {
+    return '0' + s;
+  }
+  return s;
+}
+
 // Expose helpers globally
 window.cv = cv;
 window.parseFloatHelper = parseFloatHelper;
@@ -136,6 +145,7 @@ window.fixImgUrl = fixImgUrl;
 window.getDaiNha = getDaiNha;
 window.sha256 = sha256;
 window.generateAdminTitleFromNộiDungChinh = generateAdminTitleFromNộiDungChinh;
+window.formatPhone = formatPhone;
 
 // Core State Store & Event System definition
 const listeners = {};
