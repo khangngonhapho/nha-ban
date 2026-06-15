@@ -7,14 +7,14 @@ Last updated: 2026-06-15
 - backlog: 10
 - draft: 0
 - in-progress: 2
-- done: 19
-- accepted: 69
+- done: 18
+- accepted: 70
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
 | US-094 | Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) | in-progress | XL | 2026-06-15 | `docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md` |
-| US-094A1 | Tách biệt CSS ngoài ra global.css | done | S | 2026-06-15 | `static/css/global.css`, `index.html` |
+| US-094A1 | Tách biệt CSS ngoài ra global.css | accepted | S | 2026-06-15 | `static/css/global.css`, `index.html` |
 | US-094A2 | Xây dựng Lego Core State Store & Tải dữ liệu | backlog | M | 2026-06-15 | `static/js/lego_core.js`, `index.html` |
 | US-094A3 | Phân tách Engine Render danh sách Card BĐS | backlog | M | 2026-06-15 | `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `index.html` |
 | US-094C | Cô lập Module Chi tiết & Carousel thực tế của Khách hàng | backlog | S | 2026-06-15 | `static/js/lego_detail_client.js`, `index.html` |
@@ -201,7 +201,7 @@ Last updated: 2026-06-15
 
 ### UI / Frontend
 - [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (in-progress)
-- [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (done)
+- [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (accepted)
 - [[US-094A2_lego_frontend_core|US-094A2]]: Xây dựng Lego Core State Store & Tải dữ liệu (backlog)
 - [[US-094A3_lego_frontend_render|US-094A3]]: Phân tách Engine Render danh sách Card BĐS (backlog)
 - [[US-094C_lego_frontend_preview|US-094C]]: Cô lập Module Chi tiết & Carousel thực tế của Khách hàng (backlog)

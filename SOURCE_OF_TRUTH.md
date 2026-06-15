@@ -322,6 +322,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-15 (Nghiệm thu US-094A1 - Tách biệt CSS ngoài ra global.css - TEST PASS)
+*   **Mã User Story:** `US-094A1`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Tách tệp CSS tĩnh**: Di chuyển toàn bộ ~3,650 dòng CSS trong `index.html` sang `static/css/global.css`.
+    - **Liên kết CSS tĩnh**: Thay thế khối `<style>` thô bằng thẻ `<link rel="stylesheet" href="static/css/global.css">`.
+    - **Cấu hình đóng gói & Serving**: Cập nhật `vercel.json` đóng gói thư mục `static/**` và bổ sung middleware trong `api/index.js` phục vụ file tĩnh kèm tiêu đề `Cache-Control` (Edge Caching 1 năm).
+    - **Kiểm thử Playwright E2E**: Tích hợp `scratch/test_e2e_curator.py` chạy tự động xác thực hiển thị đa viewport (Desktop/Mobile) đạt 100% PASS.
+
 ### 2026-06-14 (Nghiệm thu US-089B - Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist - TEST PASS)
 *   **Mã User Story:** `US-089B`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1061,6 +1069,8 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [ ] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic)
+- [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
 - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
 - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
