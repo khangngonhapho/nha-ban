@@ -485,6 +485,7 @@
         return s;
       };
     }
+    window.isAdmin = localStorage.getItem('isAdminSession') === 'true';
 
     // ============================================================
     // [Latest Update / User Story]
@@ -495,6 +496,7 @@
     // ============================================================
     // Hook UI elements into LegoState events
     LegoState.on('authStatusChanged', ({ isAdmin, isTokenValid }) => {
+      window.isAdmin = isAdmin;
       showGoogleLoginButtonState(isTokenValid);
       if (isAdmin) {
         document.body.classList.add('is-admin');
