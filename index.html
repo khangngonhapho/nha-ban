@@ -19,9 +19,9 @@
   <!-- Google Identity Services (GSI) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link rel="stylesheet" href="static/css/global.css">
-  <script src="static/js/lego_core.js"></script>
-  <script src="static/js/lego_render_client.js"></script>
-  <script src="static/js/lego_render_admin.js"></script>
+  <script src="static/js/lego_core.js?v=202606151500"></script>
+  <script src="static/js/lego_render_client.js?v=202606151500"></script>
+  <script src="static/js/lego_render_admin.js?v=202606151500"></script>
 </head>
 
 <body>
@@ -469,6 +469,18 @@
   </div>
 
   <script>
+    // Fallback formatPhone helper in case of cached files
+    if (typeof window.formatPhone !== 'function') {
+      window.formatPhone = function(phone) {
+        if (!phone) return '';
+        let s = String(phone).trim().replace(/[\s\.-]/g, '');
+        if (/^[1-9]\d{8}$/.test(s)) {
+          return '0' + s;
+        }
+        return s;
+      };
+    }
+
     // ============================================================
     // [Latest Update / User Story]
     // - US-029: Sắp xếp theo Sản phẩm mới thêm mặc định trên danh sách, thêm nút xếp thời gian ⏱️ kế bên xếp giá 💰 trên thanh điều khiển của Admin (Cập nhật ngày 2026-05-25)
