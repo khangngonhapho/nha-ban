@@ -315,43 +315,6 @@
               </div>
             </div>
             ` : ''}
-                <div class="admin-raw-grid" style="margin-bottom: 12px;">
-                  <div class="admin-raw-cell">
-                    <span class="label">Giá bán:</span>
-                    <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
-                  </div>
-                  <div class="admin-raw-cell">
-                    <span class="label">Diện tích:</span>
-                    <span class="value dotted">${p.dt} m²</span>
-                  </div>
-                  <div class="admin-raw-cell">
-                    <span class="label">Đơn giá:</span>
-                    <span class="value dotted" style="color:var(--gold); font-weight:800;">${p.giabq}</span>
-                  </div>
-                  <div class="admin-raw-cell">
-                    <span class="label">Quận/TP:</span>
-                    <span class="value dotted">${p.ql}</span>
-                  </div>
-                  <div class="admin-raw-cell">
-                    <span class="label">Phường:</span>
-                    <span class="value dotted">${p.phuong}</span>
-                  </div>
-                  <div class="admin-raw-cell">
-                    <span class="label">Loại:</span>
-                    <span class="value dotted">${p.loai_hinh}</span>
-                  </div>
-                  <div class="admin-raw-cell">
-                    <span class="label">Đường trước:</span>
-                    <span class="value dotted">${p.duong_truoc_nha}</span>
-                  </div>
-                  <div class="admin-raw-cell">
-                    <span class="label">Kết cấu:</span>
-                    <span class="value dotted">${p.tang} tầng</span>
-                  </div>
-                </div>
-                <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.')}</div>
-              </div>
-            </div>
           </div>`;
 
     // POST-RENDER INITIALIZATION
