@@ -4,9 +4,9 @@ Last updated: 2026-06-15
 
 ## Stats
 - Total: 106
-- backlog: 9
+- backlog: 8
 - draft: 0
-- in-progress: 1
+- in-progress: 2
 - done: 18
 - accepted: 72
 - superseded: 6
@@ -17,7 +17,7 @@ Last updated: 2026-06-15
 | US-094A1 | Tách biệt CSS ngoài ra global.css | accepted | S | 2026-06-15 | `static/css/global.css`, `index.html` |
 | US-094A2 | Xây dựng Lego Core State Store & Tải dữ liệu | accepted | M | 2026-06-15 | `static/js/lego_core.js`, `index.html` |
 | US-094A3 | Phân tách Engine Render danh sách Card BĐS | accepted | M | 2026-06-15 | `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `index.html` |
-| US-094C | Cô lập Module Chi tiết & Carousel thực tế của Khách hàng | backlog | S | 2026-06-15 | `static/js/lego_detail_client.js`, `index.html` |
+| US-094C | Cô lập Module Chi tiết & Carousel thực tế của Khách hàng | in-progress | S | 2026-06-15 | `static/js/lego_detail_client.js`, `index.html` |
 | US-094B | Cô lập Module Bộ lọc & Tìm kiếm thông minh | backlog | M | 2026-06-15 | `static/js/lego_filters.js`, `index.html` |
 | US-094D | Cô lập Module Bộ sưu tập & Lead Capture | backlog | S | 2026-06-15 | `static/js/lego_collections.js`, `index.html` |
 | US-094F | Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin | backlog | M | 2026-06-15 | `static/js/lego_detail_admin.js`, `index.html` |

@@ -1091,6 +1091,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
 - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15
 - [x] **US-094A3:** Phân tách Engine Render danh sách Card BĐS ✅ Done 2026-06-15
+- [/] **US-094C:** Cô lập Module Chi tiết & Carousel thực tế của Khách hàng ⏳ In-Progress
 - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
 - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
