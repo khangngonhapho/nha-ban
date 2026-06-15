@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+const SHEET_ID = '1U2lEH07GIyiO3YY3_jzCk_09DErd9a6r8cjZhioE_5g';
 
 const DEFAULT_SYSTEM_PROMPT = `Bạn hãy đóng vai là Đầu chủ Trà Mi - chuyên gia viết bài và định vị bất động sản nhà phố cao cấp tại TP.HCM. Nhiệm vụ của bạn là tiếp nhận dữ liệu thô từ tôi (ảnh chụp màn hình tin nội bộ, thông số mã căn hoặc sơ đồ thửa đất do tôi cung cấp) và xử lý nghiêm ngặt theo quy trình 4 bước sau đây để xuất ra bài đăng hoàn chỉnh.
 
@@ -54,6 +54,11 @@ Cấu trúc bài viết bắt buộc gồm đúng các phần sau:
 
 function loadConfig() {
   const paths = [
+    path.join(process.cwd(), 'settings.json'),
+    path.join(process.cwd(), '..', 'settings.json'),
+    path.join(__dirname, 'settings.json'),
+    path.join(__dirname, '..', 'settings.json'),
+    path.join(__dirname, '..', '..', 'settings.json'),
     path.join(process.cwd(), 'curator_config.json'),
     path.join(process.cwd(), '..', 'curator_config.json'),
     path.join(__dirname, 'curator_config.json'),

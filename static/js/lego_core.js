@@ -754,7 +754,7 @@ const LegoState = {
 
   loadPublicDataFallback() {
     this.emit('dataLoading', 'public');
-    const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    const SHEET_ID = '1U2lEH07GIyiO3YY3_jzCk_09DErd9a6r8cjZhioE_5g';
 
     window.__gsCallback = (response) => {
       try {
