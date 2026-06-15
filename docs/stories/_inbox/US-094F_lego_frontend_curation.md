@@ -38,8 +38,10 @@ size: M
 ### 1. Đóng gói Module `LegoDetailAdmin` (`lego_detail_admin.js`)
 - Module `LegoDetailAdmin` sẽ quản lý toàn bộ vòng đời hiển thị chi tiết & chỉnh sửa của Admin.
 - Phương thức chính: `LegoDetailAdmin.render(p, sbody)`.
-  - Thiết lập HTML template thô cho Admin preview, form Accordion chỉnh sửa thông tin BĐS, Accordion hình ảnh, và Accordion Preview Khách hàng.
-  - Sau khi vẽ DOM, tự động thiết lập các trình lắng nghe sự kiện thay đổi dữ liệu (event listener) trên các trường nhập liệu (`editHuong`, `editDuong`, `editDanhGia`, `editTinhTrang`...) để cập nhật trực tiếp (Live Preview) sang panel Preview Khách hàng.
+  - Thiết lập HTML template thô cho Admin preview, form Accordion chỉnh sửa thông tin BĐS, và Accordion hình ảnh.
+  - **Cơ chế Preview Khách Hàng thực tế (WebView Iframe):** 
+    - Nếu BĐS chưa được xuất bản lên sóng, hiển thị thông báo cảnh báo.
+    - Nếu BĐS đã lên sóng, nhúng một `<iframe>` chỉ định link thực tế kèm `preview=true` đóng vai trò là một Mobile WebView phản ánh 100% giao diện thực của khách hàng.
   - Khởi tạo bản đồ thực địa Google Maps `iframe` động dựa trên địa chỉ căn nhà.
   - Khởi tạo 2 carousels ảnh (BĐS & Sổ thửa đất) bằng cách gọi `setupScrollCarousel`.
 - Đóng gói logic Image Editor Carousel để quản lý việc xoay ảnh, sửa tags (Facade, Cover, Sổ đỏ, Public) và di chuyển vị trí ảnh.
@@ -48,10 +50,11 @@ size: M
 - Tích hợp hàm `uploadFileToR2` và trình xử lý upload file local trực tiếp trong module Admin.
 - Lưu giữ nguyên vẹn logic Sheets API `saveSourceChanges` và `saveNewListingFromPool` để thực hiện cập nhật cell dữ liệu tương tự như trước.
 
-### 3. Tương thích ngược & Tối giản `index.html`
+### 3. Tương thích ngược & Tối giản `index.html` & Điều chỉnh `lego_core.js`
 - Nạp `static/js/lego_detail_admin.js` trong `<head>` của `index.html`.
 - Định nghĩa các alias toàn cục trên `window` cho toàn bộ các hàm đã di chuyển để các inline template HTML của Admin không bị lỗi tham chiếu.
 - Rút gọn hàm `openS` trong `index.html` bằng cách ủy thách render Admin cho `LegoDetailAdmin.render(p, sbody)`.
+- Chỉnh sửa `lego_core.js` để tự động bỏ qua kiểm tra session admin khi phát hiện URL chứa `preview=true`, ép `isAdmin = false` riêng cho cửa sổ iframe preview.
 
 ---
 
