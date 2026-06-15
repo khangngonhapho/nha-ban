@@ -322,6 +322,13 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-15 (Nghiệm thu US-094B - Cô lập Module Bộ lọc & Tìm kiếm thông minh - TEST PASS)
+*   **Mã User Story:** `US-094B`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Cô lập Module Bộ lọc & Tìm kiếm**: Tạo tệp `static/js/lego_filters.js` và di chuyển toàn bộ logic bộ lọc (quận, phường, đường, hướng, khoảng giá, kết cấu, đánh giá, checkbox tiêu chí) và tìm kiếm thông minh tiếng Việt AND (`+`), khớp số nhà, từ `index.html` sang.
+    - **Di chuyển các hàm xử lý phụ trợ**: Di chuyển các hàm tab động, toggle dropdown, checklist tiêu chí động, tìm kiếm, clear lọc nâng cao, và Smart Pool Fallback sang `lego_filters.js`.
+    - **Duy trì tương thích ngược**: Nhúng script vào thẻ `<head>` của `index.html`, loại bỏ hơn 800 dòng lệnh cũ, và đăng ký các biến/hàm toàn cục qua `window`.
+
 ### 2026-06-15 (Nghiệm thu US-094C - Cô lập Module Chi tiết & Carousel thực tế của Khách hàng - TEST PASS)
 *   **Mã User Story:** `US-094C`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1101,7 +1108,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15
 - [x] **US-094A3:** Phân tách Engine Render danh sách Card BĐS ✅ Done 2026-06-15
 - [x] **US-094C:** Cô lập Module Chi tiết & Carousel thực tế của Khách hàng ✅ Done 2026-06-15
-- [/] **US-094B:** Cô lập Module Bộ lọc & Tìm kiếm thông minh ⏳ In-Progress
+- [x] **US-094B:** Cô lập Module Bộ lọc & Tìm kiếm thông minh ✅ Done 2026-06-15
 - [ ] **US-094D:** Cô lập Module Bộ sưu tập & Lead Capture
 - [ ] **US-094F:** Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin
 - [ ] **US-094E:** Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html
