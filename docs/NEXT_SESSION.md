@@ -26,11 +26,10 @@
  ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
  
  ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   **Không có** (Bắt đầu User Story tiếp theo của Epic US-094)
+*   **US-094D (Cô lập Module Bộ sưu tập & Lead Capture) [Size: S]:** Tách biệt logic tạo/xóa bộ sưu tập và yêu thích sang `static/js/lego_collections.js`, và form thu thập thông tin khách hàng (lead capture modal) cùng liên hệ khách hàng sang `static/js/lego_lead_capture.js`.
  
  ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
  *   **Các US con tiếp theo của Epic US-094:**
-     *   **US-094D (Cô lập Module Bộ sưu tập & Lead Capture):** Tách biệt logic tạo/xóa bộ sưu tập, lưu yêu thích, và form thu thập thông tin khách hàng (lead capture modal) sang `static/js/lego_collections.js`.
      *   **US-094F (Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin):** Tách biệt logic xem chi tiết của Admin, form chỉnh sửa trực tiếp, form curation và các tabs quản lý của Admin sang `static/js/lego_detail_admin.js`.
      *   **US-094E (Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html):** Gom các script và tối ưu dung lượng tải trang, thiết lập Cache-Control tối ưu.
  *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
