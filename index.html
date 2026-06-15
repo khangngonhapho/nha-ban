@@ -813,17 +813,7 @@
     // Aliases and global synchronization for collections & favorites
     const SELECTED_IDS = window.SELECTED_IDS;
     const favs = window.favs;
-    let collections = window.collections;
-    let activeCollectionName = window.activeCollectionName;
 
-    Object.defineProperty(window, 'collections', {
-      get: () => collections,
-      set: (val) => { collections = val; }
-    });
-    Object.defineProperty(window, 'activeCollectionName', {
-      get: () => activeCollectionName,
-      set: (val) => { activeCollectionName = val; }
-    });
 
     function cutTitleToDistrict(title) {
       if (!title) return '';
@@ -1400,9 +1390,9 @@
             (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
             (x.id && p.id && String(x.id).trim() === String(p.id).trim())
           );
-          cardEl = LegoRenderAdmin.createCard(p, curatedListing, { favs, SELECTED_IDS, activeCollectionName });
+          cardEl = LegoRenderAdmin.createCard(p, curatedListing, { favs, SELECTED_IDS, activeCollectionName: window.activeCollectionName });
         } else {
-          cardEl = LegoRenderClient.createCard(p, { favs, activeCollectionName });
+          cardEl = LegoRenderClient.createCard(p, { favs, activeCollectionName: window.activeCollectionName });
         }
         frag.appendChild(cardEl);
       });
