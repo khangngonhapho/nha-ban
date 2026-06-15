@@ -322,6 +322,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-15 (Nghiệm thu US-094D - Cô lập Module Bộ sưu tập & Lead Capture - TEST PASS)
+*   **Mã User Story:** `US-094D`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Cô lập Module Bộ sưu tập & Lead Capture**: Tạo tệp `static/js/lego_collections.js` chứa toàn bộ logic bộ sưu tập, yêu thích và chia sẻ; tạo tệp `static/js/lego_lead_capture.js` chứa toàn bộ logic chào mừng khách hàng, đăng ký thông tin liên hệ và tích hợp Zalo.
+    - **Làm sạch index.html**: Rút gọn hơn 400 dòng lệnh cũ, nạp hai thẻ script mới ở `<head>` và khai báo các alias toàn cục trên `window` để duy trì tương thích ngược 100% cho toàn bộ các module khác.
+    - **Giải quyết Sự cố Lớn (Retro)**: Khắc phục lỗi reset mất trạng thái danh sách bộ sưu tập sau khi tải lại bằng cách bền vững hóa `activeCollectionName` trong `localStorage`. Khắc phục lỗi trắng trang (blank page) trên các đường dẫn chia sẻ khách hàng (ví dụ: `/1?b=...`) bằng việc chuyển đổi các đường dẫn tài nguyên tĩnh ở `<head>` từ đường dẫn tương đối sang tuyệt đối.
+    - **Kiểm thử Playwright E2E**: Chạy kiểm thử tự động `scratch/test_e2e_collections.py` mô phỏng hành vi Client/Admin và đa thiết bị đạt 100% PASS.
+
 ### 2026-06-15 (Nghiệm thu US-094B - Cô lập Module Bộ lọc & Tìm kiếm thông minh - TEST PASS)
 *   **Mã User Story:** `US-094B`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1109,7 +1117,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-094A3:** Phân tách Engine Render danh sách Card BĐS ✅ Done 2026-06-15
 - [x] **US-094C:** Cô lập Module Chi tiết & Carousel thực tế của Khách hàng ✅ Done 2026-06-15
 - [x] **US-094B:** Cô lập Module Bộ lọc & Tìm kiếm thông minh ✅ Done 2026-06-15
-- [ ] **US-094D:** Cô lập Module Bộ sưu tập & Lead Capture
+- [x] **US-094D:** Cô lập Module Bộ sưu tập & Lead Capture ✅ Done 2026-06-15
 - [ ] **US-094F:** Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin
 - [ ] **US-094E:** Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html
 - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14

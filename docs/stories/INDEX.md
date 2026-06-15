@@ -4,11 +4,11 @@ Last updated: 2026-06-15
 
 ## Stats
 - Total: 106
-- backlog: 6
+- backlog: 4
 - draft: 0
-- in-progress: 2
-- done: 18
-- accepted: 74
+- in-progress: 1
+- done: 20
+- accepted: 75
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
