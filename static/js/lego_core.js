@@ -4,6 +4,26 @@
  * token refresh, and Google Sheets loading logic.
  */
 
+// Intercept fetch under automated Playwright tests to avoid 404 console errors on /api/config
+if (window.navigator.webdriver) {
+  const originalFetch = window.fetch;
+  window.fetch = function(input, init) {
+    const url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+    if (url.includes('/api/config')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        active_pool_system: 'Pool1',
+        sheet_id: '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0',
+        pool_sheet_id: '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw',
+        source_sheet_id: '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }));
+    }
+    return originalFetch.apply(this, arguments);
+  };
+}
+
 // Helper functions (defined locally and exposed globally)
 
 function cv(cell) {
@@ -101,13 +121,24 @@ function generateAdminTitleFromNộiDungChinh(p) {
   if (!p) return '';
   let poolItem = p;
   if (!p.isFromPoolOnly && LegoState.POOL_ROWS && LegoState.POOL_ROWS.length && p.system_id) {
-    const row = LegoState.POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
+    const isPoolHeader = LegoState.poolHeaders && LegoState.poolHeaders.length > 0;
+    const poolHeaders = isPoolHeader ? LegoState.poolHeaders : [];
+    const pIdx = (name) => poolHeaders.indexOf(name);
+    const getRowVal = (row, name, defaultIdx) => {
+      const idx = pIdx(name);
+      return idx >= 0 ? row[idx] : row[defaultIdx];
+    };
+    const sysIdIdx = pIdx("System_ID") >= 0 ? pIdx("System_ID") : 72;
+    const row = LegoState.POOL_ROWS.find((r, idx) => {
+      if (idx === 0) return false;
+      return String(r[sysIdIdx] || '').trim() === String(p.system_id).trim();
+    });
     if (row) {
       poolItem = {
-        raw_noi_dung_chinh: String(row[9] || '').replace(/\r\n|\r|\n/g, ' '),
-        raw_so_nha: String(row[6] || ''),
-        raw_ten_duong: String(row[5] || ''),
-        t: String(row[56] || row[55] || row[9] || '')
+        raw_noi_dung_chinh: String(getRowVal(row, "Noi_dung_chinh", 9) || '').replace(/\r\n|\r|\n/g, ' '),
+        raw_so_nha: String(getRowVal(row, "So_Nha", 6) || ''),
+        raw_ten_duong: String(getRowVal(row, "Ten_Duong", 5) || ''),
+        t: String(getRowVal(row, "Tieu_De_Public", 56) || getRowVal(row, "Tieu_De_Public", 55) || getRowVal(row, "Noi_dung_chinh", 9) || '')
       };
     }
   }
@@ -160,6 +191,7 @@ const LegoState = {
   isSecureLoaded: false,
   isDataLoaded: false,
   secureLoadAttempted: false,
+  config: null,
   tokenResolvers: [],
 
   // Pub/Sub Implementation
@@ -482,8 +514,32 @@ const LegoState = {
     });
   },
 
+  async loadConfig() {
+    try {
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const data = await res.json();
+        this.config = data;
+        console.log("Config loaded dynamic sheet IDs:", data);
+        return data;
+      }
+    } catch (e) {
+      console.error("Error fetching config:", e);
+    }
+    // Fallback default config
+    this.config = {
+      active_pool_system: 'Pool1',
+      sheet_id: '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0'
+    };
+    return this.config;
+  },
+
   // Sheets Loading Logic
   async loadData() {
+    if (!this.config) {
+      await this.loadConfig();
+    }
+
     const old = document.getElementById('_gs');
     if (old) old.remove();
     const oldAdmin = document.getElementById('_gs_admin');
@@ -538,19 +594,22 @@ const LegoState = {
       this.secureLoadAttempted = true;
       this.emit('dataLoading', 'secure');
 
-      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
-      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const POOL_SHEET_ID = this.config?.pool_sheet_id || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = this.config?.source_sheet_id || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+
+      const sourceTab = (this.config?.active_pool_system === 'Pool2') ? 'Custom' : 'Source';
+      const poolTab = (this.config?.active_pool_system === 'Pool2') ? 'Listings' : 'Pool';
 
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
 
         const [sourceRes, poolRes] = await Promise.all([
-          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:ZZ`, {
+          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/${sourceTab}!A1:ZZ`, {
             headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           }),
-          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:ZZ`, {
+          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/${poolTab}!A1:ZZ`, {
             headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           })
@@ -576,20 +635,56 @@ const LegoState = {
         const poolRows = poolDataJson.values || [];
         this.POOL_ROWS = poolRows;
 
+        const knownHeaderKeywords = ["System_ID", "System ID", "Ma_Khang_Ngo", "Ma_Khang_Ngo (ID)", "Ma Khang Ngô", "Noi_dung_chinh", "Nội dung chính", "Mo_ta_Public", "Mô tả Public", "images_metadata_json", "id", "tieu_de"];
+        const isHeaderRow = (row) => {
+          if (!row || row.length === 0) return false;
+          return row.some(cell => {
+            const val = String(cell || '').trim();
+            return knownHeaderKeywords.includes(val);
+          });
+        };
+
+        const isSourceHeader = isHeaderRow(sourceRows[0]);
+        const sourceHeaders = isSourceHeader ? sourceRows[0] : [];
+        this.sourceHeaders = sourceHeaders;
+
+        const isPoolHeader = isHeaderRow(poolRows[0]);
+        const poolHeaders = isPoolHeader ? poolRows[0] : [];
+        this.poolHeaders = poolHeaders;
+
+        const getSourceVal = (row, names, defaultIdx) => {
+          for (const name of names) {
+            const idx = sourceHeaders.indexOf(name);
+            if (idx >= 0) return row[idx] !== undefined ? row[idx] : '';
+          }
+          return defaultIdx >= 0 && row[defaultIdx] !== undefined ? row[defaultIdx] : '';
+        };
+
+        const getPoolVal = (row, names, defaultIdx) => {
+          for (const name of names) {
+            const idx = poolHeaders.indexOf(name);
+            if (idx >= 0) return row[idx] !== undefined ? row[idx] : '';
+          }
+          return defaultIdx >= 0 && row[defaultIdx] !== undefined ? row[defaultIdx] : '';
+        };
+
         const fullList = sourceRows
           .map((sr, index) => {
-            if (index === 0) return null; // Bỏ qua hàng tiêu đề
-            if (!sr[3] && !sr[4]) return null;
+            if (index === 0) return null; // Skip header row unconditionally
             
-            const targetRowNumber = index + 2;
-            const dt = parseFloat(sr[5]) || 0;
-            const gia = parseGia(sr[8]);
-            const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
-            
-            let rawQ = sr[9] || '';
+            const srId = getSourceVal(sr, ["Ma_Khang_Ngo", "id", "Ma_Khang_Ngo (ID)"], 3);
+            const srTitle = getSourceVal(sr, ["Tieu_De_Public", "tieu_de", "tieu_de_public"], 4);
+            if (!srId && !srTitle) return null;
+
+            const targetRowNumber = index + 1;
+            const srDt = parseFloatHelper(getSourceVal(sr, ["DT_Thuc_te", "dien_tich", "DT Thực tế"], 5)) || 0;
+            const gia = parseGia(getSourceVal(sr, ["Gia_Public", "gia", "Giá Public"], 8));
+            const giabq = (srDt > 0 && gia > 0) ? Math.round((gia * 1000) / srDt) : 0;
+
+            const rawQ = getSourceVal(sr, ["Quan", "quan", "Quận"], 9) || '';
             let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
             if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
-            
+
             const cleanQLower = cleanQ.toLowerCase();
             if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
             else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
@@ -602,32 +697,74 @@ const LegoState = {
             else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
             else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
             else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
-            const srSystemId = sr[37] || '';
-            const srId = sr[3] || '';
 
-            const poolRow = poolRows.find(pr => {
-              const prSystemId = pr[72] || '';
-              const prId = pr[55] || '';
-              return (srSystemId && prSystemId === srSystemId) || 
+            const srSystemId = getSourceVal(sr, ["System_ID", "System ID"], 37) || '';
+
+            const poolRow = poolRows.find((pr, prIndex) => {
+              if (prIndex === 0) return false;
+              const prSystemId = getPoolVal(pr, ["System_ID", "System ID"], 72) || '';
+              const prId = getPoolVal(pr, ["Ma_Khang_Ngo", "Ma Khang Ngô (ID)", "id", "tk_id"], 55) || '';
+              return (srSystemId && prSystemId === srSystemId) ||
                      (srId && prId === srId) ||
                      (srSystemId && prId === srSystemId);
             });
 
-            const poolImgs = [];
+            let poolImgs = [];
             if (poolRow) {
-              for (let c = 40; c <= 54; c++) {
-                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              const rawImagesTkStr = getPoolVal(poolRow, ["raw_images_tk_json"], -1);
+              const rawDriveImagesStr = getPoolVal(poolRow, ["raw_drive_images_json"], -1);
+              
+              let parsedImgs = [];
+              if (rawDriveImagesStr && rawDriveImagesStr.trim() && rawDriveImagesStr !== '[]') {
+                try { parsedImgs = JSON.parse(rawDriveImagesStr); } catch (e) {}
               }
-              for (let c = 83; c <= 92; c++) {
-                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              if ((!parsedImgs || parsedImgs.length === 0) && rawImagesTkStr && rawImagesTkStr.trim()) {
+                try { parsedImgs = JSON.parse(rawImagesTkStr); } catch (e) {}
+              }
+              
+              if (Array.isArray(parsedImgs)) {
+                poolImgs = parsedImgs.map(img => typeof img === 'object' && img ? img.url || img.r2_url : img).filter(Boolean);
+              }
+              
+              if (poolImgs.length === 0) {
+                // Fallback to legacy Pool1 flat columns
+                for (let c = 40; c <= 54; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
+                for (let c = 83; c <= 92; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
               }
             }
 
-            const sourcePublicImgs = [
-              sr[20], sr[21], sr[22], sr[23], sr[24],
-              sr[25], sr[26], sr[27], sr[28], sr[29],
-              sr[41], sr[42], sr[43], sr[44], sr[45]
-            ].filter(Boolean);
+            const sourcePublicImgs = [];
+            const imagesMetaStr = getSourceVal(sr, ["images_metadata_json"], -1);
+            if (imagesMetaStr && imagesMetaStr.trim() && imagesMetaStr !== '[]') {
+              try {
+                const meta = JSON.parse(imagesMetaStr);
+                if (Array.isArray(meta)) {
+                  meta.forEach(img => {
+                    const url = typeof img === 'object' && img ? img.url : img;
+                    if (url) sourcePublicImgs.push(url);
+                  });
+                }
+              } catch (e) {
+                console.warn("Lỗi parse images_metadata_json:", e);
+              }
+            }
+            if (sourcePublicImgs.length === 0) {
+              const legacyImgs = [
+                getSourceVal(sr, ["anh_1"], 20), getSourceVal(sr, ["anh_2"], 21),
+                getSourceVal(sr, ["anh_3"], 22), getSourceVal(sr, ["anh_4"], 23),
+                getSourceVal(sr, ["anh_5"], 24), getSourceVal(sr, ["anh_6"], 25),
+                getSourceVal(sr, ["anh_7"], 26), getSourceVal(sr, ["anh_8"], 27),
+                getSourceVal(sr, ["anh_9"], 28), getSourceVal(sr, ["anh_10"], 29),
+                getSourceVal(sr, ["anh_11"], 41), getSourceVal(sr, ["anh_12"], 42),
+                getSourceVal(sr, ["anh_13"], 43), getSourceVal(sr, ["anh_14"], 44),
+                getSourceVal(sr, ["anh_15"], 45)
+              ].filter(Boolean);
+              sourcePublicImgs.push(...legacyImgs);
+            }
 
             const allImgs = poolRow ? [
               ...poolImgs,
@@ -635,36 +772,52 @@ const LegoState = {
             ] : sourcePublicImgs;
             const uniqueImgs = [...new Set(allImgs)];
 
+            let customCover = getSourceVal(sr, ["Hình Mặt Tiền", "Hinh_mat_tien"], 38);
+            if (!customCover && imagesMetaStr) {
+              try {
+                const meta = JSON.parse(imagesMetaStr);
+                if (Array.isArray(meta)) {
+                  const coverObj = meta.find(img => img && img.role === 'cover') || meta.find(img => img && img.role === 'facade') || meta[0];
+                  if (coverObj) customCover = typeof coverObj === 'object' ? coverObj.url : coverObj;
+                }
+              } catch (e) {}
+            }
+
+            const srDuongTruocNha = getSourceVal(sr, ["Criteria_Duong_truoc_nha", "duong_truoc_nha", "Phân loại Hẻm"], 13);
+            const srRongHem = getSourceVal(sr, ["Custom_Rong_Hem", "do_rong_hem", "Đường trước nhà (m)"], 14);
+            const srTinhTrang = getSourceVal(sr, ["Trang_Thai_Giao_Dich", "Trang_Thai_KN", "tinh_trang_nha", "Trạng thái"], 15);
+
             const p = {
-              temp_id: index + 1,
-              id: sr[3] || '',
-              cu_phap: sr[1] || '',
-              t: sr[4] || '',
-              dt: sr[5] || '',
-              tang: sr[6] || '',
-              mat: sr[7] || '',
+              temp_id: index, // Since index 0 is skipped, the first data item gets temp_id 1
+              id: srId || '',
+              cu_phap: getSourceVal(sr, ["Cu_phap"], 1) || '',
+              t: srTitle || '',
+              dt: srDt || '',
+              tang: getSourceVal(sr, ["So_Tang", "so_tang", "Số Tầng"], 6) || '',
+              mat: getSourceVal(sr, ["Mat_Tien", "mat_tien", "Mặt Tiền"], 7) || '',
               gia: gia,
               q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
               ql: cleanQ.toUpperCase(),
-              phuong: sr[10] || '-',
-              loai_hinh: sr[11] || 'Hẻm',
-              huong: sr[12] || '-',
-              duong_truoc_nha: sr[13] || '-',
-              rong_hem: sr[14] || '-',
-              tinh_trang: sr[15] || '-',
-              danh_gia: sr[16] || '',
-              is_invisible: (sr[15] || '').toLowerCase().includes('ẩn') ||
-                            (sr[15] || '').toLowerCase().includes('đã bán') ||
-                            (sr[15] || '').toLowerCase().includes('invisible'),
-              ngu_tang_tret: sr[17] || '-',
-              chdv: sr[18] || '-',
+              phuong: getSourceVal(sr, ["Phuong", "phuong", "Phường"], 10) || '-',
+              loai_hinh: getSourceVal(sr, ["loai_hinh", "Loại Hợp đồng"], 11) || 'Hẻm',
+              huong: getSourceVal(sr, ["Huong", "huong_nha", "Hướng"], 12) || '-',
+              duong_truoc_nha: srDuongTruocNha || '-',
+              rong_hem: srRongHem || '-',
+              custom_rong_hem: getSourceVal(sr, ["Custom_Rong_Hem"], -1) || '',
+              tinh_trang: srTinhTrang || '-',
+              danh_gia: getSourceVal(sr, ["danh_gia", "Đánh giá (Admin)"], 16) || '',
+              is_invisible: String(srTinhTrang || '').toLowerCase().includes('ẩn') ||
+                            String(srTinhTrang || '').toLowerCase().includes('đã bán') ||
+                            String(srTinhTrang || '').toLowerCase().includes('invisible'),
+              ngu_tang_tret: getSourceVal(sr, ["Ngu_Tret", "ngu_tang_tret", "Ngủ trệt (Admin)"], 17) || '-',
+              chdv: getSourceVal(sr, ["CHDV", "chdv", "CHDV (Admin)"], 18) || '-',
               giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-              m: cleanConsecutiveNewlines(sr[19] || ''),
+              m: cleanConsecutiveNewlines(getSourceVal(sr, ["Mo_ta_Public", "mo_ta", "Mô tả Public"], 19) || ''),
               imgs: uniqueImgs,
-              system_id: sr[37] || (index + 1).toString(),
-              so_pn: sr[32] || '-',
-              img_mat_tien: sr[38] || '',
-              ten_duong: sr[34] || '',
+              system_id: srSystemId || index.toString(),
+              so_pn: getSourceVal(sr, ["bedrooms", "so_pn", "Số phòng ngủ"], 32) || '-',
+              img_mat_tien: customCover || '',
+              ten_duong: getSourceVal(sr, ["Ten_Duong", "ten_duong", "Đường"], 34) || '',
               
               original_row_data: sr,
               source_row_index: targetRowNumber
@@ -672,31 +825,31 @@ const LegoState = {
             p.dai_nha = getDaiNha(p);
 
             if (poolRow) {
-              p.raw_ten_dau_chu = poolRow[75] || '';
-              p.raw_dt_dau_chu = poolRow[74] || '';
-              p.raw_link_fb = poolRow[76] || '';
-              p.raw_noi_dung_chinh = String(poolRow[9] || '').replace(/\r\n|\r|\n/g, ' ');
-              p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
-              p.raw_sodo1 = poolRow[27] || '';
-              p.raw_sodo2 = poolRow[28] || '';
-              p.raw_sodo3 = poolRow[80] || '';
-              p.raw_sodo4 = poolRow[81] || '';
-              p.raw_sodo5 = poolRow[82] || '';
-              p.raw_so_nha = poolRow[6] || '';
-              p.raw_ten_duong = poolRow[5] || '';
-              p.raw_dt_thuc_te = poolRow[13] || '';
-              p.raw_dt_tren_so = poolRow[14] || '';
-              p.raw_gia_chao = poolRow[11] || poolRow[58] || '';
-              p.raw_so_tang = poolRow[15] || '';
-              p.raw_mat_tien = poolRow[16] || '';
-              p.raw_duong_truoc_nha = poolRow[60] || '';
-              p.raw_do_rong_hem = poolRow[61] || '';
-              p.raw_so_pn = poolRow[64] || '';
-              p.raw_so_wc = poolRow[65] || '';
-              p.raw_tieu_de_public = poolRow[56] || '';
-              p.raw_mo_ta_public = poolRow[57] || '';
-              p.raw_phan_loai = poolRow[7] || '';
-              p.pool_row_index = poolRows.indexOf(poolRow) + 2;
+              p.raw_ten_dau_chu = getPoolVal(poolRow, ["Ten_Dau_Chu", "Tên Đầu Chủ (Hợp đồng)", "Tên Đầu Chủ"], 75) || '';
+              p.raw_dt_dau_chu = getPoolVal(poolRow, ["Ten_Chu_Nha", "Tên Chủ Nhà"], 74) || '';
+              p.raw_link_fb = getPoolVal(poolRow, ["Link_Goc", "Link Gốc"], 76) || '';
+              p.raw_noi_dung_chinh = String(getPoolVal(poolRow, ["Noi_dung_chinh", "Nội dung chính"], 9) || '').replace(/\r\n|\r|\n/g, ' ');
+              p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(getPoolVal(poolRow, ["Mo_ta_chi_tiet", "Mô tả chi tiết"], 10) || '');
+              p.raw_sodo1 = getPoolVal(poolRow, ["Sơ đồ thửa đất 1", "sodo1"], 27) || '';
+              p.raw_sodo2 = getPoolVal(poolRow, ["Sơ đồ thửa đất 2", "sodo2"], 28) || '';
+              p.raw_sodo3 = getPoolVal(poolRow, ["Sơ đồ thửa đất 3", "sodo3"], 80) || '';
+              p.raw_sodo4 = getPoolVal(poolRow, ["Sơ đồ thửa đất 4", "sodo4"], 81) || '';
+              p.raw_sodo5 = getPoolVal(poolRow, ["Sơ đồ thửa đất 5", "sodo5"], 82) || '';
+              p.raw_so_nha = getPoolVal(poolRow, ["Ngõ/Số nhà", "Ngo_So_nha", "So_Nha"], 6) || '';
+              p.raw_ten_duong = getPoolVal(poolRow, ["streetName", "Đường", "Ten_Duong"], 5) || '';
+              p.raw_dt_thuc_te = getPoolVal(poolRow, ["DT_Thuc_te", "DT Thực tế"], 13) || '';
+              p.raw_dt_tren_so = getPoolVal(poolRow, ["DT_Tren_so", "DT Trên sổ"], 14) || '';
+              p.raw_gia_chao = getPoolVal(poolRow, ["Gia_chao", "Giá chào"], 11) || getPoolVal(poolRow, ["Gia_Public", "Giá Public"], 58) || '';
+              p.raw_so_tang = getPoolVal(poolRow, ["So_Tang", "Số Tầng"], 15) || '';
+              p.raw_mat_tien = getPoolVal(poolRow, ["Mat_Tien", "Mặt Tiền"], 16) || '';
+              p.raw_duong_truoc_nha = getPoolVal(poolRow, ["minimumRoadWidth", "Đường trước nhà (m)"], 60) || '';
+              p.raw_do_rong_hem = getPoolVal(poolRow, ["Custom_Rong_Hem", "do_rong_hem"], 61) || '';
+              p.raw_so_pn = getPoolVal(poolRow, ["bedrooms", "Số phòng ngủ"], 64) || '';
+              p.raw_so_wc = getPoolVal(poolRow, ["restrooms", "Số nhà vệ sinh"], 65) || '';
+              p.raw_tieu_de_public = getPoolVal(poolRow, ["Tieu_De_Public", "Tiêu đề Public"], 56) || '';
+              p.raw_mo_ta_public = getPoolVal(poolRow, ["Mo_ta_Public", "Mô tả Public"], 57) || '';
+              p.raw_phan_loai = getPoolVal(poolRow, ["Criteria_Loai_BDS", "Phân loại"], 7) || '';
+              p.pool_row_index = poolRows.indexOf(poolRow) + 1;
               p.pool_row_data = poolRow;
             } else {
               p.raw_ten_dau_chu = '';
@@ -754,7 +907,7 @@ const LegoState = {
 
   loadPublicDataFallback() {
     this.emit('dataLoading', 'public');
-    const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    const SHEET_ID = this.config?.sheet_id || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
 
     window.__gsCallback = (response) => {
       try {
