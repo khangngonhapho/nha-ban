@@ -7,8 +7,8 @@ Last updated: 2026-06-16
 - backlog: 2
 - draft: 3
 - in-progress: 1
-- done: 21
-- accepted: 81
+- done: 20
+- accepted: 82
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
@@ -16,7 +16,7 @@ Last updated: 2026-06-16
 | US-097 | Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng | accepted | S    | 2026-06-16 | `static/js/lego_helpers.js`, `docs/stories/_inbox/US-097_fix_quick_share_link_error.md` |
 | US-096 | Kết nối Web Vercel với hệ thống dữ liệu Pool2 (Epic Master)            | in-progress | M | 2026-06-16 | `static/js/lego_core.js`, `api/index.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-096_connect_vercel_web_to_pool2.md` |
 | US-096A | API Config & SQLite Schema Upgrade                                     | accepted | S    | 2026-06-16 | `pool_lego.py`, `manager.py`, `api/index.js`, `docs/stories/_inbox/US-096A_pool2_vercel_api_config.md` |
-| US-096B | Frontend Load & Detail View Admin                                     | done     | M    | 2026-06-16 | `static/js/lego_core.js`, `static/js/lego_detail_admin.js`, `index.html`, `docs/stories/_inbox/US-096B_pool2_vercel_frontend_load.md` |
+| US-096B | Frontend Load & Detail View Admin                                     | accepted | M    | 2026-06-16 | `static/js/lego_core.js`, `static/js/lego_detail_admin.js`, `index.html`, `docs/stories/_inbox/US-096B_pool2_vercel_frontend_load.md` |
 | US-096C | Curation Save - Text & Specs Curing                                    | draft    | M    | 2026-06-16 | `static/js/lego_detail_admin.js`, `manager.py`, `docs/stories/_inbox/US-096C_pool2_vercel_curation_save.md` |
 | US-096D | Image Curation - Selection, Roles, Ordering, & Rotation                | draft    | M    | 2026-06-16 | `static/js/lego_detail_admin.js`, `manager.py`, `docs/stories/_inbox/US-096D_pool2_vercel_image_curation.md` |
 | US-096E | Public Whitelist Publication                                           | draft    | S    | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-096E_pool2_vercel_public_publish.md` |
@@ -200,6 +200,7 @@ Last updated: 2026-06-16
 - [[US-013_replace_noidungchinh|US-013]]: Bỏ Nội dung chính, thêm DT Trên sổ & Hướng (done)
 
 ### Schema & Định nghĩa
+- [[US-096A_pool2_vercel_api_config|US-096A]]: API Config & SQLite Schema Upgrade (accepted)
 - [[US-089_pool2_data_system|US-089]]: [Decomposed] Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego (superseded)
 - [[US-089A_pool2_local_core|US-089A]]: Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ (accepted)
 - [[US-089B_pool2_cloud_publishing|US-089B]]: Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist (accepted)
@@ -211,6 +212,7 @@ Last updated: 2026-06-16
 ### UI / Frontend
 - [[US-097_fix_quick_share_link_error|US-097]]: Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng (accepted)
 - [[US-096_connect_vercel_web_to_pool2|US-096]]: Kết nối Web Vercel với hệ thống dữ liệu Pool2 (draft)
+- [[US-096B_pool2_vercel_frontend_load|US-096B]]: Frontend Load & Detail View Admin (accepted)
 - [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (accepted)
 - [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (accepted)
 - [[US-094A2_lego_frontend_core|US-094A2]]: Xây dựng Lego Core State Store & Tải dữ liệu (accepted)

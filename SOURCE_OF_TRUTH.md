@@ -337,7 +337,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
      - **Sửa lỗi ReferenceError**: Khắc phục triệt để lỗi ReferenceError khi click vào nút "⚡ Tạo Link Công Khai Nhanh" trong modal tạo link gửi khách (`#linkModal`), cho phép đóng modal, mã hóa danh sách System ID an toàn bằng Base64URL-safe (cho trường hợp nhiều căn) và sao chép đường dẫn đã tạo vào clipboard.
      - **Kiểm thử E2E Playwright**: Xây dựng kịch bản kiểm thử E2E mới `scratch/test_e2e_quick_share.py` để tự động hóa kiểm tra tính năng tạo link công khai nhanh trên giao diện Admin; chạy pass thành công **100% PASS** đồng thời bảo đảm bộ test E2E cũ (`test_e2e_modal.py`, `test_e2e_collections.py`) tiếp tục hoạt động ổn định không lỗi hồi quy.
 
-### 2026-06-16 (Nghiệm thu US-096B - Frontend Curation Load - TEST PASS)
+### 2026-06-16 (Nghiệm thu US-096B - Frontend Curation Load - ACCEPTED)
 *   **Mã User Story:** `US-096B`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
      - **Tải cấu hình Spreadsheet/Tab động**: Frontend gọi `/api/config` để lưu các Spreadsheet IDs động vào `LegoState.config`.
@@ -1172,7 +1172,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-097:** Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng ✅ Done 2026-06-16
 - [ ] **US-096:** Kết nối Web Vercel với hệ thống dữ liệu Pool2 (Epic Master)
 - [x] **US-096A:** API Config & SQLite Schema Upgrade ✅ Accepted 2026-06-16
-- [x] **US-096B:** Frontend Load & Detail View Admin ✅ Done 2026-06-16
+- [x] **US-096B:** Frontend Load & Detail View Admin ✅ Accepted 2026-06-16
 - [ ] **US-096C:** Curation Save - Text & Specs Curing
 - [ ] **US-096D:** Image Curation - Selection, Roles, Ordering, & Rotation
 - [ ] **US-096E:** Public Whitelist Publication
