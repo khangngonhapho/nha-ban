@@ -29,6 +29,7 @@
  ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
  
  ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
+*   **US-096 (Kết nối Web Vercel với hệ thống dữ liệu Pool2):** **[BACKLOG]** Thiết kế giải pháp nhận diện cấu hình active pool động và tải/lưu dữ liệu theo schema mới của Pool2.
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
 
 ### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX

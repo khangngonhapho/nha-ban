@@ -3,8 +3,8 @@
 Last updated: 2026-06-16
 
 ## Stats
-- Total: 107
-- backlog: 2
+- Total: 108
+- backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 20
@@ -13,6 +13,7 @@ Last updated: 2026-06-16
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-096 | Kết nối Web Vercel với hệ thống dữ liệu Pool2                          | draft    | M    | 2026-06-16 | `static/js/lego_core.js`, `api/index.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-096_connect_vercel_web_to_pool2.md` |
 | US-095 | Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 | accepted | S | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-095_fix_listings_table_undefined.md` |
 | US-094 | Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) | accepted | XL | 2026-06-15 | `docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md` |
 | US-094A1 | Tách biệt CSS ngoài ra global.css | accepted | S | 2026-06-15 | `static/css/global.css`, `index.html` |
@@ -202,6 +203,7 @@ Last updated: 2026-06-16
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-096_connect_vercel_web_to_pool2|US-096]]: Kết nối Web Vercel với hệ thống dữ liệu Pool2 (draft)
 - [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (accepted)
 - [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (accepted)
 - [[US-094A2_lego_frontend_core|US-094A2]]: Xây dựng Lego Core State Store & Tải dữ liệu (accepted)
