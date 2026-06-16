@@ -1,0 +1,79 @@
+0: id
+1: tieu_de
+2: DT dien_tich
+3: Tầng so_tang
+4: Ngang mat_tien
+5: Giá gia
+6: quan
+7: phuong
+8: loai_hinh
+9: huong_nha
+10: duong_truoc_nha
+11: do_rong_hem
+12: tinh_trang_nha
+13: danh_gia
+14: ngu_tang_tret
+15: chdv
+16: mo_ta
+17: anh_1
+18: anh_2
+19: anh_3
+20: anh_4
+21: anh_5
+22: anh_6
+23: anh_7
+24: anh_8
+25: anh_9
+26: anh_10
+27: Last updated
+28: Phường phuong_cu
+29: Phòng Ngủ so_pn
+30: WC so_wc
+31: Đường ten_duong
+32: Giờ đăng gio_dang
+33: Trạng Thái trang_thai
+34: System ID
+35: Hình Mặt Tiền hinh_mat_tien
+36: Tiêu đề BDS tieu_de_bds
+37: Đăng BDS dang_bds
+38: Ảnh 11 anh_11
+39: Ảnh 12 anh_12
+40: Ảnh 13 anh_13
+41: Ảnh 14 anh_14
+42: Ảnh 15 anh_15
+43: 
+44: 
+45: 
+46: 
+47: 
+48: 
+49: 
+50: 
+51: 
+52: 
+53: 
+54: 
+55: 
+56: 
+57: 
+58: 
+59: 
+60: 
+61: 
+62: 
+63: 
+64: 
+65: 
+66: 
+67: 
+68: 
+69: 
+70: 
+71: 
+72: 
+73: 
+74: 
+75: 
+76: 
+77: 
+78: 

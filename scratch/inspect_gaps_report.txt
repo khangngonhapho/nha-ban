@@ -1,0 +1,301 @@
+=== Inspecting lines 1 to 554 (lines 1 to 554) ===
+9: const ADMIN_PASSWORD = 'trang';
+10: const urlParams = new URLSearchParams(window.location.search);
+11: const isAdmin = urlParams.get('pwd') === ADMIN_PASSWORD;
+12: const shareToken = urlParams.get('s');
+15: let displayCustomerName = "";
+16: let trackingCustomerName = "";
+17: const customerToken = urlParams.get('c');
+20: let safeToken = customerToken.replace(/ /g, '+');
+25: const decoded = decodeURIComponent(escape(window.atob(safeToken)));
+26: const parts = decoded.split("|").map(p => p.trim());
+31: const customPageTitle = parts[2] || "";
+48: const TRACKING_URL = 'https://script.google.com/macros/s/AKfycbxsFXAQiX11LaSAslvefiv7ncWcHVgeyyd8Gi2pgRAneHhyZpE0AZKjP4rRrHD15oNN1g/exec';
+50: function trackAction(action, details = "") {
+67: const banner = document.getElementById('welcomeBanner');
+77: let sharedIds = null;
+78: const shareBitmask = urlParams.get('b'); // Format cũ: bitmask
+85: const decoded = atob(shareToken);
+86: const parsed = JSON.parse(decoded);
+94: const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+95: function decodeBitmask(encoded, allIds) {
+96: let bits = '';
+98: const val = B64.indexOf(ch);
+106: const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+107: const SDT = '0979841573';
+115: let DATA = [];
+116: const selDistricts = new Set();
+117: const selWards = new Set();
+118: const selDuongs = new Set();
+119: const selHuong = new Set();
+120: const selGia = new Set();
+121: const selDanhGia = new Set();
+122: let filterOpen = false;
+123: let currentSortType = 'newest'; // 'newest' or 'price'
+124: let currentSortDir = 'desc'; // 'desc' = high/newest first, 'asc' = low/oldest first
+125: let showFavOnly = false;
+126: let favs = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
+127: let collections = JSON.parse(localStorage.getItem('adminCollections') || '{}');
+128: let activeCollectionName = null; // null | 'favorites' | '[Tên BST tự tạo]'
+131: function tSel(set, val) {
+135: function syncTabUI(containerId, set) {
+137: const v = btn.getAttribute('data-val');
+141: function applyGia(arr) {
+144: const g = parseFloat(p.gia) || 0;
+155: function toggleSearchClearBtn() {
+156: const sInput = document.getElementById('searchInput');
+157: const clearBtn = document.getElementById('searchClear');
+162: function clearSearchInput() {
+163: const sInput = document.getElementById('searchInput');
+169: function onSearchInput() {
+176: function toggleSearchBar() {
+177: const bar = document.getElementById('searchBar');
+178: const btn = document.getElementById('searchToggleBtn');
+179: const input = document.getElementById('searchInput');
+181: const isOpen = bar.classList.toggle('open');
+191: function getFiltered() {
+192: let a = DATA;
+193: const sv = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+196: const idMatch = String(p.id).toLowerCase().includes(sv);
+197: const tMatch = p.t.toLowerCase().includes(sv);
+198: const dMatch = p.duong_truoc_nha.toLowerCase().includes(sv);
+199: const pMatch = p.phuong.toLowerCase().includes(sv);
+200: const qMatch = p.q.toLowerCase().includes(sv) ||
+213: const asv = (document.getElementById('adminSearchInput')?.value || '').trim().toLowerCase();
+216: const dauChuMatch = (p.raw_ten_dau_chu || '').toLowerCase().includes(asv);
+217: const ndMatch = (p.raw_noi_dung_chinh || '').toLowerCase().includes(asv);
+218: const mtMatch = (p.raw_mo_ta_chi_tiet || '').toLowerCase().includes(asv);
+219: const noteMatch = (p.note || '').toLowerCase().includes(asv);
+220: const cpMatch = (p.cu_phap || '').toLowerCase().includes(asv);
+221: const soNhaMatch = (p.raw_so_nha || '').toLowerCase().includes(asv);
+222: const duongMatch = (p.raw_ten_duong || '').toLowerCase().includes(asv);
+240: const colIds = new Set(collections[activeCollectionName]);
+246: const SELECTED_IDS = new Set();
+249: function cv(cell) { return cell ? (cell.v ?? cell.f ?? '') : ''; }
+252: function fixImgUrl(url, sz = 'w800') {
+258: const m1 = url.match(/drive\.google\.com\/file\/d\/([^/?\s]+)/);
+260: const m2 = url.match(/[?&]id=([^&\s]+)/);
+268: const old = document.getElementById('_gs');
+270: const oldAdmin = document.getElementById('_gs_admin');
+273: const token = localStorage.getItem('g_access_token');
+274: const expiry = localStorage.getItem('g_token_expiry');
+275: const now = Date.now();
+276: const isTokenValid = token && expiry && parseInt(expiry, 10) > now;
+280: const listContainer = document.getElementById('list');
+285: const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+286: const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+302: const sourceDataJson = await sourceRes.json();
+303: const poolDataJson = await poolRes.json();
+305: const sourceRows = sourceDataJson.values || [];
+306: const poolRows = poolDataJson.values || [];
+308: const fullList = sourceRows
+312: const targetRowNumber = index + 2;
+313: const dt = parseFloat(sr[5]) || 0;
+314: const gia = parseFloat(sr[8]) || 0;
+315: const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+317: let rawQ = sr[9] || '';
+318: let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+321: const cleanQLower = cleanQ.toLowerCase();
+347: const p = {
+383: const poolRow = poolRows.find(pr => {
+384: const prSystemId = pr[71] || '';
+385: const prId = pr[54] || '';
+445: function loadPublicDataFallback() {
+446: window.__gsCallback = function (response) {
+448: const rows = response.table.rows;
+449: const QUAN_FULL = { pn: 'Phú Nhuận', tb: 'Tân Bình', bt: 'Bình Thạnh', gv: 'Gò Vấp' };
+450: const fullList = rows
+453: const dt = parseFloat(cv(r.c[2])) || 0;
+454: const gia = parseFloat(cv(r.c[5])) || 0;
+455: const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+456: let rawQ = cv(r.c[6]);
+458: const titleLower = String(cv(r.c[1])).toLowerCase();
+459: const phuongLower = String(cv(r.c[7])).toLowerCase();
+465: let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+470: const cleanQLower = cleanQ.toLowerCase();
+535: const s = document.createElement('script');
+542: function finalizeData(fullList) {
+544: const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
+549: const house = fullList.find(h => h.system_id === tk);
+553: const idx = parseInt(tk, 10) - 1;
+
+=== Inspecting lines 565 to 719 (lines 565 to 719) ===
+588: function showError(msg) {
+589: const list = document.getElementById('list');
+599: function saveState() {
+601: const state = {
+615: function restoreState() {
+618: const saved = localStorage.getItem('adminState');
+620: const state = JSON.parse(saved);
+632: const sInput = document.getElementById('searchInput');
+645: const sc = document.getElementById('shareCount');
+652: function updateStats() {
+653: const arr = getFiltered();
+655: const gias = arr.map(p => parseFloat(p.gia)).filter(Boolean);
+656: const dts = arr.map(p => parseFloat(p.dt)).filter(Boolean);
+657: const tangs = arr.map(p => parseFloat(p.tang)).filter(Boolean);
+658: const quans = [...new Set(arr.map(p => p.q).filter(Boolean))].length;
+668: function toggleFilter() {
+671: const btn = document.getElementById('filterBtn');
+674: function closeFilter() {
+678: const btn = document.getElementById('filterBtn');
+679: const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size);
+684: function buildDistrictTabs() {
+685: const districtsInPool = [...new Set(DATA.map(p => p.q).filter(Boolean))];
+686: const dNamesFull = {
+694: const order = ['q3', 'q10', 'pn', 'tb', 'bt', 'gv', 'q1', 'q2', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q11', 'q12', 'tp', 'btan', 'td', 'hm', 'nb', 'bc', 'cc', 'cg'];
+697: let idxA = order.indexOf(a);
+698: let idxB = order.indexOf(b);
+704: const container = document.getElementById('districtTabs');
+709: const name = dNamesFull[d] || d.toUpperCase();
+715: function buildWardTabs() {
+716: const pool = selDistricts.size ? DATA.filter(p => selDistricts.has(p.q)) : DATA;
+717: const wards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-'))].sort();
+718: const wt = document.getElementById('wardTabs');
+719: const wl = document.getElementById('wardLbl');
+
+=== Inspecting lines 1431 to 1587 (lines 1431 to 1587) ===
+1431: const mapContainer = document.querySelector('.admin-map-container');
+1433: const fullAddress = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
+1437: const nImgs = p.imgs || [];
+1440: const sImgs = [];
+1451: function closeS() { document.getElementById('ov').classList.remove('open'); document.body.style.overflow = ''; }
+1452: function bgC(e) { if (e.target === document.getElementById('ov')) closeS(); }
+1455: function toggleSelect(id, el) {
+1469: const baseUrl = window.location.origin + window.location.pathname;
+1470: const count = SELECTED_IDS.size;
+1471: let shareUrl = '';
+1475: const singleId = [...SELECTED_IDS][0];
+1476: const house = DATA.find(p => String(p.id) === String(singleId));
+1477: const systemId = house ? house.system_id : singleId;
+1481: const allIds = DATA.map(p => String(p.id));
+1482: let bits = '';
+1486: let encoded = '';
+1503: const ta = document.createElement('textarea');
+1517: function promptGenerateLink() {
+1530: function executeGenerateLink() {
+1531: const cName = document.getElementById('linkCustName').value.trim();
+1537: const cTitle = document.getElementById('linkCustTitle').value.trim();
+1538: const cNote = document.getElementById('linkCustNote').value.trim();
+1541: let parts = [cName];
+1548: const compactCustomerString = parts.join('|');
+1552: const encodedName = window.btoa(unescape(encodeURIComponent(compactCustomerString))).replace(/=/g, '');
+1553: const baseUrl = window.location.origin + window.location.pathname;
+1554: const count = SELECTED_IDS.size;
+1555: let shareUrl = '';
+1559: const singleId = [...SELECTED_IDS][0];
+1560: const house = DATA.find(p => String(p.id) === String(singleId));
+1561: const systemId = house ? house.system_id : singleId;
+1565: const allIds = DATA.map(p => String(p.id));
+1566: let bits = '';
+1570: let encodedBitmask = '';
+
+=== Inspecting lines 1679 to 2160 (lines 1679 to 2160) ===
+1679: const velocity = deltaTime > 0 ? (deltaY / deltaTime) : 0;
+1700: let gTokenClient = null;
+1702: function saveGoogleClientId() {
+1703: const input = document.getElementById('gClientIdInput');
+1705: const val = input.value.trim();
+1715: function initGoogleAuth() {
+1716: let clientId = localStorage.getItem('gClientId');
+1721: const gClientIdInput = document.getElementById('gClientIdInput');
+1734: const token = tokenResponse.access_token;
+1735: const expiry = Date.now() + (tokenResponse.expires_in - 60) * 1000;
+1748: function handleGoogleLoginClick() {
+1749: const clientId = localStorage.getItem('gClientId');
+1754: const input = document.getElementById('gClientIdInput');
+1776: function showGoogleLoginButtonState(isLoggedIn) {
+1777: const gLoginBtn = document.getElementById('gLoginBtn');
+1778: const gLoginText = document.getElementById('gLoginText');
+1789: const clientId = localStorage.getItem('gClientId');
+1794: function autoLoginOrSilentRefresh() {
+1795: const token = localStorage.getItem('g_access_token');
+1796: const expiry = localStorage.getItem('g_token_expiry');
+1797: const now = Date.now();
+1804: const clientId = localStorage.getItem('gClientId');
+1807: const checkAndRefresh = () => {
+1826: function fetchFacadeImages(token) {
+1828: const url = `/api/get-facade-images`;
+1848: const values = data.values || [];
+1849: const facadeMap = {};
+1852: const id = row[0];
+1853: const img = row[row.length - 1] || '';
+1876: const soNha = document.getElementById('pullSoNha').value.trim();
+1877: const duong = document.getElementById('pullDuong').value.trim();
+1884: const token = localStorage.getItem('g_access_token');
+1885: const expiry = localStorage.getItem('g_token_expiry');
+1886: const now = Date.now();
+1893: const btn = document.getElementById('btnPullListing');
+1894: const spinner = document.getElementById('pullSpinner');
+1899: const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+1900: const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+1904: const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:BZ`;
+1905: const poolRes = await fetch(poolUrl, {
+1913: const poolData = await poolRes.json();
+1914: const rows = poolData.values || [];
+1917: const norm = (str) => {
+1928: const targetSoNha = norm(soNha);
+1929: const targetDuong = norm(duong);
+1932: const matchedRow = rows.find(r => norm(r[6]) === targetSoNha && norm(r[5]) === targetDuong);
+1942: const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
+1943: const sourceRes = await fetch(sourceUrl, {
+1951: const sourceData = await sourceRes.json();
+1952: const sourceRows = sourceData.values || [];
+1954: const systemId = matchedRow[71]; // Cột 71 (System ID)
+1959: const existIdx = sourceRows.findIndex(sr => sr[37] === systemId);
+1960: const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+1963: const finalImages = [];
+1964: const anhDuocChon = (matchedRow[61] || "").toString().replace(/\s/g, '');
+1965: const anhHemDuocChon = (matchedRow[62] || "").toString().replace(/\s/g, '');
+1974: const noithatIndices = anhDuocChon.split(',');
+1977: const firstNoithatIdx = parseInt(noithatIndices[0]);
+1979: const coverImgUrl = matchedRow[39 + firstNoithatIdx];
+1984: const maxHem = 2;
+1986: const hemIndices = anhHemDuocChon.split(',');
+1987: let addedHem = 0;
+1989: const hemIdx = parseInt(hemIndices[i]);
+1991: const hemUrl = matchedRow[29 + hemIdx];
+1999: const availableHem = [];
+2001: const hemUrl = matchedRow[29 + i];
+2005: const j = Math.floor(Math.random() * (i + 1));
+2006: const temp = availableHem[i];
+2017: const imgIdx = parseInt(noithatIndices[i]);
+2019: const imgUrl = matchedRow[39 + imgIdx];
+2027: const noiDungChinh = matchedRow[9] || "";
+2028: let cuPhap = noiDungChinh;
+2029: const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[A-Za-zÀ-ỹ0-9\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
+2035: const formatQuan = (q) => {
+2037: const qLower = q.toLowerCase();
+2046: const formatGia = (g) => {
+2048: const val = parseFloat(g.toString().replace(/,/g, ''));
+2054: const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
+2057: const publicRowData = [
+2102: const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AO${targetRowNumber}?valueInputOption=USER_ENTERED`;
+2103: const writeRes = await fetch(writeUrl, {
+2118: const poolRowNumber = rows.indexOf(matchedRow) + 2;
+2119: const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+2153: function updateShareUI() {
+2154: const shareCountEl = document.getElementById('shareCount');
+2157: const colFloatBtn = document.getElementById('colFloatBtn');
+
+=== Inspecting lines 2594 to 2718 (lines 2594 to 2718) ===
+2625: window.saveSourceChanges = async function(id) {
+2626: const p = DATA.find(x => String(x.id) === String(id));
+2632: const token = localStorage.getItem('g_access_token');
+2633: const expiry = localStorage.getItem('g_token_expiry');
+2634: const now = Date.now();
+2641: const saveBtn = document.getElementById('saveBtn');
+2648: const note = document.getElementById('editNote').value.trim();
+2649: const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
+2650: const huong = document.getElementById('editHuong').value;
+2651: const duong = document.getElementById('editDuong').value;
+2652: const danhGia = document.getElementById('editDanhGia').value;
+2653: const rongHem = document.getElementById('editRongHem').value.trim();
+2654: const soPn = document.getElementById('editSoPn').value.trim();
+2655: const soWc = document.getElementById('editSoWc').value.trim();
+2656: const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
+2657: const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
+2680: const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+2681: const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AO${p.source_row_index}?valueInputOption=USER_ENTERED`;
+2683: const writeRes = await fetch(writeUrl, {
+

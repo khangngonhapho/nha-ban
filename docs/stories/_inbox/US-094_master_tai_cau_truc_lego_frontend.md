@@ -1,7 +1,7 @@
 ---
 id: US-094
-status: in-progress
-date: 2026-06-15
+status: accepted
+date: 2026-06-16
 size: XL
 type: master_epic
 ---
@@ -64,7 +64,7 @@ flowchart TD
 | US-094B | Cô lập Module Bộ lọc & Tìm kiếm thông minh | M | accepted | [[US-094B_lego_frontend_filters\|US-094B]] |
 | US-094D | Cô lập Module Bộ sưu tập & Lead Capture | S | accepted | [[US-094D_lego_frontend_collections\|US-094D]] |
 | US-094F | Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin | L | accepted | [[US-094F_lego_frontend_curation\|US-094F]] |
-| US-094E | Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html | S | backlog | [[US-094E_lego_frontend_integration\|US-094E]] |
+| US-094E | Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html | S | accepted | [[US-094E_lego_frontend_integration\|US-094E]] |
 
 ## 📋 Overall Progress Checklist
 - [x] **US-094A1:** Tách biệt CSS ra file `global.css` (Chốt ngày: 2026-06-15)
@@ -74,7 +74,7 @@ flowchart TD
 - [x] **US-094B:** Cô lập bộ lọc và engine Smart Search, tích hợp Debounce (Chốt ngày: 2026-06-16)
 - [x] **US-094D:** Di cư logic Bộ sưu tập, nén Bitmask và capture form (Chốt ngày: 2026-06-16)
 - [x] **US-094F:** Di cư form curation Admin, upload local và R2 rotation (Chốt ngày: 2026-06-16)
-- [ ] **US-094E:** Tích hợp, sửa History State Back-button, cấu hình CDN cache headers (Chốt ngày: 2026-06-18)
+- [x] **US-094E:** Tích hợp, sửa History State Back-button, cấu hình CDN cache headers (Chốt ngày: 2026-06-16)
 
 ## 🔄 Change Requests (Yêu cầu Thay đổi cấp Epic)
 *(Chưa có thay đổi nào được ghi nhận)*

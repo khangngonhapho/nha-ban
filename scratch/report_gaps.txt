@@ -1,0 +1,116 @@
+Gap found before formatPhone: lines 1 to 554 (count: 554)
+  First line: 
+  Last line: return fullList[idx] ? String(fullList[idx].id) : null;
+----------------------------------------
+Gap found before trackAction: lines 565 to 719 (count: 155)
+  First line: } else {
+  Last line: const wl = document.getElementById('wardLbl');
+----------------------------------------
+Gap found before decodeBitmask: lines 735 to 769 (count: 35)
+  First line: dl.style.display = 'block';
+  Last line: updateFilterSummary(); updateStats(); applyFilter();
+----------------------------------------
+Gap found before autoFillCurationDetails: lines 786 to 801 (count: 16)
+  First line: q1: 'Q.1', q2: 'Q.2', q3: 'Q.3', q4: 'Q.4', q5: 'Q.5', q6: 'Q.6',
+  Last line: const anyActive = !!(selDistricts.size || selWards.size || selDuongs.size || selHuong.size || selGia.size || selDanhGia.size);
+----------------------------------------
+Gap found before cutTitleToDistrict: lines 892 to 898 (count: 7)
+  First line: updateStats(); applyFilter();
+  Last line: function render() {
+----------------------------------------
+Gap found before formatRawDescription: lines 909 to 910 (count: 2)
+  First line: }
+  Last line: });
+----------------------------------------
+Gap found before extractCommission: lines 924 to 924 (count: 1)
+  First line: c.dataset.pid = String(p.id);
+  Last line: c.dataset.pid = String(p.id);
+----------------------------------------
+Gap found before getDaiNha: lines 935 to 935 (count: 1)
+  First line: <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>
+  Last line: <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${SELECTED_IDS.has(String(p.id)) ? 'checked' : ''}>
+----------------------------------------
+Gap found before getMappedPoolData: lines 969 to 969 (count: 1)
+  First line: <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+  Last line: <button class="heart ${favs.has(String(p.id)) ? 'on' : ''}" onclick="th('${p.id}', this, event)">${favs.has(String(p.id)) ? '♥' : '♡'}</button>
+----------------------------------------
+Gap found before updateSwitcherCounts: lines 1069 to 1069 (count: 1)
+  First line: } else {
+  Last line: } else {
+----------------------------------------
+Gap found before saveState: lines 1230 to 1230 (count: 1)
+  First line: </div>
+  Last line: </div>
+----------------------------------------
+Gap found before restoreState: lines 1262 to 1262 (count: 1)
+  First line: <div class="accordion-header" onclick="toggleAdminAccordion(this)">
+  Last line: <div class="accordion-header" onclick="toggleAdminAccordion(this)">
+----------------------------------------
+Gap found before updateStats: lines 1337 to 1337 (count: 1)
+  First line: <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+  Last line: <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+----------------------------------------
+Gap found before updateSortButtonsUI: lines 1385 to 1385 (count: 1)
+  First line: <div class="gwrap" id="gw">
+  Last line: <div class="gwrap" id="gw">
+----------------------------------------
+Gap found before toggleSortNew: lines 1403 to 1403 (count: 1)
+  First line: <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>
+  Last line: <div class="ib"><div class="il">Tình trạng</div><div class="iv">${p.tinh_trang}</div></div>
+----------------------------------------
+Gap found before toggleSortPrice: lines 1415 to 1415 (count: 1)
+  First line: btnZalo.onclick = () => askZalo(p.id, p.t);
+  Last line: btnZalo.onclick = () => askZalo(p.id, p.t);
+----------------------------------------
+Gap found before isFacadeUrl: lines 1431 to 1587 (count: 157)
+  First line: const mapContainer = document.querySelector('.admin-map-container');
+  Last line: }
+----------------------------------------
+Gap found before stripVietnameseAccents: lines 1679 to 2160 (count: 482)
+  First line: const velocity = deltaTime > 0 ? (deltaY / deltaTime) : 0;
+  Last line: }
+----------------------------------------
+Gap found before normalizeImgUrl: lines 2251 to 2251 (count: 1)
+  First line: }
+  Last line: }
+----------------------------------------
+Gap found before downloadSingleImage: lines 2277 to 2277 (count: 1)
+  First line: const currentIds = collections[name];
+  Last line: const currentIds = collections[name];
+----------------------------------------
+Gap found before fetchAllBlobs: lines 2321 to 2321 (count: 1)
+  First line: 
+  Last line: 
+----------------------------------------
+Gap found before shareAllImagesToGallery: lines 2351 to 2351 (count: 1)
+  First line: }
+  Last line: }
+----------------------------------------
+Gap found before downloadSequential: lines 2383 to 2383 (count: 1)
+  First line: chip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:4px 10px; font-size:12px; font-weight:600; color:#fff; cursor:pointer; transition:background 0.2s;';
+  Last line: chip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:4px 10px; font-size:12px; font-weight:600; color:#fff; cursor:pointer; transition:background 0.2s;';
+----------------------------------------
+Gap found before clearDownloadProgress: lines 2401 to 2401 (count: 1)
+  First line: item.classList.remove('expanded');
+  Last line: item.classList.remove('expanded');
+----------------------------------------
+Gap found before carouselEditorGlobals: lines 2462 to 2465 (count: 4)
+  First line: justify-content: center;
+  Last line: pointer-events: none;
+----------------------------------------
+Gap found before columnIndexResolvers: lines 2480 to 2497 (count: 18)
+  First line: 
+  Last line: e.touches[0].clientX - e.touches[1].clientX,
+----------------------------------------
+Gap found before isPoolRowOnAir: lines 2511 to 2517 (count: 7)
+  First line: isDragging = false;
+  Last line: 
+----------------------------------------
+Gap found before showToast: lines 2523 to 2537 (count: 15)
+  First line: const img = overlay.querySelector('#zoomImg');
+  Last line: const box = document.getElementById('adminMotaGocBox');
+----------------------------------------
+Gap found at the end: lines 2594 to 2718 (count: 125)
+  First line: border-radius: 12px;
+  Last line: 
+----------------------------------------

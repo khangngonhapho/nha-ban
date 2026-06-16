@@ -200,7 +200,7 @@ Last updated: 2026-06-16
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
-- [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (in-progress)
+- [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (accepted)
 - [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (accepted)
 - [[US-094A2_lego_frontend_core|US-094A2]]: Xây dựng Lego Core State Store & Tải dữ liệu (accepted)
 - [[US-094A3_lego_frontend_render|US-094A3]]: Phân tách Engine Render danh sách Card BĐS (accepted)

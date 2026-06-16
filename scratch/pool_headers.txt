@@ -1,0 +1,93 @@
+0: Mã Hàng
+1: Hình Nhận Diện
+2: Tỉnh
+3: Quận
+4: Phường
+5: Đường
+6: Ngõ/Số nhà
+7: Phân loại
+8: Năm xây dựng
+9: Nội dung chính
+10: Mô tả chi tiết
+11: Giá chào
+12: Giá chốt
+13: DT Thực tế
+14: DT Trên sổ
+15: Số Tầng
+16: Mặt Tiền
+17: Hướng
+18: Tên Chủ Nhà
+19: Điện thoại 1
+20: Điện thoại 2
+21: Loại Hợp đồng
+22: Số ngày ký
+23: Ngày bắt đầu
+24: Ngày kết thúc
+25: Người ký
+26: Trạng thái
+27: Sơ đồ thửa đất 1
+28: Sơ đồ thửa đất 2
+29: Hình Mặt Tiền
+30: Hình Hẻm 1
+31: Hình Hẻm 2
+32: Hình Hẻm 3
+33: Hình Hẻm 4
+34: Hình Hẻm 5
+35: Hình Hẻm 6
+36: Hình Hẻm 7
+37: Hình Hẻm 8
+38: Hình Hẻm 9
+39: Hình Hẻm 10
+40: Ảnh 1
+41: Ảnh 2
+42: Ảnh 3
+43: Ảnh 4
+44: Ảnh 5
+45: Ảnh 6
+46: Ảnh 7
+47: Ảnh 8
+48: Ảnh 9
+49: Ảnh 10
+50: Ảnh 11
+51: Ảnh 12
+52: Ảnh 13
+53: Ảnh 14
+54: Ảnh 15
+55: Mã Khang Ngô (ID)
+56: Tiêu đề Public
+57: Mô tả Public
+58: Giá Public
+59: Phân loại Hẻm
+60: Đường trước nhà (m)
+61: Tình trạng nhà
+62: Ảnh Public (VD: 1,3,5)
+63: Ảnh Hẻm Public (VD: 1,2)
+64: Số phòng ngủ
+65: Số nhà vệ sinh
+66: Phường cũ (AI)
+67: Đánh giá (Admin)
+68: Ngủ trệt (Admin)
+69: CHDV (Admin)
+70: Duyệt Public
+71: Trạng thái Public
+72: System ID
+73: Link Gốc
+74: Điện thoại Đầu Chủ
+75: Tên Đầu Chủ (Hợp đồng)
+76: Điểm Facebook
+77: Last Crawl
+78: Last Sync
+79: Mã TK Mới
+80: Sơ đồ thửa đất 3
+81: Sơ đồ thửa đất 4
+82: Sơ đồ thửa đất 5
+83: Ảnh 16
+84: Ảnh 17
+85: Ảnh 18
+86: Ảnh 19
+87: Ảnh 20
+88: Ảnh 21
+89: Ảnh 22
+90: Ảnh 23
+91: Ảnh 24
+92: Ảnh 25
