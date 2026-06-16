@@ -5,9 +5,9 @@ Last updated: 2026-06-16
 ## Stats
 - Total: 114
 - backlog: 2
-- draft: 3
+- draft: 2
 - in-progress: 1
-- done: 20
+- done: 21
 - accepted: 82
 - superseded: 6
 
@@ -17,7 +17,7 @@ Last updated: 2026-06-16
 | US-096 | Kết nối Web Vercel với hệ thống dữ liệu Pool2 (Epic Master)            | in-progress | M | 2026-06-16 | `static/js/lego_core.js`, `api/index.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-096_connect_vercel_web_to_pool2.md` |
 | US-096A | API Config & SQLite Schema Upgrade                                     | accepted | S    | 2026-06-16 | `pool_lego.py`, `manager.py`, `api/index.js`, `docs/stories/_inbox/US-096A_pool2_vercel_api_config.md` |
 | US-096B | Frontend Load & Detail View Admin                                     | accepted | M    | 2026-06-16 | `static/js/lego_core.js`, `static/js/lego_detail_admin.js`, `index.html`, `docs/stories/_inbox/US-096B_pool2_vercel_frontend_load.md` |
-| US-096C | Curation Save - Text & Specs Curing                                    | draft    | M    | 2026-06-16 | `static/js/lego_detail_admin.js`, `manager.py`, `docs/stories/_inbox/US-096C_pool2_vercel_curation_save.md` |
+| US-096C | Curation Save - Text & Specs Curing                                    | done     | M    | 2026-06-16 | `static/js/lego_detail_admin_pool2.js`, `manager.py`, `pool_lego.py`, `docs/stories/_inbox/US-096C_pool2_vercel_curation_save.md` |
 | US-096D | Image Curation - Selection, Roles, Ordering, & Rotation                | draft    | M    | 2026-06-16 | `static/js/lego_detail_admin.js`, `manager.py`, `docs/stories/_inbox/US-096D_pool2_vercel_image_curation.md` |
 | US-096E | Public Whitelist Publication                                           | draft    | S    | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-096E_pool2_vercel_public_publish.md` |
 | US-095 | Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 | accepted | S | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-095_fix_listings_table_undefined.md` |

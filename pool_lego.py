@@ -860,6 +860,99 @@ def escape_tsv_field(val):
         return f'"{val_str}"'
     return val_str
 
+def sync_listing_to_pool2_sheets(tk_id, get_google_credentials, load_config, add_log_message, db_file=None):
+    """
+    Đồng bộ dữ liệu của một căn (đã chỉnh sửa/custom) từ bảng listings_custom_v2 lên tab Custom của Google Sheet Source 2.
+    """
+    if not db_file:
+        db_file = get_db_file()
+        
+    if not os.path.exists(db_file):
+        return {"status": "error", "message": "Database không tồn tại"}
+        
+    conn = sqlite3.connect(db_file, timeout=30.0)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # 1. Lấy System_ID của tk_id
+    raw_row = cursor.execute("SELECT System_ID FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
+    if not raw_row or not raw_row["System_ID"]:
+        conn.close()
+        return {"status": "error", "message": f"Mã căn {tk_id} không có System_ID hoặc không tồn tại trong SQLite"}
+        
+    system_id = raw_row["System_ID"]
+    
+    # 2. Đọc dữ liệu custom đầy đủ từ listings_custom_v2
+    custom_row = cursor.execute("SELECT * FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)).fetchone()
+    if not custom_row:
+        conn.close()
+        return {"status": "error", "message": f"Không tìm thấy bản ghi custom cho System ID {system_id} trong SQLite"}
+        
+    d_custom = dict(custom_row)
+    conn.close()
+    
+    # 3. Lấy cấu hình và credentials
+    creds = get_google_credentials()
+    cfg = load_config()
+    custom_sheet_id = cfg.get("pool2_custom_sheet_id")
+    
+    if not (creds and custom_sheet_id):
+        add_log_message("[❌ LỖI] Thiếu cấu hình Spreadsheet IDs Pool2 hoặc credentials")
+        return {"status": "error", "message": "Thiếu Spreadsheet IDs Pool2 hoặc credentials"}
+        
+    import gspread
+    client = gspread.authorize(creds)
+    
+    def get_col_letter(col_idx):
+        return gspread.utils.rowcol_to_a1(1, col_idx).replace("1", "")
+        
+    try:
+        add_log_message(f"[⚡] Đang đồng bộ tab Custom của File 2 Custom (ID: {custom_sheet_id})...")
+        custom_spreadsheet = client.open_by_key(custom_sheet_id)
+        try:
+            custom_sheet = custom_spreadsheet.worksheet("Custom")
+        except Exception:
+            custom_sheet = custom_spreadsheet.get_worksheet(0)
+            custom_sheet.update_title("Custom")
+            
+        custom_values = custom_sheet.get_all_values()
+        if not custom_values:
+            custom_headers = CUSTOM_HEADERS
+            custom_sheet.insert_row(custom_headers, index=1, value_input_option='USER_ENTERED')
+        else:
+            custom_headers = custom_values[0]
+            missing = [c for c in CUSTOM_HEADERS if c not in custom_headers]
+            if missing:
+                add_log_message(f"[🛠️ SCHEMA] Bổ sung cột cho File 2 Custom: {missing}")
+                custom_sheet.add_cols(len(missing))
+                for col in missing:
+                    custom_headers.append(col)
+                col_letter = get_col_letter(len(custom_headers))
+                custom_sheet.update(range_name=f"A1:{col_letter}1", values=[custom_headers], value_input_option='USER_ENTERED')
+                
+        custom_row_data = build_row_data(custom_headers, d_custom)
+        sys_col = custom_headers.index("System_ID") + 1 if "System_ID" in custom_headers else 1
+        
+        found_cust_idx = -1
+        col_vals = custom_sheet.col_values(sys_col)
+        col_cleaned = [str(x).strip() for x in col_vals]
+        if system_id.strip() in col_cleaned:
+            found_cust_idx = col_cleaned.index(system_id.strip()) + 1
+            
+        if found_cust_idx > 0:
+            col_letter = get_col_letter(len(custom_headers))
+            custom_sheet.update(range_name=f"A{found_cust_idx}:{col_letter}{found_cust_idx}", values=[custom_row_data], value_input_option='USER_ENTERED')
+            add_log_message(f"[✅] Đã cập nhật dòng {found_cust_idx} cho System ID {system_id} trên tab Custom")
+        else:
+            custom_sheet.append_row(custom_row_data, value_input_option='USER_ENTERED')
+            add_log_message(f"[✅] Đã chèn dòng mới cho System ID {system_id} trên tab Custom")
+            
+        return {"status": "success", "message": f"Đồng bộ thành công căn {tk_id} lên tab Custom"}
+        
+    except Exception as e_custom:
+        add_log_message(f"[❌ LỖI] Lỗi đồng bộ File 2 Custom: {str(e_custom)}")
+        return {"status": "error", "message": f"Lỗi đồng bộ File 2 Custom: {str(e_custom)}"}
+
 def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_message, db_file=None):
     """
     Đồng bộ dữ liệu chế độ Pool2 lên 3 file Google Sheets độc lập (Raw, Custom, Public).
@@ -1241,7 +1334,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
-                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
+                    listings_custom_v2.Custom_Rong_Hem AS custom_Custom_Rong_Hem
             FROM listings_v2 
             LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
             WHERE listings_v2.tk_id = ?

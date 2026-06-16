@@ -129,7 +129,8 @@ def normalize_listing_for_client(row):
         "Dien_thoai_Dau_Chu": ["Dien_thoai_Dau_Chu", "_i_n_tho_i___u_Ch_"],
         "Diem_Facebook": ["Diem_Facebook", "_i_m_Facebook"],
         "Ma_Hang": ["Ma_Hang", "M__H_ng"],
-        "Tinh": ["Tinh", "T_nh"]
+        "Tinh": ["Tinh", "T_nh"],
+        "Custom_Rong_Hem": ["Custom_Rong_Hem", "custom_Custom_Rong_Hem", "custom_rong_hem"]
     }
     
     for client_key, db_keys in mapping.items():
@@ -170,6 +171,7 @@ def normalize_listing_for_client(row):
         if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
         if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
         if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+        if d.get("custom_Custom_Rong_Hem"): d["Custom_Rong_Hem"] = d["custom_Custom_Rong_Hem"]
         
         # Nhóm Tiêu chí
         if d.get("custom_Criteria_Duong_truoc_nha"): d["Criteria_Duong_truoc_nha"] = d["custom_Criteria_Duong_truoc_nha"]
@@ -2350,7 +2352,8 @@ def get_listings():
                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
-                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
+                    listings_custom_v2.Custom_Rong_Hem AS custom_Custom_Rong_Hem
             FROM listings_v2 
             LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
         """
@@ -2473,7 +2476,8 @@ def handle_listing_detail(tk_id):
                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
-                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
+                    listings_custom_v2.Custom_Rong_Hem AS custom_Custom_Rong_Hem
             FROM listings_v2 
             LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
             WHERE listings_v2.tk_id = ?
@@ -2607,38 +2611,39 @@ def handle_listing_detail(tk_id):
                             "Tieu_De_Public": trim_tieu_de_bds(data.get("tieu_de_public")) or d_v2.get("Tieu_de_Public") or "",
                             "Mo_ta_Public": data.get("mo_ta_public") or d_v2.get("Mo_ta_Public") or "",
                             "Note_Noi_Bo": data.get("note_noi_bo") or d_v2.get("Note_Noi_Bo") or "",
-                            "Trang_Thai_Giao_Dich": data.get("tinh_trang_nha") or d_v2.get("Tinh_trang_nha") or "",
+                            "Trang_Thai_Giao_Dich": data.get("trang_thai_giao_dich") or data.get("tinh_trang_nha") or d_v2.get("Tinh_trang_nha") or "",
                             "Ngu_Tret": data.get("ngu_tret") or d_v2.get("Ngu_tret_Admin") or "",
                             "CHDV": data.get("chdv") or d_v2.get("CHDV_Admin") or "",
-                            "Trang_Thai_KN": data.get("danh_gia") or d_v2.get("Danh_gia_Admin") or "",
+                            "Trang_Thai_KN": data.get("trang_thai_kn") or data.get("danh_gia") or d_v2.get("Danh_gia_Admin") or "",
                             "images_metadata_json": json.dumps(images_metadata),
-                            "Dia_Chi_That": d_v2.get("Dia_Chi_That") or "",
-                            "So_Nha": data.get("ngo_so_nha") or d_v2.get("Ngo_So_nha") or "",
-                            "Ten_Duong": data.get("duong") or d_v2.get("Duong") or "",
+                            "Dia_Chi_That": data.get("dia_chi_that") or d_v2.get("Dia_Chi_That") or "",
+                            "So_Nha": data.get("ngo_so_nha") or data.get("so_nha") or d_v2.get("Ngo_So_nha") or "",
+                            "Ten_Duong": data.get("duong") or data.get("ten_duong") or d_v2.get("Duong") or "",
                             "Quan": data.get("quan") or d_v2.get("Quan") or "",
                             "Phuong": data.get("phuong") or d_v2.get("Phuong") or "",
-                            "Duong": data.get("duong") or d_v2.get("Duong") or "",
-                            "Ngo_So_nha": data.get("ngo_so_nha") or d_v2.get("Ngo_So_nha") or "",
-                            "bedrooms": data.get("so_phong_ngu") or d_v2.get("bedrooms") or d_v2.get("So_phong_ngu") or "",
-                            "restrooms": data.get("so_nha_ve_sinh") or d_v2.get("restrooms") or d_v2.get("So_nha_ve_sinh") or "",
-                            "minimumRoadWidth": data.get("duong_truoc_nha") or d_v2.get("minimumRoadWidth") or d_v2.get("Duong_truoc_nha_m") or "",
+                            "Duong": data.get("duong") or data.get("ten_duong") or d_v2.get("Duong") or "",
+                            "Ngo_So_nha": data.get("ngo_so_nha") or data.get("so_nha") or d_v2.get("Ngo_So_nha") or "",
+                            "bedrooms": data.get("bedrooms") or data.get("so_phong_ngu") or d_v2.get("bedrooms") or d_v2.get("So_phong_ngu") or "",
+                            "restrooms": data.get("restrooms") or data.get("so_nha_ve_sinh") or d_v2.get("restrooms") or d_v2.get("So_nha_ve_sinh") or "",
+                            "minimumRoadWidth": data.get("duong_truoc_nha") or data.get("minimumRoadWidth") or d_v2.get("Duong_truoc_nha_m") or "",
                             "Noi_dung_chinh": d_v2.get("Noi_dung_chinh") or "",
                             "Mo_ta_chi_tiet": d_v2.get("Mo_ta_chi_tiet") or "",
-                            "Gia_chao": d_v2.get("Gia_chao") or "",
-                            "DT_Thuc_te": d_v2.get("DT_Thuc_te") or "",
-                            "DT_Tren_so": d_v2.get("DT_Tren_so") or "",
-                            "So_Tang": d_v2.get("So_Tang") or "",
+                            "Gia_chao": data.get("gia_chao") or d_v2.get("Gia_chao") or "",
+                            "DT_Thuc_te": data.get("dt_thuc_te") or d_v2.get("DT_Thuc_te") or "",
+                            "DT_Tren_so": data.get("dt_tren_so") or d_v2.get("DT_Tren_so") or "",
+                            "So_Tang": data.get("so_tang") or d_v2.get("So_Tang") or "",
                             "Mat_Tien": data.get("mat_tien") or d_v2.get("Mat_Tien") or "",
                             "Chieu_dai": data.get("chieu_dai") or d_v2.get("Chieu_dai") or "",
-                            "Huong": d_v2.get("Huong") or "",
-                            "Criteria_Duong_truoc_nha": d_v2.get("Criteria_Duong_truoc_nha") or "",
-                            "Criteria_Noi_that": d_v2.get("Criteria_Noi_that") or "",
-                            "Criteria_Thang_may": d_v2.get("Criteria_Thang_may") or "",
-                            "Criteria_Loai_ngo": d_v2.get("Criteria_Loai_ngo") or "",
-                            "Criteria_Khoang_cach_bai_do_xe": d_v2.get("Criteria_Khoang_cach_bai_do_xe") or "",
-                            "Criteria_Kinh_doanh_Dong_tien": d_v2.get("Criteria_Kinh_doanh_Dong_tien") or "",
-                            "Criteria_Huong_nha": d_v2.get("Criteria_Huong_nha") or "",
-                            "Criteria_Khoang_cach_duong_oto": d_v2.get("Criteria_Khoang_cach_duong_oto") or "",
+                            "Huong": data.get("huong") or d_v2.get("Huong") or "",
+                            "Criteria_Duong_truoc_nha": data.get("criteria_duong_truoc_nha") or data.get("phan_loai_hem") or d_v2.get("Criteria_Duong_truoc_nha") or "",
+                            "Criteria_Noi_that": data.get("criteria_noi_that") or d_v2.get("Criteria_Noi_that") or "",
+                            "Criteria_Thang_may": data.get("criteria_thang_may") or d_v2.get("Criteria_Thang_may") or "",
+                            "Criteria_Loai_ngo": data.get("criteria_loai_ngo") or d_v2.get("Criteria_Loai_ngo") or "",
+                            "Criteria_Khoang_cach_bai_do_xe": data.get("criteria_khoang_cach_bai_do_xe") or d_v2.get("Criteria_Khoang_cach_bai_do_xe") or "",
+                            "Criteria_Kinh_doanh_Dong_tien": data.get("criteria_kinh_doanh_dong_tien") or d_v2.get("Criteria_Kinh_doanh_Dong_tien") or "",
+                            "Criteria_Huong_nha": data.get("criteria_huong_nha") or d_v2.get("Criteria_Huong_nha") or "",
+                            "Criteria_Khoang_cach_duong_oto": data.get("criteria_khoang_cach_duong_oto") or d_v2.get("Criteria_Khoang_cach_duong_oto") or "",
+                            "Custom_Rong_Hem": data.get("custom_rong_hem") or ""
                         }
                         
                         # Lấy danh sách cột thực tế của listings_custom_v2 đề phòng lệch schema
@@ -2675,6 +2680,12 @@ def handle_listing_detail(tk_id):
         
         conn.commit()
         conn.close()
+        
+        if LISTINGS_TABLE == "listings_v2":
+            try:
+                execute_sync_listing_to_pool2_sheets(tk_id)
+            except Exception as e_sheet:
+                add_log_message(f"[⚠️ WARNING] Lỗi khi đồng bộ Google Sheet tab Custom: {str(e_sheet)}")
         
         return jsonify({"status": "success", "message": f"Đã lưu biên tập cục bộ cho căn {tk_id}"})
     else:
@@ -2949,7 +2960,8 @@ def recrawl_single_listing(tk_id):
                            listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
                            listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
                            listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
-                           listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                           listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
+                    listings_custom_v2.Custom_Rong_Hem AS custom_Custom_Rong_Hem
                     FROM listings_v2 
                     LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
                     WHERE listings_v2.tk_id = ?
@@ -3165,7 +3177,8 @@ def recrawl_single_listing(tk_id):
                        listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
                        listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
                        listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
-                       listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                       listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
+                    listings_custom_v2.Custom_Rong_Hem AS custom_Custom_Rong_Hem
                 FROM listings_v2 
                 LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
                 WHERE listings_v2.tk_id = ?
@@ -3278,6 +3291,15 @@ generate_ai_curation_for_listing = generate_ai_curation_for_listing_backend
 
 def execute_publish_listing(tk_id):
     return pool_lego.publish_listing(
+        tk_id,
+        get_google_credentials,
+        load_config,
+        add_log_message,
+        db_file=DB_FILE
+    )
+
+def execute_sync_listing_to_pool2_sheets(tk_id):
+    return pool_lego.sync_listing_to_pool2_sheets(
         tk_id,
         get_google_credentials,
         load_config,

@@ -178,6 +178,36 @@ window.sha256 = sha256;
 window.generateAdminTitleFromNộiDungChinh = generateAdminTitleFromNộiDungChinh;
 window.formatPhone = formatPhone;
 
+function loadAdminDetailModule() {
+  if (document.getElementById('lego_detail_admin_script')) {
+    return;
+  }
+  let vToken = '';
+  const scripts = document.getElementsByTagName('script');
+  for (let i = 0; i < scripts.length; i++) {
+    const src = scripts[i].src || '';
+    if (src.includes('lego_core.js')) {
+      const match = src.match(/[?&]v=([^&#]+)/);
+      if (match) {
+        vToken = '?v=' + match[1];
+      }
+      break;
+    }
+  }
+  const script = document.createElement('script');
+  script.id = 'lego_detail_admin_script';
+  const isPool2 = LegoState.config && LegoState.config.active_pool_system === 'Pool2';
+  if (isPool2) {
+    script.src = '/static/js/lego_detail_admin_pool2.js' + vToken;
+  } else {
+    script.src = '/static/js/lego_detail_admin.js' + vToken;
+  }
+  document.head.appendChild(script);
+  console.log("Dynamically loaded admin detail script:", script.src);
+}
+
+window.loadAdminDetailModule = loadAdminDetailModule;
+
 // Core State Store & Event System definition
 const listeners = {};
 
@@ -539,6 +569,7 @@ const LegoState = {
     if (!this.config) {
       await this.loadConfig();
     }
+    loadAdminDetailModule();
 
     const old = document.getElementById('_gs');
     if (old) old.remove();
