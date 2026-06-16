@@ -273,11 +273,22 @@ def main():
             
             # Verify colFloatBtn is displayed (it is inside #dialActions but might be closed)
             admin_page.wait_for_selector("#colFloatBtn", timeout=5000)
+
+            # Capture speed dial closed state screenshot
+            closed_screenshot = os.path.join(artifacts_dir, "admin_speed_dial_closed.png")
+            admin_page.screenshot(path=closed_screenshot)
+            print(f"Captured screenshot of closed speed dial: {closed_screenshot}")
             
             # Click gear icon to open speed dial actions
             print("Opening speed dial menu...")
             admin_page.locator("#dialMainBtn").click()
             admin_page.wait_for_selector("#dialActions.open", timeout=5000)
+            admin_page.wait_for_timeout(350) # wait for animation transition to finish
+
+            # Capture speed dial open state screenshot
+            open_screenshot = os.path.join(artifacts_dir, "admin_speed_dial_open.png")
+            admin_page.screenshot(path=open_screenshot)
+            print(f"Captured screenshot of open speed dial: {open_screenshot}")
             
             # Click float save button
             print("Clicking float save button...")

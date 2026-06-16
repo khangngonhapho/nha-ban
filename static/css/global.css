@@ -2718,6 +2718,9 @@
     
     /* Actions list container */
     .dial-actions {
+      position: absolute;
+      bottom: 68px;
+      right: 4px;
       display: flex;
       flex-direction: column-reverse;
       align-items: center;
