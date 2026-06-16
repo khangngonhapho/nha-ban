@@ -1131,6 +1131,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [/] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ⏳ In Progress 2026-06-16
 - [x] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) ✅ Done 2026-06-16
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
 - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15

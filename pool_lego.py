@@ -1204,6 +1204,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
     conn = sqlite3.connect(db_file, timeout=30.0)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
+    listings_table = "listings_v2" if is_pool2 else "listings"
     if is_pool2:
         sql = """
             SELECT listings_v2.*, 
