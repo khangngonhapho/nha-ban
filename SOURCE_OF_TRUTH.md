@@ -323,6 +323,13 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-16 (Nghiệm thu US-097 - Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng - TEST PASS)
+*   **Mã User Story:** `US-097`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Phục hồi hàm executeGenerateQuickLink**: Khôi phục hàm `executeGenerateQuickLink` từ file nháp trích xuất và định nghĩa nó trên đối tượng toàn cục `window.executeGenerateQuickLink` trong tệp `static/js/lego_helpers.js`.
+     - **Sửa lỗi ReferenceError**: Khắc phục triệt để lỗi ReferenceError khi click vào nút "⚡ Tạo Link Công Khai Nhanh" trong modal tạo link gửi khách (`#linkModal`), cho phép đóng modal, mã hóa danh sách System ID an toàn bằng Base64URL-safe (cho trường hợp nhiều căn) và sao chép đường dẫn đã tạo vào clipboard.
+     - **Kiểm thử E2E Playwright**: Xây dựng kịch bản kiểm thử E2E mới `scratch/test_e2e_quick_share.py` để tự động hóa kiểm tra tính năng tạo link công khai nhanh trên giao diện Admin; chạy pass thành công **100% PASS** đồng thời bảo đảm bộ test E2E cũ (`test_e2e_modal.py`, `test_e2e_collections.py`) tiếp tục hoạt động ổn định không lỗi hồi quy.
+
 ### 2026-06-16 (Nghiệm thu US-095 - Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 - TEST PASS)
 *   **Mã User Story:** `US-095`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1138,6 +1145,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-097:** Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng ✅ Done 2026-06-16
 - [x] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ✅ Done 2026-06-16
 - [x] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) ✅ Done 2026-06-16
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15

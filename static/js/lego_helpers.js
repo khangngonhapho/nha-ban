@@ -1619,3 +1619,50 @@ window.executeGenerateLink = function() {
     alert('Có lỗi xảy ra: ' + e.message);
   }
 };
+
+window.executeGenerateQuickLink = function() {
+  if (SELECTED_IDS.size === 0) {
+    alert('Vui lòng chọn ít nhất 1 căn nhà để tạo link!');
+    return;
+  }
+  try {
+    const baseUrl = window.location.origin + window.location.pathname;
+    const count = SELECTED_IDS.size;
+    let shareUrl = '';
+
+    if (count === 1) {
+      const singleId = [...SELECTED_IDS][0];
+      const house = DATA.find(p => String(p.id) === String(singleId));
+      const systemId = house ? house.system_id : singleId;
+      shareUrl = `${baseUrl}?s=${systemId}`;
+    } else {
+      // Mã hoá trực tiếp danh sách System ID bằng Base64URL safe để chống lệch căn khi thay đổi bộ lọc hoặc thêm tin mới
+      const sysIdList = Array.from(SELECTED_IDS).map(id => {
+        const house = DATA.find(p => String(p.id) === String(id));
+        return house && house.system_id ? house.system_id : id;
+      }).join(',');
+      const encodedIds = window.btoa(sysIdList)
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
+      shareUrl = `${baseUrl}?b=${encodedIds}`;
+    }
+
+    // Đóng Modal
+    document.getElementById('linkModal').classList.remove('open');
+
+    // Sao chép link vào clipboard
+    const ta = document.createElement('textarea');
+    ta.value = shareUrl;
+    ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    
+    alert(`Đã copy link Công Khai Nhanh thành công!\n(Gồm ${count} căn)\n\nKhách mở link này sẽ tự nhập Tên và Số điện thoại để mở khóa xem nhà.`);
+  } catch (e) {
+    alert('Có lỗi xảy ra: ' + e.message);
+  }
+};
+

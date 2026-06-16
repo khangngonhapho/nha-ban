@@ -7,7 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
-*   **US-097 (Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng):** **[DRAFT - 2026-06-16]** Tạo User Story khôi phục hàm `executeGenerateQuickLink` bị thiếu sau đợt tái cấu trúc Lego Frontend.
+*   **US-097 (Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng):** **[ACCEPTED - 2026-06-16]** Đã khôi phục hàm `executeGenerateQuickLink` trong tệp `static/js/lego_helpers.js`, sửa lỗi ReferenceError khi tạo link công khai nhanh. Đã chạy thử nghiệm Playwright E2E tự động thành công 100% không lỗi hồi quy.
 *   **US-094E (Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html):** **[ACCEPTED - 2026-06-16]** Tách biệt logic mock và các hàm helper ra các file static [lego_mock.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_mock.js) và [lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js). Rút gọn [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) thành công xuống dưới 170 dòng script và thiết lập cache-busting version query parameter `?v=202606161110`. Khắc phục triệt để các lỗi hiển thị nút chọn BST (`#colFloatBtn`), nút xóa BST (`.delete-col-btn-float`), lỗi phân tích tham số chia sẻ (`s`), lỗi khởi tạo Admin Speed Dial, và lỗi layout trôi nổi của Speed Dial trên Mobile (neo nút chính ⚡/✕ cố định góc dưới bên phải viewport và đưa các menu hành động về absolute position tương đối). Toàn bộ 5 kịch bản E2E Playwright (`test_e2e_curation.py`, `test_e2e_filters.py`, `test_e2e_collections.py`, `test_e2e_modal.py`, `test_e2e_curator.py`) chạy thành công **100% PASS** trên cả hai viewports Desktop & Mobile.
 *   **US-094F (Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin):** **[ACCEPTED - 2026-06-16]** Tạo mới module `static/js/lego_detail_admin.js` di chuyển toàn bộ logic xem chi tiết của Admin, form curation, tabs quản lý, và Google Sheets API syncing (`saveSourceChanges`, `saveNewListingFromPool`). Tái cấu trúc `index.html` rút gọn hơn 1200 dòng JS/HTML thô, nạp script mới ở `<head>` và export các alias toàn cục trên `window` cho inline templates. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_curation.py` trên cả Desktop & Mobile.
 *   **US-094D (Cô lập Module Bộ sưu tập & Lead Capture):** **[ACCEPTED - 2026-06-15]** Tạo mới hai module `static/js/lego_collections.js` (quản lý yêu thích, danh mục bộ sưu tập và chọn hàng loạt) và `static/js/lego_lead_capture.js` (form đăng ký thông tin khách hàng, kiểm tra lead capture modal và liên kết booking/phản hồi Zalo). Làm sạch hơn 700 dòng code trong `index.html`, lưu/nạp trạng thái toàn cục tương thích ngược 100%. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_collections.py`.
@@ -30,7 +30,6 @@
  ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
  
  ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
-*   **US-097 (Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng):** **[BACKLOG]** Khôi phục và gán window.executeGenerateQuickLink trong lego_helpers.js để xử lý click nút tạo link.
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
 
 ### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX
@@ -40,9 +39,12 @@
  
  ## 3. Các file bị tác động trong phiên vừa qua
  
-*   [docs/stories/_inbox/US-097_fix_quick_share_link_error.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-097_fix_quick_share_link_error.md) — US-097: Khởi tạo User Story mô tả và đề xuất phương án sửa lỗi.
+*   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-097: Khôi phục và định nghĩa lại hàm `executeGenerateQuickLink`.
+*   [scratch/test_e2e_quick_share.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_quick_share.py) — US-097: Tạo test E2E kiểm chứng tính năng tạo link chia sẻ công khai nhanh.
+*   [docs/stories/_inbox/US-097_fix_quick_share_link_error.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-097_fix_quick_share_link_error.md) — US-097: Tạo tài liệu đặc tả User Story.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật bảng mục lục user stories.
-*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật kế hoạch bàn giao phiên kế tiếp.
+*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật trạng thái và kế hoạch bàn giao.
+*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Ghi nhận lịch sử thay đổi.
  
  ---
 *Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-16 (US-095 completed & E2E tests 100% passed).*
