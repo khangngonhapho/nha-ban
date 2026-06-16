@@ -108,9 +108,16 @@ AI cập nhật Change Log + Backlog trong file này
 
 ### Quy trình deploy chuẩn (Tự động hoá 100%):
 
+> ⚠️ **LUẬT THÉP VỀ TỰ ĐỘNG HOÁ CACHE-BUSTING VÀ E2E:**
+> Dự án sử dụng hệ thống git hooks tự động (`.git/hooks/pre-commit`):
+> 1. Mỗi khi chạy `git commit`, Git sẽ tự động chạy toàn bộ các bài kiểm thử E2E Playwright (`python verify_build.py`).
+> 2. Nếu bất kỳ bài kiểm thử nào thất bại, Git sẽ tự động **chặn commit** để bảo vệ chất lượng.
+> 3. Nếu toàn bộ bài test vượt qua thành công, Git mới tự động chạy `python scratch/bump_version.py` để tăng mã số phiên bản `?v=...` trong `index.html` và tự động `git add index.html` vào commit đó.
+> Điều này đảm bảo phiên bản mới trên Vercel luôn có số cache-busting mới nhất và chỉ được sinh ra khi toàn bộ hệ thống đã hoạt động chính xác.
+
 ```powershell
-# Bắt buộc tự chạy sau mỗi task code (không cần hỏi ý kiến user):
-git add index.html
+# Quy trình commit và push thông thường (các bước E2E và bump version đã được tự động hóa ngầm):
+git add .
 git commit -m "feat/fix/chore: mô tả thay đổi"
 git push origin main
 ```
