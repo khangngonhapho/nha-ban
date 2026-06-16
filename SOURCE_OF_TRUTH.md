@@ -326,11 +326,12 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ### 2026-06-16 (Nghiệm thu US-094E - Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html - TEST PASS)
 *   **Mã User Story:** `US-094E`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
-    - **Tách tệp Static Helpers & Mock**: Di chuyển logic mock fetch interceptor và các hàm helper tiện ích từ `index.html` sang `static/js/lego_mock.js` và `static/js/lego_helpers.js`.
-    - **Làm sạch index.html**: Rút gọn tối đa block inline script trong `index.html` xuống dưới 170 dòng sạch sẽ. Thiết lập query parameter cache-busting `?v=202606161110` cho toàn bộ tài nguyên static trong head.
-    - **Sửa lỗi Nghiệp vụ & Khởi tạo**: Khắc phục lỗi reset default activeMode của Admin thành `'pool'`, chèn tự động `#adminSpeedDial` và cơ chế click-outside.
-    - **Sửa lỗi UI Bộ sưu tập & Speed Dial**: Khôi phục nút lưu bộ sưu tập `#colFloatBtn` và nút xóa bộ sưu tập `.delete-col-btn-float` trong Speed Dial actions, sửa lỗi các hàm toggle không gọi cập nhật UI.
-    - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho toàn bộ 5 kịch bản kiểm thử E2E (`test_e2e_curation.py`, `test_e2e_filters.py`, `test_e2e_collections.py`, `test_e2e_modal.py`, `test_e2e_curator.py`) trên cả Desktop & Mobile.
+     - **Tách tệp Static Helpers & Mock**: Di chuyển logic mock fetch interceptor và các hàm helper tiện ích từ `index.html` sang `static/js/lego_mock.js` và `static/js/lego_helpers.js`.
+     - **Làm sạch index.html**: Rút gọn tối đa block inline script trong `index.html` xuống dưới 170 dòng sạch sẽ. Thiết lập query parameter cache-busting `?v=202606161110` cho toàn bộ tài nguyên static trong head (kèm theo link css để tránh cache trình duyệt).
+     - **Sửa lỗi Nghiệp vụ & Khởi tạo**: Khắc phục lỗi reset default activeMode của Admin thành `'pool'`, chèn tự động `#adminSpeedDial` và cơ chế click-outside.
+     - **Sửa lỗi UI Bộ sưu tập & Speed Dial**: Khôi phục nút lưu bộ sưu tập `#colFloatBtn` và nút xóa bộ sưu tập `.delete-col-btn-float` trong Speed Dial actions, sửa lỗi các hàm toggle không gọi cập nhật UI.
+     - **Sửa lỗi bố cục Speed Dial**: Cấu trúc lại CSS định vị `.dial-actions` thành `position: absolute` neo trên nút chính `⚡` cố định góc dưới bên phải viewport (tránh lỗi nút bấm bị đẩy lên giữa màn hình).
+     - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho toàn bộ 5 kịch bản kiểm thử E2E (`test_e2e_curation.py`, `test_e2e_filters.py`, `test_e2e_collections.py`, `test_e2e_modal.py`, `test_e2e_curator.py`) trên cả Desktop & Mobile.
 
 ### 2026-06-15 (Nghiệm thu US-094F - Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin - TEST PASS)
 *   **Mã User Story:** `US-094F`
@@ -1130,7 +1131,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
-- [ ] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic)
+- [x] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) ✅ Done 2026-06-16
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
 - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15
 - [x] **US-094A3:** Phân tách Engine Render danh sách Card BĐS ✅ Done 2026-06-15
@@ -1138,7 +1139,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 - [x] **US-094B:** Cô lập Module Bộ lọc & Tìm kiếm thông minh ✅ Done 2026-06-15
 - [x] **US-094D:** Cô lập Module Bộ sưu tập & Lead Capture ✅ Done 2026-06-15
 - [x] **US-094F:** Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin ✅ Done 2026-06-16
-- [/] **US-094E:** Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html 🚧 In-Progress
+- [x] **US-094E:** Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html ✅ Done 2026-06-16
 - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
 - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
 - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13

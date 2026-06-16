@@ -6,14 +6,14 @@ Last updated: 2026-06-16
 - Total: 106
 - backlog: 2
 - draft: 0
-- in-progress: 1
+- in-progress: 0
 - done: 20
-- accepted: 77
+- accepted: 78
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
-| US-094 | Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) | in-progress | XL | 2026-06-15 | `docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md` |
+| US-094 | Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) | accepted | XL | 2026-06-15 | `docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md` |
 | US-094A1 | Tách biệt CSS ngoài ra global.css | accepted | S | 2026-06-15 | `static/css/global.css`, `index.html` |
 | US-094A2 | Xây dựng Lego Core State Store & Tải dữ liệu | accepted | M | 2026-06-15 | `static/js/lego_core.js`, `index.html` |
 | US-094A3 | Phân tách Engine Render danh sách Card BĐS | accepted | M | 2026-06-15 | `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `index.html` |
