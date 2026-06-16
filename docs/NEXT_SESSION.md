@@ -29,7 +29,6 @@
  ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
  
  ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
-*   **US-095 (Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1):** **[IN-PROGRESS]** Khai báo và gán giá trị listings_table cho sqlite queries ở Pool1.
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
 
 ### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX
@@ -39,6 +38,7 @@
  
  ## 3. Các file bị tác động trong phiên vừa qua
  
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — US-095: Định nghĩa biến listings_table tương thích động để sửa lỗi NameError khi publish ở Pool1.
 *   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-094E: Phân tách toàn bộ helper logic, sửa lỗi tham số chia sẻ `s` và khởi tạo Speed Dial.
 *   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094E: Rút gọn tối đa code inline script, khôi phục logic chọn/xóa BST và gọi Lên sóng.
 *   [docs/stories/_inbox/US-094E_lego_frontend_integration.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094E_lego_frontend_integration.md) — US-094E: Cập nhật tài liệu tiến độ.
@@ -47,4 +47,4 @@
 *   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật bàn giao.
  
  ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-16 (US-094E completed & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-16 (US-095 completed & E2E tests 100% passed).*

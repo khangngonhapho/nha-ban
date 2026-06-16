@@ -323,6 +323,13 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-16 (Nghiệm thu US-095 - Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 - TEST PASS)
+*   **Mã User Story:** `US-095`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Khai báo listings_table**: Khai báo và gán giá trị tương thích động cho biến `listings_table` dựa trên phân hệ Pool hoạt động (`listings_v2` cho Pool2, `listings` cho Pool1) ở đầu hàm `publish_listing()` trong `pool_lego.py`.
+     - **Sửa lỗi NameError**: Khắc phục triệt để lỗi sập luồng tự động hóa curation do NameError 'listings_table' is not defined khi chạy ở chế độ Pool1.
+     - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho toàn bộ 4 kịch bản kiểm thử E2E Playwright (`test_e2e_curation.py`, `test_e2e_collections.py`, `test_e2e_filters.py`, `test_e2e_modal.py`) trên cả hai viewports Desktop & Mobile.
+
 ### 2026-06-16 (Nghiệm thu US-094E - Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html - TEST PASS)
 *   **Mã User Story:** `US-094E`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1131,7 +1138,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
-- [/] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ⏳ In Progress 2026-06-16
+- [x] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ✅ Done 2026-06-16
 - [x] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) ✅ Done 2026-06-16
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
 - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15

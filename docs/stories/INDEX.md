@@ -6,14 +6,14 @@ Last updated: 2026-06-16
 - Total: 107
 - backlog: 2
 - draft: 0
-- in-progress: 1
+- in-progress: 0
 - done: 20
-- accepted: 78
+- accepted: 79
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
-| US-095 | Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 | in-progress | S | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-095_fix_listings_table_undefined.md` |
+| US-095 | Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 | accepted | S | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-095_fix_listings_table_undefined.md` |
 | US-094 | Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) | accepted | XL | 2026-06-15 | `docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md` |
 | US-094A1 | Tách biệt CSS ngoài ra global.css | accepted | S | 2026-06-15 | `static/css/global.css`, `index.html` |
 | US-094A2 | Xây dựng Lego Core State Store & Tải dữ liệu | accepted | M | 2026-06-15 | `static/js/lego_core.js`, `index.html` |
@@ -125,7 +125,7 @@ Last updated: 2026-06-16
 ## By Keyword
 
 ### Crawl / Sync Tracking
-- [[US-095_fix_listings_table_undefined|US-095]]: Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 (in-progress)
+- [[US-095_fix_listings_table_undefined|US-095]]: Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 (accepted)
 - [[US-093_audit_manual_upload_images|US-093]]: Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) (accepted)
 - [[US-091_fix_r2_image_quality_degradation|US-091]]: Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 (backlog)
 - [[US-090_resolve_cloudinary_credit_limit|US-090]]: Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary (accepted)
