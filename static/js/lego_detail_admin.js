@@ -254,6 +254,11 @@
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
+                      <label for="editDuongTruocNha">Đường trước nhà (m):</label>
+                      <input type="number" step="0.1" id="editDuongTruocNha" value="${p.custom_rong_hem || p.raw_duong_truoc_nha || p.duong_truoc_nha || ''}" placeholder="Độ rộng hẻm (m)...">
+                    </div>
+
+                    <div class="admin-edit-group">
                       <label for="editDanhGia">Đánh giá:</label>
                       <select id="editDanhGia">
                         <option value="">Bình thường</option>
@@ -261,7 +266,9 @@
                         <option value="Hàng Lỗi">⚠️ Lỗi</option>
                       </select>
                     </div>
+                  </div>
 
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
                       <label for="editTinhTrang">Tình trạng:</label>
                       <select id="editTinhTrang">
@@ -272,8 +279,9 @@
                         <option value="Ẩn">Ẩn</option>
                       </select>
                     </div>
+                    <div></div>
                   </div>
-
+                  
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
                       <label for="editSoPn">Số phòng ngủ:</label>
@@ -326,6 +334,9 @@
 
           const editDuong = document.getElementById('editDuong');
           if (editDuong) editDuong.value = p.duong_truoc_nha || '-';
+
+          const editDuongTruocNha = document.getElementById('editDuongTruocNha');
+          if (editDuongTruocNha) editDuongTruocNha.value = p.custom_rong_hem || p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
 
           const editDanhGia = document.getElementById('editDanhGia');
           if (editDanhGia) editDanhGia.value = p.danh_gia || '';
@@ -2442,7 +2453,8 @@
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
-        const rongHem = p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
+        const editDuongTruocNhaEl = document.getElementById('editDuongTruocNha');
+        const rongHem = editDuongTruocNhaEl ? editDuongTruocNhaEl.value.trim() : (p.raw_duong_truoc_nha || p.duong_truoc_nha || '');
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
@@ -2476,49 +2488,16 @@
         };
 
         // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
+        const finalImages = p.pool_row_data ? window.getPublicImagesFromForm(p) : [];
         if (p.pool_row_data) {
-          const finalImages = window.getPublicImagesFromForm(p);
           while (finalImages.length < 15) finalImages.push("");
-
-          // Pad original_row_data to 46 columns
-          while (p.original_row_data.length < 46) p.original_row_data.push("");
-
-          // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
-          for (let i = 0; i < 10; i++) {
-            p.original_row_data[20 + i] = finalImages[i];
-          }
-          for (let i = 10; i < 15; i++) {
-            p.original_row_data[31 + i] = finalImages[i];
-          }
-          
-          p.imgs = finalImages.filter(Boolean);
         }
 
-        if (p.original_row_data) {
+        const cleanPublicImages = [];
+        if (p.pool_row_data && p.original_row_data) {
+          // Pad original_row_data to 46 columns in legacy mode
           while (p.original_row_data.length < 46) p.original_row_data.push("");
-          p.original_row_data[38] = customCoverUrl;
-          p.img_mat_tien = customCoverUrl;
 
-          if (isSodoUrl(p.original_row_data[20]) || isFacadeUrl(p.original_row_data[20])) {
-            let newCover = '';
-            for (let i = 20; i <= 29; i++) {
-              if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
-                newCover = p.original_row_data[i];
-                break;
-              }
-            }
-            if (!newCover) {
-              for (let i = 41; i <= 45; i++) {
-                if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
-                  newCover = p.original_row_data[i];
-                  break;
-                }
-              }
-            }
-            p.original_row_data[20] = newCover;
-          }
-
-          const cleanPublicImages = [];
           for (let i = 20; i <= 29; i++) {
             const url = p.original_row_data[i];
             if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
@@ -2545,32 +2524,66 @@
           while (cleanPublicImages.length < 15) {
             cleanPublicImages.push("");
           }
-          
-          for (let i = 0; i < 10; i++) {
-            p.original_row_data[20 + i] = cleanPublicImages[i];
-          }
-          for (let i = 10; i < 15; i++) {
-            p.original_row_data[31 + i] = cleanPublicImages[i];
-          }
-          p.imgs = cleanPublicImages.filter(Boolean);
         }
 
-        p.original_row_data[2] = note;
-        p.original_row_data[12] = huong;
-        p.original_row_data[13] = duong;
-        p.original_row_data[14] = rongHem || '-';
-        p.original_row_data[15] = tinhTrang;
-        p.original_row_data[16] = danhGia;
-        p.original_row_data[17] = nguTret;
-        p.original_row_data[18] = chdv;
-        p.original_row_data[19] = moTaBds;
-        p.original_row_data[30] = new Date().toISOString();
-        p.original_row_data[32] = soPn || '-';
-        p.original_row_data[33] = soWc || '-';
-        p.original_row_data[4] = tieuDeBds;
-        p.t = tieuDeBds;
-        p.original_row_data[39] = "";
+        const setVal = (names, defaultIdx, val) => {
+          if (p.original_row_data) {
+            const headers = window.LegoState?.sourceHeaders || [];
+            let mapped = false;
+            for (const name of names) {
+              const idx = headers.indexOf(name);
+              if (idx >= 0) {
+                while (p.original_row_data.length <= idx) p.original_row_data.push("");
+                p.original_row_data[idx] = val;
+                mapped = true;
+                break;
+              }
+            }
+            if (!mapped && defaultIdx >= 0) {
+              while (p.original_row_data.length <= defaultIdx) p.original_row_data.push("");
+              p.original_row_data[defaultIdx] = val;
+            }
+          }
+        };
 
+        if (p.original_row_data) {
+          const headers = window.LegoState?.sourceHeaders || [];
+          if (headers.indexOf("images_metadata_json") >= 0) {
+            const metaImages = (cleanPublicImages.length ? cleanPublicImages : finalImages).filter(Boolean).map(url => {
+              return { url: url, role: "interior" };
+            });
+            setVal(["images_metadata_json"], -1, JSON.stringify(metaImages));
+          } else {
+            // Pool1 legacy flat columns index
+            const imgsToUse = cleanPublicImages.length ? cleanPublicImages : finalImages;
+            for (let i = 0; i < 10; i++) {
+              p.original_row_data[20 + i] = imgsToUse[i] || "";
+            }
+            for (let i = 10; i < 15; i++) {
+              p.original_row_data[31 + i] = imgsToUse[i] || "";
+            }
+          }
+          p.imgs = (cleanPublicImages.length ? cleanPublicImages : finalImages).filter(Boolean);
+        }
+
+        setVal(["Note_Noi_Bo", "Note"], 2, note);
+        setVal(["Huong", "huong_nha"], 12, huong);
+        setVal(["Criteria_Duong_truoc_nha", "duong_truoc_nha"], 13, duong);
+        setVal(["Custom_Rong_Hem", "do_rong_hem"], 14, rongHem || '-');
+        setVal(["Trang_Thai_Giao_Dich", "Trang_Thai_KN", "tinh_trang_nha"], 15, tinhTrang);
+        setVal(["danh_gia"], 16, danhGia);
+        setVal(["Ngu_Tret", "ngu_tang_tret"], 17, nguTret);
+        setVal(["CHDV", "chdv"], 18, chdv);
+        setVal(["Mo_ta_Public", "mo_ta"], 19, moTaBds);
+        setVal(["Last updated"], 30, new Date().toISOString());
+        setVal(["bedrooms", "so_pn"], 32, soPn || '-');
+        setVal(["restrooms", "so_wc"], 33, soWc || '-');
+        setVal(["Tieu_De_Public", "tieu_de"], 4, tieuDeBds);
+        setVal(["Tiêu đề BDS"], 39, "");
+        setVal(["Hình Mặt Tiền", "Hinh_mat_tien"], 38, customCoverUrl);
+
+        p.img_mat_tien = customCoverUrl;
+        p.t = tieuDeBds;
         p.note = note;
         p.huong = huong;
         p.duong_truoc_nha = duong;
@@ -2582,8 +2595,22 @@
         p.so_pn = soPn || '-';
         p.m = moTaBds;
 
-        const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AT${p.source_row_index}?valueInputOption=USER_ENTERED`;
+        const SOURCE_SHEET_ID = window.LegoState?.config?.source_sheet_id || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+        const sourceTab = (window.LegoState?.config?.active_pool_system === 'Pool2') ? 'Custom' : 'Source';
+        
+        const getColLetter = (n) => {
+          let col = "";
+          while (n > 0) {
+            let rem = (n - 1) % 26;
+            col = String.fromCharCode(65 + rem) + col;
+            n = Math.floor((n - rem) / 26);
+          }
+          return col || "AT";
+        };
+        const headersLength = window.LegoState?.sourceHeaders?.length || 46;
+        const colLetter = getColLetter(headersLength);
+
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/${sourceTab}!A${p.source_row_index}:${colLetter}${p.source_row_index}?valueInputOption=USER_ENTERED`;
 
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
@@ -2604,7 +2631,8 @@
         }
 
         // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
-        if (p.pool_row_index && p.pool_row_data) {
+        // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
+        if (p.pool_row_index && p.pool_row_data && window.LegoState?.config?.active_pool_system !== 'Pool2') {
           const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
           
           // 1. Đồng bộ các ảnh Sổ thửa đất (cột AB:AC)
@@ -2768,12 +2796,14 @@
         btnElement.innerHTML = '⌛';
       }
       
-      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
-      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const POOL_SHEET_ID = window.LegoState?.config?.pool_sheet_id || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = window.LegoState?.config?.source_sheet_id || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const poolTab = (window.LegoState?.config?.active_pool_system === 'Pool2') ? 'Listings' : 'Pool';
+      const sourceTab = (window.LegoState?.config?.active_pool_system === 'Pool2') ? 'Custom' : 'Source';
       
       try {
-        // Step 1: Đọc Sheet Pool để lấy dòng gốc
-        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:CO`;
+        // Step 1: Đọc Sheet Pool để lấy dòng gốc (đọc từ A1 để lấy headers)
+        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/${poolTab}!A1:ZZ`;
         const poolRes = await fetch(poolUrl, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -2783,26 +2813,65 @@
         }
         
         const poolData = await poolRes.json();
-        const rows = poolData.values || [];
-        rows.forEach(r => {
-          while (r.length < 93) r.push("");
+        const poolRows = poolData.values || [];
+        
+        const knownHeaderKeywords = ["System_ID", "System ID", "Ma_Khang_Ngo", "Ma_Khang_Ngo (ID)", "Ma Khang Ngô", "Noi_dung_chinh", "Nội dung chính", "Mo_ta_Public", "Mô tả Public", "images_metadata_json", "id", "tieu_de"];
+        const isHeader = (row) => {
+          if (!row || row.length === 0) return false;
+          return row.some(cell => {
+            const val = String(cell || '').trim();
+            return knownHeaderKeywords.includes(val);
+          });
+        };
+
+        const isPoolHeader = isHeader(poolRows[0]);
+        const poolHeaders = isPoolHeader ? poolRows[0] : [];
+        if (window.LegoState && !window.LegoState.poolHeaders) {
+          window.LegoState.poolHeaders = poolHeaders;
+        }
+
+        const dataRows = isPoolHeader ? poolRows.slice(1) : poolRows;
+        const poolHeadersLength = poolHeaders.length > 0 ? poolHeaders.length : 93;
+        dataRows.forEach(r => {
+          while (r.length < poolHeadersLength) r.push("");
         });
         
-        const matchedRow = rows.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+        const getPoolVal = (row, names, defaultIdx) => {
+          const headers = window.LegoState?.poolHeaders || poolHeaders || [];
+          for (const name of names) {
+            const idx = headers.indexOf(name);
+            if (idx >= 0) return row[idx] !== undefined ? row[idx] : '';
+          }
+          return defaultIdx >= 0 && row[defaultIdx] !== undefined ? row[defaultIdx] : '';
+        };
+
+        const getPoolColIdx = (names, defaultIdx) => {
+          const headers = window.LegoState?.poolHeaders || poolHeaders || [];
+          for (const name of names) {
+            const idx = headers.indexOf(name);
+            if (idx >= 0) return idx;
+          }
+          return defaultIdx;
+        };
+
+        const sysIdIdx = getPoolColIdx(["System_ID", "System ID"], 72);
+        const matchedRow = dataRows.find(r => String(r[sysIdIdx] || '').trim() === String(systemId).trim());
         if (!matchedRow) {
           throw new Error("Không tìm thấy căn nhà này trong kho Pool hoặc không khớp System ID.");
         }
 
-        const p = window.activeCurationListing;
-        if (p && p.pool_row_data) {
-          matchedRow[27] = p.pool_row_data[27] || "";
-          matchedRow[28] = p.pool_row_data[28] || "";
-          matchedRow[80] = p.pool_row_data[80] || "";
-          matchedRow[81] = p.pool_row_data[81] || "";
-          matchedRow[82] = p.pool_row_data[82] || "";
-          for (let c = 30; c <= 39; c++) matchedRow[c] = p.pool_row_data[c] || "";
-          for (let c = 40; c <= 54; c++) matchedRow[c] = p.pool_row_data[c] || "";
-          for (let c = 83; c <= 92; c++) matchedRow[c] = p.pool_row_data[c] || "";
+        if (window.LegoState?.config?.active_pool_system !== 'Pool2') {
+          const p = window.activeCurationListing;
+          if (p && p.pool_row_data) {
+            matchedRow[27] = p.pool_row_data[27] || "";
+            matchedRow[28] = p.pool_row_data[28] || "";
+            matchedRow[80] = p.pool_row_data[80] || "";
+            matchedRow[81] = p.pool_row_data[81] || "";
+            matchedRow[82] = p.pool_row_data[82] || "";
+            for (let c = 30; c <= 39; c++) matchedRow[c] = p.pool_row_data[c] || "";
+            for (let c = 40; c <= 54; c++) matchedRow[c] = p.pool_row_data[c] || "";
+            for (let c = 83; c <= 92; c++) matchedRow[c] = p.pool_row_data[c] || "";
+          }
         }
 
         // Đọc dữ liệu từ form trong modal
@@ -2814,7 +2883,8 @@
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
-        const rongHem = matchedRow[59] || '';
+        const editDuongTruocNhaEl = document.getElementById('editDuongTruocNha');
+        const rongHem = editDuongTruocNhaEl ? editDuongTruocNhaEl.value.trim() : '';
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
@@ -2825,7 +2895,7 @@
         }
         
         // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
-        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AT`;
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/${sourceTab}!A1:ZZ`;
         const sourceRes = await fetch(sourceUrl, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -2836,14 +2906,33 @@
         
         const sourceData = await sourceRes.json();
         const sourceRows = sourceData.values || [];
+        const isSourceHeader = isHeader(sourceRows[0]);
+        const sourceHeaders = isSourceHeader ? sourceRows[0] : [];
         
-        const sysIdMatched = matchedRow[72] || matchedRow[71] || '';
+        if (window.LegoState && !window.LegoState.sourceHeaders) {
+          window.LegoState.sourceHeaders = sourceHeaders;
+        }
+        
+        const sysIdMatched = getPoolVal(matchedRow, ["System_ID", "System ID"], 72);
         if (!sysIdMatched) {
           throw new Error("Dữ liệu căn nhà trong Pool thiếu System ID.");
         }
         
-        const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
-        const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+        const sourceSysIdIdx = sourceHeaders.indexOf("System_ID") >= 0 
+          ? sourceHeaders.indexOf("System_ID") 
+          : (sourceHeaders.indexOf("System ID") >= 0 ? sourceHeaders.indexOf("System ID") : 37);
+
+        let existRowIdx = -1;
+        const startIdx = isSourceHeader ? 1 : 0;
+        for (let i = startIdx; i < sourceRows.length; i++) {
+          if (String(sourceRows[i][sourceSysIdIdx] || '').trim() === String(sysIdMatched).trim()) {
+            existRowIdx = i;
+            break;
+          }
+        }
+        const targetRowNumber = existRowIdx !== -1 
+          ? (isSourceHeader ? existRowIdx + 1 : existRowIdx + 2) 
+          : (isSourceHeader ? sourceRows.length + 1 : sourceRows.length + 2);
         
         // Map 15 ảnh nội thất sạch và ảnh hẻm từ biên tập viên hình ảnh trực quan
         const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
@@ -2865,11 +2954,14 @@
           return;
         }
 
-        const finalImages = window.getPublicImagesFromForm(p, matchedRow);
+        const p = window.activeCurationListing || {};
+        const finalImages = (window.LegoState?.config?.active_pool_system === 'Pool2')
+          ? window.getPublicImagesFromForm(p)
+          : window.getPublicImagesFromForm(p, matchedRow);
         while (finalImages.length < 15) finalImages.push("");
         
         // Xử lý Cú pháp
-        const noiDungChinh = matchedRow[9] || "";
+        const noiDungChinh = getPoolVal(matchedRow, ["Noi_dung_chinh", "Nội dung chính"], 9) || "";
         let cuPhap = noiDungChinh;
         const matchCuPhap = noiDungChinh.match(/^(.*?Quận\s+[a-z0-9àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ\s]+?)\s+[\d\.]+(?:-[\d\.]+)?\s*tỷ/i);
         if (matchCuPhap) {
@@ -2896,66 +2988,114 @@
           return val;
         };
         
-        const loaiHinh = (matchedRow[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền";
+        const poolSoNhaIdx = getPoolColIdx(["Ngõ/Số nhà", "Ngo_So_nha", "So_Nha"], 6);
+        const rawSoNha = matchedRow[poolSoNhaIdx] || '';
+        const loaiHinh = rawSoNha.toString().includes(".") ? "Hẻm" : "Mặt tiền";
         
         const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
-        let finalCoverUrl = customCoverUrl || matchedRow[29] || '';
+        const poolCoverIdx = getPoolColIdx(["cover_image", "Hinh_mat_tien", "Hình Mặt Tiền"], 29);
+        let finalCoverUrl = customCoverUrl || matchedRow[poolCoverIdx] || '';
         if (finalCoverUrl && normSodos.includes(normalizeImgUrl(finalCoverUrl))) {
           finalCoverUrl = '';
         }
 
-        // Xây dựng publicRowData 46 cột cho Sheet Source
-        const publicRowData = [
-          `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
-          cuPhap,                        // 1: Cu_phap (Cột B)
-          note,                          // 2: Note (Cột C)
-          maKhangNgo,                    // 3: id (Cột D)
-          tieuDeBds || matchedRow[56],   // 4: tieu_de (Cột E)
-          matchedRow[13],                // 5: dien_tich (Cột F)
-          matchedRow[15],                // 6: so_tang (Cột G)
-          matchedRow[16],                // 7: mat_tien (Cột H)
-          formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
-          formatQuan(matchedRow[3]),     // 9: quan (Cột J)
-          matchedRow[4],                 // 10: phuong (Cột K)
-          loaiHinh,                      // 11: loai_hinh (Cột L)
-          huong,                         // 12: huong_nha (Cột M)
-          duong,                         // 13: duong_truoc_nha (Cột N)
-          rongHem || '-',                // 14: do_rong_hem (Cột O)
-          tinhTrang,                     // 15: tinh_trang_nha (Cột P)
-          danhGia,                       // 16: danh_gia (Cột Q)
-          nguTret,                       // 17: ngu_tang_tret (Cột R)
-          chdv,                          // 18: chdv (Cột S)
-          moTaBds,                       // 19: mo_ta (Cột T)
-          finalImages[0],                // 20: anh_1 (Cột U)
-          finalImages[1],                // 21: anh_2 (Cột V)
-          finalImages[2],                // 22: anh_3 (Cột W)
-          finalImages[3],                // 23: anh_4 (Cột X)
-          finalImages[4],                // 24: anh_5 (Cột Y)
-          finalImages[5],                // 25: anh_6 (Cột Z)
-          finalImages[6],                // 26: anh_7 (Cột AA)
-          finalImages[7],                // 27: anh_8 (Cột AB)
-          finalImages[8],                // 28: anh_9 (Cột AC)
-          finalImages[9],                // 29: anh_10 (Cột AD)
-          new Date().toISOString(),      // 30: Last updated (Cột AE)
-          (p && p.phuong_cu) || matchedRow[66] || "", // 31: phuong_cu (Cột AF)
-          soPn || '-',                   // 32: so_pn (Cột AG)
-          soWc || '-',                   // 33: so_wc (Cột AH)
-          matchedRow[5],                 // 34: ten_duong (Cột AI)
-          "",                            // 35: gio_dang (Cột AJ)
-          "",                            // 36: trang_thai (Cột AK)
-          sysIdMatched,                  // 37: System ID (Cột AL)
-          finalCoverUrl,                 // 38: Hình Mặt Tiền (Cột AM)
-          "",                            // 39: Tiêu đề BDS (Cột AN)
-          false,                         // 40: Đăng BDS (Cột AO)
-          finalImages[10] || "",         // 41: Ảnh 11 (Cột AP)
-          finalImages[11] || "",         // 42: Ảnh 12 (Cột AQ)
-          finalImages[12] || "",         // 43: Ảnh 13 (Cột AR)
-          finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
-          finalImages[14] || ""          // 45: Ảnh 15 (Cột AT)
-        ];
+        // Xây dựng publicRowData động cho Sheet Source / Custom
+        const headers = sourceHeaders;
+        const publicRowData = [];
+        const rowLength = headers.length > 0 ? headers.length : 46;
+        for (let i = 0; i < rowLength; i++) {
+          publicRowData.push("");
+        }
+
+        const getColLetter = (n) => {
+          let col = "";
+          while (n > 0) {
+            let rem = (n - 1) % 26;
+            col = String.fromCharCode(65 + rem) + col;
+            n = Math.floor((n - rem) / 26);
+          }
+          return col || "AT";
+        };
+
+        const coverHeaders = ["Hình Mặt Tiền", "Hinh_mat_tien"];
+        let coverColIdx = -1;
+        for (const name of coverHeaders) {
+          const idx = headers.indexOf(name);
+          if (idx >= 0) {
+            coverColIdx = idx;
+            break;
+          }
+        }
+        if (coverColIdx === -1) coverColIdx = 38;
+        const coverColLetter = getColLetter(coverColIdx + 1);
+        const imageFormula = `=IMAGE(${coverColLetter}${targetRowNumber})`;
+
+        const setVal = (names, defaultIdx, val) => {
+          let mapped = false;
+          for (const name of names) {
+            const idx = headers.indexOf(name);
+            if (idx >= 0) {
+              publicRowData[idx] = val;
+              mapped = true;
+              break;
+            }
+          }
+          if (!mapped && defaultIdx >= 0) {
+            publicRowData[defaultIdx] = val;
+          }
+        };
+
+        setVal(["Hinh_mat_tien"], 0, imageFormula);
+        setVal(["Cu_phap", "Cu phap"], 1, cuPhap);
+        setVal(["Note_Noi_Bo", "Note", "Ghi chú"], 2, note);
+        setVal(["Ma_Khang_Ngo", "id", "Ma_Khang_Ngo (ID)"], 3, maKhangNgo);
+        setVal(["Tieu_De_Public", "tieu_de"], 4, tieuDeBds || getPoolVal(matchedRow, ["Tieu_De_Public", "Tiêu đề Public", "tieu_de"], 56));
+        setVal(["DT_Thuc_te", "dien_tich", "DT Thực tế"], 5, getPoolVal(matchedRow, ["DT_Thuc_te", "DT Thực tế", "dien_tich"], 13));
+        setVal(["So_Tang", "so_tang", "Số Tầng"], 6, getPoolVal(matchedRow, ["So_Tang", "Số Tầng", "so_tang"], 15));
+        setVal(["Mat_Tien", "mat_tien", "Mặt Tiền"], 7, getPoolVal(matchedRow, ["Mat_Tien", "Mặt Tiền", "mat_tien"], 16));
+        setVal(["Gia_Public", "gia", "Giá Public"], 8, formatGia(getPoolVal(matchedRow, ["Gia_chao", "Giá chào", "Gia_Public", "Giá Public"], 11)));
+        setVal(["Quan", "quan", "Quận"], 9, formatQuan(getPoolVal(matchedRow, ["Quan", "quan", "Quận"], 3)));
+        setVal(["Phuong", "phuong", "Phường"], 10, getPoolVal(matchedRow, ["Phuong", "phuong", "Phường"], 4));
+        setVal(["loai_hinh", "Loại Hợp đồng"], 11, loaiHinh);
+        setVal(["Huong", "huong_nha"], 12, huong);
+        setVal(["Criteria_Duong_truoc_nha", "duong_truoc_nha", "Phân loại Hẻm"], 13, duong);
+        setVal(["Custom_Rong_Hem", "do_rong_hem", "Đường trước nhà (m)"], 14, rongHem || '-');
+        setVal(["Trang_Thai_Giao_Dich", "Trang_Thai_KN", "tinh_trang_nha", "Trạng thái"], 15, tinhTrang);
+        setVal(["danh_gia", "Đánh giá (Admin)"], 16, danhGia);
+        setVal(["Ngu_Tret", "ngu_tang_tret", "Ngủ trệt (Admin)"], 17, nguTret);
+        setVal(["CHDV", "chdv", "CHDV (Admin)"], 18, chdv);
+        setVal(["Mo_ta_Public", "mo_ta", "Mô tả Public"], 19, moTaBds);
+        setVal(["Last updated"], 30, new Date().toISOString());
+        setVal(["phuong_cu", "Phường cũ"], 31, (p && p.phuong_cu) || getPoolVal(matchedRow, ["phuong_cu", "Phường cũ"], 66) || "");
+        setVal(["bedrooms", "so_pn", "Số phòng ngủ"], 32, soPn || '-');
+        setVal(["restrooms", "so_wc", "Số nhà vệ sinh"], 33, soWc || '-');
+        setVal(["Ten_Duong", "ten_duong", "Đường"], 34, getPoolVal(matchedRow, ["streetName", "Đường", "Ten_Duong"], 5));
+        setVal(["gio_dang"], 35, "");
+        setVal(["trang_thai"], 36, "");
+        setVal(["System_ID", "System ID"], 37, sysIdMatched);
+        setVal(["Hình Mặt Tiền", "Hinh_mat_tien"], 38, finalCoverUrl);
+        setVal(["Tiêu đề BDS"], 39, "");
+        setVal(["Đăng BDS"], 40, false);
+
+        if (headers.indexOf("images_metadata_json") >= 0) {
+          const metaImages = finalImages.filter(Boolean).map(url => {
+            return { url: url, role: "interior" };
+          });
+          setVal(["images_metadata_json"], -1, JSON.stringify(metaImages));
+        } else {
+          // Pool1 legacy flat columns index
+          for (let i = 0; i < 10; i++) {
+            publicRowData[20 + i] = finalImages[i] || "";
+          }
+          for (let i = 10; i < 15; i++) {
+            publicRowData[41 + (i - 10)] = finalImages[i] || "";
+          }
+        }
         
-        // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AT${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        // Step 4: Ghi đè/Thêm mới vào Sheet Source / Custom
+        const headersLength = headers.length || 46;
+        const colLetter = getColLetter(headersLength);
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/${sourceTab}!A${targetRowNumber}:${colLetter}${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {
@@ -2975,110 +3115,110 @@
         }
         
         // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
-        try {
-          const poolRowNumber = rows.indexOf(matchedRow) + 2;
-          const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
-          
-          // 0. Cập nhật Sổ 1 & 2 (AB:AC)
+        if (window.LegoState?.config?.active_pool_system !== 'Pool2') {
           try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${poolRowNumber}:AC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
-            });
-          } catch (e) {
-            console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
-          }
-
-          // 0b. Cập nhật Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)
-          try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${poolRowNumber}:AD${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [[customCoverUrl]] })
-            });
-          } catch (e) {
-            console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
-          }
-
-
-
-          // 0c. Cập nhật Sổ 3-5 (CC:CE)
-          try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${poolRowNumber}:CE${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [[sodo3Url, sodo4Url, sodo5Url]] })
-            });
-          } catch (e) {
-            console.warn("Không thể đồng bộ Sổ 3-5 sang Pool:", e);
-          }
-
-          // 1b. Cập nhật Ảnh Nội Thất 1-15 (AO:BC) và 16-25 (CC:CL) sang Pool thô
-          try {
-            const int1_15 = [];
-            for (let c = 40; c <= 54; c++) {
-              int1_15.push(matchedRow[c] || "");
+            const poolRowNumber = poolRows.indexOf(matchedRow) + 1;
+            const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+            
+            // 0. Cập nhật Sổ 1 & 2 (AB:AC)
+            try {
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${poolRowNumber}:AC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ values: [[sodo1Url, sodo2Url]] })
+              });
+            } catch (e) {
+              console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
             }
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:BC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [int1_15] })
-            });
-          } catch (e) {
-            console.warn("Không thể đồng bộ Ảnh Nội Thất 1-15 sang Pool:", e);
-          }
 
-          try {
-            const int16_25 = [];
-            for (let c = 83; c <= 92; c++) {
-              int16_25.push(matchedRow[c] || "");
+            // 0b. Cập nhật Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)
+            try {
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AD${poolRowNumber}:AD${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ values: [[customCoverUrl]] })
+              });
+            } catch (e) {
+              console.warn("Không thể đồng bộ Hình Mặt Tiền sang Pool:", e);
             }
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${poolRowNumber}:CO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+
+            // 0c. Cập nhật Sổ 3-5 (CC:CE)
+            try {
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CC${poolRowNumber}:CE${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ values: [[sodo3Url, sodo4Url, sodo5Url]] })
+              });
+            } catch (e) {
+              console.warn("Không thể đồng bộ Sổ 3-5 sang Pool:", e);
+            }
+
+            // 1b. Cập nhật Ảnh Nội Thất 1-15 (AO:BC) và 16-25 (CC:CL) sang Pool thô
+            try {
+              const int1_15 = [];
+              for (let c = 40; c <= 54; c++) {
+                int1_15.push(matchedRow[c] || "");
+              }
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AO${poolRowNumber}:BC${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ values: [int1_15] })
+              });
+            } catch (e) {
+              console.warn("Không thể đồng bộ Ảnh Nội Thất 1-15 sang Pool:", e);
+            }
+
+            try {
+              const int16_25 = [];
+              for (let c = 83; c <= 92; c++) {
+                int16_25.push(matchedRow[c] || "");
+              }
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CF${poolRowNumber}:CO${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ values: [int16_25] })
+              });
+            } catch (e) {
+              console.warn("Không thể đồng bộ Ảnh Nội Thất 16-25 sang Pool:", e);
+            }
+
+            // 1. Cập nhật anhDuocChon (BK) và anhHemDuocChon (BL)
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${poolRowNumber}:BL${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ values: [int16_25] })
+              body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
+            });
+            
+            // 2. Cập nhật Last Sync (CA)
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[syncDateStr]] })
             });
           } catch (e) {
-            console.warn("Không thể đồng bộ Ảnh Nội Thất 16-25 sang Pool:", e);
+            console.warn("Không thể ghi nhận thay đổi hình ảnh hoặc Last Sync vào Pool:", e);
           }
-
-          // 1. Cập nhật anhDuocChon (BK) và anhHemDuocChon (BL)
-          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!BK${poolRowNumber}:BL${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ values: [[publicIntStr, publicAlleyStr]] })
-          });
-          
-          // 2. Cập nhật Last Sync (CA)
-          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ values: [[syncDateStr]] })
-          });
-        } catch (e) {
-          console.warn("Không thể ghi nhận thay đổi hình ảnh hoặc Last Sync vào Pool:", e);
         }
         
         showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}! Đang tải lại trang...`);
