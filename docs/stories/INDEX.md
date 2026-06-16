@@ -1,14 +1,14 @@
 # Stories Index
 
-Last updated: 2026-06-15
+Last updated: 2026-06-16
 
 ## Stats
 - Total: 106
-- backlog: 3
+- backlog: 2
 - draft: 0
 - in-progress: 1
 - done: 20
-- accepted: 76
+- accepted: 77
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
@@ -21,7 +21,7 @@ Last updated: 2026-06-15
 | US-094B | Cô lập Module Bộ lọc & Tìm kiếm thông minh | accepted | M | 2026-06-15 | `static/js/lego_filters.js`, `index.html` |
 | US-094D | Cô lập Module Bộ sưu tập & Lead Capture | accepted | S | 2026-06-15 | `static/js/lego_collections.js`, `static/js/lego_lead_capture.js`, `index.html` |
 | US-094F | Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin | accepted | L    | 2026-06-15 | `static/js/lego_detail_admin.js`, `index.html` |
-| US-094E | Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html | backlog | S | 2026-06-15 | `index.html`, `vercel.json` |
+| US-094E | Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html | accepted | M | 2026-06-16 | `docs/stories/_inbox/US-094E_lego_frontend_integration.md`, `index.html`, `static/js/lego_mock.js`, `static/js/lego_helpers.js` |
 | US-093 | Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) | accepted | S | 2026-06-14 | `scratch/audit_manual_images.py`, `docs/stories/_inbox/US-093_audit_manual_upload_images.md` |
 | US-092 | Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ | accepted | S | 2026-06-13 | `vercel.json`, `api/index.js`, `docs/stories/_inbox/US-092_fix_homepage_missing_index_error.md` |
 | US-091 | Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 | backlog | M | 2026-06-13 | `manager.py`, `restore_r2_quality.py`, `docs/stories/_inbox/US-091_fix_r2_image_quality_degradation.md` |
@@ -208,7 +208,7 @@ Last updated: 2026-06-15
 - [[US-094B_lego_frontend_filters|US-094B]]: Cô lập Module Bộ lọc & Tìm kiếm thông minh (accepted)
 - [[US-094D_lego_frontend_collections|US-094D]]: Cô lập Module Bộ sưu tập & Lead Capture (accepted)
 - [[US-094F_lego_frontend_curation|US-094F]]: Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin (accepted)
-- [[US-094E_lego_frontend_integration|US-094E]]: Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html (backlog)
+- [[US-094E_lego_frontend_integration|US-094E]]: Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html (accepted)
 - [[US-092_fix_homepage_missing_index_error|US-092]]: Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ (accepted)
 - [[US-087_fix_xoa_bo_suu_tap|US-087]]: Fix lỗi không xóa được bộ sưu tập đã tồn tại (accepted)
 - [[US-086_fix_loi_tao_bo_suu_tap|US-086]]: Fix lỗi tạo bộ sưu tập (accepted)

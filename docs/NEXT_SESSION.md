@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-094E (Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html):** **[ACCEPTED - 2026-06-16]** Tách biệt logic mock và các hàm helper ra các file static [lego_mock.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_mock.js) và [lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js). Rút gọn [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) thành công xuống dưới 170 dòng script và thiết lập cache-busting version query parameter `?v=202606161110`. Khắc phục triệt để các lỗi hiển thị nút chọn BST (`#colFloatBtn`), nút xóa BST (`.delete-col-btn-float`), lỗi phân tích tham số chia sẻ (`s`), và lỗi khởi tạo Admin Speed Dial. Toàn bộ 5 kịch bản E2E Playwright (`test_e2e_curation.py`, `test_e2e_filters.py`, `test_e2e_collections.py`, `test_e2e_modal.py`, `test_e2e_curator.py`) chạy thành công **100% PASS** trên cả hai viewports Desktop & Mobile.
 *   **US-094F (Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin):** **[ACCEPTED - 2026-06-16]** Tạo mới module `static/js/lego_detail_admin.js` di chuyển toàn bộ logic xem chi tiết của Admin, form curation, tabs quản lý, và Google Sheets API syncing (`saveSourceChanges`, `saveNewListingFromPool`). Tái cấu trúc `index.html` rút gọn hơn 1200 dòng JS/HTML thô, nạp script mới ở `<head>` và export các alias toàn cục trên `window` cho inline templates. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_curation.py` trên cả Desktop & Mobile.
 *   **US-094D (Cô lập Module Bộ sưu tập & Lead Capture):** **[ACCEPTED - 2026-06-15]** Tạo mới hai module `static/js/lego_collections.js` (quản lý yêu thích, danh mục bộ sưu tập và chọn hàng loạt) và `static/js/lego_lead_capture.js` (form đăng ký thông tin khách hàng, kiểm tra lead capture modal và liên kết booking/phản hồi Zalo). Làm sạch hơn 700 dòng code trong `index.html`, lưu/nạp trạng thái toàn cục tương thích ngược 100%. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_collections.py`.
 *   **US-094B (Cô lập Module Bộ lọc & Tìm kiếm thông minh):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_filters.js` chứa toàn bộ logic bộ lọc (quận, phường, đường, hướng, khoảng giá, diện tích, kết cấu, checklist tiêu chí động) và bộ máy tìm kiếm thông minh tiếng Việt AND (`+`), tự động ẩn hiện static tabs nâng cao, và quét kho Pool thô (Smart Pool Fallback). Làm sạch hơn 800 dòng lệnh trong `index.html`, lưu/nạp bộ lọc ngầm trên `window.activeMode` tương thích ngược 100%. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_filters.py`.
@@ -27,34 +28,22 @@
  
  ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
  
- ### 🚀 Tính năng đang thực hiện (In-Progress 🛠️)
-*   *Hiện tại không có tính năng nào đang thực hiện.*
- 
  ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
- *   **Các US con tiếp theo của Epic US-094:**
-     *   **US-094E (Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html):** Gom các script và tối ưu dung lượng tải trang, thiết lập Cache-Control tối ưu.
- *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Đã hoàn tất lên phương án phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
- 
- 
- ### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX
- *   Tiếp tục chạy bộ test E2E Playwright (`test_e2e_curator.py`, `test_e2e_modal.py` và `test_e2e_filters.py`) sau mỗi US con để kiểm soát hồi quy giao diện.
+*   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
+
+### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX
+*   Chạy bộ test E2E Playwright để kiểm soát hồi quy giao diện sau mỗi đợt cập nhật.
  
  ---
  
  ## 3. Các file bị tác động trong phiên vừa qua
  
-*   [static/js/lego_collections.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_collections.js) — US-094D: Module Bộ sưu tập.
-*   [static/js/lego_lead_capture.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_lead_capture.js) — US-094D: Module Lead Capture.
-*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094D: Liên kết các file js mới và làm sạch code cũ.
-*   [scratch/test_e2e_collections.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_collections.py) — US-094D: Bộ kiểm thử Playwright E2E.
-*   [docs/stories/_inbox/US-094F_lego_frontend_curation.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094F_lego_frontend_curation.md) — US-094F: Thiết kế giải pháp và lập kế hoạch triển khai.
-
-*   [docs/stories/_inbox/US-094D_lego_frontend_collections.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094D_lego_frontend_collections.md) — US-094D: Cập nhật tài liệu User Story và nhật ký Retro.
-*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Cập nhật Change Log và đánh dấu Done cho US-094D.
-*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật thống kê và liên kết file.
-*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật báo cáo bàn giao phiên hiện tại.
-*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — US-094F: Module Chi tiết, Preview & Curation cho Admin.
-*   [scratch/test_e2e_curation.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_curation.py) — US-094F: Bộ kiểm thử Playwright E2E Curation.
+*   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-094E: Phân tách toàn bộ helper logic, sửa lỗi tham số chia sẻ `s` và khởi tạo Speed Dial.
+*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-094E: Rút gọn tối đa code inline script, khôi phục logic chọn/xóa BST và gọi Lên sóng.
+*   [docs/stories/_inbox/US-094E_lego_frontend_integration.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-094E_lego_frontend_integration.md) — US-094E: Cập nhật tài liệu tiến độ.
+*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật bảng và danh sách các user stories.
+*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Cập nhật SOT log.
+*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật bàn giao.
  
  ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-15 (US-094F completed & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-16 (US-094E completed & E2E tests 100% passed).*
