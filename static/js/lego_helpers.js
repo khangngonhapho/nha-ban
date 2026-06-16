@@ -1548,6 +1548,13 @@ window.promptGenerateLink = function() {
   document.getElementById('linkModal').classList.add('open');
 };
 
+window.shareZaloFromAdminDetail = function(id) {
+  SELECTED_IDS.clear();
+  SELECTED_IDS.add(String(id));
+  if (typeof updateShareUI === 'function') updateShareUI();
+  promptGenerateLink();
+};
+
 window.executeGenerateLink = function() {
   const cName = document.getElementById('linkCustName').value.trim();
   if (!cName) {

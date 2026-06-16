@@ -475,7 +475,7 @@
     </div>
   </div>
 
-  <button class="col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+
 
   <script>
     // --- MAIN INITIALIZATION & ROUTING STATE ---
@@ -617,20 +617,23 @@
       let html = '';
       if (mode === 'list') {
         html = `
-          <button onclick="window.activeMode = 'source'; window.LegoState.loadData(); toggleSpeedDial();" title="Xem danh sách xuất bản" class="dial-btn font-medium">📋 Source</button>
-          <button onclick="window.activeMode = 'pool'; window.LegoState.loadData(); toggleSpeedDial();" title="Xem danh sách cào thô" class="dial-btn font-medium">🏠 Pool</button>
-          <button onclick="toggleSelectAll(); toggleSpeedDial();" title="Chọn tất cả hiển thị" class="dial-btn font-medium">✅ Chọn Hết</button>
-          <button onclick="promptGenerateLink(); toggleSpeedDial();" title="Tạo link gửi khách hàng" class="dial-btn font-medium">🔗 Gửi Khách</button>
+          <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+          <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+          <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+            🔗
+            <span class="share-count" id="shareCount">0</span>
+          </button>
         `;
       } else if (mode === 'detail' && activeDetailListing) {
         const hasSourceRow = !!activeDetailListing.original_row_data;
         const isFromPool = !!activeDetailListing.isFromPoolOnly;
 
         if (hasSourceRow) {
-          html += `<button onclick="window.downloadAllListingImages('${activeDetailListing.id}'); toggleSpeedDial();" title="Tải toàn bộ hình ảnh" class="dial-btn font-medium">📥 Tải Ảnh</button>`;
-          html += `<button id="saveSourceBtn" onclick="saveSourceChanges('${activeDetailListing.id}'); toggleSpeedDial();" title="Lưu thay đổi Biên tập" class="dial-btn font-gold font-medium">💾 Lưu Edit</button>`;
+          html += `<button class="dial-btn-item download-btn-float" onclick="window.downloadAllListingImages('${activeDetailListing.id}')" title="Tải toàn bộ hình ảnh" style="background:#3498db !important; color:white !important; font-size:18px !important;">📥</button>`;
+          html += `<button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${activeDetailListing.id}')" title="Lưu thay đổi Biên tập" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>`;
+          html += `<button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${activeDetailListing.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>`;
         } else if (isFromPool) {
-          html += `<button id="savePoolBtn" onclick="saveNewListingFromPool('${activeDetailListing.system_id}', this); toggleSpeedDial();" title="Xuất bản lên sóng Source" class="dial-btn font-gold font-medium" style="display: none;">🚀 Lên Sóng</button>`;
+          html += `<button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${activeDetailListing.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">🚀</button>`;
         }
       } else if (mode === 'colView') {
         html = `
@@ -638,7 +641,12 @@
         `;
       }
       
-      if (actionsEl) actionsEl.innerHTML = html;
+      if (actionsEl) {
+        actionsEl.innerHTML = html;
+        if (mode === 'list' && typeof window.updateShareUI === 'function') {
+          window.updateShareUI();
+        }
+      }
     }
 
     // Khởi động ứng dụng
