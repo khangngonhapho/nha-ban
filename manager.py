@@ -248,6 +248,7 @@ def add_log_message(msg):
 
 # Cấu hình mặc định
 DEFAULT_CONFIG = {
+    "active_pool_system": "Pool1",
     "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
     "pool2_raw_sheet_id": "",
     "pool2_custom_sheet_id": "",
@@ -1659,7 +1660,25 @@ def handle_config():
                 else:
                     cfg[k] = data[k]
         save_config(cfg)
-        return jsonify({"status": "success", "config": cfg})
+        
+        active_sys = cfg.get("active_pool_system", "Pool1")
+        if active_sys == "Pool2":
+            sheet_id = cfg.get("pool2_public_sheet_id", "")
+            pool_sheet_id = cfg.get("pool2_raw_sheet_id", "")
+            source_sheet_id = cfg.get("pool2_custom_sheet_id", "")
+        else:
+            sheet_id = cfg.get("sheet_id", "")
+            pool_sheet_id = ""
+            source_sheet_id = ""
+
+        return jsonify({
+            "status": "success",
+            "active_pool_system": active_sys,
+            "sheet_id": sheet_id,
+            "pool_sheet_id": pool_sheet_id,
+            "source_sheet_id": source_sheet_id,
+            "config": cfg
+        })
     else:
         cfg = load_config()
         client_cfg = dict(cfg)
@@ -1667,7 +1686,25 @@ def handle_config():
             key = client_cfg["openai_api_key"]
             if len(key) > 12:
                 client_cfg["openai_api_key"] = f"{key[:8]}...xxxx...{key[-4:]}"
-        return jsonify({"status": "success", "config": client_cfg})
+                
+        active_sys = cfg.get("active_pool_system", "Pool1")
+        if active_sys == "Pool2":
+            sheet_id = cfg.get("pool2_public_sheet_id", "")
+            pool_sheet_id = cfg.get("pool2_raw_sheet_id", "")
+            source_sheet_id = cfg.get("pool2_custom_sheet_id", "")
+        else:
+            sheet_id = cfg.get("sheet_id", "")
+            pool_sheet_id = ""
+            source_sheet_id = ""
+
+        return jsonify({
+            "status": "success",
+            "active_pool_system": active_sys,
+            "sheet_id": sheet_id,
+            "pool_sheet_id": pool_sheet_id,
+            "source_sheet_id": source_sheet_id,
+            "config": client_cfg
+        })
 
 # ==================================================
 # BACKEND AUTO-CURATION & FALLBACK GENERATOR (US-040)

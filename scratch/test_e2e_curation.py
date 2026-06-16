@@ -36,7 +36,8 @@ def run_server(port, directory):
 
 def main():
     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
-    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\0fdb4d89-b92f-4650-8554-318e53f44db2"
+    repo_assets_dir = r"d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\docs\workflows\assets"
     
     port = get_free_port()
     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
@@ -113,6 +114,7 @@ def main():
     mock_pool_row_1[29] = "https://res.cloudinary.com/demo/image/upload/mat_tien_123.jpg" # mat_tien
     mock_pool_row_1[40] = "https://res.cloudinary.com/demo/image/upload/interior_1.jpg" # interior 1
     mock_pool_row_1[55] = "2001"
+    mock_pool_row_1[60] = "5.5" # Đường trước nhà (m)
     mock_pool_row_1[72] = "SYS-1001" # system_id
 
     mock_pool_row_2 = list(mock_pool_row_1)
@@ -121,6 +123,7 @@ def main():
     mock_pool_row_2[10] = "Mô tả chi tiết Ba Tháng Hai Q10"
     mock_pool_row_2[11] = "11.5"
     mock_pool_row_2[55] = "2002"
+    mock_pool_row_2[60] = "8.2" # Đường trước nhà (m)
     mock_pool_row_2[72] = "SYS-1002"
 
     console_errors = []
@@ -250,6 +253,17 @@ def main():
             admin_page.locator("#accSource .accordion-header").click()
             admin_page.wait_for_timeout(500)
             
+            # Scroll to make the Alley Width field visible in the screenshot
+            print("Scrolling to the alley width field...")
+            admin_page.locator("#editDuongTruocNha").scroll_into_view_if_needed()
+            admin_page.wait_for_timeout(500)
+            
+            # Save Alley Curation Screenshot
+            alley_screenshot_path = os.path.join(repo_assets_dir, "admin_curation_alley_evidence.png")
+            admin_page.screenshot(path=alley_screenshot_path)
+            admin_page.screenshot(path=os.path.join(artifacts_dir, "admin_curation_alley_evidence.png"))
+            print(f"Alley width curation screenshot saved to {alley_screenshot_path}")
+            
             # Test Auto Fill AI Details
             print("Clicking 'Tự động điền' AI button...")
             admin_page.locator("#btnAutoFillCuration").click()
@@ -319,9 +333,9 @@ def main():
             assert source_data[37] == "SYS-1001", "Correct System ID should be synced"
             
             # Save Desktop Screenshot
-            screenshot_path = os.path.join(artifacts_dir, "admin_curation_desktop.png")
-            admin_page.screenshot(path=screenshot_path)
-            print(f"Desktop Curation screenshot saved to {screenshot_path}")
+            admin_page.screenshot(path=os.path.join(artifacts_dir, "admin_curation_desktop.png"))
+            admin_page.screenshot(path=os.path.join(repo_assets_dir, "admin_curation_desktop.png"))
+            print(f"Desktop Curation screenshots saved")
             
             if is_headed:
                 print("\n[Headed Debug] Desktop curation complete. Pausing for 120 seconds for manual inspection...")
@@ -387,9 +401,9 @@ def main():
             mobile_page.wait_for_timeout(500)
             
             # Save Mobile Screenshot
-            screenshot_path = os.path.join(artifacts_dir, "admin_curation_mobile.png")
-            mobile_page.screenshot(path=screenshot_path)
-            print(f"Mobile Curation screenshot saved to {screenshot_path}")
+            mobile_page.screenshot(path=os.path.join(artifacts_dir, "admin_curation_mobile.png"))
+            mobile_page.screenshot(path=os.path.join(repo_assets_dir, "admin_curation_mobile.png"))
+            print(f"Mobile Curation screenshots saved")
             
         except Exception as e:
             print(f"[ERROR] Mobile Curation Flow Failed: {e}")

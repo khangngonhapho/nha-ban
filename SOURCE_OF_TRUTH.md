@@ -2,7 +2,7 @@
 title: BDS-KhangNgo - Source of Truth
 type: source-of-truth
 project: BDS-KhangNgo
-last-meaningful-update: 2026-06-11
+last-meaningful-update: 2026-06-16
 note: File pre-existing trước khi adopt Protocol V1.1. Giữ tên `SOURCE_OF_TRUTH.md` (uppercase) thay vì rename `00 Source of Truth.md` để không break Antigravity workflow đang reference path này.
 tags:
   - source-of-truth
@@ -14,7 +14,7 @@ tags:
 
 > **Mục đích:** File này là nguồn thông tin duy nhất (single source of truth) cho toàn bộ dự án website bất động sản của Khang Ngô Nhà Phố. Mọi thay đổi cần được ghi chép lại ở đây.
 
-> **Cập nhật lần cuối:** 2026-06-11
+> **Cập nhật lần cuối:** 2026-06-16
 
 ---
 
@@ -329,6 +329,23 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
      - **Phục hồi hàm executeGenerateQuickLink**: Khôi phục hàm `executeGenerateQuickLink` từ file nháp trích xuất và định nghĩa nó trên đối tượng toàn cục `window.executeGenerateQuickLink` trong tệp `static/js/lego_helpers.js`.
      - **Sửa lỗi ReferenceError**: Khắc phục triệt để lỗi ReferenceError khi click vào nút "⚡ Tạo Link Công Khai Nhanh" trong modal tạo link gửi khách (`#linkModal`), cho phép đóng modal, mã hóa danh sách System ID an toàn bằng Base64URL-safe (cho trường hợp nhiều căn) và sao chép đường dẫn đã tạo vào clipboard.
      - **Kiểm thử E2E Playwright**: Xây dựng kịch bản kiểm thử E2E mới `scratch/test_e2e_quick_share.py` để tự động hóa kiểm tra tính năng tạo link công khai nhanh trên giao diện Admin; chạy pass thành công **100% PASS** đồng thời bảo đảm bộ test E2E cũ (`test_e2e_modal.py`, `test_e2e_collections.py`) tiếp tục hoạt động ổn định không lỗi hồi quy.
+
+### 2026-06-16 (Nghiệm thu US-096B - Frontend Curation Load - TEST PASS)
+*   **Mã User Story:** `US-096B`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Tải cấu hình Spreadsheet/Tab động**: Frontend gọi `/api/config` để lưu các Spreadsheet IDs động vào `LegoState.config`.
+     - **Bóc tách cột Google Sheet động**: Triển khai cơ chế bóc tách cột qua `getSourceVal` và `getPoolVal` dựa trên tên cột đọc từ hàng đầu tiên, hỗ trợ tự động tương thích cả Pool1 và Pool2.
+     - **Tích hợp ô nhập hẻm mới**: Thêm input `#editDuongTruocNha` nhãn "Đường trước nhà (m)" vào form curation của Admin, nạp giá trị từ `Custom_Rong_Hem` hoặc fallback về hẻm thô.
+     - **Khắc phục lỗi header E2E**: Bỏ qua hàng index 0 vô điều kiện để tránh nạp dummy header thành data row làm hiện sai preview panel cho tin thô chưa lên sóng.
+     - **Kiểm thử E2E Playwright**: Bộ test suite chạy thành công **100% PASS** cho cả 5 kịch bản kiểm thử trên cả hai thiết bị Desktop và Mobile.
+
+### 2026-06-16 (Nghiệm thu US-096A - API Config & SQLite Schema Upgrade - TEST PASS)
+*   **Mã User Story:** `US-096A`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Nâng cấp CSDL SQLite**: Cấu trúc lại schema database SQLite tự động thêm cột `Custom_Rong_Hem` (kiểu dữ liệu TEXT) vào bảng `listings_custom_v2` khi khởi chạy hệ thống ở chế độ Pool2, bảo đảm không ảnh hưởng đến dữ liệu cũ.
+     - **Cấu hình Google Sheets Schema**: Thêm `"Custom_Rong_Hem"` vào danh sách `CUSTOM_HEADERS` toàn cục để hỗ trợ đồng bộ cột tùy biến hẻm lên Google Sheets Custom.
+     - **API cấu hình Spreadsheet IDs động**: Triển khai endpoint `/api/config` trên Flask backend (`manager.py`) và Vercel serverless (`api/index.js`), trả về đúng các Spreadsheet IDs động theo chế độ đang active (Public 2 ID, Raw 2 ID, Custom 2 ID) và mask OpenAI API Key.
+     - **Kiểm thử E2E Playwright**: Chạy toàn bộ bộ kiểm thử E2E Playwright và đạt kết quả **100% PASS** cho cả 5 kịch bản kiểm thử trên cả hai thiết bị Desktop và Mobile.
 
 ### 2026-06-16 (Nghiệm thu US-095 - Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 - TEST PASS)
 *   **Mã User Story:** `US-095`
@@ -1146,6 +1163,12 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 > Cập nhật khi có thêm yêu cầu mới
 
 - [x] **US-097:** Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng ✅ Done 2026-06-16
+- [ ] **US-096:** Kết nối Web Vercel với hệ thống dữ liệu Pool2 (Epic Master)
+- [x] **US-096A:** API Config & SQLite Schema Upgrade ✅ Accepted 2026-06-16
+- [x] **US-096B:** Frontend Load & Detail View Admin ✅ Done 2026-06-16
+- [ ] **US-096C:** Curation Save - Text & Specs Curing
+- [ ] **US-096D:** Image Curation - Selection, Roles, Ordering, & Rotation
+- [ ] **US-096E:** Public Whitelist Publication
 - [x] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ✅ Done 2026-06-16
 - [x] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) ✅ Done 2026-06-16
 - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
@@ -1235,7 +1258,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 3. **Nếu thay đổi schema Sheet** → cập nhật bảng section 3
 4. **Nếu đổi password/SĐT** → cập nhật section 4 và 5
 
-*File này được tạo và duy trì bởi Antigravity AI Assistant. Cập nhật lần cuối: 2026-06-11.*
+*File này được tạo và duy trì bởi Antigravity AI Assistant. Cập nhật lần cuối: 2026-06-16.*
 
 
 ## QUY TẮC ĐẶT TÊN (NAMING CONVENTIONS)

@@ -168,7 +168,7 @@ CUSTOM_HEADERS = [
     "So_Tang", "Mat_Tien", "Chieu_dai", "Huong", "Criteria_Duong_truoc_nha",
     "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
     "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien",
-    "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"
+    "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto", "Custom_Rong_Hem"
 ]
 
 # Danh sách cột cho File 3 Public (tab Public)
@@ -489,6 +489,7 @@ def init_db(db_file=None):
             bedrooms TEXT,
             restrooms TEXT,
             minimumRoadWidth TEXT,
+            Custom_Rong_Hem TEXT,
             Noi_dung_chinh TEXT,
             Mo_ta_chi_tiet TEXT,
             Gia_chao TEXT,
@@ -557,7 +558,7 @@ def init_db(db_file=None):
                 "Ma_Khang_Ngo", "Gia_Public", "Tieu_De_Public", "Mo_ta_Public", "Note_Noi_Bo",
                 "Trang_Thai_Giao_Dich", "Ngu_Tret", "CHDV", "Trang_Thai_KN", "images_metadata_json",
                 "Dia_Chi_That", "So_Nha", "Ten_Duong", "Quan", "Phuong", "Duong", "Ngo_So_nha",
-                "bedrooms", "restrooms", "minimumRoadWidth", "Noi_dung_chinh", "Mo_ta_chi_tiet",
+                "bedrooms", "restrooms", "minimumRoadWidth", "Custom_Rong_Hem", "Noi_dung_chinh", "Mo_ta_chi_tiet",
                 "Gia_chao", "DT_Thuc_te", "DT_Tren_so", "So_Tang", "Mat_Tien", "Chieu_dai", "Huong",
                 "Criteria_Duong_truoc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
                 "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien", "Criteria_Huong_nha",

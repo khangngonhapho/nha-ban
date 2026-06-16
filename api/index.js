@@ -781,6 +781,44 @@ module.exports = async (req, res) => {
     }
   }
 
+  // Endpoint lấy cấu hình Spreadsheet IDs động và config toàn cục
+  if (pathname === '/api/config') {
+    try {
+      const cfg = loadConfig();
+      const activeSys = cfg.active_pool_system || 'Pool1';
+      let sheetId = cfg.sheet_id || '';
+      let poolSheetId = '';
+      let sourceSheetId = '';
+      
+      if (activeSys === 'Pool2') {
+        sheetId = cfg.pool2_public_sheet_id || '';
+        poolSheetId = cfg.pool2_raw_sheet_id || '';
+        sourceSheetId = cfg.pool2_custom_sheet_id || '';
+      }
+      
+      // Mask OpenAI API Key
+      const clientCfg = { ...cfg };
+      if (clientCfg.openai_api_key) {
+        const key = clientCfg.openai_api_key;
+        if (key.length > 12) {
+          clientCfg.openai_api_key = `${key.slice(0, 8)}...xxxx...${key.slice(-4)}`;
+        }
+      }
+      
+      return res.status(200).json({
+        status: 'success',
+        active_pool_system: activeSys,
+        sheet_id: sheetId,
+        pool_sheet_id: poolSheetId,
+        source_sheet_id: sourceSheetId,
+        config: clientCfg
+      });
+    } catch (err) {
+      console.error('Error fetching config in serverless function:', err);
+      return res.status(500).json({ status: 'error', message: `Lỗi lấy cấu hình: ${err.message}` });
+    }
+  }
+
   let html = '';
   const htmlPaths = [
     path.join(__dirname, '..', 'index.html'),
