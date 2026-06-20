@@ -36,7 +36,7 @@ def run_server(port, directory):
 
 def main():
     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
-    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\c3d4a7c9-e9b6-4f67-9c0a-da95771787dc"
     
     port = get_free_port()
     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
@@ -149,7 +149,20 @@ def main():
         client_page.on("requestfailed", lambda req: print(f"[Client Request Failed] {req.url} - {req.failure}"))
         client_page.on("response", lambda res: print(f"[Client Response {res.status}] {res.url}") if res.status >= 400 else None)
         
+        def handle_api_config(route):
+            mock_config = {
+                "status": "success",
+                "config": {
+                    "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+                    "active_pool_system": "Pool1",
+                    "json_ui_filters": [],
+                    "json_ui_fields": []
+                }
+            }
+            route.fulfill(content_type="application/json", body=json.dumps(mock_config))
+
         client_page.route("**/gviz/tq**", handle_public_gviz)
+        client_page.route("**/api/config**", handle_api_config)
         
         # Navigate without setting name/phone in localStorage first to trigger lead capture
         client_url = f"http://localhost:{port}/index.html?s=1,2"
@@ -251,6 +264,7 @@ def main():
 
         admin_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
         admin_page.route("**/gviz/tq**", handle_public_gviz)
+        admin_page.route("**/api/config**", handle_api_config)
         
         admin_url = f"http://localhost:{port}/index.html"
         try:

@@ -36,7 +36,7 @@ def run_server(port, directory):
 
 def main():
     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
-    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\c3d4a7c9-e9b6-4f67-9c0a-da95771787dc"
     
     port = get_free_port()
     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
@@ -126,6 +126,9 @@ def main():
         client_context = browser.new_context(viewport={"width": 1280, "height": 800})
         client_page = client_context.new_page()
         
+        client_page.on("console", lambda msg: print(f"[Client Console {msg.type}] {msg.text}"))
+        client_page.on("pageerror", lambda err: print(f"[Client Page Error] {err}"))
+        
         # Inject client name & phone to bypass lead capture modal
         client_page.add_init_script("""
             localStorage.setItem('client_name', 'Test Customer');
@@ -146,7 +149,20 @@ def main():
             mock_jsonp = f"__gsCallback({json.dumps(mock_data)});"
             route.fulfill(content_type="application/javascript", body=mock_jsonp)
 
+        def handle_api_config(route):
+            mock_config = {
+                "status": "success",
+                "config": {
+                    "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+                    "active_pool_system": "Pool1",
+                    "json_ui_filters": [],
+                    "json_ui_fields": []
+                }
+            }
+            route.fulfill(content_type="application/json", body=json.dumps(mock_config))
+
         client_page.route("**/gviz/tq**", handle_public_gviz)
+        client_page.route("**/api/config**", handle_api_config)
         
         # Pass s=1 to select the first element in mock_public_row
         client_url = f"http://localhost:{port}/index.html?s=1"
@@ -233,6 +249,7 @@ def main():
         
         # Mock public sheets just in case of fallbacks
         admin_page.route("**/gviz/tq**", handle_public_gviz)
+        admin_page.route("**/api/config**", handle_api_config)
         
         admin_url = f"http://localhost:{port}/index.html"
         try:

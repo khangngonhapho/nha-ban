@@ -2122,11 +2122,12 @@
           finalImages[11] || "",         // 42: anh_12 (Cột AQ)
           finalImages[12] || "",         // 43: anh_13 (Cột AR)
           finalImages[13] || "",         // 44: anh_14 (Cột AS)
-          finalImages[14] || ""          // 45: anh_15 (Cột AT)
+          finalImages[14] || "",         // 45: anh_15 (Cột AT)
+          matchedRow[93] || ""           // 46: JSON_UI (Cột AU)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AT${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AU${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {
@@ -2480,8 +2481,8 @@
           const finalImages = window.getPublicImagesFromForm(p);
           while (finalImages.length < 15) finalImages.push("");
 
-          // Pad original_row_data to 46 columns
-          while (p.original_row_data.length < 46) p.original_row_data.push("");
+          // Pad original_row_data to 47 columns
+          while (p.original_row_data.length < 47) p.original_row_data.push("");
 
           // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
           for (let i = 0; i < 10; i++) {
@@ -2495,7 +2496,7 @@
         }
 
         if (p.original_row_data) {
-          while (p.original_row_data.length < 46) p.original_row_data.push("");
+          while (p.original_row_data.length < 47) p.original_row_data.push("");
           p.original_row_data[38] = customCoverUrl;
           p.img_mat_tien = customCoverUrl;
 
@@ -2570,6 +2571,11 @@
         p.original_row_data[4] = tieuDeBds;
         p.t = tieuDeBds;
         p.original_row_data[39] = "";
+        if (!p.json_ui_parsed) {
+          p.json_ui_parsed = {};
+        }
+        p.json_ui_parsed["Criteria_Duong_truoc_nha"] = duong;
+        p.original_row_data[46] = JSON.stringify(p.json_ui_parsed);
 
         p.note = note;
         p.huong = huong;
@@ -2583,7 +2589,7 @@
         p.m = moTaBds;
 
         const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AT${p.source_row_index}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AU${p.source_row_index}?valueInputOption=USER_ENTERED`;
 
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
@@ -2951,11 +2957,12 @@
           finalImages[11] || "",         // 42: Ảnh 12 (Cột AQ)
           finalImages[12] || "",         // 43: Ảnh 13 (Cột AR)
           finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
-          finalImages[14] || ""          // 45: Ảnh 15 (Cột AT)
+          finalImages[14] || "",         // 45: Ảnh 15 (Cột AT)
+          matchedRow[93] || ""           // 46: JSON_UI (Cột AU)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AT${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AU${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {

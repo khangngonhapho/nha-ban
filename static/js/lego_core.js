@@ -700,10 +700,10 @@ const LegoState = {
               p.pool_row_data = poolRow;
               
               let jsonUiVal = poolRow[93] || '';
-              if (!jsonUiVal || !jsonUiVal.trim().startsWith('{')) {
+              if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
                 for (let i = poolRow.length - 1; i >= 0; i--) {
                   const val = poolRow[i];
-                  if (val && val.trim().startsWith('{') && val.trim().endsWith('}')) {
+                  if (val && String(val).trim().startsWith('{') && String(val).trim().endsWith('}')) {
                     jsonUiVal = val;
                     break;
                   }
@@ -785,10 +785,31 @@ const LegoState = {
             if (!rawQ) {
               const titleLower = String(cv(r.c[1])).toLowerCase();
               const phuongLower = String(cv(r.c[7])).toLowerCase();
-              if (titleLower.includes('phú nhuận') || titleLower.includes('pn') || phuongLower.includes('phú nhuận') || phuongLower.includes('pn') || phuongLower.includes('cầu kiệu')) rawQ = 'PN';
-              else if (titleLower.includes('tân bình') || titleLower.includes('tb') || phuongLower.includes('tân bình') || phuongLower.includes('tb') || phuongLower.includes('tân sơn nhất') || phuongLower.includes('tân hòa')) rawQ = 'TB';
-              else if (titleLower.includes('bình thạnh') || titleLower.includes('bt') || phuongLower.includes('bình thạnh') || phuongLower.includes('bt')) rawQ = 'BT';
-              else if (titleLower.includes('gò vấp') || titleLower.includes('gv') || phuongLower.includes('gò vấp') || phuongLower.includes('gv')) rawQ = 'GV';
+              const descLower = String(cv(r.c[16])).toLowerCase();
+              const textToSearch = titleLower + " " + phuongLower + " " + descLower;
+              
+              if (textToSearch.includes('phú nhuận') || textToSearch.includes('pn') || textToSearch.includes('cầu kiệu')) rawQ = 'PN';
+              else if (textToSearch.includes('tân bình') || textToSearch.includes('tb') || textToSearch.includes('tân sơn nhất') || textToSearch.includes('tân hòa')) rawQ = 'TB';
+              else if (textToSearch.includes('bình thạnh') || textToSearch.includes('bt')) rawQ = 'BT';
+              else if (textToSearch.includes('gò vấp') || textToSearch.includes('gv')) rawQ = 'GV';
+              else if (textToSearch.includes('tân phú') || textToSearch.includes('tp')) rawQ = 'TP';
+              else if (textToSearch.includes('bình tân') || textToSearch.includes('btan')) rawQ = 'BTan';
+              else if (textToSearch.includes('thủ đức') || textToSearch.includes('td')) rawQ = 'TD';
+              else if (textToSearch.includes('hóc môn') || textToSearch.includes('hm')) rawQ = 'HM';
+              else if (textToSearch.includes('nhà bè') || textToSearch.includes('nb')) rawQ = 'NB';
+              else if (textToSearch.includes('bình chánh') || textToSearch.includes('bc')) rawQ = 'BC';
+              else if (textToSearch.includes('củ chi') || textToSearch.includes('cc')) rawQ = 'CC';
+              else if (textToSearch.includes('cần giờ') || textToSearch.includes('cg')) rawQ = 'CG';
+              else {
+                const numText = titleLower + " " + phuongLower;
+                let qNumMatch = numText.match(/(?:quận|q\.?)\s*(\d+)/);
+                if (!qNumMatch) {
+                  qNumMatch = descLower.match(/(?:quận|q\.?)\s*(\d+)/);
+                }
+                if (qNumMatch) {
+                  rawQ = qNumMatch[1];
+                }
+              }
             }
             let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
             if (cleanQ.endsWith('.0')) {
@@ -859,7 +880,7 @@ const LegoState = {
             let jsonUiVal = '';
             if (r.c && r.c.length) {
               for (let i = r.c.length - 1; i >= 0; i--) {
-                const val = cv(r.c[i]);
+                const val = String(cv(r.c[i]));
                 if (val && val.trim().startsWith('{') && val.trim().endsWith('}')) {
                   jsonUiVal = val;
                   break;

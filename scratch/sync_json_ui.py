@@ -298,10 +298,76 @@ def run_sync(limit=None, add_log_message=None):
         add_log_message(f"Đang đồng bộ cột CP ghi hàng loạt dữ liệu '{range_str}' lên Sheets...")
         sheet.update(range_name=range_str, values=col_values, value_input_option='USER_ENTERED')
         
-        add_log_message("[🎉 THÀNH CÔNG] Hoàn tất đồng bộ toàn bộ cột JSON_UI lên Google Sheets!")
+        add_log_message("[🎉 Pool] Đồng bộ thành công cột JSON_UI lên Pool Sheet!")
+
+        # --- ĐỒNG BỘ TIẾP SANG SOURCE VÀ PUBLIC SHEETS ---
+        try:
+            add_log_message("[⚡] Đang đồng bộ JSON_UI sang Source và Public sheets...")
+            
+            # Map System_ID sang JSON_UI từ SQLite
+            conn = sqlite3.connect(db_file, timeout=30.0)
+            cursor = conn.cursor()
+            sys_id_to_json_ui = {}
+            for sys_id, json_ui in cursor.execute(f"SELECT System_ID, JSON_UI FROM {target_table}").fetchall():
+                if sys_id:
+                    sys_id_to_json_ui[sys_id.strip()] = json_ui or ""
+            conn.close()
+            
+            # 1. Đồng bộ lên Source Sheet
+            source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
+            source_ss = client.open_by_key(source_sheet_id)
+            source_sheet = source_ss.worksheet("Source")
+            source_rows = source_sheet.get_all_values()
+            
+            headers_row = source_rows[0]
+            if len(headers_row) < 47:
+                add_log_message(f"  [-] Mở rộng Source Sheet từ {len(headers_row)} lên 47 cột...")
+                source_sheet.add_cols(47 - len(headers_row))
+                source_rows = source_sheet.get_all_values()
+                headers_row = source_rows[0]
+                
+            source_sheet.update(range_name="AU1:AU2", values=[["JSON_UI"], ["JSON_UI"]], value_input_option='USER_ENTERED')
+            
+            source_col_vals = [["JSON_UI"], ["JSON_UI"]]
+            for i in range(2, len(source_rows)):
+                row = source_rows[i]
+                sys_id = row[37].strip() if len(row) > 37 else ""
+                json_val = sys_id_to_json_ui.get(sys_id, "")
+                source_col_vals.append([json_val])
+                
+            source_range = f"AU1:AU{len(source_col_vals)}"
+            add_log_message(f"  [-] Đang ghi cột {source_range} lên Source Sheet...")
+            source_sheet.update(range_name=source_range, values=source_col_vals, value_input_option='USER_ENTERED')
+            add_log_message("[✅ Source] Đồng bộ JSON_UI sang Source Sheet thành công!")
+            
+            # 2. Cập nhật Public Sheet
+            public_sheet_id = "1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0"
+            public_ss = client.open_by_key(public_sheet_id)
+            public_sheet = public_ss.get_worksheet(0)
+            public_rows = public_sheet.get_all_values()
+            
+            public_headers = public_rows[0]
+            if len(public_headers) < 44:
+                add_log_message(f"  [-] Mở rộng Public Sheet từ {len(public_headers)} lên 44 cột...")
+                public_sheet.add_cols(44 - len(public_headers))
+                public_rows = public_sheet.get_all_values()
+                public_headers = public_rows[0]
+                
+            public_sheet.update(range_name="AR1:AR2", values=[["JSON_UI"], ["JSON_UI"]], value_input_option='USER_ENTERED')
+            
+            current_a3 = public_sheet.acell("A3", value_render_option='FORMULA').value
+            new_a3 = current_a3.replace("Source!D3:AT1000", "Source!D3:AU1000")
+            add_log_message(f"  [-] Cập nhật công thức IMPORTRANGE ở cell A3 của Public Sheet...")
+            public_sheet.update(range_name="A3", values=[[new_a3]], value_input_option='USER_ENTERED')
+            
+            add_log_message("[🎉 THÀNH CÔNG] Hoàn tất đồng bộ toàn bộ cột JSON_UI lên cả Pool, Source và Public sheets!")
+            
+        except Exception as e_sync_others:
+            add_log_message(f"[⚠️ WARNING] Lỗi đồng bộ sang Source/Public: {str(e_sync_others)}")
         
     except Exception as e_sheet:
         add_log_message(f"[❌ Sheets LỖI] Sự cố đồng bộ hàng loạt lên Sheets: {str(e_sheet)}")
+
 
 if __name__ == "__main__":
     import argparse
