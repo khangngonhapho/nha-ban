@@ -703,8 +703,9 @@ const LegoState = {
               if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
                 for (let i = poolRow.length - 1; i >= 0; i--) {
                   const val = poolRow[i];
-                  if (val && String(val).trim().startsWith('{') && String(val).trim().endsWith('}')) {
-                    jsonUiVal = val;
+                  const valStr = val ? String(val).trim() : '';
+                  if (valStr && valStr.startsWith('{') && valStr.endsWith('}')) {
+                    jsonUiVal = valStr;
                     break;
                   }
                 }
@@ -879,9 +880,10 @@ const LegoState = {
             let jsonUiVal = '';
             if (r.c && r.c.length) {
               for (let i = r.c.length - 1; i >= 0; i--) {
-                const val = String(cv(r.c[i]));
-                if (val && val.trim().startsWith('{') && val.trim().endsWith('}')) {
-                  jsonUiVal = val;
+                const val = cv(r.c[i]);
+                const valStr = val ? String(val).trim() : '';
+                if (valStr && valStr.startsWith('{') && valStr.endsWith('}')) {
+                  jsonUiVal = valStr;
                   break;
                 }
               }

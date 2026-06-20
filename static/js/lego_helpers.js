@@ -344,8 +344,9 @@ window.getMappedPoolData = function() {
     if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
       for (let i = row.length - 1; i >= 0; i--) {
         const val = row[i];
-        if (val && String(val).trim().startsWith('{') && String(val).trim().endsWith('}')) {
-          jsonUiVal = val;
+        const valStr = val ? String(val).trim() : '';
+        if (valStr && valStr.startsWith('{') && valStr.endsWith('}')) {
+          jsonUiVal = valStr;
           break;
         }
       }
