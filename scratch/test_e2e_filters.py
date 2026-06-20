@@ -36,7 +36,7 @@ def run_server(port, directory):
 
 def main():
     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
-    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\916f8731-ddb9-4d34-87c5-3a0080f87669"
     
     port = get_free_port()
     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
@@ -67,6 +67,7 @@ def main():
     mock_public_row_1[16] = {"v": "Mô tả chi tiết căn nhà CMT8..."} # m
     mock_public_row_1[17] = {"v": "https://res.cloudinary.com/demo/image/upload/sample.jpg"} # img 1
     mock_public_row_1[34] = {"v": "SYS-1001"} # system_id
+    mock_public_row_1[44] = {"v": '{"Criteria_Duong_truoc_nha": "Ngõ 1 ô tô ( 2.5 -5m)"}'}
 
     mock_public_row_2 = list(mock_public_row_1)
     mock_public_row_2[0] = {"v": "1002"}
@@ -130,6 +131,7 @@ def main():
     mock_pool_row_1[74] = "0901234567"
     mock_pool_row_1[75] = "Đầu chủ A"
     mock_pool_row_1[76] = "fb.com"
+    mock_pool_row_1[93] = '{"Criteria_Duong_truoc_nha": "Ngõ 1 ô tô ( 2.5 -5m)"}'
 
     mock_pool_row_2 = list(mock_pool_row_1)
     mock_pool_row_2[9] = "Nội dung chính Ba Tháng Hai Q10"
@@ -182,7 +184,31 @@ def main():
             mock_jsonp = f"__gsCallback({json.dumps(mock_data)});"
             route.fulfill(content_type="application/javascript", body=mock_jsonp)
 
+        def handle_api_config(route):
+            mock_config = {
+                "status": "success",
+                "config": {
+                    "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+                    "active_pool_system": "Pool1",
+                    "json_ui_filters": [
+                        {
+                            "field": "Criteria_Duong_truoc_nha",
+                            "label": "Đường trước nhà",
+                            "type": "select",
+                            "options": [
+                                "",
+                                "Hẻm xe máy ( <2m)",
+                                "Ngõ ngách (2 - 2.5m)"
+                            ]
+                        }
+                    ],
+                    "json_ui_fields": ["Criteria_Duong_truoc_nha"]
+                }
+            }
+            route.fulfill(content_type="application/json", body=json.dumps(mock_config))
+
         client_page.route("**/gviz/tq**", handle_public_gviz)
+        client_page.route("**/api/config**", handle_api_config)
         
         # Use s=1,2,3 which will correctly map to first 3 rows in mock table
         client_url = f"http://localhost:{port}/index.html?s=1,2,3"
@@ -312,6 +338,7 @@ def main():
         admin_page.route("**/api/auth/**", handle_auth_api)
         admin_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
         admin_page.route("**/gviz/tq**", handle_public_gviz)
+        admin_page.route("**/api/config**", handle_api_config)
         
         admin_url = f"http://localhost:{port}/index.html"
         try:

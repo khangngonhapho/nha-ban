@@ -698,7 +698,23 @@ const LegoState = {
               p.raw_phan_loai = poolRow[7] || '';
               p.pool_row_index = poolRows.indexOf(poolRow) + 2;
               p.pool_row_data = poolRow;
+              
+              let jsonUiVal = poolRow[93] || '';
+              if (!jsonUiVal || !jsonUiVal.trim().startsWith('{')) {
+                for (let i = poolRow.length - 1; i >= 0; i--) {
+                  const val = poolRow[i];
+                  if (val && val.trim().startsWith('{') && val.trim().endsWith('}')) {
+                    jsonUiVal = val;
+                    break;
+                  }
+                }
+              }
+              p.json_ui_parsed = {};
+              if (jsonUiVal) {
+                try { p.json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+              }
             } else {
+              p.json_ui_parsed = {};
               p.raw_ten_dau_chu = '';
               p.raw_dt_dau_chu = '';
               p.raw_link_fb = '';
@@ -839,6 +855,22 @@ const LegoState = {
               so_pn: cv(r.c[29]) || '-',
               img_mat_tien: cv(r.c[35]) || ''
             };
+            
+            let jsonUiVal = '';
+            if (r.c && r.c.length) {
+              for (let i = r.c.length - 1; i >= 0; i--) {
+                const val = cv(r.c[i]);
+                if (val && val.trim().startsWith('{') && val.trim().endsWith('}')) {
+                  jsonUiVal = val;
+                  break;
+                }
+              }
+            }
+            p.json_ui_parsed = {};
+            if (jsonUiVal) {
+              try { p.json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+            }
+            
             p.dai_nha = getDaiNha(p);
             return p;
           });

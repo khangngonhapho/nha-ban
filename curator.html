@@ -866,6 +866,7 @@
                 <div class="sidebar-tab active" data-status="raw_text" onclick="setSidebarStatus('raw_text')">Chờ di cư ảnh</div>
                 <div class="sidebar-tab" data-status="raw_complete" onclick="setSidebarStatus('raw_complete')">Chờ biên tập</div>
                 <div class="sidebar-tab" data-status="published" onclick="setSidebarStatus('published')">Đã xuất bản</div>
+                <div class="sidebar-tab" data-status="crawl_failed" onclick="setSidebarStatus('crawl_failed')" style="border-left: 1px solid var(--border-color); color: #f87171;">Lỗi cào</div>
             </div>
             <!-- Khung chọn lọc đẩy thô Pool hàng loạt (US-040) -->
             <div class="sidebar-actions" id="sidebar-bulk-actions" style="display: none; padding: 10px 12px; background: rgba(251, 191, 36, 0.05); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -1038,6 +1039,69 @@
                     </div>
                     <div class="terminal-body" id="terminal-log">
                         <!-- Terminal lines here -->
+                    </div>
+                </div>
+                
+                <!-- panel-row 2 for US-100 -->
+                <div class="panel-row" style="margin-top: 20px;">
+                    <!-- Dynamic Filters config card -->
+                    <div class="panel-card">
+                        <div class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>⚙️ Cấu hình Bộ lọc JSON Động</span>
+                            <button class="btn btn-gold" onclick="triggerSyncJsonUi()" style="font-size: 11px; padding: 4px 10px; height: auto;">🔄 Đồng bộ JSON UI Hàng loạt</button>
+                        </div>
+                        
+                        <div id="dynamic-filters-list" style="margin-bottom: 15px;">
+                            <!-- Dynamic filters list table -->
+                        </div>
+                        
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                            <label style="font-size: 11px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 10px; display: block;">➕ Thêm Bộ lọc Mới</label>
+                            <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 9px;">Khóa Dữ liệu (JSON Key)</label>
+                                    <input type="text" id="new-filter-field" placeholder="e.g. Criteria_Duong_truoc_nha">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 9px;">Nhãn hiển thị (Label)</label>
+                                    <input type="text" id="new-filter-label" placeholder="e.g. Đường trước nhà">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 9px;">Loại (Type)</label>
+                                    <select id="new-filter-type">
+                                        <option value="select">Select / Combobox</option>
+                                        <option value="text">Văn bản / Text</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 9px;">Danh sách tùy chọn (Phân cách bằng dấu phẩy)</label>
+                                <input type="text" id="new-filter-options" placeholder="Để trống nếu là Text, nhập Options1, Options2... nếu là Select">
+                            </div>
+                            <button class="btn btn-outline" onclick="addNewDynamicFilter()" style="width: 100%;">➕ Thêm Bộ lọc vào Cấu hình</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Troubleshooting card -->
+                    <div class="panel-card" style="display: flex; flex-direction: column;">
+                        <div class="panel-title">⚠️ Khắc phục Sự cố Cào tin (Troubleshooting)</div>
+                        <div style="margin-bottom: 10px; font-size: 12px; color: var(--text-muted);">
+                            Danh sách các căn bị lỗi trong quá trình vá dữ liệu chi tiết từ Thiên Khôi.
+                        </div>
+                        <div style="flex: 1; overflow-y: auto; max-height: 350px; border: 1px solid var(--border-color); border-radius: 6px; background: rgba(0,0,0,0.2);">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); text-align: left;">
+                                        <th style="padding: 8px;">Mã căn</th>
+                                        <th style="padding: 8px;">Lý do lỗi</th>
+                                        <th style="padding: 8px; text-align: right;">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trouble-table-body">
+                                    <!-- Render failed listings here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1676,6 +1740,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             fetchConfig();
             fetchListings();
+            loadTroubleList();
             logsInterval = setInterval(fetchLogs, 2000);
             
             // Tự động phân tích trang bắt đầu từ URL khi dán/nhập
@@ -1776,6 +1841,9 @@
                         document.getElementById('cfg-delay-page-max').value = cfg.delay_page_max !== undefined ? cfg.delay_page_max : 10.0;
                         
                         detectAndSetPresetDropdown();
+                        
+                        currentFiltersConfig = cfg.json_ui_filters || [];
+                        renderDynamicFiltersTable();
                     }
                 });
         }
@@ -1997,11 +2065,12 @@
                     const listings = data.listings || [];
                     
                     // Cập nhật số lượng đếm trên các Tab trạng thái ở Sidebar
-                    const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0 };
+                    const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0, crawl_failed: 0 };
                     const tabTextMap = {
                         raw_text: `Chờ di cư ảnh (${counts.raw_text})`,
                         raw_complete: `Chờ biên tập (${counts.raw_complete})`,
-                        published: `Đã xuất bản (${counts.published})`
+                        published: `Đã xuất bản (${counts.published})`,
+                        crawl_failed: `Lỗi cào (${counts.crawl_failed || 0})`
                     };
                     document.querySelectorAll('.sidebar-tab').forEach(tab => {
                         const status = tab.getAttribute('data-status');
@@ -3009,6 +3078,245 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+        // ==================================================
+        // US-100 DYNAMIC FILTERS & TROUBLESHOOTING JS (US-100)
+        // ==================================================
+        let currentFiltersConfig = [];
+
+        function renderDynamicFiltersTable() {
+            const container = document.getElementById('dynamic-filters-list');
+            if (!container) return;
+            
+            if (currentFiltersConfig.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 15px; font-size: 11px; color: var(--text-muted); background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px dashed var(--border-color);">Chưa cấu hình bộ lọc động nào. Hãy thêm bộ lọc mới ở form bên dưới.</div>`;
+                return;
+            }
+            
+            let html = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden;">
+                    <thead>
+                        <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color);">
+                            <th style="padding: 8px;">Nhãn hiển thị</th>
+                            <th style="padding: 8px;">Khóa dữ liệu (Key)</th>
+                            <th style="padding: 8px;">Loại</th>
+                            <th style="padding: 8px;">Tùy chọn (Options)</th>
+                            <th style="padding: 8px; text-align: right;">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            currentFiltersConfig.forEach((f, idx) => {
+                const optionsStr = f.options ? f.options.filter(x => x).join(', ') : '';
+                html += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 8px; font-weight: bold; color: var(--accent-gold);">${escapeHtml(f.label)}</td>
+                        <td style="padding: 8px; font-family: monospace; color: var(--text-muted);">${escapeHtml(f.field)}</td>
+                        <td style="padding: 8px;"><span style="background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 9px;">${f.type === 'select' ? 'Select' : 'Text'}</span></td>
+                        <td style="padding: 8px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(optionsStr)}">${escapeHtml(optionsStr) || '<i style="color:var(--text-muted)">Không có</i>'}</td>
+                        <td style="padding: 8px; text-align: right;">
+                            <button onclick="deleteDynamicFilter(${idx})" style="background: transparent; border: none; color: var(--accent-red); cursor: pointer; font-size: 14px; padding: 2px 6px;" title="Xóa bộ lọc này">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function addNewDynamicFilter() {
+            const fieldInput = document.getElementById('new-filter-field');
+            const labelInput = document.getElementById('new-filter-label');
+            const typeInput = document.getElementById('new-filter-type');
+            const optionsInput = document.getElementById('new-filter-options');
+            
+            const field = fieldInput.value.trim();
+            const label = labelInput.value.trim();
+            const type = typeInput.value;
+            let options = [];
+            
+            if (!field || !label) {
+                alert("Vui lòng nhập đầy đủ Khóa dữ liệu và Nhãn hiển thị!");
+                return;
+            }
+            
+            if (type === 'select') {
+                const optVal = optionsInput.value.trim();
+                if (optVal) {
+                    options = optVal.split(',').map(o => o.trim());
+                    // Đảm bảo có tùy chọn rỗng ở đầu nếu chưa có
+                    if (options.length > 0 && options[0] !== '') {
+                        options.unshift('');
+                    }
+                } else {
+                    options = [''];
+                }
+            }
+            
+            // Kiểm tra trùng lặp
+            if (currentFiltersConfig.some(f => f.field === field)) {
+                alert("Khóa dữ liệu này đã tồn tại trong cấu hình!");
+                return;
+            }
+            
+            currentFiltersConfig.push({ field, label, type, options });
+            renderDynamicFiltersTable();
+            saveDynamicFiltersConfig();
+            
+            // Reset inputs
+            fieldInput.value = '';
+            labelInput.value = '';
+            optionsInput.value = '';
+        }
+
+        function deleteDynamicFilter(idx) {
+            if (!confirm("Bạn có chắc muốn xóa bộ lọc này khỏi cấu hình?")) return;
+            currentFiltersConfig.splice(idx, 1);
+            renderDynamicFiltersTable();
+            saveDynamicFiltersConfig();
+        }
+
+        function saveDynamicFiltersConfig() {
+            // Lấy config hiện tại trước để merge
+            fetch('/api/config')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const cfg = data.config;
+                        // Chỉ cập nhật thuộc tính json_ui_filters và gửi POST
+                        cfg.json_ui_filters = currentFiltersConfig;
+                        
+                        fetch('/api/config', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(cfg)
+                        })
+                        .then(res => res.json())
+                        .then(resData => {
+                            if (resData.status === 'success') {
+                                showBannerNotification('⚙️ Đã lưu cấu hình bộ lọc động thành công!', 'green');
+                            }
+                        });
+                    }
+                });
+        }
+
+        function triggerSyncJsonUi() {
+            showBannerNotification('⏳ Đang kích hoạt tiến trình đồng bộ JSON UI hàng loạt...', 'gold');
+            fetch('/api/sync-json-ui', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🔄 Tiến trình đồng bộ JSON UI đã chạy ngầm thành công. Theo dõi log ở console bên dưới.', 'green');
+                } else {
+                    alert('Lỗi kích hoạt đồng bộ: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối máy chủ khi đồng bộ: ' + err);
+            });
+        }
+
+        function loadTroubleList() {
+            const tbody = document.getElementById('trouble-table-body');
+            if (!tbody) return;
+            
+            fetch('/api/listings?status=crawl_failed')
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = '';
+                    const listings = data.listings || [];
+                    if (listings.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">🎉 Tuyệt vời! Không phát hiện căn nào bị lỗi cào thô.</td></tr>`;
+                        return;
+                    }
+                    
+                    listings.forEach(item => {
+                        let reasonText = "Lỗi chưa xác định";
+                        const status = item.status || "";
+                        if (status.includes("deleted")) {
+                            reasonText = "❌ Đã xóa/Không tìm thấy trên nguồn";
+                        } else if (status.includes("cookie_expired")) {
+                            reasonText = "🔑 Cookie hết hạn / Hết phiên";
+                        } else if (status.includes("http_error")) {
+                            reasonText = "🌐 Lỗi HTTP / Mạng kết nối";
+                        } else if (status.includes("exception")) {
+                            reasonText = "⚠️ Lỗi xử lý dữ liệu (Exception)";
+                        } else if (status.includes("cookie_invalid")) {
+                            reasonText = "🔑 Cookie không hợp lệ";
+                        }
+                        
+                        tbody.innerHTML += `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); hover: background-color: rgba(255,255,255,0.01);">
+                                <td style="padding: 8px; font-weight: bold; font-family: monospace;">${escapeHtml(item.tk_id)}</td>
+                                <td style="padding: 8px; color: #f87171;">${escapeHtml(reasonText)}</td>
+                                <td style="padding: 8px; text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+                                    <button class="btn" onclick="recrawlTroubleListing('${item.tk_id}', this)" style="font-size: 9px; padding: 2px 6px; height: auto; background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa;" title="Thử cào lại căn này">🔄 Cào lại</button>
+                                    <button class="btn" onclick="deleteTroubleListing('${item.tk_id}', this)" style="font-size: 9px; padding: 2px 6px; height: auto; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171;" title="Xóa căn này khỏi DB">🗑️ Xóa</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(err => {
+                    console.error("Error loading troubleshooting list:", err);
+                });
+        }
+
+        function recrawlTroubleListing(tkId, btn) {
+            btn.disabled = true;
+            btn.innerText = "⏳...";
+            showBannerNotification(`⏳ Bắt đầu cào lại căn [${tkId}]...`, 'gold');
+            
+            fetch(`/api/listings/${tkId}/recrawl`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = "🔄 Cào lại";
+                if (data.status === 'success') {
+                    showBannerNotification(`🎉 Cào lại thành công căn [${tkId}]!`, 'green');
+                    loadTroubleList();
+                    fetchListings();
+                } else {
+                    alert('Không thể cào lại: ' + data.message);
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerText = "🔄 Cào lại";
+                alert('Lỗi kết nối khi cào lại: ' + err);
+            });
+        }
+
+        function deleteTroubleListing(tkId, btn) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn căn [${tkId}] khỏi database cục bộ?`)) return;
+            
+            btn.disabled = true;
+            fetch(`/api/listings/${tkId}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification(`🗑️ Đã xóa thành công căn [${tkId}] khỏi database!`, 'green');
+                    loadTroubleList();
+                    fetchListings();
+                } else {
+                    btn.disabled = false;
+                    alert('Lỗi khi xóa: ' + data.message);
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                alert('Lỗi kết nối khi xóa: ' + err);
+            });
         }
     </script>
 </body>

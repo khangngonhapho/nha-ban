@@ -46,7 +46,8 @@ POOL_HEADERS = [
     "Last Crawl", "Last Sync", "Mã TK Mới",
     "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
     "Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20",
-    "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25"
+    "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25",
+    "JSON_UI"
 ]
 
 LISTINGS_V2_COLS = [
@@ -115,6 +116,87 @@ def get_safe_col_name(header):
     cleaned = re.sub(r'_+', '_', cleaned)
     cleaned = cleaned.strip('_')
     return cleaned
+
+
+def parse_criteria_groups(criteria_list):
+    """
+    Phân loại các đặc tính (criteria) theo groupCode của TK thành 19 nhóm Tiếng Việt tương ứng.
+    """
+    mapping = {
+        'PROPERTY_CRITERIA': 'Criteria_Tiem_nang_Rui_ro',
+        'ROAD_TYPE': 'Criteria_Duong_truoc_nha',
+        'PROPERTY_TYPE': 'Criteria_Loai_BDS',
+        'LEGAL_DOCUMENT': 'Criteria_Giay_to_phap_ly',
+        'LAND_PLOT_SHAPE': 'Criteria_Hinh_dang_dat',
+        'CONSTRUCTION_STATUS': 'Criteria_Tinh_trang_xay_dung',
+        'HOUSE_STRUCTURE': 'Criteria_Cau_truc_nha',
+        'INTERIOR': 'Criteria_Noi_that',
+        'ELEVATOR': 'Criteria_Thang_may',
+        'ALLEY_TYPE': 'Criteria_Loai_ngo',
+        'TAX_CALCULATION_POSITION': 'Criteria_Vi_tri_tinh_thue',
+        'OPEN_SPACE': 'Criteria_Mat_thoang',
+        'DISTANCE_TO_PARKING_LOT': 'Criteria_Khoang_cach_bai_do_xe',
+        'PROPERTY_CRITERIA_BUSINESS_CASH_FLOW': 'Criteria_Kinh_doanh_Dong_tien',
+        'PROPERTY_CRITERIA_FACILITIES': 'Criteria_Tien_ich',
+        'PROPERTY_CRITERIA_GEOMANCY': 'Criteria_Phong_thuy',
+        'HOUSE_DIRECTION': 'Criteria_Huong_nha',
+        'POSITION_IN_ALLEY': 'Criteria_Vi_tri_trong_ngo',
+        'DISTANCE_TO_MAIN_ROAD': 'Criteria_Khoang_cach_duong_oto'
+    }
+    
+    result = {col: "" for col in mapping.values()}
+    grouped = {}
+    for item in criteria_list or []:
+        if not item:
+            continue
+        g_code = item.get("groupCode")
+        name = item.get("name")
+        if g_code and name:
+            if g_code not in grouped:
+                grouped[g_code] = []
+            grouped[g_code].append(name)
+            
+    for g_code, names in grouped.items():
+        col_name = mapping.get(g_code)
+        if col_name:
+            result[col_name] = ", ".join(names)
+            
+    return result
+
+
+def extract_json_ui_data(raw_json_dict):
+    """
+    Trích xuất các trường cấu hình từ raw_json_dict (detail_data của Thiên Khôi)
+    để tạo thành đối tượng JSON UI tinh gọn.
+    """
+    cfg = {}
+    try:
+        config_file = "settings.json"
+        if os.path.exists(config_file):
+            with open(config_file, 'r', encoding='utf-8') as f:
+                cfg = json.load(f)
+    except Exception:
+        pass
+        
+    fields = cfg.get("json_ui_fields") or ["Criteria_Duong_truoc_nha"]
+    
+    result = {}
+    criteria_list = raw_json_dict.get("criteria") or []
+    criteria_cols = {}
+    if criteria_list:
+        try:
+            criteria_cols = parse_criteria_groups(criteria_list)
+        except Exception:
+            pass
+            
+    for f in fields:
+        if f.startswith("Criteria_"):
+            result[f] = criteria_cols.get(f, "")
+        else:
+            result[f] = raw_json_dict.get(f, "")
+            
+    return result
+
 
 # ==================================================
 # POOL2 HEADERS DEFINITIONS
@@ -579,7 +661,8 @@ def init_db(db_file=None):
             "raw_images_tk_json TEXT",
             "raw_drive_images_json TEXT",
             "curated_config_json TEXT",
-            "Chieu_dai TEXT"
+            "Chieu_dai TEXT",
+            "raw_json_full TEXT"
         ]
 
         for header in POOL_HEADERS:
@@ -597,6 +680,10 @@ def init_db(db_file=None):
             
             if "Chieu_dai" not in existing_cols:
                 cursor.execute("ALTER TABLE listings ADD COLUMN Chieu_dai TEXT")
+                conn.commit()
+                
+            if "raw_json_full" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN raw_json_full TEXT")
                 conn.commit()
                 
             for header in POOL_HEADERS:

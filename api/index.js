@@ -781,6 +781,27 @@ module.exports = async (req, res) => {
     }
   }
 
+  // 4. Endpoint config an toàn cho client (US-100)
+  if (pathname === '/api/config') {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+    try {
+      const cfg = loadConfig();
+      // Chỉ trả về các trường an toàn không chứa credentials nhạy cảm
+      const safeConfig = {
+        sheet_id: cfg.sheet_id || '',
+        active_pool_system: cfg.active_pool_system || 'Pool1',
+        json_ui_filters: cfg.json_ui_filters || [],
+        json_ui_fields: cfg.json_ui_fields || []
+      };
+      return res.status(200).json({ status: 'success', config: safeConfig });
+    } catch (err) {
+      console.error('Error fetching sanitized config:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
   let html = '';
   const htmlPaths = [
     path.join(__dirname, '..', 'index.html'),

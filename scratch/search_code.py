@@ -1,22 +1,23 @@
 import os
-import re
+import glob
 
-def search_keywords(directory, keywords):
-    for root, dirs, files in os.walk(directory):
-        # Ignore git, cache, and dist directories
-        if any(ignored in root for ignored in ['.git', '__pycache__', 'dist', 'build', '.gemini', 'node_modules']):
+search_terms = ["cv(r.c"]
+js_dir = r"d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\static\js"
+
+for term in search_terms:
+    print(f"=== Searching for '{term}' ===")
+    for root, dirs, files in os.walk(js_dir):
+        if any(d in root for d in [".git", "__pycache__", "dist", "build", "Backup DB", "dist (1)"]):
             continue
         for file in files:
-            if file.endswith(('.html', '.js', '.py', '.gs')):
+            if file.endswith(".js"):
                 filepath = os.path.join(root, file)
                 try:
-                    with open(filepath, 'r', encoding='utf-8') as f:
-                        content = f.read()
-                        for kw in keywords:
-                            if re.search(r'\b' + re.escape(kw) + r'\b', content, re.I):
-                                print(f"Match found for '{kw}' in: {filepath}")
-                except Exception as e:
+                    with open(filepath, "r", encoding="utf-8") as f:
+                        for idx, line in enumerate(f, 1):
+                            if term in line:
+                                clean_line = line.strip().encode('ascii', 'ignore').decode('ascii')
+                                rel_path = os.path.relpath(filepath, js_dir)
+                                print(f"{rel_path}:{idx}: {clean_line}")
+                except Exception:
                     pass
-
-if __name__ == '__main__':
-    search_keywords('.', ['upload', 'file', 'multipart', 'uploader', 'multer'])

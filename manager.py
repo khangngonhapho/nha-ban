@@ -339,7 +339,25 @@ DEFAULT_CONFIG = {
         "* Định dạng các dòng con: Bắt buộc bắt đầu bằng dấu chấm tròn nhỏ của HTML là \"•\", tuyệt đối không dùng dấu \"+\" hoặc thụt lề để tránh lỗi hiển thị khi copy.\n\n"
         "BƯỚC 4: RÀ SOÁT LỖI CHÍNH TẢ & ĐỒNG BỘ HIỂN THỊ (BẮT BUỘC)\n"
         "- Sau khi hoàn thành toàn bộ nội dung bài đăng, bạn phải thực hiện thêm 1 bước quét tự động toàn bài để sửa triệt để tất cả lỗi chính tả, lỗi gõ dấu, dấu câu sát chữ (ví dụ: sửa ubnđ thành UBND, sửa Levela thành Lavela, sửa chửa thành chỉ, sửa công chức thành công chứng...). Đảm bảo bài viết xuất ra đạt độ chỉn chu, bảo mật và hoàn mỹ cao nhất trước khi giao cho tôi."
-    )
+    ),
+    "json_ui_fields": ["Criteria_Duong_truoc_nha"],
+    "json_ui_filters": [
+        {
+            "field": "Criteria_Duong_truoc_nha",
+            "label": "Đường trước nhà",
+            "type": "select",
+            "options": [
+                "",
+                "Hẻm xe máy ( <2m)",
+                "Ngõ ngách (2 - 2.5m)",
+                "Ngõ 1 ô tô ( 2.5 -5m)",
+                "Ngõ 2 ô tô tránh (5 - 7m)",
+                "Ngõ 3 ô tô tránh (7 - 9m)",
+                "Ngõ 4 ô tô tránh (9 - 11m)",
+                "Ngõ 4 ô tô trở lên ( >11m)"
+            ]
+        }
+    ]
 }
 
 def load_config():
@@ -1658,6 +1676,14 @@ def handle_config():
                         cfg[k] = new_key
                 else:
                     cfg[k] = data[k]
+        # Tự động trích xuất json_ui_fields từ json_ui_filters
+        if "json_ui_filters" in data:
+            filters = data["json_ui_filters"] or []
+            fields = []
+            for f in filters:
+                if isinstance(f, dict) and f.get("field"):
+                    fields.append(f["field"])
+            cfg["json_ui_fields"] = fields
         save_config(cfg)
         return jsonify({"status": "success", "config": cfg})
     else:
@@ -2324,8 +2350,11 @@ def get_listings():
     params = []
     
     if status_filter:
-        conditions.append(f"{t_prefix}status = ?")
-        params.append(status_filter)
+        if status_filter == "crawl_failed":
+            conditions.append(f"{t_prefix}status LIKE 'crawl_failed:%'")
+        else:
+            conditions.append(f"{t_prefix}status = ?")
+            params.append(status_filter)
         
     if search_q:
         # Tự động trích xuất UUID hoặc mã hàng số từ URL nếu người dùng dán cả link
@@ -2374,7 +2403,7 @@ def get_listings():
     listings = [normalize_listing_for_client(r) for r in rows]
         
     # Tính toán số lượng căn theo từng trạng thái (status) toàn cục
-    counts = {"raw_text": 0, "raw_complete": 0, "published": 0}
+    counts = {"raw_text": 0, "raw_complete": 0, "published": 0, "crawl_failed": 0}
     if os.path.exists(DB_FILE):
         try:
             conn_count = sqlite3.connect(DB_FILE, timeout=30.0)
@@ -2382,6 +2411,9 @@ def get_listings():
             for s in ["raw_text", "raw_complete", "published"]:
                 c = cursor_count.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = ?", (s,)).fetchone()[0]
                 counts[s] = c
+            # Thêm đếm số lượng căn lỗi cào
+            c_failed = cursor_count.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status LIKE 'crawl_failed:%'").fetchone()[0]
+            counts["crawl_failed"] = c_failed
             conn_count.close()
         except Exception:
             pass
@@ -2863,6 +2895,15 @@ def recrawl_single_listing(tk_id):
             criteria_cols = fetcher.parse_criteria_groups(criteria_list)
             crawled_data.update(criteria_cols)
             
+            # Lưu raw_json_full và JSON_UI tinh gọn từ Proptech API
+            crawled_data["raw_json_full"] = json.dumps(detail_data, ensure_ascii=False)
+            try:
+                import pool_lego
+                json_ui_dict = pool_lego.extract_json_ui_data(detail_data)
+                crawled_data["JSON_UI"] = json.dumps(json_ui_dict, ensure_ascii=False)
+            except Exception as e_json_ui:
+                add_log_message(f"[⚠️ WARNING] Lỗi trích xuất JSON_UI trong recrawl: {str(e_json_ui)}")
+                
             fetcher.save_raw_to_sqlite(tk_id, crawled_data, property_images)
             
             add_log_message(f"[✅] Đã cào thô thành công căn (Proptech): {tk_id}. Tiến hành di cư ảnh và xuất bản...")
@@ -3079,6 +3120,19 @@ def recrawl_single_listing(tk_id):
                 combined_images.append(img)
                 seen_images.add(img)
         crawled_data["raw_images_tk_ordered"] = images_td + combined_images
+        
+        # Extract basic JSON_UI from columns for the HTML recrawler
+        try:
+            cfg = load_config()
+            fields = cfg.get("json_ui_fields") or ["Criteria_Duong_truoc_nha"]
+            json_ui_obj = {}
+            for f in fields:
+                json_ui_obj[f] = crawled_data.get(f, "")
+            crawled_data["JSON_UI"] = json.dumps(json_ui_obj, ensure_ascii=False)
+        except Exception as e_json_ui:
+            add_log_message(f"[⚠️ WARNING] Lỗi trích xuất JSON_UI (HTML recrawl): {str(e_json_ui)}")
+        crawled_data["raw_json_full"] = ""
+        
         fetcher.save_raw_to_sqlite(tk_id, crawled_data, combined_images)
         
         add_log_message(f"[✅] Đã cào thô thành công căn: {tk_id}. Tiến hành di cư ảnh và xuất bản...")
@@ -3303,6 +3357,34 @@ def api_sync_databases():
         return jsonify(res)
     except Exception as e:
         add_log_message(f"[❌ LỖI] Lỗi trong quá trình đồng bộ API: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+        
+@app.route('/api/sync-json-ui', methods=['POST'])
+def api_sync_json_ui():
+    """Kích hoạt tiến trình đồng bộ và vá dữ liệu JSON UI"""
+    try:
+        data = request.get_json(force=True) or {}
+        limit = data.get("limit")
+        if limit:
+            try:
+                limit = int(limit)
+            except ValueError:
+                limit = None
+                
+        def sync_worker():
+            try:
+                import scratch.sync_json_ui as sync_json_ui
+                sync_json_ui.run_sync(limit=limit, add_log_message=add_log_message)
+            except Exception as ex:
+                add_log_message(f"[❌ LỖI] Lỗi tiến trình đồng bộ JSON UI: {str(ex)}")
+                
+        threading.Thread(target=sync_worker, daemon=True).start()
+        
+        return jsonify({
+            "status": "success",
+            "message": "Tiến trình đồng bộ và vá dữ liệu JSON UI đã được kích hoạt chạy ngầm."
+        })
+    except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/api/sync-databases/recrawl-all', methods=['POST'])

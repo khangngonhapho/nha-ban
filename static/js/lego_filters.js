@@ -333,6 +333,19 @@
       a = a.filter(p => activeCriteria.every(crit => window.matchCriteriaHelper(p, crit)));
     }
 
+    // LỌC THEO BỘ LỌC ĐỘNG TỰ SINH (US-100)
+    if (window.activeDynamicFilters) {
+      for (const [field, filterVal] of Object.entries(window.activeDynamicFilters)) {
+        if (filterVal) {
+          a = a.filter(p => {
+            const jsonUiObj = p.json_ui_parsed || {};
+            const valInListing = jsonUiObj[field] || '';
+            return String(valInListing).toLowerCase().includes(String(filterVal).toLowerCase());
+          });
+        }
+      }
+    }
+
     // LỌC THEO BỘ LỌC RANGE THÔNG SỐ CHI TIẾT NÂNG CAO (US-076)
     const giaMin = document.getElementById('filterGiaMin')?.value || '';
     const giaMax = document.getElementById('filterGiaMax')?.value || '';
@@ -842,8 +855,18 @@
     if (window.selHuong.size) parts.push('🧭' + [...window.selHuong].join('+'));
     if (window.selGia.size) parts.push([...window.selGia].map(g => gNames[g] || g).join('+'));
     if (window.selDanhGia.size) parts.push([...window.selDanhGia].map(d => d === 'Hàng Ngon' ? '💎' : '⚠️').join(''));
+    
+    if (window.activeDynamicFilters) {
+      for (const [field, val] of Object.entries(window.activeDynamicFilters)) {
+        if (val) {
+          parts.push(val);
+        }
+      }
+    }
+    
     document.getElementById('filterSummary').textContent = parts.length ? parts.join(' · ') : 'Tất cả';
-    const anyActive = !!(window.selDistricts.size || window.selWards.size || window.selDuongs.size || window.selHuong.size || window.selGia.size || window.selDanhGia.size);
+    const anyDynamicActive = Object.values(window.activeDynamicFilters || {}).some(Boolean);
+    const anyActive = !!(window.selDistricts.size || window.selWards.size || window.selDuongs.size || window.selHuong.size || window.selGia.size || window.selDanhGia.size || anyDynamicActive);
     document.getElementById('filterBtn').classList.toggle('active', anyActive || window.filterOpen);
     document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';
 
@@ -883,6 +906,12 @@
 
     // Xóa các tiêu chí checkbox BĐS
     document.querySelectorAll('.filter-criterion').forEach(el => el.checked = false);
+
+    // Xóa các bộ lọc động
+    window.activeDynamicFilters = {};
+    document.querySelectorAll('.dynamic-filter-select').forEach(sel => {
+      sel.value = "";
+    });
 
     // Ward, Duong & Huong tabs cần rebuild vì là dynamic
     window.buildWardTabs(); window.buildDuongTabs(); window.buildHuongTabs();
@@ -991,5 +1020,93 @@
     if (typeof window.saveState === 'function') window.saveState();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // ── Dynamic Filters Configuration Loading & Rendering (US-100) ──
+  window.JSON_UI_CONFIG = null;
+  window.activeDynamicFilters = {};
+
+  window.loadDynamicFiltersConfig = async function() {
+    try {
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'success') {
+          window.JSON_UI_CONFIG = data.config;
+          window.renderDynamicFilters();
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load dynamic filters configuration from /api/config:", e);
+    }
+  };
+
+  window.renderDynamicFilters = function() {
+    const container = document.getElementById('dynamicFiltersContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (!window.JSON_UI_CONFIG || !window.JSON_UI_CONFIG.json_ui_filters) return;
+    
+    window.JSON_UI_CONFIG.json_ui_filters.forEach(filter => {
+      const field = filter.field;
+      const label = filter.label;
+      const type = filter.type;
+      
+      const lbl = document.createElement('div');
+      lbl.className = 'filter-section-lbl';
+      lbl.textContent = label;
+      lbl.id = `lbl_${field}`;
+      container.appendChild(lbl);
+      
+      if (type === 'select') {
+        const select = document.createElement('select');
+        select.id = `filter_${field}`;
+        select.className = 'dynamic-filter-select';
+        select.style.cssText = `
+          width: 100%;
+          box-sizing: border-box;
+          padding: 10px 12px;
+          border: 1.5px solid #e2ded6;
+          border-radius: 8px;
+          background: #ffffff;
+          color: #3a3a3c;
+          font-family: inherit;
+          font-size: 13.5px;
+          font-weight: 600;
+          outline: none;
+          margin-bottom: 12px;
+          appearance: none;
+          background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233a3a3c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 12px center;
+          background-size: 14px;
+          padding-right: 32px;
+        `;
+        
+        select.onchange = function() {
+          window.activeDynamicFilters[field] = select.value;
+          window.updateFilterSummary();
+          if (typeof window.updateStats === 'function') window.updateStats();
+          window.applyFilter();
+        };
+        
+        const options = filter.options || [];
+        options.forEach(opt => {
+          const optionEl = document.createElement('option');
+          optionEl.value = opt;
+          optionEl.textContent = opt === "" ? "Tất cả" : opt;
+          if (window.activeDynamicFilters[field] === opt) {
+            optionEl.selected = true;
+          }
+          select.appendChild(optionEl);
+        });
+        
+        container.appendChild(select);
+      }
+    });
+  };
+
+  // Auto load config on script load
+  window.loadDynamicFiltersConfig();
 
 })();

@@ -60,7 +60,7 @@ def sleep_interruptible(seconds):
 
 # File Database cục bộ (Tích hợp sẵn trong Python, không cần cài đặt)
 import pool_lego
-from pool_lego import POOL_HEADERS, remove_accents, get_safe_col_name, init_db, save_raw_to_sqlite, get_db_file
+from pool_lego import POOL_HEADERS, remove_accents, get_safe_col_name, init_db, save_raw_to_sqlite, get_db_file, parse_criteria_groups, extract_json_ui_data
 
 DB_FILE = get_db_file()
 LISTINGS_TABLE = "listings_v2" if DB_FILE == "raw_archive_v2.db" else "listings"
@@ -386,59 +386,7 @@ def update_config_start_page(next_page):
     except Exception as e:
         print(f"[⚠️ WARNING] Không thể tự động lưu trang tiếp theo vào settings.json: {str(e)}")
 
-def parse_criteria_groups(criteria_list):
-    """
-    Phân loại các đặc tính (criteria) theo groupCode của TK thành 19 nhóm Tiếng Việt tương ứng.
-    
-    Args:
-        criteria_list (list): Danh sách các criteria từ API TK.
-        
-    Returns:
-        dict: Ánh xạ cột Criteria_... và giá trị.
-    """
-    mapping = {
-        'PROPERTY_CRITERIA': 'Criteria_Tiem_nang_Rui_ro',
-        'ROAD_TYPE': 'Criteria_Duong_truoc_nha',
-        'PROPERTY_TYPE': 'Criteria_Loai_BDS',
-        'LEGAL_DOCUMENT': 'Criteria_Giay_to_phap_ly',
-        'LAND_PLOT_SHAPE': 'Criteria_Hinh_dang_dat',
-        'CONSTRUCTION_STATUS': 'Criteria_Tinh_trang_xay_dung',
-        'HOUSE_STRUCTURE': 'Criteria_Cau_truc_nha',
-        'INTERIOR': 'Criteria_Noi_that',
-        'ELEVATOR': 'Criteria_Thang_may',
-        'ALLEY_TYPE': 'Criteria_Loai_ngo',
-        'TAX_CALCULATION_POSITION': 'Criteria_Vi_tri_tinh_thue',
-        'OPEN_SPACE': 'Criteria_Mat_thoang',
-        'DISTANCE_TO_PARKING_LOT': 'Criteria_Khoang_cach_bai_do_xe',
-        'PROPERTY_CRITERIA_BUSINESS_CASH_FLOW': 'Criteria_Kinh_doanh_Dong_tien',
-        'PROPERTY_CRITERIA_FACILITIES': 'Criteria_Tien_ich',
-        'PROPERTY_CRITERIA_GEOMANCY': 'Criteria_Phong_thuy',
-        'HOUSE_DIRECTION': 'Criteria_Huong_nha',
-        'POSITION_IN_ALLEY': 'Criteria_Vi_tri_trong_ngo',
-        'DISTANCE_TO_MAIN_ROAD': 'Criteria_Khoang_cach_duong_oto'
-    }
-    
-    result = {col: "" for col in mapping.values()}
-    
-    # Gom nhóm các giá trị trùng groupCode
-    grouped = {}
-    for item in criteria_list or []:
-        if not item:
-            continue
-        g_code = item.get("groupCode")
-        name = item.get("name")
-        if g_code and name:
-            if g_code not in grouped:
-                grouped[g_code] = []
-            grouped[g_code].append(name)
-            
-    # Điền giá trị nối bằng dấu phẩy
-    for g_code, names in grouped.items():
-        col_name = mapping.get(g_code)
-        if col_name:
-            result[col_name] = ", ".join(names)
-            
-    return result
+# Note: parse_criteria_groups has been moved to pool_lego.py to prevent circular imports.
 
 # ==========================================
 # LUỒNG 1: CÀO TEXT THÔ VÀ LINK ẢNH DÙNG DOM SELECTOR THẬT
@@ -833,6 +781,23 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                             combined_images.append(img)
                             seen_images.add(img)
                     crawled_data["raw_images_tk_ordered"] = images_td + combined_images
+                    
+                    # Extract basic JSON_UI from columns for the HTML crawler
+                    try:
+                        cfg = {}
+                        if os.path.exists("settings.json"):
+                            with open("settings.json", "r", encoding="utf-8") as f:
+                                cfg = json.load(f)
+                        fields = cfg.get("json_ui_fields") or ["Criteria_Duong_truoc_nha"]
+                        json_ui_obj = {}
+                        for f in fields:
+                            json_ui_obj[f] = crawled_data.get(f, "")
+                        crawled_data["JSON_UI"] = json.dumps(json_ui_obj, ensure_ascii=False)
+                    except Exception as e_json_ui:
+                        print(f"  [⚠️ WARNING] Lỗi trích xuất JSON_UI (HTML): {str(e_json_ui)}")
+                    # Leave raw_json_full empty so the backfill script will crawl the full API detail
+                    crawled_data["raw_json_full"] = ""
+                    
                     save_raw_to_sqlite(tk_id, crawled_data, combined_images)
                     
                     existing_ids.add(tk_id)
@@ -1273,6 +1238,14 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
 
                     for idx, url in enumerate(sodo_images[:5]):
                         crawled_data[f"Sơ đồ thửa đất {idx+1}"] = url
+
+                    # Lưu raw_json_full và JSON_UI tinh gọn từ Proptech API
+                    crawled_data["raw_json_full"] = json.dumps(detail_data, ensure_ascii=False)
+                    try:
+                        json_ui_obj = extract_json_ui_data(detail_data)
+                        crawled_data["JSON_UI"] = json.dumps(json_ui_obj, ensure_ascii=False)
+                    except Exception as e_json_ui:
+                        print(f"  [⚠️ WARNING] Lỗi trích xuất JSON_UI: {str(e_json_ui)}")
 
                     save_raw_to_sqlite(tk_id_crawling, crawled_data, property_images)
                     existing_ids.add(tk_id_crawling)

@@ -415,6 +415,7 @@ window.finalizeData = function(fullList) {
   if (typeof buildWardTabs === 'function') buildWardTabs();
   if (typeof buildDuongTabs === 'function') buildDuongTabs();
   if (typeof buildHuongTabs === 'function') buildHuongTabs();
+  if (typeof window.renderDynamicFilters === 'function') window.renderDynamicFilters();
   if (typeof updateFilterSummary === 'function') updateFilterSummary();
   window.updateStats();
   if (typeof render === 'function') render();
