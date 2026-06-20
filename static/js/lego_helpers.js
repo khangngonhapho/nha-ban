@@ -338,6 +338,23 @@ window.getMappedPoolData = function() {
       pool_row_data: row
     };
     p.dai_nha = window.getDaiNha(p);
+    
+    // Parse JSON_UI cho Kho Pool của Admin
+    let jsonUiVal = row[93] || '';
+    if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
+      for (let i = row.length - 1; i >= 0; i--) {
+        const val = row[i];
+        if (val && String(val).trim().startsWith('{') && String(val).trim().endsWith('}')) {
+          jsonUiVal = val;
+          break;
+        }
+      }
+    }
+    p.json_ui_parsed = {};
+    if (jsonUiVal) {
+      try { p.json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+    }
+    
     return p;
   });
   return window.MAPPED_POOL_DATA;
@@ -361,14 +378,19 @@ window.finalizeData = function(fullList) {
     window.sharedIds = window.decodeBitmask(shareBitmask, allIds);
   } else if (shareToken) {
     try {
-      if (shareToken.includes(',') || !shareToken.includes('[')) {
-        window.sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
+      // 1. Thử giải mã Base64URL safe danh sách ID phân cách bằng dấu phẩy
+      let normalizedToken = shareToken.replace(/-/g, '+').replace(/_/g, '/');
+      while (normalizedToken.length % 4) normalizedToken += '=';
+      const decoded = atob(normalizedToken);
+      if (decoded.includes(',') || decoded.startsWith('SYS-') || /^[a-zA-Z0-9,._-]+$/.test(decoded)) {
+        window.sharedIds = decoded.split(',').map(s => s.trim()).filter(Boolean);
       } else {
-        const decoded = atob(shareToken);
+        // Thử parse JSON
         const parsed = JSON.parse(decoded);
         if (Array.isArray(parsed)) window.sharedIds = parsed;
       }
     } catch (e) {
+      // 2. Fallback cho link cũ không mã hóa trực tiếp
       window.sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
     }
   }
@@ -1646,7 +1668,7 @@ window.executeGenerateQuickLink = function() {
         .replace(/=/g, '')
         .replace(/\+/g, '-')
         .replace(/\//g, '_');
-      shareUrl = `${baseUrl}?b=${encodedIds}`;
+      shareUrl = `${baseUrl}?s=${encodedIds}`;
     }
 
     // Đóng Modal
