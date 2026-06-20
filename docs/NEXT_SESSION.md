@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-100 (Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc):** **[ACCEPTED - 2026-06-21]** Thiết lập lưu trữ JSON thô cấp 2 (`raw_json_full` và `raw_json_ui`) cục bộ SQLite và đồng bộ trường `JSON_UI` lên Google Sheets. Tự động sinh bộ lọc động và lọc chính xác bằng JSON phía Frontend. Vá lỗi typo Client ID mặc định phục hồi luồng login khi người dùng xóa cache. Tái thiết lập cơ chế Cache-Busting qua `scratch/bump_version.py` và git hook `pre-commit` để tự động làm mới bộ nhớ đệm index.html của trình duyệt người dùng. Chạy kiểm thử di động tự động Pixel 5 và E2E local đạt **100% PASS**.
 *   **US-097 (Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng):** **[ACCEPTED - 2026-06-16]** Đã khôi phục hàm `executeGenerateQuickLink` trong tệp `static/js/lego_helpers.js`, sửa lỗi ReferenceError khi tạo link công khai nhanh. Đã chạy thử nghiệm Playwright E2E tự động thành công 100% không lỗi hồi quy.
 *   **US-094E (Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html):** **[ACCEPTED - 2026-06-16]** Tách biệt logic mock và các hàm helper ra các file static [lego_mock.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_mock.js) và [lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js). Rút gọn [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) thành công xuống dưới 170 dòng script và thiết lập cache-busting version query parameter `?v=202606161110`. Khắc phục triệt để các lỗi hiển thị nút chọn BST (`#colFloatBtn`), nút xóa BST (`.delete-col-btn-float`), lỗi phân tích tham số chia sẻ (`s`), lỗi khởi tạo Admin Speed Dial, và lỗi layout trôi nổi của Speed Dial trên Mobile (neo nút chính ⚡/✕ cố định góc dưới bên phải viewport và đưa các menu hành động về absolute position tương đối). Toàn bộ 5 kịch bản E2E Playwright (`test_e2e_curation.py`, `test_e2e_filters.py`, `test_e2e_collections.py`, `test_e2e_modal.py`, `test_e2e_curator.py`) chạy thành công **100% PASS** trên cả hai viewports Desktop & Mobile.
 *   **US-094F (Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin):** **[ACCEPTED - 2026-06-16]** Tạo mới module `static/js/lego_detail_admin.js` di chuyển toàn bộ logic xem chi tiết của Admin, form curation, tabs quản lý, và Google Sheets API syncing (`saveSourceChanges`, `saveNewListingFromPool`). Tái cấu trúc `index.html` rút gọn hơn 1200 dòng JS/HTML thô, nạp script mới ở `<head>` và export các alias toàn cục trên `window` cho inline templates. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_curation.py` trên cả Desktop & Mobile.
@@ -39,12 +40,20 @@
  
  ## 3. Các file bị tác động trong phiên vừa qua
  
-*   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-097: Khôi phục và định nghĩa lại hàm `executeGenerateQuickLink`.
-*   [scratch/test_e2e_quick_share.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_quick_share.py) — US-097: Tạo test E2E kiểm chứng tính năng tạo link chia sẻ công khai nhanh.
-*   [docs/stories/_inbox/US-097_fix_quick_share_link_error.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-097_fix_quick_share_link_error.md) — US-097: Tạo tài liệu đặc tả User Story.
+*   [fetcher.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/fetcher.py) — US-100: Lưu JSON thô API và UI JSON vào SQLite.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — US-100: Đồng bộ trường `JSON_UI` lên Google Sheets.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — US-100: API sync-json-ui & api-config.
+*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — US-100: Vá lỗi đăng nhập Client ID và lỗi parse dữ liệu `val.trim`.
+*   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-100: Vá lỗi `val.trim` và lưu/phục hồi trạng thái bộ lọc động.
+*   [static/js/lego_filters.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_filters.js) — US-100: Tự sinh bộ lọc động và cập nhật nút Xóa lọc.
+*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — US-100: Vá lỗi Client ID.
+*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — US-100: Tích hợp tham số phiên bản cache-busting.
+*   [scratch/bump_version.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/bump_version.py) — US-100: Script tự động bump version trong index.html.
+*   [curator.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator.html) — US-100: Tích hợp Troubleshooting Panel và nút sync hàng loạt.
+*   [docs/stories/_inbox/US-100_dynamic_json_filtering.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-100_dynamic_json_filtering.md) — US-100: Cập nhật tài liệu đặc tả User Story và Retro.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật bảng mục lục user stories.
 *   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật trạng thái và kế hoạch bàn giao.
 *   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Ghi nhận lịch sử thay đổi.
  
  ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-16 (US-095 completed & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-21 (US-100 accepted & E2E tests 100% passed).*

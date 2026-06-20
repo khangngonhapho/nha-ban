@@ -6,14 +6,14 @@ Last updated: 2026-06-20
 - Total: 109
 - backlog: 2
 - draft: 0
-- in-progress: 1
+- in-progress: 0
 - done: 20
-- accepted: 80
+- accepted: 81
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
-| US-100 | Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) | in-progress | M | 2026-06-20 | `fetcher.py`, `pool_lego.py`, `static/js/lego_filters.js`, `docs/stories/_inbox/US-100_dynamic_json_filtering.md` |
+| US-100 | Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) | accepted | M | 2026-06-20 | `fetcher.py`, `pool_lego.py`, `static/js/lego_filters.js`, `docs/stories/_inbox/US-100_dynamic_json_filtering.md` |
 | US-097 | Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng | accepted | S    | 2026-06-16 | `static/js/lego_helpers.js`, `docs/stories/_inbox/US-097_fix_quick_share_link_error.md` |
 | US-095 | Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 | accepted | S | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-095_fix_listings_table_undefined.md` |
 | US-094 | Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) | accepted | XL | 2026-06-15 | `docs/stories/_inbox/US-094_master_tai_cau_truc_lego_frontend.md` |

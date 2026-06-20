@@ -323,6 +323,17 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-21 (Nghiệm thu US-100 - Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc - TEST PASS)
+*   **Mã User Story:** `US-100`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Lưu trữ CSDL SQLite 2 tầng**: Bổ sung cột `raw_json_full` và `raw_json_ui` vào bảng `listings` trong SQLite. Cào và lưu trữ 100% JSON thô từ API Thiên Khôi.
+     - **Đồng bộ Google Sheets & Vá lỗi val.trim**: Khai báo và đồng bộ cột `JSON_UI` ở cuối rổ hàng. Sửa lỗi `TypeError: val.trim is not a function` bằng cách ép kiểu String tường minh trước khi gọi `.trim()` trên các giá trị cell của Sheet.
+     - **Frontend Vercel & Bộ lọc động**: Cấu hình endpoint `/api/config` để trả về các filter phụ và tự động sinh giao diện bộ lọc trên UI (`lego_filters.js`). Lọc và tìm kiếm động thông minh bằng JSON.
+     - **Vá lỗi Đăng nhập**: Sửa lỗi typo mặc định Google Client ID (gõ sai `fmoudokb` thành `fmoudqokb` - thiếu chữ `q`) giải quyết triệt để lỗi 401 khi người dùng xóa cache trình duyệt.
+     - **Tự động hóa Cache-Busting**: Tạo lại tập lệnh `scratch/bump_version.py` để tự động hóa việc cập nhật tham số phiên bản `?v=...` cho toàn bộ tài nguyên static trong `index.html` mỗi khi commit, tránh kẹt cache trình duyệt trên di động.
+     - **Báo cáo lỗi & Troubleshooting Panel**: Thiết kế bảng quản trị lỗi cào trực tiếp trên `curator.html` giúp Admin quản lý nhanh và tự động cào lại hoặc xóa bỏ các căn lỗi.
+     - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho toàn bộ các kịch bản kiểm thử E2E trên local và kiểm thử di động tự động trên môi trường Live Production.
+
 ### 2026-06-16 (Nghiệm thu US-097 - Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng - TEST PASS)
 *   **Mã User Story:** `US-097`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1145,6 +1156,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-100:** Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) ✅ Done 2026-06-21
 - [x] **US-097:** Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng ✅ Done 2026-06-16
 - [x] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ✅ Done 2026-06-16
 - [x] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) ✅ Done 2026-06-16
