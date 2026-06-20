@@ -62,7 +62,7 @@ def get_changed_files():
         pass
         
     if upstream_exists:
-        changed.update(run_git_command(["log", "@{u}..HEAD", "--name-only"]))
+        changed.update(run_git_command(["log", "@{u}..HEAD", "--name-only", "--format="]))
     else:
         origin_main_exists = False
         try:
@@ -73,7 +73,7 @@ def get_changed_files():
             pass
             
         if origin_main_exists:
-            changed.update(run_git_command(["log", "origin/main..HEAD", "--name-only"]))
+            changed.update(run_git_command(["log", "origin/main..HEAD", "--name-only", "--format="]))
         else:
             # Fallback to files changed in last commit
             changed.update(run_git_command(["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"]))
