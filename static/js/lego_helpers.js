@@ -573,7 +573,8 @@ window.saveState = function() {
       phongMin: document.getElementById('filterPhongMin')?.value || '',
       phongMax: document.getElementById('filterPhongMax')?.value || ''
     },
-    criteria: Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val'))
+    criteria: Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val')),
+    dynamicFilters: window.activeDynamicFilters
   };
   localStorage.setItem('adminState', JSON.stringify(state));
 };
@@ -637,6 +638,18 @@ window.restoreState = function() {
       });
     } else {
       document.querySelectorAll('.filter-criterion').forEach(el => el.checked = false);
+    }
+
+    if (state.dynamicFilters) {
+      window.activeDynamicFilters = state.dynamicFilters;
+      for (const [field, val] of Object.entries(window.activeDynamicFilters)) {
+        const selectEl = document.getElementById(`filter_${field}`);
+        if (selectEl) {
+          selectEl.value = val || '';
+        }
+      }
+    } else {
+      window.activeDynamicFilters = {};
     }
 
     if (typeof syncTabUI === 'function') {

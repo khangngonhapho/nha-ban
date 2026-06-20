@@ -863,10 +863,31 @@
         }
       }
     }
+
+    if (window.activeCollectionName) {
+      const colDisplayName = window.activeCollectionName === 'favorites' ? 'Yêu thích' : window.activeCollectionName;
+      parts.push(`📁 BST: ${colDisplayName}`);
+    }
+
+    const activeCriteria = Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val'));
+    if (activeCriteria.length > 0) {
+      parts.push(`🏷️ Tiêu chí: ${activeCriteria.join('+')}`);
+    }
     
     document.getElementById('filterSummary').textContent = parts.length ? parts.join(' · ') : 'Tất cả';
     const anyDynamicActive = Object.values(window.activeDynamicFilters || {}).some(Boolean);
-    const anyActive = !!(window.selDistricts.size || window.selWards.size || window.selDuongs.size || window.selHuong.size || window.selGia.size || window.selDanhGia.size || anyDynamicActive);
+    const anyActive = !!(
+      window.selDistricts.size || 
+      window.selWards.size || 
+      window.selDuongs.size || 
+      window.selHuong.size || 
+      window.selGia.size || 
+      window.selDanhGia.size || 
+      anyDynamicActive ||
+      window.activeCollectionName ||
+      activeCriteria.length ||
+      window.showFavOnly
+    );
     document.getElementById('filterBtn').classList.toggle('active', anyActive || window.filterOpen);
     document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';
 
@@ -884,6 +905,14 @@
     window.buildDistrictTabs();
     window.syncTabUI('giaTabs', window.selGia);
     window.syncTabUI('danhGiaTabs', window.selDanhGia);
+
+    // Xóa bộ sưu tập và yêu thích ẩn
+    window.activeCollectionName = null;
+    localStorage.removeItem('activeCollectionName');
+    window.showFavOnly = false;
+    if (typeof window.updateFavBtnUI === 'function') window.updateFavBtnUI();
+    const activeColBar = document.getElementById('activeColBar');
+    if (activeColBar) activeColBar.style.display = 'none';
 
     // Xóa ô tìm kiếm
     const sInput = document.getElementById('bdsSearchInput');
