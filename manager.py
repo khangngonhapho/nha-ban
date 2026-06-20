@@ -1085,7 +1085,29 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         import concurrent.futures
         
         drive_links = ["" for _ in raw_images_tk]
+        new_images_mapping = {}
         
+        # 1. Đọc dữ liệu ảnh cũ và cấu hình thủ công để đối chiếu/trộn
+        images_mapping_json_val = row["images_mapping_json"] if "images_mapping_json" in row.keys() else None
+        manual_images_json_val = row["manual_images_json"] if "manual_images_json" in row.keys() else None
+        raw_sodo_tk_json_val = row["raw_sodo_tk_json"] if "raw_sodo_tk_json" in row.keys() else None
+        curated_config_json_val = row["curated_config_json"] if "curated_config_json" in row.keys() else None
+        
+        try:
+            images_mapping = json.loads(images_mapping_json_val) if images_mapping_json_val else {}
+        except Exception:
+            images_mapping = {}
+            
+        try:
+            manual_images = json.loads(manual_images_json_val) if manual_images_json_val else []
+        except Exception:
+            manual_images = []
+            
+        try:
+            raw_sodo_tk = json.loads(raw_sodo_tk_json_val) if raw_sodo_tk_json_val else []
+        except Exception:
+            raw_sodo_tk = []
+
         # Xác định URL ảnh sơ đồ thửa đất của căn này để bỏ qua nén
         col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
         col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
@@ -1097,25 +1119,31 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         original_sodo3 = d.get(col_sodo3_key)
         original_sodo4 = d.get(col_sodo4_key)
         original_sodo5 = d.get(col_sodo5_key)
+
+        images_to_process = []
+        for idx, img_url in enumerate(raw_images_tk):
+            # Nếu ảnh đã được di cư thành công trong mapping, bỏ qua tải/nén/up
+            if img_url in images_mapping and images_mapping[img_url]:
+                drive_links[idx] = images_mapping[img_url]
+                new_images_mapping[img_url] = images_mapping[img_url]
+                add_log_message(f"  [⚡ Skip] Ảnh #{idx+1} của {tk_id} đã di cư trước đó. Sử dụng lại: {images_mapping[img_url]}")
+            else:
+                is_diag = (img_url in raw_sodo_tk) or (img_url == original_sodo1) or (img_url == original_sodo2) or (img_url == original_sodo3) or (img_url == original_sodo4) or (img_url == original_sodo5)
+                images_to_process.append((idx, img_url, is_diag))
         
         def process_single_image(args_tuple):
-            idx, img_url = args_tuple
+            idx, img_url, is_diagram = args_tuple
             try:
                 img_data = download_image_with_retry(img_url, headers_tk)
                 if not img_data:
                     add_log_message(f"  [❌] Bỏ qua ảnh #{idx+1} của {tk_id} do lỗi tải file.")
-                    return idx, ""
+                    return idx, "", img_url
                     
-                # KIỂM TRA BỎ QUA NÉN CHO ẢNH SƠ ĐỒ ĐỂ BẢO TOÀN CHI TIẾT THU PHÓNG (US-042)
-                is_diagram = False
-                if img_url:
-                    is_diagram = (img_url == original_sodo1) or (img_url == original_sodo2) or (img_url == original_sodo3) or (img_url == original_sodo4) or (img_url == original_sodo5)
-                
+                # BỎ QUA NÉN CHO ẢNH SƠ ĐỒ ĐỂ BẢO TOÀN CHI TIẾT
                 if is_diagram:
                     orig_kb = int(len(img_data) / 1024)
                     add_log_message(f"  [🛡️ Sơ đồ] Ảnh #{idx+1} của {tk_id} là ảnh Sơ đồ thửa đất ({orig_kb}KB). BỎ QUA NÉN để bảo toàn chi tiết.")
                 else:
-                    # TỰ ĐỘNG NÉN ẢNH TỐI ƯU HÓA DUNG LƯỢNG
                     img_data_original_len = len(img_data)
                     img_data = compress_image(img_data)
                     img_data_compressed_len = len(img_data)
@@ -1130,54 +1158,35 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 
                 filename = f"img_{tk_id}_{idx+1}.jpg"
                 
-                # GHI LÊN CLOUDFLARE R2, DRIVE HOẶC CỤC BỘ
                 if use_r2:
                     img_link = upload_image_to_r2(img_data, filename)
-                    return idx, img_link
+                    return idx, img_link, img_url
                 elif token:
                     drive_link = upload_image_to_drive(img_data, filename, house_folder_id, token)
-                    return idx, drive_link
+                    return idx, drive_link, img_url
                 else:
-                    # Lưu cục bộ
                     local_dir = os.path.join("static", "images", tk_id)
                     os.makedirs(local_dir, exist_ok=True)
                     local_path = os.path.join(local_dir, filename)
                     with open(local_path, "wb") as f:
                         f.write(img_data)
                     local_url = f"/static/images/{tk_id}/{filename}"
-                    return idx, local_url
+                    return idx, local_url, img_url
             except Exception as e:
                 add_log_message(f"  [❌ LỖI] Xử lý ảnh #{idx+1} thất bại cho {tk_id}: {str(e)}")
-                return idx, ""
+                return idx, "", img_url
 
-        # Chạy song song tối đa 3 luồng xử lý ảnh đồng thời cho căn nhà này để tối ưu băng thông (Stealth Mode)
-        max_workers = min(3, len(raw_images_tk)) if raw_images_tk else 1
-        tasks = list(enumerate(raw_images_tk))
-        
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            results = executor.map(process_single_image, tasks)
-            for idx, img_link in results:
-                if img_link:
-                    drive_links[idx] = img_link
-                    
-        # Giữ nguyên độ dài và index của drive_links để tránh lệch index khi map vai trò
-        # Việc lọc ảnh rỗng/lỗi sẽ được thực hiện khi lưu vào DB hoặc khi đẩy lên các trường
-                    
+        if images_to_process:
+            max_workers = min(3, len(images_to_process))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                results = executor.map(process_single_image, images_to_process)
+                for idx, img_link, img_url in results:
+                    if img_link:
+                        drive_links[idx] = img_link
+                        new_images_mapping[img_url] = img_link
+
         # Cập nhật SQLite, phân loại sơ đồ/ảnh thô và tự động đẩy Sheets Pool (US-040)
         try:
-            # 1. Định vị và phân loại hình ảnh (Sơ đồ vs Ảnh sản phẩm/nội thất)
-            col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
-            col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
-            col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
-            col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
-            col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
-            
-            original_sodo1 = d.get(col_sodo1_key)
-            original_sodo2 = d.get(col_sodo2_key)
-            original_sodo3 = d.get(col_sodo3_key)
-            original_sodo4 = d.get(col_sodo4_key)
-            original_sodo5 = d.get(col_sodo5_key)
-            
             clean_sodo1 = ""
             clean_sodo2 = ""
             clean_sodo3 = ""
@@ -1185,7 +1194,6 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             clean_sodo5 = ""
             house_links = []
             
-            # drive_links chứa các ảnh đã upload theo đúng thứ tự của raw_images_tk
             for idx, img_url in enumerate(raw_images_tk):
                 if idx >= len(drive_links):
                     continue
@@ -1206,7 +1214,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 else:
                     house_links.append(migrated_url)
             
-            # Tự động di cư Sơ đồ thửa đất 1 đến 5 lên Cloudinary/Drive nếu còn là link tk thô (ko nén) (US-046.6 & US-054)
+            # Tự động di cư Sơ đồ thửa đất 1 đến 5 lên Cloud (bỏ qua nén)
             headers_tk_sodo = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                 "Cookie": cookie or ""
@@ -1238,10 +1246,78 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                                 elif sodo_num == 4: clean_sodo4 = migrated
                                 elif sodo_num == 5: clean_sodo5 = migrated
                                 add_log_message(f"  [🛡️ Sơ đồ {sodo_num}] Di cư Sơ đồ {sodo_num} thành công: {migrated}")
+                                new_images_mapping[orig_sodo] = migrated
                     except Exception as e:
                         add_log_message(f"  [❌ LỖI] Di cư Sơ đồ {sodo_num} thất bại: {str(e)}")
+
+            # Smart Image Merge (Trộn ảnh thông minh) cho Pool1
+            if LISTINGS_TABLE == "listings":
+                try:
+                    curated_data = json.loads(curated_config_json_val) if curated_config_json_val else None
+                except Exception:
+                    curated_data = None
+                    
+                old_images = []
+                if isinstance(curated_data, dict):
+                    old_images = curated_data.get("images", [])
+                elif isinstance(curated_data, list):
+                    old_images = curated_data
+                
+                new_images_list = []
+                added_urls = set()
+                
+                # 1. Bảo toàn các ảnh thủ công (manual images) từ curated_config cũ
+                for img in old_images:
+                    if not isinstance(img, dict):
+                        continue
+                    url = img.get("url")
+                    if url in manual_images:
+                        new_images_list.append(img)
+                        added_urls.add(url)
+                
+                # 2. Bảo toàn và cập nhật các ảnh di cư cũ
+                for img in old_images:
+                    if not isinstance(img, dict):
+                        continue
+                    url = img.get("url")
+                    if url in manual_images:
+                        continue
+                    
+                    orig_tk_url = None
+                    for k, v in images_mapping.items():
+                        if v == url:
+                            orig_tk_url = k
+                            break
+                    
+                    if orig_tk_url and orig_tk_url in new_images_mapping:
+                        new_r2_url = new_images_mapping[orig_tk_url]
+                        if new_r2_url not in added_urls:
+                            img_copy = dict(img)
+                            img_copy["url"] = new_r2_url
+                            new_images_list.append(img_copy)
+                            added_urls.add(new_r2_url)
+                
+                # 3. Thêm các ảnh di cư mới cào vào cuối danh sách
+                for img_url in raw_images_tk:
+                    if img_url in new_images_mapping:
+                        r2_url = new_images_mapping[img_url]
+                        if r2_url not in added_urls:
+                            is_diag = (img_url in raw_sodo_tk) or (img_url == original_sodo1) or (img_url == original_sodo2) or (img_url == original_sodo3) or (img_url == original_sodo4) or (img_url == original_sodo5)
+                            role = "Sơ đồ" if is_diag else "Nội thất"
+                            visible = False if role in ["Sơ đồ", "Mặt tiền"] else True
+                            new_images_list.append({
+                                "url": r2_url,
+                                "role": role,
+                                "visible": visible
+                            })
+                            added_urls.add(r2_url)
+                
+                new_curated_config = {
+                    "images": new_images_list,
+                    "Mã_Khang_Ngô__ID_": d.get("Ma_Khang_Ngo_ID", "")
+                }
             
-            # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập (US-046.6)
+            # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập
             col_ma_kn = get_safe_col_name("Mã Khang Ngô (ID)")
             col_tieu_de = get_safe_col_name("Tiêu đề Public")
             col_mo_ta = get_safe_col_name("Mô tả Public")
@@ -1297,7 +1373,27 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             update_fields[col_anh_hem_pub] = anh_hem_pub or ""
                 
             # Lọc các trường thực sự tồn tại trong DB để tránh lỗi no such column
-            valid_update_fields = {k: v for k, v in update_fields.items() if k in db_cols}
+            if LISTINGS_TABLE == "listings":
+                update_fields["curated_config_json"] = json.dumps(new_curated_config, ensure_ascii=False)
+                update_fields["images_mapping_json"] = json.dumps(new_images_mapping, ensure_ascii=False)
+                
+                # Loại bỏ các cột phẳng hình ảnh ở Pool1
+                image_fields_to_skip = {
+                    get_safe_col_name("Hình Nhận Diện"),
+                    get_safe_col_name("Hình Mặt Tiền"),
+                    get_safe_col_name("Ảnh Public (VD: 1,3,5)"),
+                    get_safe_col_name("Ảnh Hẻm Public (VD: 1,2)")
+                }
+                for i in range(1, 6):
+                    image_fields_to_skip.add(get_safe_col_name(f"Sơ đồ thửa đất {i}"))
+                for i in range(1, 11):
+                    image_fields_to_skip.add(get_safe_col_name(f"Hình Hẻm {i}"))
+                for i in range(1, 26):
+                    image_fields_to_skip.add(get_safe_col_name(f"Ảnh {i}"))
+                
+                valid_update_fields = {k: v for k, v in update_fields.items() if k in db_cols and k not in image_fields_to_skip}
+            else:
+                valid_update_fields = {k: v for k, v in update_fields.items() if k in db_cols}
                 
             cols_sql = [f"`{k}` = ?" for k in valid_update_fields.keys()]
             
@@ -1573,7 +1669,7 @@ def upload_manual_image(tk_id):
     account_id = cfg.get("cloudflare_account_id")
     use_r2 = bool(r2_access_key and r2_secret_key and r2_bucket and account_id)
     
-    is_diagram = (role == "diagram")
+    is_diagram = (role in ["diagram", "sodo"])
     if not is_diagram:
         try:
             img_bytes = compress_image(img_bytes)
@@ -1601,49 +1697,103 @@ def upload_manual_image(tk_id):
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     cursor = conn.cursor()
     try:
-        max_seq = cursor.execute(
-            "SELECT MAX(sequence_index) FROM listings_images WHERE tk_id = ?", 
-            (tk_id,)
-        ).fetchone()[0]
-        next_seq = (max_seq + 1) if (max_seq is not None) else 0
-        
-        cursor.execute("""
-            INSERT INTO listings_images (tk_id, image_url, r2_url, role, sequence_index, edited_by, origin)
-            VALUES (?, ?, ?, ?, ?, 'Admin', 'self')
-        """, (tk_id, img_link, img_link, role, next_seq))
-        
-        all_imgs = cursor.execute(
-            "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
-            (tk_id,)
-        ).fetchall()
-        
-        curated_list = []
-        for img_url, r2_url_val, r_role in all_imgs:
-            url_to_use = r2_url_val if r2_url_val else img_url
-            curated_list.append({"url": url_to_use, "role": r_role or "interior"})
+        if LISTINGS_TABLE == "listings":
+            role_map = {
+                "sodo": "Sơ đồ",
+                "diagram": "Sơ đồ",
+                "facade": "Mặt tiền",
+                "interior": "Nội thất",
+                "alley": "Hẻm",
+                "cover": "Bìa"
+            }
+            vi_role = role_map.get(role.lower(), "Nội thất")
+            visible = False if vi_role in ["Sơ đồ", "Mặt tiền"] else True
             
-        curated_config_json = json.dumps(curated_list, ensure_ascii=False)
-        cursor.execute(
-            "UPDATE listings_v2 SET curated_config_json = ? WHERE tk_id = ?",
-            (curated_config_json, tk_id)
-        )
-        
-        sys_row = cursor.execute("SELECT System_ID FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
-        system_id = sys_row[0] if sys_row else None
-        
-        if role in ["interior", "alley", "cover"] and system_id:
-            safe_imgs = []
-            for img_url, r2_url_val, r_role in all_imgs:
-                if r_role not in ["facade", "diagram", "deleted", "hidden"]:
-                    url_to_use = r2_url_val if r2_url_val else img_url
-                    safe_imgs.append({"url": url_to_use, "role": r_role or "interior"})
+            cursor.execute("SELECT curated_config_json, manual_images_json FROM listings WHERE tk_id = ?", (tk_id,))
+            row_db = cursor.fetchone()
+            curated_json = row_db[0] if row_db else None
+            manual_json = row_db[1] if row_db else None
             
-            safe_json = json.dumps(safe_imgs, ensure_ascii=False)
+            try:
+                manual_list = json.loads(manual_json) if manual_json else []
+            except Exception:
+                manual_list = []
+            if not isinstance(manual_list, list):
+                manual_list = []
+            manual_list.append(img_link)
+            
+            new_img_obj = {
+                "url": img_link,
+                "role": vi_role,
+                "visible": visible
+            }
+            
+            if not curated_json:
+                updated_curated = {"images": [new_img_obj]}
+            else:
+                try:
+                    data_curated = json.loads(curated_json)
+                except Exception:
+                    data_curated = {"images": []}
+                
+                if isinstance(data_curated, dict):
+                    if "images" not in data_curated or not isinstance(data_curated["images"], list):
+                        data_curated["images"] = []
+                    data_curated["images"].append(new_img_obj)
+                    updated_curated = data_curated
+                elif isinstance(data_curated, list):
+                    data_curated.append(new_img_obj)
+                    updated_curated = data_curated
+                else:
+                    updated_curated = {"images": [new_img_obj]}
+            
             cursor.execute(
-                "UPDATE listings_custom_v2 SET images_metadata_json = ? WHERE System_ID = ?",
-                (safe_json, system_id)
+                "UPDATE listings SET curated_config_json = ?, manual_images_json = ? WHERE tk_id = ?",
+                (json.dumps(updated_curated, ensure_ascii=False), json.dumps(manual_list, ensure_ascii=False), tk_id)
+            )
+        else:
+            max_seq = cursor.execute(
+                "SELECT MAX(sequence_index) FROM listings_images WHERE tk_id = ?", 
+                (tk_id,)
+            ).fetchone()[0]
+            next_seq = (max_seq + 1) if (max_seq is not None) else 0
+            
+            cursor.execute("""
+                INSERT INTO listings_images (tk_id, image_url, r2_url, role, sequence_index, edited_by, origin)
+                VALUES (?, ?, ?, ?, ?, 'Admin', 'self')
+            """, (tk_id, img_link, img_link, role, next_seq))
+            
+            all_imgs = cursor.execute(
+                "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
+                (tk_id,)
+            ).fetchall()
+            
+            curated_list = []
+            for img_url, r2_url_val, r_role in all_imgs:
+                url_to_use = r2_url_val if r2_url_val else img_url
+                curated_list.append({"url": url_to_use, "role": r_role or "interior"})
+                
+            curated_config_json = json.dumps(curated_list, ensure_ascii=False)
+            cursor.execute(
+                "UPDATE listings_v2 SET curated_config_json = ? WHERE tk_id = ?",
+                (curated_config_json, tk_id)
             )
             
+            sys_row = cursor.execute("SELECT System_ID FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
+            system_id = sys_row[0] if sys_row else None
+            
+            if role in ["interior", "alley", "cover"] and system_id:
+                safe_imgs = []
+                for img_url, r2_url_val, r_role in all_imgs:
+                    if r_role not in ["facade", "diagram", "deleted", "hidden"]:
+                        url_to_use = r2_url_val if r2_url_val else img_url
+                        safe_imgs.append({"url": url_to_use, "role": r_role or "interior"})
+                
+                safe_json = json.dumps(safe_imgs, ensure_ascii=False)
+                cursor.execute(
+                    "UPDATE listings_custom_v2 SET images_metadata_json = ? WHERE System_ID = ?",
+                    (safe_json, system_id)
+                )
         conn.commit()
     except Exception as e_db:
         conn.close()
@@ -2503,12 +2653,28 @@ def handle_listing_detail(tk_id):
         data = request.json
         curated_config = data.get("curated_config")
         
-        # Đồng thời cập nhật trực tiếp vào các cột nghiệp vụ SQLite
         # Cập nhật cột curated_config_json trước
         cursor.execute(
             f"UPDATE {LISTINGS_TABLE} SET curated_config_json = ? WHERE tk_id = ?",
-            (json.dumps(curated_config), tk_id)
+            (json.dumps(curated_config, ensure_ascii=False), tk_id)
         )
+
+        # Cập nhật manual_images_json cho Pool1 (đồng bộ nếu có ảnh thủ công bị xóa khỏi curated_config)
+        if LISTINGS_TABLE == "listings" and curated_config and isinstance(curated_config, dict):
+            row_db = cursor.execute("SELECT manual_images_json FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+            current_manual_json = row_db[0] if row_db else None
+            try:
+                current_manual = json.loads(current_manual_json) if current_manual_json else []
+            except Exception:
+                current_manual = []
+                
+            if current_manual:
+                curated_urls = {img.get("url") for img in curated_config.get("images", []) if isinstance(img, dict) and img.get("url")}
+                updated_manual = [url for url in current_manual if url in curated_urls]
+                cursor.execute(
+                    "UPDATE listings SET manual_images_json = ? WHERE tk_id = ?",
+                    (json.dumps(updated_manual, ensure_ascii=False), tk_id)
+                )
         
         # Cập nhật các trường chỉnh sửa của admin vào các cột tương ứng
         fields_to_update = {
@@ -2566,6 +2732,16 @@ def handle_listing_detail(tk_id):
         for key, val in fields_to_update.items():
             safe_col = get_safe_col_name(key)
             if safe_col in db_cols:
+                # TRÁNH CẬP NHẬT CÁC CỘT PHẲNG HÌNH ẢNH Ở POOL1 (LISTINGS TABLE)
+                if LISTINGS_TABLE == "listings":
+                    is_flat_image = (
+                        key in ["Hình Nhận Diện", "Hình Mặt Tiền", "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)"] or
+                        key.startswith("Sơ đồ thửa đất ") or
+                        key.startswith("Hình Hẻm ") or
+                        key.startswith("Ảnh ")
+                    )
+                    if is_flat_image:
+                        continue
                 update_cols.append(f"`{safe_col}` = ?")
                 update_vals.append(str(val) if val is not None else "")
             

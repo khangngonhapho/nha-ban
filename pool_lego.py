@@ -662,7 +662,10 @@ def init_db(db_file=None):
             "raw_drive_images_json TEXT",
             "curated_config_json TEXT",
             "Chieu_dai TEXT",
-            "raw_json_full TEXT"
+            "raw_json_full TEXT",
+            "images_mapping_json TEXT",
+            "manual_images_json TEXT",
+            "raw_sodo_tk_json TEXT"
         ]
 
         for header in POOL_HEADERS:
@@ -684,6 +687,18 @@ def init_db(db_file=None):
                 
             if "raw_json_full" not in existing_cols:
                 cursor.execute("ALTER TABLE listings ADD COLUMN raw_json_full TEXT")
+                conn.commit()
+
+            if "images_mapping_json" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN images_mapping_json TEXT")
+                conn.commit()
+
+            if "manual_images_json" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN manual_images_json TEXT")
+                conn.commit()
+
+            if "raw_sodo_tk_json" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN raw_sodo_tk_json TEXT")
                 conn.commit()
                 
             for header in POOL_HEADERS:
@@ -823,10 +838,14 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
         grouped_urls = ordered_interiors + ordered_diagrams
 
     raw_images_tk_json_val = json.dumps(grouped_urls)
+    raw_sodo_tk_json_val = json.dumps(ordered_diagrams)
         
     if existing:
         update_parts = ["status = ?", "raw_images_tk_json = ?"]
         values = ["raw_text", raw_images_tk_json_val]
+        if "raw_sodo_tk_json" in db_cols:
+            update_parts.append("raw_sodo_tk_json = ?")
+            values.append(raw_sodo_tk_json_val)
         
         for safe_col, val in cleaned_metadata.items():
             update_parts.append(f"`{safe_col}` = ?")
@@ -839,6 +858,10 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
         columns = ["tk_id", "status", "raw_images_tk_json"]
         placeholders = ["?", "?", "?"]
         values = [tk_id, "raw_text", raw_images_tk_json_val]
+        if "raw_sodo_tk_json" in db_cols:
+            columns.append("raw_sodo_tk_json")
+            placeholders.append("?")
+            values.append(raw_sodo_tk_json_val)
         
         for safe_col, val in cleaned_metadata.items():
             columns.append(f"`{safe_col}`")
@@ -1341,6 +1364,78 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
         return {"status": "error", "message": "Mã căn không tồn tại"}
         
     d = dict(row)
+    
+    # Phân rã curated_config_json và dàn phẳng động cho Pool1
+    if not is_pool2:
+        curated_json = d.get("curated_config_json")
+        if curated_json:
+            try:
+                curated_data = json.loads(curated_json)
+            except Exception:
+                curated_data = None
+                
+            if curated_data:
+                images_list = []
+                if isinstance(curated_data, dict):
+                    images_list = curated_data.get("images", [])
+                elif isinstance(curated_data, list):
+                    images_list = curated_data
+                
+                filtered_images = []
+                for img in images_list:
+                    if not isinstance(img, dict):
+                        continue
+                    if img.get("visible") is False or img.get("role") == "Ẩn":
+                        continue
+                    filtered_images.append(img)
+                
+                diagrams = []
+                facades = []
+                covers = []
+                alleys = []
+                interiors = []
+                
+                for img in filtered_images:
+                    url = img.get("url")
+                    role = img.get("role")
+                    if not url:
+                        continue
+                    if role == "Sơ đồ":
+                        diagrams.append(url)
+                    elif role == "Mặt tiền":
+                        facades.append(url)
+                    elif role == "Bìa":
+                        covers.append(url)
+                    elif role == "Hẻm":
+                        alleys.append(url)
+                    elif role == "Nội thất":
+                        interiors.append(url)
+                    else:
+                        interiors.append(url)
+                
+                cover_url = ""
+                if covers:
+                    cover_url = covers[0]
+                elif facades:
+                    cover_url = facades[0]
+                elif interiors:
+                    cover_url = interiors[0]
+                d[get_safe_col_name("Hình Nhận Diện")] = cover_url
+                
+                d[get_safe_col_name("Hình Mặt Tiền")] = facades[0] if facades else ""
+                
+                for idx in range(5):
+                    col_name = get_safe_col_name(f"Sơ đồ thửa đất {idx+1}")
+                    d[col_name] = diagrams[idx] if idx < len(diagrams) else ""
+                    
+                for idx in range(10):
+                    col_name = get_safe_col_name(f"Hình Hẻm {idx+1}")
+                    d[col_name] = alleys[idx] if idx < len(alleys) else ""
+                    
+                for idx in range(25):
+                    col_name = get_safe_col_name(f"Ảnh {idx+1}")
+                    d[col_name] = interiors[idx] if idx < len(interiors) else ""
+
     if is_pool2:
         try:
             # Fetch images from listings_images since listings_v2 has no image columns
