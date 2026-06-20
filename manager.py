@@ -1121,14 +1121,29 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         original_sodo5 = d.get(col_sodo5_key)
 
         images_to_process = []
+        # Build lookup dictionaries with query-strings removed to support dynamic Cloudfront signed URLs
+        stripped_mapping = {}
+        for k, v in images_mapping.items():
+            if k:
+                stripped_mapping[k.split('?')[0]] = v
+                
+        stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
+
+        images_to_process = []
         for idx, img_url in enumerate(raw_images_tk):
+            stripped_url = img_url.split('?')[0] if img_url else ""
             # Nếu ảnh đã được di cư thành công trong mapping, bỏ qua tải/nén/up
-            if img_url in images_mapping and images_mapping[img_url]:
-                drive_links[idx] = images_mapping[img_url]
-                new_images_mapping[img_url] = images_mapping[img_url]
-                add_log_message(f"  [⚡ Skip] Ảnh #{idx+1} của {tk_id} đã di cư trước đó. Sử dụng lại: {images_mapping[img_url]}")
+            if stripped_url in stripped_mapping and stripped_mapping[stripped_url]:
+                drive_links[idx] = stripped_mapping[stripped_url]
+                new_images_mapping[img_url] = stripped_mapping[stripped_url]
+                add_log_message(f"  [⚡ Skip] Ảnh #{idx+1} của {tk_id} đã di cư trước đó. Sử dụng lại: {stripped_mapping[stripped_url]}")
             else:
-                is_diag = (img_url in raw_sodo_tk) or (img_url == original_sodo1) or (img_url == original_sodo2) or (img_url == original_sodo3) or (img_url == original_sodo4) or (img_url == original_sodo5)
+                is_diag = (stripped_url in stripped_sodo) or \
+                          (original_sodo1 and stripped_url == original_sodo1.split('?')[0]) or \
+                          (original_sodo2 and stripped_url == original_sodo2.split('?')[0]) or \
+                          (original_sodo3 and stripped_url == original_sodo3.split('?')[0]) or \
+                          (original_sodo4 and stripped_url == original_sodo4.split('?')[0]) or \
+                          (original_sodo5 and stripped_url == original_sodo5.split('?')[0])
                 images_to_process.append((idx, img_url, is_diag))
         
         def process_single_image(args_tuple):
@@ -1200,16 +1215,17 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 migrated_url = drive_links[idx]
                 if not migrated_url:
                     continue
-                    
-                if img_url == original_sodo1:
+                
+                stripped_img_url = img_url.split('?')[0] if img_url else ""
+                if original_sodo1 and stripped_img_url == original_sodo1.split('?')[0]:
                     clean_sodo1 = migrated_url
-                elif img_url == original_sodo2:
+                elif original_sodo2 and stripped_img_url == original_sodo2.split('?')[0]:
                     clean_sodo2 = migrated_url
-                elif img_url == original_sodo3:
+                elif original_sodo3 and stripped_img_url == original_sodo3.split('?')[0]:
                     clean_sodo3 = migrated_url
-                elif img_url == original_sodo4:
+                elif original_sodo4 and stripped_img_url == original_sodo4.split('?')[0]:
                     clean_sodo4 = migrated_url
-                elif img_url == original_sodo5:
+                elif original_sodo5 and stripped_img_url == original_sodo5.split('?')[0]:
                     clean_sodo5 = migrated_url
                 else:
                     house_links.append(migrated_url)
@@ -1276,6 +1292,11 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                         added_urls.add(url)
                 
                 # 2. Bảo toàn và cập nhật các ảnh di cư cũ
+                stripped_new_mapping = {}
+                for k, v in new_images_mapping.items():
+                    if k:
+                        stripped_new_mapping[k.split('?')[0]] = v
+                        
                 for img in old_images:
                     if not isinstance(img, dict):
                         continue
@@ -1289,20 +1310,28 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                             orig_tk_url = k
                             break
                     
-                    if orig_tk_url and orig_tk_url in new_images_mapping:
-                        new_r2_url = new_images_mapping[orig_tk_url]
-                        if new_r2_url not in added_urls:
-                            img_copy = dict(img)
-                            img_copy["url"] = new_r2_url
-                            new_images_list.append(img_copy)
-                            added_urls.add(new_r2_url)
+                    if orig_tk_url:
+                        stripped_orig_tk = orig_tk_url.split('?')[0]
+                        if stripped_orig_tk in stripped_new_mapping:
+                            new_r2_url = stripped_new_mapping[stripped_orig_tk]
+                            if new_r2_url not in added_urls:
+                                img_copy = dict(img)
+                                img_copy["url"] = new_r2_url
+                                new_images_list.append(img_copy)
+                                added_urls.add(new_r2_url)
                 
                 # 3. Thêm các ảnh di cư mới cào vào cuối danh sách
                 for img_url in raw_images_tk:
                     if img_url in new_images_mapping:
                         r2_url = new_images_mapping[img_url]
                         if r2_url not in added_urls:
-                            is_diag = (img_url in raw_sodo_tk) or (img_url == original_sodo1) or (img_url == original_sodo2) or (img_url == original_sodo3) or (img_url == original_sodo4) or (img_url == original_sodo5)
+                            stripped_img = img_url.split('?')[0] if img_url else ""
+                            is_diag = (stripped_img in stripped_sodo) or \
+                                      (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
+                                      (original_sodo2 and stripped_img == original_sodo2.split('?')[0]) or \
+                                      (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
+                                      (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
+                                      (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
                             role = "Sơ đồ" if is_diag else "Nội thất"
                             visible = False if role in ["Sơ đồ", "Mặt tiền"] else True
                             new_images_list.append({
