@@ -19,6 +19,28 @@ import subprocess
 import threading
 from datetime import datetime
 import requests
+import ssl
+from requests.adapters import HTTPAdapter
+from urllib3.util import create_urllib3_context
+
+# Khắc phục lỗi SSL: UNEXPECTED_EOF_WHILE_READING với các server đằng sau Cloudflare (OpenSSL 3.0+ / Python 3.10+)
+_orig_init_poolmanager = HTTPAdapter.init_poolmanager
+
+def _robust_init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
+    try:
+        ctx = create_urllib3_context()
+        if hasattr(ssl, "OP_IGNORE_UNEXPECTED_EOF"):
+            ctx.options |= ssl.OP_IGNORE_UNEXPECTED_EOF
+        else:
+            ctx.options |= 4
+            ctx.options |= 0x80000
+        pool_kwargs['ssl_context'] = ctx
+    except Exception:
+        pass
+    return _orig_init_poolmanager(self, connections, maxsize, block, **pool_kwargs)
+
+HTTPAdapter.init_poolmanager = _robust_init_poolmanager
+
 import hashlib
 import fetcher
 from flask import Flask, jsonify, request, Response
