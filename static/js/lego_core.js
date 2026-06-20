@@ -206,7 +206,7 @@ const LegoState = {
           const refreshToken = localStorage.getItem('g_refresh_token');
           if (refreshToken) {
             console.log("Token sắp hết hạn. Đang làm mới ngầm định kỳ...");
-            const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+            const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
             fetch('/api/auth/refresh', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -247,7 +247,7 @@ const LegoState = {
 
     let clientId = localStorage.getItem('gClientId');
     if (!clientId) {
-      clientId = '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+      clientId = '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
       localStorage.setItem('gClientId', clientId);
     }
     const gClientIdInput = document.getElementById('gClientIdInput');
@@ -393,7 +393,7 @@ const LegoState = {
       const refreshToken = localStorage.getItem('g_refresh_token');
       if (refreshToken) {
         console.log("Access token expired or missing. Refreshing using refresh token proxy...");
-        const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+        const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
         fetch('/api/auth/refresh', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -446,7 +446,7 @@ const LegoState = {
       const refreshToken = localStorage.getItem('g_refresh_token');
       if (refreshToken) {
         console.log("Token expired or close to expiry. Refreshing using refresh token proxy...");
-        const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+        const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
         fetch('/api/auth/refresh', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -499,7 +499,7 @@ const LegoState = {
       if (refreshToken) {
         console.log("Access token expired. Attempting silent refresh via server proxy...");
         try {
-          const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+          const activeClientId = localStorage.getItem('gClientId') || '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
           const res = await fetch('/api/auth/refresh', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

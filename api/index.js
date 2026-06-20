@@ -311,7 +311,7 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Bad Request: Missing authorization code' });
     }
 
-    const CLIENT_ID = body.client_id || '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+    const CLIENT_ID = body.client_id || '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
     const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
     if (!CLIENT_SECRET) {
@@ -373,7 +373,7 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Bad Request: Missing refresh token' });
     }
 
-    const CLIENT_ID = body.client_id || '1088195961071-25r6rpvsfmoudokb75u0m2ugu8na0v0.apps.googleusercontent.com';
+    const CLIENT_ID = body.client_id || '1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com';
     const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
     if (!CLIENT_SECRET) {
