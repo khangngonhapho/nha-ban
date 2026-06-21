@@ -4,8 +4,8 @@
 // @version      1.1
 // @description  Cào nhanh thông tin nhà phố từ danh sách Thiên Khôi về local server Khang Ngô
 // @author       Antigravity
-// @match        https://proptech.thienkhoi.com/*
-// @match        https://backend.thienkhoi.com/*
+// @match        https://*.thienkhoi.com/*
+// @match        http://*.thienkhoi.com/*
 // @grant        GM_xmlhttpRequest
 // @connect      localhost
 // @connect      127.0.0.1
@@ -684,6 +684,10 @@
 
     // RUN INITIAL ENGINE
     function runEngine() {
+        if (!document.body) {
+            setTimeout(runEngine, 500);
+            return;
+        }
         createFloatingPanel();
         scanListings();
 
