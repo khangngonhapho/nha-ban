@@ -2920,6 +2920,18 @@ def handle_listing_detail(tk_id):
         conn.close()
         return jsonify({"status": "success", "listing": d})
 
+def set_listing_crawl_failed(tk_id, reason):
+    try:
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
+        cursor = conn.cursor()
+        row = cursor.execute(f"SELECT tk_id FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
+        if row:
+            cursor.execute(f"UPDATE {LISTINGS_TABLE} SET status = ? WHERE tk_id = ?", (f"crawl_failed:{reason}", tk_id))
+            conn.commit()
+        conn.close()
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Không thể cập nhật trạng thái lỗi cào cho căn {tk_id}: {str(e)}")
+
 @app.route('/api/listings/<tk_id>/recrawl', methods=['POST'])
 def recrawl_single_listing(tk_id):
     """Cào lại hoặc cào mới duy nhất căn này bằng cookie Thiên Khôi hiện tại"""
@@ -2984,14 +2996,20 @@ def recrawl_single_listing(tk_id):
                     headers["Authorization"] = f"Bearer {access_token}"
                     r = requests.get(detail_api_url, headers=headers, timeout=20)
                 else:
+                    set_listing_crawl_failed(tk_id, "cookie_expired")
                     return jsonify({"status": "error", "message": "Access token hết hạn và không thể refresh."}), 401
                     
-            if r.status_code != 200:
+            if r.status_code in [400, 404]:
+                set_listing_crawl_failed(tk_id, "deleted")
+                return jsonify({"status": "error", "message": f"Căn nhà đã bị khóa nguồn hoặc xóa trên Thiên Khôi (Mã lỗi {r.status_code})."}), 400
+            elif r.status_code != 200:
+                set_listing_crawl_failed(tk_id, "http_error")
                 return jsonify({"status": "error", "message": f"Thiên Khôi API phản hồi mã lỗi {r.status_code}"}), 500
                 
             detail_json = r.json()
             detail_data = detail_json.get("data") or {}
             if not detail_data:
+                set_listing_crawl_failed(tk_id, "exception")
                 return jsonify({"status": "error", "message": "Nội dung phản hồi API trống."}), 400
                 
             ma_hang = detail_data.get("code") or tk_id
@@ -3229,7 +3247,11 @@ def recrawl_single_listing(tk_id):
         }
         
         r = requests.get(detail_url, headers=headers, timeout=20)
-        if r.status_code != 200:
+        if r.status_code in [400, 404]:
+            set_listing_crawl_failed(tk_id, "deleted")
+            return jsonify({"status": "error", "message": f"Căn nhà đã bị khóa nguồn hoặc xóa trên Thiên Khôi (HTTP {r.status_code})."}), 400
+        elif r.status_code != 200:
+            set_listing_crawl_failed(tk_id, "http_error")
             return jsonify({"status": "error", "message": f"Thiên Khôi phản hồi mã lỗi HTTP {r.status_code}"}), 500
             
         if "security.html" in r.url or "Account/Login" in r.url or "login" in r.url.lower():
@@ -3240,6 +3262,7 @@ def recrawl_single_listing(tk_id):
                 winsound.Beep(800, 450)
             except Exception:
                 pass
+            set_listing_crawl_failed(tk_id, "cookie_expired")
             return jsonify({"status": "error", "message": "Cookie đã hết hạn hoặc bị chặn bảo mật bởi Thiên Khôi."}), 401
             
         from bs4 import BeautifulSoup
@@ -3247,6 +3270,7 @@ def recrawl_single_listing(tk_id):
         
         # Kiểm tra tính hợp lệ của trang chi tiết để tránh ghi đè dữ liệu trống
         if not soup_detail.select_one('#Detail_sNoiDung') and not soup_detail.select_one('#Detail_sDiaChi') and not soup_detail.select_one('#Detail_iGiaChaoHopDong_show'):
+            set_listing_crawl_failed(tk_id, "cookie_expired")
             return jsonify({"status": "error", "message": "Không tìm thấy nội dung chi tiết căn nhà trên trang Thiên Khôi. Vui lòng cập nhật lại Cookie."}), 400
             
         # Bóc tách DOM bằng helper của fetcher
@@ -3451,10 +3475,7 @@ def recrawl_single_listing(tk_id):
         
     except Exception as e:
         add_log_message(f"[❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e)}")
-        return jsonify({"status": "error", "message": f"Gặp sự cố khi cào lẻ: {str(e)}"}), 500
-        
-    except Exception as e:
-        add_log_message(f"[❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e)}")
+        set_listing_crawl_failed(tk_id, "exception")
         return jsonify({"status": "error", "message": f"Gặp sự cố khi cào lại: {str(e)}"}), 500
 
 # ==================================================
