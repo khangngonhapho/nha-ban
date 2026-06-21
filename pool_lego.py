@@ -1385,7 +1385,10 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                 for img in images_list:
                     if not isinstance(img, dict):
                         continue
-                    if img.get("visible") is False or img.get("role") == "Ẩn":
+                    role = img.get("role")
+                    is_hidden = role in ["Ẩn", "hidden"]
+                    is_invisible_non_sodo = (img.get("visible") is False and role not in ["Sơ đồ", "diagram"])
+                    if is_hidden or is_invisible_non_sodo:
                         continue
                     filtered_images.append(img)
                 
