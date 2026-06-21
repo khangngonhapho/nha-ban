@@ -36,7 +36,7 @@ def run_server(port, directory):
 
 def main():
     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
-    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\1ec06314-4f0e-4a5f-8b55-c657801bc43a"
     
     port = get_free_port()
     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)

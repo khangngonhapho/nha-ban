@@ -54,3 +54,15 @@ size: S
 > - Đăng nhập quyền Admin trên Vercel, chọn một căn đã lên sóng (Source), xác nhận nút "⚡ Tự động điền" hiển thị.
 > - Bấm nút "⚡ Tự động điền", chọn Cancel, xác nhận thông tin không đổi. Chọn OK, xác nhận thông tin được điền bằng AI thành công.
 > - Trên Curator Dashboard, chọn một căn, bấm "🤖 BIÊN TẬP AI", kiểm tra hiển thị xác nhận ghi đè tương tự.
+
+## 🧠 Retro, Lessons Learned & Good Practices
+
+### 1. Sự cố / Khó khăn phát sinh (Incidents & Challenges)
+- **Lỗi Encoding Tiếng Việt khi Tải Prompt**: Khi xuất nội dung Google Doc chứa System Prompt tiếng Việt, `requests.get` mặc định giải mã theo chuẩn ISO-8859-1 hoặc CP1252 làm xuất hiện lỗi vỡ phông chữ (garbled text). Khắc phục bằng cách gán tường minh `response.encoding = 'utf-8'`.
+- **Kẹt phân quyền thư mục khi dựng EXE**: Khi build bằng PyInstaller, thư mục `dist` thỉnh thoảng bị lỗi phân quyền do tệp read-only hoặc system file khiến quá trình clean thư mục thất bại. Đã giải quyết bằng lệnh `attrib -r -s -h dist\* /s /d`.
+- **Đường dẫn đóng gói PyInstaller**: Dữ liệu static đính kèm dạng `datas` khi biên dịch chế độ `onedir` sẽ được gom vào thư mục con `_internal` nhưng khi chạy runtime, PyInstaller sẽ giải nén trực tiếp vào thư mục gốc `sys._MEIPASS`. Do đó, cần kiểm tra cả hai đường dẫn fallback động để đảm bảo ứng dụng chạy mượt mà cả môi trường debug lẫn production.
+
+### 2. Thực tiễn Tốt (Good Practices)
+- **Tự động bắt Dialog trong Playwright**: Đối với các tính năng dùng hộp thoại xác nhận `confirm()`, luôn cấu hình Playwright `page.on('dialog', lambda d: d.accept())` để tránh kịch bản kiểm thử bị treo (hanging) do chờ tương tác từ người dùng.
+- **Cache-Busting Tự động**: Tích hợp công cụ tự động tăng số phiên bản static resources (`?v=...`) qua pre-commit hook giúp giảm thiểu triệt để lỗi người dùng bị kẹt giao diện cũ trên thiết bị di động do cache trình duyệt.
+
