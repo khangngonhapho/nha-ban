@@ -323,6 +323,15 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-22 (Nghiệm thu US-104 - Sửa Lỗi Không Hiển Thị Carousel Hình Sổ Trên Giao Diện Admin Vercel - TEST PASS)
+*   **Mã User Story:** `US-104`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Hiển thị Song song Carousel Sổ Đỏ**: Cấu hình trang chi tiết Admin (`lego_detail_admin.js`) để luôn render Carousel Sổ đỏ (`#carouselSo`) độc lập song song với Carousel Ảnh nhà (`#carouselNha`) bất kể ban đầu có link ảnh hay chưa (hiển thị thông báo "Chưa có hình ảnh" để admin upload).
+     - **Tách biệt Logic Bộ Lọc visible**: Giữ lại các ảnh Sơ đồ có `visible = false` khi publish và đồng bộ để phục vụ Admin quản trị, trong khi giao diện Khách hàng (Client view / Preview) vẫn ẩn chúng hoàn toàn để bảo mật PII.
+     - **Đồng bộ Sổ đỏ R2 sạch**: Cập nhật hàm lưu `saveSourceChanges` và `saveNewListingFromPool` để ghi nhận các ảnh sodo vào `curated_config.images` với vai trò là `"Sơ đồ"`, đồng thời dàn phẳng trực tiếp tối đa 5 link ảnh sodo vào các cột phẳng của Pool Sheet qua fetch Google Sheets API. Loại bỏ cơ chế bảng Pool2.
+     - **Chuẩn hóa Logic Phía Python Backend**: Cập nhật `pool_lego.py` và `manager.py` cho phép trích xuất sổ đỏ từ `curated_config_json` hoặc `raw_sodo_tk_json` để xuất bản và dàn phẳng lên Google Sheets.
+     - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho toàn bộ 4 kịch bản kiểm thử E2E Playwright (`test_e2e_curation.py`, `test_e2e_collections.py`, `test_e2e_filters.py`, `test_e2e_modal.py`) trên cả hai viewports Desktop & Mobile.
+
 ### 2026-06-22 (Nghiệm thu US-103 - Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi - TEST PASS)
 *   **Mã User Story:** `US-103`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**

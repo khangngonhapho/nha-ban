@@ -6,14 +6,14 @@ Last updated: 2026-06-22
 - Total: 113
 - backlog: 3
 - draft: 0
-- in-progress: 1
+- in-progress: 0
 - done: 21
-- accepted: 82
+- accepted: 83
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
-| US-104 | Sửa lỗi không show carousel hình sổ trên detail admin view vercel | in-progress | S | 2026-06-22 | `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js` |
+| US-104 | Sửa lỗi không show carousel hình sổ trên detail admin view vercel | accepted | S | 2026-06-22 | `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js` |
 | US-103 | Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi | accepted | M | 2026-06-22 | `static/js/thienkhoi_list_scraper.user.js`, `curator.html`, `curator_html_data.py` |
 | US-102 | Lọc các căn chưa có raw_json_full trên Curator Dashboard | done | S | 2026-06-21 | `manager.py`, `curator.html`, `curator_html_data.py` |
 | US-101 | Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên | backlog | M | 2026-06-21 | `manager.py`, `pool_lego.py` |
@@ -211,7 +211,7 @@ Last updated: 2026-06-22
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
-- [[US-104_fix_admin_sodo_carousel|US-104]]: Sửa lỗi không show carousel hình sổ trên detail admin view vercel (in-progress)
+- [[US-104_fix_admin_sodo_carousel|US-104]]: Sửa lỗi không show carousel hình sổ trên detail admin view vercel (accepted)
 - [[US-097_fix_quick_share_link_error|US-097]]: Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng (accepted)
 - [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (accepted)
 - [[US-094A1_lego_frontend_css|US-094A1]]: Tách biệt CSS ngoài ra global.css (accepted)

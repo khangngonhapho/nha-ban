@@ -1,21 +1,5 @@
 [
     {
-        "id": 3,
-        "name": "Hiếm",
-        "parentId": null,
-        "groupId": 1,
-        "groupCode": "PROPERTY_CRITERIA",
-        "groupName": "Tiềm năng - Rủi ro"
-    },
-    {
-        "id": 16,
-        "name": "Chủ cần bán gấp",
-        "parentId": null,
-        "groupId": 1,
-        "groupCode": "PROPERTY_CRITERIA",
-        "groupName": "Tiềm năng - Rủi ro"
-    },
-    {
         "id": 17,
         "name": "Chính chủ",
         "parentId": null,
@@ -24,8 +8,8 @@
         "groupName": "Tiềm năng - Rủi ro"
     },
     {
-        "id": 37,
-        "name": "Ngõ 3 ô tô tránh (7 - 9m)",
+        "id": 35,
+        "name": "Ngõ 1 ô tô ( 2.5 -5m)",
         "parentId": null,
         "groupId": 3,
         "groupCode": "ROAD_TYPE",
@@ -48,16 +32,16 @@
         "groupName": "Giấy tờ pháp lý"
     },
     {
-        "id": 62,
-        "name": "Vuông",
+        "id": 63,
+        "name": "Nở hậu",
         "parentId": null,
         "groupId": 6,
         "groupCode": "LAND_PLOT_SHAPE",
         "groupName": "Hình dạng thửa đất"
     },
     {
-        "id": 68,
-        "name": "Xây < 5 năm",
+        "id": 70,
+        "name": "Xây 10-15 năm",
         "parentId": null,
         "groupId": 7,
         "groupCode": "CONSTRUCTION_STATUS",
@@ -72,8 +56,8 @@
         "groupName": "Cấu trúc nhà"
     },
     {
-        "id": 77,
-        "name": "Nội thất giá trị cao, tiền tỷ",
+        "id": 76,
+        "name": "Nội thất cơ bản",
         "parentId": null,
         "groupId": 9,
         "groupCode": "INTERIOR",
@@ -96,48 +80,32 @@
         "groupName": "Vị trí tính thuế theo quy định của Nhà nước"
     },
     {
-        "id": 90,
-        "name": "Lô góc 2 mặt thoáng",
+        "id": 88,
+        "name": "Chỉ có 1 mặt tiền",
         "parentId": null,
         "groupId": 14,
         "groupCode": "OPEN_SPACE",
         "groupName": "Mặt thoáng"
     },
     {
-        "id": 111,
+        "id": 98,
         "name": "Dưới 100m",
+        "parentId": null,
+        "groupId": 16,
+        "groupCode": "DISTANCE_TO_MAIN_ROAD",
+        "groupName": "Khoảng cách ra đường ô tô tránh"
+    },
+    {
+        "id": 110,
+        "name": "Không có",
         "parentId": null,
         "groupId": 18,
         "groupCode": "DISTANCE_TO_PARKING_LOT",
         "groupName": "Khoảng cách ra bãi đỗ xe oto"
     },
     {
-        "id": 115,
-        "name": "Khu vực thuần ở",
-        "parentId": null,
-        "groupId": 19,
-        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
-        "groupName": "Kinh doanh - Dòng tiền"
-    },
-    {
         "id": 117,
         "name": "Khu vực kinh doanh sầm uất",
-        "parentId": 116,
-        "groupId": 19,
-        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
-        "groupName": "Kinh doanh - Dòng tiền"
-    },
-    {
-        "id": 118,
-        "name": "Khu vực kinh doanh nhỏ",
-        "parentId": 116,
-        "groupId": 19,
-        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
-        "groupName": "Kinh doanh - Dòng tiền"
-    },
-    {
-        "id": 119,
-        "name": "Khu vực kinh doanh văn phòng",
         "parentId": 116,
         "groupId": 19,
         "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
