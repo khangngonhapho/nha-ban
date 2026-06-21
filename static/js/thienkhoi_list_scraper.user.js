@@ -370,6 +370,7 @@
     let isCrawlingBulk = false;
     let localListingIds = new Set();
     let checkedIds = new Set(); // Cache verified listing IDs to prevent duplicate calls
+    let uncheckedPanelIds = new Set(); // Track manually unchecked IDs in the panel
 
     // CHECK A BATCH OF LISTING IDS FOR LOCAL EXISTENCE
     function checkExistLocally(tkIds) {
@@ -603,9 +604,11 @@
 
         // Look for cards: div with class shadow-small
         const cards = document.querySelectorAll('div.shadow-small');
-        if (cards.length === 0) return;
-
-        let newItemsFound = false;
+        if (cards.length === 0) {
+            detectedListings = [];
+            updateFloatingPanel();
+            return;
+        }
 
         // Collect detected IDs to batch check their existence
         const detectedIds = [];
@@ -627,6 +630,8 @@
             await checkExistLocally(uncheckedIds);
             isChecking = false;
         }
+
+        const currentListings = [];
 
         cards.forEach(card => {
             // Find detail link
@@ -659,37 +664,37 @@
                         existingBtn.title = "Cào căn này về database local.";
                     }
                 }
-                return;
-            }
-
-            // Create button
-            const btn = document.createElement('button');
-            const isCrawled = localListingIds.has(tkId);
-            if (isCrawled) {
-                btn.className = 'kn-scrape-btn success';
-                btn.innerHTML = `✅ Đã có`;
-                btn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
             } else {
-                btn.className = 'kn-scrape-btn';
-                btn.innerHTML = `📥 Cào Căn Này`;
-                btn.title = "Cào căn này về database local.";
+                // Create button
+                const btn = document.createElement('button');
+                const isCrawled = localListingIds.has(tkId);
+                if (isCrawled) {
+                    btn.className = 'kn-scrape-btn success';
+                    btn.innerHTML = `✅ Đã có`;
+                    btn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
+                } else {
+                    btn.className = 'kn-scrape-btn';
+                    btn.innerHTML = `📥 Cào Căn Này`;
+                    btn.title = "Cào căn này về database local.";
+                }
+                btn.setAttribute('data-tk-id', tkId);
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    crawlSingle(tkId, btn);
+                });
+
+                // Append to card
+                card.appendChild(btn);
             }
-            btn.setAttribute('data-tk-id', tkId);
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                crawlSingle(tkId, btn);
-            });
 
-            // Append to card
-            card.appendChild(btn);
-
-            // Save to state
-            if (!detectedListings.some(item => item.id === tkId)) {
-                detectedListings.push({ id: tkId, title: title });
-                newItemsFound = true;
+            // Save to current listing array (only unique items)
+            if (!currentListings.some(item => item.id === tkId)) {
+                currentListings.push({ id: tkId, title: title });
             }
         });
+
+        detectedListings = currentListings;
 
         // Always update the floating panel checklist to keep counts and checkboxes synchronized with localListingIds
         updateFloatingPanel();
@@ -830,10 +835,23 @@
                 uncrawledListings.forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'kn-list-item';
+                    const isChecked = !uncheckedPanelIds.has(item.id);
                     itemDiv.innerHTML = `
-                        <input type="checkbox" class="kn-item-check" value="${item.id}" checked />
+                        <input type="checkbox" class="kn-item-check" value="${item.id}" ${isChecked ? 'checked' : ''} />
                         <span class="kn-item-title" title="${item.title}">${item.title}</span>
                     `;
+                    
+                    const chk = itemDiv.querySelector('.kn-item-check');
+                    if (chk) {
+                        chk.addEventListener('change', (e) => {
+                            if (e.target.checked) {
+                                uncheckedPanelIds.delete(item.id);
+                            } else {
+                                uncheckedPanelIds.add(item.id);
+                            }
+                        });
+                    }
+                    
                     checklist.appendChild(itemDiv);
                 });
             } else {
