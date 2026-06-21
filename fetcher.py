@@ -1401,6 +1401,13 @@ def try_refresh_tokens(cookie_path="thienkhoi_cookie.txt"):
                 f.write(new_cookie_str)
             print("[🎉 SUCCESS] Token refreshed programmatically and saved to thienkhoi_cookie.txt.")
             return new_cookie_str
+        else:
+            try:
+                err_data = r.json()
+                msg = err_data.get("message") or r.text
+            except Exception:
+                msg = r.text
+            print(f"[❌ ERROR] Failed to refresh token. HTTP {r.status_code}: {msg}")
     except Exception as e:
         print(f"[⚠️ WARNING] Failed to refresh token: {e}")
     return None

@@ -381,37 +381,46 @@
 
     // AUTO-SYNC COOKIES ON LAUNCH
     function syncCookies() {
-        writeLog("Đang đồng bộ cookie với server...");
-        GM_xmlhttpRequest({
-            method: "POST",
-            url: `${getLocalUrl()}/api/crawl`,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            data: JSON.stringify({
-                url: "MOCK_SAVE_ONLY",
-                cookie: document.cookie
-            }),
-            onload: function(response) {
-                if (response.status === 200) {
-                    writeLog("✅ Đồng bộ cookie thành công!");
-                } else {
-                    writeLog(`❌ Lỗi đồng bộ cookie: HTTP ${response.status}`);
+        return new Promise((resolve) => {
+            writeLog("Đang đồng bộ cookie với server...");
+            GM_xmlhttpRequest({
+                method: "POST",
+                url: `${getLocalUrl()}/api/crawl`,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: JSON.stringify({
+                    url: "MOCK_SAVE_ONLY",
+                    cookie: document.cookie
+                }),
+                onload: function(response) {
+                    if (response.status === 200) {
+                        writeLog("✅ Đồng bộ cookie thành công!");
+                        resolve(true);
+                    } else {
+                        writeLog(`❌ Lỗi đồng bộ cookie: HTTP ${response.status}`);
+                        resolve(false);
+                    }
+                },
+                onerror: function(err) {
+                    writeLog("❌ Không kết nối được server local. Hãy bật manager.py!");
+                    resolve(false);
                 }
-            },
-            onerror: function(err) {
-                writeLog("❌ Không kết nối được server local. Hãy bật manager.py!");
-            }
+            });
         });
     }
 
     // TRIGGER SINGLE LISTING CRAWL
-    function crawlSingle(tkId, buttonEl) {
+    async function crawlSingle(tkId, buttonEl) {
         if (!buttonEl) return;
         
         buttonEl.disabled = true;
         buttonEl.className = "kn-scrape-btn crawling";
         buttonEl.innerHTML = `<div class="kn-spinner"></div> Đang cào...`;
+        
+        writeLog("Đang làm mới cookie trước khi cào...");
+        await syncCookies();
+        
         writeLog(`Bắt đầu cào căn: ${tkId.slice(0, 8)}...`);
 
         GM_xmlhttpRequest({
@@ -465,6 +474,10 @@
         }
 
         isCrawlingBulk = true;
+        
+        writeLog("Đang làm mới cookie trước khi cào hàng loạt...");
+        await syncCookies();
+        
         writeLog(`🚀 BẮT ĐẦU CÀO HÀNG LOẠT ${checkboxes.length} CĂN...`);
         const bulkBtn = document.getElementById('kn-btn-bulk-scrape');
         if (bulkBtn) bulkBtn.textContent = "Đang cào hàng loạt...";
