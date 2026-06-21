@@ -2834,7 +2834,6 @@ def handle_listing_detail(tk_id):
                 if LISTINGS_TABLE == "listings":
                     is_flat_image = (
                         key in ["Hình Nhận Diện", "Hình Mặt Tiền", "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)"] or
-                        key.startswith("Sơ đồ thửa đất ") or
                         key.startswith("Hình Hẻm ") or
                         key.startswith("Ảnh ")
                     )

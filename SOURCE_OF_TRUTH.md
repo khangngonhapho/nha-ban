@@ -1169,6 +1169,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-104:** Sửa lỗi không show carousel hình sổ trên detail admin view vercel ✅ Done 2026-06-22
 - [x] **US-103:** Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi ✅ Done 2026-06-22
 - [x] **US-102:** Lọc các căn chưa có raw_json_full trên Curator Dashboard ✅ Done 2026-06-21
 - [ ] **US-101:** Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên
