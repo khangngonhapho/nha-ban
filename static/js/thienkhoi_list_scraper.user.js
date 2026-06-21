@@ -368,6 +368,42 @@
     // STATE STORE
     let detectedListings = [];
     let isCrawlingBulk = false;
+    let localListingIds = new Set();
+
+    // FETCH LOCALLY CRAWLED LISTINGS FROM FLASK DB
+    function fetchLocalListings() {
+        return new Promise((resolve) => {
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: `${getLocalUrl()}/api/listings`,
+                onload: function(response) {
+                    if (response.status === 200) {
+                        try {
+                            const resData = JSON.parse(response.responseText);
+                            const list = resData.listings || [];
+                            localListingIds.clear();
+                            list.forEach(item => {
+                                if (item.tk_id) {
+                                    localListingIds.add(item.tk_id);
+                                }
+                            });
+                            console.log(`[Khang Ngô BDS Scraper] Đã tải ${localListingIds.size} căn từ database local.`);
+                            resolve(true);
+                        } catch (e) {
+                            console.error("[Khang Ngô BDS Scraper] Lỗi parse danh sách local:", e);
+                            resolve(false);
+                        }
+                    } else {
+                        resolve(false);
+                    }
+                },
+                onerror: function(err) {
+                    console.warn("[Khang Ngô BDS Scraper] Không thể kết nối local server để lấy danh sách căn.");
+                    resolve(false);
+                }
+            });
+        });
+    }
 
     // HELPER: Add message to log panel
     function writeLog(msg) {
@@ -436,9 +472,12 @@
                     const resData = JSON.parse(response.responseText);
                     if (response.status === 200 && resData.status === "success") {
                         buttonEl.className = "kn-scrape-btn success";
-                        buttonEl.innerHTML = `✅ Đã cào thành công`;
+                        buttonEl.innerHTML = `✅ Đã có`;
+                        buttonEl.title = "Căn này đã có trong database local. Nhấn để cào lại.";
                         writeLog(`✅ Cào thành công căn: ${tkId.slice(0, 8)}`);
                         showToast(`Cào thành công căn!`);
+                        localListingIds.add(tkId);
+                        updateFloatingPanel();
                     } else {
                         const errMsg = resData.message || "Lỗi chưa rõ";
                         buttonEl.className = "kn-scrape-btn failed";
@@ -509,9 +548,11 @@
                             if (response.status === 200 && resData.status === "success") {
                                 if (cardBtn) {
                                     cardBtn.className = "kn-scrape-btn success";
-                                    cardBtn.innerHTML = `✅ Đã cào thành công`;
+                                    cardBtn.innerHTML = `✅ Đã có`;
+                                    cardBtn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
                                 }
                                 writeLog(`✅ [${i+1}/${checkboxes.length}] Thành công: ${tkId.slice(0, 8)}`);
+                                localListingIds.add(tkId);
                             } else {
                                 if (cardBtn) {
                                     cardBtn.className = "kn-scrape-btn failed";
@@ -542,6 +583,7 @@
 
         isCrawlingBulk = false;
         if (bulkBtn) bulkBtn.textContent = "Cào các căn đã chọn";
+        updateFloatingPanel();
         writeLog("🏁 HOÀN TẤT TIẾN TRÌNH CÀO HÀNG LOẠT!");
         showToast("Đã hoàn tất cào hàng loạt!");
     }
@@ -573,9 +615,17 @@
 
             // Create button
             const btn = document.createElement('button');
-            btn.className = 'kn-scrape-btn';
+            const isCrawled = localListingIds.has(tkId);
+            if (isCrawled) {
+                btn.className = 'kn-scrape-btn success';
+                btn.innerHTML = `✅ Đã có`;
+                btn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
+            } else {
+                btn.className = 'kn-scrape-btn';
+                btn.innerHTML = `📥 Cào Căn Này`;
+                btn.title = "Cào căn này về database local.";
+            }
             btn.setAttribute('data-tk-id', tkId);
-            btn.innerHTML = `📥 Cào Căn Này`;
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -683,6 +733,18 @@
         // Sync Cookie click
         document.getElementById('kn-btn-sync-cookie').addEventListener('click', () => {
             syncCookies();
+            fetchLocalListings().then(() => {
+                updateFloatingPanel();
+                // Refresh existing buttons styles
+                document.querySelectorAll('.kn-scrape-btn').forEach(btn => {
+                    const tkId = btn.getAttribute('data-tk-id');
+                    if (tkId && localListingIds.has(tkId)) {
+                        btn.className = 'kn-scrape-btn success';
+                        btn.innerHTML = `✅ Đã có`;
+                        btn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
+                    }
+                });
+            });
         });
 
         // Open Dashboard click
@@ -719,9 +781,13 @@
             detectedListings.forEach(item => {
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'kn-list-item';
+                const isCrawled = localListingIds.has(item.id);
+                const checkedStr = isCrawled ? '' : 'checked';
+                const labelSuffix = isCrawled ? ' <span style="color: #10b981; font-weight: bold;">(Đã cào)</span>' : '';
+                
                 itemDiv.innerHTML = `
-                    <input type="checkbox" class="kn-item-check" value="${item.id}" checked />
-                    <span class="kn-item-title" title="${item.title}">${item.title}</span>
+                    <input type="checkbox" class="kn-item-check" value="${item.id}" ${checkedStr} />
+                    <span class="kn-item-title" title="${item.title}">${item.title}${labelSuffix}</span>
                 `;
                 checklist.appendChild(itemDiv);
             });
@@ -729,13 +795,17 @@
     }
 
     // RUN INITIAL ENGINE
-    function runEngine() {
+    async function runEngine() {
         if (!document.body || !document.head) {
             setTimeout(runEngine, 500);
             return;
         }
         initializeDOM();
         createFloatingPanel();
+        
+        // Load locally crawled listing IDs first
+        await fetchLocalListings();
+        
         scanListings();
 
         // Run scans periodically
