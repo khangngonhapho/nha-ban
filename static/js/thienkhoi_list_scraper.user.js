@@ -373,7 +373,7 @@
 
     // CHECK A BATCH OF LISTING IDS FOR LOCAL EXISTENCE
     function checkExistLocally(tkIds) {
-        const idsToCheck = tkIds.filter(id => !checkedIds.has(id));
+        const idsToCheck = tkIds.map(id => id.toLowerCase()).filter(id => !checkedIds.has(id));
         if (idsToCheck.length === 0) return Promise.resolve(true);
 
         return new Promise((resolve) => {
@@ -390,7 +390,7 @@
                             const resData = JSON.parse(response.responseText);
                             const exists = resData.exists || [];
                             exists.forEach(id => {
-                                localListingIds.add(id);
+                                localListingIds.add(id.toLowerCase());
                             });
                             // Mark all these IDs as verified
                             idsToCheck.forEach(id => checkedIds.add(id));
@@ -483,7 +483,7 @@
                         buttonEl.title = "Căn này đã có trong database local. Nhấn để cào lại.";
                         writeLog(`✅ Cào thành công căn: ${tkId.slice(0, 8)}`);
                         showToast(`Cào thành công căn!`);
-                        localListingIds.add(tkId);
+                        localListingIds.add(tkId.toLowerCase());
                         updateFloatingPanel();
                     } else {
                         const errMsg = resData.message || "Lỗi chưa rõ";
@@ -559,7 +559,7 @@
                                     cardBtn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
                                 }
                                 writeLog(`✅ [${i+1}/${checkboxes.length}] Thành công: ${tkId.slice(0, 8)}`);
-                                localListingIds.add(tkId);
+                                localListingIds.add(tkId.toLowerCase());
                             } else {
                                 if (cardBtn) {
                                     cardBtn.className = "kn-scrape-btn failed";
@@ -616,7 +616,7 @@
             if (!href) return;
             const match = href.match(/\/(?:sources|Detail)\/([a-f0-9\-]{36}|\d+)/i);
             if (match) {
-                detectedIds.push(match[1]);
+                detectedIds.push(match[1].toLowerCase());
             }
         });
 
@@ -638,7 +638,7 @@
             const match = href.match(/\/(?:sources|Detail)\/([a-f0-9\-]{36}|\d+)/i);
             if (!match) return;
 
-            const tkId = match[1];
+            const tkId = match[1].toLowerCase();
 
             // Extract title
             const titleEl = card.querySelector('p.line-clamp-2') || card.querySelector('p');
@@ -691,9 +691,8 @@
             }
         });
 
-        if (newItemsFound) {
-            updateFloatingPanel();
-        }
+        // Always update the floating panel checklist to keep counts and checkboxes synchronized with localListingIds
+        updateFloatingPanel();
     }
 
     // RENDER FLOATING PANEL
@@ -780,20 +779,14 @@
         });
 
         // Sync Cookie click
-        document.getElementById('kn-btn-sync-cookie').addEventListener('click', () => {
-            syncCookies();
-            fetchLocalListings().then(() => {
-                updateFloatingPanel();
-                // Refresh existing buttons styles
-                document.querySelectorAll('.kn-scrape-btn').forEach(btn => {
-                    const tkId = btn.getAttribute('data-tk-id');
-                    if (tkId && localListingIds.has(tkId)) {
-                        btn.className = 'kn-scrape-btn success';
-                        btn.innerHTML = `✅ Đã có`;
-                        btn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
-                    }
-                });
-            });
+        document.getElementById('kn-btn-sync-cookie').addEventListener('click', async () => {
+            await syncCookies();
+            checkedIds.clear();
+            localListingIds.clear();
+            detectedListings = [];
+            // Re-scan visible listings immediately to update their status and refresh the floating panel
+            await scanListings();
+            showToast("Đã đồng bộ cookie và quét lại danh sách!");
         });
 
         // Open Dashboard click
@@ -822,24 +815,34 @@
     // UPDATE FLOATING PANEL DATA
     function updateFloatingPanel() {
         const countSpan = document.getElementById('kn-detected-count');
-        if (countSpan) countSpan.textContent = detectedListings.length;
-
         const checklist = document.getElementById('kn-listings-checklist');
-        if (checklist && detectedListings.length > 0) {
-            checklist.innerHTML = '';
-            detectedListings.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'kn-list-item';
-                const isCrawled = localListingIds.has(item.id);
-                const checkedStr = isCrawled ? '' : 'checked';
-                const labelSuffix = isCrawled ? ' <span style="color: #10b981; font-weight: bold;">(Đã cào)</span>' : '';
-                
-                itemDiv.innerHTML = `
-                    <input type="checkbox" class="kn-item-check" value="${item.id}" ${checkedStr} />
-                    <span class="kn-item-title" title="${item.title}">${item.title}${labelSuffix}</span>
+        
+        // Filter out already crawled listings
+        const uncrawledListings = detectedListings.filter(item => !localListingIds.has(item.id));
+        
+        if (countSpan) {
+            countSpan.textContent = uncrawledListings.length;
+        }
+
+        if (checklist) {
+            if (uncrawledListings.length > 0) {
+                checklist.innerHTML = '';
+                uncrawledListings.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'kn-list-item';
+                    itemDiv.innerHTML = `
+                        <input type="checkbox" class="kn-item-check" value="${item.id}" checked />
+                        <span class="kn-item-title" title="${item.title}">${item.title}</span>
+                    `;
+                    checklist.appendChild(itemDiv);
+                });
+            } else {
+                checklist.innerHTML = `
+                    <div style="padding: 10px; text-align: center; color: rgba(255,255,255,0.4); font-size: 11px;">
+                        Không phát hiện căn mới nào...
+                    </div>
                 `;
-                checklist.appendChild(itemDiv);
-            });
+            }
         }
     }
 
