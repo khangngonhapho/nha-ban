@@ -1,0 +1,27 @@
+Occurrences of 'Pool1' in manager.py:
+
+manager.py L2577-L2600:
+  2577:         # Nếu đang ở chế độ Pool2, đồng bộ cập nhật vào bảng listings_custom_v2
+  2578:         if LISTINGS_TABLE == "listings_v2":
+  2579:             try:
+  2580:                 row_v2 = cursor.execute("SELECT * FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()
+  2581:                 if row_v2:
+  2582:                     d_v2 = dict(row_v2)
+  2583:                     system_id = d_v2.get("System_ID")
+  2584:                     if system_id:
+  2585:                         # Kiểm tra xem đã tồn tại System_ID trong listings_custom_v2 chưa
+  2586:                         custom_exists = cursor.execute(
+  2587:                             "SELECT 1 FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)
+  2588:                         ).fetchone()
+  2589:                         
+  2590:                         # Trích xuất danh sách ảnh an toàn từ curated_config
+  2591:                         images_metadata = []
+  2592:                         if curated_config and isinstance(curated_config, dict):
+  2593:                             images_list = curated_config.get("images", [])
+  2594:                             safe_roles = ["interior", "alley", "cover", "interior_public", "alley_public"]
+  2595:                             images_metadata = [img for img in images_list if img.get("role") in safe_roles or not img.get("role")]
+  2596:                         
+  2597:                         # Điền thông tin vào listings_custom_v2
+  2598:                         custom_data = {
+  2599:                             "System_ID": system_id,
+  2600:                             "Ma_Khang_Ngo": data.get("ma_khang_ngo") or d_v2.get("Ma_Khang_Ngo_ID") or "",

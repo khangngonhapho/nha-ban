@@ -163,14 +163,15 @@
 
         .sidebar-tab {
             flex: 1;
-            padding: 12px 5px;
+            padding: 12px 4px;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
             transition: 0.2s;
             border-bottom: 2px solid transparent;
+            word-break: break-word;
         }
 
         .sidebar-tab:hover {
@@ -866,6 +867,8 @@
                 <div class="sidebar-tab active" data-status="raw_text" onclick="setSidebarStatus('raw_text')">Chờ di cư ảnh</div>
                 <div class="sidebar-tab" data-status="raw_complete" onclick="setSidebarStatus('raw_complete')">Chờ biên tập</div>
                 <div class="sidebar-tab" data-status="published" onclick="setSidebarStatus('published')">Đã xuất bản</div>
+                <div class="sidebar-tab" data-status="missing_raw_json" onclick="setSidebarStatus('missing_raw_json')">Thiếu JSON</div>
+                <div class="sidebar-tab" data-status="crawl_failed" onclick="setSidebarStatus('crawl_failed')" style="border-left: 1px solid var(--border-color); color: #f87171;">Lỗi cào</div>
             </div>
             <!-- Khung chọn lọc đẩy thô Pool hàng loạt (US-040) -->
             <div class="sidebar-actions" id="sidebar-bulk-actions" style="display: none; padding: 10px 12px; background: rgba(251, 191, 36, 0.05); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -1040,6 +1043,69 @@
                         <!-- Terminal lines here -->
                     </div>
                 </div>
+                
+                <!-- panel-row 2 for US-100 -->
+                <div class="panel-row" style="margin-top: 20px;">
+                    <!-- Dynamic Filters config card -->
+                    <div class="panel-card">
+                        <div class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>⚙️ Cấu hình Bộ lọc JSON Động</span>
+                            <button class="btn btn-gold" onclick="triggerSyncJsonUi()" style="font-size: 11px; padding: 4px 10px; height: auto;">🔄 Đồng bộ JSON UI Hàng loạt</button>
+                        </div>
+                        
+                        <div id="dynamic-filters-list" style="margin-bottom: 15px;">
+                            <!-- Dynamic filters list table -->
+                        </div>
+                        
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                            <label style="font-size: 11px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 10px; display: block;">➕ Thêm Bộ lọc Mới</label>
+                            <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 9px;">Khóa Dữ liệu (JSON Key)</label>
+                                    <input type="text" id="new-filter-field" placeholder="e.g. Criteria_Duong_truoc_nha">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 9px;">Nhãn hiển thị (Label)</label>
+                                    <input type="text" id="new-filter-label" placeholder="e.g. Đường trước nhà">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label style="font-size: 9px;">Loại (Type)</label>
+                                    <select id="new-filter-type">
+                                        <option value="select">Select / Combobox</option>
+                                        <option value="text">Văn bản / Text</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 9px;">Danh sách tùy chọn (Phân cách bằng dấu phẩy)</label>
+                                <input type="text" id="new-filter-options" placeholder="Để trống nếu là Text, nhập Options1, Options2... nếu là Select">
+                            </div>
+                            <button class="btn btn-outline" onclick="addNewDynamicFilter()" style="width: 100%;">➕ Thêm Bộ lọc vào Cấu hình</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Troubleshooting card -->
+                    <div class="panel-card" style="display: flex; flex-direction: column;">
+                        <div class="panel-title">⚠️ Khắc phục Sự cố Cào tin (Troubleshooting)</div>
+                        <div style="margin-bottom: 10px; font-size: 12px; color: var(--text-muted);">
+                            Danh sách các căn bị lỗi trong quá trình vá dữ liệu chi tiết từ Thiên Khôi.
+                        </div>
+                        <div style="flex: 1; overflow-y: auto; max-height: 350px; border: 1px solid var(--border-color); border-radius: 6px; background: rgba(0,0,0,0.2);">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); text-align: left;">
+                                        <th style="padding: 8px;">Mã căn</th>
+                                        <th style="padding: 8px;">Lý do lỗi</th>
+                                        <th style="padding: 8px; text-align: right;">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trouble-table-body">
+                                    <!-- Render failed listings here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- TAB 2: IMAGE MIGRATION -->
@@ -1186,6 +1252,17 @@
                                         <option value="Đã bán">Đã bán (Ẩn)</option>
                                         <option value="Ẩn">Ẩn</option>
                                     </select>
+                                </div>
+                            </div>
+                            
+                            <div class="editor-grid-2" style="margin-top: 10px;">
+                                <div class="form-group">
+                                    <label>Mặt tiền (m)</label>
+                                    <input type="text" id="edit-mat-tien" placeholder="Mặt tiền...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Chiều dài (m)</label>
+                                    <input type="text" id="edit-chieu-dai" placeholder="Chiều dài...">
                                 </div>
                             </div>
                             
@@ -1665,6 +1742,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             fetchConfig();
             fetchListings();
+            loadTroubleList();
             logsInterval = setInterval(fetchLogs, 2000);
             
             // Tự động phân tích trang bắt đầu từ URL khi dán/nhập
@@ -1765,6 +1843,9 @@
                         document.getElementById('cfg-delay-page-max').value = cfg.delay_page_max !== undefined ? cfg.delay_page_max : 10.0;
                         
                         detectAndSetPresetDropdown();
+                        
+                        currentFiltersConfig = cfg.json_ui_filters || [];
+                        renderDynamicFiltersTable();
                     }
                 });
         }
@@ -1929,21 +2010,25 @@
             if (!query) return null;
             query = query.trim();
             
-            // Nếu là URL đầy đủ từ Thiên Khôi
-            if (query.includes('thienkhoi.com')) {
-                const parts = query.split('/');
-                const lastPart = parts[parts.length - 1].split('?')[0].trim();
-                if (lastPart) return lastPart;
+            // 1. Check if it contains a UUID anywhere (standard 36-char format with hyphens)
+            const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+            const uuidMatch = query.match(uuidRegex);
+            if (uuidMatch) {
+                return uuidMatch[0];
             }
             
-            // Nếu là UUID (dài 36 ký tự)
-            if (query.length === 36 && query.includes('-')) {
-                return query;
+            // 2. Check if it is a URL containing /Detail/(\d+)
+            const detailRegex = /\/Detail\/(\d+)/i;
+            const detailMatch = query.match(detailRegex);
+            if (detailMatch) {
+                return detailMatch[1];
             }
             
-            // Nếu là mã hàng truyền thống (chỉ số, độ dài từ 5 đến 12)
-            if (/^\d+$/.test(query) && query.length >= 5 && query.length <= 12) {
-                return query;
+            // 3. Fallback: split by slash and get the last non-empty segment
+            const parts = query.split('/').map(p => p.trim()).filter(p => p);
+            if (parts.length > 0) {
+                const lastSegment = parts[parts.length - 1].split('?')[0].trim();
+                if (lastSegment) return lastSegment;
             }
             
             return null;
@@ -1982,11 +2067,13 @@
                     const listings = data.listings || [];
                     
                     // Cập nhật số lượng đếm trên các Tab trạng thái ở Sidebar
-                    const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0 };
+                    const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0, crawl_failed: 0, missing_raw_json: 0 };
                     const tabTextMap = {
                         raw_text: `Chờ di cư ảnh (${counts.raw_text})`,
                         raw_complete: `Chờ biên tập (${counts.raw_complete})`,
-                        published: `Đã xuất bản (${counts.published})`
+                        published: `Đã xuất bản (${counts.published})`,
+                        missing_raw_json: `Thiếu JSON (${counts.missing_raw_json || 0})`,
+                        crawl_failed: `Lỗi cào (${counts.crawl_failed || 0})`
                     };
                     document.querySelectorAll('.sidebar-tab').forEach(tab => {
                         const status = tab.getAttribute('data-status');
@@ -2054,11 +2141,27 @@
                             <input type="checkbox" class="house-select-chk" data-id="${house.tk_id}" ${isChecked} onclick="event.stopPropagation(); toggleListingSelect('${house.tk_id}', this)" style="cursor: pointer; width: 14px; height: 14px; margin-right: 6px;">
                         ` : '';
 
+                        let badgeClass = house.status;
+                        let badgeText = house.status || 'N/A';
+                        if (house.status === 'raw_text') {
+                            badgeClass = 'raw_text';
+                            badgeText = 'Chờ Drive';
+                        } else if (house.status === 'raw_complete') {
+                            badgeClass = 'raw_complete';
+                            badgeText = 'Chờ biên tập';
+                        } else if (house.status === 'published') {
+                            badgeClass = 'published';
+                            badgeText = 'Published';
+                        } else if (house.status && house.status.startsWith('crawl_failed')) {
+                            badgeClass = 'raw_text';
+                            badgeText = 'Lỗi cào';
+                        }
+
                         card.innerHTML = `
                             <div class="house-card-header" style="display: flex; align-items: center;">
                                 ${checkboxHTML}
                                 <span class="house-id" style="${sidebarStatus === 'raw_complete' ? 'margin-left: 2px;' : ''}">${house.tk_id}</span>
-                                <span class="status-badge badge-${house.status}">${house.status === 'raw_text' ? 'Chờ Drive' : (house.status === 'raw_complete' ? 'Chờ biên tập' : 'Published')}</span>
+                                <span class="status-badge badge-${badgeClass}">${badgeText}</span>
                             </div>
                             <div class="house-title">${house.Mo_ta_chi_tiet || house.Noi_dung_chinh || 'Không có mô tả'}</div>
                             <div class="house-meta">
@@ -2281,6 +2384,8 @@
             document.getElementById('edit-gia-public').value = house.Gia_Public || house.Gia_chao || '';
             document.getElementById('edit-phan-loai-hem').value = house.Phan_loai_Hem || 'Hẻm xe hơi';
             document.getElementById('edit-duong-truoc-nha').value = house.Duong_truoc_nha_m || '';
+            document.getElementById('edit-mat-tien').value = house.Mat_Tien || '';
+            document.getElementById('edit-chieu-dai').value = house.Chieu_dai || '';
             document.getElementById('edit-so-phong-ngu').value = house.So_phong_ngu || '';
             document.getElementById('edit-so-nha-ve-sinh').value = house.So_nha_ve_sinh || '';
             document.getElementById('edit-danh-gia').value = house.Danh_gia_Admin || '';
@@ -2442,12 +2547,17 @@
                     'Ẩn': 'background: var(--accent-slate); color:#fff;'
                 };
 
-                const cardStyle = item.role === 'Ẩn' ? 'opacity: 0.5;' : '';
+                const isDimmed = item.role === 'Ẩn' || item.visible === false;
+                const cardStyle = isDimmed ? 'opacity: 0.4;' : '';
 
                 card.innerHTML = `
-                    <div class="image-wrapper" style="${cardStyle}">
+                    <div class="image-wrapper" style="${cardStyle} position: relative;">
                         <img src="${item.url}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'100%\' height=\'100%\' fill=\'%231e293b\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'sans-serif\' font-size=\'14\' fill=\'%2394a3b8\'>Ảnh lỗi hoặc Đang di cư...</text></svg>';">
                         <span class="image-role-badge" style="${labelStyle[item.role]}">${roleLabels[item.role]}</span>
+                        <div class="visibility-checkbox-container" style="position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 4px; display: flex; align-items: center; gap: 4px; z-index: 10;">
+                            <input type="checkbox" id="visible-check-${index}" ${item.visible !== false ? 'checked' : ''} onchange="toggleImageVisibility(${index}, this.checked)" style="cursor: pointer; width: 14px; height: 14px; margin: 0;">
+                            <label for="visible-check-${index}" style="color: #fff; font-size: 11px; font-weight: bold; cursor: pointer; margin: 0;">Hiện</label>
+                        </div>
                     </div>
                     <div class="image-controls">
                         <div class="role-btn-group">
@@ -2465,14 +2575,15 @@
                             <span style="font-size:10px; color:var(--text-muted)">#${index+1}</span>
                             <button class="order-btn" onclick="moveImage(${index}, 1)" ${index === imagesConfig.length - 1 ? 'disabled' : ''}>Phải ▶</button>
                         </div>
-                        <div class="order-btn-group" style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 4px; margin-top: 4px;">
-                            <button class="order-btn" style="flex: 1; text-align: left;" onclick="rotateSingleImage(${index}, 90)" ${!item.url.includes('cloudinary.com') ? 'disabled title="Chỉ xoay được ảnh Cloudinary"' : ''}>🔄 Xoay +90°</button>
-                            <button class="order-btn" style="flex: 1; text-align: right;" onclick="rotateSingleImage(${index}, 270)" ${!item.url.includes('cloudinary.com') ? 'disabled title="Chỉ xoay được ảnh Cloudinary"' : ''}>🔄 Xoay -90°</button>
-                        </div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        function toggleImageVisibility(idx, isChecked) {
+            imagesConfig[idx].visible = isChecked;
+            renderImageGrid();
         }
 
         function assignImageRole(idx, role) {
@@ -2485,6 +2596,7 @@
                 
                 // Gán vai trò Bìa cho ảnh được chọn
                 imagesConfig[idx].role = 'Bìa';
+                imagesConfig[idx].visible = true;
                 
                 // Đổi vị trí (swap) với index 0 (Ảnh 1)
                 if (idx > 0) {
@@ -2498,8 +2610,14 @@
                     if (item.role === 'Mặt tiền') item.role = 'Ẩn';
                 });
                 imagesConfig[idx].role = role;
+                imagesConfig[idx].visible = false;
             } else {
                 imagesConfig[idx].role = role;
+                if (role === 'Sơ đồ') {
+                    imagesConfig[idx].visible = false;
+                } else if (role === 'Hẻm' || role === 'Nội thất') {
+                    imagesConfig[idx].visible = true;
+                }
             }
             renderImageGrid();
         }
@@ -2516,50 +2634,7 @@
             renderImageGrid();
         }
 
-        // --- CLOUDINARY URL ROTATION HELPERS (US-083) ---
-        function rotateCloudinaryUrl(url, angleOffset = 90) {
-            if (!url || !url.includes("cloudinary.com/")) return url;
-            
-            const uploadMarker = "/upload/";
-            const index = url.indexOf(uploadMarker);
-            if (index === -1) return url;
-            
-            const prefix = url.substring(0, index + uploadMarker.length);
-            let remaining = url.substring(index + uploadMarker.length);
-            
-            const rotationRegex = /^a_(-?\d+)\//;
-            const match = remaining.match(rotationRegex);
-            
-            let currentAngle = 0;
-            if (match) {
-                currentAngle = parseInt(match[1], 10);
-                remaining = remaining.replace(rotationRegex, "");
-            }
-            
-            let newAngle = (currentAngle + angleOffset) % 360;
-            if (newAngle < 0) newAngle += 360;
-            
-            if (newAngle === 0) {
-                return prefix + remaining;
-            } else {
-                return prefix + `a_${newAngle}/` + remaining;
-            }
-        }
 
-        function rotateSingleImage(idx, angleOffset) {
-            const item = imagesConfig[idx];
-            if (!item || !item.url) return;
-            
-            if (!item.url.includes("cloudinary.com/")) {
-                alert("Chỉ hỗ trợ xoay ảnh đã tải lên Cloudinary!");
-                return;
-            }
-            
-            const newUrl = rotateCloudinaryUrl(item.url, angleOffset);
-            imagesConfig[idx].url = newUrl;
-            
-            renderImageGrid();
-        }
 
         // ==========================================
         // SAVE & PUBLISH CORE LOGIC
@@ -2602,6 +2677,8 @@
                 gia_public: document.getElementById('edit-gia-public').value,
                 phan_loai_hem: document.getElementById('edit-phan-loai-hem').value,
                 duong_truoc_nha: document.getElementById('edit-duong-truoc-nha').value,
+                mat_tien: document.getElementById('edit-mat-tien').value,
+                chieu_dai: document.getElementById('edit-chieu-dai').value,
                 so_phong_ngu: document.getElementById('edit-so-phong-ngu').value,
                 so_nha_ve_sinh: document.getElementById('edit-so-nha-ve-sinh').value,
                 danh_gia: document.getElementById('edit-danh-gia').value,
@@ -3037,6 +3114,245 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+        // ==================================================
+        // US-100 DYNAMIC FILTERS & TROUBLESHOOTING JS (US-100)
+        // ==================================================
+        let currentFiltersConfig = [];
+
+        function renderDynamicFiltersTable() {
+            const container = document.getElementById('dynamic-filters-list');
+            if (!container) return;
+            
+            if (currentFiltersConfig.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 15px; font-size: 11px; color: var(--text-muted); background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px dashed var(--border-color);">Chưa cấu hình bộ lọc động nào. Hãy thêm bộ lọc mới ở form bên dưới.</div>`;
+                return;
+            }
+            
+            let html = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden;">
+                    <thead>
+                        <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color);">
+                            <th style="padding: 8px;">Nhãn hiển thị</th>
+                            <th style="padding: 8px;">Khóa dữ liệu (Key)</th>
+                            <th style="padding: 8px;">Loại</th>
+                            <th style="padding: 8px;">Tùy chọn (Options)</th>
+                            <th style="padding: 8px; text-align: right;">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            currentFiltersConfig.forEach((f, idx) => {
+                const optionsStr = f.options ? f.options.filter(x => x).join(', ') : '';
+                html += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 8px; font-weight: bold; color: var(--accent-gold);">${escapeHtml(f.label)}</td>
+                        <td style="padding: 8px; font-family: monospace; color: var(--text-muted);">${escapeHtml(f.field)}</td>
+                        <td style="padding: 8px;"><span style="background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 9px;">${f.type === 'select' ? 'Select' : 'Text'}</span></td>
+                        <td style="padding: 8px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(optionsStr)}">${escapeHtml(optionsStr) || '<i style="color:var(--text-muted)">Không có</i>'}</td>
+                        <td style="padding: 8px; text-align: right;">
+                            <button onclick="deleteDynamicFilter(${idx})" style="background: transparent; border: none; color: var(--accent-red); cursor: pointer; font-size: 14px; padding: 2px 6px;" title="Xóa bộ lọc này">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function addNewDynamicFilter() {
+            const fieldInput = document.getElementById('new-filter-field');
+            const labelInput = document.getElementById('new-filter-label');
+            const typeInput = document.getElementById('new-filter-type');
+            const optionsInput = document.getElementById('new-filter-options');
+            
+            const field = fieldInput.value.trim();
+            const label = labelInput.value.trim();
+            const type = typeInput.value;
+            let options = [];
+            
+            if (!field || !label) {
+                alert("Vui lòng nhập đầy đủ Khóa dữ liệu và Nhãn hiển thị!");
+                return;
+            }
+            
+            if (type === 'select') {
+                const optVal = optionsInput.value.trim();
+                if (optVal) {
+                    options = optVal.split(',').map(o => o.trim());
+                    // Đảm bảo có tùy chọn rỗng ở đầu nếu chưa có
+                    if (options.length > 0 && options[0] !== '') {
+                        options.unshift('');
+                    }
+                } else {
+                    options = [''];
+                }
+            }
+            
+            // Kiểm tra trùng lặp
+            if (currentFiltersConfig.some(f => f.field === field)) {
+                alert("Khóa dữ liệu này đã tồn tại trong cấu hình!");
+                return;
+            }
+            
+            currentFiltersConfig.push({ field, label, type, options });
+            renderDynamicFiltersTable();
+            saveDynamicFiltersConfig();
+            
+            // Reset inputs
+            fieldInput.value = '';
+            labelInput.value = '';
+            optionsInput.value = '';
+        }
+
+        function deleteDynamicFilter(idx) {
+            if (!confirm("Bạn có chắc muốn xóa bộ lọc này khỏi cấu hình?")) return;
+            currentFiltersConfig.splice(idx, 1);
+            renderDynamicFiltersTable();
+            saveDynamicFiltersConfig();
+        }
+
+        function saveDynamicFiltersConfig() {
+            // Lấy config hiện tại trước để merge
+            fetch('/api/config')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const cfg = data.config;
+                        // Chỉ cập nhật thuộc tính json_ui_filters và gửi POST
+                        cfg.json_ui_filters = currentFiltersConfig;
+                        
+                        fetch('/api/config', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(cfg)
+                        })
+                        .then(res => res.json())
+                        .then(resData => {
+                            if (resData.status === 'success') {
+                                showBannerNotification('⚙️ Đã lưu cấu hình bộ lọc động thành công!', 'green');
+                            }
+                        });
+                    }
+                });
+        }
+
+        function triggerSyncJsonUi() {
+            showBannerNotification('⏳ Đang kích hoạt tiến trình đồng bộ JSON UI hàng loạt...', 'gold');
+            fetch('/api/sync-json-ui', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🔄 Tiến trình đồng bộ JSON UI đã chạy ngầm thành công. Theo dõi log ở console bên dưới.', 'green');
+                } else {
+                    alert('Lỗi kích hoạt đồng bộ: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối máy chủ khi đồng bộ: ' + err);
+            });
+        }
+
+        function loadTroubleList() {
+            const tbody = document.getElementById('trouble-table-body');
+            if (!tbody) return;
+            
+            fetch('/api/listings?status=crawl_failed')
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = '';
+                    const listings = data.listings || [];
+                    if (listings.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">🎉 Tuyệt vời! Không phát hiện căn nào bị lỗi cào thô.</td></tr>`;
+                        return;
+                    }
+                    
+                    listings.forEach(item => {
+                        let reasonText = "Lỗi chưa xác định";
+                        const status = item.status || "";
+                        if (status.includes("deleted")) {
+                            reasonText = "❌ Đã xóa/Không tìm thấy trên nguồn";
+                        } else if (status.includes("cookie_expired")) {
+                            reasonText = "🔑 Cookie hết hạn / Hết phiên";
+                        } else if (status.includes("http_error")) {
+                            reasonText = "🌐 Lỗi HTTP / Mạng kết nối";
+                        } else if (status.includes("exception")) {
+                            reasonText = "⚠️ Lỗi xử lý dữ liệu (Exception)";
+                        } else if (status.includes("cookie_invalid")) {
+                            reasonText = "🔑 Cookie không hợp lệ";
+                        }
+                        
+                        tbody.innerHTML += `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); hover: background-color: rgba(255,255,255,0.01);">
+                                <td style="padding: 8px; font-weight: bold; font-family: monospace;">${escapeHtml(item.tk_id)}</td>
+                                <td style="padding: 8px; color: #f87171;">${escapeHtml(reasonText)}</td>
+                                <td style="padding: 8px; text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+                                    <button class="btn" onclick="recrawlTroubleListing('${item.tk_id}', this)" style="font-size: 9px; padding: 2px 6px; height: auto; background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa;" title="Thử cào lại căn này">🔄 Cào lại</button>
+                                    <button class="btn" onclick="deleteTroubleListing('${item.tk_id}', this)" style="font-size: 9px; padding: 2px 6px; height: auto; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171;" title="Xóa căn này khỏi DB">🗑️ Xóa</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(err => {
+                    console.error("Error loading troubleshooting list:", err);
+                });
+        }
+
+        function recrawlTroubleListing(tkId, btn) {
+            btn.disabled = true;
+            btn.innerText = "⏳...";
+            showBannerNotification(`⏳ Bắt đầu cào lại căn [${tkId}]...`, 'gold');
+            
+            fetch(`/api/listings/${tkId}/recrawl`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = "🔄 Cào lại";
+                if (data.status === 'success') {
+                    showBannerNotification(`🎉 Cào lại thành công căn [${tkId}]!`, 'green');
+                    loadTroubleList();
+                    fetchListings();
+                } else {
+                    alert('Không thể cào lại: ' + data.message);
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerText = "🔄 Cào lại";
+                alert('Lỗi kết nối khi cào lại: ' + err);
+            });
+        }
+
+        function deleteTroubleListing(tkId, btn) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn căn [${tkId}] khỏi database cục bộ?`)) return;
+            
+            btn.disabled = true;
+            fetch(`/api/listings/${tkId}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification(`🗑️ Đã xóa thành công căn [${tkId}] khỏi database!`, 'green');
+                    loadTroubleList();
+                    fetchListings();
+                } else {
+                    btn.disabled = false;
+                    alert('Lỗi khi xóa: ' + data.message);
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                alert('Lỗi kết nối khi xóa: ' + err);
+            });
         }
     </script>
 </body>

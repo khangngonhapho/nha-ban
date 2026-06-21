@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#c0392b">
+
+  <!-- Open Graph / Meta cho Zalo, Facebook -->
+  <meta property="og:title" content="Giỏ Hàng Độc Quyền - Khang Ngô Nhà Phố">
+  <meta property="og:description"
+    content="Danh sách nhà phố Sài Gòn được chọn lọc kỹ càng, pháp lý chuẩn, giá trực tiếp chủ nhà.">
+  <meta property="og:image" content="https://khangngonhapho.github.io/nha-ban/avatarKhangNgo.jpg">
+  <meta property="og:type" content="website">
+
+  <title>Khang Ngô Nhà Phố</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <!-- Google Identity Services (GSI) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="stylesheet" href="/static/css/global.css?v=202606210224">
+  <script src="/static/js/lego_mock.js?v=202606210224"></script>
+  <script src="/static/js/lego_core.js?v=202606210224"></script>
+  <script src="/static/js/lego_helpers.js?v=202606210224"></script>
+  <script src="/static/js/lego_render_client.js?v=202606210224"></script>
+  <script src="/static/js/lego_render_admin.js?v=202606210224"></script>
+  <script src="/static/js/lego_filters.js?v=202606210224"></script>
+  <script src="/static/js/lego_collections.js?v=202606210224"></script>
+  <script src="/static/js/lego_lead_capture.js?v=202606210224"></script>
+  <script src="/static/js/lego_detail_client.js?v=202606210224"></script>
+  <script src="/static/js/lego_detail_admin.js?v=202606210224"></script>
+</head>
+
+<body>
+  <div id="welcomeBanner"
+    style="display:none; background: #27ae60; color: white; padding: 10px 16px; font-weight: 600; font-size: 14px; text-align: center;">
+  </div>
+  <header>
+    <div class="hdr-top">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge" id="totalBadge">...</span>
+        <button class="sort-icon-btn admin-only" id="sortNewBtn" onclick="toggleSortNew()"
+          title="Sắp xếp thời gian">⏱️</button>
+        <button class="sort-icon-btn admin-only" id="sortPriceBtn" onclick="toggleSortPrice()"
+          title="Sắp xếp giá">💰</button>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="admin-only" id="gLoginBtn" onclick="handleGoogleLoginClick()"
+          style="display: none; align-items: center; justify-content: center; width: 34px; height: 34px; background: #fff; border: 1.5px solid #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.15); padding: 0;"
+          title="Đăng nhập Google">
+          <svg style="width:14px; height:14px; display:block;" viewBox="0 0 24 24">
+            <path fill="#EA4335"
+              d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.66 15.02 1 12 1 7.35 1 3.39 3.65 1.39 7.5l3.85 2.99C6.18 7.37 8.87 5.04 12 5.04z" />
+            <path fill="#4285F4"
+              d="M23.49 12.27c0-.82-.07-1.6-.2-2.36H12v4.51h6.44c-.28 1.48-1.12 2.74-2.38 3.59l3.7 2.87c2.16-1.99 3.73-4.92 3.73-8.61z" />
+            <path fill="#FBBC05"
+              d="M5.24 14.49c-.25-.76-.4-1.56-.4-2.39s.15-1.63.4-2.39L1.39 6.72C.5 8.49 0 10.49 0 12.5s.5 4.01 1.39 5.78l3.85-2.99z" />
+            <path fill="#34A853"
+              d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.7-2.87c-1.03.69-2.35 1.1-4.26 1.1-3.13 0-5.82-2.33-6.76-5.46L1.39 15.85C3.39 19.7 7.35 23 12 23z" />
+          </svg>
+          <span id="gLoginText" style="display:none"></span>
+        </button>
+        <div style="position: relative;">
+          <button class="hdr-icon-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="Yêu thích">♡</button>
+          <span class="fav-count-badge" id="favCount" style="display:none">0</span>
+        </div>
+        <button class="hdr-icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()" title="Tìm kiếm">
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+        </button>
+        <button class="hdr-icon-btn" id="filterBtn" onclick="toggleFilter()" title="Bộ lọc">
+          <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="search-bar" id="searchBar">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8" />
+        <path d="M21 21l-4.35-4.35" />
+      </svg>
+      <input type="text" id="bdsSearchInput" placeholder="Tìm mã căn, đường, tiêu đề..." onkeyup="onSearchInput()" autocomplete="off" spellcheck="false">
+      <span class="search-clear" id="searchClear" onclick="clearSearchInput()" style="display:none">✕</span>
+    </div>
+    <!-- Admin: thông tin bộ lọc hiện tại -->
+    <div class="filter-bar" id="filterBar" style="display:none">
+      <span class="filter-summary" id="filterSummary">Tất cả</span>
+      <button class="reset-btn" id="resetBtn" onclick="resetFilters()" style="display:none">↺ Xóa lọc</button>
+    </div>
+    <!-- Collapsible panel -->
+    <div class="filter-panel" id="filterPanel">
+      <!-- Mobile Filter Header (US-076.3) -->
+      <div class="mobile-filter-header">
+        <button class="mobile-filter-back-btn" onclick="toggleFilter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <span class="mobile-filter-title">Tìm kiếm</span>
+      </div>
+
+      <div class="filter-scroll-content">
+
+      <!-- TIÊU CHÍ BĐS Checklist (US-076.3) -->
+      <div class="criteria-section">
+        <div class="criteria-title">TIÊU CHÍ BĐS *</div>
+        <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
+        <div class="criteria-grid"></div>
+      </div>
+
+      <div class="filter-divider"></div>
+      <div id="dynamicFiltersContainer"></div>
+
+      <div class="filter-section-lbl" id="districtLbl" style="margin-top:4px;">Quận / TP</div>
+      <div class="multiselect-container" id="districtMulti">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('districtMulti')">
+          <span class="multiselect-placeholder" id="districtPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="districtOptions"></div>
+      </div>
+
+      <div class="filter-section-lbl" id="wardLbl" style="display:none">Phường</div>
+      <div class="multiselect-container" id="wardMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('wardMulti')">
+          <span class="multiselect-placeholder" id="wardPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="wardOptions"></div>
+      </div>
+
+      <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
+      <div class="multiselect-container" id="duongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('duongMulti')">
+          <span class="multiselect-placeholder" id="duongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="duongOptions"></div>
+      </div>
+      <div class="filter-section-lbl" id="giaLbl">Khoảng giá</div>
+      <div class="tabs" id="giaTabs">
+        <button class="tab on" data-val="all" onclick="tGia('all')">Tất cả</button>
+        <button class="tab" data-val="lt7" onclick="tGia('lt7')">Dưới 7 tỷ</button>
+        <button class="tab" data-val="7-10" onclick="tGia('7-10')">7–10 tỷ</button>
+        <button class="tab" data-val="10-15" onclick="tGia('10-15')">10–15 tỷ</button>
+        <button class="tab" data-val="15-20" onclick="tGia('15-20')">15–20 tỷ</button>
+        <button class="tab" data-val="gt20" onclick="tGia('gt20')">Trên 20 tỷ</button>
+      </div>
+      <div class="filter-section-lbl" id="huongLbl" style="display:none">Hướng nhà</div>
+      <div class="multiselect-container" id="huongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('huongMulti')">
+          <span class="multiselect-placeholder" id="huongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="huongOptions"></div>
+      </div>
+      <div class="filter-section-lbl" id="danhGiaLbl">Đánh giá</div>
+      <div class="tabs" id="danhGiaTabs">
+        <button class="tab on" data-val="all" onclick="tDanhGia('all')">Tất cả</button>
+        <button class="tab" data-val="Hàng Ngon" style="background:var(--gold);color:#fff"
+          onclick="tDanhGia('Hàng Ngon')">💎 Ngon</button>
+        <button class="tab" data-val="Hàng Lỗi" style="background:#7f8c8d;color:#fff" onclick="tDanhGia('Hàng Lỗi')">⚠️
+          Lỗi</button>
+      </div>
+      <div class="detailed-specs-title">Tìm kiếm mở rộng</div>
+      <div class="detailed-specs-container">
+        <div class="detailed-specs-card">
+          <div class="detailed-specs-grid">
+            <!-- Khoảng giá -->
+            <div class="spec-item">
+              <span class="spec-label">Giá chào:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterGiaMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterGiaMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">tỷ</span>
+              </div>
+            </div>
+
+            <!-- Diện tích thực tế -->
+            <div class="spec-item">
+              <span class="spec-label">Diện tích thực tế:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterDtThucTeMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterDtThucTeMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m²</span>
+              </div>
+            </div>
+
+            <!-- Diện tích sổ -->
+            <div class="spec-item">
+              <span class="spec-label">Diện tích trên sổ:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterDtTrenSoMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterDtTrenSoMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m²</span>
+              </div>
+            </div>
+
+            <!-- Ngang (mặt tiền) -->
+            <div class="spec-item">
+              <span class="spec-label">Mặt tiền:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterNgangMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterNgangMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m</span>
+              </div>
+            </div>
+
+            <!-- Rộng hẻm -->
+            <div class="spec-item">
+              <span class="spec-label">Rộng hẻm:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" step="0.1" id="filterHemMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" step="0.1" id="filterHemMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">m</span>
+              </div>
+            </div>
+
+            <!-- Số phòng ngủ -->
+            <div class="spec-item">
+              <span class="spec-label">Số phòng ngủ:</span>
+              <div class="spec-value-group">
+                <span class="spec-text">Từ:</span>
+                <input type="number" id="filterPhongMin" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-text">đến:</span>
+                <input type="number" id="filterPhongMax" class="inline-input" oninput="onSearchInput()">
+                <span class="spec-unit">pn</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
+      <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(0,0,0,0.03); border: 1.5px solid #e2ded6; border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; align-items: center;"></div>
+
+      </div>
+
+      <!-- Action Button Footer (US-076.3) -->
+      <div class="filter-footer-actions">
+        <button class="btn-filter-clear" onclick="clearAllFilters()">
+          <span>Xóa điều kiện</span>
+        </button>
+        <button class="btn-filter-apply" onclick="toggleFilter()">
+          <span>Tìm kiếm</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="active-col-bar" id="activeColBar" style="display:none;">
+    <span>📂 Đang xem BST: <span id="activeColNameText"></span></span>
+    <button onclick="exitCollectionView()">✕ Hủy xem</button>
+  </div>
+
+  <div class="mode-segmented-container admin-only" id="modeSwitcherContainer" style="display: none; justify-content: flex-end; align-items: center; background: #f8f9fa; padding: 10px 16px; border-bottom: 1px solid var(--border);">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 11px; font-weight: 700; color: #57606f;">CĂN LÊN SÓNG</span>
+      <label class="admin-toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 22px; margin-bottom: 0;">
+        <input type="checkbox" id="onAirToggle" onchange="toggleShowOnAirOnly(this.checked)" style="opacity: 0; width: 0; height: 0;">
+        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 22px;"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="sn" id="sTong">-</div>
+      <div class="sl">Căn</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sGia">-</div>
+      <div class="sl">Tỷ</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sDt">-</div>
+      <div class="sl">m²</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sTang">-</div>
+      <div class="sl">Tầng</div>
+    </div>
+    <div class="stat">
+      <div class="sn" id="sQuan">-</div>
+      <div class="sl">Quận</div>
+    </div>
+  </div>
+
+  <main id="list">
+    <div class="loading">
+      <div class="spinner"></div>
+      <div>Đang tải dữ liệu...</div>
+    </div>
+  </main>
+
+
+  <!-- Lightbox (Full Screen Media Viewer) -->
+  <div class="lightbox" id="lbOverlay">
+    <div class="lb-close" onclick="closeLb()">✕</div>
+    <div class="lb-main" id="lbMain">
+    </div>
+    <button class="garr al" style="z-index:9999;" id="lbPrev" onclick="lbMove(-1)">‹</button>
+    <button class="garr ar" style="z-index:9999;" id="lbNext" onclick="lbMove(1)">›</button>
+    <div class="lb-thumbs" id="lbThumbs"></div>
+  </div>
+
+  <div class="overlay" id="ov" onclick="bgC(event)">
+    <div class="sheet" style="position: relative;">
+      <div class="dh"></div>
+      <div class="shead">
+        <div class="stitle" id="mT"></div>
+        <div class="admin-header-actions" id="adminHeaderActions"></div>
+        <button class="xbtn" onclick="closeS()">✕</button>
+      </div>
+      <div class="admin-detail-float-actions" id="adminDetailFloatActions"></div>
+      <div id="mID"
+        style="padding: 0 20px 4px; font-size: 17px; color: var(--sub); font-weight: 800; text-align: right; word-break: break-all;">
+      </div>
+      <div class="sbody" id="sbody">
+        <div class="gwrap" id="gw">
+          <div class="gtrack" id="gt"></div>
+          <div class="gdots" id="gd"></div>
+          <button class="garr al" id="al" onclick="gm(-1)">‹</button>
+          <button class="garr ar" id="ar" onclick="gm(1)">›</button>
+        </div>
+        <div class="ig" id="mG"></div>
+        <div class="desc" id="mD"></div>
+      </div>
+      <div class="scta">
+        <a href="tel:0979841573" class="cb ccall" id="mCall">📞 Gọi ngay</a>
+        <button class="cb czalo" id="mZalo" onclick="">💬 Tư vấn ngay căn này</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Bắt Buộc Nhập Thông Tin Khách Hàng (Lead Capture Form - US-059) -->
+  <div class="overlay" id="leadCaptureModal" style="display:none; z-index: 100000; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center;">
+    <div class="lead-capture-modal-content">
+      <!-- Header/Branding -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🏡</div>
+        <h3 style="margin: 0 0 8px 0; font-size: 20px; color: var(--text); font-weight: 800;">Giỏ Hàng Khang Ngô Nhà Phố</h3>
+        <p style="margin: 0; font-size: 13.5px; color: var(--sub); line-height: 1.5;">
+          Chào mừng anh/chị! Để mở khóa xem thông số chi tiết và hình ảnh đầy đủ của các căn nhà phố, vui lòng chia sẻ thông tin liên hệ nhanh bên dưới:
+        </p>
+      </div>
+
+      <!-- Inputs -->
+      <div style="margin-bottom: 18px;">
+        <label style="font-size: 13px; color: var(--text); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Tên của anh/chị <span style="color: var(--red);">*</span></label>
+        <input type="text" id="leadCustName" class="lead-capture-input" placeholder="Tên để Khang tiện xưng hô...">
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="font-size: 13px; color: var(--text); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Số điện thoại liên hệ <span style="color: var(--red);">*</span></label>
+        <input type="tel" id="leadCustPhone" class="lead-capture-input" placeholder="Nhập số điện thoại của anh/chị...">
+      </div>
+
+      <!-- Submit Button -->
+      <button onclick="submitLeadCapture()" class="lead-capture-submit-btn">
+        <span>🔑 XEM DANH SÁCH CĂN NHÀ</span>
+      </button>
+      
+      <div style="text-align: center; margin-top: 14px;">
+        <span style="font-size: 11px; color: var(--sub);">🔒 Khang Ngô bảo mật tuyệt đối thông tin của anh/chị.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tạo Link Gửi Khách -->
+  <div class="overlay" id="linkModal" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+      <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">🔗 Tạo Link Gửi Khách</h3>
+      <p style="font-size:14px; color:var(--sub); text-align:center; margin-bottom:20px;">Bạn đang tạo link cho <b
+          id="linkModalCount" style="color:var(--gold)">0</b> căn nhà.</p>
+
+      <div style="margin-bottom: 16px;">
+        <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tên khách
+          hàng <span style="color:var(--red)">*</span></label>
+        <input type="text" id="linkCustName"
+          style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+          placeholder="VD: Anh Hùng Quận 3">
+        <div style="font-size:12px; color:#888; margin-top:4px;">* Tên này sẽ hiển thị ở dòng chào mừng trên web.</div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tiêu đề trang (hiển thị trên tab trình duyệt của khách)</label>
+        <input type="text" id="linkCustTitle"
+          style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+          placeholder="Mặc định: Giỏ hàng độc quyền - Khang Ngô Nhà Phố">
+        <div style="font-size:12px; color:#888; margin-top:4px;">* Nếu để trống, trang web sẽ sử dụng tên mặc định.</div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="font-size:14px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Ghi chú nội
+          bộ</label>
+        <input type="text" id="linkCustNote"
+          style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; outline:none;"
+          placeholder="VD: Khách VIP tài chính 20 tỷ">
+        <div style="font-size:12px; color:#888; margin-top:4px;">* Chỉ dùng để phân loại trong File Tracking, ẩn với
+          khách.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top: 10px;">
+        <div style="display:flex; gap:12px;">
+          <button onclick="document.getElementById('linkModal').classList.remove('open')"
+            style="flex:1; padding:14px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:15px;">Huỷ</button>
+          <button onclick="executeGenerateLink()"
+            style="flex:1; padding:14px; border-radius:8px; border:none; background:#27ae60; color:#fff; font-weight:700; font-size:15px;">Tạo Link Cá Nhân</button>
+        </div>
+        <button onclick="executeGenerateQuickLink()"
+          style="width:100%; padding:14px; border-radius:8px; border: 1.5px solid var(--gold); background: transparent; color: var(--gold); font-weight: 800; font-size:15px; cursor: pointer; font-family: inherit;">⚡ Tạo Link Công Khai Nhanh (Khách tự nhập SĐT)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Xem Bộ sưu tập (Admin) -->
+  <div class="overlay" id="colViewModal" onclick="if(event.target===this) closeColViewModal()">
+    <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+      <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📂 Xem Bộ Sưu Tập</h3>
+      <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Vui lòng chọn bộ sưu tập để xem rổ hàng:</p>
+      
+      <div id="colViewList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;"></div>
+      
+      <div>
+        <button onclick="closeColViewModal()" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Lưu các căn đã chọn vào BST (Admin) -->
+  <div class="overlay" id="colSaveModal" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="sheet" style="padding:24px 20px; max-height:80vh; overflow-y:auto; border-radius: 20px 20px 0 0;">
+      <h3 style="margin-top:0; font-size:18px; color:var(--text); text-align:center;">📁 Lưu vào Bộ Sưu Tập</h3>
+      <p style="font-size:13px; color:var(--sub); text-align:center; margin-bottom:20px;">Lưu <b id="colSaveModalCount" style="color:var(--blue)">0</b> căn đang chọn vào:</p>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:6px;">Tạo Bộ sưu tập mới:</label>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <input type="text" id="newColName" style="padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; outline:none; font-family: inherit;" placeholder="VD: Khách Hùng Quận 3">
+          <button onclick="createNewCollection(event)" style="padding: 12px; border-radius: 8px; border: none; background: #2980b9; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; width: 100%; transition: background 0.2s;">Tạo bộ sưu tập mới</button>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="font-size:13px; color:var(--sub); font-weight:600; display:block; margin-bottom:8px;">Hoặc lưu vào BST hiện có:</label>
+        <div id="colSaveList" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto;"></div>
+      </div>
+      
+      <div>
+        <button onclick="document.getElementById('colSaveModal').classList.remove('open')" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:var(--sub); font-weight:700; font-size:14px; font-family: inherit;">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    // --- MAIN INITIALIZATION & ROUTING STATE ---
+    function openS(id, tempP = null, autoExpandPreview = false) {
+      const p = tempP || DATA.find(x => String(x.id) === String(id));
+      if (!p) return;
+      window.activeCurationListing = p;
+
+      if (p.id && typeof trackAction === 'function') {
+        trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
+      }
+
+      const mID = document.getElementById('mID');
+      const cleanTitle = typeof cutTitleToDistrict === 'function' ? cutTitleToDistrict(p.t) : p.t;
+      const cleanAddressTitle = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}`.trim() || cleanTitle;
+      document.getElementById('mT').textContent = cleanAddressTitle;
+
+      const floatActions = document.getElementById('adminDetailFloatActions');
+      if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        if (mID) mID.style.display = 'none';
+        if (floatActions) {
+          floatActions.style.display = 'none';
+          floatActions.innerHTML = '';
+        }
+        if (typeof renderSpeedDialActions === 'function') renderSpeedDialActions('detail', p);
+      } else {
+        if (mID) {
+          mID.style.display = 'block';
+          mID.textContent = `#${p.id}`;
+        }
+        if (floatActions) {
+          floatActions.style.display = 'none';
+          floatActions.innerHTML = '';
+        }
+      }
+      
+      const sbody = document.getElementById('sbody');
+      const scta = document.querySelector('.scta');
+
+      if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+        if (scta) scta.style.display = 'none';
+        if (window.LegoDetailAdmin) window.LegoDetailAdmin.render(p, sbody, autoExpandPreview);
+      } else {
+        if (scta) scta.style.display = 'none';
+        if (window.LegoDetailClient) window.LegoDetailClient.render(p, sbody);
+      }
+
+      const btnZalo = document.getElementById('mZalo');
+      if (btnZalo) {
+        btnZalo.textContent = `💬 Tư vấn ngay căn này`;
+        btnZalo.onclick = () => { if (typeof askZalo === 'function') askZalo(p.id, p.t); };
+      }
+
+      document.getElementById('ov').classList.add('open');
+      document.getElementById('sbody').scrollTop = 0;
+      document.body.style.overflow = 'hidden';
+
+      if (!window.preventPushState) {
+        history.pushState({ detailOpen: true }, "");
+      }
+      window.preventPushState = false;
+    }
+
+    function closeS(fromPopState = false) { 
+      document.getElementById('ov').classList.remove('open'); 
+      document.body.style.overflow = ''; 
+      if (!fromPopState && window.history.state && window.history.state.detailOpen) {
+        window.preventPushState = true;
+        history.back();
+      }
+      const floatActions = document.getElementById('adminDetailFloatActions');
+      if (floatActions) floatActions.innerHTML = '';
+    }
+
+    function bgC(e) { 
+      if (e.target === document.getElementById('ov')) closeS(false); 
+    }
+
+    function toggleSelect(id, el) {
+      const sid = String(id);
+      if (SELECTED_IDS.has(sid)) {
+        SELECTED_IDS.delete(sid);
+        if (el && el.classList) el.classList.remove('selected');
+      } else {
+        SELECTED_IDS.add(sid);
+        if (el && el.classList) el.classList.add('selected');
+      }
+      if (typeof window.updateShareUI === 'function') window.updateShareUI();
+      if (typeof window.saveState === 'function') window.saveState();
+    }
+
+    function toggleSelectAll() {
+      const visibleCards = [...document.querySelectorAll('#list .card')].filter(c => c.style.display !== 'none');
+      const visibleIds = visibleCards.map(c => c.dataset.pid);
+      const allSelected = visibleIds.length > 0 && visibleIds.every(id => SELECTED_IDS.has(id));
+      if (allSelected) {
+        visibleIds.forEach(id => SELECTED_IDS.delete(id));
+        visibleCards.forEach(c => c.classList.remove('selected'));
+      } else {
+        visibleIds.forEach(id => SELECTED_IDS.add(id));
+        visibleCards.forEach(c => c.classList.add('selected'));
+      }
+      if (typeof window.updateShareUI === 'function') window.updateShareUI();
+      if (typeof window.saveState === 'function') window.saveState();
+    }
+
+    function toggleSpeedDial() {
+      const mainBtn = document.getElementById('dialMainBtn');
+      const actions = document.getElementById('dialActions');
+      if (actions) {
+        const isOpen = actions.classList.toggle('open');
+        if (mainBtn) mainBtn.innerHTML = isOpen ? '✕' : '⚡';
+      }
+    }
+
+    function renderSpeedDialActions(mode, p = null) {
+      const dial = document.getElementById('adminSpeedDial');
+      const actions = document.getElementById('dialActions');
+      const mainBtn = document.getElementById('dialMainBtn');
+      const colViewModal = document.getElementById('colViewModal');
+      const isColViewOpen = colViewModal && colViewModal.classList.contains('open');
+
+      if (!dial || !actions) return;
+
+      let activeDetailListing = p;
+      if (mode === 'list' && isColViewOpen) {
+        dial.style.display = 'none';
+        return;
+      }
+      dial.style.display = 'block';
+
+      const actionsEl = document.getElementById('dialActions');
+      if (actionsEl) {
+        actionsEl.innerHTML = '';
+        actionsEl.classList.remove('open');
+      }
+      if (mainBtn) mainBtn.innerHTML = '⚡';
+
+      let html = '';
+      if (mode === 'list') {
+        html = `
+          <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
+          <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
+          <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">
+            🔗
+            <span class="share-count" id="shareCount">0</span>
+          </button>
+        `;
+      } else if (mode === 'detail' && activeDetailListing) {
+        const hasSourceRow = !!activeDetailListing.original_row_data;
+        const isFromPool = !!activeDetailListing.isFromPoolOnly;
+
+        if (hasSourceRow) {
+          html += `<button class="dial-btn-item download-btn-float" onclick="window.downloadAllListingImages('${activeDetailListing.id}')" title="Tải toàn bộ hình ảnh" style="background:#3498db !important; color:white !important; font-size:18px !important;">📥</button>`;
+          html += `<button class="dial-btn-item save-source-btn" id="saveSourceBtn" onclick="saveSourceChanges('${activeDetailListing.id}')" title="Lưu thay đổi Biên tập" style="background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">💾</button>`;
+          html += `<button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${activeDetailListing.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>`;
+        } else if (isFromPool) {
+          html += `<button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${activeDetailListing.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#e0a800 !important; color:#1c1c1e !important; font-size:18px !important;">🚀</button>`;
+        }
+      } else if (mode === 'colView') {
+        html = `
+          <button class="dial-btn-item delete-col-btn-float" onclick="deleteSelectedCollections()" title="Xóa các bộ sưu tập đã chọn" style="background:#e74c3c !important; color:white !important; font-size:18px !important;">🗑️</button>
+        `;
+      }
+      
+      if (actionsEl) {
+        actionsEl.innerHTML = html;
+        if (mode === 'list' && typeof window.updateShareUI === 'function') {
+          window.updateShareUI();
+        }
+      }
+    }
+
+    // Khởi động ứng dụng
+    if (typeof window.initLegoApp === 'function') {
+      window.initLegoApp();
+    }
+    if (window.isAdmin && typeof renderSpeedDialActions === 'function') {
+      renderSpeedDialActions('list');
+    }
+  </script>
+</body>
+
+</html>

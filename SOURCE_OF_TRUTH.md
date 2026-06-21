@@ -1156,6 +1156,8 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-102:** Lọc các căn chưa có raw_json_full trên Curator Dashboard ✅ Done 2026-06-21
+- [ ] **US-101:** Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên
 - [x] **US-100:** Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) ✅ Done 2026-06-21
 - [x] **US-097:** Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng ✅ Done 2026-06-16
 - [x] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ✅ Done 2026-06-16

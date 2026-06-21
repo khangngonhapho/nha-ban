@@ -163,14 +163,15 @@
 
         .sidebar-tab {
             flex: 1;
-            padding: 12px 5px;
+            padding: 12px 4px;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
             transition: 0.2s;
             border-bottom: 2px solid transparent;
+            word-break: break-word;
         }
 
         .sidebar-tab:hover {
@@ -866,6 +867,7 @@
                 <div class="sidebar-tab active" data-status="raw_text" onclick="setSidebarStatus('raw_text')">Chờ di cư ảnh</div>
                 <div class="sidebar-tab" data-status="raw_complete" onclick="setSidebarStatus('raw_complete')">Chờ biên tập</div>
                 <div class="sidebar-tab" data-status="published" onclick="setSidebarStatus('published')">Đã xuất bản</div>
+                <div class="sidebar-tab" data-status="missing_raw_json" onclick="setSidebarStatus('missing_raw_json')">Thiếu JSON</div>
                 <div class="sidebar-tab" data-status="crawl_failed" onclick="setSidebarStatus('crawl_failed')" style="border-left: 1px solid var(--border-color); color: #f87171;">Lỗi cào</div>
             </div>
             <!-- Khung chọn lọc đẩy thô Pool hàng loạt (US-040) -->
@@ -2065,11 +2067,12 @@
                     const listings = data.listings || [];
                     
                     // Cập nhật số lượng đếm trên các Tab trạng thái ở Sidebar
-                    const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0, crawl_failed: 0 };
+                    const counts = data.status_counts || { raw_text: 0, raw_complete: 0, published: 0, crawl_failed: 0, missing_raw_json: 0 };
                     const tabTextMap = {
                         raw_text: `Chờ di cư ảnh (${counts.raw_text})`,
                         raw_complete: `Chờ biên tập (${counts.raw_complete})`,
                         published: `Đã xuất bản (${counts.published})`,
+                        missing_raw_json: `Thiếu JSON (${counts.missing_raw_json || 0})`,
                         crawl_failed: `Lỗi cào (${counts.crawl_failed || 0})`
                     };
                     document.querySelectorAll('.sidebar-tab').forEach(tab => {
@@ -2138,11 +2141,27 @@
                             <input type="checkbox" class="house-select-chk" data-id="${house.tk_id}" ${isChecked} onclick="event.stopPropagation(); toggleListingSelect('${house.tk_id}', this)" style="cursor: pointer; width: 14px; height: 14px; margin-right: 6px;">
                         ` : '';
 
+                        let badgeClass = house.status;
+                        let badgeText = house.status || 'N/A';
+                        if (house.status === 'raw_text') {
+                            badgeClass = 'raw_text';
+                            badgeText = 'Chờ Drive';
+                        } else if (house.status === 'raw_complete') {
+                            badgeClass = 'raw_complete';
+                            badgeText = 'Chờ biên tập';
+                        } else if (house.status === 'published') {
+                            badgeClass = 'published';
+                            badgeText = 'Published';
+                        } else if (house.status && house.status.startsWith('crawl_failed')) {
+                            badgeClass = 'raw_text';
+                            badgeText = 'Lỗi cào';
+                        }
+
                         card.innerHTML = `
                             <div class="house-card-header" style="display: flex; align-items: center;">
                                 ${checkboxHTML}
                                 <span class="house-id" style="${sidebarStatus === 'raw_complete' ? 'margin-left: 2px;' : ''}">${house.tk_id}</span>
-                                <span class="status-badge badge-${house.status}">${house.status === 'raw_text' ? 'Chờ Drive' : (house.status === 'raw_complete' ? 'Chờ biên tập' : 'Published')}</span>
+                                <span class="status-badge badge-${badgeClass}">${badgeText}</span>
                             </div>
                             <div class="house-title">${house.Mo_ta_chi_tiet || house.Noi_dung_chinh || 'Không có mô tả'}</div>
                             <div class="house-meta">

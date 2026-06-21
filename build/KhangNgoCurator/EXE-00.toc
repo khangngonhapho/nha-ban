@@ -62,10 +62,6 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
    'PYSOURCE'),
-  ('pyi_rth_multiprocessing',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
-   'PYSOURCE'),
   ('pyi_rth_cryptography_openssl',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks\\pyi_rth_cryptography_openssl.py',
@@ -74,6 +70,10 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_setuptools.py',
    'PYSOURCE'),
+  ('pyi_rth_multiprocessing',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
+   'PYSOURCE'),
   ('manager',
    'I:\\Other computers\\My '
    'Laptop\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\manager.py',
@@ -81,7 +81,7 @@
  [],
  False,
  False,
- 1781176250,
+ 1782014743,
  [('run.exe',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',

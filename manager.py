@@ -2553,6 +2553,11 @@ def get_listings():
     if status_filter:
         if status_filter == "crawl_failed":
             conditions.append(f"{t_prefix}status LIKE 'crawl_failed:%'")
+        elif status_filter == "missing_raw_json":
+            if "raw_json_full" in db_cols:
+                conditions.append(f"({t_prefix}raw_json_full IS NULL OR {t_prefix}raw_json_full = '')")
+            else:
+                conditions.append("1=0")
         else:
             conditions.append(f"{t_prefix}status = ?")
             params.append(status_filter)
@@ -2604,7 +2609,7 @@ def get_listings():
     listings = [normalize_listing_for_client(r) for r in rows]
         
     # Tính toán số lượng căn theo từng trạng thái (status) toàn cục
-    counts = {"raw_text": 0, "raw_complete": 0, "published": 0, "crawl_failed": 0}
+    counts = {"raw_text": 0, "raw_complete": 0, "published": 0, "crawl_failed": 0, "missing_raw_json": 0}
     if os.path.exists(DB_FILE):
         try:
             conn_count = sqlite3.connect(DB_FILE, timeout=30.0)
@@ -2615,6 +2620,16 @@ def get_listings():
             # Thêm đếm số lượng căn lỗi cào
             c_failed = cursor_count.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status LIKE 'crawl_failed:%'").fetchone()[0]
             counts["crawl_failed"] = c_failed
+            
+            # Đếm số lượng căn thiếu raw_json_full
+            cursor_count.execute(f"PRAGMA table_info({LISTINGS_TABLE})")
+            cols = [r[1] for r in cursor_count.fetchall()]
+            if "raw_json_full" in cols:
+                c_missing = cursor_count.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE raw_json_full IS NULL OR raw_json_full = ''").fetchone()[0]
+                counts["missing_raw_json"] = c_missing
+            else:
+                counts["missing_raw_json"] = 0
+                
             conn_count.close()
         except Exception:
             pass

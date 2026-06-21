@@ -1,0 +1,82 @@
+Found publish_listing at L1263
+1263: def publish_listing(tk_id, get_google_credentials, load_config, add_log_message, db_file=None):
+1264:     """
+1265:     Thực hiện đồng bộ xuất bản dữ liệu của một căn nhà từ SQLite local lên Google Sheets trực tuyến.
+1266:     Tự động kiểm tra trùng Mã Hàng để chép đè có chọn lọc hoặc chèn dòng mới ở cuối bảng Table.
+1267:     Đồng bộ mã ID Khang Ngô mới sang sheet Source và cập nhật trạng thái trong SQLite.
+1268:     """
+1269:     if not db_file:
+1270:         db_file = get_db_file()
+1271:         
+1272:     if not os.path.exists(db_file):
+1273:         return {"status": "error", "message": "Database không tồn tại"}
+1274:         
+1275:     # Xác định pool system đang hoạt động
+1276:     is_pool2 = False
+1277:     try:
+1278:         config_file = "settings.json"
+1279:         if os.path.exists(config_file):
+1280:             with open(config_file, 'r', encoding='utf-8') as f:
+1281:                 cfg = json.load(f)
+1282:                 if cfg.get("active_pool_system") == "Pool2":
+1283:                     is_pool2 = True
+1284:     except Exception:
+1285:         pass
+1286:         
+1287:     if is_pool2:
+1288:         return publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_message, db_file)
+1289: 
+1290: 
+1291:     conn = sqlite3.connect(db_file, timeout=30.0)
+1292:     conn.row_factory = sqlite3.Row
+1293:     cursor = conn.cursor()
+1294:     listings_table = "listings_v2" if is_pool2 else "listings"
+1295:     if is_pool2:
+1296:         sql = """
+1297:             SELECT listings_v2.*, 
+1298:                    listings_custom_v2.Ma_Khang_Ngo AS custom_Ma_Khang_Ngo, 
+1299:                    listings_custom_v2.Gia_Public AS custom_Gia_Public, 
+1300:                    listings_custom_v2.Tieu_De_Public AS custom_Tieu_De_Public, 
+1301:                    listings_custom_v2.Mo_ta_Public AS custom_Mo_ta_Public, 
+1302:                    listings_custom_v2.Note_Noi_Bo AS custom_Note_Noi_Bo, 
+1303:                    listings_custom_v2.Trang_Thai_Giao_Dich AS custom_Trang_Thai_Giao_Dich, 
+1304:                    listings_custom_v2.Ngu_Tret AS custom_Ngu_Tret, 
+1305:                    listings_custom_v2.CHDV AS custom_CHDV, 
+1306:                    listings_custom_v2.Trang_Thai_KN AS custom_Trang_Thai_KN, 
+1307:                    listings_custom_v2.images_metadata_json AS custom_images_metadata_json, 
+1308:                    listings_custom_v2.Dia_Chi_That AS custom_Dia_Chi_That, 
+1309:                    listings_custom_v2.So_Nha AS custom_So_Nha, 
+1310:                    listings_custom_v2.Ten_Duong AS custom_Ten_Duong,
+1311:                    listings_custom_v2.bedrooms AS custom_bedrooms,
+1312:                    listings_custom_v2.restrooms AS custom_restrooms,
+1313:                    listings_custom_v2.minimumRoadWidth AS custom_minimumRoadWidth,
+1314:                    listings_custom_v2.Noi_dung_chinh AS custom_Noi_dung_chinh,
+1315:                    listings_custom_v2.Mo_ta_chi_tiet AS custom_Mo_ta_chi_tiet,
+1316:                    listings_custom_v2.Gia_chao AS custom_Gia_chao,
+1317:                    listings_custom_v2.DT_Thuc_te AS custom_DT_Thuc_te,
+1318:                    listings_custom_v2.DT_Tren_so AS custom_DT_Tren_so,
+1319:                    listings_custom_v2.So_Tang AS custom_So_Tang,
+1320:                    listings_custom_v2.Mat_Tien AS custom_Mat_Tien,
+1321:                    listings_custom_v2.Chieu_dai AS custom_Chieu_dai,
+1322:                    listings_custom_v2.Huong AS custom_Huong,
+1323:                    listings_custom_v2.Criteria_Duong_truoc_nha AS custom_Criteria_Duong_truoc_nha,
+1324:                    listings_custom_v2.Criteria_Noi_that AS custom_Criteria_Noi_that,
+1325:                    listings_custom_v2.Criteria_Thang_may AS custom_Criteria_Thang_may,
+1326:                    listings_custom_v2.Criteria_Loai_ngo AS custom_Criteria_Loai_ngo,
+1327:                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
+1328:                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
+1329:                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
+1330:                    listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+1331:             FROM listings_v2 
+1332:             LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
+1333:             WHERE listings_v2.tk_id = ?
+1334:         """
+1335:         row = cursor.execute(sql, (tk_id,)).fetchone()
+1336:     else:
+1337:         row = cursor.execute(f"SELECT * FROM {listings_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+1338:     
+1339:     if not row:
+1340:         conn.close()
+1341:         return {"status": "error", "message": "Mã căn không tồn tại"}
+1342:         
+1343:     d = dict(row)

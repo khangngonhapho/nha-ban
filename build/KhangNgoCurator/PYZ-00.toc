@@ -2251,6 +2251,9 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\lzma.py',
    'PYMODULE'),
+  ('manager',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\manager.py',
+   'PYMODULE'),
   ('markupsafe',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe\\__init__.py',
@@ -3641,6 +3644,10 @@
   ('runpy',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\runpy.py',
+   'PYMODULE'),
+  ('scratch', '-', 'PYMODULE'),
+  ('scratch.sync_json_ui',
+   'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\scratch\\sync_json_ui.py',
    'PYMODULE'),
   ('secrets',
    'C:\\Users\\Khang '

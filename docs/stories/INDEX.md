@@ -1,18 +1,20 @@
 # Stories Index
 
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 ## Stats
-- Total: 109
-- backlog: 2
+- Total: 111
+- backlog: 3
 - draft: 0
 - in-progress: 0
-- done: 20
+- done: 21
 - accepted: 81
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-102 | Lọc các căn chưa có raw_json_full trên Curator Dashboard | done | S | 2026-06-21 | `manager.py`, `curator.html`, `curator_html_data.py` |
+| US-101 | Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên | backlog | M | 2026-06-21 | `manager.py`, `pool_lego.py` |
 | US-100 | Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) | accepted | M | 2026-06-20 | `fetcher.py`, `pool_lego.py`, `static/js/lego_filters.js`, `docs/stories/_inbox/US-100_dynamic_json_filtering.md` |
 | US-097 | Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng | accepted | S    | 2026-06-16 | `static/js/lego_helpers.js`, `docs/stories/_inbox/US-097_fix_quick_share_link_error.md` |
 | US-095 | Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 | accepted | S | 2026-06-16 | `pool_lego.py`, `docs/stories/_inbox/US-095_fix_listings_table_undefined.md` |
@@ -127,6 +129,8 @@ Last updated: 2026-06-20
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-102_missing_json_curator_tab|US-102]]: Lọc các căn chưa có raw_json_full trên Curator Dashboard (done)
+- [[US-101_optimize_recrawl_image_handling|US-101]]: Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên (backlog)
 - [[US-095_fix_listings_table_undefined|US-095]]: Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 (accepted)
 - [[US-093_audit_manual_upload_images|US-093]]: Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) (accepted)
 - [[US-091_fix_r2_image_quality_degradation|US-091]]: Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2 (backlog)

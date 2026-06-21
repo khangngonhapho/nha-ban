@@ -1,0 +1,40 @@
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\curator.html: 8 occurrences
+  Char 106181: const isCurated = house.curated_config ? '✓ Đã tag' : 'Chưa tag';                         const address
+  Char 108056: style="margin-left:auto; color:${house.curated_config ? 'var(--accent-green)' : 'var(--text-muted)'}">${isCurated}</spa
+  Char 122703: // Xử lý hình ảnh             // Nếu có curated_config thì dùng, nếu không thì tự tạo mảng mặc định từ raw_drive_images
+  Char 123014: [];                          if (house.curated_config && house.curated_config.images && house.curated_config.images.len
+  Char 123038: if (house.curated_config && house.curated_config.images && house.curated_config.images.length > 0) {
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\curator_html_data.py: 8 occurrences
+  Char 103582: const isCurated = house.curated_config ? \'✓ Đã tag\' : \'Chưa tag\';\n                        const add
+  Char 105525: style="margin-left:auto; color:${house.curated_config ? \'var(--accent-green)\' : \'var(--text-muted)\'}">${isCurated}<
+  Char 120790: / Xử lý hình ảnh\n            // Nếu có curated_config thì dùng, nếu không thì tự tạo mảng mặc định từ raw_drive_images\
+  Char 121105: ];\n            \n            if (house.curated_config && house.curated_config.images && house.curated_config.images.len
+  Char 121129: if (house.curated_config && house.curated_config.images && house.curated_config.images.length > 0) {\n
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\manager.py: 21 occurrences
+  Char 9406: "raw_drive_images_json") else []     d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config
+  Char 9439: d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None          if LIS
+  Char 9472: ads(d["curated_config_json"]) if d.get("curated_config_json") else None          if LISTINGS_TABLE == "listings_v2":
+  Char 82259: le or "interior"})                      curated_config_json = json.dumps(curated_list, ensure_ascii=False)         curso
+  Char 82386: te(             "UPDATE listings_v2 SET curated_config_json = ? WHERE tk_id = ?",             (curated_config_json, tk_i
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\pool_lego.py: 13 occurrences
+  Char 8019: ges_tk_json", "raw_drive_images_json", "curated_config_json" ] + [col for col in LISTINGS_V2_COLS if col not in ["tk_id"
+  Char 15303: ges_tk_json", "raw_drive_images_json", "curated_config_json", "Chieu_dai"                 }                 for col in e
+  Char 16584: es_json TEXT",                         "curated_config_json TEXT",                         "Chieu_dai TEXT"
+  Char 18631: w_drive_images_json TEXT",             "curated_config_json TEXT",             "Chieu_dai TEXT",             "pending_di
+  Char 24869: w_drive_images_json TEXT",             "curated_config_json TEXT",             "Chieu_dai TEXT",             "raw_json_f
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\scratch\test_ai_curation.py: 3 occurrences
+  Char 1238: "raw_drive_images_json") else []     d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config
+  Char 1271: d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None          print(
+  Char 1304: ads(d["curated_config_json"]) if d.get("curated_config_json") else None          print(f"Listing ID: {d['tk_id']}")
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\scratch\dump_listing.py: 1 occurrences
+  Char 536: ges_tk_json', 'raw_drive_images_json', 'curated_config_json']:             # Try to print length of JSON instead of full
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\scratch\test_custom_length.py: 10 occurrences
+  Char 2780: "anh_hem_public_vd_1_2": "1",         "curated_config": {             "images": [                 {"url": "https://url-
+  Char 3035: ulating the PUT logic in manager.py     curated_config = data.get("curated_config")          # 1. Update listings_v2 cur
+  Char 3062: nager.py     curated_config = data.get("curated_config")          # 1. Update listings_v2 curated_config_json     cursor
+  Char 3112: nfig")          # 1. Update listings_v2 curated_config_json     cursor.execute(         "UPDATE listings_v2 SET curated_
+  Char 3184: xecute(         "UPDATE listings_v2 SET curated_config_json = ? WHERE tk_id = ?",         (json.dumps(curated_config), t
+File d:\LHTBrain\01_PROJECTS\BDS-KhangNgo\scratch\test_pool2_publishing.py: 3 occurrences
+  Char 7219: a = raw_rows[1]          # Kiểm tra cột curated_config_json tồn tại trên File 1     if "curated_config_json" not in raw_
+  Char 7267: config_json tồn tại trên File 1     if "curated_config_json" not in raw_headers:         print("[❌ FAIL] Không tìm thấy
+  Char 7351: print("[❌ FAIL] Không tìm thấy cột curated_config_json trên File 1 Raw")         sys.exit(1)              print("

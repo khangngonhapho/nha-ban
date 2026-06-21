@@ -1,0 +1,140 @@
+1344:     if is_pool2:
+1345:         try:
+1346:             # Fetch images from listings_images since listings_v2 has no image columns
+1347:             cursor.execute(
+1348:                 "SELECT image_url, r2_url, role, sequence_index FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC", 
+1349:                 (tk_id,)
+1350:             )
+1351:             img_rows = cursor.fetchall()
+1352:             
+1353:             diagrams = []
+1354:             facades = []
+1355:             alleys = []
+1356:             interiors = []
+1357:             for img_url, r2_url, role, seq in img_rows:
+1358:                 url = r2_url if r2_url else img_url
+1359:                 if not url:
+1360:                     continue
+1361:                 if role == "diagram":
+1362:                     diagrams.append(url)
+1363:                 elif role in ["facade", "cover"]:
+1364:                     facades.append(url)
+1365:                 elif role == "alley":
+1366:                     alleys.append(url)
+1367:                 elif role == "interior":
+1368:                     interiors.append(url)
+1369:             
+1370:             # Map them into safe column name keys
+1371:             for idx in range(5):
+1372:                 d[get_safe_col_name(f"Sơ đồ thửa đất {idx+1}")] = diagrams[idx] if idx < len(diagrams) else ""
+1373:             d[get_safe_col_name("Hình Mặt Tiền")] = facades[0] if facades else (interiors[0] if interiors else "")
+1374:             for idx in range(10):
+1375:                 d[get_safe_col_name(f"Hình Hẻm {idx+1}")] = alleys[idx] if idx < len(alleys) else ""
+1376:             for idx in range(25):
+1377:                 d[get_safe_col_name(f"Ảnh {idx+1}")] = interiors[idx] if idx < len(interiors) else ""
+1378:         except Exception as e_img_fetch:
+1379:             add_log_message(f"[⚠️ WARNING] Không thể truy vấn ảnh từ listings_images cho publish: {str(e_img_fetch)}")
+1380:     if is_pool2 and "custom_Ma_Khang_Ngo" in d:
+1381:         if d.get("custom_Ma_Khang_Ngo"): d["Ma_Khang_Ngo_ID"] = d["custom_Ma_Khang_Ngo"]
+1382:         if d.get("custom_Tieu_De_Public"): d["Tieu_de_Public"] = d["custom_Tieu_De_Public"]
+1383:         if d.get("custom_Mo_ta_Public"): d["Mo_ta_Public"] = d["custom_Mo_ta_Public"]
+1384:         if d.get("custom_Gia_Public"): d["Gia_Public"] = d["custom_Gia_Public"]
+1385:         if d.get("custom_Note_Noi_Bo"): d["Note_Noi_Bo"] = d["custom_Note_Noi_Bo"]
+1386:         if d.get("custom_Trang_Thai_Giao_Dich"): d["Tinh_trang_nha"] = d["custom_Trang_Thai_Giao_Dich"]
+1387:         if d.get("custom_Ngu_Tret"): d["Ngu_tret_Admin"] = d["custom_Ngu_Tret"]
+1388:         if d.get("custom_CHDV"): d["CHDV_Admin"] = d["custom_CHDV"]
+1389:         if d.get("custom_Trang_Thai_KN"): d["Danh_gia_Admin"] = d["custom_Trang_Thai_KN"]
+1390:         
+1391:         # Nhóm đè địa chỉ / kỹ thuật
+1392:         if d.get("custom_So_Nha"): d["Ngo_So_nha"] = d["custom_So_Nha"]
+1393:         if d.get("custom_Ten_Duong"): d["Duong"] = d["custom_Ten_Duong"]
+1394:         if d.get("custom_Quan"): d["Quan"] = d["custom_Quan"]
+1395:         if d.get("custom_Phuong"): d["Phuong"] = d["custom_Phuong"]
+1396:         if d.get("custom_bedrooms"): d["bedrooms"] = d["custom_bedrooms"]
+1397:         if d.get("custom_restrooms"): d["restrooms"] = d["custom_restrooms"]
+1398:         if d.get("custom_minimumRoadWidth"): d["minimumRoadWidth"] = d["custom_minimumRoadWidth"]
+1399:         if d.get("custom_Noi_dung_chinh"): d["Noi_dung_chinh"] = d["custom_Noi_dung_chinh"]
+1400:         if d.get("custom_Mo_ta_chi_tiet"): d["Mo_ta_chi_tiet"] = d["custom_Mo_ta_chi_tiet"]
+1401:         if d.get("custom_Gia_chao"): d["Gia_chao"] = d["custom_Gia_chao"]
+1402:         if d.get("custom_DT_Thuc_te"): d["DT_Thuc_te"] = d["custom_DT_Thuc_te"]
+1403:         if d.get("custom_DT_Tren_so"): d["DT_Tren_so"] = d["custom_DT_Tren_so"]
+1404:         if d.get("custom_So_Tang"): d["So_Tang"] = d["custom_So_Tang"]
+1405:         if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
+1406:         if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
+1407:         if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+1408:     
+1409:     # Khử va chạm Mã Hàng
+1410:     ma_hang_db = d.get("M__H_ng", "") or d.get("Ma_Hang", "")
+1411:     if ma_hang_db:
+1412:         collision_count = cursor.execute(
+1413:             f"SELECT COUNT(DISTINCT tk_id) FROM {listings_table} WHERE Ma_Hang = ?",
+1414:             (ma_hang_db,)
+1415:         ).fetchone()[0]
+1416:         if collision_count > 1:
+1417:             parts = tk_id.split('-')
+1418:             suffix = parts[-1].upper() if parts else ""
+1419:             target_ma_hang = f"TK-{suffix}"
+1420:             add_log_message(f"[🛡️ COLLISION RESOLUTION] Phát hiện mã hàng gốc '{ma_hang_db}' bị trùng lặp trong SQLite. Tự động chuyển đổi thành mã hàng 8 ký tự độc nhất: '{target_ma_hang}'")
+1421:         else:
+1422:             target_ma_hang = ma_hang_db
+1423:     else:
+1424:         parts = tk_id.split('-')
+1425:         suffix = parts[-1].upper() if parts else ""
+1426:         target_ma_hang = f"TK-{suffix}"
+1427:         
+1428:     conn.close()
+1429:     
+1430:     creds = get_google_credentials()
+1431:     cfg = load_config()
+1432:     sheet_id = cfg.get("sheet_id")
+1433:     
+1434:     next_row = 3
+1435:     sheet = None
+1436:     existing_row_index = None
+1437:     
+1438:     if creds and sheet_id:
+1439:         try:
+1440:             import gspread
+1441:             client = gspread.authorize(creds)
+1442:             spreadsheet = client.open_by_key(sheet_id)
+1443:             
+1444:             try:
+1445:                 sheet = spreadsheet.worksheet("Pool")
+1446:             except Exception:
+1447:                 try:
+1448:                     sheet = spreadsheet.worksheet("Source")
+1449:                 except Exception:
+1450:                     sheet = spreadsheet.get_worksheet(0)
+1451:                     
+1452:             try:
+1453:                 col_a_values = sheet.col_values(1)
+1454:                 col_a_cleaned = [str(x).strip() for x in col_a_values]
+1455:                 target_stripped = target_ma_hang.strip()
+1456:                 if target_stripped in col_a_cleaned:
+1457:                     existing_row_index = col_a_cleaned.index(target_stripped) + 1
+1458:                     add_log_message(f"[ℹ] Phát hiện Mã Hàng {target_stripped} đã tồn tại ở dòng {existing_row_index} trong Sheets. Kích hoạt chế độ CẬP NHẬT CHÉP ĐÈ chỉ dành riêng cho HÌNH ẢNH và LAST CRAWL.")
+1459:             except Exception as e:
+1460:                 add_log_message(f"[⚠️ WARNING] Không thể kiểm tra trùng Mã Hàng trong Sheets: {str(e)}")
+1461: 
+1462:             if existing_row_index:
+1463:                 next_row = existing_row_index
+1464:             else:
+1465:                 table_end_row = get_table_end_row_index(sheet_id, creds, add_log_message)
+1466:                 if table_end_row:
+1467:                     next_row = table_end_row
+1468:                     add_log_message(f"[ℹ] Phát hiện Table chính thức kết thúc ở dòng {table_end_row}. Thực hiện chèn tại dòng {next_row} để tự động mở rộng Table và kế thừa format.")
+1469:                 else:
+1470:                     try:
+1471:                         next_row = len(sheet.get_all_values()) + 1
+1472:                     except Exception as e:
+1473:                         add_log_message(f"[⚠️ WARNING] Không lấy được số dòng hiện tại của Sheet, fallback về mặc định: {str(e)}")
+1474:                         next_row = 3
+1475:         except Exception as e:
+1476:             add_log_message(f"[❌ LỖI] Lỗi kết nối API Google Sheets: {str(e)}")
+1477:             
+1478:     row_data = []
+1479:     row_data_escaped = []
+1480:     
+1481:     if existing_row_index and sheet:
+1482:         try:
+1483:             existing_row = sheet.row_values(existing_row_index)

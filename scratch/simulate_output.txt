@@ -1,0 +1,45 @@
+Response status: 200
+Response length: 450701
+Total rows on public sheet: 162
+Found target row at index 161
+Row cells length: 80
+Index 79: value=''
+Index 78: value=''
+Index 77: value=''
+Index 76: value=''
+Index 75: value=''
+Index 74: value=''
+Index 73: value=''
+Index 72: value=''
+Index 71: value=''
+Index 70: value=''
+Index 69: value=''
+Index 68: value=''
+Index 67: value=''
+Index 66: value=''
+Index 65: value=''
+Index 64: value=''
+Index 63: value=''
+Index 62: value=''
+Index 61: value=''
+Index 60: value=''
+Index 59: value=''
+Index 58: value=''
+Index 57: value=''
+Index 56: value=''
+Index 55: value=''
+Index 54: value=''
+Index 53: value=''
+Index 52: value=''
+Index 51: value=''
+Index 50: value=''
+Index 49: value=''
+Index 48: value=''
+Index 47: value=''
+Index 46: value=''
+Index 45: value=''
+Index 44: value=''
+Index 43: value='{"Criteria_Duong_truoc_nha": "Ngõ ngách (2 - 2.5m)"}'
+--> Found JSON_UI at index 43: {"Criteria_Duong_truoc_nha": "Ngõ ngách (2 - 2.5m)"}
+Parsed JSON_UI: {'Criteria_Duong_truoc_nha': 'Ngõ ngách (2 - 2.5m)'}
+Criteria_Duong_truoc_nha value: Ngõ ngách (2 - 2.5m)

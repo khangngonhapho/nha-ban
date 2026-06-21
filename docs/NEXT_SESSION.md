@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-102 (Lọc các căn chưa có raw_json_full trên Curator Dashboard):** **[ACCEPTED - 2026-06-21]** Bổ sung tab **Thiếu JSON** và đếm chính xác số lượng các căn chưa có `raw_json_full` trên toàn bộ DB. Tích hợp bộ lọc Quận/Đường/Số nhà hoạt động đồng bộ với tab mới. Tự động đồng bộ hóa HTML và biên dịch thành công file chạy EXE sản xuất. Chạy kiểm thử tự động API đạt **100% PASS**.
 *   **US-100 (Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc):** **[ACCEPTED - 2026-06-21]** Thiết lập lưu trữ JSON thô cấp 2 (`raw_json_full` và `raw_json_ui`) cục bộ SQLite và đồng bộ trường `JSON_UI` lên Google Sheets. Tự động sinh bộ lọc động và lọc chính xác bằng JSON phía Frontend. Vá lỗi typo Client ID mặc định phục hồi luồng login khi người dùng xóa cache. Tái thiết lập cơ chế Cache-Busting qua `scratch/bump_version.py` và git hook `pre-commit` để tự động làm mới bộ nhớ đệm index.html của trình duyệt người dùng. Chạy kiểm thử di động tự động Pixel 5 và E2E local đạt **100% PASS**.
 *   **US-097 (Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng):** **[ACCEPTED - 2026-06-16]** Đã khôi phục hàm `executeGenerateQuickLink` trong tệp `static/js/lego_helpers.js`, sửa lỗi ReferenceError khi tạo link công khai nhanh. Đã chạy thử nghiệm Playwright E2E tự động thành công 100% không lỗi hồi quy.
 *   **US-094E (Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html):** **[ACCEPTED - 2026-06-16]** Tách biệt logic mock và các hàm helper ra các file static [lego_mock.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_mock.js) và [lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js). Rút gọn [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) thành công xuống dưới 170 dòng script và thiết lập cache-busting version query parameter `?v=202606161110`. Khắc phục triệt để các lỗi hiển thị nút chọn BST (`#colFloatBtn`), nút xóa BST (`.delete-col-btn-float`), lỗi phân tích tham số chia sẻ (`s`), lỗi khởi tạo Admin Speed Dial, và lỗi layout trôi nổi của Speed Dial trên Mobile (neo nút chính ⚡/✕ cố định góc dưới bên phải viewport và đưa các menu hành động về absolute position tương đối). Toàn bộ 5 kịch bản E2E Playwright (`test_e2e_curation.py`, `test_e2e_filters.py`, `test_e2e_collections.py`, `test_e2e_modal.py`, `test_e2e_curator.py`) chạy thành công **100% PASS** trên cả hai viewports Desktop & Mobile.
@@ -32,6 +33,7 @@
  
  ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
+*   **US-101 (Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên):** **[BACKLOG]** Tránh cào lại và nén/upload lại ảnh đã di cư, bảo vệ và loại trừ ảnh tự tải lên khi recrawl.
 
 ### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX
 *   Chạy bộ test E2E Playwright để kiểm soát hồi quy giao diện sau mỗi đợt cập nhật.
@@ -56,4 +58,4 @@
 *   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Ghi nhận lịch sử thay đổi.
  
  ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-21 (US-100 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-21 (US-102 accepted & API tests 100% passed).*
