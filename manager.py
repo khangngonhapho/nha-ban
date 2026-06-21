@@ -2970,6 +2970,7 @@ def recrawl_single_listing(tk_id):
                 pass
                 
         if not cookie:
+            set_listing_crawl_failed(tk_id, "cookie_expired")
             return jsonify({"status": "error", "message": "Không tìm thấy Cookie Thiên Khôi. Vui lòng cập nhật Cookie trước."}), 400
             
         add_log_message(f"[🚀] BẮT ĐẦU TIẾN TRÌNH CÀO LẺ 1 CĂN: {tk_id} - URL: {detail_url}")

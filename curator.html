@@ -264,6 +264,7 @@
         .badge-raw_text { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
         .badge-raw_complete { background: rgba(59, 82, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 82, 246, 0.3); }
         .badge-published { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-crawl_failed { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
 
         .house-title {
             font-size: 13px;
@@ -1145,6 +1146,18 @@
                 </div>
 
                 <div id="editor-active" style="display: none;">
+                    <div id="editor-error-banner" style="display: none; background: rgba(239, 68, 68, 0.08); border: 1px solid var(--accent-red); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                        <div style="font-weight: bold; color: var(--accent-red); font-size: 13px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
+                            ⚠️ PHÁT HIỆN SỰ CỐ CÀO TIN (CRAWL ERROR)
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-main); margin-bottom: 10px;">
+                            Lý do lỗi: <strong id="editor-error-reason" style="color: var(--accent-red);">[Reason]</strong>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn" onclick="recrawlActiveListing()" style="font-size: 11px; padding: 4px 10px; background: rgba(251, 191, 36, 0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); height: auto;">🔄 Thử cào lại</button>
+                            <button class="btn" onclick="deleteActiveListing()" style="font-size: 11px; padding: 4px 10px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); height: auto;">🗑️ Xóa khỏi SQLite</button>
+                        </div>
+                    </div>
                     <div class="editor-container">
                         <!-- Left Panel: Images and classification -->
                         <div>
@@ -2153,7 +2166,7 @@
                             badgeClass = 'published';
                             badgeText = 'Published';
                         } else if (house.status && house.status.startsWith('crawl_failed')) {
-                            badgeClass = 'raw_text';
+                            badgeClass = 'crawl_failed';
                             badgeText = 'Lỗi cào';
                         }
 
@@ -2376,6 +2389,30 @@
             document.getElementById('editor-active').style.display = 'block';
 
             const house = activeListingData;
+            
+            // Check status for crawl failure banner
+            const errorBanner = document.getElementById('editor-error-banner');
+            if (errorBanner) {
+                if (house.status && house.status.startsWith('crawl_failed:')) {
+                    const reasonKey = house.status.split(':')[1];
+                    let reasonText = "Lỗi chưa xác định";
+                    if (reasonKey === "deleted") {
+                        reasonText = "❌ Đã xóa/Không tìm thấy trên nguồn";
+                    } else if (reasonKey === "cookie_expired") {
+                        reasonText = "🔑 Cookie hết hạn / Hết phiên";
+                    } else if (reasonKey === "http_error") {
+                        reasonText = "🌐 Lỗi HTTP / Mạng kết nối";
+                    } else if (reasonKey === "exception") {
+                        reasonText = "⚠️ Lỗi xử lý dữ liệu (Exception)";
+                    } else if (reasonKey === "cookie_invalid") {
+                        reasonText = "🔑 Cookie không hợp lệ";
+                    }
+                    document.getElementById('editor-error-reason').innerText = reasonText;
+                    errorBanner.style.display = 'block';
+                } else {
+                    errorBanner.style.display = 'none';
+                }
+            }
             
             // Text fields
             document.getElementById('edit-tieu-de-public').value = house.Tieu_de_Public || '';
@@ -2858,10 +2895,34 @@
                     renderEditor();
                 } else {
                     alert('Lỗi khi cào lại căn nhà: ' + data.message);
+                    fetchListings();
+                    loadTroubleList();
+                    // Load lại chi tiết từ DB để hiển thị trạng thái lỗi cào
+                    fetch(`/api/listings/${activeListingId}`)
+                        .then(res => res.json())
+                        .then(detailData => {
+                            if (detailData && detailData.status === 'success') {
+                                activeListingData = detailData.listing;
+                                renderEditor();
+                            }
+                        })
+                        .catch(e => console.error("Lỗi khi tải chi tiết căn nhà:", e));
                 }
             })
             .catch(err => {
                 alert('Không thể kết nối máy chủ để cào lại căn nhà: ' + err.message);
+                fetchListings();
+                loadTroubleList();
+                // Load lại chi tiết từ DB để hiển thị trạng thái lỗi cào
+                fetch(`/api/listings/${activeListingId}`)
+                    .then(res => res.json())
+                    .then(detailData => {
+                        if (detailData && detailData.status === 'success') {
+                            activeListingData = detailData.listing;
+                            renderEditor();
+                        }
+                    })
+                    .catch(e => console.error("Lỗi khi tải chi tiết căn nhà:", e));
             });
         }
 
@@ -3324,12 +3385,16 @@
                     fetchListings();
                 } else {
                     alert('Không thể cào lại: ' + data.message);
+                    loadTroubleList();
+                    fetchListings();
                 }
             })
             .catch(err => {
                 btn.disabled = false;
                 btn.innerText = "🔄 Cào lại";
                 alert('Lỗi kết nối khi cào lại: ' + err);
+                loadTroubleList();
+                fetchListings();
             });
         }
 
