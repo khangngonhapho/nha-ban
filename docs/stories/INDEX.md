@@ -3,16 +3,17 @@
 Last updated: 2026-06-22
 
 ## Stats
-- Total: 113
+- Total: 114
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 21
-- accepted: 83
+- accepted: 84
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-105 | Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI | accepted | S | 2026-06-22 | `static/js/lego_detail_admin.js`, `static/js/lego_helpers.js`, `curator.html` |
 | US-104 | Sửa lỗi không show carousel hình sổ trên detail admin view vercel | accepted | S | 2026-06-22 | `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js` |
 | US-103 | Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi | accepted | M | 2026-06-22 | `static/js/thienkhoi_list_scraper.user.js`, `curator.html`, `curator_html_data.py` |
 | US-102 | Lọc các căn chưa có raw_json_full trên Curator Dashboard | done | S | 2026-06-21 | `manager.py`, `curator.html`, `curator_html_data.py` |
@@ -131,6 +132,7 @@ Last updated: 2026-06-22
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-105_autofill_button_overwrite_confirmation|US-105]]: Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI (accepted)
 - [[US-103_crawl_listings_userscript|US-103]]: Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi (accepted)
 - [[US-102_missing_json_curator_tab|US-102]]: Lọc các căn chưa có raw_json_full trên Curator Dashboard (done)
 - [[US-101_optimize_recrawl_image_handling|US-101]]: Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên (backlog)
@@ -183,6 +185,7 @@ Last updated: 2026-06-22
 - [[US-002_adjacent_houses_khangngo_id|US-002]]: Thuật toán Mã Khang Ngô cắt số phụ căn nhà (done)
 
 ### AI Content Generation
+- [[US-105_autofill_button_overwrite_confirmation|US-105]]: Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI (accepted)
 - [[US-078_admin_curation_auto_fill_ai|US-078]]: Tích hợp nút Tự động điền AI trong Pool và bảo mật số nhà trên Vercel Admin (accepted)
 - [[US-044_robust_ai_curation|US-044]]: Robustness Upgrades for AI Curation and Frontend Triggering (accepted)
 - [[US-040_auto_curation_pipeline_diagram_labeling|US-040]]: Tự động hóa Luồng Curation & Dán nhãn Sơ đồ khi Cào tin đẩy thẳng về Pool (done)
@@ -211,6 +214,7 @@ Last updated: 2026-06-22
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-105_autofill_button_overwrite_confirmation|US-105]]: Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI (accepted)
 - [[US-104_fix_admin_sodo_carousel|US-104]]: Sửa lỗi không show carousel hình sổ trên detail admin view vercel (accepted)
 - [[US-097_fix_quick_share_link_error|US-097]]: Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng (accepted)
 - [[US-094_master_tai_cau_truc_lego_frontend|US-094]]: Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) (accepted)

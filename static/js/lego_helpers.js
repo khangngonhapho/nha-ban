@@ -72,6 +72,9 @@ window.autoFillCurationDetails = async function() {
   if (!window.CURRENT_EDITING_LISTING) return;
   const p = window.CURRENT_EDITING_LISTING;
   
+  const confirmProceed = confirm("Hành động này sẽ xóa thông tin Tiêu đề public và Mô tả public cũ để thay bằng thông tin mới tự động điền bằng AI. Bạn có chắc chắn muốn tiếp tục không?");
+  if (!confirmProceed) return;
+  
   let originalBtnText = "";
   if (btn) {
     originalBtnText = btn.innerHTML;

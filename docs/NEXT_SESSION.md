@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-105 (Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI):** **[ACCEPTED - 2026-06-22]** Cho phép hiển thị nút Tự động điền thầm lặng bằng AI đối với cả các căn đã lên sóng. Hỏi xác nhận cảnh báo mất mát dữ liệu trước khi thay thế nội dung trường Tiêu đề public và Mô tả public. Đồng bộ hóa sang Curator Dashboard và chạy kiểm thử Playwright E2E tự động thành công.
 *   **US-104 (Sửa lỗi không show carousel hình sổ trên detail admin view vercel):** **[ACCEPTED - 2026-06-22]** Đã cấu hình hiển thị song song Carousel Sổ đỏ (`#carouselSo`) và Carousel BĐS (`#carouselNha`) ở chế độ Admin. Đồng bộ R2 sodo sạch và dàn phẳng 5 cột lên Sheets. Bảo mật sodo bằng cách ẩn khỏi Client view/Preview qua logic `visible: false`.
 *   **US-103 (Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi):** **[ACCEPTED - 2026-06-22]** Phát triển hoàn tất Tampermonkey/Violentmonkey Userscript tích hợp trực tiếp lên giao diện của website Thiên Khôi (proptech.thienkhoi.com). Hỗ trợ nút cào nhanh 1-click cho từng card và bảng điều khiển (Floating Panel) nổi với giao diện Glassmorphism cao cấp để chọn lọc cào hàng loạt. Hỗ trợ tự động đồng bộ Cookie đăng nhập của người dùng về Local Server. Tích hợp liên kết tải và cài đặt nhanh vào giao diện Curator Dashboard. Đã vượt qua toàn bộ 4 kịch bản kiểm thử Playwright E2E tự động và test tích hợp.
 *   **US-102 (Lọc các căn chưa có raw_json_full trên Curator Dashboard):** **[ACCEPTED - 2026-06-21]** Bổ sung tab **Thiếu JSON** và đếm chính xác số lượng các căn chưa có `raw_json_full` trên toàn bộ DB. Tích hợp bộ lọc Quận/Đường/Số nhà hoạt động đồng bộ với tab mới. Tự động đồng bộ hóa HTML và biên dịch thành công file chạy EXE sản xuất. Chạy kiểm thử tự động API đạt **100% PASS**.
@@ -44,12 +45,12 @@
  
  ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — US-104: Cấu hình hiển thị song song carousel và logic lưu sodo R2 sạch.
-*   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-104: Định nghĩa và chia sẻ hàm `isListingSodoUrl` dùng chung.
-*   [curator.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator.html) — US-104: Tương thích Curation và cập nhật giao diện Admin.
-*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — US-104: Cập nhật logic publish/sync local sodo thô/biên tập.
-*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — US-104: Dàn phẳng sodo đã lọc an toàn lên 5 cột Google Sheets.
-*   [docs/stories/_inbox/US-104_fix_admin_sodo_carousel.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-104_fix_admin_sodo_carousel.md) — US-104: Cập nhật trạng thái accepted và tài liệu Retro bài học kinh nghiệm.
+*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — US-105: Hiển thị nút Tự động điền cho cả các căn đã lên sóng.
+*   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-105: Bổ sung dialog xác nhận cảnh báo ghi đè thông tin.
+*   [curator.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator.html) — US-105: Bổ sung cảnh báo xác nhận ghi đè tương tự trên Curator Dashboard.
+*   [curator_html_data.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator_html_data.py) — US-105: Biên dịch lại mã nguồn giao diện Curator.
+*   [scratch/test_e2e_curation.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_curation.py) — US-105: Bổ sung dialog listener cho kịch bản E2E.
+*   [docs/stories/_inbox/US-105_autofill_button_overwrite_confirmation.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-105_autofill_button_overwrite_confirmation.md) — US-105: Đặc tả User Story.
  
  ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-22 (US-104 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-22 (US-105 accepted & E2E tests 100% passed).*

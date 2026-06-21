@@ -1647,6 +1647,9 @@
                 return;
             }
             
+            const confirmProceed = confirm("Hành động này sẽ xóa thông tin Tiêu đề public và Mô tả public cũ để thay bằng thông tin mới tự động điền bằng AI. Bạn có chắc chắn muốn tiếp tục không?");
+            if (!confirmProceed) return;
+            
             const btn = document.getElementById('btn-run-ai');
             const spinner = document.getElementById('ai-spinner');
             const btnText = document.getElementById('ai-btn-text');

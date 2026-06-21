@@ -151,6 +151,7 @@ def main():
         admin_context = browser.new_context(viewport={"width": 1280, "height": 800})
         admin_page = admin_context.new_page()
         
+        admin_page.on("dialog", lambda dialog: dialog.accept())
         admin_page.on("console", lambda msg: (
             print(f"[Admin Console {msg.type}] {msg.text}"),
             console_errors.append(msg.text) if msg.type == "error" else None

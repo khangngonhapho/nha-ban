@@ -323,6 +323,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-22 (Nghiệm thu US-105 - Hiện Nút "Tự Động Điền" Cho Căn Đã Lên Sóng & Hỏi Xác Nhận Thay Thế Thông Tin AI - TEST PASS)
+*   **Mã User Story:** `US-105`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Hiện Nút Tự Động Điền Cho Mọi Căn**: Loại bỏ điều kiện check `p.isFromPoolOnly` để luôn hiển thị nút "⚡ Tự động điền" trên giao diện chi tiết Admin Vercel.
+     - **Cảnh báo Xác nhận Ghi đè AI**: Thêm hộp thoại xác nhận `confirm` cảnh báo ghi đè thông tin Tiêu đề public và Mô tả public trước khi gọi API AI.
+     - **Đồng bộ hóa Curator Dashboard**: Tích hợp cảnh báo `confirm` tương tự cho nút "🤖 BIÊN TẬP AI" trên Curator Dashboard offline (`curator.html` / `curator_html_data.py`).
+     - **Kiểm thử E2E & Dialog Handler**: Thêm dialog listener vào kịch bản Playwright E2E (`test_e2e_curation.py`) đảm bảo test suite chạy mượt mà đạt 100% PASS.
+
 ### 2026-06-22 (Nghiệm thu US-104 - Sửa Lỗi Không Hiển Thị Carousel Hình Sổ Trên Giao Diện Admin Vercel - TEST PASS)
 *   **Mã User Story:** `US-104`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1178,6 +1186,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-105:** Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI ✅ Done 2026-06-22
 - [x] **US-104:** Sửa lỗi không show carousel hình sổ trên detail admin view vercel ✅ Done 2026-06-22
 - [x] **US-103:** Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi ✅ Done 2026-06-22
 - [x] **US-102:** Lọc các căn chưa có raw_json_full trên Curator Dashboard ✅ Done 2026-06-21
