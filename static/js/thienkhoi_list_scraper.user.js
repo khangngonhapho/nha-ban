@@ -16,7 +16,12 @@
     'use strict';
 
     // CONFIGURATION
-    let localPort = localStorage.getItem('kn_scraper_port') || '5000';
+    let localPort = '5000';
+    try {
+        localPort = localStorage.getItem('kn_scraper_port') || '5000';
+    } catch (e) {
+        console.warn("[Khang Ngô BDS] Không thể truy cập localStorage:", e);
+    }
     let getLocalUrl = () => `http://localhost:${localPort}`;
 
     // STYLES
@@ -325,21 +330,38 @@
         }
     `;
 
-    // Inject CSS
-    const styleEl = document.createElement('style');
-    styleEl.textContent = styles;
-    document.head.appendChild(styleEl);
+    // Deferred DOM initialization to prevent errors if document.body/head is not ready
+    let domInitialized = false;
+    let toastEl = null;
 
-    // Toast element
-    const toastEl = document.createElement('div');
-    toastEl.className = 'kn-toast';
-    document.body.appendChild(toastEl);
+    function initializeDOM() {
+        if (domInitialized) return;
+        if (!document.head || !document.body) return;
+
+        try {
+            // Inject CSS
+            const styleEl = document.createElement('style');
+            styleEl.textContent = styles;
+            document.head.appendChild(styleEl);
+
+            // Toast element
+            toastEl = document.createElement('div');
+            toastEl.className = 'kn-toast';
+            document.body.appendChild(toastEl);
+
+            domInitialized = true;
+            console.log("[Khang Ngô BDS Scraper] Khởi tạo DOM (style/toast) thành công.");
+        } catch (e) {
+            console.error("[Khang Ngô BDS Scraper] Lỗi khởi tạo DOM:", e);
+        }
+    }
 
     function showToast(message, duration = 3000) {
+        if (!toastEl) return;
         toastEl.textContent = message;
         toastEl.classList.add('show');
         setTimeout(() => {
-            toastEl.classList.remove('show');
+            if (toastEl) toastEl.classList.remove('show');
         }, duration);
     }
 
@@ -523,10 +545,11 @@
             if (!aTag) return;
 
             const href = aTag.getAttribute('href');
+            if (!href) return;
             const match = href.match(/\/(?:sources|Detail)\/([a-f0-9\-]{36}|\d+)/i);
             if (!match) return;
 
-            const tkId = match.group ? match.group(1) : match[1];
+            const tkId = match[1];
 
             // If button is already injected, skip
             if (card.querySelector('.kn-scrape-btn')) return;
@@ -567,7 +590,13 @@
 
         const panel = document.createElement('div');
         panel.id = 'kn-floating-panel';
-        if (localStorage.getItem('kn_panel_collapsed') === 'true') {
+        
+        let isCollapsedDefault = false;
+        try {
+            isCollapsedDefault = localStorage.getItem('kn_panel_collapsed') === 'true';
+        } catch (e) {}
+
+        if (isCollapsedDefault) {
             panel.classList.add('collapsed');
         }
 
@@ -626,7 +655,9 @@
         const toggleCollapse = () => {
             panel.classList.toggle('collapsed');
             const isCollapsed = panel.classList.contains('collapsed');
-            localStorage.setItem('kn_panel_collapsed', isCollapsed);
+            try {
+                localStorage.setItem('kn_panel_collapsed', isCollapsed);
+            } catch (e) {}
         };
 
         header.addEventListener('click', toggleCollapse);
@@ -654,7 +685,9 @@
         // Port change
         document.getElementById('kn-port-input').addEventListener('change', (e) => {
             localPort = e.target.value.trim() || '5000';
-            localStorage.setItem('kn_scraper_port', localPort);
+            try {
+                localStorage.setItem('kn_scraper_port', localPort);
+            } catch (err) {}
             writeLog(`Đổi cổng kết nối sang: ${localPort}`);
         });
 
@@ -684,10 +717,11 @@
 
     // RUN INITIAL ENGINE
     function runEngine() {
-        if (!document.body) {
+        if (!document.body || !document.head) {
             setTimeout(runEngine, 500);
             return;
         }
+        initializeDOM();
         createFloatingPanel();
         scanListings();
 
