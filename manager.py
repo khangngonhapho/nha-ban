@@ -268,26 +268,41 @@ def add_log_message(msg):
         if len(LOGS_BUFFER) > 1000:
             LOGS_BUFFER.pop(0)
 
-# Cấu hình mặc định
-DEFAULT_CONFIG = {
-    "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
-    "pool2_raw_sheet_id": "",
-    "pool2_custom_sheet_id": "",
-    "pool2_public_sheet_id": "",
-    "drive_folder_id": "10NcfOJ3_YBiPVc4FSK2uGGNs7MPmAFO8",
-    "target_district": "",
-    "search_url": "https://data.thienkhoi.com/Hang?iID_MaTinh=0&iID_HuongNha=0&iID_LoaiHang=0&iID_MaQuan=0&iID_MaPhuongXa=0&iTrangThai=0&iTuMatTien=0&iDenMatTien=0&iTuDienTich=0&iDenDienTich=0&iGiaChaoHopDong=0&iHeSoThanhTich=0&iGia=0&sGia=0&iTuGia=0&iDenGia=0&iPhanTramHoaHong=0&iDuongVao=0&iTuSoTang=0&iPhanTang=0&iDenSoTang=0&iSoPhongNgu=0&iSoToilet=0&iID_Nguon=0&sTaiKhoan=0908130555&iTaiKhoan=0&Menu=0&Page=1&PageSize=20&bCamKetChuan=False&bSigned=False&bHidden=0&iID_MaNguoiDungTao=0&iID_MaNguoiTuChoi=0&iDuAn=0&iTrangThaiSoDo=0&iBranch=0&blacklist=False&iKhoBank=0&iKhoHang=0&iID_MaNguoiDuyetBank=0&iID_MaNguoiBCDK=0&all=False&inside=False&tester=False",
-    "crawler_limit": 5,
-    "crawler_start_page": 1,
-    "delay_house_min": 3.0,
-    "delay_house_max": 6.0,
-    "delay_page_min": 5.0,
-    "delay_page_max": 10.0,
-    "openai_api_base": "https://api.openai.com/v1",
-    "openai_api_key": os.environ.get("OPENAI_API_KEY", ""),
-    "prompt_google_doc_id": "1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE",
-    "openai_system_prompt": (
-        "Bạn hãy đóng vai là Đầu chủ Trà Mi - chuyên gia viết bài và định vị bất động sản nhà phố cao cấp tại TP.HCM. Nhiệm vụ của bạn là tiếp nhận dữ liệu thô từ tôi (ảnh chụp màn hình tin nội bộ, thông số mã căn hoặc sơ đồ thửa đất do tôi cung cấp) và xử lý nghiêm ngặt theo quy trình 4 bước sau đây để xuất ra bài đăng hoàn chỉnh.\n\n"
+def clean_prompt_content(content):
+    """Lọc bỏ phần giới thiệu ở đầu Google Doc và bắt đầu chính xác từ câu lệnh phân vai của AI"""
+    if not content:
+        return content
+    start_keywords = ["bạn hãy đóng vai là", "bạn là", "nhiệm vụ của bạn"]
+    content_lower = content.lower()
+    for kw in start_keywords:
+        idx = content_lower.find(kw)
+        if idx != -1:
+            return content[idx:].strip()
+    return content.strip()
+
+def get_default_system_prompt():
+    """Tải default system prompt từ tệp tin cục bộ system_prompt.txt"""
+    import sys
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    prompt_file = os.path.join(base_path, "system_prompt.txt")
+    if os.path.exists(prompt_file):
+        try:
+            with open(prompt_file, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+                if content:
+                    return clean_prompt_content(content)
+        except Exception as e:
+            print(f"[⚠️ WARNING] Không thể đọc system_prompt.txt: {str(e)}")
+            
+    # Fallback an toàn nếu không tìm thấy tệp cục bộ
+    return (
+        "Bạn hãy đóng vai là Đầu chủ Trà Mi - chuyên gia viết bài và định vị bất động sản nhà phố cao cấp tại TP.HCM. "
+        "Nhiệm vụ của bạn là tiếp nhận dữ liệu thô từ tôi (ảnh chụp màn hình tin nội bộ, thông số mã căn hoặc sơ đồ thửa đất do tôi cung cấp) "
+        "và xử lý nghiêm ngặt theo quy trình 4 bước sau đây để xuất ra bài đăng hoàn chỉnh.\n\n"
         "BƯỚC 1: GIẢI MÃ CÚ PHÁP DỮ LIỆU THÔ (BẮT BUỘC)\n"
         "- Quy tắc giải mã địa chỉ: Chuỗi số đứng trước tên đường, phân cách bằng dấu chấm \".\" tương ứng với dấu xẹt \"/\". Ví dụ: \"12.14 Đào Duy Anh\" -> \"12/14 Đào Duy Anh\". Phải ghi nhận chính xác số hẻm nội bộ ở bước này để tôi tiện quản lý nguồn hàng.\n"
         "- Quy tắc diện tích (Lấy số lớn nhất): Nếu dữ liệu có dạng \"Số nhỏ/Số lớn\" (ví dụ: 55/60m2), luôn lấy số lớn nhất (60m2) làm diện tích sử dụng để đăng tin.\n"
@@ -361,7 +376,27 @@ DEFAULT_CONFIG = {
         "* Định dạng các dòng con: Bắt buộc bắt đầu bằng dấu chấm tròn nhỏ của HTML là \"•\", tuyệt đối không dùng dấu \"+\" hoặc thụt lề để tránh lỗi hiển thị khi copy.\n\n"
         "BƯỚC 4: RÀ SOÁT LỖI CHÍNH TẢ & ĐỒNG BỘ HIỂN THỊ (BẮT BUỘC)\n"
         "- Sau khi hoàn thành toàn bộ nội dung bài đăng, bạn phải thực hiện thêm 1 bước quét tự động toàn bài để sửa triệt để tất cả lỗi chính tả, lỗi gõ dấu, dấu câu sát chữ (ví dụ: sửa ubnđ thành UBND, sửa Levela thành Lavela, sửa chửa thành chỉ, sửa công chức thành công chứng...). Đảm bảo bài viết xuất ra đạt độ chỉn chu, bảo mật và hoàn mỹ cao nhất trước khi giao cho tôi."
-    ),
+    )
+
+# Cấu hình mặc định
+DEFAULT_CONFIG = {
+    "sheet_id": "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw",
+    "pool2_raw_sheet_id": "",
+    "pool2_custom_sheet_id": "",
+    "pool2_public_sheet_id": "",
+    "drive_folder_id": "10NcfOJ3_YBiPVc4FSK2uGGNs7MPmAFO8",
+    "target_district": "",
+    "search_url": "https://data.thienkhoi.com/Hang?iID_MaTinh=0&iID_HuongNha=0&iID_LoaiHang=0&iID_MaQuan=0&iID_MaPhuongXa=0&iTrangThai=0&iTuMatTien=0&iDenMatTien=0&iTuDienTich=0&iDenDienTich=0&iGiaChaoHopDong=0&iHeSoThanhTich=0&iGia=0&sGia=0&iTuGia=0&iDenGia=0&iPhanTramHoaHong=0&iDuongVao=0&iTuSoTang=0&iPhanTang=0&iDenSoTang=0&iSoPhongNgu=0&iSoToilet=0&iID_Nguon=0&sTaiKhoan=0908130555&iTaiKhoan=0&Menu=0&Page=1&PageSize=20&bCamKetChuan=False&bSigned=False&bHidden=0&iID_MaNguoiDungTao=0&iID_MaNguoiTuChoi=0&iDuAn=0&iTrangThaiSoDo=0&iBranch=0&blacklist=False&iKhoBank=0&iKhoHang=0&iID_MaNguoiDuyetBank=0&iID_MaNguoiBCDK=0&all=False&inside=False&tester=False",
+    "crawler_limit": 5,
+    "crawler_start_page": 1,
+    "delay_house_min": 3.0,
+    "delay_house_max": 6.0,
+    "delay_page_min": 5.0,
+    "delay_page_max": 10.0,
+    "openai_api_base": "https://api.openai.com/v1",
+    "openai_api_key": os.environ.get("OPENAI_API_KEY", ""),
+    "prompt_google_doc_id": "12LaUJ-34eolQ9ElgQhpe5k9Mh_bn4B7p31DQAZ1Ncto",
+    "openai_system_prompt": get_default_system_prompt(),
     "json_ui_fields": ["Criteria_Duong_truoc_nha"],
     "json_ui_filters": [
         {
@@ -638,7 +673,7 @@ def get_google_access_token(creds):
         return None
 
 def fetch_google_doc_content(doc_id):
-    """Tải nội dung text thô từ một Google Doc dựa trên ID hoặc link của Doc"""
+    """Tải nội dung text thô từ một Google Doc dựa trên ID hoặc link của Doc, hỗ trợ OAuth và Public fallback"""
     if not doc_id:
         return None
     doc_id = str(doc_id).strip()
@@ -648,34 +683,60 @@ def fetch_google_doc_content(doc_id):
         if match:
             doc_id = match.group(1)
             
-    creds = get_google_credentials()
-    if not creds:
-        add_log_message("[⚠️ GOOGLE DOC] Không tìm thấy credentials hợp lệ để tải prompt từ Google Doc.")
-        return None
-        
-    token = get_google_access_token(creds)
-    if not token:
-        add_log_message("[⚠️ GOOGLE DOC] Không thể tạo access token để kết nối tới Google Doc.")
-        return None
-        
-    url = f"https://www.googleapis.com/drive/v3/files/{doc_id}/export?mimeType=text/plain"
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
+    content = None
     
-    try:
-        add_log_message(f"[🤖 GOOGLE DOC] Đang tải prompt từ Google Doc ID: {doc_id}...")
-        response = requests.get(url, headers=headers, timeout=15)
-        if response.status_code == 200:
-            content = response.text
-            if content.startswith('\ufeff'):
-                content = content[1:]
-            add_log_message("[✅ GOOGLE DOC] Đã tải prompt thành công từ Google Docs.")
-            return content.strip()
-        else:
-            add_log_message(f"[⚠️ GOOGLE DOC] Tải prompt thất bại, HTTP {response.status_code}: {response.text}")
-    except Exception as e:
-        add_log_message(f"[❌ GOOGLE DOC ERROR] Gặp lỗi khi tải prompt: {str(e)}")
+    # Cách 1: Thử tải dùng Google API OAuth nếu có Credentials
+    creds = get_google_credentials()
+    if creds:
+        token = get_google_access_token(creds)
+        if token:
+            url = f"https://www.googleapis.com/drive/v3/files/{doc_id}/export?mimeType=text/plain"
+            headers = {
+                "Authorization": f"Bearer {token}"
+            }
+            try:
+                add_log_message(f"[🤖 GOOGLE DOC] Đang tải prompt từ Google Doc (OAuth) ID: {doc_id}...")
+                response = requests.get(url, headers=headers, timeout=15)
+                if response.status_code == 200:
+                    response.encoding = 'utf-8'
+                    content = response.text
+                    add_log_message("[✅ GOOGLE DOC] Đã tải prompt thành công bằng OAuth.")
+                else:
+                    add_log_message(f"[⚠️ GOOGLE DOC] Tải prompt OAuth thất bại, HTTP {response.status_code}")
+            except Exception as e:
+                add_log_message(f"[⚠️ GOOGLE DOC] Lỗi khi tải prompt bằng OAuth: {str(e)}")
+
+    # Cách 2: Tải công khai dự phòng (Public Link) nếu OAuth thất bại hoặc không có Credentials
+    if not content:
+        url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt"
+        try:
+            add_log_message(f"[🤖 GOOGLE DOC] Đang tải prompt từ Google Doc (Public Link) ID: {doc_id}...")
+            response = requests.get(url, timeout=15)
+            if response.status_code == 200:
+                response.encoding = 'utf-8'
+                content = response.text
+                add_log_message("[✅ GOOGLE DOC] Đã tải prompt thành công bằng Public Link.")
+            else:
+                add_log_message(f"[⚠️ GOOGLE DOC] Tải prompt Public Link thất bại, HTTP {response.status_code}")
+        except Exception as e:
+            add_log_message(f"[❌ GOOGLE DOC ERROR] Gặp lỗi khi tải prompt Public Link: {str(e)}")
+
+    if content:
+        if content.startswith('\ufeff'):
+            content = content[1:]
+        clean_content = clean_prompt_content(content)
+        
+        # Lưu vào cache cục bộ làm offline cache
+        try:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            cache_file = os.path.join(script_dir, "system_prompt.txt")
+            with open(cache_file, "w", encoding="utf-8") as f:
+                f.write(clean_content)
+            add_log_message("[💾 OFFLINE CACHE] Đã cập nhật bộ nhớ đệm system_prompt.txt thành công.")
+        except Exception as cache_err:
+            print(f"Lỗi ghi cache prompt cục bộ: {cache_err}")
+            
+        return clean_content
         
     return None
 

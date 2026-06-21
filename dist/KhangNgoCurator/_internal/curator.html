@@ -904,78 +904,91 @@
             <!-- TAB 1: CRAWL SYSTEM -->
             <div class="content-section active" id="crawl-tab">
                 <div class="panel-row">
-                    <div class="panel-card">
-                        <div class="panel-title">📡 Stealth Crawler Controller</div>
-                        
-                        <div class="form-group">
-                            <label>1. URL DANH SÁCH QUẬN THIÊN KHÔI</label>
-                            <input type="text" id="crawl-url" placeholder="https://data.thienkhoi.com/Hang/List?Page=1&pID_Quan=..." value="">
-                        </div>
-
-                        <div class="panel-row" style="margin-bottom: 12px; grid-template-columns: 1.5fr 1fr;">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label>⚡ CHỌN NHANH TỐC ĐỘ CÀO TIN (PRESET)</label>
-                                <select id="crawl-speed-preset" onchange="onSpeedPresetChange(this.value)">
-                                    <option value="safe">🟢 An toàn (Stealth Mode) - Nghỉ 8-15s / 20-40s</option>
-                                    <option value="optimal" selected>🟡 Tối ưu (Fast & Safe) - Nghỉ 3-6s / 5-10s</option>
-                                    <option value="turbo">🔴 Siêu tốc (Turbo Mode) - Nghỉ 1.5-3s / 3-5s</option>
-                                    <option value="custom">⚙️ Tùy chỉnh (Độ trễ do bạn tự đặt bên phải)</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label>2. TÊN QUẬN MỤC TIÊU (LỌC TRƯỚC)</label>
-                                <select id="crawl-district">
-                                    <option value="" selected>Tất cả (Không lọc quận)</option>
-                                    <option value="Quận 1">Quận 1</option>
-                                    <option value="Quận 3">Quận 3</option>
-                                    <option value="Quận 4">Quận 4</option>
-                                    <option value="Quận 5">Quận 5</option>
-                                    <option value="Quận 6">Quận 6</option>
-                                    <option value="Quận 7">Quận 7</option>
-                                    <option value="Quận 8">Quận 8</option>
-                                    <option value="Quận 10">Quận 10</option>
-                                    <option value="Quận 11">Quận 11</option>
-                                    <option value="Quận 12">Quận 12</option>
-                                    <option value="Bình Thạnh">Bình Thạnh</option>
-                                    <option value="Phú Nhuận">Phú Nhuận</option>
-                                    <option value="Gò Vấp">Gò Vấp</option>
-                                    <option value="Tân Bình">Tân Bình</option>
-                                    <option value="Tân Phú">Tân Phú</option>
-                                    <option value="Bình Tân">Bình Tân</option>
-                                    <option value="Thủ Đức">Thủ Đức</option>
-                                    <option value="Hóc Môn">Hóc Môn</option>
-                                    <option value="Nhà Bè">Nhà Bè</option>
-                                    <option value="Bình Chánh">Bình Chánh</option>
-                                    <option value="Củ Chi">Củ Chi</option>
-                                    <option value="Cần Giờ">Cần Giờ</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="panel-row" style="margin-bottom: 0; grid-template-columns: 1fr 1fr;">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="panel-card">
+                            <div class="panel-title">📡 Stealth Crawler Controller</div>
+                            
                             <div class="form-group">
-                                <label>3. GIỚI HẠN CĂN <span style="font-size: 0.8em; opacity: 0.7;">(Để trống/0 để cào không giới hạn)</span></label>
-                                <input type="number" id="crawl-limit" value="5" min="0" placeholder="Không giới hạn">
+                                <label>1. URL DANH SÁCH QUẬN THIÊN KHÔI</label>
+                                <input type="text" id="crawl-url" placeholder="https://data.thienkhoi.com/Hang/List?Page=1&pID_Quan=..." value="">
                             </div>
-                            <div class="form-group">
-                                <label>4. TRANG BẮT ĐẦU</label>
-                                <input type="number" id="crawl-start-page" value="1" min="1">
+
+                            <div class="panel-row" style="margin-bottom: 12px; grid-template-columns: 1.5fr 1fr;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>⚡ CHỌN NHANH TỐC ĐỘ CÀO TIN (PRESET)</label>
+                                    <select id="crawl-speed-preset" onchange="onSpeedPresetChange(this.value)">
+                                        <option value="safe">🟢 An toàn (Stealth Mode) - Nghỉ 8-15s / 20-40s</option>
+                                        <option value="optimal" selected>🟡 Tối ưu (Fast & Safe) - Nghỉ 3-6s / 5-10s</option>
+                                        <option value="turbo">🔴 Siêu tốc (Turbo Mode) - Nghỉ 1.5-3s / 3-5s</option>
+                                        <option value="custom">⚙️ Tùy chỉnh (Độ trễ do bạn tự đặt bên phải)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>2. TÊN QUẬN MỤC TIÊU (LỌC TRƯỚC)</label>
+                                    <select id="crawl-district">
+                                        <option value="" selected>Tất cả (Không lọc quận)</option>
+                                        <option value="Quận 1">Quận 1</option>
+                                        <option value="Quận 3">Quận 3</option>
+                                        <option value="Quận 4">Quận 4</option>
+                                        <option value="Quận 5">Quận 5</option>
+                                        <option value="Quận 6">Quận 6</option>
+                                        <option value="Quận 7">Quận 7</option>
+                                        <option value="Quận 8">Quận 8</option>
+                                        <option value="Quận 10">Quận 10</option>
+                                        <option value="Quận 11">Quận 11</option>
+                                        <option value="Quận 12">Quận 12</option>
+                                        <option value="Bình Thạnh">Bình Thạnh</option>
+                                        <option value="Phú Nhuận">Phú Nhuận</option>
+                                        <option value="Gò Vấp">Gò Vấp</option>
+                                        <option value="Tân Bình">Tân Bình</option>
+                                        <option value="Tân Phú">Tân Phú</option>
+                                        <option value="Bình Tân">Bình Tân</option>
+                                        <option value="Thủ Đức">Thủ Đức</option>
+                                        <option value="Hóc Môn">Hóc Môn</option>
+                                        <option value="Nhà Bè">Nhà Bè</option>
+                                        <option value="Bình Chánh">Bình Chánh</option>
+                                        <option value="Củ Chi">Củ Chi</option>
+                                        <option value="Cần Giờ">Cần Giờ</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="panel-row" style="margin-bottom: 0; grid-template-columns: 1fr 1fr;">
+                                <div class="form-group">
+                                    <label>3. GIỚI HẠN CĂN <span style="font-size: 0.8em; opacity: 0.7;">(Để trống/0 để cào không giới hạn)</span></label>
+                                    <input type="number" id="crawl-limit" value="5" min="0" placeholder="Không giới hạn">
+                                </div>
+                                <div class="form-group">
+                                    <label>4. TRANG BẮT ĐẦU</label>
+                                    <input type="number" id="crawl-start-page" value="1" min="1">
+                                </div>
+                            </div>
+
+                            <div class="alert-box" id="speed-preset-alert">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                <div id="speed-preset-alert-text">
+                                    <strong>🟡 Chế độ Tối ưu (Fast & Safe) đang bật:</strong> Nghỉ ngẫu nhiên 3 - 6 giây giữa các căn và 5 - 10 giây khi chuyển trang. Tăng tốc độ cào ~2.5 lần nhưng vẫn bảo đảm an toàn chống chặn Cookie.
+                                </div>
+                            </div>
+
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                <button class="btn btn-gold" id="btn-start-crawl" onclick="startCrawl()">👉 BẮT ĐẦU CÀO TIN</button>
+                                <button class="btn btn-outline" onclick="openCookieModal()">🔑 Cập nhật Cookie</button>
+                                <button class="btn" style="background: linear-gradient(135deg, var(--accent-red) 0%, #b91c1c 100%); color: white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);" onclick="clearAllListings()">🧹 Xóa Sạch Dữ Liệu Cũ</button>
                             </div>
                         </div>
 
-                        <div class="alert-box" id="speed-preset-alert">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                            </svg>
-                            <div id="speed-preset-alert-text">
-                                <strong>🟡 Chế độ Tối ưu (Fast & Safe) đang bật:</strong> Nghỉ ngẫu nhiên 3 - 6 giây giữa các căn và 5 - 10 giây khi chuyển trang. Tăng tốc độ cào ~2.5 lần nhưng vẫn bảo đảm an toàn chống chặn Cookie.
-                            </div>
-                        </div>
-
-                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                            <button class="btn btn-gold" id="btn-start-crawl" onclick="startCrawl()">👉 BẮT ĐẦU CÀO TIN</button>
-                            <button class="btn btn-outline" onclick="openCookieModal()">🔑 Cập nhật Cookie</button>
-                            <button class="btn" style="background: linear-gradient(135deg, var(--accent-red) 0%, #b91c1c 100%); color: white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);" onclick="clearAllListings()">🧹 Xóa Sạch Dữ Liệu Cũ</button>
+                        <!-- Userscript Installation Card -->
+                        <div class="panel-card" style="border-left: 4px solid var(--accent-gold);">
+                            <div class="panel-title">🔌 Tiện ích trình duyệt (Tampermonkey Scraper)</div>
+                            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+                                Cài đặt tiện ích mở rộng (Userscript) chạy trực tiếp trên website Thiên Khôi để cào nhanh lẻ hoặc cào hàng loạt chỉ với 1-click từ trang danh sách đã lọc.
+                            </p>
+                            <a href="static/js/thienkhoi_list_scraper.user.js" target="_blank" class="btn btn-outline" style="border-color: var(--accent-gold); color: var(--accent-gold); display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: fit-content; text-decoration: none;">
+                                ⚡ CÀI ĐẶT / CẬP NHẬT SCARPER SCRIPT
+                            </a>
                         </div>
                     </div>
 
@@ -1633,6 +1646,9 @@
                 alert("Vui lòng chọn 1 căn nhà từ danh sách bên trái để chạy AI biên tập!");
                 return;
             }
+            
+            const confirmProceed = confirm("Hành động này sẽ xóa thông tin Tiêu đề public và Mô tả public cũ để thay bằng thông tin mới tự động điền bằng AI. Bạn có chắc chắn muốn tiếp tục không?");
+            if (!confirmProceed) return;
             
             const btn = document.getElementById('btn-run-ai');
             const spinner = document.getElementById('ai-spinner');
@@ -2729,6 +2745,9 @@
                 hinh_mat_tien: hinhMatTien,
                 so_do_1: soDoImgs[0] || '',
                 so_do_2: soDoImgs[1] || '',
+                so_do_3: soDoImgs[2] || '',
+                so_do_4: soDoImgs[3] || '',
+                so_do_5: soDoImgs[4] || '',
                 hem_imgs: hemImgs,
                 public_imgs: publicImgs,
                 anh_public_vd_1_3_5: anhPublicField,

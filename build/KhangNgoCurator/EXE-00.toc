@@ -81,7 +81,7 @@
  [],
  False,
  False,
- 1782027911,
+ 1782071414,
  [('run.exe',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',

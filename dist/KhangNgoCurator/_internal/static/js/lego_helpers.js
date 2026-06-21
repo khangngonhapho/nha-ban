@@ -72,6 +72,9 @@ window.autoFillCurationDetails = async function() {
   if (!window.CURRENT_EDITING_LISTING) return;
   const p = window.CURRENT_EDITING_LISTING;
   
+  const confirmProceed = confirm("Hành động này sẽ xóa thông tin Tiêu đề public và Mô tả public cũ để thay bằng thông tin mới tự động điền bằng AI. Bạn có chắc chắn muốn tiếp tục không?");
+  if (!confirmProceed) return;
+  
   let originalBtnText = "";
   if (btn) {
     originalBtnText = btn.innerHTML;
@@ -850,6 +853,62 @@ window.normalizeImgUrl = function(url) {
   }
   
   return cleanUrl;
+};
+
+// === isListingSodoUrl ===
+window.isListingSodoUrl = function(url, p) {
+  if (!url) return false;
+  const normFn = window.normalizeImgUrl;
+  if (!normFn) return false;
+  const norm = normFn(url);
+  if (norm === '') return false;
+  
+  // 1. Nhận diện theo mẫu tên file Cloudinary được uploader tạo ra (cực kỳ tối ưu và nhanh)
+  const urlLower = String(url).toLowerCase();
+  if (urlLower.includes('/sodo1_') || urlLower.includes('/sodo2_') || 
+      urlLower.includes('/sodo3_') || urlLower.includes('/sodo4_') || urlLower.includes('/sodo5_')) {
+    return true;
+  }
+
+  // 2. Nhận diện theo curated_config nếu có
+  if (p && p.curated_config && Array.isArray(p.curated_config.images)) {
+    const isSodoInConfig = p.curated_config.images.some(img => {
+      if (img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram')) {
+        return normFn(img.url) === norm;
+      }
+      return false;
+    });
+    if (isSodoInConfig) return true;
+  }
+
+  // 3. Lấy 5 giá trị sodo hiện có của căn nhà (đọc từ DOM hoặc từ p)
+  if (p) {
+    const getSodoVal = (idx) => {
+      let el = document.getElementById(`editSodo${idx}Url`);
+      if (el) return el.value.trim();
+      const colIdx = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(idx) : null;
+      if (p.pool_row_data && colIdx !== null) return p.pool_row_data[colIdx];
+      return p[`raw_sodo${idx}`] || '';
+    };
+
+    const sodo1Val = getSodoVal(1);
+    const sodo2Val = getSodoVal(2);
+    const sodo3Val = getSodoVal(3);
+    const sodo4Val = getSodoVal(4);
+    const sodo5Val = getSodoVal(5);
+
+    const normS1 = normFn(sodo1Val);
+    const normS2 = normFn(sodo2Val);
+    const normS3 = normFn(sodo3Val);
+    const normS4 = normFn(sodo4Val);
+    const normS5 = normFn(sodo5Val);
+
+    if (norm === normS1 || norm === normS2 || norm === normS3 || norm === normS4 || norm === normS5) {
+      return true;
+    }
+  }
+  
+  return false;
 };
 
 // Image downloads

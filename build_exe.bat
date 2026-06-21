@@ -13,7 +13,7 @@ echo [*] Dang bien dich bang PyInstaller...
 echo [*] Vui long doi trong giay lat...
 echo.
 
-python -c "exec('import dis, PyInstaller.__main__\nold = dis._get_const_info\ndef safe(*a,**k):\n try: return old(*a,**k)\n except: return (None,\"IndexError\")\ndis._get_const_info = safe\nPyInstaller.__main__.run()')" --name "KhangNgoCurator" --onedir --noconfirm --clean --add-data "curator.html;." --add-data "thienkhoi_cookie.txt;." --add-data "static;static" manager.py
+python -c "exec('import dis, PyInstaller.__main__\nold = dis._get_const_info\ndef safe(*a,**k):\n try: return old(*a,**k)\n except: return (None,\"IndexError\")\ndis._get_const_info = safe\nPyInstaller.__main__.run()')" --name "KhangNgoCurator" --onedir --noconfirm --clean --add-data "curator.html;." --add-data "thienkhoi_cookie.txt;." --add-data "system_prompt.txt;." --add-data "static;static" manager.py
 
 if %ERRORLEVEL% NEQ 0 (
     echo.

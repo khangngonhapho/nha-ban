@@ -173,8 +173,42 @@ async function getGoogleAccessToken(creds) {
   }
 }
 
+function cleanPromptContent(content) {
+  if (!content) return content;
+  const startKeywords = ["bạn hãy đóng vai là", "bạn là", "nhiệm vụ của bạn"];
+  const contentLower = content.toLowerCase();
+  for (const kw of startKeywords) {
+    const idx = contentLower.indexOf(kw);
+    if (idx !== -1) {
+      return content.substring(idx).trim();
+    }
+  }
+  return content.trim();
+}
+
+function getDefaultSystemPrompt() {
+  const paths = [
+    path.join(process.cwd(), 'system_prompt.txt'),
+    path.join(process.cwd(), '..', 'system_prompt.txt'),
+    path.join(__dirname, 'system_prompt.txt'),
+    path.join(__dirname, '..', 'system_prompt.txt'),
+    path.join(__dirname, '..', '..', 'system_prompt.txt')
+  ];
+  for (const p of paths) {
+    if (fs.existsSync(p)) {
+      try {
+        console.log(`[🤖 AI] Đang tải default system prompt từ: ${p}`);
+        return cleanPromptContent(fs.readFileSync(p, 'utf8').trim());
+      } catch (e) {
+        console.error('Lỗi đọc system_prompt.txt từ ' + p, e);
+      }
+    }
+  }
+  return DEFAULT_SYSTEM_PROMPT; // fallback to the hardcoded string
+}
+
 async function fetchGoogleDocContent(docId, accessToken) {
-  if (!docId || !accessToken) return null;
+  if (!docId) return null;
   
   let cleanId = docId.trim();
   if (cleanId.includes('/')) {
@@ -184,26 +218,64 @@ async function fetchGoogleDocContent(docId, accessToken) {
     }
   }
 
-  const url = `https://www.googleapis.com/drive/v3/files/${cleanId}/export?mimeType=text/plain`;
-  try {
-    const res = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
+  let content = null;
+  
+  // Cách 1: Thử dùng OAuth token nếu được cung cấp
+  if (accessToken) {
+    const url = `https://www.googleapis.com/drive/v3/files/${cleanId}/export?mimeType=text/plain`;
+    try {
+      console.log(`[🤖 GOOGLE DOC] Đang tải prompt từ Google Doc (OAuth) ID: ${cleanId}...`);
+      const res = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      if (res.ok) {
+        content = await res.text();
+        console.log('[✅ GOOGLE DOC] Đã tải prompt thành công bằng OAuth.');
+      } else {
+        console.error(`Google Docs OAuth download failed: ${res.status}`);
       }
-    });
-    if (!res.ok) {
-      console.error(`Google Docs download failed: ${res.status}`);
-      return null;
+    } catch (err) {
+      console.error('Error fetching Google Doc content via OAuth:', err);
     }
-    let content = await res.text();
+  }
+
+  // Cách 2: Tải công khai dự phòng (Public Link) nếu OAuth thất bại hoặc không có token
+  if (!content) {
+    const url = `https://docs.google.com/document/d/${cleanId}/export?format=txt`;
+    try {
+      console.log(`[🤖 GOOGLE DOC] Đang tải prompt từ Google Doc (Public Link) ID: ${cleanId}...`);
+      const res = await fetch(url);
+      if (res.ok) {
+        content = await res.text();
+        console.log('[✅ GOOGLE DOC] Đã tải prompt thành công bằng Public Link.');
+      } else {
+        console.error(`Google Docs Public download failed: ${res.status}`);
+      }
+    } catch (err) {
+      console.error('Error fetching Google Doc content via Public Link:', err);
+    }
+  }
+
+  if (content) {
     if (content.startsWith('\ufeff')) {
       content = content.substring(1);
     }
-    return content.trim();
-  } catch (err) {
-    console.error('Error fetching Google Doc content:', err);
-    return null;
+    const cleanContent = cleanPromptContent(content);
+    
+    // Lưu vào cache file cục bộ để offline dùng tiếp nếu chạy trong môi trường ghi được
+    try {
+      const cachePath = path.join(__dirname, 'system_prompt.txt');
+      fs.writeFileSync(cachePath, cleanContent, 'utf8');
+      console.log('[💾 OFFLINE CACHE] Đã cập nhật bộ nhớ đệm system_prompt.txt.');
+    } catch (e) {
+      // Vercel serverless function filesystem is read-only, which is expected to fail silently.
+    }
+    return cleanContent;
   }
+  
+  return null;
 }
 
 function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId) {
@@ -505,7 +577,7 @@ module.exports = async (req, res) => {
     }
 
     // Tải prompt động từ Google Doc
-    const docId = cfg.prompt_google_doc_id || '';
+    const docId = cfg.prompt_google_doc_id || '12LaUJ-34eolQ9ElgQhpe5k9Mh_bn4B7p31DQAZ1Ncto';
     let systemPrompt = '';
     if (docId) {
       try {
@@ -515,11 +587,9 @@ module.exports = async (req, res) => {
           googleToken = await getGoogleAccessToken(creds);
         }
 
-        if (googleToken) {
-          const docPrompt = await fetchGoogleDocContent(docId, googleToken);
-          if (docPrompt) {
-            systemPrompt = docPrompt;
-          }
+        const docPrompt = await fetchGoogleDocContent(docId, googleToken);
+        if (docPrompt) {
+          systemPrompt = docPrompt;
         }
       } catch (err) {
         console.error('Error fetching dynamic prompt, fallback to default:', err);
@@ -527,7 +597,7 @@ module.exports = async (req, res) => {
     }
 
     if (!systemPrompt) {
-      systemPrompt = cfg.openai_system_prompt || DEFAULT_SYSTEM_PROMPT;
+      systemPrompt = cfg.openai_system_prompt || getDefaultSystemPrompt();
     }
 
     // Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác

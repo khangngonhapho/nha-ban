@@ -5,7 +5,7 @@ a = Analysis(
     ['manager.py'],
     pathex=[],
     binaries=[],
-    datas=[('curator.html', '.'), ('thienkhoi_cookie.txt', '.'), ('static', 'static')],
+    datas=[('curator.html', '.'), ('thienkhoi_cookie.txt', '.'), ('system_prompt.txt', '.'), ('static', 'static')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

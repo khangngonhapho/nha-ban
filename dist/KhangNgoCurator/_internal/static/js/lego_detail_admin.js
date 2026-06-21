@@ -89,7 +89,6 @@
                   <div class="admin-carousel-dots"></div>
                 </div>
               </div>
-              ${(p.raw_sodo1 || p.raw_sodo2) ? `
               <div>
                 <div class="admin-raw-title" style="margin-bottom: 6px; margin-top: 8px;">Sổ thửa đất</div>
                 <div id="carouselSo" style="position: relative;">
@@ -97,7 +96,6 @@
                   <div class="admin-carousel-dots"></div>
                 </div>
               </div>
-              ` : ''}
             </div>
 
             <!-- Mô tả chi tiết (gộp, không tiêu đề) -->
@@ -210,7 +208,7 @@
                   <div class="admin-edit-group">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
-                      ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+                      <button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>
                     </div>
                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
                   </div>
@@ -339,23 +337,43 @@
             mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
           }
 
-          const sImgs = [];
-          const s1 = p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1;
-          const s2 = p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2;
-          const s3 = p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3;
-          const s4 = p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4;
-          const s5 = p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5;
-          if (s1) sImgs.push(s1);
-          if (s2) sImgs.push(s2);
-          if (s3) sImgs.push(s3);
-          if (s4) sImgs.push(s4);
-          if (s5) sImgs.push(s5);
+          let sImgs = [];
+          if (p.curated_config && Array.isArray(p.curated_config.images)) {
+            sImgs = p.curated_config.images
+              .filter(img => img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram'))
+              .map(img => img.url);
+          }
+          if (sImgs.length === 0) {
+            const sodoColIdx1 = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(1) : 27;
+            const sodoColIdx2 = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(2) : 28;
+            const sodoColIdx3 = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(3) : 80;
+            const sodoColIdx4 = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(4) : 81;
+            const sodoColIdx5 = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(5) : 82;
+            const s1 = p.pool_row_data ? p.pool_row_data[sodoColIdx1] : p.raw_sodo1;
+            const s2 = p.pool_row_data ? p.pool_row_data[sodoColIdx2] : p.raw_sodo2;
+            const s3 = p.pool_row_data ? p.pool_row_data[sodoColIdx3] : p.raw_sodo3;
+            const s4 = p.pool_row_data ? p.pool_row_data[sodoColIdx4] : p.raw_sodo4;
+            const s5 = p.pool_row_data ? p.pool_row_data[sodoColIdx5] : p.raw_sodo5;
+            if (s1) sImgs.push(s1);
+            if (s2) sImgs.push(s2);
+            if (s3) sImgs.push(s3);
+            if (s4) sImgs.push(s4);
+            if (s5) sImgs.push(s5);
+          }
 
           const sodoUrls = sImgs.map(url => normalizeImgUrl(url));
-          const nImgs = (p.imgs || []).filter(url => {
-            const norm = normalizeImgUrl(url);
-            return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
-          });
+          let nImgs = [];
+          if (p.curated_config && Array.isArray(p.curated_config.images)) {
+            nImgs = p.curated_config.images
+              .filter(img => img && img.url && img.role !== 'Sơ đồ' && img.role !== 'diagram' && img.role !== 'Mặt tiền' && img.role !== 'facade' && img.role !== 'Ẩn' && img.role !== 'hidden')
+              .map(img => img.url);
+          }
+          if (nImgs.length === 0) {
+            nImgs = (p.imgs || []).filter(url => {
+              const norm = normalizeImgUrl(url);
+              return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+            });
+          }
 
           setupScrollCarousel('carouselNha', nImgs, false);
           setupScrollCarousel('carouselSo', sImgs, true);
@@ -451,48 +469,6 @@
   }
 
 
-  
-  // === isListingSodoUrl ===
-    window.isListingSodoUrl = function(url, p) {
-      if (!url || !p) return false;
-      const normFn = window.normalizeImgUrl;
-      if (!normFn) return false;
-      const norm = normFn(url);
-      if (norm === '') return false;
-      
-      // 1. Nhận diện theo mẫu tên file Cloudinary được uploader tạo ra (cực kỳ tối ưu và nhanh)
-      const urlLower = String(url).toLowerCase();
-      if (urlLower.includes('/sodo1_') || urlLower.includes('/sodo2_') || 
-          urlLower.includes('/sodo3_') || urlLower.includes('/sodo4_') || urlLower.includes('/sodo5_')) {
-        return true;
-      }
-
-      // 2. Lấy 5 giá trị sodo hiện có của căn nhà (ưu tiên đọc từ DOM để phản hồi ngay lập tức khi thay đổi trên Form)
-      const getSodoVal = (idx) => {
-        let el = document.getElementById(`editSodo${idx}Url`);
-        if (el) return el.value.trim();
-        const colIdx = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(idx) : null;
-        if (p.pool_row_data && colIdx !== null) return p.pool_row_data[colIdx];
-        return p[`raw_sodo${idx}`] || '';
-      };
-
-      const sodo1Val = getSodoVal(1);
-      const sodo2Val = getSodoVal(2);
-      const sodo3Val = getSodoVal(3);
-      const sodo4Val = getSodoVal(4);
-      const sodo5Val = getSodoVal(5);
-
-      const normS1 = normFn(sodo1Val);
-      const normS2 = normFn(sodo2Val);
-      const normS3 = normFn(sodo3Val);
-      const normS4 = normFn(sodo4Val);
-      const normS5 = normFn(sodo5Val);
-
-      if (norm === normS1 || norm === normS2 || norm === normS3 || norm === normS4 || norm === normS5) {
-        return true;
-      }
-      return false;
-    };
   // === renderImageEditorWidget ===
     function renderImageEditorWidget(p) {
       const slidesBefore = window.imageEditorSlides || [];
@@ -3118,7 +3094,6 @@
   window.uploadFileToR2 = uploadFileToR2;
   window.executePullFromPool = executePullFromPool;
   window.renderImageEditorWidget = renderImageEditorWidget;
-  window.isListingSodoUrl = isListingSodoUrl;
   window.slideImageEditorCarousel = slideImageEditorCarousel;
   window.gotoImageEditorSlide = gotoImageEditorSlide;
   window.handleCarouselTouchStart = handleCarouselTouchStart;
