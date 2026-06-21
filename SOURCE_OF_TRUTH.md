@@ -323,6 +323,19 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-22 (Nghiệm thu US-103 - Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi - TEST PASS)
+*   **Mã User Story:** `US-103`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Phát triển Scraper Userscript**: Viết tệp [thienkhoi_list_scraper.user.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/thienkhoi_list_scraper.user.js) chạy trên Tampermonkey/Violentmonkey phục vụ tại endpoint tĩnh `/static/js/thienkhoi_list_scraper.user.js`.
+     - **Tối ưu hóa Tồn tại Căn (Batch-Check)**: Trích xuất các listing ID trên màn hình (DOM) gửi batch query `POST /api/listings/check-exist` kiểm tra nhanh sự tồn tại trong SQLite, tránh tải toàn bộ 6000+ căn về client gây quá tải.
+     - **Highlight lưới danh sách**: Tự động đánh dấu màu xanh lá và hiển thị `✅ Đã có` trên nút cào của các card căn đã có trong database local.
+     - **Bộ lọc & Đồng bộ panel nổi**: Tự động rebuild danh sách panel nổi đồng bộ 100% theo các card hiển thị trên DOM (cập nhật ngay khi tìm kiếm/lọc quận, đường trên trang Thiên Khôi) và tự động lọc loại bỏ các căn đã cào.
+     - **Duy trì Trạng thái Checkbox**: Lưu trữ các checkbox bị bỏ chọn thủ công vào `uncheckedPanelIds` (Set) giúp duy trì lựa chọn của người dùng qua các phiên tự động rebuild danh sách mỗi 1.5 giây.
+     - **Nút Bật/Tắt Curation AI**: Thêm toggle switch trên floating panel cho phép người dùng tùy chọn bật tắt việc gọi Gemini GenAI tạo mô tả curation khi cào (gửi tham số `run_ai` lên API recrawl backend).
+     - **Delay ngẫu nhiên (Bulk Crawl Delay)**: Tự động tạo khoảng trễ ngẫu nhiên từ 2s - 5s giữa mỗi yêu cầu cào hàng loạt để tránh bị khóa tài khoản hoặc giới hạn rate limit.
+     - **Chuẩn hóa ID & Auto Cookie Sync**: Chuẩn hóa chữ thường (lowercase) cho tất cả listing UUID và tự động đồng bộ cookie trình duyệt về local server qua endpoint `/api/crawl` ngay khi tải trang và trước mỗi lượt cào.
+     - **Tích hợp Curator Dashboard & E2E Test**: Tích hợp card tải nhanh Userscript vào Curator Dashboard (`curator.html` & `curator_html_data.py`). Biên dịch thành công và chạy E2E Playwright test suite đạt **100% PASS**.
+
 ### 2026-06-21 (Nghiệm thu US-100 - Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc - TEST PASS)
 *   **Mã User Story:** `US-100`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1156,6 +1169,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-103:** Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi ✅ Done 2026-06-22
 - [x] **US-102:** Lọc các căn chưa có raw_json_full trên Curator Dashboard ✅ Done 2026-06-21
 - [ ] **US-101:** Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên
 - [x] **US-100:** Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) ✅ Done 2026-06-21

@@ -3,16 +3,17 @@
 Last updated: 2026-06-21
 
 ## Stats
-- Total: 111
+- Total: 112
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 21
-- accepted: 81
+- accepted: 82
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-103 | Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi | accepted | M | 2026-06-22 | `static/js/thienkhoi_list_scraper.user.js`, `curator.html`, `curator_html_data.py` |
 | US-102 | Lọc các căn chưa có raw_json_full trên Curator Dashboard | done | S | 2026-06-21 | `manager.py`, `curator.html`, `curator_html_data.py` |
 | US-101 | Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên | backlog | M | 2026-06-21 | `manager.py`, `pool_lego.py` |
 | US-100 | Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) | accepted | M | 2026-06-20 | `fetcher.py`, `pool_lego.py`, `static/js/lego_filters.js`, `docs/stories/_inbox/US-100_dynamic_json_filtering.md` |
@@ -129,6 +130,7 @@ Last updated: 2026-06-21
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-103_crawl_listings_userscript|US-103]]: Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi (accepted)
 - [[US-102_missing_json_curator_tab|US-102]]: Lọc các căn chưa có raw_json_full trên Curator Dashboard (done)
 - [[US-101_optimize_recrawl_image_handling|US-101]]: Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên (backlog)
 - [[US-095_fix_listings_table_undefined|US-095]]: Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 (accepted)
