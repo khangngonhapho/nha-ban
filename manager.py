@@ -2639,6 +2639,38 @@ def get_listings():
         "status_counts": counts
     })
 
+@app.route('/api/listings/check-exist', methods=['POST'])
+def check_listings_exist():
+    """Kiểm tra danh sách tk_id xem có tồn tại trong database local không (tối ưu hóa hiệu năng)"""
+    data = request.json or {}
+    tk_ids = data.get("tk_ids", [])
+    if not tk_ids:
+        return jsonify({"exists": []})
+        
+    if not os.path.exists(DB_FILE):
+        return jsonify({"exists": []})
+        
+    # Lọc bỏ giá trị không hợp lệ
+    tk_ids = [str(x).strip() for x in tk_ids if x]
+    if not tk_ids:
+        return jsonify({"exists": []})
+        
+    try:
+        conn = sqlite3.connect(DB_FILE, timeout=10.0)
+        cursor = conn.cursor()
+        
+        # Tạo câu truy vấn IN với tham số an toàn
+        placeholders = ",".join(["?"] * len(tk_ids))
+        sql = f"SELECT tk_id FROM {LISTINGS_TABLE} WHERE tk_id IN ({placeholders})"
+        rows = cursor.execute(sql, tk_ids).fetchall()
+        conn.close()
+        
+        exists_ids = [r[0] for r in rows if r[0]]
+        return jsonify({"exists": exists_ids})
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Lỗi kiểm tra tồn tại căn: {str(e)}")
+        return jsonify({"exists": [], "error": str(e)}), 500
+
 @app.route('/api/listings/<tk_id>', methods=['GET', 'PUT', 'DELETE'])
 def handle_listing_detail(tk_id):
     """Lấy chi tiết hoặc cập nhật cấu hình biên tập cho 1 căn"""

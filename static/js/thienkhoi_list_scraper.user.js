@@ -369,28 +369,35 @@
     let detectedListings = [];
     let isCrawlingBulk = false;
     let localListingIds = new Set();
+    let checkedIds = new Set(); // Cache verified listing IDs to prevent duplicate calls
 
-    // FETCH LOCALLY CRAWLED LISTINGS FROM FLASK DB
-    function fetchLocalListings() {
+    // CHECK A BATCH OF LISTING IDS FOR LOCAL EXISTENCE
+    function checkExistLocally(tkIds) {
+        const idsToCheck = tkIds.filter(id => !checkedIds.has(id));
+        if (idsToCheck.length === 0) return Promise.resolve(true);
+
         return new Promise((resolve) => {
             GM_xmlhttpRequest({
-                method: "GET",
-                url: `${getLocalUrl()}/api/listings`,
+                method: "POST",
+                url: `${getLocalUrl()}/api/listings/check-exist`,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: JSON.stringify({ tk_ids: idsToCheck }),
                 onload: function(response) {
                     if (response.status === 200) {
                         try {
                             const resData = JSON.parse(response.responseText);
-                            const list = resData.listings || [];
-                            localListingIds.clear();
-                            list.forEach(item => {
-                                if (item.tk_id) {
-                                    localListingIds.add(item.tk_id);
-                                }
+                            const exists = resData.exists || [];
+                            exists.forEach(id => {
+                                localListingIds.add(id);
                             });
-                            console.log(`[Khang Ngô BDS Scraper] Đã tải ${localListingIds.size} căn từ database local.`);
+                            // Mark all these IDs as verified
+                            idsToCheck.forEach(id => checkedIds.add(id));
+                            console.log(`[Khang Ngô BDS Scraper] Đã kiểm tra ${idsToCheck.length} căn mới. Phát hiện ${exists.length} căn đã cào.`);
                             resolve(true);
                         } catch (e) {
-                            console.error("[Khang Ngô BDS Scraper] Lỗi parse danh sách local:", e);
+                            console.error("[Khang Ngô BDS Scraper] Lỗi parse phản hồi check-exist:", e);
                             resolve(false);
                         }
                     } else {
@@ -398,7 +405,7 @@
                     }
                 },
                 onerror: function(err) {
-                    console.warn("[Khang Ngô BDS Scraper] Không thể kết nối local server để lấy danh sách căn.");
+                    console.warn("[Khang Ngô BDS Scraper] Không thể kết nối local server để kiểm tra tồn tại căn.");
                     resolve(false);
                 }
             });
@@ -588,11 +595,38 @@
         showToast("Đã hoàn tất cào hàng loạt!");
     }
 
+    let isChecking = false;
+
     // PARSE DOM TO FIND LISTING CARDS
-    function scanListings() {
+    async function scanListings() {
+        if (isChecking) return;
+
         // Look for cards: div with class shadow-small
         const cards = document.querySelectorAll('div.shadow-small');
+        if (cards.length === 0) return;
+
         let newItemsFound = false;
+
+        // Collect detected IDs to batch check their existence
+        const detectedIds = [];
+        cards.forEach(card => {
+            const aTag = card.querySelector('a[href*="/sources/"], a[href*="/Detail/"]');
+            if (!aTag) return;
+            const href = aTag.getAttribute('href');
+            if (!href) return;
+            const match = href.match(/\/(?:sources|Detail)\/([a-f0-9\-]{36}|\d+)/i);
+            if (match) {
+                detectedIds.push(match[1]);
+            }
+        });
+
+        // Filter out IDs we haven't checked yet and verify their status
+        const uncheckedIds = detectedIds.filter(id => !checkedIds.has(id));
+        if (uncheckedIds.length > 0) {
+            isChecking = true;
+            await checkExistLocally(uncheckedIds);
+            isChecking = false;
+        }
 
         cards.forEach(card => {
             // Find detail link
@@ -606,12 +640,27 @@
 
             const tkId = match[1];
 
-            // If button is already injected, skip
-            if (card.querySelector('.kn-scrape-btn')) return;
-
             // Extract title
             const titleEl = card.querySelector('p.line-clamp-2') || card.querySelector('p');
             const title = titleEl ? titleEl.textContent.trim() : 'Không rõ tiêu đề';
+
+            // If button is already injected, update state and skip
+            const existingBtn = card.querySelector('.kn-scrape-btn');
+            if (existingBtn) {
+                if (!existingBtn.classList.contains('crawling')) {
+                    const isCrawled = localListingIds.has(tkId);
+                    if (isCrawled) {
+                        existingBtn.className = 'kn-scrape-btn success';
+                        existingBtn.innerHTML = `✅ Đã có`;
+                        existingBtn.title = "Căn này đã có trong database local. Nhấn để cào lại.";
+                    } else {
+                        existingBtn.className = 'kn-scrape-btn';
+                        existingBtn.innerHTML = `📥 Cào Căn Này`;
+                        existingBtn.title = "Cào căn này về database local.";
+                    }
+                }
+                return;
+            }
 
             // Create button
             const btn = document.createElement('button');
@@ -802,9 +851,6 @@
         }
         initializeDOM();
         createFloatingPanel();
-        
-        // Load locally crawled listing IDs first
-        await fetchLocalListings();
         
         scanListings();
 
