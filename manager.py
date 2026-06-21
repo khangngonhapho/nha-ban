@@ -2964,11 +2964,48 @@ def set_listing_crawl_failed(tk_id, reason):
     except Exception as e:
         add_log_message(f"[⚠️ WARNING] Không thể cập nhật trạng thái lỗi cào cho căn {tk_id}: {str(e)}")
 
+def run_ai_curation_for_crawled_listing(tk_id, data):
+    run_ai = data.get("run_ai", False)
+    if run_ai:
+        try:
+            cfg = load_config()
+            conn_check = sqlite3.connect(DB_FILE, timeout=30.0)
+            conn_check.row_factory = sqlite3.Row
+            cursor_check = conn_check.cursor()
+            saved_row = cursor_check.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
+            conn_check.close()
+            
+            if saved_row:
+                d_norm = normalize_listing_for_client(saved_row)
+                ai_result = generate_ai_curation_for_listing_backend(d_norm, cfg)
+                if ai_result:
+                    conn_update = sqlite3.connect(DB_FILE, timeout=30.0)
+                    cursor_update = conn_update.cursor()
+                    col_tieu_de = get_safe_col_name("Tiêu đề Public")
+                    col_mo_ta = get_safe_col_name("Mô tả Public")
+                    col_phuong_cu = get_safe_col_name("Phường cũ (AI)")
+                    
+                    cursor_update.execute(
+                        f"UPDATE {LISTINGS_TABLE} SET `{col_tieu_de}` = ?, `{col_mo_ta}` = ?, `{col_phuong_cu}` = ? WHERE tk_id = ?",
+                        (ai_result.get("tieu_de_public", ""), ai_result.get("mo_ta_public", ""), ai_result.get("phuong_cu", ""), tk_id)
+                    )
+                    conn_update.commit()
+                    conn_update.close()
+                    add_log_message(f"[🤖 AUTO-AI SUCCESS] Đã tự động tạo Tiêu đề Public và Mô tả bằng AI cho căn {tk_id}")
+        except Exception as e_ai:
+            add_log_message(f"[❌ AUTO-AI ERROR] Lỗi tự động tạo Curation AI cho căn {tk_id}: {str(e_ai)}")
+
 @app.route('/api/listings/<tk_id>/recrawl', methods=['POST'])
 def recrawl_single_listing(tk_id):
     """Cào lại hoặc cào mới duy nhất căn này bằng cookie Thiên Khôi hiện tại"""
     if not os.path.exists(DB_FILE):
         return jsonify({"status": "error", "message": "Database không tồn tại"}), 404
+        
+    data = {}
+    try:
+        data = request.json or {}
+    except Exception:
+        pass
         
     try:
         conn = sqlite3.connect(DB_FILE, timeout=30.0)
@@ -3198,6 +3235,9 @@ def recrawl_single_listing(tk_id):
                 add_log_message(f"[⚠️ WARNING] Lỗi trích xuất JSON_UI trong recrawl: {str(e_json_ui)}")
                 
             fetcher.save_raw_to_sqlite(tk_id, crawled_data, property_images)
+            
+            # Call AI Curation helper
+            run_ai_curation_for_crawled_listing(tk_id, data)
             
             add_log_message(f"[✅] Đã cào thô thành công căn (Proptech): {tk_id}. Tiến hành di cư ảnh và xuất bản...")
             
@@ -3433,6 +3473,9 @@ def recrawl_single_listing(tk_id):
         crawled_data["raw_json_full"] = ""
         
         fetcher.save_raw_to_sqlite(tk_id, crawled_data, combined_images)
+        
+        # Call AI Curation helper
+        run_ai_curation_for_crawled_listing(tk_id, data)
         
         add_log_message(f"[✅] Đã cào thô thành công căn: {tk_id}. Tiến hành di cư ảnh và xuất bản...")
         

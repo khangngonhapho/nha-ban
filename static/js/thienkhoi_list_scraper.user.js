@@ -371,6 +371,10 @@
     let localListingIds = new Set();
     let checkedIds = new Set(); // Cache verified listing IDs to prevent duplicate calls
     let uncheckedPanelIds = new Set(); // Track manually unchecked IDs in the panel
+    let runAi = false;
+    try {
+        runAi = localStorage.getItem('kn_run_ai') === 'true';
+    } catch (e) {}
 
     // CHECK A BATCH OF LISTING IDS FOR LOCAL EXISTENCE
     function checkExistLocally(tkIds) {
@@ -473,6 +477,7 @@
             headers: {
                 "Content-Type": "application/json"
             },
+            data: JSON.stringify({ run_ai: runAi }),
             timeout: 60000,
             onload: function(response) {
                 buttonEl.disabled = false;
@@ -549,6 +554,7 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
+                    data: JSON.stringify({ run_ai: runAi }),
                     timeout: 60000,
                     onload: function(response) {
                         try {
@@ -585,8 +591,10 @@
                     }
                 });
             });
-            // Delay 2s between requests to be safe
-            await new Promise(r => setTimeout(r, 2000));
+            // Randomized delay between 2 to 5 seconds to prevent rate limiting
+            const delayMs = Math.floor(Math.random() * 3000) + 2000;
+            writeLog(`Chờ ${(delayMs/1000).toFixed(1)} giây trước khi cào căn tiếp theo...`);
+            await new Promise(r => setTimeout(r, delayMs));
         }
 
         isCrawlingBulk = false;
@@ -751,9 +759,15 @@
                 </div>
                 
                 <!-- Config -->
-                <div class="kn-config-row">
-                    <span class="kn-config-label">Cổng Local Server:</span>
-                    <input type="text" class="kn-config-input" id="kn-port-input" value="${localPort}" />
+                <div class="kn-config-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span class="kn-config-label">Tự động tạo Curation AI:</span>
+                        <input type="checkbox" id="kn-run-ai-toggle" style="accent-color: #E31A22; cursor: pointer;" />
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span class="kn-config-label">Cổng Local Server:</span>
+                        <input type="text" class="kn-config-input" id="kn-port-input" value="${localPort}" />
+                    </div>
                 </div>
 
                 <!-- Logs Box -->
@@ -803,6 +817,19 @@
         document.getElementById('kn-btn-bulk-scrape').addEventListener('click', () => {
             crawlBulk();
         });
+
+        // AI Curation Toggle change
+        const runAiToggle = document.getElementById('kn-run-ai-toggle');
+        if (runAiToggle) {
+            runAiToggle.checked = runAi;
+            runAiToggle.addEventListener('change', (e) => {
+                runAi = e.target.checked;
+                try {
+                    localStorage.setItem('kn_run_ai', runAi);
+                } catch (err) {}
+                writeLog(`Đã ${runAi ? 'BẬT' : 'TẮT'} tự động tạo Curation AI.`);
+            });
+        }
 
         // Port change
         document.getElementById('kn-port-input').addEventListener('change', (e) => {
