@@ -424,10 +424,10 @@
 
         .raw-row {
             display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 20px;
-            padding: 8px 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            grid-template-columns: 80px 60px 200px 1fr;
+            gap: 15px;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             align-items: center;
         }
 
@@ -435,18 +435,70 @@
             border-bottom: none;
         }
 
-        .raw-key {
-            font-size: 12px;
-            color: var(--accent-cyan);
-            font-weight: 600;
+        .raw-col-code {
+            font-weight: 700;
+            color: var(--accent-gold);
             font-family: monospace;
-            word-break: break-all;
+            font-size: 14px;
         }
 
-        .raw-val {
+        .raw-col-idx {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .raw-col-name {
+            color: var(--accent-cyan);
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+            font-weight: 600;
+        }
+
+        .raw-col-value-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .raw-col-val {
             font-size: 13px;
             color: var(--text-main);
             word-break: break-all;
+        }
+
+        .raw-col-val .empty {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .raw-img-preview {
+            max-width: 150px;
+            max-height: 120px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.2s;
+            object-fit: cover;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .raw-img-preview:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .raw-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                align-items: flex-start;
+            }
+            .raw-col-code, .raw-col-idx, .raw-col-name {
+                display: inline-block;
+                margin-right: 10px;
+            }
         }
 
         /* Image Gallery */
@@ -1638,6 +1690,58 @@
         // =====================================================================
         // RAW COLUMNS INSPECTOR TAB RENDERER
         // =====================================================================
+        function getExcelColumnName(colIndex) {
+            let columnName = "";
+            let temp = colIndex;
+            while (temp >= 0) {
+                columnName = String.fromCharCode((temp % 26) + 65) + columnName;
+                temp = Math.floor(temp / 26) - 1;
+            }
+            return columnName;
+        }
+
+        function isImageLink(val) {
+            if (typeof val !== 'string') return false;
+            const cleanVal = val.trim();
+            if (!cleanVal.startsWith('http://') && !cleanVal.startsWith('https://')) return false;
+            return /\.(jpg|jpeg|png|webp|gif|svg|bmp)/i.test(cleanVal) || 
+                   cleanVal.includes('res.cloudinary.com') ||
+                   cleanVal.includes('googleusercontent.com') ||
+                   cleanVal.includes('pub-e92603c36c8d4789917d05d1eba12a7e');
+        }
+
+        function renderRawRowHtml(header, val, index) {
+            const excelCode = getExcelColumnName(index);
+            const colNum = index + 1;
+            
+            const isImg = isImageLink(val);
+            const displayVal = (val !== undefined && val !== null && val !== '') ? val : '<span class="empty">[Trống]</span>';
+            
+            let imgPreviewHtml = '';
+            if (isImg) {
+                let cleanUrl = val.trim();
+                if (cleanUrl.includes('drive.google.com')) {
+                    const match = cleanUrl.match(/id=([^&]+)/) || cleanUrl.match(/file\/d\/([^/]+)/);
+                    if (match) cleanUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
+                }
+                imgPreviewHtml = `
+                    <div style="margin-top: 4px;">
+                        <img src="${cleanUrl}" class="raw-img-preview" alt="Preview" onclick="openLightbox('${val.trim()}')" onerror="this.style.display='none'">
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="raw-col-code">${excelCode}</div>
+                <div class="raw-col-idx">#${colNum}</div>
+                <div class="raw-col-name" title="${header}">${header}</div>
+                <div class="raw-col-value-container">
+                    <div class="raw-col-val">${displayVal}</div>
+                    ${imgPreviewHtml}
+                </div>
+            `;
+        }
+
         let currentListingRaw = null;
 
         function renderRawInspector(item) {
@@ -1653,21 +1757,29 @@
             document.getElementById('source-col-search').value = '';
 
             if (activeDataMode === 'sqlite') {
-                // In SQLite mode, columns are represented by key-value pairs of the joined dictionary
-                Object.keys(item).forEach(key => {
+                // In SQLite mode, columns are represented by keys of the joined dictionary
+                poolHeaders.forEach((header, index) => {
+                    const val = item[header];
+                    const excelCode = getExcelColumnName(index);
+                    const colNum = index + 1;
+                    
                     const rowDiv = document.createElement('div');
                     rowDiv.className = 'raw-row';
-                    rowDiv.setAttribute('data-col', key.toLowerCase());
-                    rowDiv.innerHTML = `
-                        <span class="raw-key" title="${key}">${key}</span>
-                        <span class="raw-val">${item[key] !== null ? item[key] : '<span class="empty">[Trống]</span>'}</span>
-                    `;
+                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
+                    rowDiv.innerHTML = renderRawRowHtml(header, val, index);
+                    poolList.appendChild(rowDiv);
+                });
+
+                sourceHeaders.forEach((header, index) => {
+                    const val = item[header];
+                    const excelCode = getExcelColumnName(index);
+                    const colNum = index + 1;
                     
-                    if (key.startsWith('custom_')) {
-                        sourceList.appendChild(rowDiv);
-                    } else {
-                        poolList.appendChild(rowDiv);
-                    }
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'raw-row';
+                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
+                    rowDiv.innerHTML = renderRawRowHtml(header, val, index);
+                    sourceList.appendChild(rowDiv);
                 });
             } else {
                 // In Google Sheets mode, use LegoState headers and raw arrays
@@ -1677,26 +1789,26 @@
                 // Pool Tab
                 poolHeaders.forEach((header, index) => {
                     const val = poolRow[index];
+                    const excelCode = getExcelColumnName(index);
+                    const colNum = index + 1;
+                    
                     const rowDiv = document.createElement('div');
                     rowDiv.className = 'raw-row';
-                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index}`);
-                    rowDiv.innerHTML = `
-                        <span class="raw-key" title="Cột ${index + 1}: ${header}">Col ${index + 1}: ${header}</span>
-                        <span class="raw-val">${val !== undefined && val !== '' ? val : '<span class="empty">[Trống]</span>'}</span>
-                    `;
+                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
+                    rowDiv.innerHTML = renderRawRowHtml(header, val, index);
                     poolList.appendChild(rowDiv);
                 });
 
                 // Source Tab
                 sourceHeaders.forEach((header, index) => {
                     const val = sourceRow[index];
+                    const excelCode = getExcelColumnName(index);
+                    const colNum = index + 1;
+                    
                     const rowDiv = document.createElement('div');
                     rowDiv.className = 'raw-row';
-                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index}`);
-                    rowDiv.innerHTML = `
-                        <span class="raw-key" title="Cột ${index + 1}: ${header}">Col ${index + 1}: ${header}</span>
-                        <span class="raw-val">${val !== undefined && val !== '' ? val : '<span class="empty">[Trống]</span>'}</span>
-                    `;
+                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
+                    rowDiv.innerHTML = renderRawRowHtml(header, val, index);
                     sourceList.appendChild(rowDiv);
                 });
             }
