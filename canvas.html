@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Nhìn Toàn Cảnh (Canvas View) - Khang Ngô Nhà Phố</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/global.css?v=20260622">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(22, 28, 45, 0.7);
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --border-color: rgba(148, 163, 184, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-gold: #fbbf24;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-slate: #64748b;
+            --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --glass-blur: blur(12px);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at 10% 20%, rgba(26, 32, 60, 0.5) 0%, rgba(10, 12, 25, 0.5) 90%);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Top Header */
+        header {
+            height: 70px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-section span {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mode-selector {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+            font-weight: 500;
+        }
+
+        .mode-selector:focus {
+            border-color: var(--accent-gold);
+        }
+
+        /* Workspace Layout */
+        .workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 380px;
+            border-right: 1px solid var(--border-color);
+            background: var(--panel-bg);
+            backdrop-filter: var(--glass-blur);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .search-container {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-container input, .search-container select {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-container input:focus, .search-container select:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .sidebar-tab {
+            flex: 1;
+            padding: 12px 4px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .sidebar-tab:hover {
+            color: var(--text-main);
+        }
+
+        .sidebar-tab.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+            background: rgba(30, 41, 59, 0.2);
+        }
+
+        .listing-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .listing-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .listing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            transition: 0.2s;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .listing-card:hover {
+            transform: translateY(-2px);
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        .listing-card.active {
+            background: rgba(24, 37, 66, 0.9);
+            border-color: var(--accent-gold);
+        }
+
+        .listing-card.active::before {
+            background: var(--accent-gold);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .card-id {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .card-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .card-title {
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Detail Area */
+        .detail-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .detail-tabs {
+            display: flex;
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+        }
+
+        .detail-tab {
+            padding: 15px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 3px solid transparent;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .detail-tab:hover {
+            color: var(--text-main);
+        }
+
+        .detail-tab.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        /* Canvas Dashboard Layout */
+        .canvas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 20px;
+        }
+
+        .canvas-card {
+            background: rgba(22, 28, 45, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-premium);
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .canvas-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .field-pair-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .field-pair {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+            padding-bottom: 8px;
+        }
+
+        .field-pair:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .field-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .field-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .val-box {
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-main);
+            word-break: break-all;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .val-box.empty {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.5;
+        }
+
+        .val-box.raw {
+            border-left: 2.5px solid var(--accent-cyan);
+        }
+
+        .val-box.curated {
+            border-left: 2.5px solid var(--accent-gold);
+            background: rgba(251, 191, 36, 0.03);
+        }
+
+        .val-box.pii {
+            border-left: 2.5px solid var(--accent-red);
+            background: rgba(239, 68, 68, 0.03);
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* Raw Inspector Table */
+        .raw-table-controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .raw-table-controls input {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .raw-table-controls input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .raw-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .raw-row {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 20px;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            align-items: center;
+        }
+
+        .raw-row:last-child {
+            border-bottom: none;
+        }
+
+        .raw-key {
+            font-size: 12px;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .raw-val {
+            font-size: 13px;
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        /* Image Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 4/3;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            background: #000;
+            transition: 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            border-color: var(--accent-gold);
+            box-shadow: var(--shadow-premium);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .img-role-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: var(--accent-gold);
+            font-size: 10px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            text-transform: uppercase;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 40px;
+            min-height: 400px;
+        }
+
+        .empty-state h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        /* Profile Widget */
+        .profile-widget {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .profile-widget img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--accent-gold);
+        }
+
+        /* Google Sign-in overlay */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+
+        .auth-card {
+            background: rgba(22, 28, 45, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .auth-card h2 {
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* Lightbox modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 85%;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .lightbox-rotate {
+            position: absolute;
+            top: -40px;
+            right: 50px;
+            color: var(--accent-gold);
+            font-size: 14px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .lightbox-download {
+            position: absolute;
+            top: -40px;
+            right: 150px;
+            color: var(--accent-green);
+            font-size: 14px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-left: 10px;
+            display: inline-block;
+        }
+        .badge-raw { background: rgba(59, 82, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 82, 246, 0.3); }
+        .badge-published { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-error { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header>
+        <div class="logo-section">
+            <h1>Khang Ngô Nhà Phố</h1>
+            <span>Canvas Dashboard</span>
+        </div>
+
+        <div class="header-controls">
+            <!-- Mode Selector: Local SQLite vs Live Google Sheets -->
+            <select class="mode-selector" id="data-mode-select" onchange="switchDataMode(this.value)">
+                <option value="sqlite">💾 SQLite (Dữ liệu cục bộ)</option>
+                <option value="sheets">🌐 Google Sheets (Đồng bộ Realtime)</option>
+            </select>
+
+            <!-- Google OAuth Profile status -->
+            <div id="profile-container" style="display: none;">
+                <div class="profile-widget">
+                    <img id="profile-pic" src="" alt="Avatar">
+                    <span id="profile-name">Admin</span>
+                    <button class="btn btn-outline" style="font-size: 10px; padding: 2px 6px; height: auto;" onclick="googleSignOut()">Đăng xuất</button>
+                </div>
+            </div>
+            
+            <a href="/" class="btn btn-outline" style="font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center;">✍️ Về Biên Tập</a>
+        </div>
+    </header>
+
+    <!-- Workspace Container -->
+    <div class="workspace">
+        <!-- Sidebar Navigation List -->
+        <div class="sidebar">
+            <div class="search-container">
+                <input type="text" id="canvas-search" placeholder="🔍 Tìm kiếm mã căn, địa chỉ, đường..." oninput="filterListings()">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <select id="filter-quan" onchange="filterListings()">
+                        <option value="">Tất cả Quận</option>
+                        <option value="q1">Quận 1</option>
+                        <option value="q3">Quận 3</option>
+                        <option value="q10">Quận 10</option>
+                        <option value="pn">Phú Nhuận</option>
+                        <option value="tb">Tân Bình</option>
+                        <option value="bt">Bình Thạnh</option>
+                        <option value="gv">Gò Vấp</option>
+                        <option value="tp">Tân Phú</option>
+                        <option value="btan">Bình Tân</option>
+                        <option value="td">Thủ Đức</option>
+                    </select>
+                    <select id="filter-status" onchange="filterListings()">
+                        <option value="all">Mọi trạng thái</option>
+                        <option value="published">Đã lên sóng</option>
+                        <option value="raw">Chờ biên tập</option>
+                    </select>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between;">
+                    <span>Tổng cộng: <strong id="stats-total" style="color:var(--accent-cyan)">0</strong> căn</span>
+                    <span>Đang lọc: <strong id="stats-filtered" style="color:var(--accent-gold)">0</strong> căn</span>
+                </div>
+            </div>
+
+            <!-- Scrollable list of houses -->
+            <div class="listing-scroll" id="listings-list">
+                <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
+                    <div class="spinner-small" style="display: inline-block; margin-bottom: 10px;"></div>
+                    <p>Đang nạp dữ liệu rổ hàng...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Detail Canvas area -->
+        <div class="detail-area">
+            <!-- Detail tab bar -->
+            <div class="detail-tabs" id="detail-tabs-bar" style="display: none;">
+                <div class="detail-tab active" onclick="switchDetailTab('canvas-tab')">📊 Nhìn Toàn Cảnh</div>
+                <div class="detail-tab" onclick="switchDetailTab('gallery-tab')">🖼️ Thư viện Hình ảnh</div>
+                <div class="detail-tab" onclick="switchDetailTab('pool-raw-tab')">📝 Chi tiết Pool (Thô)</div>
+                <div class="detail-tab" onclick="switchDetailTab('source-raw-tab')">🚀 Chi tiết Source (Sạch)</div>
+            </div>
+
+            <!-- Main Scrollable Content -->
+            <div class="detail-content" id="detail-content-area">
+                <div class="empty-state" id="empty-state-view">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-muted); margin-bottom: 15px; opacity: 0.7;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-3.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                    </svg>
+                    <h3>Chưa có căn nhà nào được chọn</h3>
+                    <p>Vui lòng nhấp chọn một căn nhà từ danh mục rổ hàng bên trái để xem phân tích so sánh trực quan.</p>
+                </div>
+
+                <div id="listing-view" style="display: none;">
+                    <!-- Top House Header info -->
+                    <div class="canvas-card" style="margin-bottom: 20px; border-left: 5px solid var(--accent-gold);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                            <div>
+                                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                                    <span style="font-size: 20px; font-weight: 800; font-family: 'Outfit'; letter-spacing: 0.5px; color: #fff;" id="view-header-id">ID</span>
+                                    <span id="view-header-status-badge" class="badge badge-raw">Chờ biên tập</span>
+                                </div>
+                                <h2 style="font-family: 'Outfit'; font-size: 18px; font-weight: 600; line-height: 1.4; color: var(--text-main);" id="view-header-title">Tiêu đề public</h2>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Giá công khai</div>
+                                <div style="font-size: 28px; font-weight: 800; color: var(--accent-gold); font-family: 'Outfit';" id="view-header-price">0 Tỷ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 1: CANVAS MAIN DASHBOARD -->
+                    <div class="tab-pane active" id="canvas-tab">
+                        <div class="canvas-grid">
+                            <!-- Column 1: Vị trí & Kỹ thuật & Giá -->
+                            <div style="display: flex; flex-direction: column; gap: 20px;">
+                                <!-- 📍 Địa lý & Vị trí -->
+                                <div class="canvas-card">
+                                    <div class="canvas-card-title">📍 Vị trí & Địa lý đối chiếu</div>
+                                    <div class="field-pair-list">
+                                        <div class="field-pair">
+                                            <span class="field-label">Số nhà & Con hẻm thực tế (Bảo mật)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Thô)</div><div class="val-box raw" id="loc-so-nha-raw">-</div></div>
+                                                <div><div class="field-label">Source (Sạch)</div><div class="val-box curated pii" id="loc-so-nha-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Tên đường phố</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Thô)</div><div class="val-box raw" id="loc-duong-raw">-</div></div>
+                                                <div><div class="field-label">Source (Sạch)</div><div class="val-box curated" id="loc-duong-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Phường xã (Hành chính)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Thô)</div><div class="val-box raw" id="loc-phuong-raw">-</div></div>
+                                                <div><div class="field-label">Source (Sạch)</div><div class="val-box curated" id="loc-phuong-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Quận huyện (Khu vực)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Thô)</div><div class="val-box raw" id="loc-quan-raw">-</div></div>
+                                                <div><div class="field-label">Source (Sạch)</div><div class="val-box curated" id="loc-quan-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Phường cũ (Đặc trưng địa lý lịch sử)</span>
+                                            <div class="val-box curated" id="loc-phuong-cu-cur">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 📐 Thông số kỹ thuật & Diện tích -->
+                                <div class="canvas-card">
+                                    <div class="canvas-card-title">📐 Kỹ thuật, Diện tích & Kết cấu</div>
+                                    <div class="field-pair-list">
+                                        <div class="field-pair">
+                                            <span class="field-label">Diện tích đất (m2)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Thực tế)</div><div class="val-box raw" id="spec-dt-thuc-raw">-</div></div>
+                                                <div><div class="field-label">Source (Sổ công nhận)</div><div class="val-box curated" id="spec-dt-so-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Kích thước (Ngang x Dài)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Mặt tiền (Ngang)</div><div class="val-box raw" id="spec-ngang">-</div></div>
+                                                <div><div class="field-label">Chiều dài (m)</div><div class="val-box curated" id="spec-dai">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Kết cấu số tầng</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Thô)</div><div class="val-box raw" id="spec-tang-raw">-</div></div>
+                                                <div><div class="field-label">Source (Sạch)</div><div class="val-box curated" id="spec-tang-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Số phòng ngủ / Nhà vệ sinh</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Phòng ngủ (PN)</div><div class="val-box raw" id="spec-pn">-</div></div>
+                                                <div><div class="field-label">Toilet (WC)</div><div class="val-box curated" id="spec-wc">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Hướng phong thủy & Đặc trưng</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Hướng nhà</div><div class="val-box raw" id="spec-huong">-</div></div>
+                                                <div><div class="field-label">Ngủ trệt / CHDV</div><div class="val-box curated" id="spec-ngutret-chdv">-</div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 2: Curation & PII & Giá & Hệ thống -->
+                            <div style="display: flex; flex-direction: column; gap: 20px;">
+                                <!-- 💰 Giá cả & Giao dịch -->
+                                <div class="canvas-card">
+                                    <div class="canvas-card-title">💰 Giá cả & Phân loại giao dịch</div>
+                                    <div class="field-pair-list">
+                                        <div class="field-pair">
+                                            <span class="field-label">Thông tin Giá tiền (Tỷ đồng)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Giá chào thô)</div><div class="val-box raw" id="price-chao-raw">-</div></div>
+                                                <div><div class="field-label">Source (Giá Public)</div><div class="val-box curated" id="price-public-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Đơn giá đất trung bình (tr/m²)</span>
+                                            <div class="val-box curated" id="price-average">-</div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Hẻm trước nhà & Độ rộng (m)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Loại hẻm</div><div class="val-box raw" id="price-hem-loai">-</div></div>
+                                                <div><div class="field-label">Rộng hẻm (m)</div><div class="val-box curated" id="price-hem-rong">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Tình trạng nhà & Đánh giá phân loại</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Tình trạng</div><div class="val-box raw" id="price-tinh-trang">-</div></div>
+                                                <div><div class="field-label">Đánh giá admin</div><div class="val-box curated" id="price-danh-gia">-</div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 🤝 Đầu chủ & Chủ nhà (PII - Bảo mật nghiêm ngặt) -->
+                                <div class="canvas-card" style="border: 1px solid rgba(239, 68, 68, 0.3);">
+                                    <div class="canvas-card-title" style="color: var(--accent-red);">🤝 Thông tin Đầu chủ & Chủ nhà (PII)</div>
+                                    <div class="field-pair-list">
+                                        <div class="field-pair">
+                                            <span class="field-label">Thông tin liên hệ Chủ Nhà (Đầu nguồn)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Tên chủ nhà</div><div class="val-box pii" id="pii-owner-name">-</div></div>
+                                                <div><div class="field-label">SĐT liên hệ</div><div class="val-box pii" id="pii-owner-phone">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Thông tin liên hệ Đầu Chủ (Môi giới ký HĐ)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Tên đầu chủ</div><div class="val-box pii" id="pii-broker-name">-</div></div>
+                                                <div><div class="field-label">SĐT đầu chủ</div><div class="val-box pii" id="pii-broker-phone">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Link liên kết / Facebook Đầu chủ</span>
+                                            <div class="val-box pii" id="pii-broker-fb">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 🤖 Curation & AI Marketing -->
+                                <div class="canvas-card">
+                                    <div class="canvas-card-title">🤖 AI Marketing & Curation Notes</div>
+                                    <div class="field-pair-list">
+                                        <div class="field-pair">
+                                            <span class="field-label">Note nội bộ của Admin</span>
+                                            <div class="val-box curated" id="marketing-note" style="min-height: 50px; display: block; padding: 8px;">-</div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">USP Phân loại nổi bật (Tag thô)</span>
+                                            <div class="val-box raw" id="marketing-badges">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ⚙️ Thông tin Hệ thống -->
+                                <div class="canvas-card">
+                                    <div class="canvas-card-title">⚙️ Thông tin đồng bộ & Metadata</div>
+                                    <div class="field-pair-list" style="font-family: monospace; font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.03); padding-bottom: 4px;">
+                                            <span class="field-label" style="margin-bottom: 0;">System ID:</span>
+                                            <span id="meta-sys-id" style="color: var(--text-main);"></span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.03); padding-bottom: 4px;">
+                                            <span class="field-label" style="margin-bottom: 0;">Mã cào tin gốc:</span>
+                                            <span id="meta-ma-hang" style="color: var(--text-main);"></span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.03); padding-bottom: 4px;">
+                                            <span class="field-label" style="margin-bottom: 0;">Last Crawl:</span>
+                                            <span id="meta-last-crawl" style="color: var(--text-main);"></span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.03); padding-bottom: 4px;">
+                                            <span class="field-label" style="margin-bottom: 0;">Last Sync:</span>
+                                            <span id="meta-last-sync" style="color: var(--text-main);"></span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; padding-top: 4px;">
+                                            <span class="field-label" style="margin-bottom: 0;">Link cào gốc:</span>
+                                            <a id="meta-source-link" href="#" target="_blank" style="color: var(--accent-cyan); text-decoration: underline;">Mở nguồn ➔</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: GALLERY IMAGE GRID -->
+                    <div class="tab-pane" id="gallery-tab" style="display: none;">
+                        <div class="raw-table-controls" style="margin-bottom: 20px;">
+                            <button class="btn btn-gold" onclick="filterGallery('all')">Tất cả</button>
+                            <button class="btn" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="filterGallery('sodo')">📄 Sơ đồ / Sổ đỏ</button>
+                            <button class="btn" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="filterGallery('facade')">🏡 Mặt tiền</button>
+                            <button class="btn" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="filterGallery('alley')">🛣️ Hẻm</button>
+                            <button class="btn" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="filterGallery('interior')">🛋️ Nội thất / Khác</button>
+                        </div>
+                        <div class="gallery-grid" id="gallery-container">
+                            <!-- Dynamic gallery items here -->
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: RAW POOL COLUMNS INSPECTOR -->
+                    <div class="tab-pane" id="pool-raw-tab" style="display: none;">
+                        <div class="raw-table-controls">
+                            <input type="text" id="pool-col-search" placeholder="🔍 Nhập từ khóa để lọc cột (Ví dụ: Điện thoại, Giá, Sổ...)" oninput="filterRawColumns('pool')">
+                        </div>
+                        <div class="raw-list" id="pool-raw-list">
+                            <!-- Dynamic key-values list -->
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: RAW SOURCE COLUMNS INSPECTOR -->
+                    <div class="tab-pane" id="source-raw-tab" style="display: none;">
+                        <div class="raw-table-controls">
+                            <input type="text" id="source-col-search" placeholder="🔍 Nhập từ khóa để lọc cột (Ví dụ: tieu_de, gia, mo_ta...)" oninput="filterRawColumns('source')">
+                        </div>
+                        <div class="raw-list" id="source-raw-list">
+                            <!-- Dynamic key-values list -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Required Modal overlay -->
+    <div class="auth-overlay" id="auth-modal" style="display: none;">
+        <div class="auth-card">
+            <h2>🔑 Yêu cầu xác thực tài khoản</h2>
+            <p>Trang Canvas hoạt động ở chế độ <strong>Google Sheets</strong> yêu cầu kết nối với tài khoản được cấp quyền chỉnh sửa rổ hàng BDS Khang Ngô.</p>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <div id="g_id_onload"
+                     data-client_id="1088195961071-25r6rpvsfmoudqokb75u0m2ugu8na0v0.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_select="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="filled_blue"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left">
+                </div>
+            </div>
+            <button class="btn btn-outline" style="width: 100%;" onclick="switchDataMode('sqlite')">💾 Dùng SQLite Offline</button>
+        </div>
+    </div>
+
+    <!-- Image Lightbox Modal -->
+    <div class="lightbox-modal" id="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox(event)">✕</button>
+            <button class="lightbox-rotate" onclick="rotateLightbox(event)">🔄 Xoay ảnh</button>
+            <a class="lightbox-download" id="lightbox-dl-btn" href="#" download target="_blank">📥 Tải ảnh</a>
+            <img id="lightbox-img" src="" alt="Lightbox image" style="transform: rotate(0deg); transition: transform 0.2s ease;">
+        </div>
+    </div>
+
+    <!-- Core App logic -->
+    <script>
+        // Global State variables
+        let activeDataMode = 'sqlite';
+        let allListings = [];
+        let filteredListings = [];
+        let activeListingId = null;
+        let poolHeaders = [];
+        let sourceHeaders = [];
+        let currentRotation = 0;
+
+        // Auto detect localhost
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            
+            if (isLocal) {
+                switchDataMode('sqlite');
+            } else {
+                switchDataMode('sheets');
+            }
+        });
+
+        // Toggle SQLite vs Google Sheets
+        function switchDataMode(mode) {
+            activeDataMode = mode;
+            document.getElementById('data-mode-select').value = mode;
+            
+            const profileContainer = document.getElementById('profile-container');
+            const listingsContainer = document.getElementById('listings-list');
+            
+            listingsContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
+                    <div class="spinner-small" style="display: inline-block; margin-bottom: 10px;"></div>
+                    <p>Đang tải dữ liệu rổ hàng ${mode === 'sheets' ? 'Sheets API' : 'SQLite DB'}...</p>
+                </div>
+            `;
+            
+            if (mode === 'sheets') {
+                profileContainer.style.display = 'flex';
+                initializeGoogleSheetsMode();
+            } else {
+                profileContainer.style.display = 'none';
+                document.getElementById('auth-modal').style.display = 'none';
+                loadSQLiteData();
+            }
+            
+            // Reset active listing view
+            activeListingId = null;
+            document.getElementById('empty-state-view').style.display = 'flex';
+            document.getElementById('listing-view').style.display = 'none';
+            document.getElementById('detail-tabs-bar').style.display = 'none';
+        }
+
+        // =====================================================================
+        // SQLITE (LOCAL BACKEND) DATA LOADING
+        // =====================================================================
+        function loadSQLiteData() {
+            fetch('/api/listings')
+                .then(res => res.json())
+                .then(data => {
+                    allListings = data.listings || [];
+                    console.log("SQLite loaded listings count:", allListings.length);
+                    // Extract headers from SQL dict keys if we have listings
+                    if (allListings.length > 0) {
+                        const first = allListings[0];
+                        // Group keys based on Pool vs Source prefix
+                        poolHeaders = Object.keys(first).filter(k => !k.startsWith('custom_'));
+                        sourceHeaders = Object.keys(first).filter(k => k.startsWith('custom_'));
+                    }
+                    filterListings();
+                })
+                .catch(err => {
+                    console.error("Error loading SQLite data:", err);
+                    document.getElementById('listings-list').innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--accent-red);">
+                            <p>⚠️ Không thể kết nối SQLite Backend Server.</p>
+                            <p style="font-size:11px; margin-top:5px; color:var(--text-muted)">Đảm bảo bạn đã khởi chạy <code>python manager.py</code> locally.</p>
+                            <button class="btn btn-outline" style="margin-top:15px; font-size:11px;" onclick="loadSQLiteData()">🔄 Thử lại</button>
+                        </div>
+                    `;
+                });
+        }
+
+        // =====================================================================
+        // GOOGLE SHEETS (REALTIME DIRECT) LOADING VIA LEGO CORE
+        // =====================================================================
+        function initializeGoogleSheetsMode() {
+            if (typeof LegoState === 'undefined') {
+                // Dynamically load scripts if not loaded
+                loadScript('/static/js/lego_core.js', () => {
+                    loadScript('/static/js/lego_helpers.js', () => {
+                        startSheetsMode();
+                    });
+                });
+            } else {
+                startSheetsMode();
+            }
+        }
+
+        function loadScript(src, callback) {
+            const s = document.createElement('script');
+            s.src = src;
+            s.onload = callback;
+            document.head.appendChild(s);
+        }
+
+        function startSheetsMode() {
+            LegoState.isAdmin = true;
+            
+            // Listen to Auth events
+            LegoState.on('authRequired', () => {
+                document.getElementById('auth-modal').style.display = 'flex';
+            });
+            
+            LegoState.on('authStatusChanged', (status) => {
+                if (status.isTokenValid) {
+                    document.getElementById('auth-modal').style.display = 'none';
+                    // Update user profile info
+                    updateGoogleProfileWidget();
+                } else {
+                    document.getElementById('auth-modal').style.display = 'flex';
+                }
+            });
+
+            // Listen to Data loaded
+            LegoState.on('rawDataLoaded', (data) => {
+                allListings = data || [];
+                poolHeaders = LegoState.POOL_HEADERS || [];
+                sourceHeaders = LegoState.SOURCE_HEADERS || [];
+                console.log("Google Sheets loaded rows:", allListings.length);
+                filterListings();
+            });
+
+            // Init state
+            LegoState.loadData();
+        }
+
+        function updateGoogleProfileWidget() {
+            const token = localStorage.getItem('g_access_token');
+            if (!token) return;
+            
+            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(user => {
+                document.getElementById('profile-pic').src = user.picture || '/avatarKhangNgo.jpg';
+                document.getElementById('profile-name').innerText = user.name || 'Admin';
+            })
+            .catch(e => console.error("Error fetching google user info:", e));
+        }
+
+        // Callback from Google Sign-In
+        window.handleCredentialResponse = function(response) {
+            const idToken = response.credential;
+            // Parse payload for access token
+            fetch('/api/auth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: idToken, isCredentialToken: true })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.access_token) {
+                    localStorage.setItem('g_access_token', data.access_token);
+                    localStorage.setItem('g_token_expiry', Date.now() + (data.expires_in - 60) * 1000);
+                    if (data.refresh_token) {
+                        localStorage.setItem('g_refresh_token', data.refresh_token);
+                    }
+                    document.getElementById('auth-modal').style.display = 'none';
+                    LegoState.isTokenValid = true;
+                    LegoState.loadData();
+                    updateGoogleProfileWidget();
+                } else {
+                    alert("Đăng nhập thất bại: Google OAuth token missing.");
+                }
+            })
+            .catch(err => {
+                // Fallback direct storage if local proxy is not ready
+                console.warn("Server proxy failed, setting direct ID Token...");
+                localStorage.setItem('g_access_token', idToken);
+                localStorage.setItem('g_token_expiry', Date.now() + 3500 * 1000);
+                document.getElementById('auth-modal').style.display = 'none';
+                LegoState.isTokenValid = true;
+                LegoState.loadData();
+            });
+        };
+
+        function googleSignOut() {
+            localStorage.removeItem('g_access_token');
+            localStorage.removeItem('g_token_expiry');
+            localStorage.removeItem('g_refresh_token');
+            switchDataMode('sqlite');
+        }
+
+        // =====================================================================
+        // FILTER AND RENDER SIDEBAR LISTINGS
+        // =====================================================================
+        function filterListings() {
+            const query = document.getElementById('canvas-search').value.toLowerCase().trim();
+            const quan = document.getElementById('filter-quan').value.toLowerCase();
+            const status = document.getElementById('filter-status').value;
+            
+            filteredListings = allListings.filter(item => {
+                // Parse standard keys based on mode
+                let matchQ = true;
+                let matchStatus = true;
+                let matchSearch = true;
+                
+                let itemQuan = '';
+                let itemStatus = '';
+                let itemTitle = '';
+                let itemMaKN = '';
+                let itemSoNha = '';
+                let itemDuong = '';
+                let itemTkId = '';
+
+                if (activeDataMode === 'sqlite') {
+                    itemQuan = String(item.Quan || item.Qu_n || '').toLowerCase();
+                    itemStatus = item.status || '';
+                    itemTitle = String(item.Tieu_de_Public || item.Ti_u____Public || '').toLowerCase();
+                    itemMaKN = String(item.Ma_Khang_Ngo_ID || item.M__Khang_Ng___ID_ || '').toLowerCase();
+                    itemSoNha = String(item.Ngo_So_nha || item.Ng__S__nh_ || '').toLowerCase();
+                    itemDuong = String(item.Duong || item.___ng || '').toLowerCase();
+                    itemTkId = String(item.tk_id || '').toLowerCase();
+                } else {
+                    // Google Sheets object maps
+                    itemQuan = String(item.q || '').toLowerCase();
+                    itemStatus = item.is_invisible ? 'invisible' : (item.id ? 'published' : 'raw_complete');
+                    itemTitle = String(item.t || '').toLowerCase();
+                    itemMaKN = String(item.id || '').toLowerCase();
+                    itemSoNha = String(item.raw_so_nha || '').toLowerCase();
+                    itemDuong = String(item.raw_ten_duong || '').toLowerCase();
+                    itemTkId = String(item.system_id || '').toLowerCase();
+                }
+
+                // Apply filters
+                if (quan && !itemQuan.includes(quan)) matchQ = false;
+                
+                if (status === 'published') {
+                    if (activeDataMode === 'sqlite') {
+                        if (itemStatus !== 'published') matchStatus = false;
+                    } else {
+                        if (itemStatus !== 'published') matchStatus = false;
+                    }
+                } else if (status === 'raw') {
+                    if (activeDataMode === 'sqlite') {
+                        if (itemStatus === 'published') matchStatus = false;
+                    } else {
+                        if (itemStatus === 'published') matchStatus = false;
+                    }
+                }
+
+                if (query) {
+                    const matchQText = itemTitle.includes(query) || 
+                                       itemMaKN.includes(query) || 
+                                       itemSoNha.includes(query) || 
+                                       itemDuong.includes(query) || 
+                                       itemTkId.includes(query);
+                    if (!matchQText) matchSearch = false;
+                }
+
+                return matchQ && matchStatus && matchSearch;
+            });
+
+            // Update stats
+            document.getElementById('stats-total').innerText = allListings.length;
+            document.getElementById('stats-filtered').innerText = filteredListings.length;
+
+            renderSidebarList();
+        }
+
+        function renderSidebarList() {
+            const listContainer = document.getElementById('listings-list');
+            listContainer.innerHTML = '';
+            
+            if (filteredListings.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px 10px; color: var(--text-muted); font-size:12px;">
+                        <p>📭 Không tìm thấy căn nhà nào khớp bộ lọc.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredListings.forEach(item => {
+                let id = '';
+                let title = '';
+                let priceVal = 0;
+                let status = '';
+                let tkId = '';
+                let quan = '';
+                let phuong = '';
+
+                if (activeDataMode === 'sqlite') {
+                    tkId = item.tk_id;
+                    id = item.Ma_Khang_Ngo_ID || item.M__Khang_Ng___ID_ || item.tk_id;
+                    title = item.Tieu_de_Public || item.Ti_u____Public || 'Chưa biên tập';
+                    priceVal = item.Gia_Public || item.Gi__Public || item.Gia_chao || 0;
+                    status = item.status;
+                    quan = item.Quan || item.Qu_n || '';
+                    phuong = item.Phuong || item.Ph__ng || '';
+                } else {
+                    tkId = item.system_id;
+                    id = item.id || `Pool-${item.system_id}`;
+                    title = item.t || item.raw_noi_dung_chinh || 'Chưa biên tập';
+                    priceVal = item.gia || item.raw_gia_chao || 0;
+                    status = item.id ? 'published' : 'raw_complete';
+                    quan = item.ql || '';
+                    phuong = item.phuong || '';
+                }
+
+                const isActive = activeListingId === tkId;
+                const statusText = status === 'published' ? 'Đã lên sóng' : 'Chờ biên tập';
+                const statusClass = status === 'published' ? 'badge-published' : 'badge-raw';
+
+                const card = document.createElement('div');
+                card.className = `listing-card ${isActive ? 'active' : ''}`;
+                card.onclick = () => selectListing(tkId);
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="card-id">${id}</span>
+                        <span class="card-price">${priceVal ? priceVal + ' tỷ' : 'Liên hệ'}</span>
+                    </div>
+                    <div class="card-title">${title}</div>
+                    <div class="card-meta">
+                        <span>📍 ${quan} - P.${phuong}</span>
+                        <span class="status-badge ${statusClass}" style="font-size:8px;">${statusText}</span>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        // =====================================================================
+        // SELECT AND RENDER PROPERTY DETAILS
+        // =====================================================================
+        function selectListing(tkId) {
+            activeListingId = tkId;
+            
+            // Re-render sidebar to highlight selected card
+            renderSidebarList();
+
+            document.getElementById('empty-state-view').style.display = 'none';
+            document.getElementById('listing-view').style.display = 'block';
+            document.getElementById('detail-tabs-bar').style.display = 'flex';
+
+            // Reset tab views
+            switchDetailTab('canvas-tab');
+
+            if (activeDataMode === 'sqlite') {
+                loadListingDetailFromSQLite(tkId);
+            } else {
+                loadListingDetailFromSheets(tkId);
+            }
+        }
+
+        // Retrieve full listing details from Flask backend SQLite
+        function loadListingDetailFromSQLite(tkId) {
+            fetch(`/api/listings/${tkId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const listing = data.listing;
+                        renderCanvasDashboard(listing);
+                        renderRawInspector(listing);
+                        renderImageGallery(listing);
+                    }
+                })
+                .catch(err => console.error("Error loading detail from SQLite:", err));
+        }
+
+        // Retrieve details from memory array (Google Sheets mode)
+        function loadListingDetailFromSheets(tkId) {
+            const listing = allListings.find(item => item.system_id === tkId);
+            if (listing) {
+                renderCanvasDashboard(listing);
+                renderRawInspector(listing);
+                renderImageGallery(listing);
+            }
+        }
+
+        // =====================================================================
+        // CANVAS DETAIL DASHBOARD RENDERER
+        // =====================================================================
+        function renderCanvasDashboard(item) {
+            // Header elements
+            let title = '';
+            let id = '';
+            let price = '';
+            let status = '';
+
+            if (activeDataMode === 'sqlite') {
+                title = item.Tieu_de_Public || item.Ti_u____Public || 'Chưa có tiêu đề public';
+                id = item.Ma_Khang_Ngo_ID || item.M__Khang_Ng___ID_ || item.tk_id;
+                price = (item.Gia_Public || item.Gi__Public || item.Gia_chao || 0) + ' tỷ';
+                status = item.status === 'published' ? 'Đã lên sóng' : 'Chờ biên tập';
+            } else {
+                title = item.t || 'Chưa có tiêu đề public';
+                id = item.id || `Pool-${item.system_id}`;
+                price = (item.gia || item.raw_gia_chao || 0) + ' tỷ';
+                status = item.id ? 'Đã lên sóng' : 'Chờ biên tập';
+            }
+
+            document.getElementById('view-header-id').innerText = id;
+            document.getElementById('view-header-title').innerText = title;
+            document.getElementById('view-header-price').innerText = price;
+            
+            const badge = document.getElementById('view-header-status-badge');
+            badge.innerText = status;
+            badge.className = `badge ${status === 'Đã lên sóng' ? 'badge-published' : 'badge-raw'}`;
+
+            // Map and Compare Fields: Pool (Thô) vs. Source (Sạch)
+            let rawAddress = '';
+            let curAddress = '';
+            let rawStreet = '';
+            let curStreet = '';
+            let rawWard = '';
+            let curWard = '';
+            let rawDistrict = '';
+            let curDistrict = '';
+            let curWardOld = '';
+
+            let rawArea = '';
+            let curArea = '';
+            let rawNgang = '';
+            let curDai = '';
+            let rawFloors = '';
+            let curFloors = '';
+            let rawPn = '';
+            let curWc = '';
+            let rawHuong = '';
+            let curNguTretChdv = '';
+
+            let rawPrice = '';
+            let curPrice = '';
+            let curAvgPrice = '';
+            let rawAlleyType = '';
+            let curAlleyWidth = '';
+            let rawCondition = '';
+            let curRating = '';
+
+            let piiOwnerName = '';
+            let piiOwnerPhone = '';
+            let piiBrokerName = '';
+            let piiBrokerPhone = '';
+            let piiBrokerFb = '';
+
+            let mktNote = '';
+            let mktBadges = '';
+
+            let metaSysId = '';
+            let metaMaHang = '';
+            let metaCrawl = '';
+            let metaSync = '';
+            let metaLink = '';
+
+            if (activeDataMode === 'sqlite') {
+                // Location & Address
+                rawAddress = item.Ngo_So_nha || item.Ng__S__nh_ || '-';
+                curAddress = item.custom_So_Nha || item.Ngo_So_nha || item.Ng__S__nh_ || '-';
+                rawStreet = item.Duong || item.___ng || '-';
+                curStreet = item.custom_Ten_Duong || item.Duong || item.___ng || '-';
+                rawWard = item.Phuong || item.Ph__ng || '-';
+                curWard = item.custom_Phuong || item.Phuong || item.Ph__ng || '-';
+                rawDistrict = item.Quan || item.Qu_n || '-';
+                curDistrict = item.custom_Quan || item.Quan || item.Qu_n || '-';
+                curWardOld = item.Phuong_cu_AI || item.Phuong_cu_AI_ || '-';
+
+                // Tech Specs
+                rawArea = (item.DT_Thuc_te || item.DT_Th_c_t_ || '-') + ' m²';
+                curArea = (item.DT_Tren_so || item.DT_Tr_n_s_ || item.custom_DT_Tren_so || '-') + ' m²';
+                rawNgang = (item.Mat_Tien || item.M_t_Ti_n || '-') + ' m';
+                curDai = (item.Chieu_dai || item.Chi_u_dai || '-') + ' m';
+                rawFloors = item.So_Tang || item.S__T_ng || '-';
+                curFloors = item.custom_So_Tang || item.So_Tang || item.S__T_ng || '-';
+                rawPn = item.So_phong_ngu || item.S__ph_ng_ng_ || '-';
+                curWc = item.So_nha_ve_sinh || item.S__nh__v__sinh || '-';
+                rawHuong = item.Huong || item.Gi__ch_o || '-';
+                curNguTretChdv = `Trệt: ${item.Ngu_tret_Admin || '-'} | CHDV: ${item.CHDV_Admin || '-'}`;
+
+                // Pricing
+                rawPrice = (item.Gia_chao || item.Gi__ch_o || '-') + ' tỷ';
+                curPrice = (item.Gia_Public || item.Gi__Public || '-') + ' tỷ';
+                const parsedArea = parseFloat(item.DT_Thuc_te || item.DT_Th_c_t_ || 0);
+                const parsedGia = parseFloat(item.Gia_Public || item.Gi__Public || 0);
+                curAvgPrice = (parsedArea > 0 && parsedGia > 0) ? Math.round((parsedGia * 1000) / parsedArea) + ' tr/m²' : '-';
+                rawAlleyType = item.Phan_lo_i_Hem || item.Phan_loai_Hem || '-';
+                curAlleyWidth = (item.Duong_truoc_nha_m || item.minimumRoadWidth || '-') + ' m';
+                rawCondition = item.Tinh_trang_nha || '-';
+                curRating = item.Danh_gia_Admin || 'Bình thường';
+
+                // PII Secure Info
+                piiOwnerName = item.Ten_Chu_Nha || '-';
+                piiOwnerPhone = (item.Dien_thoai_1 || '') + (item.Dien_thoai_2 ? ' / ' + item.Dien_thoai_2 : '') || '-';
+                piiBrokerName = item.Ten_Dau_Chu_Hop_dong || item.Ten_Dau_Chu || '-';
+                piiBrokerPhone = item.Dien_thoai_Dau_Chu || '-';
+                piiBrokerFb = item.Diem_Facebook ? `<a href="${item.Diem_Facebook}" target="_blank" style="color:var(--accent-cyan)">Mở Facebook Đầu Chủ ➔</a>` : 'Không có link FB';
+
+                // Marketing
+                mktNote = item.Note_Noi_Bo || '-';
+                mktBadges = item.Phan_loai || item.Phan_lo_i || '-';
+
+                // Metadata
+                metaSysId = item.System_ID || '-';
+                metaMaHang = item.Ma_Hang || '-';
+                metaCrawl = item.Last_Crawl || '-';
+                metaSync = item.Last_Sync || '-';
+                metaLink = item.Link_Goc || item.Link_G_c || '#';
+            } else {
+                // Google Sheets Realtime mode properties
+                rawAddress = item.raw_so_nha || '-';
+                curAddress = item.raw_so_nha || '-';
+                rawStreet = item.raw_ten_duong || '-';
+                curStreet = item.ten_duong || '-';
+                rawWard = item.raw_phuong_xa || '-';
+                curWard = item.phuong || '-';
+                rawDistrict = item.raw_quan_huyen || '-';
+                curDistrict = item.ql || '-';
+                curWardOld = item.phuong_cu || '-';
+
+                rawArea = (item.raw_dt_thuc_te || '-') + ' m²';
+                curArea = (item.dt || '-') + ' m²';
+                rawNgang = (item.raw_mat_tien || '-') + ' m';
+                curDai = (item.dai_nha || '-') + ' m';
+                rawFloors = item.raw_so_tang || '-';
+                curFloors = item.tang || '-';
+                rawPn = item.raw_so_pn || '-';
+                curWc = item.raw_so_wc || '-';
+                rawHuong = item.raw_huong || '-';
+                curNguTretChdv = `Trệt: ${item.ngu_tang_tret || '-'} | CHDV: ${item.chdv || '-'}`;
+
+                rawPrice = (item.raw_gia_chao || '-') + ' tỷ';
+                curPrice = (item.gia || '-') + ' tỷ';
+                curAvgPrice = item.giabq || '-';
+                rawAlleyType = item.raw_phan_loai || '-';
+                curAlleyWidth = (item.rong_hem || '-') + ' m';
+                rawCondition = item.tinh_trang || '-';
+                curRating = item.danh_gia || 'Bình thường';
+
+                // PII Protected
+                if (item.pool_row_data) {
+                    piiOwnerName = item.pool_row_data[30] || '-'; // Tên Chủ Nhà
+                    piiOwnerPhone = (item.pool_row_data[31] || '') + (item.pool_row_data[32] ? ' / ' + item.pool_row_data[32] : '') || '-';
+                    piiBrokerName = item.raw_ten_dau_chu || '-';
+                    piiBrokerPhone = item.raw_dt_dau_chu || '-';
+                    piiBrokerFb = item.raw_link_fb ? `<a href="${item.raw_link_fb}" target="_blank" style="color:var(--accent-cyan)">Mở Facebook Đầu Chủ ➔</a>` : 'Không có link FB';
+                }
+
+                mktNote = item.cu_phap || '-';
+                mktBadges = item.raw_phan_loai || '-';
+
+                metaSysId = item.system_id || '-';
+                metaMaHang = item.id || '-';
+                metaCrawl = item.pool_row_data ? item.pool_row_data[74] : '-'; // Last Crawl
+                metaSync = item.pool_row_data ? item.pool_row_data[75] : '-'; // Last Sync
+                metaLink = item.pool_row_data ? item.pool_row_data[70] : '#'; // Link Gốc
+            }
+
+            // Fill HTML
+            document.getElementById('loc-so-nha-raw').innerText = rawAddress;
+            document.getElementById('loc-so-nha-cur').innerText = curAddress;
+            document.getElementById('loc-duong-raw').innerText = rawStreet;
+            document.getElementById('loc-duong-cur').innerText = curStreet;
+            document.getElementById('loc-phuong-raw').innerText = rawWard;
+            document.getElementById('loc-phuong-cur').innerText = curWard;
+            document.getElementById('loc-quan-raw').innerText = rawDistrict;
+            document.getElementById('loc-quan-cur').innerText = curDistrict;
+            document.getElementById('loc-phuong-cu-cur').innerText = curWardOld;
+
+            document.getElementById('spec-dt-thuc-raw').innerText = rawArea;
+            document.getElementById('spec-dt-so-cur').innerText = curArea;
+            document.getElementById('spec-ngang').innerText = rawNgang;
+            document.getElementById('spec-dai').innerText = curDai;
+            document.getElementById('spec-tang-raw').innerText = rawFloors;
+            document.getElementById('spec-tang-cur').innerText = curFloors;
+            document.getElementById('spec-pn').innerText = rawPn;
+            document.getElementById('spec-wc').innerText = curWc;
+            document.getElementById('spec-huong').innerText = rawHuong;
+            document.getElementById('spec-ngutret-chdv').innerText = curNguTretChdv;
+
+            document.getElementById('price-chao-raw').innerText = rawPrice;
+            document.getElementById('price-public-cur').innerText = curPrice;
+            document.getElementById('price-average').innerText = curAvgPrice;
+            document.getElementById('price-hem-loai').innerText = rawAlleyType;
+            document.getElementById('price-hem-rong').innerText = curAlleyWidth;
+            document.getElementById('price-tinh-trang').innerText = rawCondition;
+            document.getElementById('price-danh-gia').innerText = curRating;
+
+            document.getElementById('pii-owner-name').innerText = piiOwnerName;
+            document.getElementById('pii-owner-phone').innerText = piiOwnerPhone;
+            document.getElementById('pii-broker-name').innerText = piiBrokerName;
+            document.getElementById('pii-broker-phone').innerText = piiBrokerPhone;
+            document.getElementById('pii-broker-fb').innerHTML = piiBrokerFb;
+
+            document.getElementById('marketing-note').innerText = mktNote;
+            document.getElementById('marketing-badges').innerText = mktBadges;
+
+            document.getElementById('meta-sys-id').innerText = metaSysId;
+            document.getElementById('meta-ma-hang').innerText = metaMaHang;
+            document.getElementById('meta-last-crawl').innerText = metaCrawl;
+            document.getElementById('meta-last-sync').innerText = metaSync;
+            
+            const linkA = document.getElementById('meta-source-link');
+            linkA.href = metaLink;
+            linkA.style.display = metaLink !== '#' ? 'inline' : 'none';
+        }
+
+        // =====================================================================
+        // RAW COLUMNS INSPECTOR TAB RENDERER
+        // =====================================================================
+        let currentListingRaw = null;
+
+        function renderRawInspector(item) {
+            currentListingRaw = item;
+            
+            const poolList = document.getElementById('pool-raw-list');
+            const sourceList = document.getElementById('source-raw-list');
+            
+            poolList.innerHTML = '';
+            sourceList.innerHTML = '';
+            
+            document.getElementById('pool-col-search').value = '';
+            document.getElementById('source-col-search').value = '';
+
+            if (activeDataMode === 'sqlite') {
+                // In SQLite mode, columns are represented by key-value pairs of the joined dictionary
+                Object.keys(item).forEach(key => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'raw-row';
+                    rowDiv.setAttribute('data-col', key.toLowerCase());
+                    rowDiv.innerHTML = `
+                        <span class="raw-key" title="${key}">${key}</span>
+                        <span class="raw-val">${item[key] !== null ? item[key] : '<span class="empty">[Trống]</span>'}</span>
+                    `;
+                    
+                    if (key.startsWith('custom_')) {
+                        sourceList.appendChild(rowDiv);
+                    } else {
+                        poolList.appendChild(rowDiv);
+                    }
+                });
+            } else {
+                // In Google Sheets mode, use LegoState headers and raw arrays
+                const poolRow = item.pool_row_data || [];
+                const sourceRow = item.original_row_data || [];
+                
+                // Pool Tab
+                poolHeaders.forEach((header, index) => {
+                    const val = poolRow[index];
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'raw-row';
+                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index}`);
+                    rowDiv.innerHTML = `
+                        <span class="raw-key" title="Cột ${index + 1}: ${header}">Col ${index + 1}: ${header}</span>
+                        <span class="raw-val">${val !== undefined && val !== '' ? val : '<span class="empty">[Trống]</span>'}</span>
+                    `;
+                    poolList.appendChild(rowDiv);
+                });
+
+                // Source Tab
+                sourceHeaders.forEach((header, index) => {
+                    const val = sourceRow[index];
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'raw-row';
+                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index}`);
+                    rowDiv.innerHTML = `
+                        <span class="raw-key" title="Cột ${index + 1}: ${header}">Col ${index + 1}: ${header}</span>
+                        <span class="raw-val">${val !== undefined && val !== '' ? val : '<span class="empty">[Trống]</span>'}</span>
+                    `;
+                    sourceList.appendChild(rowDiv);
+                });
+            }
+        }
+
+        // Live Filter Raw columns based on Search box
+        function filterRawColumns(type) {
+            const query = document.getElementById(`${type}-col-search`).value.toLowerCase().trim();
+            const rows = document.querySelectorAll(`#${type}-raw-list .raw-row`);
+            
+            rows.forEach(row => {
+                const colMeta = row.getAttribute('data-col');
+                if (!query || colMeta.includes(query)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // =====================================================================
+        // IMAGE GALLERY RENDERER
+        // =====================================================================
+        let allGalleryImages = [];
+
+        function renderImageGallery(item) {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+            allGalleryImages = [];
+
+            if (activeDataMode === 'sqlite') {
+                // SQLite returns list of images inside row.raw_images_tk or query from listings_images
+                const imgs = item.images || item.imgs || [];
+                imgs.forEach(img => {
+                    let url = '';
+                    let role = 'interior';
+                    
+                    if (typeof img === 'string') {
+                        url = img;
+                    } else if (img && typeof img === 'object') {
+                        url = img.r2_url || img.image_url || img.url || '';
+                        role = img.role || 'interior';
+                    }
+
+                    if (url) {
+                        allGalleryImages.push({ url, role });
+                    }
+                });
+            } else {
+                // Google Sheets maps pool images
+                const imgs = item.imgs || [];
+                imgs.forEach(url => {
+                    // Infer role based on order or standard mapping
+                    let role = 'interior';
+                    if (url === item.img_mat_tien) role = 'cover';
+                    else if (url === item.raw_sodo1 || url === item.raw_sodo2 || url === item.raw_sodo3) role = 'sodo';
+                    
+                    allGalleryImages.push({ url, role });
+                });
+            }
+
+            if (allGalleryImages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
+                        <p>🖼️ Không có hình ảnh nào cho căn nhà này.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filterGallery('all');
+        }
+
+        // Filter Gallery photos based on sub-tabs
+        function filterGallery(filter) {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+            
+            // Mark active control button
+            const buttons = document.querySelectorAll('#gallery-tab .raw-table-controls button');
+            buttons.forEach(btn => {
+                btn.className = 'btn';
+                btn.style.background = 'rgba(255,255,255,0.05)';
+                btn.style.color = '#fff';
+            });
+            
+            // Find selected button
+            const targetBtn = Array.from(buttons).find(btn => {
+                const onclickStr = btn.getAttribute('onclick') || '';
+                return onclickStr.includes(`'${filter}'`);
+            });
+            if (targetBtn) {
+                targetBtn.className = 'btn btn-gold';
+                targetBtn.style.background = '';
+                targetBtn.style.color = '';
+            }
+
+            const filtered = allGalleryImages.filter(img => {
+                if (filter === 'all') return true;
+                if (filter === 'sodo') return img.role.includes('sodo') || img.url.toLowerCase().includes('sodo') || img.url.toLowerCase().includes('so_do') || img.url.toLowerCase().includes('so-do');
+                if (filter === 'facade') return img.role === 'cover' || img.role === 'facade' || img.url.toLowerCase().includes('mat_tien') || img.url.toLowerCase().includes('mattien');
+                if (filter === 'alley') return img.role.includes('alley') || img.url.toLowerCase().includes('hem');
+                if (filter === 'interior') return !img.role.includes('sodo') && !img.role.includes('alley') && img.role !== 'cover';
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
+                        <p>📭 Không tìm thấy hình ảnh phù hợp phân loại này.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(img => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'gallery-item';
+                itemDiv.onclick = () => openLightbox(img.url);
+                
+                let cleanUrl = img.url;
+                if (cleanUrl.includes('drive.google.com')) {
+                    const match = cleanUrl.match(/id=([^&]+)/) || cleanUrl.match(/file\/d\/([^/]+)/);
+                    if (match) cleanUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
+                }
+
+                itemDiv.innerHTML = `
+                    <img src="${cleanUrl}" alt="Photo" onerror="this.src='/avatarKhangNgo.jpg'">
+                    <span class="img-role-badge">${img.role}</span>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        // =====================================================================
+        // TAB NAVIGATION UTILITIES
+        // =====================================================================
+        function switchDetailTab(tabId) {
+            // Tab headers
+            document.querySelectorAll('.detail-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const activeTab = Array.from(document.querySelectorAll('.detail-tab')).find(tab => tab.getAttribute('onclick').includes(tabId));
+            if (activeTab) activeTab.classList.add('active');
+
+            // Tab contents
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+        }
+
+        // =====================================================================
+        // LIGHTBOX IMAGE VIEWER
+        // =====================================================================
+        function openLightbox(url) {
+            const modal = document.getElementById('lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            const dlBtn = document.getElementById('lightbox-dl-btn');
+            
+            let cleanUrl = url;
+            if (url.includes('drive.google.com')) {
+                const match = url.match(/id=([^&]+)/) || url.match(/file\/d\/([^/]+)/);
+                if (match) cleanUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
+            }
+
+            img.src = cleanUrl;
+            dlBtn.href = cleanUrl;
+            
+            currentRotation = 0;
+            img.style.transform = `rotate(0deg)`;
+            modal.style.display = 'flex';
+        }
+
+        function closeLightbox(event) {
+            if (event.target.id === 'lightbox-modal' || event.target.className === 'lightbox-close') {
+                document.getElementById('lightbox-modal').style.display = 'none';
+            }
+        }
+
+        function rotateLightbox(event) {
+            event.stopPropagation();
+            currentRotation = (currentRotation + 90) % 360;
+            document.getElementById('lightbox-img').style.transform = `rotate(${currentRotation}deg)`;
+        }
+    </script>
+</body>
+</html>

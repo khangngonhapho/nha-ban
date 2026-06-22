@@ -575,6 +575,8 @@ const LegoState = {
         const sourceRows = sourceDataJson.values || [];
         const poolRows = poolDataJson.values || [];
         this.POOL_ROWS = poolRows;
+        this.SOURCE_HEADERS = sourceRows[0] || [];
+        this.POOL_HEADERS = poolRows[0] || [];
 
         const fullList = sourceRows
           .map((sr, index) => {

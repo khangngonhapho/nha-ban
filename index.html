@@ -18,17 +18,17 @@
     rel="stylesheet">
   <!-- Google Identity Services (GSI) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link rel="stylesheet" href="/static/css/global.css?v=202606220302">
-  <script src="/static/js/lego_mock.js?v=202606220302"></script>
-  <script src="/static/js/lego_core.js?v=202606220302"></script>
-  <script src="/static/js/lego_helpers.js?v=202606220302"></script>
-  <script src="/static/js/lego_render_client.js?v=202606220302"></script>
-  <script src="/static/js/lego_render_admin.js?v=202606220302"></script>
-  <script src="/static/js/lego_filters.js?v=202606220302"></script>
-  <script src="/static/js/lego_collections.js?v=202606220302"></script>
-  <script src="/static/js/lego_lead_capture.js?v=202606220302"></script>
-  <script src="/static/js/lego_detail_client.js?v=202606220302"></script>
-  <script src="/static/js/lego_detail_admin.js?v=202606220302"></script>
+  <link rel="stylesheet" href="/static/css/global.css?v=202606222131">
+  <script src="/static/js/lego_mock.js?v=202606222131"></script>
+  <script src="/static/js/lego_core.js?v=202606222131"></script>
+  <script src="/static/js/lego_helpers.js?v=202606222131"></script>
+  <script src="/static/js/lego_render_client.js?v=202606222131"></script>
+  <script src="/static/js/lego_render_admin.js?v=202606222131"></script>
+  <script src="/static/js/lego_filters.js?v=202606222131"></script>
+  <script src="/static/js/lego_collections.js?v=202606222131"></script>
+  <script src="/static/js/lego_lead_capture.js?v=202606222131"></script>
+  <script src="/static/js/lego_detail_client.js?v=202606222131"></script>
+  <script src="/static/js/lego_detail_admin.js?v=202606222131"></script>
 </head>
 
 <body>
@@ -618,6 +618,7 @@
       let html = '';
       if (mode === 'list') {
         html = `
+          <button class="dial-btn-item canvas-btn-float" onclick="window.open('/canvas.html', '_blank')" title="📊 Bảng Nhìn Toàn Cảnh (Canvas View)">📊</button>
           <button class="dial-btn-item selall-btn-float" id="selAllBtn" onclick="toggleSelectAll()" title="Chọn / Bỏ chọn tất cả">☐</button>
           <button class="dial-btn-item col-btn-float" id="colFloatBtn" onclick="openColSaveModal()" title="Lưu vào bộ sưu tập" style="display: none;">📁</button>
           <button class="dial-btn-item share-btn-float" onclick="promptGenerateLink()" title="Tạo link gửi khách">

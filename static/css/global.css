@@ -2788,6 +2788,15 @@
     .admin-speed-dial .col-btn-float:hover {
       background: #f4d03f !important;
     }
+    
+    .admin-speed-dial .canvas-btn-float {
+      background: #8e44ad !important;
+      color: white !important;
+      font-size: 18px !important;
+    }
+    .admin-speed-dial .canvas-btn-float:hover {
+      background: #9b59b6 !important;
+    }
   
 
     /* Responsive cho máy tính */

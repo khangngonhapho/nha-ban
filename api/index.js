@@ -872,6 +872,28 @@ module.exports = async (req, res) => {
     }
   }
 
+  // Serve canvas.html for visual details dashboard
+  if (pathname === '/canvas' || pathname === '/canvas.html') {
+    let canvasHtml = '';
+    const canvasPaths = [
+      path.join(__dirname, '..', 'canvas.html'),
+      path.join(process.cwd(), 'canvas.html'),
+      path.join(__dirname, 'canvas.html')
+    ];
+    for (const p of canvasPaths) {
+      try {
+        if (fs.existsSync(p)) {
+          canvasHtml = fs.readFileSync(p, 'utf8');
+          break;
+        }
+      } catch (err) {}
+    }
+    if (!canvasHtml) {
+      return res.status(404).send('canvas.html not found');
+    }
+    return res.status(200).setHeader('Content-Type', 'text/html; charset=utf-8').send(canvasHtml);
+  }
+
   let html = '';
   const htmlPaths = [
     path.join(__dirname, '..', 'index.html'),

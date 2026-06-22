@@ -1665,6 +1665,21 @@ def index_html():
     resp.headers['Expires'] = '0'
     return resp
 
+@app.route('/canvas')
+@app.route('/canvas.html')
+def canvas_view():
+    """Trả về giao diện trực quan xem chi tiết căn nhà canvas.html"""
+    if os.path.exists("canvas.html"):
+        with open("canvas.html", "r", encoding="utf-8") as f:
+            content = f.read()
+    else:
+        return "canvas.html not found", 404
+    resp = Response(content, mimetype='text/html')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
+
 @app.route('/api/schema/add-column', methods=['POST'])
 def add_schema_column():
     """

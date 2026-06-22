@@ -3,16 +3,17 @@
 Last updated: 2026-06-22
 
 ## Stats
-- Total: 114
+- Total: 115
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 21
-- accepted: 84
+- accepted: 85
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-106 | Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source)          | accepted | M | 2026-06-22 | `canvas.html`, `manager.py`, `api/index.js`, `curator.html`       |
 | US-105 | Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI | accepted | S | 2026-06-22 | `static/js/lego_detail_admin.js`, `static/js/lego_helpers.js`, `curator.html` |
 | US-104 | Sửa lỗi không show carousel hình sổ trên detail admin view vercel | accepted | S | 2026-06-22 | `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js` |
 | US-103 | Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi | accepted | M | 2026-06-22 | `static/js/thienkhoi_list_scraper.user.js`, `curator.html`, `curator_html_data.py` |
@@ -132,6 +133,7 @@ Last updated: 2026-06-22
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-106_canvas_detail_view|US-106]]: Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) (accepted)
 - [[US-105_autofill_button_overwrite_confirmation|US-105]]: Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI (accepted)
 - [[US-103_crawl_listings_userscript|US-103]]: Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi (accepted)
 - [[US-102_missing_json_curator_tab|US-102]]: Lọc các căn chưa có raw_json_full trên Curator Dashboard (done)
@@ -214,6 +216,7 @@ Last updated: 2026-06-22
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-106_canvas_detail_view|US-106]]: Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) (accepted)
 - [[US-105_autofill_button_overwrite_confirmation|US-105]]: Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI (accepted)
 - [[US-104_fix_admin_sodo_carousel|US-104]]: Sửa lỗi không show carousel hình sổ trên detail admin view vercel (accepted)
 - [[US-097_fix_quick_share_link_error|US-097]]: Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng (accepted)
