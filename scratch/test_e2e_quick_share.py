@@ -106,7 +106,7 @@ def main():
         if "Source" in url:
             response_body = {"values": [["header_row"] * 46, mock_source_row_1]}
         else:
-            response_body = {"values": [mock_pool_row_1]}
+            response_body = {"values": [["header_row"] * 96, mock_pool_row_1]}
         route.fulfill(content_type="application/json", body=json.dumps(response_body))
 
     with sync_playwright() as p:

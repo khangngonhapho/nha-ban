@@ -550,7 +550,7 @@ const LegoState = {
             headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           }),
-          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:ZZ`, {
+          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A1:ZZ`, {
             headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           })
@@ -574,9 +574,10 @@ const LegoState = {
 
         const sourceRows = sourceDataJson.values || [];
         const poolRows = poolDataJson.values || [];
-        this.POOL_ROWS = poolRows;
         this.SOURCE_HEADERS = sourceRows[0] || [];
         this.POOL_HEADERS = poolRows[0] || [];
+        const poolDataRows = poolRows.slice(1);
+        this.POOL_ROWS = poolDataRows;
 
         const fullList = sourceRows
           .map((sr, index) => {
@@ -607,7 +608,7 @@ const LegoState = {
             const srSystemId = sr[37] || '';
             const srId = sr[3] || '';
 
-            const poolRow = poolRows.find(pr => {
+            const poolRow = poolDataRows.find(pr => {
               const prSystemId = pr[72] || '';
               const prId = pr[55] || '';
               return (srSystemId && prSystemId === srSystemId) || 
@@ -698,7 +699,7 @@ const LegoState = {
               p.raw_tieu_de_public = poolRow[56] || '';
               p.raw_mo_ta_public = poolRow[57] || '';
               p.raw_phan_loai = poolRow[7] || '';
-              p.pool_row_index = poolRows.indexOf(poolRow) + 2;
+              p.pool_row_index = poolDataRows.indexOf(poolRow) + 2;
               p.pool_row_data = poolRow;
               
               let jsonUiVal = poolRow[93] || '';

@@ -1081,6 +1081,32 @@
 
     <!-- Core App logic -->
     <script>
+        // Hardcoded Pool Headers for direct Sheets mode
+        const HARDCODED_POOL_HEADERS = [
+            "Mã Hàng", "Hình Nhận Diện", "Tỉnh", "Quận", "Phường", "Đường", "Ngõ/Số nhà", "Phân loại",
+            "Năm xây dựng", "Nội dung chính", "Mô tả chi tiết", "Giá chào", "Giá chốt",
+            "DT Thực tế", "DT Trên sổ", "Số Tầng", "Mặt Tiền", "Hướng", "Tên Chủ Nhà",
+            "Điện thoại 1", "Điện thoại 2", "Loại Hợp đồng", "Số ngày ký", "Ngày bắt đầu",
+            "Ngày kết thúc", "Người ký", "Trạng thái",
+            "Sơ đồ thửa đất 1", "Sơ đồ thửa đất 2",
+            "Hình Mặt Tiền",
+            "Hình Hẻm 1", "Hình Hẻm 2", "Hình Hẻm 3", "Hình Hẻm 4", "Hình Hẻm 5", 
+            "Hình Hẻm 6", "Hình Hẻm 7", "Hình Hẻm 8", "Hình Hẻm 9", "Hình Hẻm 10",
+            "Ảnh 1", "Ảnh 2", "Ảnh 3", "Ảnh 4", "Ảnh 5", "Ảnh 6", "Ảnh 7", "Ảnh 8",
+            "Ảnh 9", "Ảnh 10", "Ảnh 11", "Ảnh 12", "Ảnh 13", "Ảnh 14", "Ảnh 15",
+            "Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Giá Public", 
+            "Phân loại Hẻm", "Đường trước nhà (m)", "Tình trạng nhà", "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
+            "Số phòng ngủ", "Số nhà vệ sinh", "Phường cũ (AI)",
+            "Đánh giá (Admin)", "Ngủ trệt (Admin)", "CHDV (Admin)",
+            "Duyệt Public", "Trạng thái Public", "System ID", "Link Gốc",
+            "Điện thoại Đầu Chủ", "Tên Đầu Chủ (Hợp đồng)", "Điểm Facebook",
+            "Last Crawl", "Last Sync", "Mã TK Mới",
+            "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
+            "Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20",
+            "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25",
+            "JSON_UI"
+        ];
+
         // Global State variables
         let activeDataMode = 'sqlite';
         let allListings = [];
@@ -1168,8 +1194,8 @@
         function initializeGoogleSheetsMode() {
             if (typeof LegoState === 'undefined') {
                 // Dynamically load scripts if not loaded
-                loadScript('/static/js/lego_core.js', () => {
-                    loadScript('/static/js/lego_helpers.js', () => {
+                loadScript('/static/js/lego_core.js?v=20260622', () => {
+                    loadScript('/static/js/lego_helpers.js?v=20260622', () => {
                         startSheetsMode();
                     });
                 });
@@ -1206,7 +1232,7 @@
             // Listen to Data loaded
             LegoState.on('rawDataLoaded', (data) => {
                 allListings = data || [];
-                poolHeaders = LegoState.POOL_HEADERS || [];
+                poolHeaders = HARDCODED_POOL_HEADERS;
                 sourceHeaders = LegoState.SOURCE_HEADERS || [];
                 console.log("Google Sheets loaded rows:", allListings.length);
                 filterListings();

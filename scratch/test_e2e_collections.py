@@ -259,7 +259,7 @@ def main():
             if "Source" in url:
                 response_body = {"values": [["header_row"] * 46, mock_source_row_1, mock_source_row_2]}
             else:
-                response_body = {"values": [mock_pool_row_1, mock_pool_row_2]}
+                response_body = {"values": [["header_row"] * 96, mock_pool_row_1, mock_pool_row_2]}
             route.fulfill(content_type="application/json", body=json.dumps(response_body))
 
         admin_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
