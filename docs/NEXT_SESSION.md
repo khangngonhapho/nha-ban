@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-106 (Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source)):** **[ACCEPTED - 2026-06-24]** Thiết lập bảng nhìn toàn cảnh trực quan Canvas Detail View, hỗ trợ so sánh đối chiếu giữa Pool (Thô) và Source (Sạch). Hỗ trợ Dual-mode (Google Sheets realtime vs SQLite local) và Tab Inspector cột thô tự động map tiêu đề cột Pool/Source sạch. Khắc phục lỗi lệch tiêu đề cột Pool bằng cách hardcode danh sách 94 cột. Toàn bộ kịch bản E2E Playwright `test_e2e_canvas.py` và `verify_build.py` chạy thành công **100% PASS** trên môi trường local.
 *   **US-105 (Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI):** **[ACCEPTED - 2026-06-22]** Cho phép hiển thị nút Tự động điền thầm lặng bằng AI đối với cả các căn đã lên sóng. Hỏi xác nhận cảnh báo mất mát dữ liệu trước khi thay thế nội dung trường Tiêu đề public và Mô tả public. Đồng bộ hóa sang Curator Dashboard và chạy kiểm thử Playwright E2E tự động thành công.
 *   **US-104 (Sửa lỗi không show carousel hình sổ trên detail admin view vercel):** **[ACCEPTED - 2026-06-22]** Đã cấu hình hiển thị song song Carousel Sổ đỏ (`#carouselSo`) và Carousel BĐS (`#carouselNha`) ở chế độ Admin. Đồng bộ R2 sodo sạch và dàn phẳng 5 cột lên Sheets. Bảo mật sodo bằng cách ẩn khỏi Client view/Preview qua logic `visible: false`.
 *   **US-103 (Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi):** **[ACCEPTED - 2026-06-22]** Phát triển hoàn tất Tampermonkey/Violentmonkey Userscript tích hợp trực tiếp lên giao diện của website Thiên Khôi (proptech.thienkhoi.com). Hỗ trợ nút cào nhanh 1-click cho từng card và bảng điều khiển (Floating Panel) nổi với giao diện Glassmorphism cao cấp để chọn lọc cào hàng loạt. Hỗ trợ tự động đồng bộ Cookie đăng nhập của người dùng về Local Server. Tích hợp liên kết tải và cài đặt nhanh vào giao diện Curator Dashboard. Đã vượt qua toàn bộ 4 kịch bản kiểm thử Playwright E2E tự động và test tích hợp.
@@ -17,7 +18,7 @@
 *   **US-094F (Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin):** **[ACCEPTED - 2026-06-16]** Tạo mới module `static/js/lego_detail_admin.js` di chuyển toàn bộ logic xem chi tiết của Admin, form curation, tabs quản lý, và Google Sheets API syncing (`saveSourceChanges`, `saveNewListingFromPool`). Tái cấu trúc `index.html` rút gọn hơn 1200 dòng JS/HTML thô, nạp script mới ở `<head>` và export các alias toàn cục trên `window` cho inline templates. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_curation.py` trên cả Desktop & Mobile.
 *   **US-094D (Cô lập Module Bộ sưu tập & Lead Capture):** **[ACCEPTED - 2026-06-15]** Tạo mới hai module `static/js/lego_collections.js` (quản lý yêu thích, danh mục bộ sưu tập và chọn hàng loạt) và `static/js/lego_lead_capture.js` (form đăng ký thông tin khách hàng, kiểm tra lead capture modal và liên kết booking/phản hồi Zalo). Làm sạch hơn 700 dòng code trong `index.html`, lưu/nạp trạng thái toàn cục tương thích ngược 100%. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_collections.py`.
 *   **US-094B (Cô lập Module Bộ lọc & Tìm kiếm thông minh):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_filters.js` chứa toàn bộ logic bộ lọc (quận, phường, đường, hướng, khoảng giá, diện tích, kết cấu, checklist tiêu chí động) và bộ máy tìm kiếm thông minh tiếng Việt AND (`+`), tự động ẩn hiện static tabs nâng cao, và quét kho Pool thô (Smart Pool Fallback). Làm sạch hơn 800 dòng lệnh trong `index.html`, lưu/nạp bộ lọc ngầm trên `window.activeMode` tương thích ngược 100%. Đạt tỷ lệ 100% PASS cho bộ kiểm thử Playwright E2E `test_e2e_filters.py`.
-*   **US-094C (Cô lập Module Chi tiết & Carousel thực tế của Khách hàng):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_detail_client.js` đóng gói toàn bộ logic xem chi tiết của Khách hàng, Swiper image carousel, lightbox phóng to ảnh (hỗ trợ zoom, vuốt, keydown, thumbnails, drag), và legacy gallery helpers. Tái cấu trúc hàm `openS` trong `index.html` để ủy quyền hoàn toàn sang `LegoDetailClient.render(p, sbody)`. Chạy thành công bộ test Playwright E2E đa vai trò (Client/Admin) và đa thiết bị đạt 100% SUCCESS.
+*   **US-094C (Cô lập Module Chi tiết & Carousel thực tế của Khách hàng):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_detail_client.js` đóng gói toàn bộ logic xem chi tiết của Khách hàng, Swiper image carousel, lightbox phóng to ảnh (hỗ trợ zoom, vuốt, keydown, thumbnails, drag), và legacy gallery helpers. Tái cấu trúc hàm `openS` trong `index.html` để hủy quyền hoàn toàn sang `LegoDetailClient.render(p, sbody)`. Chạy thành công bộ test Playwright E2E đa vai trò (Client/Admin) và đa thiết bị đạt 100% SUCCESS.
 *   **US-094A3 (Phân tách Engine Render danh sách Card BĐS):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_render_client.js` và `static/js/lego_render_admin.js` tách biệt hoàn toàn phần render dữ liệu Card (`DocumentFragment`) ra khỏi `index.html` cho cả giao diện Khách hàng và Admin, bảo đảm tương thích ngược 100% và không làm gãy các tính năng tương tác. Đã chạy E2E Playwright test đạt 100% PASS.
 *   **US-094A2 (Xây dựng Lego Core State Store & Tải dữ liệu):** **[ACCEPTED - 2026-06-15]** Tạo mới module `static/js/lego_core.js` định nghĩa `window.LegoState` để đóng gói toàn bộ trạng thái lõi, logic xác thực Google OAuth (GSI Auth), tự động refresh token ngầm và luồng nạp dữ liệu Sheets API (Admin secure + public fallback). Thiết lập cơ chế Event-Driven (Pub/Sub) và liên kết các getters/setters toàn cục tương thích ngược 100% không gây lỗi hồi quy. Kiểm thử Playwright E2E đạt 100% PASS trên Desktop & Mobile.
 *   **US-094A1 (Tách biệt CSS ngoài ra global.css):** **[ACCEPTED - 2026-06-15]** Di chuyển toàn bộ ~3,650 dòng CSS trong `index.html` sang `static/css/global.css`, liên kết qua thẻ `<link>` và cấu hình static serving trên Vercel với tiêu đề `Cache-Control`. Đã chạy kiểm thử Playwright E2E đạt 100% PASS, nghiệm thu giao diện hiển thị mượt mà trên môi trường Production.
@@ -29,28 +30,29 @@
 *   **US-090 (Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary):** **[ACCEPTED - 2026-06-13]** Đã hoàn tất di cư toàn bộ 5.180 ảnh từ Cloudinary sang Cloudflare R2 trên SQLite và đồng bộ lên Google Sheet Pool (v1). Giải quyết triệt để lỗi chuỗi JSON mảng trên Sheets và thiết lập báo cáo danh sách 581 căn lỗi ảnh 404 (ở cả Sheets và SQLite) kèm địa chỉ thực chi tiết.
 *   **US-089A (Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ):** **[ACCEPTED - 2026-06-12]** Đã triển khai cấu trúc CSDL SQLite v2 sạch sẽ không chứa các cột hình ảnh phẳng, lưu trữ hình ảnh độc lập có khóa ngoại và sequence_index tuần tự trong `listings_images` và `raw_images_tk_json`. Tích hợp luồng bóc tách tiêu chí thô `parse_criteria_groups` và dynamic badges DOM fallback, đồng thời thiết lập cơ chế phân nhóm hình ảnh (nội thất trước, sơ đồ sau) tự động bảo toàn trình tự. Xây dựng công cụ `query_helper.py` tra cứu nhanh và hiển thị Premium HTML Dark Mode.
 *   **US-088 (Đổi tên file và di cư tính năng cũ (Pool1) sang Lego):** **[ACCEPTED - 2026-06-11]** Phân rã toàn bộ logic nghiệp vụ (schema, SQLite write, Sheets sync) của Pool1 cũ ra một khối Lego trung tâm `pool_lego.py` và đổi tên các file cốt lõi sang tiếng Anh thân thiện dễ hiểu (`settings.json`, `fetcher.py`, `manager.py`). Đã biên dịch, chạy thử cào và xuất bản ổn định không lỗi hồi quy, đóng gói EXE và tích hợp tài liệu chi tiết vào SOT.
- 
- ---
- 
- ## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
- 
- ### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
+
+---
+
+## 2. Kế hoạch hành động phiên tiếp theo (Action Plan)
+
+### 🚀 Tính năng Backlog đề xuất (To-Do 📋)
 *   **US-091 (Khắc phục lỗi giảm chất lượng hình ảnh quá mức khi di cư sang R2):** **[BACKLOG]** Phục hồi chất lượng hình ảnh cao sắc nét từ TK. Tạm dừng để ưu tiên refactoring Frontend.
 *   **US-101 (Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên):** **[BACKLOG]** Tránh cào lại và nén/upload lại ảnh đã di cư, bảo vệ và loại trừ ảnh tự tải lên khi recrawl.
 
 ### 💡 Nhiệm vụ: Bảo trì & Theo dõi UI/UX
 *   Chạy bộ test E2E Playwright để kiểm soát hồi quy giao diện sau mỗi đợt cập nhật.
- 
- ---
- 
- ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — US-105: Hiển thị nút Tự động điền cho cả các căn đã lên sóng.
-*   [static/js/lego_helpers.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_helpers.js) — US-105: Bổ sung dialog xác nhận cảnh báo ghi đè thông tin.
-*   [curator.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator.html) — US-105: Bổ sung cảnh báo xác nhận ghi đè tương tự trên Curator Dashboard.
-*   [curator_html_data.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator_html_data.py) — US-105: Biên dịch lại mã nguồn giao diện Curator.
-*   [scratch/test_e2e_curation.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_curation.py) — US-105: Bổ sung dialog listener cho kịch bản E2E.
-*   [docs/stories/_inbox/US-105_autofill_button_overwrite_confirmation.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-105_autofill_button_overwrite_confirmation.md) — US-105: Đặc tả User Story.
- 
- ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-22 (US-105 accepted & E2E tests 100% passed).*
+---
+
+## 3. Các file bị tác động trong phiên vừa qua
+
+*   [canvas.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/canvas.html) — Giao diện chính của Canvas Detail View và bộ máy nạp hardcoded headers.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Route phục vụ file canvas.html ở môi trường local.
+*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — Proxy static route phục vụ canvas.html trên Vercel.
+*   [curator.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/curator.html) — Tích hợp link mở nhanh Canvas View trên header admin dashboard.
+*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — Tích hợp speed dial admin shortcut cho Canvas View.
+*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — Cập nhật logic load dữ liệu song song và export headers thô của Pool/Source.
+*   [scratch/test_e2e_canvas.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_canvas.py) — Script kiểm thử tự động Playwright E2E tích hợp dành riêng cho Canvas View.
+
+---
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-24 (US-106 accepted & E2E tests 100% passed).*

@@ -323,6 +323,15 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-24 (Nghiệm thu US-106 - Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) - TEST PASS)
+*   **Mã User Story:** `US-106`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Giao diện Canvas View (`canvas.html`)**: Xây dựng bảng nhìn toàn cảnh trực quan, phân khu thông tin rõ ràng (vị trí, thông số kỹ thuật, giá, thông tin bảo mật PII, AI Curation), hỗ trợ lọc tìm kiếm thông minh và Lightbox xem ảnh trực quan.
+     - **Khả năng tương thích môi trường kép (Dual-mode)**: Tự động chạy local bằng SQLite thông qua backend Flask hoặc chạy realtime trên Vercel kết nối trực tiếp Google Sheets API qua Google OAuth2.
+     - **Tab Inspector Cột Thô tự động**: Hiển thị bảng dọc đầy đủ 94 cột Pool thô và 46 cột Source sạch kèm thanh tìm kiếm cột.
+     - **Khắc phục lỗi lệch tiêu đề cột Pool**: Hardcode danh sách 94 tiêu đề cột thô chuẩn của Pool để tránh lệch hàng/cột do cache/offset và đồng bộ hiển thị cột thứ 3 giống chi tiết Source.
+     - **Bổ sung E2E Integration Test**: Thiết lập bộ test tự động Playwright `test_e2e_canvas.py` giả lập toàn bộ hành vi xem, đối chiếu và phóng to ảnh, đạt 100% PASS.
+
 ### 2026-06-22 (Nghiệm thu US-105 - Hiện Nút "Tự Động Điền" Cho Căn Đã Lên Sóng & Hỏi Xác Nhận Thay Thế Thông Tin AI - TEST PASS)
 *   **Mã User Story:** `US-105`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1186,6 +1195,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-106:** Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) ✅ Done 2026-06-24
 - [x] **US-105:** Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI ✅ Done 2026-06-22
 - [x] **US-104:** Sửa lỗi không show carousel hình sổ trên detail admin view vercel ✅ Done 2026-06-22
 - [x] **US-103:** Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi ✅ Done 2026-06-22
