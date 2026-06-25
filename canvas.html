@@ -1659,9 +1659,9 @@
 
                 metaSysId = item.system_id || '-';
                 metaMaHang = item.id || '-';
-                metaCrawl = item.pool_row_data ? item.pool_row_data[74] : '-'; // Last Crawl
-                metaSync = item.pool_row_data ? item.pool_row_data[75] : '-'; // Last Sync
-                metaLink = item.pool_row_data ? item.pool_row_data[70] : '#'; // Link Gốc
+                metaCrawl = (item.pool_row_data && item.pool_row_data.length > 77) ? item.pool_row_data[77] : '-'; // Last Crawl
+                metaSync = (item.pool_row_data && item.pool_row_data.length > 78) ? item.pool_row_data[78] : '-'; // Last Sync
+                metaLink = (item.pool_row_data && item.pool_row_data.length > 73) ? item.pool_row_data[73] : '#'; // Link Gốc
             }
 
             // Fill HTML
