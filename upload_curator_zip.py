@@ -108,21 +108,43 @@ def create_zip_and_upload():
         )
         
         if r.status_code == 403:
-            print("")
-            print("==================================================================")
-            print("❌ LỖI BẢO MẬT: THƯ MỤC GOOGLE DRIVE CHƯA ĐƯỢC CHIA SẺ!")
-            print("==================================================================")
-            print("Tài khoản Service Account Google của anh chưa có quyền ghi vào thư mục này.")
-            print("")
-            print("Anh chỉ cần làm 2 bước đơn giản sau để sửa trong 10 giây:")
-            print(f"  1. Mở Google Drive của anh, tìm thư mục có ID: '{drive_folder_id}'")
-            print("     (Hoặc thư mục bất kỳ anh muốn dùng làm nơi lưu file zip).")
-            print("  2. Click chuột phải chọn 'Chia sẻ' (Share) -> Thêm email này làm 'Người chỉnh sửa' (Editor):")
-            print("     👉 bds-autopost-bot@khangngo-admin.iam.gserviceaccount.com")
-            print("  3. Nhấn 'Gửi' (Send) và chạy lại file này!")
-            print("==================================================================")
-            print("")
-            sys.exit(1)
+            print("[⚠️ CẢNH BÁO] Không có quyền ghi vào thư mục Drive đích.")
+            print("[*] Đang tự động thử lại bằng cách tải trực tiếp lên Root Drive của Service Account...")
+            
+            metadata_fallback = {
+                "name": "KhangNgoCurator.zip"
+            }
+            files_fallback = {
+                "data": ("metadata", json.dumps(metadata_fallback), "application/json"),
+                "file": ("KhangNgoCurator.zip", zip_data, "application/zip")
+            }
+            
+            r = requests.post(
+                "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+                headers=headers,
+                files=files_fallback,
+                timeout=300
+            )
+            
+            if r.status_code != 200:
+                print(f"[❌ LỖI FALLBACK] HTTP {r.status_code}: {r.text}")
+                print("")
+                print("==================================================================")
+                print("❌ LỖI BẢO MẬT: THƯ MỤC GOOGLE DRIVE CHƯA ĐƯỢC CHIA SẺ!")
+                print("==================================================================")
+                print("Tài khoản Service Account Google của anh chưa có quyền ghi vào thư mục này.")
+                print("")
+                print("Anh chỉ cần làm 2 bước đơn giản sau để sửa trong 10 giây:")
+                print(f"  1. Mở Google Drive của anh, tìm thư mục có ID: '{drive_folder_id}'")
+                print("     (Hoặc thư mục bất kỳ anh muốn dùng làm nơi lưu file zip).")
+                print("  2. Click chuột phải chọn 'Chia sẻ' (Share) -> Thêm email này làm 'Người chỉnh sửa' (Editor):")
+                print("     👉 bds-autopost-bot@khangngo-admin.iam.gserviceaccount.com")
+                print("  3. Nhấn 'Gửi' (Send) và chạy lại file này!")
+                print("==================================================================")
+                print("")
+                sys.exit(1)
+            else:
+                print("[✅ THÀNH CÔNG] Đã tải tệp lên Root Drive của Service Account thành công.")
             
         if r.status_code != 200:
             print(f"[❌ LỖI API] Google Drive trả về mã lỗi HTTP {r.status_code}: {r.text}")
