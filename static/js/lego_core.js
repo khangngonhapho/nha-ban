@@ -624,6 +624,13 @@ const LegoState = {
 
             const poolImgs = [];
             if (poolRow) {
+              if (poolRow[27]) poolImgs.push(poolRow[27]);
+              if (poolRow[28]) poolImgs.push(poolRow[28]);
+              if (poolRow[29]) poolImgs.push(poolRow[29]);
+              if (poolRow[80]) poolImgs.push(poolRow[80]);
+              if (poolRow[81]) poolImgs.push(poolRow[81]);
+              if (poolRow[82]) poolImgs.push(poolRow[82]);
+
               for (let c = 40; c <= 54; c++) {
                 if (poolRow[c]) poolImgs.push(poolRow[c]);
               }
@@ -762,6 +769,13 @@ const LegoState = {
           if (matchedPoolRowIndexes.has(prIdx)) return;
 
           const poolImgs = [];
+          if (poolRow[27]) poolImgs.push(poolRow[27]);
+          if (poolRow[28]) poolImgs.push(poolRow[28]);
+          if (poolRow[29]) poolImgs.push(poolRow[29]);
+          if (poolRow[80]) poolImgs.push(poolRow[80]);
+          if (poolRow[81]) poolImgs.push(poolRow[81]);
+          if (poolRow[82]) poolImgs.push(poolRow[82]);
+
           for (let c = 40; c <= 54; c++) {
             if (poolRow[c]) poolImgs.push(poolRow[c]);
           }
@@ -814,7 +828,7 @@ const LegoState = {
             imgs: uniqueImgs,
             system_id: poolRow[72] || (sourceRows.length + prIdx + 1).toString(),
             so_pn: poolRow[64] || '-',
-            img_mat_tien: poolRow[37] || '',
+            img_mat_tien: poolRow[29] || '',
             ten_duong: poolRow[5] || '',
 
             original_row_data: null,
