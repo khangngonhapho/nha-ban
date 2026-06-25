@@ -76,7 +76,7 @@ def restore_database():
         print("[-] Không tìm thấy dữ liệu hoặc Sheets Pool rỗng!")
         return
         
-    data_rows = all_values[2:] # Dữ liệu bắt đầu từ dòng 3 (index 2)
+    data_rows = all_values[1:] # Dữ liệu bắt đầu từ dòng 2 (index 1)
     print(f"  - Đang phân tích {len(data_rows)} dòng dữ liệu từ Google Sheets Pool...")
 
     # Xây dựng dictionary từ sheet Source để merge

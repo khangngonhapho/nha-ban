@@ -6,7 +6,7 @@
     <title>Bảng Nhìn Toàn Cảnh (Canvas View) - Khang Ngô Nhà Phố</title>
     <!-- Google Fonts: Outfit & Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/global.css?v=20260622">
+    <link rel="stylesheet" href="/static/css/global.css?v=202606252338">
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -1194,8 +1194,8 @@
         function initializeGoogleSheetsMode() {
             if (typeof LegoState === 'undefined') {
                 // Dynamically load scripts if not loaded
-                loadScript('/static/js/lego_core.js?v=20260622', () => {
-                    loadScript('/static/js/lego_helpers.js?v=20260622', () => {
+                loadScript('/static/js/lego_core.js?v=202606252338', () => {
+                    loadScript('/static/js/lego_helpers.js?v=202606252338', () => {
                         startSheetsMode();
                     });
                 });
@@ -1333,7 +1333,7 @@
                 } else {
                     // Google Sheets object maps
                     itemQuan = String(item.q || '').toLowerCase();
-                    itemStatus = item.is_invisible ? 'invisible' : (item.id ? 'published' : 'raw_complete');
+                    itemStatus = item.is_invisible ? 'invisible' : ((item.source_row_index !== undefined && item.source_row_index !== null) ? 'published' : 'raw_complete');
                     itemTitle = String(item.t || '').toLowerCase();
                     itemMaKN = String(item.id || '').toLowerCase();
                     itemSoNha = String(item.raw_so_nha || '').toLowerCase();
@@ -1412,7 +1412,7 @@
                     id = item.id || `Pool-${item.system_id}`;
                     title = item.t || item.raw_noi_dung_chinh || 'Chưa biên tập';
                     priceVal = item.gia || item.raw_gia_chao || 0;
-                    status = item.id ? 'published' : 'raw_complete';
+                    status = (item.source_row_index !== undefined && item.source_row_index !== null) ? 'published' : 'raw_complete';
                     quan = item.ql || '';
                     phuong = item.phuong || '';
                 }
@@ -1506,7 +1506,7 @@
                 title = item.t || 'Chưa có tiêu đề public';
                 id = item.id || `Pool-${item.system_id}`;
                 price = (item.gia || item.raw_gia_chao || 0) + ' tỷ';
-                status = item.id ? 'Đã lên sóng' : 'Chờ biên tập';
+                status = (item.source_row_index !== undefined && item.source_row_index !== null) ? 'Đã lên sóng' : 'Chờ biên tập';
             }
 
             document.getElementById('view-header-id').innerText = id;
@@ -1796,17 +1796,25 @@
                     poolList.appendChild(rowDiv);
                 });
 
-                sourceHeaders.forEach((header, index) => {
-                    const val = item[header];
-                    const excelCode = getExcelColumnName(index);
-                    const colNum = index + 1;
-                    
-                    const rowDiv = document.createElement('div');
-                    rowDiv.className = 'raw-row';
-                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
-                    rowDiv.innerHTML = renderRawRowHtml(header, val, index);
-                    sourceList.appendChild(rowDiv);
-                });
+                if (item.status !== 'published') {
+                    sourceList.innerHTML = `
+                        <div style="text-align: center; padding: 40px 10px; color: var(--text-muted); font-size: 13px;">
+                            <p>ℹ️ Căn nhà này chưa lên sóng. Không có dữ liệu trong sheet Source.</p>
+                        </div>
+                    `;
+                } else {
+                    sourceHeaders.forEach((header, index) => {
+                        const val = item[header];
+                        const excelCode = getExcelColumnName(index);
+                        const colNum = index + 1;
+                        
+                        const rowDiv = document.createElement('div');
+                        rowDiv.className = 'raw-row';
+                        rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
+                        rowDiv.innerHTML = renderRawRowHtml(header, val, index);
+                        sourceList.appendChild(rowDiv);
+                    });
+                }
             } else {
                 // In Google Sheets mode, use LegoState headers and raw arrays
                 const poolRow = item.pool_row_data || [];
@@ -1826,17 +1834,25 @@
                 });
 
                 // Source Tab
-                sourceHeaders.forEach((header, index) => {
-                    const val = sourceRow[index];
-                    const excelCode = getExcelColumnName(index);
-                    const colNum = index + 1;
-                    
-                    const rowDiv = document.createElement('div');
-                    rowDiv.className = 'raw-row';
-                    rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
-                    rowDiv.innerHTML = renderRawRowHtml(header, val, index);
-                    sourceList.appendChild(rowDiv);
-                });
+                if (sourceRow.length === 0) {
+                    sourceList.innerHTML = `
+                        <div style="text-align: center; padding: 40px 10px; color: var(--text-muted); font-size: 13px;">
+                            <p>ℹ️ Căn nhà này chưa lên sóng. Không có dữ liệu trong sheet Source.</p>
+                        </div>
+                    `;
+                } else {
+                    sourceHeaders.forEach((header, index) => {
+                        const val = sourceRow[index];
+                        const excelCode = getExcelColumnName(index);
+                        const colNum = index + 1;
+                        
+                        const rowDiv = document.createElement('div');
+                        rowDiv.className = 'raw-row';
+                        rowDiv.setAttribute('data-col', `${header.toLowerCase()} col-${index} ${excelCode.toLowerCase()} #${colNum}`);
+                        rowDiv.innerHTML = renderRawRowHtml(header, val, index);
+                        sourceList.appendChild(rowDiv);
+                    });
+                }
             }
         }
 

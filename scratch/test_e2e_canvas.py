@@ -36,7 +36,7 @@ def run_server(port, directory):
 
 def main():
     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
-    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\98e9c411-d16e-4cb5-a567-0ed9e98b708f"
+    artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\c3b8820b-34f3-44a0-a88a-e1cd4c29c407"
     
     port = get_free_port()
     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
@@ -93,14 +93,51 @@ def main():
         ]
     }
     
-    mock_listings_list = {
-        "status": "success",
-        "listings": [mock_listing]
+    mock_listing_raw = {
+        "tk_id": "SYS-1002",
+        "Ma_Khang_Ngo_ID": "",
+        "Tieu_de_Public": "",
+        "Gia_Public": 0,
+        "status": "raw_complete",
+        "Quan": "Q3",
+        "Phuong": "Phường 11",
+        "Ngo_So_nha": "124",
+        "custom_So_Nha": "",
+        "Duong": "Cách Mạng Tháng Tám",
+        "custom_Ten_Duong": "",
+        "Phuong_cu_AI": "Phường 10",
+        "DT_Thuc_te": 80,
+        "DT_Tren_so": 75,
+        "Mat_Tien": 4.0,
+        "Chieu_dai": 18.0,
+        "So_Tang": 3,
+        "So_phong_ngu": 3,
+        "So_nha_ve_sinh": 3,
+        "Huong": "Tây Nam",
+        "Ngu_tret_Admin": "Không",
+        "CHDV_Admin": "Không",
+        "Gia_chao": 7.0,
+        "Phan_lo_i_Hem": "Hẻm ba gác",
+        "Duong_truoc_nha_m": 3,
+        "Tinh_trang_nha": "Cũ tiện xây mới",
+        "Danh_gia_Admin": "",
+        "Ten_Chu_Nha": "Nguyễn Văn B",
+        "Dien_thoai_1": "0907654321",
+        "Ten_Dau_Chu": "Đầu Chủ C",
+        "Dien_thoai_Dau_Chu": "0981234567",
+        "Note_Noi_Bo": "",
+        "Phan_loai": "",
+        "System_ID": "SYS-1002",
+        "Ma_Hang": "SYS-1002",
+        "Last_Crawl": "2026-06-22",
+        "Last_Sync": "2026-06-22",
+        "Link_Goc": "https://example.com/sys-1002",
+        "images": []
     }
     
-    mock_listings_detail = {
+    mock_listings_list = {
         "status": "success",
-        "listing": mock_listing
+        "listings": [mock_listing, mock_listing_raw]
     }
     
     console_errors = []
@@ -128,11 +165,19 @@ def main():
             route.fulfill(content_type="application/json", body=json.dumps(mock_listings_list))
             
         def handle_listings_detail_api(route):
-            print(f"[Mock API] Intercepted {route.request.method} {route.request.url}")
-            route.fulfill(content_type="application/json", body=json.dumps(mock_listings_detail))
+            url = route.request.url
+            print(f"[Mock API] Intercepted {route.request.method} {url}")
+            if "SYS-1001" in url:
+                detail = {"status": "success", "listing": mock_listing}
+            elif "SYS-1002" in url:
+                detail = {"status": "success", "listing": mock_listing_raw}
+            else:
+                detail = {"status": "error", "message": "Not found"}
+            route.fulfill(content_type="application/json", body=json.dumps(detail))
             
         page.route("**/api/listings", handle_listings_api)
         page.route("**/api/listings/SYS-1001", handle_listings_detail_api)
+        page.route("**/api/listings/SYS-1002", handle_listings_detail_api)
         page.route("**/res.cloudinary.com/**", lambda route: route.fulfill(status=200, body="Dummy Image"))
         
         canvas_url = f"http://localhost:{port}/canvas.html"
@@ -152,10 +197,14 @@ def main():
             page.wait_for_selector("#view-header-id", timeout=5000)
             header_id = page.locator("#view-header-id").inner_text()
             header_title = page.locator("#view-header-title").inner_text()
-            print(f"Loaded details for: {header_id} - {header_title}")
+            header_status = page.locator("#view-header-status-badge").inner_text()
+            print(f"Loaded details for: {header_id} - {header_title} - {header_status}")
             
             if "KN-1001" not in header_id:
                 raise Exception("System ID mismatch in detail header")
+            
+            if "ĐÃ LÊN SÓNG" not in header_status.upper():
+                raise Exception(f"Expected status 'Đã lên sóng' for published listing, got: {header_status}")
                 
             # Verify comparing fields
             so_nha_cur = page.locator("#loc-so-nha-cur").inner_text()
@@ -196,6 +245,35 @@ def main():
             page.locator("#pool-col-search").fill("dt")
             page.wait_for_timeout(300)
             print("Searched columns with query 'dt'")
+            
+            # --- Now test clicking the raw listing (SYS-1002) ---
+            print("Selecting second (raw) card SYS-1002...")
+            page.locator(".listing-card").nth(1).click()
+            page.wait_for_timeout(500)
+            print("Selected raw card SYS-1002")
+            
+            page.wait_for_selector("#view-header-id", timeout=5000)
+            header_id_raw = page.locator("#view-header-id").inner_text()
+            header_status_raw = page.locator("#view-header-status-badge").inner_text()
+            print(f"Loaded raw details: {header_id_raw} - {header_status_raw}")
+            
+            if "SYS-1002" not in header_id_raw:
+                raise Exception("System ID mismatch in detail header for raw listing")
+                
+            if "CHỜ BIÊN TẬP" not in header_status_raw.upper():
+                raise Exception(f"Expected status 'Chờ biên tập' for raw listing, got: {header_status_raw}")
+                
+            # Click Tab 4: Chi tiết Source (Sạch)
+            print("Switching to Source Detail Tab for raw listing...")
+            page.locator(".detail-tab", has_text="Chi tiết Source (Sạch)").click()
+            page.wait_for_timeout(300)
+            
+            # Verify the warning text is present
+            source_content = page.locator("#source-raw-list").inner_text()
+            print(f"Source tab content: {source_content.strip()}")
+            if "Căn nhà này chưa lên sóng. Không có dữ liệu trong sheet Source." not in source_content:
+                raise Exception("Expected warning message in Source raw inspector tab is missing")
+            print("Warning message in Source tab verified successfully!")
             
             # Save Desktop Screenshot
             screenshot_path = os.path.join(artifacts_dir, "canvas_view_desktop.png")

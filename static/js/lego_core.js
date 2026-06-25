@@ -579,6 +579,8 @@ const LegoState = {
         const poolDataRows = poolRows.slice(1);
         this.POOL_ROWS = poolDataRows;
 
+        const matchedPoolRowIndexes = new Set();
+
         const fullList = sourceRows
           .map((sr, index) => {
             if (index === 0) return null; // Bỏ qua hàng tiêu đề
@@ -608,12 +610,16 @@ const LegoState = {
             const srSystemId = sr[37] || '';
             const srId = sr[3] || '';
 
-            const poolRow = poolDataRows.find(pr => {
+            const poolRow = poolDataRows.find((pr, prIdx) => {
               const prSystemId = pr[72] || '';
               const prId = pr[55] || '';
-              return (srSystemId && prSystemId === srSystemId) || 
-                     (srId && prId === srId) ||
-                     (srSystemId && prId === srSystemId);
+              const isMatch = (srSystemId && prSystemId === srSystemId) || 
+                              (srId && prId === srId) ||
+                              (srSystemId && prId === srSystemId);
+              if (isMatch) {
+                matchedPoolRowIndexes.add(prIdx);
+              }
+              return isMatch;
             });
 
             const poolImgs = [];
@@ -751,10 +757,127 @@ const LegoState = {
           })
           .filter(Boolean);
 
+        const unmatchedList = [];
+        poolDataRows.forEach((poolRow, prIdx) => {
+          if (matchedPoolRowIndexes.has(prIdx)) return;
+
+          const poolImgs = [];
+          for (let c = 40; c <= 54; c++) {
+            if (poolRow[c]) poolImgs.push(poolRow[c]);
+          }
+          for (let c = 83; c <= 92; c++) {
+            if (poolRow[c]) poolImgs.push(poolRow[c]);
+          }
+
+          let rawQ = poolRow[3] || '';
+          let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+          if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+
+          const cleanQLower = cleanQ.toLowerCase();
+          if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
+          else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
+          else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
+          else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
+          else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
+          else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
+          else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
+          else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
+          else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
+          else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
+          else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
+
+          const uniqueImgs = [...new Set(poolImgs)];
+
+          const p = {
+            temp_id: sourceRows.length + prIdx + 1,
+            id: poolRow[55] || '',
+            cu_phap: poolRow[1] || '',
+            t: poolRow[56] || poolRow[55] || 'Chưa biên tập',
+            dt: parseFloatHelper(poolRow[13]) || 0,
+            tang: poolRow[15] || '',
+            mat: poolRow[16] || '',
+            gia: parseGia(poolRow[11]) || parseGia(poolRow[58]) || 0,
+            q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
+            ql: cleanQ.toUpperCase(),
+            phuong: poolRow[4] || '-',
+            loai_hinh: poolRow[7] || 'Hẻm',
+            huong: poolRow[17] || '-',
+            duong_truoc_nha: poolRow[60] || '-',
+            rong_hem: poolRow[61] || '-',
+            tinh_trang: '-',
+            danh_gia: '',
+            is_invisible: false,
+            ngu_tang_tret: '-',
+            chdv: '-',
+            giabq: '-',
+            m: cleanConsecutiveNewlines(poolRow[10] || ''),
+            imgs: uniqueImgs,
+            system_id: poolRow[72] || (sourceRows.length + prIdx + 1).toString(),
+            so_pn: poolRow[64] || '-',
+            img_mat_tien: poolRow[37] || '',
+            ten_duong: poolRow[5] || '',
+
+            original_row_data: null,
+            source_row_index: null,
+            isFromPoolOnly: true
+          };
+          p.dai_nha = getDaiNha(p);
+
+          p.raw_ten_dau_chu = poolRow[75] || '';
+          p.raw_dt_dau_chu = poolRow[74] || '';
+          p.raw_link_fb = poolRow[76] || '';
+          p.raw_noi_dung_chinh = String(poolRow[9] || '').replace(/\r\n|\r|\n/g, ' ');
+          p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
+          p.raw_sodo1 = poolRow[27] || '';
+          p.raw_sodo2 = poolRow[28] || '';
+          p.raw_sodo3 = poolRow[80] || '';
+          p.raw_sodo4 = poolRow[81] || '';
+          p.raw_sodo5 = poolRow[82] || '';
+          p.raw_so_nha = poolRow[6] || '';
+          p.raw_ten_duong = poolRow[5] || '';
+          p.raw_dt_thuc_te = poolRow[13] || '';
+          p.raw_dt_tren_so = poolRow[14] || '';
+          p.raw_gia_chao = poolRow[11] || poolRow[58] || '';
+          p.raw_so_tang = poolRow[15] || '';
+          p.raw_mat_tien = poolRow[16] || '';
+          p.raw_duong_truoc_nha = poolRow[60] || '';
+          p.raw_do_rong_hem = poolRow[61] || '';
+          p.raw_so_pn = poolRow[64] || '';
+          p.raw_so_wc = poolRow[65] || '';
+          p.raw_tieu_de_public = poolRow[56] || '';
+          p.raw_mo_ta_public = poolRow[57] || '';
+          p.raw_phan_loai = poolRow[7] || '';
+          p.pool_row_index = prIdx + 2;
+          p.pool_row_data = poolRow;
+
+          let jsonUiVal = poolRow[93] || '';
+          if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
+            for (let i = poolRow.length - 1; i >= 0; i--) {
+              const val = poolRow[i];
+              const valStr = val ? String(val).trim() : '';
+              if (valStr && valStr.startsWith('{') && valStr.endsWith('}')) {
+                jsonUiVal = valStr;
+                break;
+              }
+            }
+          }
+          p.json_ui_parsed = {};
+          if (jsonUiVal) {
+            try { p.json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+          }
+
+          unmatchedList.push(p);
+        });
+
+        const mergedList = [
+          ...fullList,
+          ...unmatchedList
+        ];
+
         this.isSecureLoaded = true;
-        this.DATA = fullList;
+        this.DATA = mergedList;
         this.isDataLoaded = true;
-        this.emit('rawDataLoaded', fullList);
+        this.emit('rawDataLoaded', mergedList);
       } catch (err) {
         console.error("Error loading secure admin data, falling back to public:", err);
         this.loadPublicDataFallback();
