@@ -62,7 +62,7 @@
 
     const renderImageEditorWidget = (p) => {
       if (typeof window.renderImageEditorWidget === 'function') {
-        return window.renderImageEditorWidget(p);
+        return window.renderImageEditorWidget(p, true);
       }
       return '';
     };
@@ -470,29 +470,30 @@
 
 
   // === renderImageEditorWidget ===
-    function renderImageEditorWidget(p) {
+    function renderImageEditorWidget(p, forceNew = false) {
       const slidesBefore = window.imageEditorSlides || [];
       const activeIdxBefore = window.activeImageEditorIndex || 0;
       let activeCardId = null;
-      if (activeIdxBefore >= 0 && activeIdxBefore < slidesBefore.length) {
+      if (!forceNew && activeIdxBefore >= 0 && activeIdxBefore < slidesBefore.length) {
         const activeCard = slidesBefore[activeIdxBefore];
         activeCardId = { type: activeCard.type, index: activeCard.index };
       }
       console.log("Image Editor Debug - Before:", {
         activeIdxBefore,
         slidesCountBefore: slidesBefore.length,
-        activeCardId
+        activeCardId,
+        forceNew
       });
 
-      const domCover = document.getElementById('editCoverImgUrl');
-      const domPublicCover = document.getElementById('editPublicCoverUrl');
-      const domPublicInterior = document.getElementById('editPublicInteriorIndices');
-      const domPublicAlley = document.getElementById('editPublicAlleyIndices');
-      const domSodo1 = document.getElementById('editSodo1Url');
-      const domSodo2 = document.getElementById('editSodo2Url');
-      const domSodo3 = document.getElementById('editSodo3Url');
-      const domSodo4 = document.getElementById('editSodo4Url');
-      const domSodo5 = document.getElementById('editSodo5Url');
+      const domCover = forceNew ? null : document.getElementById('editCoverImgUrl');
+      const domPublicCover = forceNew ? null : document.getElementById('editPublicCoverUrl');
+      const domPublicInterior = forceNew ? null : document.getElementById('editPublicInteriorIndices');
+      const domPublicAlley = forceNew ? null : document.getElementById('editPublicAlleyIndices');
+      const domSodo1 = forceNew ? null : document.getElementById('editSodo1Url');
+      const domSodo2 = forceNew ? null : document.getElementById('editSodo2Url');
+      const domSodo3 = forceNew ? null : document.getElementById('editSodo3Url');
+      const domSodo4 = forceNew ? null : document.getElementById('editSodo4Url');
+      const domSodo5 = forceNew ? null : document.getElementById('editSodo5Url');
 
       const cards = [];
       

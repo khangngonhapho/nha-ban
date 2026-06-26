@@ -1230,7 +1230,7 @@
             });
 
             // Listen to Data loaded
-            LegoState.on('rawDataLoaded', (data) => {
+            LegoState.on('canvasDataLoaded', (data) => {
                 allListings = data || [];
                 poolHeaders = HARDCODED_POOL_HEADERS;
                 sourceHeaders = LegoState.SOURCE_HEADERS || [];

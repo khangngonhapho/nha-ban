@@ -889,9 +889,10 @@ const LegoState = {
         ];
 
         this.isSecureLoaded = true;
-        this.DATA = mergedList;
+        this.DATA = fullList;
         this.isDataLoaded = true;
-        this.emit('rawDataLoaded', mergedList);
+        this.emit('rawDataLoaded', fullList);
+        this.emit('canvasDataLoaded', mergedList);
       } catch (err) {
         console.error("Error loading secure admin data, falling back to public:", err);
         this.loadPublicDataFallback();
@@ -1040,6 +1041,7 @@ const LegoState = {
         this.DATA = fullList;
         this.isDataLoaded = true;
         this.emit('rawDataLoaded', fullList);
+        this.emit('canvasDataLoaded', fullList);
         this.emit('publicDataLoaded');
       } catch (e) {
         this.emit('dataLoadError', 'Lỗi parse dữ liệu: ' + e.message);

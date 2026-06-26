@@ -778,10 +778,26 @@ window.stripVietnameseAccents = function(str) {
 // Road reverser / abbreviator
 window.abbreviateAndReverseRoad = function(roadName) {
   if (!roadName) return "";
-  const cleanRoad = window.stripVietnameseAccents(roadName);
-  const words = cleanRoad.trim().split(/\s+/).filter(w => w.length > 0);
-  const abbr = words.map(w => w[0].toUpperCase()).join('');
-  return abbr;
+  let normalized = roadName.trim();
+  if (/cách mạng tháng (tám|8)|cmt8/i.test(normalized)) {
+    normalized = "CMTT";
+  } else if (/ba tháng hai|3 tháng 2|3\/2|3-2/i.test(normalized)) {
+    normalized = "BTH";
+  } else if (/đường số (\d+)/i.test(normalized)) {
+    const match = normalized.match(/đường số (\d+)/i);
+    normalized = "DS" + match[1];
+  }
+  
+  let abbr = "";
+  if (normalized === "CMTT" || normalized === "BTH" || normalized.startsWith("DS")) {
+    abbr = normalized;
+  } else {
+    const cleanRoad = window.stripVietnameseAccents(normalized);
+    const words = cleanRoad.trim().split(/\s+/).filter(w => w.length > 0);
+    abbr = words.map(w => w[0].toUpperCase()).join('');
+  }
+  const reversed = abbr.split('').reverse().join('');
+  return reversed;
 };
 
 // Map house number to code
@@ -792,7 +808,7 @@ window.mapSoNha = function(soNha) {
   for (let i = 0; i < soNha.length; i++) {
     const char = soNha[i];
     const lowerChar = char.toLowerCase();
-    res += map[lowerChar] !== undefined ? map[lowerChar] : char.toUpperCase();
+    res += map[lowerChar] !== undefined ? map[lowerChar] : char.toLowerCase();
   }
   return res;
 };
@@ -800,10 +816,19 @@ window.mapSoNha = function(soNha) {
 // ID generator
 window.generateMaKhangNgo = function(soNha, duong) {
   if (!soNha || !duong) return "";
-  const soNhaCode = window.mapSoNha(soNha);
+  let cleanSoNha = soNha.toString().trim();
+  if (cleanSoNha.includes('+')) {
+    cleanSoNha = cleanSoNha.split('+')[0].trim();
+  }
+  const soNhaCode = window.mapSoNha(cleanSoNha);
   const duongCode = window.abbreviateAndReverseRoad(duong);
-  const base = soNhaCode + 'I' + duongCode;
-  return base;
+  let combined = soNhaCode + 'I' + duongCode;
+  if (combined.length > 1) {
+    combined = combined[0] + 'W' + combined.substring(1);
+  } else {
+    combined = combined + 'W';
+  }
+  return combined;
 };
 
 // Automatic titles & descriptions
