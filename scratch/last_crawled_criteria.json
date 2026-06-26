@@ -1,23 +1,15 @@
 [
     {
-        "id": 3,
-        "name": "Hiếm",
-        "parentId": null,
-        "groupId": 1,
-        "groupCode": "PROPERTY_CRITERIA",
-        "groupName": "Tiềm năng - Rủi ro"
-    },
-    {
-        "id": 16,
-        "name": "Chủ cần bán gấp",
-        "parentId": null,
-        "groupId": 1,
-        "groupCode": "PROPERTY_CRITERIA",
-        "groupName": "Tiềm năng - Rủi ro"
-    },
-    {
         "id": 17,
         "name": "Chính chủ",
+        "parentId": null,
+        "groupId": 1,
+        "groupCode": "PROPERTY_CRITERIA",
+        "groupName": "Tiềm năng - Rủi ro"
+    },
+    {
+        "id": 18,
+        "name": "Dân đầu tư",
         "parentId": null,
         "groupId": 1,
         "groupCode": "PROPERTY_CRITERIA",
@@ -48,64 +40,64 @@
         "groupName": "Giấy tờ pháp lý"
     },
     {
-        "id": 63,
-        "name": "Nở hậu",
+        "id": 62,
+        "name": "Vuông",
         "parentId": null,
         "groupId": 6,
         "groupCode": "LAND_PLOT_SHAPE",
         "groupName": "Hình dạng thửa đất"
     },
     {
-        "id": 69,
-        "name": "Xây 5-10 năm",
+        "id": 68,
+        "name": "Xây < 5 năm",
         "parentId": null,
         "groupId": 7,
         "groupCode": "CONSTRUCTION_STATUS",
         "groupName": "Tình trạng xây dựng"
     },
     {
-        "id": 74,
-        "name": "Không rõ",
+        "id": 72,
+        "name": "Nhà khung cột",
         "parentId": null,
         "groupId": 8,
         "groupCode": "HOUSE_STRUCTURE",
         "groupName": "Cấu trúc nhà"
     },
     {
-        "id": 77,
-        "name": "Nội thất giá trị cao, tiền tỷ",
+        "id": 76,
+        "name": "Nội thất cơ bản",
         "parentId": null,
         "groupId": 9,
         "groupCode": "INTERIOR",
         "groupName": "Nội thất"
     },
     {
-        "id": 79,
-        "name": "Không",
-        "parentId": null,
-        "groupId": 10,
-        "groupCode": "ELEVATOR",
-        "groupName": "Thang máy"
-    },
-    {
-        "id": 80,
-        "name": "Ngõ thông",
+        "id": 81,
+        "name": "Ngõ cụt",
         "parentId": null,
         "groupId": 11,
         "groupCode": "ALLEY_TYPE",
         "groupName": "Loại ngõ"
     },
     {
-        "id": 86,
-        "name": "Vị trí số 3",
+        "id": 82,
+        "name": "Nằm cuối ngõ",
+        "parentId": null,
+        "groupId": 12,
+        "groupCode": "POSITION_IN_ALLEY",
+        "groupName": "Vị trí nhà trong ngõ"
+    },
+    {
+        "id": 85,
+        "name": "Vị trí số 2",
         "parentId": null,
         "groupId": 13,
         "groupCode": "TAX_CALCULATION_POSITION",
         "groupName": "Vị trí tính thuế theo quy định của Nhà nước"
     },
     {
-        "id": 90,
-        "name": "Lô góc 2 mặt thoáng",
+        "id": 88,
+        "name": "Chỉ có 1 mặt tiền",
         "parentId": null,
         "groupId": 14,
         "groupCode": "OPEN_SPACE",
@@ -120,8 +112,8 @@
         "groupName": "Khoảng cách ra đường ô tô tránh"
     },
     {
-        "id": 111,
-        "name": "Dưới 100m",
+        "id": 112,
+        "name": "100-300m",
         "parentId": null,
         "groupId": 18,
         "groupCode": "DISTANCE_TO_PARKING_LOT",

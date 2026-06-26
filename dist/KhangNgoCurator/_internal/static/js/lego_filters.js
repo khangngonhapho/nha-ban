@@ -180,10 +180,12 @@
     
     // Lọc động: Chỉ hiện căn Public (US-039.7)
     if (window.isAdmin && window.activeMode === 'pool' && window.showOnAirOnly) {
-      a = a.filter(p => window.DATA.some(x => 
-        (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
-        (x.id && p.id && String(x.id).trim() === String(p.id).trim())
-      ));
+      a = a.filter(p => window.DATA.some(x => {
+        if (x.system_id && p.system_id) {
+          return String(x.system_id).trim() === String(p.system_id).trim();
+        }
+        return x.id && p.id && String(x.id).trim() === String(p.id).trim();
+      }));
     }
     
     const sv = (document.getElementById('bdsSearchInput')?.value || '').trim();

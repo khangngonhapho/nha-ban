@@ -459,7 +459,7 @@
     }
 
     // TRIGGER SINGLE LISTING CRAWL
-    async function crawlSingle(tkId, buttonEl) {
+    async function crawlSingle(tkId, buttonEl, title = '') {
         if (!buttonEl) return;
         
         buttonEl.disabled = true;
@@ -477,7 +477,7 @@
             headers: {
                 "Content-Type": "application/json"
             },
-            data: JSON.stringify({ run_ai: runAi }),
+            data: JSON.stringify({ run_ai: runAi, title: title }),
             timeout: 60000,
             onload: function(response) {
                 buttonEl.disabled = false;
@@ -536,6 +536,8 @@
 
         for (let i = 0; i < checkboxes.length; i++) {
             const tkId = checkboxes[i].value;
+            const item = detectedListings.find(l => l.id === tkId);
+            const title = item ? item.title : '';
             writeLog(`[${i+1}/${checkboxes.length}] Đang xử lý: ${tkId}`);
             
             // Find corresponding card button to update its UI state
@@ -554,7 +556,7 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    data: JSON.stringify({ run_ai: runAi }),
+                    data: JSON.stringify({ run_ai: runAi, title: title }),
                     timeout: 60000,
                     onload: function(response) {
                         try {
@@ -689,7 +691,7 @@
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    crawlSingle(tkId, btn);
+                    crawlSingle(tkId, btn, title);
                 });
 
                 // Append to card
