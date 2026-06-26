@@ -2707,8 +2707,8 @@
         showToast("Đã lưu thay đổi lên Google Sheets thành công!", "success");
         
         // Re-render list cards in the background to reflect changes in-place
-        if (typeof render === 'function') {
-          render();
+        if (typeof window.render === 'function') {
+          window.render();
         }
 
         // Focus and expand the Customer Preview section in-place without page reload (US-046.4)
