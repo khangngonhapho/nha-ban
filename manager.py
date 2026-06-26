@@ -3166,8 +3166,41 @@ def recrawl_single_listing(tk_id):
             
             phan_loai_names = [c.get("name") for c in (detail_data.get("criteria") or []) if c and c.get("name")]
             phan_loai = ", ".join(phan_loai_names)
-            
-            noi_dung_chinh = f"{ngo_so_nha} {duong_name}, {detail_data.get('area', '')}m2, {detail_data.get('floors', '')} tầng, mt {detail_data.get('wide', '')}m, sâu {detail_data.get('depth', '')}m, giá {detail_data.get('offeringPrice', '')} tỷ, Phường {phuong_name} {quan_name}"
+            # Lấy title từ payload gửi lên nếu có (do Tampermonkey gửi)
+            crawled_title = data.get("title", "").strip() if data else ""
+            if crawled_title:
+                noi_dung_chinh = crawled_title
+            else:
+                # Fallback clean title
+                dt_so = str(detail_data.get("area") or "").strip()
+                dt_thuc = str(detail_data.get("actualArea") or "").strip()
+                if dt_so and dt_thuc and dt_so != dt_thuc:
+                    area_str = f"{dt_so}/{dt_thuc}"
+                else:
+                    area_str = dt_so or dt_thuc
+
+                floors_val = str(detail_data.get("floors") or "").strip()
+                wide_val = str(detail_data.get("wide") or "").strip()
+                depth_val = str(detail_data.get("depth") or "").strip()
+                price_val = str(detail_data.get("offeringPrice") or "").strip()
+
+                parts = []
+                if ngo_so_nha:
+                    parts.append(str(ngo_so_nha).strip())
+                if duong_name:
+                    parts.append(str(duong_name).strip())
+                if area_str:
+                    parts.append(str(area_str).strip())
+                if floors_val:
+                    parts.append(str(floors_val).strip())
+                if wide_val:
+                    parts.append(str(wide_val).strip())
+                if depth_val:
+                    parts.append(str(depth_val).strip())
+                if price_val:
+                    parts.append(f"{price_val} tỷ")
+
+                noi_dung_chinh = " ".join([p for p in parts if p])
             
             mo_ta_chi_tiet = detail_data.get("description", "")
             gia_chao = str(detail_data.get("offeringPrice", ""))
@@ -3515,6 +3548,44 @@ def recrawl_single_listing(tk_id):
             "commissionValue": commission_value,
             "certificateSeries": certificate_series
         }
+
+        # Lấy title từ payload gửi lên nếu có (do Tampermonkey gửi)
+        crawled_title = data.get("title", "").strip() if data else ""
+        if crawled_title:
+            crawled_data["Nội dung chính"] = crawled_title
+        else:
+            # Fallback clean title
+            dt_so = str(crawled_data.get("DT Trên sổ") or "").strip()
+            dt_thuc = str(crawled_data.get("DT Thực tế") or "").strip()
+            if dt_so and dt_thuc and dt_so != dt_thuc:
+                area_str = f"{dt_so}/{dt_thuc}"
+            else:
+                area_str = dt_so or dt_thuc
+
+            ngo_so_nha = crawled_data.get("Ngõ/Số nhà", "")
+            duong_name = crawled_data.get("Đường", "")
+            floors_val = str(crawled_data.get("Số Tầng") or "").strip()
+            wide_val = str(crawled_data.get("Mặt Tiền") or "").strip()
+            depth_val = str(crawled_data.get("Chieu_dai") or "").strip()
+            price_val = str(crawled_data.get("Giá chào") or "").strip()
+
+            parts = []
+            if ngo_so_nha:
+                parts.append(str(ngo_so_nha).strip())
+            if duong_name:
+                parts.append(str(duong_name).strip())
+            if area_str:
+                parts.append(str(area_str).strip())
+            if floors_val:
+                parts.append(str(floors_val).strip())
+            if wide_val:
+                parts.append(str(wide_val).strip())
+            if depth_val:
+                parts.append(str(depth_val).strip())
+            if price_val:
+                parts.append(f"{price_val} tỷ")
+
+            crawled_data["Nội dung chính"] = " ".join([p for p in parts if p])
 
         # Parse criteria using direct label scraper + fallback to V1 multiselect
         classified_cols = fetcher.scrape_criteria_from_dom(soup_detail, phan_loai_scraped)

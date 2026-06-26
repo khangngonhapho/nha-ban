@@ -2334,7 +2334,35 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
             phan_loai_names = [c.get("name") for c in (detail_data.get("criteria") or []) if c and c.get("name")]
             phan_loai = ", ".join(phan_loai_names)
             
-            noi_dung_chinh = f"{ngo_so_nha} {duong_name}, {detail_data.get('area', '')}m2, {detail_data.get('floors', '')} tầng, mt {detail_data.get('wide', '')}m, sâu {detail_data.get('depth', '')}m, giá {detail_data.get('offeringPrice', '')} tỷ, Phường {phuong_name} {quan_name}"
+            dt_so = str(detail_data.get("area") or "").strip()
+            dt_thuc = str(detail_data.get("actualArea") or "").strip()
+            if dt_so and dt_thuc and dt_so != dt_thuc:
+                area_str = f"{dt_so}/{dt_thuc}"
+            else:
+                area_str = dt_so or dt_thuc
+
+            floors_val = str(detail_data.get("floors") or "").strip()
+            wide_val = str(detail_data.get("wide") or "").strip()
+            depth_val = str(detail_data.get("depth") or "").strip()
+            price_val = str(detail_data.get("offeringPrice") or "").strip()
+
+            parts = []
+            if ngo_so_nha:
+                parts.append(str(ngo_so_nha).strip())
+            if duong_name:
+                parts.append(str(duong_name).strip())
+            if area_str:
+                parts.append(str(area_str).strip())
+            if floors_val:
+                parts.append(str(floors_val).strip())
+            if wide_val:
+                parts.append(str(wide_val).strip())
+            if depth_val:
+                parts.append(str(depth_val).strip())
+            if price_val:
+                parts.append(f"{price_val} tỷ")
+
+            noi_dung_chinh = " ".join([p for p in parts if p])
             mo_ta_chi_tiet = detail_data.get("description", "")
             gia_chao = str(detail_data.get("offeringPrice", ""))
             dt_thuc_te = str(detail_data.get("actualArea", ""))
