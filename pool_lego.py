@@ -1568,8 +1568,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                 else:
                     table_end_row = get_table_end_row_index(sheet_id, creds, add_log_message)
                     if table_end_row:
-                        next_row = table_end_row
-                        add_log_message(f"[ℹ] Phát hiện Table chính thức kết thúc ở dòng {table_end_row}. Thực hiện chèn tại dòng {next_row} để tự động mở rộng Table và kế thừa format.")
+                        next_row = table_end_row + 1
+                        add_log_message(f"[ℹ] Phát hiện Table chính thức kết thúc ở dòng {table_end_row}. Thực hiện chèn tại dòng {next_row} (cuối bảng) để thêm dòng mới vào cuối.")
                     else:
                         try:
                             next_row = len(sheet.get_all_values()) + 1
