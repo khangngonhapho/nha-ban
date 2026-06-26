@@ -323,6 +323,16 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
 
+### 2026-06-26 (Nghiệm thu US-107 - Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas - TEST PASS)
+*   **Mã User Story:** `US-107`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Đồng bộ song song dữ liệu Pool & Source**: Thay đổi trong `static/js/lego_core.js` để tự động đối chiếu và gom các căn trong Pool chưa khớp với Source (`unmatchedList`) làm danh sách hiển thị trên Canvas (hiển thị cả các căn chưa lên sóng ở chế độ Admin).
+     - **Phân loại Trạng thái & Badge động**: Hiển thị badge trạng thái "Đã lên sóng" (badge-published) or "Chờ biên tập" (badge-raw) trên Card và Sidebar, hỗ trợ lọc Status chính xác.
+     - **Cảnh báo dữ liệu Source trống**: Cấu hình tab Source thô hiển thị cảnh báo thay thế cho danh sách 46 hàng rỗng khi căn nhà chưa lên sóng.
+     - **Sửa lỗi Lẫn lộn Ảnh mặt tiền (Mix-up Image Fix)**: Vá lỗi leak ảnh mặt tiền ở frontend bằng tham số `forceNew` reset ảnh cũ khi chuyển căn. Thiết lập Thread Lock (`sheets_lock = threading.Lock()`) trong backend python `pool_lego.py` để ngăn ngừa xung đột ghi đè chéo khi chạy nhiều luồng ghi dữ liệu trực tiếp lên Google Sheets API. Chạy tool tự vá phục hồi thành công 29 căn lỗi trên Google Sheets.
+     - **Sửa lỗi "Căn đầu tiên bị lỗi" (Căn thô 0 tỷ có hình xe máy)**: Xóa dòng rác số 90 trống thông tin trên Pool Sheet và đồng bộ lại để loại bỏ căn lỗi hiển thị ở đầu trang của chế độ Admin.
+     - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho bộ kiểm thử E2E Playwright (`test_e2e_canvas.py` và `test_e2e_filters.py`) trên cả hai viewports Desktop & Mobile.
+
 ### 2026-06-24 (Nghiệm thu US-106 - Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) - TEST PASS)
 *   **Mã User Story:** `US-106`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1195,6 +1205,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-107:** Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (Bao gồm Căn chưa lên sóng) ✅ Done 2026-06-26
 - [x] **US-106:** Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) ✅ Done 2026-06-24
 - [x] **US-105:** Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI ✅ Done 2026-06-22
 - [x] **US-104:** Sửa lỗi không show carousel hình sổ trên detail admin view vercel ✅ Done 2026-06-22

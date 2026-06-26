@@ -7,7 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
-*   **US-107 (Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas):** **[IN-PROGRESS]** Đang tiến hành lập kế hoạch chi tiết (Planning), thiết kế giải pháp đồng bộ và hiển thị căn chưa lên sóng từ Pool lên Canvas view.
+*   **US-107 (Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas):** **[ACCEPTED - 2026-06-26]** Đồng bộ realtime và hiển thị toàn bộ căn nhà từ Pool trên Canvas (bao gồm các căn chưa lên sóng). Phân loại trạng thái Card và hiển thị badge động "Đã lên sóng" / "Chờ biên tập". Hỗ trợ tab Source thô hiển thị cảnh báo cho các căn chưa lên sóng. Khắc phục lỗi rò rỉ trạng thái ảnh mặt tiền ở frontend, thêm Thread Lock ở backend python, dọn dẹp dòng rác 90 trên Pool Sheet để xóa hoàn toàn căn thô 0 tỷ có hình xe máy rác. Chạy thành công bộ test Playwright E2E tự động đạt 100% PASS.
 *   **US-106 (Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source)):** **[ACCEPTED - 2026-06-24]** Thiết lập bảng nhìn toàn cảnh trực quan Canvas Detail View, hỗ trợ so sánh đối chiếu giữa Pool (Thô) và Source (Sạch). Hỗ trợ Dual-mode (Google Sheets realtime vs SQLite local) và Tab Inspector cột thô tự động map tiêu đề cột Pool/Source sạch. Khắc phục lỗi lệch tiêu đề cột Pool bằng cách hardcode danh sách 94 cột. Toàn bộ kịch bản E2E Playwright `test_e2e_canvas.py` và `verify_build.py` chạy thành công **100% PASS** trên môi trường local.
 *   **US-105 (Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI):** **[ACCEPTED - 2026-06-22]** Cho phép hiển thị nút Tự động điền thầm lặng bằng AI đối với cả các căn đã lên sóng. Hỏi xác nhận cảnh báo mất mát dữ liệu trước khi thay thế nội dung trường Tiêu đề public và Mô tả public. Đồng bộ hóa sang Curator Dashboard và chạy kiểm thử Playwright E2E tự động thành công.
 *   **US-104 (Sửa lỗi không show carousel hình sổ trên detail admin view vercel):** **[ACCEPTED - 2026-06-22]** Đã cấu hình hiển thị song song Carousel Sổ đỏ (`#carouselSo`) và Carousel BĐS (`#carouselNha`) ở chế độ Admin. Đồng bộ R2 sodo sạch và dàn phẳng 5 cột lên Sheets. Bảo mật sodo bằng cách ẩn khỏi Client view/Preview qua logic `visible: false`.
@@ -56,4 +56,4 @@
 *   [scratch/test_e2e_canvas.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/test_e2e_canvas.py) — Script kiểm thử tự động Playwright E2E tích hợp dành riêng cho Canvas View.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-24 (US-106 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-26 (US-107 accepted & E2E tests 100% passed).*

@@ -9,7 +9,7 @@
     <!-- Google Identity Services (GSI) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="/static/css/global.css?v=202606261127">
-    <script src="/static/js/lego_core.js?v=202606261127"></script>
+    <script src="/static/js/lego_core.js?v=202606261230"></script>
     <script src="/static/js/lego_helpers.js?v=202606261127"></script>
     <style>
         :root {
@@ -1360,12 +1360,10 @@
                 }
 
                 if (query) {
-                    const matchQText = itemTitle.includes(query) || 
-                                       itemMaKN.includes(query) || 
-                                       itemSoNha.includes(query) || 
-                                       itemDuong.includes(query) || 
-                                       itemTkId.includes(query);
-                    if (!matchQText) matchSearch = false;
+                    const searchString = `${itemTitle} ${itemMaKN} ${itemSoNha} ${itemDuong} ${itemTkId}`.toLowerCase();
+                    const queryTokens = query.split(/\s+/).filter(Boolean);
+                    const matchAllTokens = queryTokens.every(token => searchString.includes(token));
+                    if (!matchAllTokens) matchSearch = false;
                 }
 
                 return matchQ && matchStatus && matchSearch;
