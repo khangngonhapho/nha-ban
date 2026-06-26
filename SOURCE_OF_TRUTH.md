@@ -322,6 +322,15 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-27 (Nghiệm thu US-109 - Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool - TEST PASS)
+*   **Mã User Story:** `US-109`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Trích xuất Tiêu đề Thô từ DOM**: Cập nhật userscript `static/js/thienkhoi_list_scraper.user.js` để đọc trường `title` trên card tin danh sách và đính kèm vào payload POST `/api/listings/{tkId}/recrawl`.
+     - **Lưu trữ CSDL & Google Sheets**: Sửa đổi `manager.py` nhận tham số `title` và ghi trực tiếp vào cột `Noi_dung_chinh` (Nội dung chính) thay vì chuỗi tự ghép nối.
+     - **Fallback & Định dạng Diện tích Kép (Double-area)**: Bổ sung logic fallback cho `fetcher.py` và `pool_lego.py` để sinh tiêu đề sạch. Trong trường hợp diện tích sổ (`area`) và diện tích thực tế (`actualArea`) lệch nhau, tiêu đề fallback sẽ hiển thị cả 2 dưới dạng `{area}/{actualArea}` (ví dụ: `46/58`).
+     - **Chuẩn hóa Dữ liệu lịch sử (Migration)**: Viết và chạy thành công migration script `standardize_existing_noi_dung_chinh.py` để chuẩn hóa lại 96 listings cũ trong SQLite và đồng thời thực hiện cập nhật hàng loạt (batch update) cột J2:J97 trên Google Sheets tab Pool chỉ trong 1 API call.
+     - **Kiểm thử E2E Playwright**: Chạy bộ test Playwright E2E tự động thành công và lưu hình ảnh chứng cứ tại `docs/workflows/assets/US-109_desktop.png` và `docs/workflows/assets/US-109_mobile.png`.
+
 ### 2026-06-26 (Nghiệm thu US-108 - Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') - TEST PASS)
 *   **Mã User Story:** `US-108`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1210,6 +1219,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-109:** Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool ✅ Done 2026-06-27
 - [x] **US-108:** Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') ✅ Done 2026-06-26
 - [x] **US-107:** Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (Bao gồm Căn chưa lên sóng) ✅ Done 2026-06-26
 - [x] **US-106:** Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) ✅ Done 2026-06-24

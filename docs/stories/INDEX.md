@@ -1,18 +1,19 @@
 # Stories Index
 
-Last updated: 2026-06-26
+Last updated: 2026-06-27
 
 ## Stats
-- Total: 117
+- Total: 118
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 21
-- accepted: 87
+- accepted: 88
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-109 | Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool | accepted | M | 2026-06-27 | `fetcher.py`, `index.html`, `manager.py`, `pool_lego.py`, `static/js/thienkhoi_list_scraper.user.js` |
 | US-108 | Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') | accepted | S | 2026-06-26 | `static/js/lego_detail_admin.js` |
 | US-107 | Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas | accepted | M | 2026-06-25 | `static/js/lego_core.js`, `canvas.html` |
 | US-106 | Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source)          | accepted | M | 2026-06-22 | `canvas.html`, `manager.py`, `api/index.js`, `curator.html`       |
@@ -135,6 +136,7 @@ Last updated: 2026-06-26
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-109_mapping_crawled_title_to_noidungchinh|US-109]]: Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool (accepted)
 - [[US-107_sync_all_pool_listings_canvas|US-107]]: Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (accepted)
 - [[US-106_canvas_detail_view|US-106]]: Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) (accepted)
 - [[US-105_autofill_button_overwrite_confirmation|US-105]]: Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI (accepted)
