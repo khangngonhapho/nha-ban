@@ -28,10 +28,9 @@
     "json_ui_filters": [
         {
             "field": "Criteria_Duong_truoc_nha",
-            "label": "Đường trước nhà",
-            "type": "select",
+            "label": "Đường trước nhà thô",
+            "type": "multiselect",
             "options": [
-                "",
                 "Hẻm xe máy ( <2m)",
                 "Ngõ ngách (2 - 2.5m)",
                 "Ngõ 1 ô tô ( 2.5 -5m)",

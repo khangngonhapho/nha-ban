@@ -2551,7 +2551,6 @@
         if (!p.json_ui_parsed) {
           p.json_ui_parsed = {};
         }
-        p.json_ui_parsed["Criteria_Duong_truoc_nha"] = duong;
         p.original_row_data[46] = JSON.stringify(p.json_ui_parsed);
 
         p.note = note;

@@ -552,6 +552,17 @@ window.saveState = function() {
   const shareToken = new URLSearchParams(window.location.search).get('s');
   if (!window.isAdmin || shareBitmask || shareToken) return;
   
+  const serializedDynamicFilters = {};
+  if (window.activeDynamicFilters) {
+    for (const [field, val] of Object.entries(window.activeDynamicFilters)) {
+      if (val instanceof Set) {
+        serializedDynamicFilters[field] = { type: 'set', data: [...val] };
+      } else {
+        serializedDynamicFilters[field] = val;
+      }
+    }
+  }
+  
   const state = {
     districts: [...selDistricts],
     wards: [...selWards],
@@ -578,7 +589,7 @@ window.saveState = function() {
       phongMax: document.getElementById('filterPhongMax')?.value || ''
     },
     criteria: Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val')),
-    dynamicFilters: window.activeDynamicFilters
+    dynamicFilters: serializedDynamicFilters
   };
   localStorage.setItem('adminState', JSON.stringify(state));
 };
@@ -645,11 +656,35 @@ window.restoreState = function() {
     }
 
     if (state.dynamicFilters) {
-      window.activeDynamicFilters = state.dynamicFilters;
-      for (const [field, val] of Object.entries(window.activeDynamicFilters)) {
-        const selectEl = document.getElementById(`filter_${field}`);
-        if (selectEl) {
-          selectEl.value = val || '';
+      window.activeDynamicFilters = {};
+      for (const [field, val] of Object.entries(state.dynamicFilters)) {
+        if (val && typeof val === 'object' && val.type === 'set' && Array.isArray(val.data)) {
+          const newSet = new Set(val.data);
+          window.activeDynamicFilters[field] = newSet;
+          
+          // Re-check checkboxes in the UI if rendered
+          const optionsDiv = document.getElementById(`dynamic_options_${field}`);
+          if (optionsDiv) {
+            optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+              cb.checked = newSet.has(cb.value);
+            });
+            const placeholder = document.getElementById(`dynamic_placeholder_${field}`);
+            if (placeholder) {
+              if (newSet.size === 0) {
+                placeholder.textContent = 'Tất cả';
+                placeholder.style.color = 'rgba(44, 44, 46, 0.5)';
+              } else {
+                placeholder.textContent = [...newSet].join(', ');
+                placeholder.style.color = '#2c2c2e';
+              }
+            }
+          }
+        } else {
+          window.activeDynamicFilters[field] = val;
+          const selectEl = document.getElementById(`filter_${field}`);
+          if (selectEl) {
+            selectEl.value = val || '';
+          }
         }
       }
     } else {

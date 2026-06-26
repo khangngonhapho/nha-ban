@@ -339,11 +339,21 @@
     if (window.activeDynamicFilters) {
       for (const [field, filterVal] of Object.entries(window.activeDynamicFilters)) {
         if (filterVal) {
-          a = a.filter(p => {
-            const jsonUiObj = p.json_ui_parsed || {};
-            const valInListing = jsonUiObj[field] || '';
-            return String(valInListing).toLowerCase().includes(String(filterVal).toLowerCase());
-          });
+          if (filterVal instanceof Set) {
+            if (filterVal.size > 0) {
+              a = a.filter(p => {
+                const jsonUiObj = p.json_ui_parsed || {};
+                const valInListing = jsonUiObj[field] || '';
+                return filterVal.has(String(valInListing));
+              });
+            }
+          } else {
+            a = a.filter(p => {
+              const jsonUiObj = p.json_ui_parsed || {};
+              const valInListing = jsonUiObj[field] || '';
+              return String(valInListing).toLowerCase().includes(String(filterVal).toLowerCase());
+            });
+          }
         }
       }
     }
@@ -766,20 +776,12 @@
   // ── Build duong tabs dynamically ──
   window.buildDuongTabs = function() {
     if (!window.isAdmin) return;
-    let pool = window.selDistricts.size ? window.DATA.filter(p => window.selDistricts.has(p.q)) : window.DATA;
-    if (window.selWards.size) pool = pool.filter(p => window.selWards.has(p.phuong));
-    const duongs = [...new Set(pool.map(p => p.duong_truoc_nha).filter(d => d && d !== '-'))].sort();
+    const duongs = ["Hẻm ba gác", "Hẻm ô tô lý thuyết", "Hẻm ô tô", "Mặt tiền đường"];
     const container = document.getElementById('duongOptions');
     const box = document.getElementById('duongMulti');
     const dl = document.getElementById('duongLbl');
     if (!container || !box) return;
 
-    if (!duongs.length) { 
-      box.classList.remove('has-duong'); 
-      box.style.display = 'none';
-      if (dl) dl.style.display = 'none'; 
-      return; 
-    }
     if (dl) dl.style.display = 'block';
     box.classList.add('has-duong');
     box.style.display = '';
@@ -861,7 +863,13 @@
     if (window.activeDynamicFilters) {
       for (const [field, val] of Object.entries(window.activeDynamicFilters)) {
         if (val) {
-          parts.push(val);
+          if (val instanceof Set) {
+            if (val.size > 0) {
+              parts.push([...val].join('+'));
+            }
+          } else {
+            parts.push(val);
+          }
         }
       }
     }
@@ -877,7 +885,10 @@
     }
     
     document.getElementById('filterSummary').textContent = parts.length ? parts.join(' · ') : 'Tất cả';
-    const anyDynamicActive = Object.values(window.activeDynamicFilters || {}).some(Boolean);
+    const anyDynamicActive = Object.values(window.activeDynamicFilters || {}).some(val => {
+      if (val instanceof Set) return val.size > 0;
+      return !!val;
+    });
     const anyActive = !!(
       window.selDistricts.size || 
       window.selWards.size || 
@@ -942,6 +953,14 @@
     window.activeDynamicFilters = {};
     document.querySelectorAll('.dynamic-filter-select').forEach(sel => {
       sel.value = "";
+    });
+    document.querySelectorAll('.multiselect-container[id^="dynamic_multi_"]').forEach(container => {
+      container.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      const placeholder = container.querySelector('.multiselect-placeholder');
+      if (placeholder) {
+        placeholder.textContent = 'Tất cả';
+        placeholder.style.color = 'rgba(44, 44, 46, 0.5)';
+      }
     });
 
     // Ward, Duong & Huong tabs cần rebuild vì là dynamic
@@ -1133,8 +1152,114 @@
         });
         
         container.appendChild(select);
+      } else if (type === 'multiselect') {
+        const multiselectDiv = document.createElement('div');
+        multiselectDiv.id = `dynamic_multi_${field}`;
+        multiselectDiv.className = 'multiselect-container';
+        
+        const trigger = document.createElement('div');
+        trigger.className = 'multiselect-trigger';
+        trigger.onclick = function(e) {
+          e.stopPropagation();
+          window.toggleMultiselect(multiselectDiv.id);
+        };
+        
+        const placeholder = document.createElement('span');
+        placeholder.id = `dynamic_placeholder_${field}`;
+        placeholder.className = 'multiselect-placeholder';
+        placeholder.textContent = 'Tất cả';
+        placeholder.style.color = 'rgba(44, 44, 46, 0.5)';
+        
+        const arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        arrowSvg.setAttribute('class', 'multiselect-arrow');
+        arrowSvg.setAttribute('viewBox', '0 0 24 24');
+        arrowSvg.innerHTML = `<polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+        
+        trigger.appendChild(placeholder);
+        trigger.appendChild(arrowSvg);
+        
+        const optionsDiv = document.createElement('div');
+        optionsDiv.id = `dynamic_options_${field}`;
+        optionsDiv.className = 'multiselect-options';
+        
+        const selectedSet = window.activeDynamicFilters[field] || new Set();
+        
+        const options = filter.options || [];
+        options.forEach(opt => {
+          const optionEl = document.createElement('div');
+          optionEl.className = 'multiselect-option';
+          optionEl.onclick = function(e) {
+            e.stopPropagation();
+            const checkbox = optionEl.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+              checkbox.checked = !checkbox.checked;
+              window.updateDynamicSelectionFromCheckboxes(field);
+            }
+          };
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.value = opt;
+          if (selectedSet instanceof Set && selectedSet.has(opt)) {
+            checkbox.checked = true;
+          }
+          checkbox.onclick = function(e) {
+            e.stopPropagation();
+          };
+          checkbox.onchange = function() {
+            window.updateDynamicSelectionFromCheckboxes(field);
+          };
+          
+          const span = document.createElement('span');
+          span.textContent = opt;
+          
+          optionEl.appendChild(checkbox);
+          optionEl.appendChild(span);
+          optionsDiv.appendChild(optionEl);
+        });
+        
+        if (selectedSet instanceof Set && selectedSet.size > 0) {
+          placeholder.textContent = [...selectedSet].join(', ');
+          placeholder.style.color = '#2c2c2e';
+        }
+        
+        multiselectDiv.appendChild(trigger);
+        multiselectDiv.appendChild(optionsDiv);
+        container.appendChild(multiselectDiv);
       }
     });
+  };
+
+  window.updateDynamicSelectionFromCheckboxes = function(field) {
+    const optionsDiv = document.getElementById(`dynamic_options_${field}`);
+    if (!optionsDiv) return;
+    
+    if (!window.activeDynamicFilters[field] || !(window.activeDynamicFilters[field] instanceof Set)) {
+      window.activeDynamicFilters[field] = new Set();
+    }
+    
+    const selectedSet = window.activeDynamicFilters[field];
+    selectedSet.clear();
+    
+    optionsDiv.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+      selectedSet.add(cb.value);
+    });
+    
+    // Update placeholder
+    const placeholder = document.getElementById(`dynamic_placeholder_${field}`);
+    if (placeholder) {
+      if (selectedSet.size === 0) {
+        placeholder.textContent = 'Tất cả';
+        placeholder.style.color = 'rgba(44, 44, 46, 0.5)';
+      } else {
+        placeholder.textContent = [...selectedSet].join(', ');
+        placeholder.style.color = '#2c2c2e';
+      }
+    }
+    
+    window.updateFilterSummary();
+    if (typeof window.updateStats === 'function') window.updateStats();
+    window.applyFilter();
   };
 
   // Auto load config on script load
