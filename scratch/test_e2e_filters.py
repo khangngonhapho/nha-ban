@@ -76,6 +76,7 @@ def main():
     mock_public_row_2[6] = {"v": "q10"}
     mock_public_row_2[7] = {"v": "Phường 12"}
     mock_public_row_2[34] = {"v": "SYS-1002"}
+    mock_public_row_2[44] = {"v": '{"Criteria_Duong_truoc_nha": "Hẻm xe máy ( <2m)"}'}
 
     mock_public_row_3 = list(mock_public_row_1)
     mock_public_row_3[0] = {"v": "1003"}
@@ -84,6 +85,7 @@ def main():
     mock_public_row_3[6] = {"v": "tb"}
     mock_public_row_3[7] = {"v": "Phường 2"}
     mock_public_row_3[34] = {"v": "SYS-1003"}
+    mock_public_row_3[44] = {"v": '{"Criteria_Duong_truoc_nha": ""}'}
 
     # ── Define Mock Data for Admin View ──
     # Source rows
@@ -139,6 +141,7 @@ def main():
     mock_pool_row_2[11] = "11.5"
     mock_pool_row_2[55] = "2002"
     mock_pool_row_2[72] = "SYS-1002"
+    mock_pool_row_2[93] = '{"Criteria_Duong_truoc_nha": "Hẻm xe máy ( <2m)"}'
 
     console_errors = []
 
@@ -193,12 +196,12 @@ def main():
                     "json_ui_filters": [
                         {
                             "field": "Criteria_Duong_truoc_nha",
-                            "label": "Đường trước nhà",
-                            "type": "select",
+                            "label": "Đường trước nhà thô",
+                            "type": "multiselect",
                             "options": [
-                                "",
                                 "Hẻm xe máy ( <2m)",
-                                "Ngõ ngách (2 - 2.5m)"
+                                "Ngõ ngách (2 - 2.5m)",
+                                "Ngõ 1 ô tô ( 2.5 -5m)"
                             ]
                         }
                     ],
@@ -265,6 +268,51 @@ def main():
             # Verify restored count
             card_count = client_page.locator(".card").count()
             print(f"Listings count after reset: {card_count}")
+            assert card_count == 3, f"Expected 3 cards, got {card_count}"
+
+            # --- US-110: Test Dynamic Multiselect (Đường trước nhà thô) ---
+            print("Opening filter panel to test US-110 Dynamic Multiselect...")
+            client_page.locator("#filterBtn").click()
+            client_page.wait_for_selector("#filterPanel.open", timeout=5000)
+            
+            # Verify multiselect container exists for Criteria_Duong_truoc_nha
+            print("Checking multiselect trigger for Criteria_Duong_truoc_nha...")
+            multiselect_trigger = client_page.locator("#dynamic_multi_Criteria_Duong_truoc_nha .multiselect-trigger")
+            assert multiselect_trigger.count() == 1, "Multiselect container should exist for Criteria_Duong_truoc_nha"
+            
+            # Click trigger to open options
+            multiselect_trigger.click()
+            client_page.wait_for_selector("#dynamic_options_Criteria_Duong_truoc_nha", timeout=5000)
+            
+            # Select 'Ngõ 1 ô tô ( 2.5 -5m)' checkbox
+            print("Selecting 'Ngõ 1 ô tô ( 2.5 -5m)' in multiselect...")
+            checkbox_value = "Ngõ 1 ô tô ( 2.5 -5m)"
+            client_page.locator(f"#dynamic_options_Criteria_Duong_truoc_nha input[value='{checkbox_value}']").check()
+            time.sleep(1)
+            
+            # Close filter panel
+            client_page.locator("#filterBtn").click()
+            client_page.wait_for_selector("#filterPanel:not(.open)", timeout=5000)
+            
+            # Verify filtered cards (Only card 1 should remain)
+            card_count = client_page.locator(".card").count()
+            print(f"Listings count after selecting dynamic multiselect option: {card_count}")
+            assert card_count == 1, f"Expected 1 card after multiselect filtering, got {card_count}"
+            
+            # Open filter panel and click clear button to reset
+            print("Opening filter panel to reset multiselect...")
+            client_page.locator("#filterBtn").click()
+            client_page.wait_for_selector("#filterPanel.open", timeout=5000)
+            
+            client_page.locator(".btn-filter-clear").click()
+            time.sleep(0.5)
+            
+            # Close filter panel
+            client_page.locator("#filterBtn").click()
+            client_page.wait_for_selector("#filterPanel:not(.open)", timeout=5000)
+            
+            card_count = client_page.locator(".card").count()
+            print(f"Listings count after resetting multiselect: {card_count}")
             assert card_count == 3, f"Expected 3 cards, got {card_count}"
             
             # Test text search
@@ -385,6 +433,15 @@ def main():
             card_count = admin_page.locator(".card").count()
             print(f"Listings count with 'Chỉ hiện căn Public' toggle: {card_count}")
             assert card_count == 2, f"Expected 2 public cards, got {card_count}"
+            
+            # --- US-110: Test Admin custom street options in buildDuongTabs() ---
+            print("Checking admin custom street options in buildDuongTabs()...")
+            # We must verify that the options contain all 4 standard values
+            expected_options = ["Hẻm ba gác", "Hẻm ô tô lý thuyết", "Hẻm ô tô", "Mặt tiền đường"]
+            for opt_val in expected_options:
+                opt_selector = f"#duongOptions input[value='{opt_val}']"
+                assert admin_page.locator(opt_selector).count() == 1, f"Option check for '{opt_val}' should be present in admin"
+            print("Verified: all 4 custom street options are correctly pinned in admin!")
             
         except Exception as e:
             print(f"[ERROR] Admin View Search & Filter Failed: {e}")
