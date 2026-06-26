@@ -24,14 +24,6 @@
         "groupName": "Tiềm năng - Rủi ro"
     },
     {
-        "id": 18,
-        "name": "Dân đầu tư",
-        "parentId": null,
-        "groupId": 1,
-        "groupCode": "PROPERTY_CRITERIA",
-        "groupName": "Tiềm năng - Rủi ro"
-    },
-    {
         "id": 35,
         "name": "Ngõ 1 ô tô ( 2.5 -5m)",
         "parentId": null,
@@ -64,16 +56,16 @@
         "groupName": "Hình dạng thửa đất"
     },
     {
-        "id": 67,
-        "name": "Mới xây xong",
+        "id": 69,
+        "name": "Xây 5-10 năm",
         "parentId": null,
         "groupId": 7,
         "groupCode": "CONSTRUCTION_STATUS",
         "groupName": "Tình trạng xây dựng"
     },
     {
-        "id": 72,
-        "name": "Nhà khung cột",
+        "id": 74,
+        "name": "Không rõ",
         "parentId": null,
         "groupId": 8,
         "groupCode": "HOUSE_STRUCTURE",
@@ -96,32 +88,24 @@
         "groupName": "Thang máy"
     },
     {
-        "id": 81,
-        "name": "Ngõ cụt",
+        "id": 80,
+        "name": "Ngõ thông",
         "parentId": null,
         "groupId": 11,
         "groupCode": "ALLEY_TYPE",
         "groupName": "Loại ngõ"
     },
     {
-        "id": 83,
-        "name": "Không nằm cuối ngõ",
-        "parentId": null,
-        "groupId": 12,
-        "groupCode": "POSITION_IN_ALLEY",
-        "groupName": "Vị trí nhà trong ngõ"
-    },
-    {
-        "id": 85,
-        "name": "Vị trí số 2",
+        "id": 86,
+        "name": "Vị trí số 3",
         "parentId": null,
         "groupId": 13,
         "groupCode": "TAX_CALCULATION_POSITION",
         "groupName": "Vị trí tính thuế theo quy định của Nhà nước"
     },
     {
-        "id": 89,
-        "name": "Thoáng trước, sau",
+        "id": 90,
+        "name": "Lô góc 2 mặt thoáng",
         "parentId": null,
         "groupId": 14,
         "groupCode": "OPEN_SPACE",
@@ -147,30 +131,6 @@
         "id": 115,
         "name": "Khu vực thuần ở",
         "parentId": null,
-        "groupId": 19,
-        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
-        "groupName": "Kinh doanh - Dòng tiền"
-    },
-    {
-        "id": 117,
-        "name": "Khu vực kinh doanh sầm uất",
-        "parentId": 116,
-        "groupId": 19,
-        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
-        "groupName": "Kinh doanh - Dòng tiền"
-    },
-    {
-        "id": 118,
-        "name": "Khu vực kinh doanh nhỏ",
-        "parentId": 116,
-        "groupId": 19,
-        "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
-        "groupName": "Kinh doanh - Dòng tiền"
-    },
-    {
-        "id": 119,
-        "name": "Khu vực kinh doanh văn phòng",
-        "parentId": 116,
         "groupId": 19,
         "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
         "groupName": "Kinh doanh - Dòng tiền"

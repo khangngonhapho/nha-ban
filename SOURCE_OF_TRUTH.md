@@ -322,6 +322,11 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-26 (Nghiệm thu US-108 - Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') - TEST PASS)
+*   **Mã User Story:** `US-108`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Khắc phục lỗi shadowing hàm render()**: Trong `static/js/lego_detail_admin.js`, đổi lệnh gọi hàm render module cục bộ sau khi save thành công thành `window.render()` rõ ràng để tránh bị scope shadowing che khuất, giải quyết triệt để lỗi JavaScript `Cannot read properties of undefined (reading 'img_mat_tien')` và thực hiện render lại danh sách card trơn tru.
+     - **Kiểm thử E2E Playwright**: Viết mới và chạy thành công script Playwright E2E tự động `scratch/test_e2e_curation_save_changes.py` kiểm thử lưu curation trên cả Desktop và Mobile đạt tỷ lệ **100% PASS**.
 
 ### 2026-06-26 (Nghiệm thu US-107 - Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas - TEST PASS)
 *   **Mã User Story:** `US-107`
@@ -1205,6 +1210,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-108:** Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') ✅ Done 2026-06-26
 - [x] **US-107:** Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (Bao gồm Căn chưa lên sóng) ✅ Done 2026-06-26
 - [x] **US-106:** Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) ✅ Done 2026-06-24
 - [x] **US-105:** Hiện nút "Tự động điền" cho cả các căn đã lên sóng & hỏi xác nhận thay thế thông tin AI ✅ Done 2026-06-22

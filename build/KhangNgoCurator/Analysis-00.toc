@@ -1703,6 +1703,10 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\_distutils_hack\\override.py',
    'PYMODULE'),
+  ('_py_abc',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\_py_abc.py',
+   'PYMODULE'),
   ('stringprep',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\stringprep.py',
@@ -1714,10 +1718,6 @@
   ('tracemalloc',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tracemalloc.py',
-   'PYMODULE'),
-  ('_py_abc',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\_py_abc.py',
    'PYMODULE'),
   ('webbrowser',
    'C:\\Users\\Khang '
@@ -4139,6 +4139,74 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\__config__.py',
    'PYMODULE'),
+  ('yaml',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\__init__.py',
+   'PYMODULE'),
+  ('yaml.cyaml',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\cyaml.py',
+   'PYMODULE'),
+  ('yaml.resolver',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\resolver.py',
+   'PYMODULE'),
+  ('yaml.representer',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\representer.py',
+   'PYMODULE'),
+  ('yaml.serializer',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\serializer.py',
+   'PYMODULE'),
+  ('yaml.constructor',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\constructor.py',
+   'PYMODULE'),
+  ('yaml.dumper',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\dumper.py',
+   'PYMODULE'),
+  ('yaml.emitter',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\emitter.py',
+   'PYMODULE'),
+  ('yaml.loader',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\loader.py',
+   'PYMODULE'),
+  ('yaml.composer',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\composer.py',
+   'PYMODULE'),
+  ('yaml.parser',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\parser.py',
+   'PYMODULE'),
+  ('yaml.scanner',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\scanner.py',
+   'PYMODULE'),
+  ('yaml.reader',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\reader.py',
+   'PYMODULE'),
+  ('yaml.nodes',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\nodes.py',
+   'PYMODULE'),
+  ('yaml.events',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\events.py',
+   'PYMODULE'),
+  ('yaml.tokens',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\tokens.py',
+   'PYMODULE'),
+  ('yaml.error',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\error.py',
+   'PYMODULE'),
   ('numpy._distributor_init',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\_distributor_init.py',
@@ -5177,6 +5245,10 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy\\fft\\_pocketfft_umath.cp314-win_amd64.pyd',
    'EXTENSION'),
+  ('yaml\\_yaml.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\_yaml.cp314-win_amd64.pyd',
+   'EXTENSION'),
   ('_elementtree.pyd',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\_elementtree.pyd',
@@ -5276,33 +5348,17 @@
   ('thienkhoi_cookie.txt',
    'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\thienkhoi_cookie.txt',
    'DATA'),
-  ('cryptography-48.0.0.dist-info\\sboms\\sbom.json',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\sboms\\sbom.json',
-   'DATA'),
   ('cryptography-48.0.0.dist-info\\licenses\\LICENSE',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\licenses\\LICENSE',
    'DATA'),
-  ('cryptography-48.0.0.dist-info\\licenses\\LICENSE.APACHE',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\licenses\\LICENSE.APACHE',
-   'DATA'),
-  ('cryptography-48.0.0.dist-info\\WHEEL',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\WHEEL',
-   'DATA'),
-  ('cryptography-48.0.0.dist-info\\sboms\\cryptography-rust.cyclonedx.json',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\sboms\\cryptography-rust.cyclonedx.json',
-   'DATA'),
-  ('cryptography-48.0.0.dist-info\\RECORD',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\RECORD',
-   'DATA'),
   ('cryptography-48.0.0.dist-info\\INSTALLER',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\licenses\\LICENSE.APACHE',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\licenses\\LICENSE.APACHE',
    'DATA'),
   ('cryptography-48.0.0.dist-info\\licenses\\LICENSE.BSD',
    'C:\\Users\\Khang '
@@ -5312,9 +5368,25 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\METADATA',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
+  ('cryptography-48.0.0.dist-info\\WHEEL',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\WHEEL',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\sboms\\sbom.json',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\sboms\\sbom.json',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\RECORD',
+   'DATA'),
+  ('cryptography-48.0.0.dist-info\\sboms\\cryptography-rust.cyclonedx.json',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\cryptography-48.0.0.dist-info\\sboms\\cryptography-rust.cyclonedx.json',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
    'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
    'C:\\Users\\Khang '
@@ -5323,6 +5395,10 @@
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
    'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
    'C:\\Users\\Khang '
@@ -5336,30 +5412,42 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\WHEEL',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
-   'DATA'),
   ('setuptools\\_vendor\\jaraco\\text\\Lorem ipsum.txt',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\setuptools\\_vendor\\jaraco\\text\\Lorem '
    'ipsum.txt',
    'DATA'),
+  ('certifi\\py.typed',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\certifi\\py.typed',
+   'DATA'),
   ('certifi\\cacert.pem',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\certifi\\cacert.pem',
    'DATA'),
-  ('certifi\\py.typed',
+  ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_schematron_message.xsl',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\certifi\\py.typed',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_schematron_message.xsl',
+   'DATA'),
+  ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\readme.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\readme.txt',
+   'DATA'),
+  ('lxml\\isoschematron\\resources\\xsl\\XSD2Schtrn.xsl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\XSD2Schtrn.xsl',
    'DATA'),
   ('lxml\\isoschematron\\resources\\rng\\iso-schematron.rng',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\rng\\iso-schematron.rng',
    'DATA'),
-  ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\readme.txt',
+  ('lxml\\isoschematron\\resources\\xsl\\RNG2Schtrn.xsl',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\readme.txt',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\RNG2Schtrn.xsl',
+   'DATA'),
+  ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_dsdl_include.xsl',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_dsdl_include.xsl',
    'DATA'),
   ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_abstract_expand.xsl',
    'C:\\Users\\Khang '
@@ -5369,244 +5457,280 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_schematron_skeleton_for_xslt1.xsl',
    'DATA'),
-  ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_dsdl_include.xsl',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_dsdl_include.xsl',
-   'DATA'),
-  ('lxml\\isoschematron\\resources\\xsl\\XSD2Schtrn.xsl',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\XSD2Schtrn.xsl',
-   'DATA'),
-  ('lxml\\isoschematron\\resources\\xsl\\RNG2Schtrn.xsl',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\RNG2Schtrn.xsl',
-   'DATA'),
-  ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_schematron_message.xsl',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_schematron_message.xsl',
-   'DATA'),
   ('lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_svrl_for_xslt1.xsl',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\lxml\\isoschematron\\resources\\xsl\\iso-schematron-xslt1\\iso_svrl_for_xslt1.xsl',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\splitmix64\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\splitmix64\\LICENSE.md',
-   'DATA'),
-  ('flask-3.1.3.dist-info\\METADATA',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\METADATA',
-   'DATA'),
-  ('markupsafe-3.0.3.dist-info\\RECORD',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\RECORD',
-   'DATA'),
-  ('click-8.3.3.dist-info\\WHEEL',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\WHEEL',
    'DATA'),
   ('werkzeug-3.1.8.dist-info\\RECORD',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\RECORD',
    'DATA'),
-  ('flask-3.1.3.dist-info\\RECORD',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\RECORD',
-   'DATA'),
-  ('flask-3.1.3.dist-info\\licenses\\LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\licenses\\LICENSE.txt',
-   'DATA'),
-  ('flask-3.1.3.dist-info\\REQUESTED',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\REQUESTED',
-   'DATA'),
-  ('werkzeug-3.1.8.dist-info\\licenses\\LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\licenses\\LICENSE.txt',
-   'DATA'),
   ('numpy-2.4.6.dist-info\\licenses\\LICENSE.txt',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\LICENSE.txt',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\sfc64\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\sfc64\\LICENSE.md',
-   'DATA'),
-  ('click-8.3.3.dist-info\\METADATA',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\METADATA',
-   'DATA'),
-  ('flask-3.1.3.dist-info\\entry_points.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\entry_points.txt',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\distributions\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\distributions\\LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\METADATA',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\METADATA',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\pcg64\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\pcg64\\LICENSE.md',
-   'DATA'),
-  ('werkzeug-3.1.8.dist-info\\INSTALLER',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\INSTALLER',
-   'DATA'),
-  ('click-8.3.3.dist-info\\RECORD',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\RECORD',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\linalg\\lapack_lite\\LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\linalg\\lapack_lite\\LICENSE.txt',
-   'DATA'),
-  ('itsdangerous-2.2.0.dist-info\\METADATA',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\METADATA',
-   'DATA'),
-  ('markupsafe-3.0.3.dist-info\\METADATA',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\METADATA',
-   'DATA'),
-  ('itsdangerous-2.2.0.dist-info\\RECORD',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\RECORD',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\common\\pythoncapi-compat\\COPYING',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\common\\pythoncapi-compat\\COPYING',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\DELVEWHEEL',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\DELVEWHEEL',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\npysort\\x86-simd-sort\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\npysort\\x86-simd-sort\\LICENSE.md',
-   'DATA'),
-  ('click-8.3.3.dist-info\\INSTALLER',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\INSTALLER',
-   'DATA'),
-  ('markupsafe-3.0.3.dist-info\\WHEEL',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\WHEEL',
-   'DATA'),
-  ('flask-3.1.3.dist-info\\INSTALLER',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\INSTALLER',
-   'DATA'),
-  ('itsdangerous-2.2.0.dist-info\\LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\LICENSE.txt',
-   'DATA'),
-  ('markupsafe-3.0.3.dist-info\\licenses\\LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\licenses\\LICENSE.txt',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\mt19937\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\mt19937\\LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\WHEEL',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\WHEEL',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\entry_points.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\entry_points.txt',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\umath\\svml\\LICENSE',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\umath\\svml\\LICENSE',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\INSTALLER',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\INSTALLER',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\highway\\LICENSE',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\highway\\LICENSE',
-   'DATA'),
-  ('itsdangerous-2.2.0.dist-info\\INSTALLER',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\INSTALLER',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\philox\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\philox\\LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\ma\\LICENSE',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\ma\\LICENSE',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\include\\numpy\\libdivide\\LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\include\\numpy\\libdivide\\LICENSE.txt',
-   'DATA'),
-  ('click-8.3.3.dist-info\\licenses\\LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\licenses\\LICENSE.txt',
-   'DATA'),
-  ('markupsafe-3.0.3.dist-info\\top_level.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\top_level.txt',
-   'DATA'),
-  ('flask-3.1.3.dist-info\\WHEEL',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\WHEEL',
-   'DATA'),
-  ('markupsafe-3.0.3.dist-info\\INSTALLER',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\INSTALLER',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\fft\\pocketfft\\LICENSE.md',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\fft\\pocketfft\\LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\multiarray\\dragon4_LICENSE.txt',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\multiarray\\dragon4_LICENSE.txt',
-   'DATA'),
-  ('itsdangerous-2.2.0.dist-info\\WHEEL',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\WHEEL',
    'DATA'),
   ('werkzeug-3.1.8.dist-info\\WHEEL',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\WHEEL',
    'DATA'),
-  ('werkzeug-3.1.8.dist-info\\METADATA',
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\LICENSE.md',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\METADATA',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\LICENSE.md',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('click-8.3.3.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\RECORD',
+   'DATA'),
+  ('click-8.3.3.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\INSTALLER',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\distributions\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\distributions\\LICENSE.md',
+   'DATA'),
+  ('click-8.3.3.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\WHEEL',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\WHEEL',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\INSTALLER',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\linalg\\lapack_lite\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\linalg\\lapack_lite\\LICENSE.txt',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\RECORD',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\METADATA',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\highway\\LICENSE',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\highway\\LICENSE',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\umath\\svml\\LICENSE',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\umath\\svml\\LICENSE',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\INSTALLER',
    'DATA'),
   ('numpy-2.4.6.dist-info\\RECORD',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\RECORD',
    'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\include\\numpy\\libdivide\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\include\\numpy\\libdivide\\LICENSE.txt',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\RECORD',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\REQUESTED',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\REQUESTED',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\INSTALLER',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\WHEEL',
+   'DATA'),
+  ('click-8.3.3.dist-info\\licenses\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\licenses\\LICENSE.txt',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\common\\pythoncapi-compat\\COPYING',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\common\\pythoncapi-compat\\COPYING',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\INSTALLER',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\INSTALLER',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\RECORD',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\RECORD',
+   'DATA'),
+  ('click-8.3.3.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\click-8.3.3.dist-info\\METADATA',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\top_level.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\top_level.txt',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\pcg64\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\pcg64\\LICENSE.md',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\WHEEL',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\mt19937\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\mt19937\\LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\fft\\pocketfft\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\fft\\pocketfft\\LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\philox\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\philox\\LICENSE.md',
+   'DATA'),
+  ('werkzeug-3.1.8.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\werkzeug-3.1.8.dist-info\\METADATA',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\METADATA',
+   'DATA'),
+  ('flask-3.1.3.dist-info\\entry_points.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\flask-3.1.3.dist-info\\entry_points.txt',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\ma\\LICENSE',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\ma\\LICENSE',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\DELVEWHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\DELVEWHEEL',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\multiarray\\dragon4_LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\multiarray\\dragon4_LICENSE.txt',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\entry_points.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\entry_points.txt',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\sfc64\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\sfc64\\LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\METADATA',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\WHEEL',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\WHEEL',
+   'DATA'),
+  ('markupsafe-3.0.3.dist-info\\METADATA',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\markupsafe-3.0.3.dist-info\\METADATA',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\npysort\\x86-simd-sort\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\_core\\src\\npysort\\x86-simd-sort\\LICENSE.md',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\LICENSE.txt',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\LICENSE.txt',
+   'DATA'),
+  ('numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\splitmix64\\LICENSE.md',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\numpy-2.4.6.dist-info\\licenses\\numpy\\random\\src\\splitmix64\\LICENSE.md',
+   'DATA'),
   ('base_library.zip',
    'D:\\LHTBrain\\01_PROJECTS\\BDS-KhangNgo\\build\\KhangNgoCurator\\base_library.zip',
    'DATA')],
- [('sre_compile',
+ [('ntpath',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\sre_compile.py',
-   'PYMODULE'),
-  ('stat',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\stat.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\ntpath.py',
    'PYMODULE'),
   ('types',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\types.py',
+   'PYMODULE'),
+  ('re._parser',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_parser.py',
+   'PYMODULE'),
+  ('re._constants',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_constants.py',
+   'PYMODULE'),
+  ('re._compiler',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_compiler.py',
+   'PYMODULE'),
+  ('re._casefix',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_casefix.py',
+   'PYMODULE'),
+  ('abc',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\abc.py',
+   'PYMODULE'),
+  ('codecs',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\codecs.py',
+   'PYMODULE'),
+  ('traceback',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\traceback.py',
+   'PYMODULE'),
+  ('heapq',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\heapq.py',
+   'PYMODULE'),
+  ('sre_compile',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\sre_compile.py',
+   'PYMODULE'),
+  ('sre_constants',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\sre_constants.py',
+   'PYMODULE'),
+  ('sre_parse',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\sre_parse.py',
+   'PYMODULE'),
+  ('locale',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\locale.py',
+   'PYMODULE'),
+  ('_collections_abc',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\_collections_abc.py',
+   'PYMODULE'),
+  ('enum',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\enum.py',
    'PYMODULE'),
   ('encodings.zlib_codec',
    'C:\\Users\\Khang '
@@ -6100,29 +6224,17 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\encodings\\__init__.py',
    'PYMODULE'),
-  ('posixpath',
+  ('reprlib',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\posixpath.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\reprlib.py',
    'PYMODULE'),
-  ('ntpath',
+  ('stat',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\ntpath.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\stat.py',
    'PYMODULE'),
-  ('linecache',
+  ('_weakrefset',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\linecache.py',
-   'PYMODULE'),
-  ('genericpath',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\genericpath.py',
-   'PYMODULE'),
-  ('copyreg',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\copyreg.py',
-   'PYMODULE'),
-  ('collections',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\collections\\__init__.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\_weakrefset.py',
    'PYMODULE'),
   ('warnings',
    'C:\\Users\\Khang '
@@ -6132,77 +6244,37 @@
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\keyword.py',
    'PYMODULE'),
-  ('locale',
+  ('posixpath',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\locale.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\posixpath.py',
    'PYMODULE'),
-  ('re._parser',
+  ('linecache',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_parser.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\linecache.py',
    'PYMODULE'),
-  ('re._constants',
+  ('copyreg',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_constants.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\copyreg.py',
    'PYMODULE'),
-  ('re._compiler',
+  ('operator',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_compiler.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\operator.py',
    'PYMODULE'),
-  ('re._casefix',
+  ('genericpath',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\re\\_casefix.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\genericpath.py',
    'PYMODULE'),
-  ('sre_constants',
+  ('collections',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\sre_constants.py',
-   'PYMODULE'),
-  ('codecs',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\codecs.py',
-   'PYMODULE'),
-  ('sre_parse',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\sre_parse.py',
-   'PYMODULE'),
-  ('traceback',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\traceback.py',
-   'PYMODULE'),
-  ('reprlib',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\reprlib.py',
-   'PYMODULE'),
-  ('heapq',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\heapq.py',
-   'PYMODULE'),
-  ('_weakrefset',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\_weakrefset.py',
-   'PYMODULE'),
-  ('functools',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\functools.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\collections\\__init__.py',
    'PYMODULE'),
   ('weakref',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\weakref.py',
    'PYMODULE'),
-  ('abc',
+  ('functools',
    'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\abc.py',
-   'PYMODULE'),
-  ('_collections_abc',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\_collections_abc.py',
-   'PYMODULE'),
-  ('enum',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\enum.py',
-   'PYMODULE'),
-  ('operator',
-   'C:\\Users\\Khang '
-   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\operator.py',
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\functools.py',
    'PYMODULE'),
   ('io',
    'C:\\Users\\Khang '

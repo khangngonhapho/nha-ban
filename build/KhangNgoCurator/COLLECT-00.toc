@@ -613,4 +613,8 @@
   ('winsound.pyd',
    'C:\\Users\\Khang '
    'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\DLLs\\winsound.pyd',
+   'EXTENSION'),
+  ('yaml\\_yaml.cp314-win_amd64.pyd',
+   'C:\\Users\\Khang '
+   'Ngo\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\yaml\\_yaml.cp314-win_amd64.pyd',
    'EXTENSION')],)
