@@ -34,7 +34,7 @@ class MockWorksheet:
                 vals.append("")
         return vals
 
-    def insert_row(self, row_data, index=1, value_input_option='USER_ENTERED'):
+    def insert_row(self, row_data, index=1, value_input_option='USER_ENTERED', inherit_from_before=False):
         if index - 1 <= len(self.values):
             self.values.insert(index - 1, list(row_data))
         else:

@@ -1674,7 +1674,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     sheet.update(range_name=f"A{existing_row_index}:DZ{existing_row_index}", values=[row_data], value_input_option='USER_ENTERED')
                 else:
                     add_log_message(f"[⚡] Đang chèn chốt dòng mới lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
-                    sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED')
+                    sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED', inherit_from_before=True)
             
                 source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
                 try:
