@@ -6,7 +6,11 @@
     <title>Bảng Nhìn Toàn Cảnh (Canvas View) - Khang Ngô Nhà Phố</title>
     <!-- Google Fonts: Outfit & Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/global.css?v=202606252338">
+    <!-- Google Identity Services (GSI) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="/static/css/global.css?v=202606261127">
+    <script src="/static/js/lego_core.js?v=202606261127"></script>
+    <script src="/static/js/lego_helpers.js?v=202606261127"></script>
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -1192,23 +1196,7 @@
         // GOOGLE SHEETS (REALTIME DIRECT) LOADING VIA LEGO CORE
         // =====================================================================
         function initializeGoogleSheetsMode() {
-            if (typeof LegoState === 'undefined') {
-                // Dynamically load scripts if not loaded
-                loadScript('/static/js/lego_core.js?v=202606252338', () => {
-                    loadScript('/static/js/lego_helpers.js?v=202606252338', () => {
-                        startSheetsMode();
-                    });
-                });
-            } else {
-                startSheetsMode();
-            }
-        }
-
-        function loadScript(src, callback) {
-            const s = document.createElement('script');
-            s.src = src;
-            s.onload = callback;
-            document.head.appendChild(s);
+            startSheetsMode();
         }
 
         function startSheetsMode() {
@@ -1236,6 +1224,19 @@
                 sourceHeaders = LegoState.SOURCE_HEADERS || [];
                 console.log("Google Sheets loaded rows:", allListings.length);
                 filterListings();
+            });
+
+            // Listen to Data loading error
+            LegoState.on('dataLoadError', (errMsg) => {
+                console.error("Google Sheets load error:", errMsg);
+                const listingsContainer = document.getElementById('listings-list');
+                listingsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 45px 15px; color: var(--accent-red);">
+                        <p style="font-weight: 600; margin-bottom: 8px;">⚠️ Không thể kết nối Google Sheets</p>
+                        <p style="font-size:11px; line-height: 1.4; color:var(--text-muted)">${errMsg}</p>
+                        <button class="btn btn-outline" style="margin-top:20px; font-size:11px;" onclick="switchDataMode('sheets')">🔄 Thử lại</button>
+                    </div>
+                `;
             });
 
             // Init state
