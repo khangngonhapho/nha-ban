@@ -803,8 +803,7 @@
   window.buildHuongTabs = function() {
     if (!window.isAdmin) return;
     let pool = window.selDistricts.size ? window.DATA.filter(p => window.selDistricts.has(p.q)) : window.DATA;
-    if (window.selWards.size) pool = pool.filter(p => window.selWards.has(p.phuong));
-    const huongs = [...new Set(pool.map(p => p.huong).filter(h => h && h !== '-'))].sort();
+    const huongs = ["Đông Nam", "Đông Bắc", "Tây Nam", "Tây Bắc", "Nam", "Đông", "Bắc", "Tây"];
     const container = document.getElementById('huongOptions');
     const box = document.getElementById('huongMulti');
     const hl = document.getElementById('huongLbl');
