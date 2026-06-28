@@ -1,18 +1,19 @@
 # Stories Index
 
-Last updated: 2026-06-27
+Last updated: 2026-06-28
 
 ## Stats
-- Total: 118
+- Total: 119
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 21
-- accepted: 88
+- accepted: 89
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-110 | Quản lý và Biên tập Hướng nhà (Direction Curation & Management)        | accepted | M    | 2026-06-28 | `fetcher.py`, `manager.py`, `pool_lego.py`, `restore_db_from_sheets.py`, `static/js/lego_detail_client.js`, `static/js/lego_detail_admin.js`, `static/js/lego_filters.js` |
 | US-109 | Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool | accepted | M | 2026-06-27 | `fetcher.py`, `index.html`, `manager.py`, `pool_lego.py`, `static/js/thienkhoi_list_scraper.user.js` |
 | US-108 | Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') | accepted | S | 2026-06-26 | `static/js/lego_detail_admin.js` |
 | US-107 | Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas | accepted | M | 2026-06-25 | `static/js/lego_core.js`, `canvas.html` |
@@ -136,6 +137,7 @@ Last updated: 2026-06-27
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-109_mapping_crawled_title_to_noidungchinh|US-109]]: Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool (accepted)
 - [[US-107_sync_all_pool_listings_canvas|US-107]]: Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (accepted)
 - [[US-106_canvas_detail_view|US-106]]: Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) (accepted)
@@ -212,6 +214,7 @@ Last updated: 2026-06-27
 - [[US-013_replace_noidungchinh|US-013]]: Bỏ Nội dung chính, thêm DT Trên sổ & Hướng (done)
 
 ### Schema & Định nghĩa
+- [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-089_pool2_data_system|US-089]]: [Decomposed] Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego (superseded)
 - [[US-089A_pool2_local_core|US-089A]]: Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ (accepted)
 - [[US-089B_pool2_cloud_publishing|US-089B]]: Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist (accepted)
@@ -221,6 +224,7 @@ Last updated: 2026-06-27
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-108_fix_curation_shadowing_render|US-108]]: Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') (accepted)
 - [[US-107_sync_all_pool_listings_canvas|US-107]]: Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (accepted)
 - [[US-106_canvas_detail_view|US-106]]: Giao diện Canvas trực quan xem chi tiết căn nhà (Pool & Source) (accepted)

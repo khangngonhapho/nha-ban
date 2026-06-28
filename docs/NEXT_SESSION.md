@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-110 (Quản lý và Biên tập Hướng nhà):** **[ACCEPTED - 2026-06-28]** Tự động bóc tách Hướng từ DOM/API lưu vào cột Huong/custom_huong trong SQLite và đồng bộ lên Google Sheets Pool (cột R) & Source (cột M). Thiết lập giao diện bộ lọc Hướng 8 hướng tiêu chuẩn và mặc định Hướng trong form biên tập chi tiết trùng với Hướng gốc khi chưa chỉnh sửa. Đã kiểm thử Playwright E2E đạt 100% PASS và deploy lên live Production.
 *   **US-109 (Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool):** **[ACCEPTED - 2026-06-27]** Lưu trực tiếp trường title từ userscript cào tin vào trường `Noi_dung_chinh` CSDL local và cột J tab Pool trên Google Sheets. Hỗ trợ fallback sinh tiêu đề sạch và định dạng diện tích kép `{area}/{actualArea}` nếu diện tích sổ khác diện tích thực tế. Đã chạy migration cập nhật hàng loạt 96 dòng và test E2E 100% PASS.
 *   **US-108 (Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien')):** **[ACCEPTED - 2026-06-26]** Sửa lỗi shadowing hàm `render()` trong `static/js/lego_detail_admin.js` khi bấm lưu curation thành công bằng cách đổi thành gọi trực tiếp `window.render()`. Chạy bộ test Playwright E2E tự động đạt 100% PASS.
 *   **US-107 (Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas):** **[ACCEPTED - 2026-06-26]** Đồng bộ realtime và hiển thị toàn bộ căn nhà từ Pool trên Canvas (bao gồm các căn chưa lên sóng). Phân loại trạng thái Card và hiển thị badge động "Đã lên sóng" / "Chờ biên tập". Hỗ trợ tab Source thô hiển thị cảnh báo cho các căn chưa lên sóng. Khắc phục lỗi rò rỉ trạng thái ảnh mặt tiền ở frontend, thêm Thread Lock ở backend python, dọn dẹp dòng rác 90 trên Pool Sheet để xóa hoàn toàn căn thô 0 tỷ có hình xe máy rác. Chạy thành công bộ test Playwright E2E tự động đạt 100% PASS.
@@ -49,13 +50,14 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [fetcher.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/fetcher.py) — Bổ sung logic fallback clean title và định dạng diện tích kép.
-*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — Cập nhật cache-busting query parameter cho các Lego script files.
-*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Ghi nhận crawled title từ API/userscript và logic fallback.
-*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Cấu trúc lại logic sinh fallback clean title thống nhất.
-*   [static/js/thienkhoi_list_scraper.user.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/thienkhoi_list_scraper.user.js) — Đọc trường title thô của card và gửi lên POST API.
-*   [scratch/standardize_existing_noi_dung_chinh.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/standardize_existing_noi_dung_chinh.py) — Script chuẩn hóa 96 dòng dữ liệu lịch sử và batch update Google Sheets.
+*   [fetcher.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/fetcher.py) — Cập nhật logic cào và bóc tách Hướng từ DOM/API Thiên Khôi.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Cập nhật SQLite Schema và API PUT cập nhật custom_huong.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Nâng cấp CSDL cục bộ và thêm các trường Hướng.
+*   [restore_db_from_sheets.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/restore_db_from_sheets.py) — Phục hồi dữ liệu Hướng thô và Hướng biên tập từ Google Sheets.
+*   [static/js/lego_detail_client.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_client.js) — Hiển thị Hướng read-only trên giao diện Khách hàng.
+*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — Hiển thị Hướng gốc và dropdown biên tập Hướng với giá trị mặc định fallback.
+*   [static/js/lego_filters.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_filters.js) — Cố định 8 lựa chọn hướng trong bộ lọc Hướng nhà.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-27 (US-109 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-28 (US-110 accepted & E2E tests 100% passed).*
 
