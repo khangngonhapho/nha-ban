@@ -101,7 +101,7 @@ def restore_database():
     repaired_sheets_items = []
     seen_tk_ids = set()
     
-    for idx, row_values in enumerate(data_rows, start=3):
+    for idx, row_values in enumerate(data_rows, start=2):
         # Tránh các dòng rỗng hoàn toàn hoặc thiếu Mã Hàng
         if len(row_values) < 10 or not row_values[0]:
             continue
@@ -235,7 +235,10 @@ def restore_database():
             # Các cột văn bản đặc thù của curation, bắt buộc ghi đè
             curated_cols = ["Mã Khang Ngô (ID)", "Tiêu đề Public", "Mô tả Public", "Giá Public", "Trạng thái Public"]
             
+            # Hướng sẽ được xử lý riêng để lưu vào custom_huong
             for header, s_col_idx in SOURCE_TO_POOL_MAP.items():
+                if header == "Hướng":
+                    continue
                 if len(s_row) > s_col_idx:
                     s_val = s_row[s_col_idx].strip()
                     # Bỏ qua lỗi công thức của Google Sheets
@@ -247,10 +250,19 @@ def restore_database():
                     elif s_val:
                         row_dict[header] = s_val
                         
+        # US-110: Lấy giá trị Hướng biên tập từ Source sheet, mặc định bằng Hướng thô nếu chưa biên tập
+        custom_huong_val = row_dict.get("Hướng", "").strip()
+        if pool_sys_id and pool_sys_id in source_dict:
+            s_row = source_dict[pool_sys_id]
+            if len(s_row) > 12:
+                s_val = s_row[12].strip()
+                if s_val and not (s_val.startswith("#") and s_val.endswith("!")):
+                    custom_huong_val = s_val
+                        
         # Chuẩn bị câu lệnh insert vào SQLite
-        columns = ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json"]
-        placeholders = ["?", "?", "?", "?"]
-        insert_vals = [tk_id, status, json.dumps(reconstructed_drive_images), json.dumps(reconstructed_drive_images)]
+        columns = ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "custom_huong"]
+        placeholders = ["?", "?", "?", "?", "?"]
+        insert_vals = [tk_id, status, json.dumps(reconstructed_drive_images), json.dumps(reconstructed_drive_images), custom_huong_val]
         
         for header in POOL_HEADERS:
             safe_col = get_safe_col_name(header)
