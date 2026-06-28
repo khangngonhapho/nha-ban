@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-112 (Đồng bộ siêu cấu trúc Master Prompt mới cho Tự động điền AI trên Vercel và Local):** **[ACCEPTED - 2026-06-29]** Cập nhật ID Google Doc prompt thành ID mới (`1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE`). Đồng bộ cấu trúc jsonSuffix 5 trường ở Node.js và Python local. Triển khai hàm trợ giúp làm sạch ký tự in đậm `**` và nối chuỗi mô tả/góc nhìn đầu tư theo các quy tắc mới (khoảng cách dòng trống `\n\n` và phân cách `---`). Chạy toàn bộ 4 bộ test E2E Playwright đạt 100% PASS và deploy lên live Production.
 *   **US-111 (Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang):** **[ACCEPTED - 2026-06-29]** Khắc phục lỗi Specificity CSS Accordion bằng cách loại bỏ các gán cứng inline style display trên phần tử `.accordion-content`, bàn giao quyền điều khiển hiển thị hoàn toàn cho class `.expanded`. Bổ sung dọn dẹp phòng thủ trong hàm `toggleAdminAccordion`. Đã chạy 3 bộ test Playwright E2E đạt 100% PASS và deploy lên live Production.
 *   **US-110 (Quản lý và Biên tập Hướng nhà):** **[ACCEPTED - 2026-06-28]** Tự động bóc tách Hướng từ DOM/API Thiên Khôi lưu vào cột Huong/custom_huong trong SQLite và đồng bộ lên Google Sheets Pool (cột R) & Source (cột M). Thiết lập giao diện bộ lọc Hướng 8 hướng tiêu chuẩn và mặc định Hướng trong form biên tập chi tiết trùng với Hướng gốc khi chưa chỉnh sửa. Đã kiểm thử Playwright E2E đạt 100% PASS và deploy lên live Production.
 *   **US-109 (Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool):** **[ACCEPTED - 2026-06-27]** Lưu trực tiếp trường title từ userscript cào tin vào trường `Noi_dung_chinh` CSDL local và cột J tab Pool trên Google Sheets. Hỗ trợ fallback sinh tiêu đề sạch và định dạng diện tích kép `{area}/{actualArea}` nếu diện tích sổ khác diện tích thực tế. Đã chạy migration cập nhật hàng loạt 96 dòng và test E2E 100% PASS.
@@ -51,9 +52,15 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — Loại bỏ inline style display và thêm cơ chế dọn dẹp display phòng thủ trong `toggleAdminAccordion`.
-*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — Cập nhật cache-busting version.
+*   [settings.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/settings.json) — Cập nhật prompt_google_doc_id thành ID mới.
+*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — Cập nhật default docId, jsonSuffix và logic ghép moTaRaw của Vercel Node.js.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Thêm hàm parse_and_join_ai_response và đồng bộ logic Tự động điền local.
+*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký và cập nhật trạng thái US-112 thành accepted.
+*   [docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md) — Cập nhật trạng thái story thành accepted và hoàn thành acceptance criteria.
+*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — Cập nhật cache-busting version tự động.
+*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Ghi nhận change log phiên hiện tại.
+*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật tài liệu Next Session.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-111 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-112 accepted & E2E tests 100% passed).*
 

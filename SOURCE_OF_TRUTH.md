@@ -322,6 +322,17 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-29 (Nghiệm thu US-112 - Đồng bộ siêu cấu trúc Master Prompt mới cho Tự động điền AI trên Vercel và Local - TEST PASS)
+*   **Mã User Story:** `US-112`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Cấu hình & Tích hợp Prompt ID mới**: Thay đổi ID Google Doc mặc định thành ID mới (`1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE`) tại `settings.json`, `api/index.js`, và `manager.py`.
+     - **Đồng bộ AI Prompt Suffix**: Thiết lập cấu trúc JSON trả về gồm 5 trường (`tieuDeChinh`, `tieuDePhu`, `moTaChiTiet`, `gocNhinDauTu`, `phuongCu`) ở cả hai môi trường Node.js và Python local.
+     - **Cải tiến logic nối chuỗi và làm sạch**:
+       - Loại bỏ hoàn toàn dấu in đậm `**` ra khỏi toàn bộ nội dung.
+       - Tách biệt tiêu đề phụ và mô tả bằng một dòng trống (`\n\n`) đúng quy chuẩn.
+       - Nối Góc nhìn đầu tư bằng dấu phân cách `---` và xuống dòng hợp lý.
+     - **Kiểm thử E2E tự động**: Đạt tỷ lệ **100% PASS** cho toàn bộ 4 bộ test Playwright E2E (`test_e2e_curation.py`, `test_e2e_collections.py`, `test_e2e_filters.py`, `test_e2e_modal.py`) trên cả hai viewport Desktop & Mobile.
+
 ### 2026-06-29 (Nghiệm thu US-111 - Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang - TEST PASS)
 *   **Mã User Story:** `US-111`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
