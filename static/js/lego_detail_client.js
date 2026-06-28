@@ -395,6 +395,10 @@
             <span class="value dotted">${p.phuong}</span>
           </div>
           <div class="admin-raw-cell">
+            <span class="label">Hướng:</span>
+            <span class="value dotted">${p.huong || '-'}</span>
+          </div>
+          <div class="admin-raw-cell">
             <span class="label">Loại:</span>
             <span class="value dotted">${p.loai_hinh}</span>
           </div>

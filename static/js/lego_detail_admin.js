@@ -139,6 +139,10 @@
                   <span class="value dotted">${p.raw_so_wc || '-'} WC</span>
                 </div>
                 <div class="admin-raw-cell">
+                  <span class="label">Hướng gốc:</span>
+                  <span class="value dotted">${(p.pool_row_data && p.pool_row_data[17]) || p.huong || '-'}</span>
+                </div>
+                <div class="admin-raw-cell">
                   <span class="label">Giá chào:</span>
                   <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia || '-'} tỷ</span>
                 </div>

@@ -669,7 +669,8 @@ def init_db(db_file=None):
             "raw_json_full TEXT",
             "images_mapping_json TEXT",
             "manual_images_json TEXT",
-            "raw_sodo_tk_json TEXT"
+            "raw_sodo_tk_json TEXT",
+            "custom_huong TEXT DEFAULT ''"
         ]
 
         for header in POOL_HEADERS:
@@ -703,6 +704,10 @@ def init_db(db_file=None):
 
             if "raw_sodo_tk_json" not in existing_cols:
                 cursor.execute("ALTER TABLE listings ADD COLUMN raw_sodo_tk_json TEXT")
+                conn.commit()
+                
+            if "custom_huong" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN custom_huong TEXT DEFAULT ''")
                 conn.commit()
                 
             for header in POOL_HEADERS:
@@ -808,6 +813,20 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
 
     # Lưu hoặc Cập nhật bảng
     existing = cursor.execute(f"SELECT tk_id FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+
+    # US-110: Tự động khởi tạo custom_huong bằng Hướng thô nếu chưa có
+    if "custom_huong" in db_cols:
+        huong_raw = cleaned_metadata.get("Huong") or ""
+        if huong_raw:
+            is_new = not existing
+            db_custom_huong = ""
+            if existing:
+                row_ch = cursor.execute(f"SELECT custom_huong FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+                if row_ch and row_ch[0]:
+                    db_custom_huong = str(row_ch[0]).strip()
+            
+            if is_new or not db_custom_huong:
+                cleaned_metadata["custom_huong"] = huong_raw
     
     # Dò tìm các ảnh sơ đồ (diagram) từ metadata trước để phục vụ phân loại và phân nhóm
     diagram_urls = []
@@ -2372,7 +2391,9 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
             chieu_dai = str(detail_data.get("depth", ""))
             so_phong_ngu = str(detail_data.get("bedrooms") or "")
             so_nha_ve_sinh = str(detail_data.get("restrooms") or "")
-            huong = detail_data.get("direction", "")
+            # US-110: Trích xuất Hướng trực tiếp từ criteria HOUSE_DIRECTION của JSON thô
+            criteria_list = detail_data.get("criteria") or []
+            huong = next((c.get("name", "") for c in criteria_list if c and c.get("groupCode") == "HOUSE_DIRECTION"), "")
             duong_truoc_nha = str(detail_data.get("minimumRoadWidth") or "")
             trang_thai = detail_data.get("status", "")
             

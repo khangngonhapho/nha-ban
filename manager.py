@@ -2867,6 +2867,7 @@ def handle_listing_detail(tk_id):
             "Ngủ trệt (Admin)": data.get("ngu_tret"),
             "CHDV (Admin)": data.get("chdv"),
             "Phường cũ (AI)": data.get("phuong_cu_ai"),
+            "custom_huong": data.get("custom_huong"),
             # Thực tế địa chỉ chỉnh sửa
             "Ngõ/Số nhà": data.get("ngo_so_nha"),
             "Quận": data.get("quan"),
@@ -3212,7 +3213,9 @@ def recrawl_single_listing(tk_id):
             so_phong_ngu = str(detail_data.get("bedrooms") or "")
             so_nha_ve_sinh = str(detail_data.get("restrooms") or "")
             
-            huong = detail_data.get("direction", "")
+            # US-110: Trích xuất Hướng trực tiếp từ criteria HOUSE_DIRECTION của JSON thô
+            criteria_list = detail_data.get("criteria") or []
+            huong = next((c.get("name", "") for c in criteria_list if c and c.get("groupCode") == "HOUSE_DIRECTION"), "")
             duong_truoc_nha = str(detail_data.get("minimumRoadWidth") or "")
             trang_thai = detail_data.get("status", "")
             loai_hop_dong = detail_data.get("contractType", "")
@@ -3523,7 +3526,7 @@ def recrawl_single_listing(tk_id):
             "Số Tầng": fetcher.safe_get_val(soup_detail, '#Detail_iSoTang_show') or fetcher.get_val_by_label(soup_detail, "số tầng"),
             "Số phòng ngủ": bedrooms_scraped,
             "Số nhà vệ sinh": restrooms_scraped,
-            "Hướng": huong_scraped or fetcher.get_val_by_label(soup_detail, "hướng"),
+            "Hướng": huong_scraped or fetcher.get_val_by_label(soup_detail, "hướng nhà") or fetcher.get_val_by_label(soup_detail, "hướng"),
             "Đường trước nhà (m)": duong_truoc_nha,
             "Tình trạng nhà": "Bình thường",
             "Trạng thái": fetcher.safe_get_val(soup_detail, '#Detail_iTrangThai') or fetcher.get_val_by_label(soup_detail, "trạng thái"),
