@@ -324,7 +324,16 @@
         window.CURRENT_EDITING_LISTING = p;
         setTimeout(() => {
           const editHuong = document.getElementById('editHuong');
-          if (editHuong) editHuong.value = p.huong || '-';
+          if (editHuong) {
+            let defaultVal = p.huong || '-';
+            if (defaultVal === '-' || defaultVal === '') {
+              const rawHuong = (p.pool_row_data && p.pool_row_data[17]) || '';
+              if (rawHuong && rawHuong !== '-') {
+                defaultVal = rawHuong;
+              }
+            }
+            editHuong.value = defaultVal;
+          }
 
           const editDuong = document.getElementById('editDuong');
           if (editDuong) editDuong.value = p.duong_truoc_nha || '-';
