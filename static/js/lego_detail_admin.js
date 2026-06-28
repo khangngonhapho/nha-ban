@@ -410,7 +410,7 @@
                   accPreview.style.display = 'block';
                   accPreview.classList.add('expanded');
                   const content = accPreview.querySelector('.accordion-content');
-                  if (content) content.style.display = 'block';
+                  if (content) content.style.removeProperty('display');
                   const arrow = accPreview.querySelector('.arrow');
                   if (arrow) arrow.textContent = '▼';
                 }
@@ -457,7 +457,7 @@
             if (accPreview) {
               accPreview.classList.add('expanded');
               const content = accPreview.querySelector('.accordion-content');
-              if (content) content.style.display = 'block';
+              if (content) content.style.removeProperty('display');
               const arrow = accPreview.querySelector('.arrow');
               if (arrow) arrow.textContent = '▼';
               
@@ -469,7 +469,7 @@
             if (accSource) {
               accSource.classList.remove('expanded');
               const content = accSource.querySelector('.accordion-content');
-              if (content) content.style.display = 'none';
+              if (content) content.style.removeProperty('display');
               const arrow = accSource.querySelector('.arrow');
               if (arrow) arrow.textContent = '▶';
             }
@@ -2182,6 +2182,11 @@
       const arrow = header.querySelector('.arrow');
       const isExpanded = item.classList.contains('expanded');
       
+      const content = item.querySelector('.accordion-content');
+      if (content) {
+        content.style.removeProperty('display');
+      }
+
       if (isExpanded) {
         item.classList.remove('expanded');
         if (arrow) arrow.textContent = '▶';
