@@ -34,13 +34,13 @@
         const encoded = encodeURIComponent(s);
         slide.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false" style="width:100%;height:100%;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
       } else {
-        slide.innerHTML = `<img src="${window.fixImgUrl(s, 'w800')}" class="lb-img" id="lbImg-${i}" style="max-width:100%;max-height:100%;object-fit:contain;user-select:none;pointer-events:auto;will-change:transform;transition:transform 0.15s ease-out;" />`;
+        slide.innerHTML = `<img src="${window.fixImgUrl(s, 'w800')}" class="lb-img" id="lbImg-${i}" style="max-width:100%;max-height:100%;object-fit:contain;user-select:none;pointer-events:auto;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;transition:none;" />`;
       }
       track.appendChild(slide);
     });
     main.innerHTML = '';
     main.appendChild(track);
-    track.style.transform = `translateX(${-lbIdx * lbCw}px)`;
+    track.style.transform = `translate3d(${-lbIdx * lbCw}px, 0, 0)`;
   }
 
   function lbAnimateTo(idx) {
@@ -48,10 +48,13 @@
     if (!track) return;
     lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
     const prev = document.getElementById(`lbImg-${lbIdx}`);
-    if (prev) prev.style.transform = 'translate(0,0) scale(1)';
+    if (prev) {
+      prev.style.transition = 'transform 0.15s ease-out';
+      prev.style.transform = 'translate3d(0,0,0) scale(1)';
+    }
     lbIdx = idx;
     track.style.transition = 'transform .3s cubic-bezier(.25,.46,.45,.94)';
-    track.style.transform = `translateX(${-lbIdx * lbCw}px)`;
+    track.style.transform = `translate3d(${-lbIdx * lbCw}px, 0, 0)`;
     updateLbThumbsUI();
   }
 
@@ -108,8 +111,11 @@
     newLbMain.addEventListener('touchstart', e => {
       e.preventDefault();
       lbMaxTouches = Math.max(lbMaxTouches, e.touches.length);
+      const img = document.getElementById(`lbImg-${lbIdx}`);
+      if (img) {
+        img.style.transition = 'none'; // Disable transition on start
+      }
       if (e.touches.length === 2) {
-        const img = document.getElementById(`lbImg-${lbIdx}`);
         if (img) {
           lbStartDist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
@@ -139,17 +145,21 @@
           e.touches[0].clientY - e.touches[1].clientY
         );
         lbImgScale = Math.max(1, Math.min(4, lbLastScale * (dist / lbStartDist)));
-        img.style.transform = `translate(${lbImgPosX}px,${lbImgPosY}px) scale(${lbImgScale})`;
+        img.style.transition = 'none';
+        img.style.transform = `translate3d(${lbImgPosX}px,${lbImgPosY}px,0) scale(${lbImgScale})`;
       } else if (e.touches.length === 1 && lbDragging) {
         if (lbImgScale > 1) {
           const newX = lbImgPosX + (e.touches[0].clientX - lbTx);
           const newY = lbImgPosY + (e.touches[0].clientY - lbTy);
           lbTx = e.touches[0].clientX; lbTy = e.touches[0].clientY;
           lbImgPosX = newX; lbImgPosY = newY;
-          if (img) img.style.transform = `translate(${lbImgPosX}px,${lbImgPosY}px) scale(${lbImgScale})`;
+          if (img) {
+            img.style.transition = 'none';
+            img.style.transform = `translate3d(${lbImgPosX}px,${lbImgPosY}px,0) scale(${lbImgScale})`;
+          }
         } else {
           const dx = lbTx - e.touches[0].clientX;
-          track.style.transform = `translateX(${-lbIdx * lbCw - dx}px)`;
+          track.style.transform = `translate3d(${-lbIdx * lbCw - dx}px, 0, 0)`;
         }
       }
     }, { passive: false });
@@ -160,10 +170,17 @@
       if (e.touches.length === 0) {
         lbMaxTouches = 0; lbStartDist = 0;
       }
+      const img = document.getElementById(`lbImg-${lbIdx}`);
       if (lbImgScale <= 1.05) {
         lbImgScale = 1; lbImgPosX = 0; lbImgPosY = 0;
-        const img = document.getElementById(`lbImg-${lbIdx}`);
-        if (img) img.style.transform = 'translate(0,0) scale(1)';
+        if (img) {
+          img.style.transition = 'transform 0.15s ease-out';
+          img.style.transform = 'translate3d(0,0,0) scale(1)';
+        }
+      } else {
+        if (img) {
+          img.style.transition = 'none'; // Keep transition disabled while zoomed in
+        }
       }
       if (e.touches.length === 0 && !wasMulti && lbImgScale <= 1.05) {
         const dx = lbTx - e.changedTouches[0].clientX;
@@ -177,7 +194,7 @@
             if (newIdx !== lbIdx) lbAnimateTo(newIdx);
             else {
               const track2 = document.getElementById('lbTrack');
-              if (track2) track2.style.transform = `translateX(${-lbIdx * lbCw}px)`;
+              if (track2) track2.style.transform = `translate3d(${-lbIdx * lbCw}px, 0, 0)`;
             }
           });
         });
@@ -268,7 +285,7 @@
       const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' on' : '');
       gd.appendChild(d);
     });
-    gt.style.transform = 'translateX(0px)'; ua();
+    gt.style.transform = 'translate3d(0, 0, 0)'; ua();
 
     let gwMaxTouches = 0, gwCw = 0;
     gw.ontouchstart = e => {
@@ -284,7 +301,7 @@
       gwMaxTouches = Math.max(gwMaxTouches, e.touches.length);
       if (gwMaxTouches >= 2 || !gwCw) return;
       const dx = tx - e.touches[0].clientX;
-      gt.style.transform = `translateX(${-gI * gwCw - dx}px)`;
+      gt.style.transform = `translate3d(${-gI * gwCw - dx}px, 0, 0)`;
     };
     gw.ontouchend = e => {
       if (e.touches.length === 0) {
@@ -299,7 +316,7 @@
         requestAnimationFrame(() => {
           gt.style.transition = '';
           requestAnimationFrame(() => {
-            gt.style.transform = `translateX(${-gI * gwCw}px)`;
+            gt.style.transform = `translate3d(${-gI * gwCw}px, 0, 0)`;
           });
         });
       }
@@ -311,7 +328,7 @@
     const gwEl = document.getElementById('gw');
     const cw = gwEl ? gwEl.offsetWidth : 0;
     const gt = document.getElementById('gt');
-    if (gt) gt.style.transform = `translateX(${-gI * cw}px)`;
+    if (gt) gt.style.transform = `translate3d(${-gI * cw}px, 0, 0)`;
     document.querySelectorAll('.dot').forEach((x, i) => x.classList.toggle('on', i === gI));
     ua();
   }
