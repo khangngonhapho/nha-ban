@@ -13,7 +13,7 @@ new_ai_logic = """
 // -----------------------------------------------------
 // KHANG NGÔ AI TOOL - HỆ THỐNG GỌI AI HỢP NHẤT (DRY)
 // -----------------------------------------------------
-var OPENAI_API_KEY = "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";
+var OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxEXXf4A";
 
 /**
  * Hàm gọi OpenAI API dùng chung

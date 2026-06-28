@@ -1,0 +1,104 @@
+{
+  "pool": {
+    "range": "Pool!A1:G5",
+    "majorDimension": "ROWS",
+    "values": [
+      [
+        "Mã Hàng",
+        "Hình Nhận Diện",
+        "Tỉnh",
+        "Quận",
+        "Phường",
+        "Đường",
+        "Ngõ/Số nhà"
+      ],
+      [
+        "TK-534B8B",
+        "",
+        "Tp. Hồ Chí Minh",
+        "Quận 3",
+        "Nhiêu Lộc",
+        "trần quang diệu",
+        "40.78"
+      ],
+      [
+        "TK-E8E726",
+        "",
+        "Tp. Hồ Chí Minh",
+        "Bình Thạnh",
+        "Bình Lợi Trung",
+        "Nơ Trang Long",
+        "67A"
+      ],
+      [
+        "TK-D45312",
+        "",
+        "Tp. Hồ Chí Minh",
+        "Quận 3",
+        "Nhiêu Lộc",
+        "Lê Văn Sỹ",
+        "339.36C"
+      ],
+      [
+        "TK-E40E56",
+        "",
+        "Tp. Hồ Chí Minh",
+        "Quận 10",
+        "Vườn Lài",
+        "Điện Biên Phủ",
+        "546.1"
+      ]
+    ]
+  },
+  "source": {
+    "range": "Source!A1:G5",
+    "majorDimension": "ROWS",
+    "values": [
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "DT",
+        "Tầng"
+      ],
+      [
+        "Hinh_mat_tien",
+        "Cu_phap",
+        "Note",
+        "id",
+        "tieu_de",
+        "dien_tich",
+        "so_tang"
+      ],
+      [
+        "",
+        "40.78 trần quang diệu 38 3 9 5 8.75 tỷ Nhiêu Lộc Quận 3",
+        "",
+        "AWOIZTIDQT",
+        "HXH Trần Quang Diệu - 38m2 - 9x5 - 3 tầng - 8.75T | Lô góc 2 mặt thoáng, nội thất đẹp",
+        "38",
+        "3"
+      ],
+      [
+        "",
+        "339.36C Lê Văn Sỹ 46 4 4.6 10 12.8 tỷ Nhiêu Lộc Quận 3",
+        "",
+        "BWBCIBScISVL",
+        "HXH Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp lô góc 4PN",
+        "46",
+        "4"
+      ],
+      [
+        "",
+        "",
+        "",
+        "MWCAIAMINITVV ",
+        "Võ Văn Tần 31m2 3Tầng 3.1x10 - 7.6 tỷ",
+        "31",
+        "3"
+      ]
+    ]
+  }
+}

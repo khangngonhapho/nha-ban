@@ -1,0 +1,626 @@
+
+=== Found in scratch\index_extracted.js ===
+Line 210: window.autoFillCurationDetails = function() {
+--- Code block ---
+  205:     let secureLoadAttempted = false;
+  206:     let isSecureLoaded = false;
+  207:     let isDataLoaded = false;
+  208:     window.CURRENT_EDITING_LISTING = null;
+  209: 
+  210:     window.autoFillCurationDetails = function() {
+  211:       const editTieuDe = document.getElementById('editTieuDeBds');
+  212:       const editMoTa = document.getElementById('editMoTaBds');
+  213:       if (window.CURRENT_EDITING_LISTING) {
+  214:         const p = window.CURRENT_EDITING_LISTING;
+  215:         if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
+  216:         if (editMoTa) editMoTa.value = p.m || p.raw_mo_ta_public || generateAutoDescription(p);
+  217:         
+  218:         // Kích hoạt event input để cập nhật live preview
+  219:         if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
+  220:         if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+  221:       }
+  222:     };
+  223:     const selDistricts = new Set();
+  224:     const selWards = new Set();
+  225:     const selDuongs = new Set();
+  226:     const selHuong = new Set();
+  227:     const selGia = new Set();
+  228:     const selDanhGia = new Set();
+  229:     let filterOpen = false;
+  230:     let currentSortType = 'newest'; // 'newest' or 'price'
+  231:     let currentSortDir = 'desc'; // 'desc' = high/newest first, 'asc' = low/oldest first
+  232:     let showFavOnly = false;
+  233:     let favs = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
+  234:     let collections = JSON.parse(localStorage.getItem('adminCollections') || '{}');
+  235:     let activeCollectionName = null; // null | 'favorites' | '[Tên BST tự tạo]'
+  236: 
+  237:     // ── Multi-select helper ──
+  238:     function tSel(set, val) {
+  239:       if (val === 'all') { set.clear(); return; }
+  240:       if (set.has(val)) set.delete(val); else set.add(val);
+  241:     }
+  242:     function syncTabUI(containerId, set) {
+  243:       document.querySelectorAll('#' + containerId + ' .tab').forEach(btn => {
+  244:         const v = btn.getAttribute('data-val');
+  245:         btn.classList.toggle('on', v === 'all' ? set.size === 0 : set.has(v));
+  246:       });
+  247:     }
+  248:     function applyGia(arr) {
+  249:       if (!selGia.size) return arr;
+  250:       return arr.filter(p => {
+  251:         const g = parseFloat(p.gia) || 0;
+  252:         return [...selGia].some(r => {
+  253:           if (r === 'lt7') return g < 7;
+  254:           if (r === '7-10') return g >= 7 && g <= 10;
+  255:           if (r === '10-15') return g > 10 && g <= 15;
+  256:           if (r === '15-20') return g > 15 && g <= 20;
+  257:           if (r === 'gt20') return g > 20;
+  258:           return false;
+  259:         });
+  260:       });
+  261:     }
+  262:     function toggleSearchClearBtn() {
+  263:       const sInput = document.getElementById('bdsSearchInput');
+  264:       const clearBtn = document.getElementById('searchClear');
+  265:       if (sInput && clearBtn) {
+  266:         clearBtn.style.display = sInput.value.trim() ? 'flex' : 'none';
+  267:       }
+  268:     }
+  269:     function clearSearchInput() {
+  270:       const sInput = document.getElementById('bdsSearchInput');
+  271:       if (sInput) {
+  272:         sInput.value = '';
+  273:         onSearchInput();
+  274:       }
+  275:     }
+  276:     let searchDebounceTimeout = null;
+  277:     function onSearchInput() {
+  278:       toggleSearchClearBtn();
+  279:       if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout);
+  280:       searchDebounceTimeout = setTimeout(() => {
+  281:         updateStats();
+  282:         applyFilter();
+  283:         saveState();
+  284:       }, 250);
+  285:     }
+  286: 
+  287:     function toggleSearchBar() {
+  288:       const bar = document.getElementById('searchBar');
+  289:       const btn = document.getElementById('searchToggleBtn');
+-----------------
+Line 2264: ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+--- Code block ---
+  2259:                   </div>
+  2260: 
+  2261:                   <div class="admin-edit-group">
+  2262:                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+  2263:                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+  2264:                       ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+  2265:                     </div>
+  2266:                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+  2267:                   </div>
+  2268: 
+  2269:                   <div class="admin-edit-group">
+  2270:                     <label for="editMoTaBds">Mô tả public:</label>
+  2271:                     <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+  2272:                   </div>
+  2273: 
+  2274:                   ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+  2275: 
+  2276:                   ${renderImageEditorWidget(p)}
+  2277: 
+  2278:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  2279:                     <div class="admin-edit-group">
+  2280:                       <label for="editHuong">Hướng nhà:</label>
+  2281:                       <select id="editHuong">
+  2282:                         <option value="-">Chưa xác định</option>
+  2283:                         <option value="Đông">Đông</option>
+  2284:                         <option value="Tây">Tây</option>
+  2285:                         <option value="Nam">Nam</option>
+  2286:                         <option value="Bắc">Bắc</option>
+  2287:                         <option value="Đông Nam">Đông Nam</option>
+  2288:                         <option value="Đông Bắc">Đông Bắc</option>
+  2289:                         <option value="Tây Nam">Tây Nam</option>
+  2290:                         <option value="Tây Bắc">Tây Bắc</option>
+  2291:                       </select>
+  2292:                     </div>
+  2293:                     
+  2294:                     <div class="admin-edit-group">
+  2295:                       <label for="editDuong">Đường trước nhà:</label>
+  2296:                       <select id="editDuong">
+  2297:                         <option value="-">Chưa xác định</option>
+  2298:                         <option value="Hẻm ba gác">Hẻm ba gác</option>
+  2299:                         <option value="Hẻm ô tô lý thuyết">Hẻm ô tô lý thuyết</option>
+  2300:                         <option value="Hẻm ô tô">Hẻm ô tô</option>
+  2301:                         <option value="Mặt tiền đường">Mặt tiền đường</option>
+  2302:                       </select>
+  2303:                     </div>
+  2304:                   </div>
+  2305: 
+  2306:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  2307:                     <div class="admin-edit-group">
+  2308:                       <label for="editDanhGia">Đánh giá:</label>
+  2309:                       <select id="editDanhGia">
+  2310:                         <option value="">Bình thường</option>
+  2311:                         <option value="Hàng Ngon">💎 Ngon</option>
+  2312:                         <option value="Hàng Lỗi">⚠️ Lỗi</option>
+  2313:                       </select>
+  2314:                     </div>
+  2315: 
+  2316:                     <div class="admin-edit-group">
+  2317:                       <label for="editTinhTrang">Tình trạng:</label>
+  2318:                       <select id="editTinhTrang">
+  2319:                         <option value="Bình thường">Bình thường</option>
+  2320:                         <option value="Mới">Mới</option>
+  2321:                         <option value="Nát">Nát</option>
+  2322:                         <option value="Đã bán">Đã bán</option>
+  2323:                         <option value="Ẩn">Ẩn</option>
+  2324:                       </select>
+  2325:                     </div>
+  2326:                   </div>
+  2327: 
+  2328:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  2329:                     <div class="admin-edit-group">
+  2330:                       <label for="editSoPn">Số phòng ngủ:</label>
+  2331:                       <input type="number" id="editSoPn" value="${p.so_pn !== '-' ? p.so_pn : ''}" placeholder="Số phòng...">
+  2332:                     </div>
+  2333: 
+  2334:                     <div class="admin-edit-group">
+  2335:                       <label for="editSoWc">Số WC:</label>
+  2336:                       <input type="number" id="editSoWc" value="${(p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || '')}" placeholder="Số WC...">
+  2337:                     </div>
+  2338:                   </div>
+  2339: 
+  2340:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+  2341:                     <div class="admin-edit-group row-group">
+  2342:                       <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checked' : ''}>
+  2343:                       <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+-----------------
+
+=== Found in scratch\live_detail_admin_downloaded.js ===
+Line 213: ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+--- Code block ---
+  208:                   </div>
+  209: 
+  210:                   <div class="admin-edit-group">
+  211:                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+  212:                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+  213:                       ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+  214:                     </div>
+  215:                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+  216:                   </div>
+  217: 
+  218:                   <div class="admin-edit-group">
+  219:                     <label for="editMoTaBds">Mô tả public:</label>
+  220:                     <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+  221:                   </div>
+  222: 
+  223:                   ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+  224: 
+  225:                   ${renderImageEditorWidget(p)}
+  226: 
+  227:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  228:                     <div class="admin-edit-group">
+  229:                       <label for="editHuong">Hướng nhà:</label>
+  230:                       <select id="editHuong">
+  231:                         <option value="-">Chưa xác định</option>
+  232:                         <option value="Đông">Đông</option>
+  233:                         <option value="Tây">Tây</option>
+  234:                         <option value="Nam">Nam</option>
+  235:                         <option value="Bắc">Bắc</option>
+  236:                         <option value="Đông Nam">Đông Nam</option>
+  237:                         <option value="Đông Bắc">Đông Bắc</option>
+  238:                         <option value="Tây Nam">Tây Nam</option>
+  239:                         <option value="Tây Bắc">Tây Bắc</option>
+  240:                       </select>
+  241:                     </div>
+  242:                     
+  243:                     <div class="admin-edit-group">
+  244:                       <label for="editDuong">Đường trước nhà:</label>
+  245:                       <select id="editDuong">
+  246:                         <option value="-">Chưa xác định</option>
+  247:                         <option value="Hẻm ba gác">Hẻm ba gác</option>
+  248:                         <option value="Hẻm ô tô lý thuyết">Hẻm ô tô lý thuyết</option>
+  249:                         <option value="Hẻm ô tô">Hẻm ô tô</option>
+  250:                         <option value="Mặt tiền đường">Mặt tiền đường</option>
+  251:                       </select>
+  252:                     </div>
+  253:                   </div>
+  254: 
+  255:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  256:                     <div class="admin-edit-group">
+  257:                       <label for="editDanhGia">Đánh giá:</label>
+  258:                       <select id="editDanhGia">
+  259:                         <option value="">Bình thường</option>
+  260:                         <option value="Hàng Ngon">💎 Ngon</option>
+  261:                         <option value="Hàng Lỗi">⚠️ Lỗi</option>
+  262:                       </select>
+  263:                     </div>
+  264: 
+  265:                     <div class="admin-edit-group">
+  266:                       <label for="editTinhTrang">Tình trạng:</label>
+  267:                       <select id="editTinhTrang">
+  268:                         <option value="Bình thường">Bình thường</option>
+  269:                         <option value="Mới">Mới</option>
+  270:                         <option value="Nát">Nát</option>
+  271:                         <option value="Đã bán">Đã bán</option>
+  272:                         <option value="Ẩn">Ẩn</option>
+  273:                       </select>
+  274:                     </div>
+  275:                   </div>
+  276: 
+  277:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  278:                     <div class="admin-edit-group">
+  279:                       <label for="editSoPn">Số phòng ngủ:</label>
+  280:                       <input type="number" id="editSoPn" value="${p.so_pn !== '-' ? p.so_pn : ''}" placeholder="Số phòng...">
+  281:                     </div>
+  282: 
+  283:                     <div class="admin-edit-group">
+  284:                       <label for="editSoWc">Số WC:</label>
+  285:                       <input type="number" id="editSoWc" value="${(p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || '')}" placeholder="Số WC...">
+  286:                     </div>
+  287:                   </div>
+  288: 
+  289:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+  290:                     <div class="admin-edit-group row-group">
+  291:                       <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checked' : ''}>
+  292:                       <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+-----------------
+
+=== Found in scratch\live_helpers_downloaded.js ===
+Line 67: window.autoFillCurationDetails = async function() {
+--- Code block ---
+  62:   }
+  63:   return selected;
+  64: };
+  65: 
+  66: // AI Curation Auto-fill logic
+  67: window.autoFillCurationDetails = async function() {
+  68:   const editTieuDe = document.getElementById('editTieuDeBds');
+  69:   const editMoTa = document.getElementById('editMoTaBds');
+  70:   const btn = document.getElementById('btnAutoFillCuration');
+  71:   
+  72:   if (!window.CURRENT_EDITING_LISTING) return;
+  73:   const p = window.CURRENT_EDITING_LISTING;
+  74:   
+  75:   let originalBtnText = "";
+  76:   if (btn) {
+  77:     originalBtnText = btn.innerHTML;
+  78:     btn.innerHTML = "⏳ Đang chạy AI...";
+  79:     btn.disabled = true;
+  80:     btn.style.opacity = "0.6";
+  81:   }
+  82:   
+  83:   try {
+  84:     const payload = {
+  85:       soNha: p.raw_so_nha || '',
+  86:       duong: p.raw_ten_duong || '',
+  87:       phuong: p.phuong || '',
+  88:       quan: p.ql || '',
+  89:       noiDungChinh: p.raw_noi_dung_chinh || '',
+  90:       moTaChiTiet: p.raw_mo_ta_chi_tiet || '',
+  91:       dtThucTe: p.raw_dt_thuc_te || p.dt || '',
+  92:       dtTrenSo: p.raw_dt_tren_so || p.dt || '',
+  93:       matTien: p.raw_mat_tien || p.mat || '',
+  94:       soTang: p.raw_so_tang || p.tang || '',
+  95:       soPhongNgu: p.so_pn !== '-' ? p.so_pn : '',
+  96:       soToilet: (p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || ''),
+  97:       giaChao: p.raw_gia_chao || p.gia || '',
+  98:       duongTruocNha: p.raw_duong_truoc_nha || p.duong_truoc_nha || '',
+  99:       phanLoaiHem: p.raw_do_rong_hem || p.rong_hem || '',
+  100:       phanLoai: p.danh_gia || ''
+  101:     };
+  102:     
+  103:     const gToken = localStorage.getItem('g_access_token') || '';
+  104:     const headers = { 'Content-Type': 'application/json' };
+  105:     if (gToken) {
+  106:       headers['Authorization'] = `Bearer ${gToken}`;
+  107:     }
+  108:     
+  109:     const res = await fetch('/api/ai/generate', {
+  110:       method: 'POST',
+  111:       headers: headers,
+  112:       body: JSON.stringify(payload)
+  113:     });
+  114:     
+  115:     if (!res.ok) {
+  116:       const errData = await res.json().catch(() => ({}));
+  117:       throw new Error(errData.message || `Lỗi server HTTP ${res.status}`);
+  118:     }
+  119:     
+  120:     const data = await res.json();
+  121:     if (data.status === 'success') {
+  122:       if (editTieuDe) editTieuDe.value = data.tieu_de_public || '';
+  123:       if (editMoTa) editMoTa.value = data.mo_ta_public || '';
+  124:       
+  125:       p.phuong_cu = data.phuong_cu || '';
+  126:       if (p.original_row_data) {
+  127:         p.original_row_data[66] = data.phuong_cu || '';
+  128:       }
+  129:       if (p.pool_row_data) {
+  130:         p.pool_row_data[66] = data.phuong_cu || '';
+  131:       }
+  132:       
+  133:       if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
+  134:       if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+  135:       
+  136:       showToast("🤖 AI biên tập Tiêu đề và Mô tả thành công!", "success");
+  137:     } else {
+  138:       throw new Error(data.message || "Lỗi không xác định từ AI.");
+  139:     }
+  140:   } catch (err) {
+  141:     console.error("Lỗi Tự động điền AI:", err);
+  142:     showToast("⚠️ " + err.message + " -> Dùng mẫu mặc định.", "warning");
+  143:     
+  144:     if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
+  145:     if (editMoTa) editMoTa.value = p.m || p.raw_mo_ta_public || generateAutoDescription(p);
+  146:     
+-----------------
+
+=== Found in scratch\find_auto_fill_def.py ===
+Line 9: if "autoFillCurationDetails" in line:
+--- Code block ---
+  4: with open(filepath, "r", encoding="utf-8") as f:
+  5:     lines = f.readlines()
+  6: 
+  7: out = []
+  8: for idx, line in enumerate(lines):
+  9:     if "autoFillCurationDetails" in line:
+  10:         out.append(f"Line {idx+1}: {line.strip()}\n")
+  11: 
+  12: # Let's search for function autoFillCurationDetails definitions
+  13: # Usually it's defined like `function autoFillCurationDetails()` or `window.autoFillCurationDetails = ...`
+  14: for idx, line in enumerate(lines):
+  15:     if "autoFillCurationDetails" in line and ("function" in line or "=" in line):
+  16:         # print 50 lines around it
+  17:         start = max(0, idx - 5)
+  18:         end = min(len(lines), idx + 100)
+  19:         out.append(f"\n--- Around Line {idx+1} ---\n")
+  20:         for j in range(start, end):
+  21:             out.append(f"{j+1}: {lines[j]}")
+  22: 
+  23: with open("d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/search_func.txt", "w", encoding="utf-8") as f_out:
+  24:     f_out.writelines(out)
+-----------------
+Line 12: # Let's search for function autoFillCurationDetails definitions
+--- Code block ---
+  7: out = []
+  8: for idx, line in enumerate(lines):
+  9:     if "autoFillCurationDetails" in line:
+  10:         out.append(f"Line {idx+1}: {line.strip()}\n")
+  11: 
+  12: # Let's search for function autoFillCurationDetails definitions
+  13: # Usually it's defined like `function autoFillCurationDetails()` or `window.autoFillCurationDetails = ...`
+  14: for idx, line in enumerate(lines):
+  15:     if "autoFillCurationDetails" in line and ("function" in line or "=" in line):
+  16:         # print 50 lines around it
+  17:         start = max(0, idx - 5)
+  18:         end = min(len(lines), idx + 100)
+  19:         out.append(f"\n--- Around Line {idx+1} ---\n")
+  20:         for j in range(start, end):
+  21:             out.append(f"{j+1}: {lines[j]}")
+  22: 
+  23: with open("d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/search_func.txt", "w", encoding="utf-8") as f_out:
+  24:     f_out.writelines(out)
+-----------------
+Line 13: # Usually it's defined like `function autoFillCurationDetails()` or `window.autoFillCurationDetails = ...`
+--- Code block ---
+  8: for idx, line in enumerate(lines):
+  9:     if "autoFillCurationDetails" in line:
+  10:         out.append(f"Line {idx+1}: {line.strip()}\n")
+  11: 
+  12: # Let's search for function autoFillCurationDetails definitions
+  13: # Usually it's defined like `function autoFillCurationDetails()` or `window.autoFillCurationDetails = ...`
+  14: for idx, line in enumerate(lines):
+  15:     if "autoFillCurationDetails" in line and ("function" in line or "=" in line):
+  16:         # print 50 lines around it
+  17:         start = max(0, idx - 5)
+  18:         end = min(len(lines), idx + 100)
+  19:         out.append(f"\n--- Around Line {idx+1} ---\n")
+  20:         for j in range(start, end):
+  21:             out.append(f"{j+1}: {lines[j]}")
+  22: 
+  23: with open("d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/search_func.txt", "w", encoding="utf-8") as f_out:
+  24:     f_out.writelines(out)
+-----------------
+Line 15: if "autoFillCurationDetails" in line and ("function" in line or "=" in line):
+--- Code block ---
+  10:         out.append(f"Line {idx+1}: {line.strip()}\n")
+  11: 
+  12: # Let's search for function autoFillCurationDetails definitions
+  13: # Usually it's defined like `function autoFillCurationDetails()` or `window.autoFillCurationDetails = ...`
+  14: for idx, line in enumerate(lines):
+  15:     if "autoFillCurationDetails" in line and ("function" in line or "=" in line):
+  16:         # print 50 lines around it
+  17:         start = max(0, idx - 5)
+  18:         end = min(len(lines), idx + 100)
+  19:         out.append(f"\n--- Around Line {idx+1} ---\n")
+  20:         for j in range(start, end):
+  21:             out.append(f"{j+1}: {lines[j]}")
+  22: 
+  23: with open("d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/search_func.txt", "w", encoding="utf-8") as f_out:
+  24:     f_out.writelines(out)
+-----------------
+
+=== Found in scratch\find_autofill_anywhere.py ===
+Line 3: keywords = ["autoFillCurationDetails"]
+
+=== Found in static\js\lego_detail_admin.js ===
+Line 211: ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+--- Code block ---
+  206:                   </div>
+  207: 
+  208:                   <div class="admin-edit-group">
+  209:                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+  210:                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+  211:                       ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+  212:                     </div>
+  213:                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+  214:                   </div>
+  215: 
+  216:                   <div class="admin-edit-group">
+  217:                     <label for="editMoTaBds">Mô tả public:</label>
+  218:                     <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+  219:                   </div>
+  220: 
+  221:                   ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+  222: 
+  223:                   ${renderImageEditorWidget(p)}
+  224: 
+  225:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  226:                     <div class="admin-edit-group">
+  227:                       <label for="editHuong">Hướng nhà:</label>
+  228:                       <select id="editHuong">
+  229:                         <option value="-">Chưa xác định</option>
+  230:                         <option value="Đông">Đông</option>
+  231:                         <option value="Tây">Tây</option>
+  232:                         <option value="Nam">Nam</option>
+  233:                         <option value="Bắc">Bắc</option>
+  234:                         <option value="Đông Nam">Đông Nam</option>
+  235:                         <option value="Đông Bắc">Đông Bắc</option>
+  236:                         <option value="Tây Nam">Tây Nam</option>
+  237:                         <option value="Tây Bắc">Tây Bắc</option>
+  238:                       </select>
+  239:                     </div>
+  240:                     
+  241:                     <div class="admin-edit-group">
+  242:                       <label for="editDuong">Đường trước nhà:</label>
+  243:                       <select id="editDuong">
+  244:                         <option value="-">Chưa xác định</option>
+  245:                         <option value="Hẻm ba gác">Hẻm ba gác</option>
+  246:                         <option value="Hẻm ô tô lý thuyết">Hẻm ô tô lý thuyết</option>
+  247:                         <option value="Hẻm ô tô">Hẻm ô tô</option>
+  248:                         <option value="Mặt tiền đường">Mặt tiền đường</option>
+  249:                       </select>
+  250:                     </div>
+  251:                   </div>
+  252: 
+  253:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  254:                     <div class="admin-edit-group">
+  255:                       <label for="editDanhGia">Đánh giá:</label>
+  256:                       <select id="editDanhGia">
+  257:                         <option value="">Bình thường</option>
+  258:                         <option value="Hàng Ngon">💎 Ngon</option>
+  259:                         <option value="Hàng Lỗi">⚠️ Lỗi</option>
+  260:                       </select>
+  261:                     </div>
+  262: 
+  263:                     <div class="admin-edit-group">
+  264:                       <label for="editTinhTrang">Tình trạng:</label>
+  265:                       <select id="editTinhTrang">
+  266:                         <option value="Bình thường">Bình thường</option>
+  267:                         <option value="Mới">Mới</option>
+  268:                         <option value="Nát">Nát</option>
+  269:                         <option value="Đã bán">Đã bán</option>
+  270:                         <option value="Ẩn">Ẩn</option>
+  271:                       </select>
+  272:                     </div>
+  273:                   </div>
+  274: 
+  275:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+  276:                     <div class="admin-edit-group">
+  277:                       <label for="editSoPn">Số phòng ngủ:</label>
+  278:                       <input type="number" id="editSoPn" value="${p.so_pn !== '-' ? p.so_pn : ''}" placeholder="Số phòng...">
+  279:                     </div>
+  280: 
+  281:                     <div class="admin-edit-group">
+  282:                       <label for="editSoWc">Số WC:</label>
+  283:                       <input type="number" id="editSoWc" value="${(p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || '')}" placeholder="Số WC...">
+  284:                     </div>
+  285:                   </div>
+  286: 
+  287:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+  288:                     <div class="admin-edit-group row-group">
+  289:                       <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checked' : ''}>
+  290:                       <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+-----------------
+
+=== Found in static\js\lego_helpers.js ===
+Line 67: window.autoFillCurationDetails = async function() {
+--- Code block ---
+  62:   }
+  63:   return selected;
+  64: };
+  65: 
+  66: // AI Curation Auto-fill logic
+  67: window.autoFillCurationDetails = async function() {
+  68:   const editTieuDe = document.getElementById('editTieuDeBds');
+  69:   const editMoTa = document.getElementById('editMoTaBds');
+  70:   const btn = document.getElementById('btnAutoFillCuration');
+  71:   
+  72:   if (!window.CURRENT_EDITING_LISTING) return;
+  73:   const p = window.CURRENT_EDITING_LISTING;
+  74:   
+  75:   let originalBtnText = "";
+  76:   if (btn) {
+  77:     originalBtnText = btn.innerHTML;
+  78:     btn.innerHTML = "⏳ Đang chạy AI...";
+  79:     btn.disabled = true;
+  80:     btn.style.opacity = "0.6";
+  81:   }
+  82:   
+  83:   try {
+  84:     const payload = {
+  85:       soNha: p.raw_so_nha || '',
+  86:       duong: p.raw_ten_duong || '',
+  87:       phuong: p.phuong || '',
+  88:       quan: p.ql || '',
+  89:       noiDungChinh: p.raw_noi_dung_chinh || '',
+  90:       moTaChiTiet: p.raw_mo_ta_chi_tiet || '',
+  91:       dtThucTe: p.raw_dt_thuc_te || p.dt || '',
+  92:       dtTrenSo: p.raw_dt_tren_so || p.dt || '',
+  93:       matTien: p.raw_mat_tien || p.mat || '',
+  94:       soTang: p.raw_so_tang || p.tang || '',
+  95:       soPhongNgu: p.so_pn !== '-' ? p.so_pn : '',
+  96:       soToilet: (p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || ''),
+  97:       giaChao: p.raw_gia_chao || p.gia || '',
+  98:       duongTruocNha: p.raw_duong_truoc_nha || p.duong_truoc_nha || '',
+  99:       phanLoaiHem: p.raw_do_rong_hem || p.rong_hem || '',
+  100:       phanLoai: p.danh_gia || ''
+  101:     };
+  102:     
+  103:     const gToken = localStorage.getItem('g_access_token') || '';
+  104:     const headers = { 'Content-Type': 'application/json' };
+  105:     if (gToken) {
+  106:       headers['Authorization'] = `Bearer ${gToken}`;
+  107:     }
+  108:     
+  109:     const res = await fetch('/api/ai/generate', {
+  110:       method: 'POST',
+  111:       headers: headers,
+  112:       body: JSON.stringify(payload)
+  113:     });
+  114:     
+  115:     if (!res.ok) {
+  116:       const errData = await res.json().catch(() => ({}));
+  117:       throw new Error(errData.message || `Lỗi server HTTP ${res.status}`);
+  118:     }
+  119:     
+  120:     const data = await res.json();
+  121:     if (data.status === 'success') {
+  122:       if (editTieuDe) editTieuDe.value = data.tieu_de_public || '';
+  123:       if (editMoTa) editMoTa.value = data.mo_ta_public || '';
+  124:       
+  125:       p.phuong_cu = data.phuong_cu || '';
+  126:       if (p.original_row_data) {
+  127:         p.original_row_data[66] = data.phuong_cu || '';
+  128:       }
+  129:       if (p.pool_row_data) {
+  130:         p.pool_row_data[66] = data.phuong_cu || '';
+  131:       }
+  132:       
+  133:       if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
+  134:       if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+  135:       
+  136:       showToast("🤖 AI biên tập Tiêu đề và Mô tả thành công!", "success");
+  137:     } else {
+  138:       throw new Error(data.message || "Lỗi không xác định từ AI.");
+  139:     }
+  140:   } catch (err) {
+  141:     console.error("Lỗi Tự động điền AI:", err);
+  142:     showToast("⚠️ " + err.message + " -> Dùng mẫu mặc định.", "warning");
+  143:     
+  144:     if (editTieuDe) editTieuDe.value = p.raw_tieu_de_public || generateAutoTitle(p);
+  145:     if (editMoTa) editMoTa.value = p.m || p.raw_mo_ta_public || generateAutoDescription(p);
+  146:     
+-----------------

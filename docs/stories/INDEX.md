@@ -1,18 +1,20 @@
 # Stories Index
 
-Last updated: 2026-06-28
+Last updated: 2026-06-29
 
 ## Stats
-- Total: 119
+- Total: 121
 - backlog: 3
 - draft: 0
-- in-progress: 0
+- in-progress: 1
 - done: 21
-- accepted: 89
+- accepted: 90
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-112 | Đảm bảo thực hiện prompt mới khi bấm nút "Tự động điền" trong biên tập chi tiết | in-progress | S | 2026-06-29 | `docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md`, `settings.json`, `api/index.js`, `manager.py` |
+| US-111 | Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang | accepted | S | 2026-06-29 | `static/js/lego_detail_admin.js` |
 | US-110 | Quản lý và Biên tập Hướng nhà (Direction Curation & Management)        | accepted | M    | 2026-06-28 | `fetcher.py`, `manager.py`, `pool_lego.py`, `restore_db_from_sheets.py`, `static/js/lego_detail_client.js`, `static/js/lego_detail_admin.js`, `static/js/lego_filters.js` |
 | US-109 | Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool | accepted | M | 2026-06-27 | `fetcher.py`, `index.html`, `manager.py`, `pool_lego.py`, `static/js/thienkhoi_list_scraper.user.js` |
 | US-108 | Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') | accepted | S | 2026-06-26 | `static/js/lego_detail_admin.js` |
@@ -137,6 +139,7 @@ Last updated: 2026-06-28
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-109_mapping_crawled_title_to_noidungchinh|US-109]]: Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool (accepted)
 - [[US-107_sync_all_pool_listings_canvas|US-107]]: Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (accepted)
@@ -224,6 +227,7 @@ Last updated: 2026-06-28
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-108_fix_curation_shadowing_render|US-108]]: Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') (accepted)
 - [[US-107_sync_all_pool_listings_canvas|US-107]]: Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (accepted)

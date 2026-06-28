@@ -1,0 +1,454 @@
+
+==================================================
+TARGET: 133F Hoa Lan (tk_id: 97e696de-6dfe-44ff-8d4e-683d667dc31a)
+==================================================
+ID: 94 | Ma_Hang: TKK184XM | Address: 133F Hoa Lan
+
+--- CURATED CONFIG JSON ---
+{}
+
+--- RAW DRIVE IMAGES JSON ---
+Total 11 images:
+  [0]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/chrome_Y8t9XURFfD_smllpe
+  [1]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_jrpyr2dwuokycuddps6n.jpg
+  [2]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_iunno1ss6qkonlp31p7n.jpg
+  [3]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_ohnujrhfvxnb8nh3xrsd.jpg
+  [4]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_mkoikuwkl1j7snrtrdnn.jpg
+  [5]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_poztrda7dwayem2gaymy.jpg
+  [6]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_e4lv2sgurpgiw7gdkgtv.jpg
+  [7]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_qvkxeqsqs3krrs02oosx.jpg
+  [8]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_wolfs8gl026l80hscnbg.jpg
+  [9]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_qlepzskeyxlafg2cwzyz.jpg
+  [10]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/MWBBfILH_interior_1780919765045.jpg
+
+--- RAW IMAGES TK JSON ---
+Total 11 images in TK:
+  [0]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/chrome_Y8t9XURFfD_smllpe
+  [1]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_jrpyr2dwuokycuddps6n.jpg
+  [2]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_iunno1ss6qkonlp31p7n.jpg
+  [3]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_ohnujrhfvxnb8nh3xrsd.jpg
+  [4]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_mkoikuwkl1j7snrtrdnn.jpg
+  [5]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_poztrda7dwayem2gaymy.jpg
+  [6]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_e4lv2sgurpgiw7gdkgtv.jpg
+  [7]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_qvkxeqsqs3krrs02oosx.jpg
+  [8]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_wolfs8gl026l80hscnbg.jpg
+  [9]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_qlepzskeyxlafg2cwzyz.jpg
+  [10]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/MWBBfILH_interior_1780919765045.jpg
+
+--- ANH_1 TO ANH_25 COLUMNS ---
+  Anh_1: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_syjebaxauzl1lhuq9htq.jpg
+  Anh_2: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_qiqjbgycqtbajltcta92.jpg
+  Anh_3: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_jrpyr2dwuokycuddps6n.jpg
+  Anh_4: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_iunno1ss6qkonlp31p7n.jpg
+  Anh_5: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_ohnujrhfvxnb8nh3xrsd.jpg
+  Anh_6: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_mkoikuwkl1j7snrtrdnn.jpg
+  Anh_7: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_poztrda7dwayem2gaymy.jpg
+  Anh_8: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_e4lv2sgurpgiw7gdkgtv.jpg
+  Anh_9: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_qvkxeqsqs3krrs02oosx.jpg
+  Anh_10: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/97e696de-6dfe-44ff-8d4e-683d667dc31a_wolfs8gl026l80hscnbg.jpg
+
+==================================================
+TARGET: 440.26.2B Nguyễn Kiệm (tk_id: baae8880-48eb-43bd-90c1-a52d81d8c15e)
+==================================================
+ID: 93 | Ma_Hang: TKEOPUG8 | Address: 440.26.2B Nguyễn Kiệm
+
+--- CURATED CONFIG JSON ---
+{
+  "images": [
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_1.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_2.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_3.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_4.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_5.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_6.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_7.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_8.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_9.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_10.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_11.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_12.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_13.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_14.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_15.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_16.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_17.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_18.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_19.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_20.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_21.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_22.jpg",
+      "role": "Sơ đồ",
+      "visible": false
+    }
+  ],
+  "Mã_Khang_Ngô__ID_": "AWAOIHSIHbIKN"
+}
+
+--- RAW DRIVE IMAGES JSON ---
+Total 22 images:
+  [0]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_1.jpg
+  [1]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_2.jpg
+  [2]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_3.jpg
+  [3]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_4.jpg
+  [4]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_5.jpg
+  [5]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_6.jpg
+  [6]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_7.jpg
+  [7]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_8.jpg
+  [8]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_9.jpg
+  [9]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_10.jpg
+  [10]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_11.jpg
+  [11]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_12.jpg
+  [12]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_13.jpg
+  [13]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_14.jpg
+  [14]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_15.jpg
+  [15]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_16.jpg
+  [16]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_17.jpg
+  [17]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_18.jpg
+  [18]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_19.jpg
+  [19]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_20.jpg
+  [20]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_21.jpg
+  [21]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_baae8880-48eb-43bd-90c1-a52d81d8c15e_22.jpg
+
+--- RAW IMAGES TK JSON ---
+Total 22 images in TK:
+  [0]: https://dms3amyi97gvv.cloudfront.net/Property/79374e04-de00-4337-ab9e-1768d93bce73_1780204213815_c6cd2e0c.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=tB7cjMm2UrJe5Ti6eBimcqg8cV6igGdYc48FhFFn84nAqcUzz69wHtx3WIfi8GBxXS1qaMDlCzpmULhKFM3-u51AVcLJ-pqDGsK3fKKfUlnWb0IpOYt8SVGFTrxBW5VdyLlrmr8B2CNbEyzuH7kPnDHEGjDKHhbYE24WvFzwVos1e8HcMHBELAo9t6nII8DXPA8Rq69-fUUzGQeIdDstCSW~P5vB2OSnvpA~e1XB9FPzPgj9kiM9wA0pcv27gGQIlomlfJiqjGNgXqAQdnzW5ZaKOcVu0Fbr0dnKFYNJsB6Oq5s30MJirHghEjEYhSJRozVCTs6~CQJhAC59IygaUA__
+  [1]: https://dms3amyi97gvv.cloudfront.net/Property/d1215dde-51b0-4aa8-9c61-39c8fdf17bbe_1780204215024_a432fd8d.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=grD7GXtVPVZ5ROLAjmQohqt9RPNiYH-QTCUdxCfDnzB5p0RdO1N1eCXc7XdZpXxEaFd0pij2YCrIkoi36JrAGuYqf25uz-csnf4KEOXvAQKxpIdOdwv5wVSLSH6ILeOoJp0OY1betL83GWZVIRdkHwLBMPllCfOUIfwzsb8fMsgcM-nmFrpQIRepdpFEgyMy02il-TuuvTfc00nWUXgmE6hu95nHUPt5E1GCQUCSDPjz4W1esaDK212AHBPkN1Gu6b0cVBt63XB4~Az-TUThlocL~6MKJ0vYNKKRT7nkyvopiH2Q~9GmzNhrJJYk8A8XawSGMfu7KWOH-4WGkPbX2Q__
+  [2]: https://dms3amyi97gvv.cloudfront.net/Property/28d21a2f-105b-44ea-b82d-b499c8412b09_1780204215140_3c3009af.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=U7wyhZXmEF-HsmxpluBBSMi2TMUMuNy3qynB8r5uUg9MbNh598cNLoVbvErUJ4oSNWeNiSfLf6YJDrX0MTU8LvVK2DIBUoUa2wB1~R1MJnM2bsgcaHaMCN2I9Eud2mPl02H7Vji32yTfc9tjzJikc4VGW8HZOxQJlUqsvJWeNNaxs6G798520ZC7l-1PoMel0Io0RwYKkhUFaWE5jYPx9-tLgCzSRFr4Gtpzie-HrL7JNYM8OB5WA8b5bHONknS57bcNlZ~KwMfU1-pFvHDmfwK28eH0UPyXiJjUywYyS9kj2p-2~OyWJm9F1bY1XAfRKUOCBRkPViecCZo-QubDJw__
+  [3]: https://dms3amyi97gvv.cloudfront.net/Property/1f66e42c-dd7c-45d4-8869-4e8a01c983c4_1780204215072_b984f2fc.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=hgPbN7~czBwCEXhXs7OBQiKZnoetfORuIQCrkT-yov2ABKpiwSdn4f10~builgv3c3DNF3Ew6SbA-3Un5L7Xnk7pbYt6JgMJq1GYxidR0jE3ziISPc~~bWvmDbDTpuRzmpDb0nN7~N2fwzaT6Wze6mDITjWgobO1X7sqiSXctCyCDTIDRPY1dSmiYyuNKvDDuoiD-REzQDpxQpdn6L56CRf02tJpc64plI-UKux3XcZM27YHRgiDCuf68mrcCkF9HyhpGNgS09i~Flde4c-sThBGDNq2FbiCwGtESZTDxwUrg0e0M55j2NiE6iofYrDrZNYX2goFW4teVp3z~JiSOw__
+  [4]: https://dms3amyi97gvv.cloudfront.net/Property/fab2b184-ad2c-4371-b371-828c177e19a8_1780204214921_244c3af9.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=sk4-UFCUaP8FyjwpBC~2GdXu2QBxj2xsftPMaqk3RBl-MwDGq8daX~pLRBNoVbGdGWHk~3WkBnbIcWGm6Js81UwKr~JOaBQTvEd4fHqDYewTje~N5gNEDkpZJ5M7QwyxIRQGBLsOmbvvy4pTFHlcknZPuIJj8KAYZU-Qa9BkvQ-kLWE6oIJhtGJgm885Os7iwna3hCIdw-iz-XOlOlPy1TlsXeJgydhwiLTFAg0lbdct8Okk-3hsE59kx2Px61FgZiqHJaH0iCzJ~wkyn-wpEVO9f7JK5XHX7zzmVwk1x75tfP-Hp1C-7V7lD5WaJvwbc3KHjsrMJ9smLOvKT2OOig__
+  [5]: https://dms3amyi97gvv.cloudfront.net/Property/a73219ce-c9f2-4962-a17a-fbc1237a1605_1780204214942_e99e36d5.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=pkwrLG3QEViIjALh5lJGgyeYNSQickWcOVPd386g~8DPn2RLcLs3PG3eSskBUcQyk8qNrWWc2Mwq1C9FAgVhA4lUFmMgoAH5fTMKUfeFf3PcgD5wOPv49fHka6Bf4gYibew9Rgtlkmln9USIAg5-lWYTNoJpLCzBQN~UeNkVs1BTsSvguw6UlJtHjKkOfAuHBwn939koo1tEDdUzXXIuqPe-3M0LFWJIWzOLLwUaQCrbSz~nFORV2lz3ZV2N6cjdqSWuXM9iFbcAES0AYcMDMby6FcJQ6yIxMCKrILQVMwABSto6I7mQqgHxdPvZCs2unH278PFDpu4XnEx9Tctnnw__
+  [6]: https://dms3amyi97gvv.cloudfront.net/Property/a279f9cf-e15c-4d7d-807e-e40863f0449b_1780204214967_5297e0ac.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=bZV-lLaF63FfUJG4UNDCGvs4I9P7VQ7R5N4lPzfMFTJBo0Wok2tW3rixTHeb~zjbMhjMJrFL-Ok9RZKfY1M~XGrEc-n0w9AyXUylOY6VE1wPSYFIeb0tblR0d85jV2fiYGl6p8eEYf3A2GhQA~0sVTCuXU5HKTdMg-01K2DlmRU6VUMgQINXhyvrsZWX-tMzdlNCBGOOu9xW0VHJnXNHEr1sGzve74Cdvnix3x~15qYinDDodQfYj7fPVllMnKVbJghZ2mTPgKQA8FDihz9gQ-sPOhbBTWTW1pFtx~-eEKz-kyBR9NbAyZX6vogKcBYyQaiGxdooJG0AAN6iaRTDcA__
+  [7]: https://dms3amyi97gvv.cloudfront.net/Property/ab6e1ece-7d7f-4b24-b26b-31d5df115515_1780204216260_806b6972.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=B91S7TNUQ2RUruk9A1qnHdHxYYsOFrhufYF4j~urbkbhdJPTdxZG3UYUkxl135~w0FnH7XDyDMtXUvyPHjOo0NvNNmC-a28yINLiAYGvisjR~Z7wvVyD5lBdtJqjFq8fHXaBrf0RO~~1NRGyYbSEWm4-9YPosXiM3xVhE-Ay0se3VpYbhyuKVYDJ9k7YWxrRF8VF6aBiIJTV1gBZnJDJ~wQxL9c~U86hFc~hhaB~QibTGlxEjvXVLk60yF~laaKHRxps3O0E~CNE3yZbo1ZngkIkDGr~eUx~N1GHc82IrYIjETY9pqH0YUcLSPn009sR02i-zqWkxrUQzPxmIMRikQ__
+  [8]: https://dms3amyi97gvv.cloudfront.net/Property/dccfab94-1400-413f-b5f2-88219a15e72e_1780204216266_20f7043e.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=ZGB9UJdcAllT591dIiMhXit~qS1IcDm7lApgzUwkt94nJ8kEJlOdHfRJXEizM8lJNKBxCdxBUC~ly21mQD4kd2VnfbNPtKlSN-Tu3PKHfexx~2kc80pEpWqEF~uKwcR4rFUgYFy5caXVCDNDAWuKhMZNwwm-M~GTCbtCL38kdFTnw-xpmTIrw404JDnkJnygXeq9REDvWVRItGIHCyU50TG8qoXq0Bfww3hDjdLczZCBaS8nwz2SrKTkT8RWW6GcVmqo5LfIsRQydiWMR-AtpLlY24qkb9q2mS1f05nBFFJGRjL8uleqj4Owc9DKXNOTSyF0Ytq6l~V0HHFMrBMUpw__
+  [9]: https://dms3amyi97gvv.cloudfront.net/Property/473bd2a5-085d-43ed-95d3-4f4aa47df35e_1780204216290_8a3c78fe.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=ficD9Pa5zErI4gmgg41-ZcsQE0yZMfP3u4nobvKgaseKKi3QakwE5JsPI5anRTeJZd0ZRpr6Pm18ZFaoCKqmIG232TlDYJMJpW-YvmxESTjxbcRoW7PlJh1KXbdWLCS71CeVOPgGbcEOD4h4fsly05pK4n7JRToLgQ5L5D1eVstBA~hAcFva3Sya~vCs2EsyIiX8SShAF-MwOKmgqExA6DOg62i~S1lSiM8lXzFlICnxLbigYkOF3OKNXLTcY3PmUikKgVg5o75mavLboy2hOkIQDafjtoQLqe3Z8cEAjmmA5fitUeNqxMSuRSgzixZdTeiMUzBgpOmUHhZ~1Wzd1A__
+  [10]: https://dms3amyi97gvv.cloudfront.net/Property/92871085-cf7a-4d93-bfb1-82fe8c384388_1780204216279_a37f4e6d.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=ykskwRdX2q9ycfXzduTPVQn9QpACx~aXmvVFrl2AgH-YD~ATDafcVtGr8V~Td-Bv9AUOTyzUcpn7Km71NIu4vbJz5q70MFvZQ~tZjKfAromgqiFG82b-sMTMENxMHqwrSMpkz~wV6FzxxIxgNdbRWhRkRuQAg2kp3ijCmdWG4ewDVwAA5O1~dxUbRugLMkEtjtpHL0VfVXSb-PUfZuNzdyyP~vxmWttepX3AvLjIh0QKcL0pDf-ZziapbY38QqBctmqBvMoQMyrVWeupSVbnsbb1jQFubD1~4dcnxJ2XEsZQiG~LDdVPm9FA2Ord~gU5oU3Z0Fhhoq61hZ5kR79cCA__
+  [11]: https://dms3amyi97gvv.cloudfront.net/Property/6339a163-f714-406b-ad2e-5b0ceaae1786_1780204216329_913db8a0.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=ZWFKGyfc5w0i9XsM69xWaXSr-aFiDJQDKM86A5VRoFwdsNC-r2T7xMOSt8PMX3RflyRnOtpWVj5GLkvE1oM~kvY-PJW~76judyQ4oJ1GXWOGf24A1OFTT~B6gVTIRq6O1xO8XSCNOmB~wQP8tP~wSJnNIvAESiRHohfTHSIlgYrvVB9t4xciZD4mkhOjuaduUQy3ONaD5M0hDj2ykxvsiLCIMTqjLtqZQmop0aFLEaaswjOmYEXbmy9XSQH6yrQsvUbUS1v~~6O2ftAf8XgqDpzZlIOX~FkyrPcLIAEapuULXjW1-mJGfUxpz666x1App2dJMtoioJYwOkBT10~Rcg__
+  [12]: https://dms3amyi97gvv.cloudfront.net/Property/47aeea5b-1d18-4ccd-b8f1-88baf7c293c5_1780204216343_037eb8d2.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=CBH38oMeioxBIyNp7RR9B91Z-XX2V4adXTmhe89~K7qZZK5f0cydlzyMtGmscapX4FmyHZumEy7YGhVq6rwXLmxJVt1lbvREiPXefHVjj31KYkvy1k0518MPeZ0Ip2SOPtIMZsLxsM9pkgEZfvTI5wT6ikhsxeu~SLgZcW1TBqUN6NGfMvldcqsNo0If7NLXneBt4Q5nykwYMgpq8hXeMZ4QWy7b7bh7Cv75M623Zb~Y3tQmT4kz54Y-f3zUKyu~mOCV2J6Ik9OFioK4HzNkJ5PZGm-CtC-IZvObjmu73tlJjE7Q3JD7TGzydoTmCO~5rKz8N6OnYdVIJR2VebDi4Q__
+  [13]: https://dms3amyi97gvv.cloudfront.net/Property/b5a7219f-a9b7-4e8a-9f2c-0ba5d2d5403c_1780204218034_663703aa.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=LZdYb71NbA~KIaIKlS2RmFRyAhI7pz38POaVkngnv-mln2wDoMZIu5ZUUVWZEG7y4~tQUo3GZgB7SwHh4sWWlnzlBk~qnBpoIskv2tTU8mqpGr~QJ0qi98QJN6QhTzHzVZiLauOnxrtTcUm-Xm3SKWPw72kO6EKbGrZA1q2loJvPBBxvYG2IT4i3OfjQvvZzt1UAfZbBl2-Ipo839SgXki~XeyixoZ7MO6DLfR1MLZ6ktx0aPQ2BtQObdn~EZRharxDXZ1o0LfL8ZZr4meFG5uJ5zoQngar3zSUo-ybmyW0Z0rjiccNpLp3srqargVeMkC8jU-nxCgTujNZpaH2ldg__
+  [14]: https://dms3amyi97gvv.cloudfront.net/Property/362f81da-284f-4d73-9d10-3893bf102c59_1780204217968_8ac3e613.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=r~Rd4v~1AWadtRk6Fw6u9UG6rKe85b87gveN7wDmDByeLMdZkE1jTPANZwSjdq5CPXspVXLsy3Etxz~EQ~mDlVUgZ8jBfyejfNoVLbY323KJLYczuOabjsz5kZgsLivcWcqczOJcX7Hxgf-cqD1fYzx1mrknog~xYo3EtiL70m-M49aa6kX2dfcr7r-WwWkLl6g9HRZUVjjq3xRfP2mHhMqw263NM6k3UUIwWgIc3YCKXn8-IQYRCfG58eJtILPzYijTI~3BDZxf6Zjuy3pifv7KO-p7iq5kQH01O-FJeH5X1tAGZ2TTRVvL1jpjJPE-oeXQpW3kxBJSY707xytgOQ__
+  [15]: https://dms3amyi97gvv.cloudfront.net/Property/6f7e0100-b09d-4ca4-8e60-6d4151877a0e_1780204217804_d9c4fe23.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=HZdin4Waw7y16qhWJui-dEX~KkI7EufQkLycucbqi-AgaA~Q6wU2GsCJLBRv8Cxxy07queSKSjbacrTEXy66g62QHU3L~8yGqrtIGAT4-6Eee3XjpZu18jjgISXBjrHCdIzzNnl3GbR5xgJ~G9HjturTwHxoVzxlZL8ZzC2tlnJB~BtJIgnF7n79Nl4SasU8QIUmSUkRgIA0rc3rm2I2b~M3QVX-0evbfS5R0iUoSB~U3ZufJZJDT3ymottHyR5kc5fEMpt-po60WEaK~glrhRSOCzXADtFC8iyasufVtAi9T6ApjE1pmT5~aJvGgASS9qFF8TftVLFYJmF1bsfWkQ__
+  [16]: https://dms3amyi97gvv.cloudfront.net/Property/446516db-4288-41f1-82c8-ea341b819fdf_1780204217854_34a6fa1e.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=ZI4IW~Z9v1lzh-C0dJqxBCXmCyUxcGA-kXv~NzZ6AUpv12TSqO7yk1SZPu~xhECPA44qziRfCJDjPpUgqDUK5xzR5iQTaS7lv9UK8gOyjGAfxApaQFPlIxl6yBB5ioACtCBJGMT-l1~XiTd5PJJbS4Q3AmoPHdhfmfcegqe0N~74H6MLskXB8zD-5jlJps0ebpiSDTrBRfKXtbVVD-1VVK8dYY60DQWLLHIj6YI6kj19nZcuQ3hYScM9mY85Zzokws6H17~B8anPU5qkQfUwvY8SUnalepwIkROklWn7SX4lvwUz7sl80RCuXD~u02YpFlVYgklIkc7dheHl1y-RZw__
+  [17]: https://dms3amyi97gvv.cloudfront.net/Property/fc0083e3-feab-446b-b061-d548d15b5bf8_1780204217825_9d9d8209.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=vb-6rG7SZHWiwn3AO3PN1aW86aKVad89ttOJWqmGzghAsSlmlX33W5t-fGuW9m58NgEpOEYPsbj-ULHDbxmnQKg9Dpcn8zN6slEvAY2tNIiZbwHQF1nT~dxaLgRj2qBfrxvdWI2rrhRNNzM8S0Bl8QVIUgwUbO6uIJhcMzOvrJlaFvzDC9-cYHmJ33T8QuiIllmOvYRrGT2MyfHCtgn7q7ksZ3~~F56~Xpd0ADb7muAr6Qoi3wLZtXvmqzsNmnFGF2wLp8rw-nj15q-TaXrz9WghaRamhxo8sCyYn766wflsvmYP3CRzBlEw1l9fkPyrEsCpVMj33K70AVA5lJmE2A__
+  [18]: https://dms3amyi97gvv.cloudfront.net/Property/18ee1a25-3b4a-4583-816d-4493415c7fa6_1780204217777_922eb335.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=U3gTClKqFbo8ZylQC0RLO7T49uYdouxAKg9B-WTg-rwM5wVTY5sBkAzhaVzJTsSj~s~aUxF7Bqim8KDXHw5hUIeasVqsTdGrzwRNvbovWEaidj6me7kRiMWlhxhJmtfxvnucLjkLAB-42G4AHnKtF-4d7Aac5ILHRlqn0OUz-JcYo-zUTYGMN9EZnXS-G~-iNrNtBrBgEOIMNvmHdbztbQcmsg8e7uV3auL8BzxOAnMDRGxRuzc05pOBXq7UmDOgk58bAuHSrdfMPR~Dxh8los61-2SCaX1WO8WsCwvcxVVumgK2rzWrNrumZ~GyMIVf~pGXjlq-Nb58SCNRyf8hHA__
+  [19]: https://dms3amyi97gvv.cloudfront.net/Property/9808f2cf-24d5-4e44-9157-c6b149ada44d_1780204219202_ef1e87f6.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=H0FCUr0eYqdsJ3B-11YsX4TgSc427F~w4wvwQ06YBswsL9bQyTBdS5tKxhhHy4WjdK-Fav0JUk98stAdj4WHXFE2O5CAbYtmIhEAv3dd2e~-tmIodLSOttzOwH64lZbQB7HHvcKuLCp-jROFN6BToaYy4M7TUFcsp-ofPjW1XOivC5prBOK4gi7sMCYliWNPQyriFZOhqzxaINctRDYW12LPA0RRJu1Ur8y7U3BKNK6749TYovYDROYJcQryPhOWCSInVjRMZK57AferPtTRn5jTKrAuF6PLWVHyKBP1pEMXUeLLb2TsVHB5ra31AuBN8P0qQVe8StrxBwt7oFZFWg__
+  [20]: https://dms3amyi97gvv.cloudfront.net/Property/3143e6e6-7d84-4de7-9890-e9f90a946c11_1780204219114_61a0137e.jpg?Expires=1782384062&Key-Pair-Id=KX5HYW72PVJI2&Signature=m5I0~-RRmlC2CgPLBfSqGdvrZcTGMeY2xTjta~TteS~Z3XwOiYnWBPbld0xzY3eSryeuHLuqI0Bco5sSCJ2wA9QrcwPND-VV0KGfVwFy8-JncOB5X~mhp0ht7LOsUZwN9TlHDRvGUB31uqhgdQOQPa6F6ztRrZD8oaoG2xpwToqRuNWNMu7mNJ5a~9xCXw1vspJfXHNGWqrrGyjJJQpwkeKlNb7fE1drK6Bw03fP~r8Ur-7yXH9BRfJIKnfx9CQuaB1v5olBAWbcJQVYQDXqR95XNdnxrjI4Kkgs7iCG9w06bgAI2VMaaPI9HjqzRvScqoqFdF8cfQgFnPQoBREyyw__
+  [21]: https://dms3amyi97gvv.cloudfront.net/Property/f99cad45-4c48-4915-992f-ecaef93471f4_1780204213874_19623575.jpg?Expires=1782384291&Key-Pair-Id=KX5HYW72PVJI2&Signature=vSiKGg7avsJcQyUbyy7PJnOX3Qk0WmimT5hEPFS9VvmHt3IVRqIgc7DFh9a3~TH4nZ6iO9Tafp6YkVfwRqj9mPzNtc4z34bvKELQAEZsOXYdiOu2~maTO5l8zE3DSTZZ8n7T0HGzuKMUJm~7XRZsOoIp1PmS93dNp1FJX9KJN0QU7yu63pDYrsARJGH-s6xsn5aocqMHevPdMJHdkwv5V776tBbBIv92L5DsfAuRZIl93BQjZa4OwSIbl3hgogWfsQf-BlwiYc5AjLe02WywUDCMj6oR9bKgbmio00hXHFWfnY02Vsz3IxfdEw93IxFYDO0M2YZvQIQ4-76~zLtfPw__
+
+--- ANH_1 TO ANH_25 COLUMNS ---
+
+==================================================
+TARGET: 46.15E Nhiêu Tứ (tk_id: 74f3a2c5-4546-4250-a199-ea64b81d9ae7)
+==================================================
+ID: 91 | Ma_Hang: TKRA68AI | Address: 46.15E Nhiêu Tứ
+
+--- CURATED CONFIG JSON ---
+{}
+
+--- RAW DRIVE IMAGES JSON ---
+Total 13 images:
+  [0]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_13.jpg
+  [1]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_14.jpg
+  [2]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_5.jpg
+  [3]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_6.jpg
+  [4]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_7.jpg
+  [5]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_8.jpg
+  [6]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_9.jpg
+  [7]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_10.jpg
+  [8]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_11.jpg
+  [9]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_12.jpg
+  [10]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166301661.jpg
+  [11]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166306018.jpg
+  [12]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166309693.jpg
+
+--- RAW IMAGES TK JSON ---
+Total 13 images in TK:
+  [0]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_13.jpg
+  [1]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_14.jpg
+  [2]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_5.jpg
+  [3]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_6.jpg
+  [4]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_7.jpg
+  [5]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_8.jpg
+  [6]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_9.jpg
+  [7]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_10.jpg
+  [8]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_11.jpg
+  [9]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_12.jpg
+  [10]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166301661.jpg
+  [11]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166306018.jpg
+  [12]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166309693.jpg
+
+--- ANH_1 TO ANH_25 COLUMNS ---
+  Anh_1: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_74f3a2c5-4546-4250-a199-ea64b81d9ae7_1.jpg
+  Anh_2: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166301661.jpg
+  Anh_3: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166306018.jpg
+  Anh_4: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166309693.jpg
+  Anh_5: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166311177.jpg
+  Anh_6: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166314012.jpg
+  Anh_7: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166315768.jpg
+  Anh_8: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166317199.jpg
+  Anh_9: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166409755.jpg
+  Anh_10: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166306018.jpg
+  Anh_11: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166309693.jpg
+  Anh_16: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166311177.jpg
+  Anh_17: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166314012.jpg
+  Anh_18: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166315768.jpg
+  Anh_19: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166317199.jpg
+  Anh_20: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/SYS-20261127-991_interior_1781166409755.jpg
+
+==================================================
+TARGET: 178.4.12A5 Phan Đăng Lưu (tk_id: 6813162d-e907-4e54-878a-09f87d87ea1c)
+==================================================
+ID: 90 | Ma_Hang: TKHVUS3B | Address: 178.4.12A5 Phan Đăng Lưu
+
+--- CURATED CONFIG JSON ---
+{
+  "images": [
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_1.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_2.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_3.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_4.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_5.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_6.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_7.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_8.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_9.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_10.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_11.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_12.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_13.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_14.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_15.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_16.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_17.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_18.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_19.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_20.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_21.jpg",
+      "role": "Nội thất",
+      "visible": true
+    },
+    {
+      "url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_22.jpg",
+      "role": "Sơ đồ",
+      "visible": false
+    }
+  ],
+  "Mã_Khang_Ngô__ID_": "MWZTIAIMHaNILDP"
+}
+
+--- RAW DRIVE IMAGES JSON ---
+Total 22 images:
+  [0]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_1.jpg
+  [1]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_2.jpg
+  [2]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_3.jpg
+  [3]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_4.jpg
+  [4]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_5.jpg
+  [5]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_6.jpg
+  [6]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_7.jpg
+  [7]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_8.jpg
+  [8]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_9.jpg
+  [9]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_10.jpg
+  [10]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_11.jpg
+  [11]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_12.jpg
+  [12]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_13.jpg
+  [13]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_14.jpg
+  [14]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_15.jpg
+  [15]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_16.jpg
+  [16]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_17.jpg
+  [17]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_18.jpg
+  [18]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_19.jpg
+  [19]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_20.jpg
+  [20]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_21.jpg
+  [21]: https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/BDS-KhangNgo/img_6813162d-e907-4e54-878a-09f87d87ea1c_22.jpg
+
+--- RAW IMAGES TK JSON ---
+Total 22 images in TK:
+  [0]: https://dms3amyi97gvv.cloudfront.net/Property/65a06341-0222-47b4-a4ae-2056574e3d13_1781700798097_3e22fc74.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=yVT4wyKFZRxQljix3xOcd70WeuB37Ff1XEfW5YtBpjmHU4AqrFJchDBOHOdb6Hv4s81VjSGnMBTz1TspR2BDG1ZrkhZUzZ0yjLwrULlPK-Due-0Lkgx0RYloYhRXZ~vY3LOMoSTm~QRs8Z6ylzbRoZPvO8ZrQR-VZJzlR7WR8juZxtHHtzddunNKo4Rq1VNddDmqvo1ACTeJKEEAqdVv3Bzt~0CJbkKWRJucy~qLZKyFst3HI99o~Op8gT0wlNMMLigPwSfOQqliS9HLugaWkouiCOgVqVM1nfYm7tJDcFr6lqPhDTl5pNUzUXFSikGCR8Z5GHF~aR2k5-AqqCiXWw__
+  [1]: https://dms3amyi97gvv.cloudfront.net/Property/b0092860-2bb4-40cf-8393-b075df352767_1781700800374_7ea11072.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=wQcYEU2bsWlMRrmJMvyC10CX9xPJl8IfMNAzAXKPec6WsSCZ7iv0nafh8OaW78Mt1a7p~Uxt-zHB9JB0MGtvfh7xAQ4U8Oji~iZmwxXzGVEU-X54ibkcJiYFEFMj28JiXDPAOepm6m9R~5eoybjJ0U9VMJ0W3HnkuhyMawhcQlNl1pHZ3WEiPHhY3-vKHlDtAuyfpd1G5FsijpeqAmtz~8lpmhlmlMz7jfcewIvy7~rNJq~Av5vcLSd0S5rpBBGVgKoZnzHnNVOGRtLZavwlaCXObLcHic2roUH4mz8OYHtuC5VM9lSOsXYPbc-jNvaKmU68CCIisUlAjamFPDi7pw__
+  [2]: https://dms3amyi97gvv.cloudfront.net/Property/052b4c51-6bdd-4f60-9e50-0e3cb685deb8_1781700800645_80fd845e.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=WwQYnqA2AckSXnuzYRbvSlAy4MJn0R4Jy-I4LGio2qepvAxLwr6IFUPZ8I6NL-EWdVXR0jAUr2JYojovt56e9s4QOVWP1cqHAWDqbDi-ieBqTE8MMponnR-VzeLpCICeKRn~HssG-0dtgDaE0zsN0h3lw0VWvMolg5Rr8rAIjHa~AFuCCJHQKhE~57PdfksnWHXKfx2nJz-Aan2ELSt8MmV8fhZDUE5X~8NMB0ji7qOurz4oNqS0mHJvRvi3YIQCwjrV7aAkwUv6aEaJDqqWdiyFoZMjcNfN15cIzlsKuuJzd65r5kB69mKE8brfKdH7WtWrUNu~ZSjqS9DrkEPAeA__
+  [3]: https://dms3amyi97gvv.cloudfront.net/Property/edc92259-3d88-4b5b-8ef2-6408d65903fa_1781700800771_e52d98af.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=IIuRUhmf2YOk7m3B7IsD71AMJcvRJY~WKbrTGKF4WFIe37xZZPy3kRIs0QK7oyFz4OJmmd67r4Fr27H2ObebbH9l4bhJi5dq3UvoS32n4EIybpHgTQUIyp1AIJdQu9GNtJLAWsrCJd8BrtrCPAE4jKrzGWv2k~U~f-KZ4Le~DTelt-R~Dt3-RNkOpaD7cwcu5h6xtqVWZLo9JpC9lM0zcOx~DvZ84Yzjr6HW~j9CYTbZWPgRb7Cb~Be~PeHQapAgEiXDfDtuh786KRYaXa5N3aASm7jcCT6Pqjd36qOIFA78Gz0v-p6PvUhzCwKEjJu-X6rFdt~E4Qot0aJ~lLQ19Q__
+  [4]: https://dms3amyi97gvv.cloudfront.net/Property/cb0225c5-9f6a-474b-bef3-a679bfc84658_1781700801112_f19ef157.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=f1i2E7fA056YMMy745fTI4c8vls4lTku7o05mMHBWxTCewG-~IcTqFqAkmLWColMACoeSy7dazHE4IaqkINkAuh5RxHuMTUHRSxgrAgt90o4bH3oIRFHPX6adq9fvN6jYjHH0ogVrJtaHyUWwL~Wh3vgxrzrlrfY5CBEjWZQWFrhQjgzBbn6njW1cl~bdy7boap3hsstzssFM~OP7Zr2oK3i7tYMTsP1LbXxN~DpjsjoyOQKB5sEI1MSVJL14I~t4QdUNerdHA6XrhIub9GFSuNGXkSJzqYF9-kRQ0FdXrqHeMvlGk-HpdRS-Epvo4e113ovVeGKnJyMdnnBRgyUzA__
+  [5]: https://dms3amyi97gvv.cloudfront.net/Property/3fbbd50b-77e4-497b-9723-97d29909bcf2_1781700799880_27957f80.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=cJgJYkRXzPWRymEC7pa99MiVrL7weusKJXXKc5llMfDiuLDcZEbXiQVssFD-dliLeky-rlKQOQuC3OTSs~HlJ0NhkEd75Klp2dxJFgJIi7t2ijdhTezPJx757kiiAD3snlybbODYCcKMlSuXMriOJ00KDXihStulacffQZUShyerxZzelHTGTInsFnBfMX4s5TObJk9aR4rRZ6dEQVIFAZx-FMsr8fZ7uf9EeA6F972TTw4qlIHTthUdR6UPPqEVRb9nHseV~UV276depqk7jl16~jBT8S4w1iwc-QtwXqptCV4HW4sh1zOCyMRh3B7QFSh2bHKlmkPllYrkiKOEHg__
+  [6]: https://dms3amyi97gvv.cloudfront.net/Property/9fdd6022-7818-4ad7-b075-2a3f1f477953_1781700801734_5d90d530.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=P~tVL93Ux~jOgx28aypLatouogn7sY8NFCZM16L9BsR-YeNgEddseUCQ~MbXOH97wicAryAingBJPwVC-9LMDNuqjV1FKOYLcsqnvlXpL-HuVTVNK5nhyXX4lhbsWFxRb-NUXmbKGG1rKZCKiDP~0XOsRl--xRMmXGp3J7ltgQC53FNzQdbfY4ljU7-DUQCqdDQ76EF3OuRla1TyYzCvtIJR2wSH7VV4RxoWBYEl5VcO~-PQmIXthGbRzVjivDw3DBhJ29CAo~K8JfDf1ys2RD0QpD7UgZ5irYxWah2C~exCG3TZPXUtjSsNkO1vmF0HSCaFRvyfrqdoY-WCHGt00Q__
+  [7]: https://dms3amyi97gvv.cloudfront.net/Property/80a8aab8-51ef-416f-a237-0fb0b1b071c9_1781700803480_008bb225.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=plgQ36tUSCQqFKWxry2AOQfp66ZNGGj4pN1pBOScSrAA76MewPtjCPSaJKIqtkoJIWm6DSIOOjy78OkSfR4W59SaZDKklXSe3f-UEK9ZO1tsXJlIKgaBksG-C3fyDeC-F~FcQs8n1-Cb40~FrYZF~d3zT9THh22mTiYXX6gLgVQUs~WRL2BZ6pULPJpxJJghoLKt73CMF1ZXtGot5W44QA150lmkFd13t3cZ3VaGiFoe9Yh9tXDMAQHVompltcbDSjLYYPGLrRfjBJka8ds3D1SwChbSvMSlKKGaop588xLPSNzqBb7i~44fiIhbs7GeuoJtS8psU8SMeQSslO0rmg__
+  [8]: https://dms3amyi97gvv.cloudfront.net/Property/a4463e98-0eb1-404a-8f9e-64e77bb8d2d3_1781700803868_53771fb9.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=Pt4yH3W5h6I2u1n0haiavv-HLux54csFHdARCWn6EgSuB2GHuzEHz6B6gLKZTaYSQLdmFtcF3KhgiBBfjpl-kWNB1~tBNgn7x5N3Kl-FycGZcb54dc-LUk6wQsVsEFoHTbHvS6v8dhwSnmspEgfPdt4nhznd0zEeOJs3yDi28VG4~dlpNDOVBxqWRS~RjcoZmfpFqKoA7Yv81n1XU7gkufXsO6iYUDO3s7u4UtWj~kVW3jwcX1dymrRURLVpjMUesBUjtJFNGEKc1HJygI2578Wxzh0gB1o2ysJc74RjmUjo7yQPeksZrJiM2yCfRhEk8p~VL2NdssNRs7Cquzrxiw__
+  [9]: https://dms3amyi97gvv.cloudfront.net/Property/8217351b-a81d-4644-9ed2-607b4dc9fbcf_1781700803474_3cecde34.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=sdjrySPBrlaZ6keo3-5DkHQzhWt9zeUjpIsoym5K3A1xiJtarVsot9mxT2rY5mr996pLWLxyBFpwc4LvQFqprVptH5-auffMx2D~bc~j-vookuMLroLlowDLuj-KZxVmbrsMfvJ-jMQXMFMXUfDuQFARB5OfXmhtKqZPFHhOYzgUjl0rl9P1~hgAqtddTfXvHYPkxjT3DkaRyVq9wueuhYujjf1uKk1Q7f4ZfcfQucIi-0u~dFM9Exo66jS3gKcRDzuteR9glmQiZZ0ewMKjMZlzyjgIIsLA24GIPDKtJX7bZjlM1a1VJn9~spCvfZ01155Boj5ba~Bi9ETbj2p~yQ__
+  [10]: https://dms3amyi97gvv.cloudfront.net/Property/8d68dd0f-a50e-404f-93a5-255523fcdc73_1781700803687_5e62cdef.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=h0Y2n8U5r7H37704Ld5Wz6DuOYhqmlBQ8RzPhzdip0UyE7Aj35TWZfigz868yk4fWn-8Qo4xATSb-01ZppevlPFPXsN03xdvV23cGOZnEZ2Nq-6KbjTV~N07TSAusy~xKqPgtWnS6qjlHPSMOloNVI7qRkDzIaiCHs62IR1ZnsV~vozw~QzxTm0ZiHRHe9z~JJwDnYPqA-eZoeo8jTNsIJrm7bFUOVhBfSYki9LBLwyRCgXcIqyZgkZeApUWg6uBQ3fgp7CGvXg0pHcrOBw3n9YM08BBXmpl0rPPHRTNJnU-03hYRgRrrLPwiy3B6-Vfo0S02tL6fe4R8Wb2hUmVcQ__
+  [11]: https://dms3amyi97gvv.cloudfront.net/Property/0ea48aa6-5a35-4743-9847-fab19526ef2a_1781700804377_c6ff8e65.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=RVSiQUbnDqi7uGm7zPwJ6klxn75KAmLew4zEJMHknkZm9uIItU8~Y4Pa7f4U9th2YMALVaRK7874hCUYdjqTCwVUBQi05yTektqlOsC4YmSOuOUkJ3VdKYblu0f4dWZaWmhzTP3eooPUPulM7ppiSeH6ULODzfWRhmNbaeZNlTFjlUXcz4pyYCeIPAHbOdi-5aheY2FgJzHTwB8khzcXeolS2~0rlw2tb7sXGCowjS4kzA7iaJ6mdwyJq9pXBesR675QqDzucDAYV38cKGzQXAcGE2rVM9j~mdixnjk2vhad2jZjbSlhEmF1oo-sW3P-EOKVDwAI1AX8s~QNhZP4Ww__
+  [12]: https://dms3amyi97gvv.cloudfront.net/Property/3caeda71-406e-493c-9f50-b5e9282c10ee_1781700804100_959548c0.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=p-RipPVNiChXdccKmlSGWgmv9gclUrYfaYutdokkBq4Fhc7kL-hJEFsPjt3n~n9TJbqUb8xFkaz6mgwGqVOSXJLjyq7Wpck4OO15m8vPpRZ0FSIwU4c~mbrjy7iK4zKwIeL2x9bBEcbVkrfVV-rTepiF63FayUw3E-nF1R81hCBwNB7~2QCDrNUmrg0iw36sn5157pzcG7qSrv-LGJvZtUCv4gRfAZCimegLTIAO3q1vMpG~ax9HBl9WUT13D3tkYXHWx638lR07wW8zi6oqsupYmavfMkYyLnRMEIdxO0gv-DJhY~r~ANPCGY0w8SCuBYU2l4QZSv6gxYmxzg3n0g__
+  [13]: https://dms3amyi97gvv.cloudfront.net/Property/d4416f1e-d917-4a88-b288-3eed8f2ae491_1781700806229_9c8a0e3d.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=KHcGeYgzfiQGx5jKS4URO1-YuM00cO~YuCWJ~hJ-VQ6sGf4SOs3cHhvBeAL~PCmL8DC-DwYFMTj2jA1ZZb2YHcIpQOQW2htwx2RP01NW6b4JYbETPYnTkV9RUZF~rbHQUv-cxVAT-C-xnaM-b2usDONof88~0fsgx-vEbTqD38N6kiBA0LF3bGUgUHaGmLY4fzCjXye0AVKoRhxYum~NcPNPgEtZP279~a3DvBWiAYUh5q6G1-~LNgVKSDC~Od5wcTZes58~tgHSh5H6CHL~7JGnoG6yuadjFTflskak2hVEpiyy2SeOuXUhf4~-hLiQGfSP2SRMade3pSGrluRbbw__
+  [14]: https://dms3amyi97gvv.cloudfront.net/Property/a4e166ec-9bdc-4071-83ac-ac62081aef05_1781700806261_5e122457.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=LOypQkS0-9-XORAVAVaqwptiaCY4A8NjWlYtpYec0X40xJqOR~746dBGEn73hvxYGguYH5DHU-yBKGkbaCz~xiHKkBLpHiJQr8c7h7LaAtM5WiTdkzKKL25Jrn65ncn~vjj9yd0vYABlb7SyRdRTGzu0Cvdpgn2DNbSSeN8o0L8O5wdK159jupTFqQYK9BYh8YMp0YOwIbhi7pfQjRdCXXb-uUo-GFc90HD5Qrio8LhR0jTJyTbfO6xuRaqeyychpmUWBs7yMiRhLxg9~e2u-ykZkg2FztiOMbkAxy7MwCp6h5OfrGkPvR8KCjWIAvsjTQGRGcXfAQY1UlsaQUfh3g__
+  [15]: https://dms3amyi97gvv.cloudfront.net/Property/53670973-82e1-4cc8-859d-5b5776cd500a_1781700806043_fd3c9c08.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=UONqIXJYmthSdvP3PSVBOGOkSOX-4dpCcoqH84TCCvMebj--GUe8kOMDkVfIR41x-pFrZTg8BE6Bnwz-XLuEP1GpRDL-UvwEd7l4jpYkiJuYYJKuzSCoNj~cLtg1rVzeBe2H5cU4J5mTyBMTfjPkUSNsDiGsnXbGPFKIxofsT78cfcIf3f5Nnt7pOd6PhElDFmfHU-TxBYJGCAiiGKKqkoktqVs6dfYSeYuxe9MjJMmW-Ny4PtbNaClhtSpSoO4cpixVkufyjvNXDSonP39BhqHulp2P0R5Ch8XvObcrjKPZs01Tmn0BTSsUb3bBqU6r1AeVKCO233JPCq~~0mXZ0Q__
+  [16]: https://dms3amyi97gvv.cloudfront.net/Property/2797e782-370f-491a-8e62-f83194b40936_1781700806426_0af220f3.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=MDLRLjc11yE2b0wzgHSLI1YmyVh5C~8VIdLnkicQLImC7-u-xY4eXyF~nBShKtaXvnCHvalG1ed~EYg5eCFgQg3nClQatkciQhY1c2SPbn3CIXKC5m~ga7fXRTipVG5jPjDo-vGx-PheKGPqM-fw4N1Ss5-BSZNFq8mMn6NFIMKmDUv5JI0FtblDy~OXEniyp7Rb3fO3O4LU54RdNo~PEtWCswBasjEpd41KBgTqpE0DkZjRe9WxBeCiGq0aILCdjJX0rkuCa8QlPleWKji9KdUSv2~918B2zeLBFvmdfaNcRYeVac2ok28BhlEtA~x7dLhZ0NwBzY9VZH0KW6mdZA__
+  [17]: https://dms3amyi97gvv.cloudfront.net/Property/186983d2-0fca-4d3f-8463-dd4c5f0b14b9_1781700806981_39d1c181.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=jVSHSAzjDs15u4Qo~ColReD4DqE0pjkeqT7ifISGZXr7rY4o0QbIBsBWtPXrCy0X4oTqCFoJK1iCv6~QYSfR73pgzx9~ARqLzr6efHRjIbcAe48o4vTIrp2xSRAXWSBI9CcwHLWdfAQhM3XbAwxziJ8pqjplHsHXABErQhIUdRH~MSkMEA-pdDbVfVkoyQGAirBK100QS5ZfQujRypTmgDECKfcZu-8q3U24JUVCAzP2r~OSUf6ytvT7gCJ8fr~HdnAIrKIRcOgCs7HTamK4pc~EDGXsn1Mn4C6U6ACnOZpBZSQ70xDpBl8hZ~7IM8D-yajVxBTytfJUVap0LNOO8w__
+  [18]: https://dms3amyi97gvv.cloudfront.net/Property/c411a570-8cd8-4235-ac3e-2deac4a70e71_1781700805719_f0e245be.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=o1IhUY04OnM~IqX-aZr059uK2aBaHzFK-9wxJ1z0SSiTHvRVKvEwBGutyvPQY93IzavEGyZsOSSWXPvQY0kylMQNMYcrx8~6R8imBw-DVHBfb4OvcThNoMaJej8KqKf7a6eWJOrBbrMxeVQBsOEP-0BC9g9Uvml2ByI~FDc2v4P8KWH0WEJKt-2gqJIPvlZUk13PcL5A6efEOWv5GQOYg2lXqVWV8wIQAO0Gbtp2Zy9a4RX1PaEcmQLfSjckVoIC3Z61g4wOUDWgV0Xlo~wCrCvhE53D4n3DPnEcspDzWDW9yq5KqjAsYV-z-miA2Gm1AxFlt~bYufSX93m3FtdK1w__
+  [19]: https://dms3amyi97gvv.cloudfront.net/Property/3aa0a1e9-e2ea-482e-97a1-25f46b8d094d_1781700808532_1fbed740.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=NKcSQIRrzsvtSSfCGyazl7Ei8ZA02BIfjirWhGP2Hg1r7TZA5ycqWYNkGEksJezXSNLYSi3miFrzsQJLwstwO8~gzHgi8YW2d33pgYRthkG3l7IFeJ1DgXx7xc0T5mgWASIot~t-hRKwu1jGKq94xG4RJxu5Ohr8xJ9zwM25k3V1lvpshn4PBS48jiG8p~EtjPf8gCIu1npAnWxWOgHPL71IqQE5056b0wzGzK4qMiXb4z02g6BDiLdXGnto2GxAZ6VdDSQJK6RGe0MoKDHIC38kny40ypJvmFqwWSrP5Xyu9Myril0puu~y4qI4tBKvEcOjce3CZzavEGqgnyDovw__
+  [20]: https://dms3amyi97gvv.cloudfront.net/Property/1e4d54f7-c6bd-4f7f-b51d-7a6f7d834717_1781700808563_d462bd0f.jpg?Expires=1782292386&Key-Pair-Id=KX5HYW72PVJI2&Signature=QjUFZEYvovPXyEYZWQ9SPr9U~qw8L4YeRrEByfSNKdAqonBY83P26s9exFhiElsgbtI0wdf0A5iS4rERIWwjnknzOkmkLFI8FT7-O2LG51rDilqdKRcOO8oU-rk1i2HfmZTb3WDT5beTTl69YYKUTmBUPhgyNdJo9baNa7Xm5btPttVBAz8HxE7wC4vfXmwkyOpk4ytFdpCCCZvOqBkmBe9Pjp9~UQMWR2vUmjQJ6MSjvzVgahOCVvy4GwIX7rpHsfA0boAdwoRHGEDuyxaz4QVGCG30L5n74HSJkIOkhKmZSP-Ss~E2gGQxlxbTpcPOuuhklBAw9EniG7xHlGXdvw__
+  [21]: https://dms3amyi97gvv.cloudfront.net/Property/c5f934ed-6374-49ac-85d3-91e75baa60ba_1781700798383_2f7db9f9.jpg?Expires=1782291883&Key-Pair-Id=KX5HYW72PVJI2&Signature=aBXw7wvFsBNPnmNsK2cvyGGS2SWBPzclwbymyEX9lFwwAlvWxQX-TI0kGDafFR4hXDq8UgZW2URaZmf7v2wBgzhPJrT8Bt7qCwBTgeJMEm06FlC7aRplXVtVEs421Md21ZVZp9PtzIcBorhB0uIGRW9TmT6yXuHLCNahNfZdZTUJhUMVOVCPlT3aAquog-o0rjNn~OCUx~KDNLgb5aiRBci6KXbJDvXnQzxJiNnPoH~GEO89o2mDLLLY3d~MRFgUsyIeEAf5gc8QHJMaDAO5O8w~cA3BNm1RCGdrBKHo2uCtKE9Okh~R1PqP1NQxZyaNCq05V07-J85IBWv7GOIy~w__
+
+--- ANH_1 TO ANH_25 COLUMNS ---

@@ -1,0 +1,878 @@
+Line 37: def main():
+--- Code chunk ---
+  32:     server = socketserver.TCPServer(("", port), Handler)
+  33:     print(f"Local server started on port {port} serving {directory}")
+  34:     server.serve_forever()
+  35:     return server
+  36: 
+  37: def main():
+  38:     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
+  39:     artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+  40:     
+  41:     port = get_free_port()
+  42:     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
+  43:     server_thread.start()
+  44:     
+  45:     time.sleep(1.5) # Allow server to bind
+  46:     
+-----------------
+Line 38: project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
+--- Code chunk ---
+  33:     print(f"Local server started on port {port} serving {directory}")
+  34:     server.serve_forever()
+  35:     return server
+  36: 
+  37: def main():
+  38:     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
+  39:     artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+  40:     
+  41:     port = get_free_port()
+  42:     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
+  43:     server_thread.start()
+  44:     
+  45:     time.sleep(1.5) # Allow server to bind
+  46:     
+  47:     test_success = True
+-----------------
+Line 39: artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+--- Code chunk ---
+  34:     server.serve_forever()
+  35:     return server
+  36: 
+  37: def main():
+  38:     project_dir = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo"
+  39:     artifacts_dir = r"C:\Users\Khang Ngo\.gemini\antigravity\brain\595fc691-aac4-4d6b-9257-a1e94612755c"
+  40:     
+  41:     port = get_free_port()
+  42:     server_thread = threading.Thread(target=run_server, args=(port, project_dir), daemon=True)
+  43:     server_thread.start()
+  44:     
+  45:     time.sleep(1.5) # Allow server to bind
+  46:     
+  47:     test_success = True
+  48:     
+-----------------
+Line 59: mock_public_row_1[8] = {"v": "Mặt tiền"} # loai_hinh
+--- Code chunk ---
+  54:     mock_public_row_1[3] = {"v": 4} # tang
+  55:     mock_public_row_1[4] = {"v": 5} # mat
+  56:     mock_public_row_1[5] = {"v": 8.5} # gia
+  57:     mock_public_row_1[6] = {"v": "q3"} # q
+  58:     mock_public_row_1[7] = {"v": "Phường 11"} # phuong
+  59:     mock_public_row_1[8] = {"v": "Mặt tiền"} # loai_hinh
+  60:     mock_public_row_1[9] = {"v": "Đông Nam"} # huong
+  61:     mock_public_row_1[10] = {"v": 15} # duong_truoc_nha
+  62:     mock_public_row_1[11] = {"v": 0} # rong_hem
+  63:     mock_public_row_1[12] = {"v": "Bình thường"} # tinh_trang
+  64:     mock_public_row_1[13] = {"v": "Hàng Ngon"} # danh_gia
+  65:     mock_public_row_1[14] = {"v": "Không"} # ngu_tang_tret
+  66:     mock_public_row_1[15] = {"v": "Không"} # chdv
+  67:     mock_public_row_1[16] = {"v": "Mô tả chi tiết căn nhà CMT8..."} # m
+  68:     mock_public_row_1[17] = {"v": "https://res.cloudinary.com/demo/image/upload/sample.jpg"} # img 1
+-----------------
+Line 73: mock_public_row_2[1] = {"v": "Căn Ba Tháng Hai Q10"}
+--- Code chunk ---
+  68:     mock_public_row_1[17] = {"v": "https://res.cloudinary.com/demo/image/upload/sample.jpg"} # img 1
+  69:     mock_public_row_1[34] = {"v": "SYS-1001"} # system_id
+  70: 
+  71:     mock_public_row_2 = list(mock_public_row_1)
+  72:     mock_public_row_2[0] = {"v": "1002"}
+  73:     mock_public_row_2[1] = {"v": "Căn Ba Tháng Hai Q10"}
+  74:     mock_public_row_2[5] = {"v": 12.0}
+  75:     mock_public_row_2[6] = {"v": "q10"}
+  76:     mock_public_row_2[7] = {"v": "Phường 12"}
+  77:     mock_public_row_2[34] = {"v": "SYS-1002"}
+  78: 
+  79:     # ── Define Mock Data for Admin View ──
+  80:     mock_source_row_1 = [""] * 46
+  81:     mock_source_row_1[0] = "1"
+  82:     mock_source_row_1[1] = "CP"
+-----------------
+Line 93: mock_source_row_2[4] = "Căn Ba Tháng Hai Q10"
+--- Code chunk ---
+  88:     mock_source_row_1[10] = "Phường 11"
+  89:     mock_source_row_1[37] = "SYS-1001"
+  90: 
+  91:     mock_source_row_2 = list(mock_source_row_1)
+  92:     mock_source_row_2[3] = "SYS-1002"
+  93:     mock_source_row_2[4] = "Căn Ba Tháng Hai Q10"
+  94:     mock_source_row_2[8] = "12.0"
+  95:     mock_source_row_2[9] = "Q10"
+  96:     mock_source_row_2[10] = "Phường 12"
+  97:     mock_source_row_2[37] = "SYS-1002"
+  98: 
+  99:     # Pool Sheet columns matching what Lego Curation reads:
+  100:     # 0: id/noName, 5: ten_duong (col F), 6: so_nha (col G), 9: noi_dung_chinh (col J), 10: mo_ta_chi_tiet (col K),
+  101:     # 11: gia_chao (col L), 13: dt_thuc_te (col N), 27: sodo1 (col AB), 28: sodo2 (col AC), 29: img_mat_tien (col AD),
+  102:     # 40: public_cover/img1 (col AO), 55: khangngo_id (col BD), 72: system_id (col BU)
+-----------------
+Line 120: mock_pool_row_2[9] = "Nội dung chính Ba Tháng Hai Q10"
+--- Code chunk ---
+  115:     mock_pool_row_1[55] = "2001"
+  116:     mock_pool_row_1[72] = "SYS-1001" # system_id
+  117: 
+  118:     mock_pool_row_2 = list(mock_pool_row_1)
+  119:     mock_pool_row_2[0] = "2002"
+  120:     mock_pool_row_2[9] = "Nội dung chính Ba Tháng Hai Q10"
+  121:     mock_pool_row_2[10] = "Mô tả chi tiết Ba Tháng Hai Q10"
+  122:     mock_pool_row_2[11] = "11.5"
+  123:     mock_pool_row_2[55] = "2002"
+  124:     mock_pool_row_2[72] = "SYS-1002"
+  125: 
+  126:     console_errors = []
+  127:     captured_sheets_calls = []
+  128: 
+  129:     def handle_public_gviz(route):
+-----------------
+Line 121: mock_pool_row_2[10] = "Mô tả chi tiết Ba Tháng Hai Q10"
+--- Code chunk ---
+  116:     mock_pool_row_1[72] = "SYS-1001" # system_id
+  117: 
+  118:     mock_pool_row_2 = list(mock_pool_row_1)
+  119:     mock_pool_row_2[0] = "2002"
+  120:     mock_pool_row_2[9] = "Nội dung chính Ba Tháng Hai Q10"
+  121:     mock_pool_row_2[10] = "Mô tả chi tiết Ba Tháng Hai Q10"
+  122:     mock_pool_row_2[11] = "11.5"
+  123:     mock_pool_row_2[55] = "2002"
+  124:     mock_pool_row_2[72] = "SYS-1002"
+  125: 
+  126:     console_errors = []
+  127:     captured_sheets_calls = []
+  128: 
+  129:     def handle_public_gviz(route):
+  130:         mock_data = {
+-----------------
+Line 158: admin_page.on("requestfailed", lambda req: print(f"[Admin Request Failed] {req.url} - {req.failure}"))
+--- Code chunk ---
+  153:         
+  154:         admin_page.on("console", lambda msg: (
+  155:             print(f"[Admin Console {msg.type}] {msg.text}"),
+  156:             console_errors.append(msg.text) if msg.type == "error" else None
+  157:         ))
+  158:         admin_page.on("requestfailed", lambda req: print(f"[Admin Request Failed] {req.url} - {req.failure}"))
+  159:         admin_page.on("pageerror", lambda err: print(f"[Admin Page Error] {err}"))
+  160:         
+  161:         # Inject admin session
+  162:         admin_page.add_init_script("""
+  163:             localStorage.setItem('isAdminSession', 'true');
+  164:             localStorage.setItem('g_access_token', 'mock_google_oauth_token');
+  165:             localStorage.setItem('g_token_expiry', (Date.now() + 3600 * 1000).toString());
+  166:         """)
+  167:         
+-----------------
+Line 193: # Intercept AI generation endpoint
+--- Code chunk ---
+  188:                 print(f"[Sheets Mock API] Captured writing request payload: {parsed_data}")
+  189:                 route.fulfill(content_type="application/json", body=json.dumps({"spreadsheetId": "mock-sheet", "updatedCells": 1}))
+  190:             else:
+  191:                 route.continue_()
+  192: 
+  193:         # Intercept AI generation endpoint
+  194:         def handle_ai_generate(route):
+  195:             print("[AI Mock API] Auto fill AI generated request")
+  196:             response_body = {
+  197:                 "status": "success",
+  198:                 "tieu_de_public": "Căn CMT8 Q3 VIP - AI Generated Title",
+  199:                 "mo_ta_public": "Mô tả công khai tự động biên tập bởi AI cho căn Cách Mạng Tháng Tám...",
+  200:                 "phuong_cu": "Phường 11"
+  201:             }
+  202:             route.fulfill(content_type="application/json", body=json.dumps(response_body))
+-----------------
+Line 194: def handle_ai_generate(route):
+--- Code chunk ---
+  189:                 route.fulfill(content_type="application/json", body=json.dumps({"spreadsheetId": "mock-sheet", "updatedCells": 1}))
+  190:             else:
+  191:                 route.continue_()
+  192: 
+  193:         # Intercept AI generation endpoint
+  194:         def handle_ai_generate(route):
+  195:             print("[AI Mock API] Auto fill AI generated request")
+  196:             response_body = {
+  197:                 "status": "success",
+  198:                 "tieu_de_public": "Căn CMT8 Q3 VIP - AI Generated Title",
+  199:                 "mo_ta_public": "Mô tả công khai tự động biên tập bởi AI cho căn Cách Mạng Tháng Tám...",
+  200:                 "phuong_cu": "Phường 11"
+  201:             }
+  202:             route.fulfill(content_type="application/json", body=json.dumps(response_body))
+  203: 
+-----------------
+Line 195: print("[AI Mock API] Auto fill AI generated request")
+--- Code chunk ---
+  190:             else:
+  191:                 route.continue_()
+  192: 
+  193:         # Intercept AI generation endpoint
+  194:         def handle_ai_generate(route):
+  195:             print("[AI Mock API] Auto fill AI generated request")
+  196:             response_body = {
+  197:                 "status": "success",
+  198:                 "tieu_de_public": "Căn CMT8 Q3 VIP - AI Generated Title",
+  199:                 "mo_ta_public": "Mô tả công khai tự động biên tập bởi AI cho căn Cách Mạng Tháng Tám...",
+  200:                 "phuong_cu": "Phường 11"
+  201:             }
+  202:             route.fulfill(content_type="application/json", body=json.dumps(response_body))
+  203: 
+  204:         admin_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
+-----------------
+Line 198: "tieu_de_public": "Căn CMT8 Q3 VIP - AI Generated Title",
+--- Code chunk ---
+  193:         # Intercept AI generation endpoint
+  194:         def handle_ai_generate(route):
+  195:             print("[AI Mock API] Auto fill AI generated request")
+  196:             response_body = {
+  197:                 "status": "success",
+  198:                 "tieu_de_public": "Căn CMT8 Q3 VIP - AI Generated Title",
+  199:                 "mo_ta_public": "Mô tả công khai tự động biên tập bởi AI cho căn Cách Mạng Tháng Tám...",
+  200:                 "phuong_cu": "Phường 11"
+  201:             }
+  202:             route.fulfill(content_type="application/json", body=json.dumps(response_body))
+  203: 
+  204:         admin_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
+  205:         admin_page.route("**/gviz/tq**", handle_public_gviz)
+  206:         admin_page.route("**/api/ai/generate**", handle_ai_generate)
+  207:         # Mock Google Maps and Cloudinary requests
+-----------------
+Line 199: "mo_ta_public": "Mô tả công khai tự động biên tập bởi AI cho căn Cách Mạng Tháng Tám...",
+--- Code chunk ---
+  194:         def handle_ai_generate(route):
+  195:             print("[AI Mock API] Auto fill AI generated request")
+  196:             response_body = {
+  197:                 "status": "success",
+  198:                 "tieu_de_public": "Căn CMT8 Q3 VIP - AI Generated Title",
+  199:                 "mo_ta_public": "Mô tả công khai tự động biên tập bởi AI cho căn Cách Mạng Tháng Tám...",
+  200:                 "phuong_cu": "Phường 11"
+  201:             }
+  202:             route.fulfill(content_type="application/json", body=json.dumps(response_body))
+  203: 
+  204:         admin_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
+  205:         admin_page.route("**/gviz/tq**", handle_public_gviz)
+  206:         admin_page.route("**/api/ai/generate**", handle_ai_generate)
+  207:         # Mock Google Maps and Cloudinary requests
+  208:         admin_page.route("**/maps.google.com/**", lambda route: route.fulfill(status=200, body="<html>Dummy Maps</html>"))
+-----------------
+Line 206: admin_page.route("**/api/ai/generate**", handle_ai_generate)
+--- Code chunk ---
+  201:             }
+  202:             route.fulfill(content_type="application/json", body=json.dumps(response_body))
+  203: 
+  204:         admin_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
+  205:         admin_page.route("**/gviz/tq**", handle_public_gviz)
+  206:         admin_page.route("**/api/ai/generate**", handle_ai_generate)
+  207:         # Mock Google Maps and Cloudinary requests
+  208:         admin_page.route("**/maps.google.com/**", lambda route: route.fulfill(status=200, body="<html>Dummy Maps</html>"))
+  209:         admin_page.route("**/res.cloudinary.com/**", lambda route: route.fulfill(status=200, body="Dummy Image"))
+  210: 
+  211:         admin_url = f"http://localhost:{port}/index.html"
+  212:         
+  213:         try:
+  214:             print(f"Navigating admin page to: {admin_url}")
+  215:             admin_page.goto(admin_url, wait_until="load", timeout=30000)
+-----------------
+Line 215: admin_page.goto(admin_url, wait_until="load", timeout=30000)
+--- Code chunk ---
+  210: 
+  211:         admin_url = f"http://localhost:{port}/index.html"
+  212:         
+  213:         try:
+  214:             print(f"Navigating admin page to: {admin_url}")
+  215:             admin_page.goto(admin_url, wait_until="load", timeout=30000)
+  216:             
+  217:             # Wait for secure loading
+  218:             print("Waiting for secure data loading...")
+  219:             admin_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  220:             
+  221:             # Wait for curation pool list cards
+  222:             admin_page.wait_for_selector(".card", timeout=10000)
+  223:             card_count = admin_page.locator(".card").count()
+  224:             print(f"Curation pool cards count: {card_count}")
+-----------------
+Line 217: # Wait for secure loading
+--- Code chunk ---
+  212:         
+  213:         try:
+  214:             print(f"Navigating admin page to: {admin_url}")
+  215:             admin_page.goto(admin_url, wait_until="load", timeout=30000)
+  216:             
+  217:             # Wait for secure loading
+  218:             print("Waiting for secure data loading...")
+  219:             admin_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  220:             
+  221:             # Wait for curation pool list cards
+  222:             admin_page.wait_for_selector(".card", timeout=10000)
+  223:             card_count = admin_page.locator(".card").count()
+  224:             print(f"Curation pool cards count: {card_count}")
+  225:             assert card_count == 2, f"Expected 2 cards, got {card_count}"
+  226:             
+-----------------
+Line 218: print("Waiting for secure data loading...")
+--- Code chunk ---
+  213:         try:
+  214:             print(f"Navigating admin page to: {admin_url}")
+  215:             admin_page.goto(admin_url, wait_until="load", timeout=30000)
+  216:             
+  217:             # Wait for secure loading
+  218:             print("Waiting for secure data loading...")
+  219:             admin_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  220:             
+  221:             # Wait for curation pool list cards
+  222:             admin_page.wait_for_selector(".card", timeout=10000)
+  223:             card_count = admin_page.locator(".card").count()
+  224:             print(f"Curation pool cards count: {card_count}")
+  225:             assert card_count == 2, f"Expected 2 cards, got {card_count}"
+  226:             
+  227:             # Open the curation drawer for first card
+-----------------
+Line 219: admin_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+--- Code chunk ---
+  214:             print(f"Navigating admin page to: {admin_url}")
+  215:             admin_page.goto(admin_url, wait_until="load", timeout=30000)
+  216:             
+  217:             # Wait for secure loading
+  218:             print("Waiting for secure data loading...")
+  219:             admin_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  220:             
+  221:             # Wait for curation pool list cards
+  222:             admin_page.wait_for_selector(".card", timeout=10000)
+  223:             card_count = admin_page.locator(".card").count()
+  224:             print(f"Curation pool cards count: {card_count}")
+  225:             assert card_count == 2, f"Expected 2 cards, got {card_count}"
+  226:             
+  227:             # Open the curation drawer for first card
+  228:             print("Opening curation drawer for first card (SYS-1001)...")
+-----------------
+Line 221: # Wait for curation pool list cards
+--- Code chunk ---
+  216:             
+  217:             # Wait for secure loading
+  218:             print("Waiting for secure data loading...")
+  219:             admin_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  220:             
+  221:             # Wait for curation pool list cards
+  222:             admin_page.wait_for_selector(".card", timeout=10000)
+  223:             card_count = admin_page.locator(".card").count()
+  224:             print(f"Curation pool cards count: {card_count}")
+  225:             assert card_count == 2, f"Expected 2 cards, got {card_count}"
+  226:             
+  227:             # Open the curation drawer for first card
+  228:             print("Opening curation drawer for first card (SYS-1001)...")
+  229:             admin_page.evaluate("openPoolS('SYS-1001')")
+  230:             
+-----------------
+Line 222: admin_page.wait_for_selector(".card", timeout=10000)
+--- Code chunk ---
+  217:             # Wait for secure loading
+  218:             print("Waiting for secure data loading...")
+  219:             admin_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  220:             
+  221:             # Wait for curation pool list cards
+  222:             admin_page.wait_for_selector(".card", timeout=10000)
+  223:             card_count = admin_page.locator(".card").count()
+  224:             print(f"Curation pool cards count: {card_count}")
+  225:             assert card_count == 2, f"Expected 2 cards, got {card_count}"
+  226:             
+  227:             # Open the curation drawer for first card
+  228:             print("Opening curation drawer for first card (SYS-1001)...")
+  229:             admin_page.evaluate("openPoolS('SYS-1001')")
+  230:             
+  231:             # Verify Curator panel UI accordion items
+-----------------
+Line 233: admin_page.wait_for_selector("#accSource", timeout=5000)
+--- Code chunk ---
+  228:             print("Opening curation drawer for first card (SYS-1001)...")
+  229:             admin_page.evaluate("openPoolS('SYS-1001')")
+  230:             
+  231:             # Verify Curator panel UI accordion items
+  232:             print("Verifying curation accordion panels...")
+  233:             admin_page.wait_for_selector("#accSource", timeout=5000)
+  234:             
+  235:             # Verify BĐS is not published yet, so Preview accordion should not be present
+  236:             assert admin_page.locator("#accPreview").count() == 0, "Preview accordion should not be visible for unpublished listings"
+  237:             
+  238:             # Check the warning save pool notice is shown
+  239:             save_notice = admin_page.locator("#poolSaveNotice").inner_text()
+  240:             print(f"Save notice text: {save_notice}")
+  241:             assert "Nhập đầy đủ cả Tiêu đề Public và Mô tả Public" in save_notice, "Should warn about missing public data"
+  242:             
+-----------------
+Line 251: admin_page.wait_for_timeout(500)
+--- Code chunk ---
+  246:             assert not is_visible_save, "Lên sóng button should not be visible when fields are empty"
+  247:             
+  248:             # Expand the editing accordion to make button visible
+  249:             print("Expanding Curation editing accordion...")
+  250:             admin_page.locator("#accSource .accordion-header").click()
+  251:             admin_page.wait_for_timeout(500)
+  252:             
+  253:             # Test Auto Fill AI Details
+  254:             print("Clicking 'Tự động điền' AI button...")
+  255:             admin_page.locator("#btnAutoFillCuration").click()
+  256:             admin_page.wait_for_timeout(1000) # wait for AI fetch
+  257:             
+  258:             # Verify fields filled
+  259:             title_val = admin_page.locator("#editTieuDeBds").input_value()
+  260:             desc_val = admin_page.locator("#editMoTaBds").input_value()
+-----------------
+Line 253: # Test Auto Fill AI Details
+--- Code chunk ---
+  248:             # Expand the editing accordion to make button visible
+  249:             print("Expanding Curation editing accordion...")
+  250:             admin_page.locator("#accSource .accordion-header").click()
+  251:             admin_page.wait_for_timeout(500)
+  252:             
+  253:             # Test Auto Fill AI Details
+  254:             print("Clicking 'Tự động điền' AI button...")
+  255:             admin_page.locator("#btnAutoFillCuration").click()
+  256:             admin_page.wait_for_timeout(1000) # wait for AI fetch
+  257:             
+  258:             # Verify fields filled
+  259:             title_val = admin_page.locator("#editTieuDeBds").input_value()
+  260:             desc_val = admin_page.locator("#editMoTaBds").input_value()
+  261:             print(f"Filled Title: {title_val}")
+  262:             print(f"Filled Description: {desc_val}")
+-----------------
+Line 254: print("Clicking 'Tự động điền' AI button...")
+--- Code chunk ---
+  249:             print("Expanding Curation editing accordion...")
+  250:             admin_page.locator("#accSource .accordion-header").click()
+  251:             admin_page.wait_for_timeout(500)
+  252:             
+  253:             # Test Auto Fill AI Details
+  254:             print("Clicking 'Tự động điền' AI button...")
+  255:             admin_page.locator("#btnAutoFillCuration").click()
+  256:             admin_page.wait_for_timeout(1000) # wait for AI fetch
+  257:             
+  258:             # Verify fields filled
+  259:             title_val = admin_page.locator("#editTieuDeBds").input_value()
+  260:             desc_val = admin_page.locator("#editMoTaBds").input_value()
+  261:             print(f"Filled Title: {title_val}")
+  262:             print(f"Filled Description: {desc_val}")
+  263:             assert "AI Generated Title" in title_val, "Title should be auto filled by AI"
+-----------------
+Line 255: admin_page.locator("#btnAutoFillCuration").click()
+--- Code chunk ---
+  250:             admin_page.locator("#accSource .accordion-header").click()
+  251:             admin_page.wait_for_timeout(500)
+  252:             
+  253:             # Test Auto Fill AI Details
+  254:             print("Clicking 'Tự động điền' AI button...")
+  255:             admin_page.locator("#btnAutoFillCuration").click()
+  256:             admin_page.wait_for_timeout(1000) # wait for AI fetch
+  257:             
+  258:             # Verify fields filled
+  259:             title_val = admin_page.locator("#editTieuDeBds").input_value()
+  260:             desc_val = admin_page.locator("#editMoTaBds").input_value()
+  261:             print(f"Filled Title: {title_val}")
+  262:             print(f"Filled Description: {desc_val}")
+  263:             assert "AI Generated Title" in title_val, "Title should be auto filled by AI"
+  264:             assert "Cách Mạng Tháng Tám" in desc_val, "Description should be auto filled by AI"
+-----------------
+Line 256: admin_page.wait_for_timeout(1000) # wait for AI fetch
+--- Code chunk ---
+  251:             admin_page.wait_for_timeout(500)
+  252:             
+  253:             # Test Auto Fill AI Details
+  254:             print("Clicking 'Tự động điền' AI button...")
+  255:             admin_page.locator("#btnAutoFillCuration").click()
+  256:             admin_page.wait_for_timeout(1000) # wait for AI fetch
+  257:             
+  258:             # Verify fields filled
+  259:             title_val = admin_page.locator("#editTieuDeBds").input_value()
+  260:             desc_val = admin_page.locator("#editMoTaBds").input_value()
+  261:             print(f"Filled Title: {title_val}")
+  262:             print(f"Filled Description: {desc_val}")
+  263:             assert "AI Generated Title" in title_val, "Title should be auto filled by AI"
+  264:             assert "Cách Mạng Tháng Tám" in desc_val, "Description should be auto filled by AI"
+  265:             
+-----------------
+Line 263: assert "AI Generated Title" in title_val, "Title should be auto filled by AI"
+--- Code chunk ---
+  258:             # Verify fields filled
+  259:             title_val = admin_page.locator("#editTieuDeBds").input_value()
+  260:             desc_val = admin_page.locator("#editMoTaBds").input_value()
+  261:             print(f"Filled Title: {title_val}")
+  262:             print(f"Filled Description: {desc_val}")
+  263:             assert "AI Generated Title" in title_val, "Title should be auto filled by AI"
+  264:             assert "Cách Mạng Tháng Tám" in desc_val, "Description should be auto filled by AI"
+  265:             
+  266:             # Verify save notice turns green/success
+  267:             new_save_notice = admin_page.locator("#poolSaveNotice").inner_text()
+  268:             print(f"Updated save notice: {new_save_notice}")
+  269:             assert "Đã đủ điều kiện" in new_save_notice, "Save notice should indicate conditions met"
+  270:             
+  271:             # Verify "Lên sóng" button is now visible
+  272:             is_visible_save_now = admin_page.locator("#savePoolBtn").is_visible()
+-----------------
+Line 264: assert "Cách Mạng Tháng Tám" in desc_val, "Description should be auto filled by AI"
+--- Code chunk ---
+  259:             title_val = admin_page.locator("#editTieuDeBds").input_value()
+  260:             desc_val = admin_page.locator("#editMoTaBds").input_value()
+  261:             print(f"Filled Title: {title_val}")
+  262:             print(f"Filled Description: {desc_val}")
+  263:             assert "AI Generated Title" in title_val, "Title should be auto filled by AI"
+  264:             assert "Cách Mạng Tháng Tám" in desc_val, "Description should be auto filled by AI"
+  265:             
+  266:             # Verify save notice turns green/success
+  267:             new_save_notice = admin_page.locator("#poolSaveNotice").inner_text()
+  268:             print(f"Updated save notice: {new_save_notice}")
+  269:             assert "Đã đủ điều kiện" in new_save_notice, "Save notice should indicate conditions met"
+  270:             
+  271:             # Verify "Lên sóng" button is now visible
+  272:             is_visible_save_now = admin_page.locator("#savePoolBtn").is_visible()
+  273:             print(f"Is Lên sóng button visible now? {is_visible_save_now}")
+-----------------
+Line 278: admin_page.wait_for_selector(".image-editor-carousel-container", timeout=5000)
+--- Code chunk ---
+  273:             print(f"Is Lên sóng button visible now? {is_visible_save_now}")
+  274:             assert is_visible_save_now, "Lên sóng button should be visible when title & description are filled"
+  275:             
+  276:             # Verify Image Editor Carousel exists and shows correct image slides
+  277:             print("Checking Curation Image Editor Carousel...")
+  278:             admin_page.wait_for_selector(".image-editor-carousel-container", timeout=5000)
+  279:             slides_count = admin_page.locator(".carousel-slide-item").count()
+  280:             print(f"Image editor slides: {slides_count}")
+  281:             
+  282:             # Go to slide 2 (Interior image) and select as public
+  283:             print("Navigating to slide 2 (Interior image)...")
+  284:             admin_page.evaluate("gotoImageEditorSlide(2)")
+  285:             admin_page.wait_for_timeout(500)
+  286:             print("Toggling Public flag on slide 2...")
+  287:             admin_page.locator("#ctrlPublicBtn").click()
+-----------------
+Line 285: admin_page.wait_for_timeout(500)
+--- Code chunk ---
+  280:             print(f"Image editor slides: {slides_count}")
+  281:             
+  282:             # Go to slide 2 (Interior image) and select as public
+  283:             print("Navigating to slide 2 (Interior image)...")
+  284:             admin_page.evaluate("gotoImageEditorSlide(2)")
+  285:             admin_page.wait_for_timeout(500)
+  286:             print("Toggling Public flag on slide 2...")
+  287:             admin_page.locator("#ctrlPublicBtn").click()
+  288:             admin_page.wait_for_timeout(500)
+  289:             
+  290:             # Go back to slide 0
+  291:             print("Navigating back to slide 0...")
+  292:             admin_page.evaluate("gotoImageEditorSlide(0)")
+  293:             admin_page.wait_for_timeout(500)
+  294:             
+-----------------
+Line 288: admin_page.wait_for_timeout(500)
+--- Code chunk ---
+  283:             print("Navigating to slide 2 (Interior image)...")
+  284:             admin_page.evaluate("gotoImageEditorSlide(2)")
+  285:             admin_page.wait_for_timeout(500)
+  286:             print("Toggling Public flag on slide 2...")
+  287:             admin_page.locator("#ctrlPublicBtn").click()
+  288:             admin_page.wait_for_timeout(500)
+  289:             
+  290:             # Go back to slide 0
+  291:             print("Navigating back to slide 0...")
+  292:             admin_page.evaluate("gotoImageEditorSlide(0)")
+  293:             admin_page.wait_for_timeout(500)
+  294:             
+  295:             # Open speed dial menu first
+  296:             print("Opening speed dial menu...")
+  297:             admin_page.locator("#dialMainBtn").click()
+-----------------
+Line 293: admin_page.wait_for_timeout(500)
+--- Code chunk ---
+  288:             admin_page.wait_for_timeout(500)
+  289:             
+  290:             # Go back to slide 0
+  291:             print("Navigating back to slide 0...")
+  292:             admin_page.evaluate("gotoImageEditorSlide(0)")
+  293:             admin_page.wait_for_timeout(500)
+  294:             
+  295:             # Open speed dial menu first
+  296:             print("Opening speed dial menu...")
+  297:             admin_page.locator("#dialMainBtn").click()
+  298:             admin_page.wait_for_timeout(500)
+  299:             
+  300:             # Clicking 'Lên sóng' button to submit curation changes
+  301:             print("Clicking 'Lên sóng' button to submit curation changes...")
+  302:             admin_page.locator("#savePoolBtn").click()
+-----------------
+Line 297: admin_page.locator("#dialMainBtn").click()
+--- Code chunk ---
+  292:             admin_page.evaluate("gotoImageEditorSlide(0)")
+  293:             admin_page.wait_for_timeout(500)
+  294:             
+  295:             # Open speed dial menu first
+  296:             print("Opening speed dial menu...")
+  297:             admin_page.locator("#dialMainBtn").click()
+  298:             admin_page.wait_for_timeout(500)
+  299:             
+  300:             # Clicking 'Lên sóng' button to submit curation changes
+  301:             print("Clicking 'Lên sóng' button to submit curation changes...")
+  302:             admin_page.locator("#savePoolBtn").click()
+  303:             
+  304:             # Wait for Sheets API PUT requests to be fired (robust polling up to 10s)
+  305:             sheets_captured = False
+  306:             for _ in range(20):
+-----------------
+Line 298: admin_page.wait_for_timeout(500)
+--- Code chunk ---
+  293:             admin_page.wait_for_timeout(500)
+  294:             
+  295:             # Open speed dial menu first
+  296:             print("Opening speed dial menu...")
+  297:             admin_page.locator("#dialMainBtn").click()
+  298:             admin_page.wait_for_timeout(500)
+  299:             
+  300:             # Clicking 'Lên sóng' button to submit curation changes
+  301:             print("Clicking 'Lên sóng' button to submit curation changes...")
+  302:             admin_page.locator("#savePoolBtn").click()
+  303:             
+  304:             # Wait for Sheets API PUT requests to be fired (robust polling up to 10s)
+  305:             sheets_captured = False
+  306:             for _ in range(20):
+  307:                 if len(captured_sheets_calls) > 0:
+-----------------
+Line 304: # Wait for Sheets API PUT requests to be fired (robust polling up to 10s)
+--- Code chunk ---
+  299:             
+  300:             # Clicking 'Lên sóng' button to submit curation changes
+  301:             print("Clicking 'Lên sóng' button to submit curation changes...")
+  302:             admin_page.locator("#savePoolBtn").click()
+  303:             
+  304:             # Wait for Sheets API PUT requests to be fired (robust polling up to 10s)
+  305:             sheets_captured = False
+  306:             for _ in range(20):
+  307:                 if len(captured_sheets_calls) > 0:
+  308:                     sheets_captured = True
+  309:                     break
+  310:                 admin_page.wait_for_timeout(500)
+  311:             
+  312:             assert sheets_captured, "Should have triggered sheets PUT calls"
+  313:             
+-----------------
+Line 310: admin_page.wait_for_timeout(500)
+--- Code chunk ---
+  305:             sheets_captured = False
+  306:             for _ in range(20):
+  307:                 if len(captured_sheets_calls) > 0:
+  308:                     sheets_captured = True
+  309:                     break
+  310:                 admin_page.wait_for_timeout(500)
+  311:             
+  312:             assert sheets_captured, "Should have triggered sheets PUT calls"
+  313:             
+  314:             # Verify that we wrote to Sheet Source
+  315:             source_write = [call for call in captured_sheets_calls if "Source" in call["url"]]
+  316:             assert len(source_write) > 0, "Should have written to Source sheet"
+  317:             source_data = source_write[0]["data"]["values"][0]
+  318:             print(f"Wrote to Source: {source_data[1]} (SystemID={source_data[37]})")
+  319:             assert source_data[37] == "SYS-1001", "Correct System ID should be synced"
+-----------------
+Line 332: print(f"[ERROR] Desktop Curation Flow Failed: {e}")
+--- Code chunk ---
+  327:                 print("\n[Headed Debug] Desktop curation complete. Pausing for 120 seconds for manual inspection...")
+  328:                 print("Check the iframe preview loaded from memory!")
+  329:                 time.sleep(120)
+  330:             
+  331:         except Exception as e:
+  332:             print(f"[ERROR] Desktop Curation Flow Failed: {e}")
+  333:             test_success = False
+  334:             admin_page.screenshot(path=os.path.join(artifacts_dir, "admin_curation_error.png"))
+  335:         finally:
+  336:             admin_context.close()
+  337:             
+  338:         # --- MOBILE VIEWPORT TEST (375x812, hasTouch=True) ---
+  339:         print("\n--- Running Mobile Curation Test (375x812) ---")
+  340:         mobile_context = browser.new_context(
+  341:             viewport={"width": 375, "height": 812},
+-----------------
+Line 352: mobile_page.on("requestfailed", lambda req: print(f"[Mobile Request Failed] {req.url} - {req.failure}"))
+--- Code chunk ---
+  347:         
+  348:         mobile_page.on("console", lambda msg: (
+  349:             print(f"[Mobile Console {msg.type}] {msg.text}"),
+  350:             console_errors.append(msg.text) if msg.type == "error" else None
+  351:         ))
+  352:         mobile_page.on("requestfailed", lambda req: print(f"[Mobile Request Failed] {req.url} - {req.failure}"))
+  353:         mobile_page.on("pageerror", lambda err: print(f"[Mobile Page Error] {err}"))
+  354:         
+  355:         mobile_page.add_init_script("""
+  356:             localStorage.setItem('isAdminSession', 'true');
+  357:             localStorage.setItem('g_access_token', 'mock_google_oauth_token');
+  358:             localStorage.setItem('g_token_expiry', (Date.now() + 3600 * 1000).toString());
+  359:         """)
+  360:         
+  361:         mobile_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
+-----------------
+Line 363: mobile_page.route("**/api/ai/generate**", handle_ai_generate)
+--- Code chunk ---
+  358:             localStorage.setItem('g_token_expiry', (Date.now() + 3600 * 1000).toString());
+  359:         """)
+  360:         
+  361:         mobile_page.route(lambda url: "spreadsheets" in url and "values" in url, handle_admin_sheets)
+  362:         mobile_page.route("**/gviz/tq**", handle_public_gviz)
+  363:         mobile_page.route("**/api/ai/generate**", handle_ai_generate)
+  364:         mobile_page.route("**/maps.google.com/**", lambda route: route.fulfill(status=200, body="<html>Dummy Maps</html>"))
+  365:         mobile_page.route("**/res.cloudinary.com/**", lambda route: route.fulfill(status=200, body="Dummy Image"))
+  366: 
+  367:         try:
+  368:             print(f"Navigating mobile page to: {admin_url}")
+  369:             mobile_page.goto(admin_url, wait_until="load", timeout=30000)
+  370:             
+  371:             # Wait for secure loading
+  372:             mobile_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+-----------------
+Line 369: mobile_page.goto(admin_url, wait_until="load", timeout=30000)
+--- Code chunk ---
+  364:         mobile_page.route("**/maps.google.com/**", lambda route: route.fulfill(status=200, body="<html>Dummy Maps</html>"))
+  365:         mobile_page.route("**/res.cloudinary.com/**", lambda route: route.fulfill(status=200, body="Dummy Image"))
+  366: 
+  367:         try:
+  368:             print(f"Navigating mobile page to: {admin_url}")
+  369:             mobile_page.goto(admin_url, wait_until="load", timeout=30000)
+  370:             
+  371:             # Wait for secure loading
+  372:             mobile_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  373:             
+  374:             # Open pool listing
+  375:             mobile_page.evaluate("openPoolS('SYS-1002')")
+  376:             
+  377:             # Check accordion rendering
+  378:             mobile_page.wait_for_selector("#accSource", timeout=5000)
+-----------------
+Line 371: # Wait for secure loading
+--- Code chunk ---
+  366: 
+  367:         try:
+  368:             print(f"Navigating mobile page to: {admin_url}")
+  369:             mobile_page.goto(admin_url, wait_until="load", timeout=30000)
+  370:             
+  371:             # Wait for secure loading
+  372:             mobile_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  373:             
+  374:             # Open pool listing
+  375:             mobile_page.evaluate("openPoolS('SYS-1002')")
+  376:             
+  377:             # Check accordion rendering
+  378:             mobile_page.wait_for_selector("#accSource", timeout=5000)
+  379:             mobile_page.wait_for_selector("#accPreview", timeout=5000)
+  380:             
+-----------------
+Line 372: mobile_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+--- Code chunk ---
+  367:         try:
+  368:             print(f"Navigating mobile page to: {admin_url}")
+  369:             mobile_page.goto(admin_url, wait_until="load", timeout=30000)
+  370:             
+  371:             # Wait for secure loading
+  372:             mobile_page.wait_for_function("window.isSecureLoaded === true", timeout=10000)
+  373:             
+  374:             # Open pool listing
+  375:             mobile_page.evaluate("openPoolS('SYS-1002')")
+  376:             
+  377:             # Check accordion rendering
+  378:             mobile_page.wait_for_selector("#accSource", timeout=5000)
+  379:             mobile_page.wait_for_selector("#accPreview", timeout=5000)
+  380:             
+  381:             # Scroll to make sure it's in view
+-----------------
+Line 378: mobile_page.wait_for_selector("#accSource", timeout=5000)
+--- Code chunk ---
+  373:             
+  374:             # Open pool listing
+  375:             mobile_page.evaluate("openPoolS('SYS-1002')")
+  376:             
+  377:             # Check accordion rendering
+  378:             mobile_page.wait_for_selector("#accSource", timeout=5000)
+  379:             mobile_page.wait_for_selector("#accPreview", timeout=5000)
+  380:             
+  381:             # Scroll to make sure it's in view
+  382:             mobile_page.locator("#accSource").scroll_into_view_if_needed()
+  383:             
+  384:             # Test toggle accordion
+  385:             print("Clicking accordion headers to toggle...")
+  386:             mobile_page.locator("#accSource .accordion-header").click()
+  387:             mobile_page.wait_for_timeout(500)
+-----------------
+Line 379: mobile_page.wait_for_selector("#accPreview", timeout=5000)
+--- Code chunk ---
+  374:             # Open pool listing
+  375:             mobile_page.evaluate("openPoolS('SYS-1002')")
+  376:             
+  377:             # Check accordion rendering
+  378:             mobile_page.wait_for_selector("#accSource", timeout=5000)
+  379:             mobile_page.wait_for_selector("#accPreview", timeout=5000)
+  380:             
+  381:             # Scroll to make sure it's in view
+  382:             mobile_page.locator("#accSource").scroll_into_view_if_needed()
+  383:             
+  384:             # Test toggle accordion
+  385:             print("Clicking accordion headers to toggle...")
+  386:             mobile_page.locator("#accSource .accordion-header").click()
+  387:             mobile_page.wait_for_timeout(500)
+  388:             
+-----------------
+Line 387: mobile_page.wait_for_timeout(500)
+--- Code chunk ---
+  382:             mobile_page.locator("#accSource").scroll_into_view_if_needed()
+  383:             
+  384:             # Test toggle accordion
+  385:             print("Clicking accordion headers to toggle...")
+  386:             mobile_page.locator("#accSource .accordion-header").click()
+  387:             mobile_page.wait_for_timeout(500)
+  388:             
+  389:             # Save Mobile Screenshot
+  390:             screenshot_path = os.path.join(artifacts_dir, "admin_curation_mobile.png")
+  391:             mobile_page.screenshot(path=screenshot_path)
+  392:             print(f"Mobile Curation screenshot saved to {screenshot_path}")
+  393:             
+  394:         except Exception as e:
+  395:             print(f"[ERROR] Mobile Curation Flow Failed: {e}")
+  396:             test_success = False
+-----------------
+Line 395: print(f"[ERROR] Mobile Curation Flow Failed: {e}")
+--- Code chunk ---
+  390:             screenshot_path = os.path.join(artifacts_dir, "admin_curation_mobile.png")
+  391:             mobile_page.screenshot(path=screenshot_path)
+  392:             print(f"Mobile Curation screenshot saved to {screenshot_path}")
+  393:             
+  394:         except Exception as e:
+  395:             print(f"[ERROR] Mobile Curation Flow Failed: {e}")
+  396:             test_success = False
+  397:         finally:
+  398:             mobile_context.close()
+  399:             
+  400:         browser.close()
+  401:         
+  402:     if test_success:
+  403:         print("\n[🎉 ALL E2E CURATION TESTS PASSED SUCCESSFULLY]")
+  404:         sys.exit(0)
+-----------------
+Line 406: print("\n[❌ SOME E2E CURATION TESTS FAILED]")
+--- Code chunk ---
+  401:         
+  402:     if test_success:
+  403:         print("\n[🎉 ALL E2E CURATION TESTS PASSED SUCCESSFULLY]")
+  404:         sys.exit(0)
+  405:     else:
+  406:         print("\n[❌ SOME E2E CURATION TESTS FAILED]")
+  407:         sys.exit(1)
+  408: 
+  409: if __name__ == "__main__":
+  410:     main()
+-----------------
+Line 409: if __name__ == "__main__":
+--- Code chunk ---
+  404:         sys.exit(0)
+  405:     else:
+  406:         print("\n[❌ SOME E2E CURATION TESTS FAILED]")
+  407:         sys.exit(1)
+  408: 
+  409: if __name__ == "__main__":
+  410:     main()
+-----------------
+Line 410: main()
+--- Code chunk ---
+  405:     else:
+  406:         print("\n[❌ SOME E2E CURATION TESTS FAILED]")
+  407:         sys.exit(1)
+  408: 
+  409: if __name__ == "__main__":
+  410:     main()
+-----------------

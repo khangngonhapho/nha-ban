@@ -1,0 +1,96 @@
+--- Found US-104 at Line 326 ---
+321: *   **Lưu trữ:** Ghi dữ liệu trực tuyến vào Google Sheets và cập nhật trường `status`, `Last_Sync` trong SQLite.
+322: 
+323: ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
+324: 
+325: 
+326: ### 2026-06-22 (Nghiệm thu US-104 - Sửa Lỗi Không Hiển Thị Carousel Hình Sổ Trên Giao Diện Admin Vercel - TEST PASS)
+327: *   **Mã User Story:** `US-104`
+328: *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+329:      - **Hiển thị Song song Carousel Sổ Đỏ**: Cấu hình trang chi tiết Admin (`lego_detail_admin.js`) để luôn render Carousel Sổ đỏ (`#carouselSo`) độc lập song song với Carousel Ảnh nhà (`#carouselNha`) bất kể ban đầu có link ảnh hay chưa (hiển thị thông báo "Chưa có hình ảnh" để admin upload).
+330:      - **Tách biệt Logic Bộ Lọc visible**: Giữ lại các ảnh Sơ đồ có `visible = false` khi publish và đồng bộ để phục vụ Admin quản trị, trong khi giao diện Khách hàng (Client view / Preview) vẫn ẩn chúng hoàn toàn để bảo mật PII.
+331:      - **Đồng bộ Sổ đỏ R2 sạch**: Cập nhật hàm lưu `saveSourceChanges` và `saveNewListingFromPool` để ghi nhận các ảnh sodo vào `curated_config.images` với vai trò là `"Sơ đồ"`, đồng thời dàn phẳng trực tiếp tối đa 5 link ảnh sodo vào các cột phẳng của Pool Sheet qua fetch Google Sheets API. Loại bỏ cơ chế bảng Pool2.
+332:      - **Chuẩn hóa Logic Phía Python Backend**: Cập nhật `pool_lego.py` và `manager.py` cho phép trích xuất sổ đỏ từ `curated_config_json` hoặc `raw_sodo_tk_json` để xuất bản và dàn phẳng lên Google Sheets.
+333:      - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho toàn bộ 4 kịch bản kiểm thử E2E Playwright (`test_e2e_curation.py`, `test_e2e_collections.py`, `test_e2e_filters.py`, `test_e2e_modal.py`) trên cả hai viewports Desktop & Mobile.
+334: 
+335: ### 2026-06-22 (Nghiệm thu US-103 - Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi - TEST PASS)
+336: *   **Mã User Story:** `US-103`
+337: *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+338:      - **Phát triển Scraper Userscript**: Viết tệp [thienkhoi_list_scraper.user.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/thienkhoi_list_scraper.user.js) chạy trên Tampermonkey/Violentmonkey phục vụ tại endpoint tĩnh `/static/js/thienkhoi_list_scraper.user.js`.
+339:      - **Tối ưu hóa Tồn tại Căn (Batch-Check)**: Trích xuất các listing ID trên màn hình (DOM) gửi batch query `POST /api/listings/check-exist` kiểm tra nhanh sự tồn tại trong SQLite, tránh tải toàn bộ 6000+ căn về client gây quá tải.
+340:      - **Highlight lưới danh sách**: Tự động đánh dấu màu xanh lá và hiển thị `✅ Đã có` trên nút cào của các card căn đã có trong database local.
+341:      - **Bộ lọc & Đồng bộ panel nổi**: Tự động rebuild danh sách panel nổi đồng bộ 100% theo các card hiển thị trên DOM (cập nhật ngay khi tìm kiếm/lọc quận, đường trên trang Thiên Khôi) và tự động lọc loại bỏ các căn đã cào.
+342:      - **Duy trì Trạng thái Checkbox**: Lưu trữ các checkbox bị bỏ chọn thủ công vào `uncheckedPanelIds` (Set) giúp duy trì lựa chọn của người dùng qua các phiên tự động rebuild danh sách mỗi 1.5 giây.
+343:      - **Nút Bật/Tắt Curation AI**: Thêm toggle switch trên floating panel cho phép người dùng tùy chọn bật tắt việc gọi Gemini GenAI tạo mô tả curation khi cào (gửi tham số `run_ai` lên API recrawl backend).
+344:      - **Delay ngẫu nhiên (Bulk Crawl Delay)**: Tự động tạo khoảng trễ ngẫu nhiên từ 2s - 5s giữa mỗi yêu cầu cào hàng loạt để tránh bị khóa tài khoản hoặc giới hạn rate limit.
+345:      - **Chuẩn hóa ID & Auto Cookie Sync**: Chuẩn hóa chữ thường (lowercase) cho tất cả listing UUID và tự động đồng bộ cookie trình duyệt về local server qua endpoint `/api/crawl` ngay khi tải trang và trước mỗi lượt cào.
+346:      - **Tích hợp Curator Dashboard & E2E Test**: Tích hợp card tải nhanh Userscript vào Curator Dashboard (`curator.html` & `curator_html_data.py`). Biên dịch thành công và chạy E2E Playwright test suite đạt **100% PASS**.
+347: 
+348: ### 2026-06-21 (Nghiệm thu US-100 - Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc - TEST PASS)
+349: *   **Mã User Story:** `US-100`
+350: *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+-----------------
+--- Found US-104 at Line 327 ---
+322: 
+323: ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
+324: 
+325: 
+326: ### 2026-06-22 (Nghiệm thu US-104 - Sửa Lỗi Không Hiển Thị Carousel Hình Sổ Trên Giao Diện Admin Vercel - TEST PASS)
+327: *   **Mã User Story:** `US-104`
+328: *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+329:      - **Hiển thị Song song Carousel Sổ Đỏ**: Cấu hình trang chi tiết Admin (`lego_detail_admin.js`) để luôn render Carousel Sổ đỏ (`#carouselSo`) độc lập song song với Carousel Ảnh nhà (`#carouselNha`) bất kể ban đầu có link ảnh hay chưa (hiển thị thông báo "Chưa có hình ảnh" để admin upload).
+330:      - **Tách biệt Logic Bộ Lọc visible**: Giữ lại các ảnh Sơ đồ có `visible = false` khi publish và đồng bộ để phục vụ Admin quản trị, trong khi giao diện Khách hàng (Client view / Preview) vẫn ẩn chúng hoàn toàn để bảo mật PII.
+331:      - **Đồng bộ Sổ đỏ R2 sạch**: Cập nhật hàm lưu `saveSourceChanges` và `saveNewListingFromPool` để ghi nhận các ảnh sodo vào `curated_config.images` với vai trò là `"Sơ đồ"`, đồng thời dàn phẳng trực tiếp tối đa 5 link ảnh sodo vào các cột phẳng của Pool Sheet qua fetch Google Sheets API. Loại bỏ cơ chế bảng Pool2.
+332:      - **Chuẩn hóa Logic Phía Python Backend**: Cập nhật `pool_lego.py` và `manager.py` cho phép trích xuất sổ đỏ từ `curated_config_json` hoặc `raw_sodo_tk_json` để xuất bản và dàn phẳng lên Google Sheets.
+333:      - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho toàn bộ 4 kịch bản kiểm thử E2E Playwright (`test_e2e_curation.py`, `test_e2e_collections.py`, `test_e2e_filters.py`, `test_e2e_modal.py`) trên cả hai viewports Desktop & Mobile.
+334: 
+335: ### 2026-06-22 (Nghiệm thu US-103 - Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi - TEST PASS)
+336: *   **Mã User Story:** `US-103`
+337: *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+338:      - **Phát triển Scraper Userscript**: Viết tệp [thienkhoi_list_scraper.user.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/thienkhoi_list_scraper.user.js) chạy trên Tampermonkey/Violentmonkey phục vụ tại endpoint tĩnh `/static/js/thienkhoi_list_scraper.user.js`.
+339:      - **Tối ưu hóa Tồn tại Căn (Batch-Check)**: Trích xuất các listing ID trên màn hình (DOM) gửi batch query `POST /api/listings/check-exist` kiểm tra nhanh sự tồn tại trong SQLite, tránh tải toàn bộ 6000+ căn về client gây quá tải.
+340:      - **Highlight lưới danh sách**: Tự động đánh dấu màu xanh lá và hiển thị `✅ Đã có` trên nút cào của các card căn đã có trong database local.
+341:      - **Bộ lọc & Đồng bộ panel nổi**: Tự động rebuild danh sách panel nổi đồng bộ 100% theo các card hiển thị trên DOM (cập nhật ngay khi tìm kiếm/lọc quận, đường trên trang Thiên Khôi) và tự động lọc loại bỏ các căn đã cào.
+342:      - **Duy trì Trạng thái Checkbox**: Lưu trữ các checkbox bị bỏ chọn thủ công vào `uncheckedPanelIds` (Set) giúp duy trì lựa chọn của người dùng qua các phiên tự động rebuild danh sách mỗi 1.5 giây.
+343:      - **Nút Bật/Tắt Curation AI**: Thêm toggle switch trên floating panel cho phép người dùng tùy chọn bật tắt việc gọi Gemini GenAI tạo mô tả curation khi cào (gửi tham số `run_ai` lên API recrawl backend).
+344:      - **Delay ngẫu nhiên (Bulk Crawl Delay)**: Tự động tạo khoảng trễ ngẫu nhiên từ 2s - 5s giữa mỗi yêu cầu cào hàng loạt để tránh bị khóa tài khoản hoặc giới hạn rate limit.
+345:      - **Chuẩn hóa ID & Auto Cookie Sync**: Chuẩn hóa chữ thường (lowercase) cho tất cả listing UUID và tự động đồng bộ cookie trình duyệt về local server qua endpoint `/api/crawl` ngay khi tải trang và trước mỗi lượt cào.
+346:      - **Tích hợp Curator Dashboard & E2E Test**: Tích hợp card tải nhanh Userscript vào Curator Dashboard (`curator.html` & `curator_html_data.py`). Biên dịch thành công và chạy E2E Playwright test suite đạt **100% PASS**.
+347: 
+348: ### 2026-06-21 (Nghiệm thu US-100 - Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc - TEST PASS)
+349: *   **Mã User Story:** `US-100`
+350: *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+351:      - **Lưu trữ CSDL SQLite 2 tầng**: Bổ sung cột `raw_json_full` và `raw_json_ui` vào bảng `listings` trong SQLite. Cào và lưu trữ 100% JSON thô từ API Thiên Khôi.
+-----------------
+--- Found US-104 at Line 1181 ---
+1176: 
+1177: ## 9. 🚀 TÍNH NĂNG CẦN THÊM (Backlog)
+1178: 
+1179: > Cập nhật khi có thêm yêu cầu mới
+1180: 
+1181: - [x] **US-104:** Sửa lỗi không show carousel hình sổ trên detail admin view vercel ✅ Done 2026-06-22
+1182: - [x] **US-103:** Userscript Cào Căn Nhà Từ Trang Danh Sách Thiên Khôi ✅ Done 2026-06-22
+1183: - [x] **US-102:** Lọc các căn chưa có raw_json_full trên Curator Dashboard ✅ Done 2026-06-21
+1184: - [ ] **US-101:** Tối ưu hóa di cư ảnh khi cào lại và bảo toàn hình ảnh tự tải lên
+1185: - [x] **US-100:** Thiết lập cơ chế lưu trữ JSON động hai tầng và bộ lọc tìm kiếm tùy biến không cấu trúc (Unstructured JSON Filtering Framework) ✅ Done 2026-06-21
+1186: - [x] **US-097:** Sửa lỗi không bấm tạo được link Công Khai Nhanh để share cho khách hàng ✅ Done 2026-06-16
+1187: - [x] **US-095:** Khắc phục lỗi name 'listings_table' is not defined khi tự động hóa Curation & Xuất bản ở chế độ Pool1 ✅ Done 2026-06-16
+1188: - [x] **US-094:** Tái cấu trúc trang chủ index.html theo Kiến trúc Lego Frontend (Master Epic) ✅ Done 2026-06-16
+1189: - [x] **US-094A1:** Tách biệt CSS ngoài ra global.css ✅ Done 2026-06-15
+1190: - [x] **US-094A2:** Xây dựng Lego Core State Store & Tải dữ liệu ✅ Done 2026-06-15
+1191: - [x] **US-094A3:** Phân tách Engine Render danh sách Card BĐS ✅ Done 2026-06-15
+1192: - [x] **US-094C:** Cô lập Module Chi tiết & Carousel thực tế của Khách hàng ✅ Done 2026-06-15
+1193: - [x] **US-094B:** Cô lập Module Bộ lọc & Tìm kiếm thông minh ✅ Done 2026-06-15
+1194: - [x] **US-094D:** Cô lập Module Bộ sưu tập & Lead Capture ✅ Done 2026-06-15
+1195: - [x] **US-094F:** Cô lập Module Chi tiết, Preview & Curation dành riêng cho Admin ✅ Done 2026-06-16
+1196: - [x] **US-094E:** Tích hợp toàn diện, tối ưu hiệu năng và dọn dẹp index.html ✅ Done 2026-06-16
+1197: - [x] **US-093:** Kiểm tra tính khả dụng và lập báo cáo hình ảnh tự tải lên (Không phải hình từ TK) ✅ Done 2026-06-14
+1198: - [x] **US-092:** Sửa lỗi Internal Server Error: Missing index.html khi truy cập trang chủ ✅ Done 2026-06-13
+1199: - [x] **US-090:** Di cư toàn bộ kho hình ảnh sang Cloudflare R2 & Khắc phục giới hạn hạn mức Cloudinary ✅ Done 2026-06-13
+1200: - [ ] **US-089:** Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới cho SQLite và Google Sheets v2 theo kiến trúc Lego
+1201: - [x] **US-089A:** Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ ✅ Done 2026-06-12
+1202: - [x] **US-089B:** Tích hợp Google Sheets Đa Quyền Hạn & Luồng Xuất bản Public Whitelist ✅ Done 2026-06-14
+1203: - [x] **US-088:** Đổi tên file và di cư tính năng cũ (Pool1) sang Lego ✅ Done 2026-06-11
+1204: - [x] **US-085:** Sửa lỗi hiển thị và tối ưu hóa lướt vuốt trên điện thoại Android ✅ Done 2026-06-10
+1205: 
+-----------------

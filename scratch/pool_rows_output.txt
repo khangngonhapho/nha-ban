@@ -1,0 +1,13 @@
+--- POOL SHEET (A1:E5) ---
+Row 1: ['Mã Hàng', 'Hình Nhận Diện', 'Tỉnh', 'Quận', 'Phường']
+Row 2: ['TK-534B8B', '', 'Tp. Hồ Chí Minh', 'Quận 3', 'Nhiêu Lộc']
+Row 3: ['TK-E8E726', '', 'Tp. Hồ Chí Minh', 'Bình Thạnh', 'Bình Lợi Trung']
+Row 4: ['TK-D45312', '', 'Tp. Hồ Chí Minh', 'Quận 3', 'Nhiêu Lộc']
+Row 5: ['TK-E40E56', '', 'Tp. Hồ Chí Minh', 'Quận 10', 'Vườn Lài']
+
+--- SOURCE SHEET (A1:E5) ---
+Row 1: []
+Row 2: ['Hinh_mat_tien', 'Cu_phap', 'Note', 'id', 'tieu_de']
+Row 3: ['', '40.78 trần quang diệu 38 3 9 5 8.75 tỷ Nhiêu Lộc Quận 3', '', 'AWOIZTIDQT', 'HXH Trần Quang Diệu - 38m2 - 9x5 - 3 tầng - 8.75T | Lô góc 2 mặt thoáng, nội thất đẹp']
+Row 4: ['', '339.36C Lê Văn Sỹ 46 4 4.6 10 12.8 tỷ Nhiêu Lộc Quận 3', '', 'BWBCIBScISVL', 'HXH Lê Văn Sỹ - 46m2 - 4.6x10 - 4 tầng - 12.8T | Nhà mới đẹp lô góc 4PN']
+Row 5: ['', '', '', 'MWCAIAMINITVV ', 'Võ Văn Tần 31m2 3Tầng 3.1x10 - 7.6 tỷ']

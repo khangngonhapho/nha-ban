@@ -1,0 +1,136 @@
+
+=== Found in index.html ===
+Line 498: if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 519: if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 630: const isFromPool = !!activeDetailListing.isFromPoolOnly;
+
+=== Found in scratch\index_extracted.js ===
+Line 173: if (!p.isFromPoolOnly && POOL_ROWS && POOL_ROWS.length && p.system_id) {
+Line 468: isFromPoolOnly: true,
+Line 1690: c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
+Line 1692: c.setAttribute('onclick', (p.isFromPoolOnly && !isOnAir) ? `openPoolS('${p.system_id}')` : `openS('${curatedListing ? curatedListing.id : p.id}')`);
+Line 1700: ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
+Line 1733: ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
+Line 2099: if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 2121: if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 2258: <input type="text" id="editMaKhangNgo" value="${p.isFromPoolOnly ? (generateMaKhangNgo(p.raw_so_nha, p.raw_ten_duong) || p.id) : p.id}" placeholder="Mã Khang Ngô..." style="font-weight: 700; color: var(--red);">
+Line 2264: ${p.isFromPoolOnly ? `<button type="button" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+Line 2266: <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+Line 2271: <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+Line 2274: ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+Line 2362: <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.isFromPoolOnly ? (p.raw_tieu_de_public || generateAutoTitle(p)) : (p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.')}</div>
+Line 2402: <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.isFromPoolOnly ? (p.m || p.raw_mo_ta_public || generateAutoDescription(p)) : (p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.')}</div>
+Line 2492: if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 2551: if (p.isFromPoolOnly) {
+Line 2932: if (p.isFromPoolOnly) {
+Line 3569: ${!p.isFromPoolOnly ? `
+Line 3586: let currentCover = (p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || '');
+Line 3588: if (!p.isFromPoolOnly) {
+Line 3599: if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+Line 3602: } else if (!p.isFromPoolOnly && p.pool_row_data) {
+Line 3637: } else if (!p.isFromPoolOnly) {
+Line 3658: const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+Line 3663: if (!p.isFromPoolOnly) {
+Line 3676: if (!p.isFromPoolOnly) {
+Line 3719: const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+Line 3724: if (!p.isFromPoolOnly) {
+Line 3736: let sodo1Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo1Url')?.value || (p.pool_row_data ? p.pool_row_data[27] : p.raw_sodo1) || '');
+Line 3737: let sodo2Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo2Url')?.value || (p.pool_row_data ? p.pool_row_data[28] : p.raw_sodo2) || '');
+Line 3738: let sodo3Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo3Url')?.value || (p.pool_row_data ? p.pool_row_data[80] : p.raw_sodo3) || '');
+Line 3739: let sodo4Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo4Url')?.value || (p.pool_row_data ? p.pool_row_data[81] : p.raw_sodo4) || '');
+Line 3740: let sodo5Val = p.isFromPoolOnly ? '' : (document.getElementById('editSodo5Url')?.value || (p.pool_row_data ? p.pool_row_data[82] : p.raw_sodo5) || '');
+Line 3755: if (p.isFromPoolOnly) {
+Line 4514: isFromPoolOnly: true,
+
+=== Found in scratch\inspect_standard_card_html.py ===
+Line 9: if 'c.className = p.isFromPoolOnly' in line:
+
+=== Found in scratch\test_upload_render.py ===
+Line 83: 'isFromPoolOnly': False
+
+=== Found in scratch\rebuild_detail_admin.py ===
+Line 138: ${(p.id && !p.isFromPoolOnly) ? `
+Line 153: search_str = 'if (isAdmin && (p.original_row_data || p.isFromPoolOnly))'
+
+=== Found in scratch\check_block.py ===
+Line 52: search_str = 'if (isAdmin && (p.original_row_data || p.isFromPoolOnly))'
+
+=== Found in scratch\find_occ3.py ===
+Line 10: search_str = 'if (isAdmin && (p.original_row_data || p.isFromPoolOnly))'
+
+=== Found in scratch\live_core_downloaded.js ===
+Line 103: if (!p.isFromPoolOnly && LegoState.POOL_ROWS && LegoState.POOL_ROWS.length && p.system_id) {
+
+=== Found in scratch\live_detail_admin_downloaded.js ===
+Line 207: <input type="text" id="editMaKhangNgo" value="${p.isFromPoolOnly ? (generateMaKhangNgo(p.raw_so_nha, p.raw_ten_duong) || p.id) : p.id}" placeholder="Mã Khang Ngô..." style="font-weight: 700; color: var(--red);">
+Line 213: ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+Line 215: <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+Line 220: <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+Line 223: ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+Line 304: ${(p.id && !p.isFromPoolOnly) ? `
+Line 321: if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 373: if (p.isFromPoolOnly) {
+Line 584: let currentCover = domCover ? domCover.value : ((p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || ''));
+Line 589: if (!p.isFromPoolOnly) {
+Line 607: if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+Line 610: } else if (!p.isFromPoolOnly && p.pool_row_data) {
+Line 644: } else if (!p.isFromPoolOnly) {
+Line 657: const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+Line 849: ${!p.isFromPoolOnly ? `
+Line 1817: isFromPoolOnly: true,
+
+=== Found in scratch\live_helpers_downloaded.js ===
+Line 337: isFromPoolOnly: true,
+
+=== Found in scratch\live_index.html ===
+Line 498: if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 519: if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 630: const isFromPool = !!activeDetailListing.isFromPoolOnly;
+
+=== Found in scratch\live_render_admin_downloaded.js ===
+Line 38: c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
+Line 42: c.setAttribute('onclick', (p.isFromPoolOnly && !isOnAir) ? `openPoolS('${p.system_id}')` : `openS('${curatedListing ? curatedListing.id : p.id}')`);
+Line 54: ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
+
+=== Found in scratch\live_render_downloaded.js ===
+Line 26: c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
+Line 30: c.setAttribute('onclick', p.isFromPoolOnly ? `openPoolS('${p.system_id}')` : `openS('${p.id}')`);
+Line 38: ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
+
+=== Found in scratch\find_isFromPoolOnly.py ===
+Line 3: keywords = ["isFromPoolOnly"]
+Line 27: with open("d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/search_isFromPoolOnly.txt", "w", encoding="utf-8") as out_f:
+
+=== Found in static\js\lego_core.js ===
+Line 103: if (!p.isFromPoolOnly && LegoState.POOL_ROWS && LegoState.POOL_ROWS.length && p.system_id) {
+
+=== Found in static\js\lego_render_client.js ===
+Line 26: c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
+Line 30: c.setAttribute('onclick', p.isFromPoolOnly ? `openPoolS('${p.system_id}')` : `openS('${p.id}')`);
+Line 38: ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
+
+=== Found in static\js\lego_render_admin.js ===
+Line 38: c.className = p.isFromPoolOnly ? 'card is-pool-card' : 'card';
+Line 42: c.setAttribute('onclick', (p.isFromPoolOnly && !isOnAir) ? `openPoolS('${p.system_id}')` : `openS('${curatedListing ? curatedListing.id : p.id}')`);
+Line 54: ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
+
+=== Found in static\js\lego_detail_admin.js ===
+Line 205: <input type="text" id="editMaKhangNgo" value="${p.isFromPoolOnly ? (generateMaKhangNgo(p.raw_so_nha, p.raw_ten_duong) || p.id) : p.id}" placeholder="Mã Khang Ngô..." style="font-weight: 700; color: var(--red);">
+Line 211: ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+Line 213: <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+Line 218: <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+Line 221: ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+Line 302: ${(p.id && !p.isFromPoolOnly) ? `
+Line 319: if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+Line 391: if (p.isFromPoolOnly) {
+Line 560: let currentCover = domCover ? domCover.value : ((p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || ''));
+Line 565: if (!p.isFromPoolOnly) {
+Line 583: if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+Line 586: } else if (!p.isFromPoolOnly && p.pool_row_data) {
+Line 620: } else if (!p.isFromPoolOnly) {
+Line 633: const targetMatTien = p.isFromPoolOnly ? '' : (p.pool_row_data ? (p.pool_row_data[29] || '') : (p.img_mat_tien || ''));
+Line 825: ${!p.isFromPoolOnly ? `
+Line 1793: isFromPoolOnly: true,
+
+=== Found in static\js\lego_helpers.js ===
+Line 337: isFromPoolOnly: true,

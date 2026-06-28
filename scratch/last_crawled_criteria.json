@@ -1,15 +1,15 @@
 [
     {
-        "id": 17,
-        "name": "Chính chủ",
+        "id": 16,
+        "name": "Chủ cần bán gấp",
         "parentId": null,
         "groupId": 1,
         "groupCode": "PROPERTY_CRITERIA",
         "groupName": "Tiềm năng - Rủi ro"
     },
     {
-        "id": 18,
-        "name": "Dân đầu tư",
+        "id": 17,
+        "name": "Chính chủ",
         "parentId": null,
         "groupId": 1,
         "groupCode": "PROPERTY_CRITERIA",
@@ -64,32 +64,32 @@
         "groupName": "Cấu trúc nhà"
     },
     {
-        "id": 76,
-        "name": "Nội thất cơ bản",
+        "id": 75,
+        "name": "Chỉ có nội thất liền tường",
         "parentId": null,
         "groupId": 9,
         "groupCode": "INTERIOR",
         "groupName": "Nội thất"
     },
     {
-        "id": 81,
-        "name": "Ngõ cụt",
+        "id": 79,
+        "name": "Không",
+        "parentId": null,
+        "groupId": 10,
+        "groupCode": "ELEVATOR",
+        "groupName": "Thang máy"
+    },
+    {
+        "id": 80,
+        "name": "Ngõ thông",
         "parentId": null,
         "groupId": 11,
         "groupCode": "ALLEY_TYPE",
         "groupName": "Loại ngõ"
     },
     {
-        "id": 82,
-        "name": "Nằm cuối ngõ",
-        "parentId": null,
-        "groupId": 12,
-        "groupCode": "POSITION_IN_ALLEY",
-        "groupName": "Vị trí nhà trong ngõ"
-    },
-    {
-        "id": 85,
-        "name": "Vị trí số 2",
+        "id": 84,
+        "name": "Vị trí số 1",
         "parentId": null,
         "groupId": 13,
         "groupCode": "TAX_CALCULATION_POSITION",
@@ -112,8 +112,8 @@
         "groupName": "Khoảng cách ra đường ô tô tránh"
     },
     {
-        "id": 112,
-        "name": "100-300m",
+        "id": 110,
+        "name": "Không có",
         "parentId": null,
         "groupId": 18,
         "groupCode": "DISTANCE_TO_PARKING_LOT",
@@ -126,70 +126,6 @@
         "groupId": 19,
         "groupCode": "PROPERTY_CRITERIA_BUSINESS_CASH_FLOW",
         "groupName": "Kinh doanh - Dòng tiền"
-    },
-    {
-        "id": 125,
-        "name": "Gần trường học mầm non",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 126,
-        "name": "Gần trường học cấp 1",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 127,
-        "name": "Gần trường học cấp 2",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 128,
-        "name": "Gần trường học cấp 3",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 129,
-        "name": "Gần trường Đại học",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 130,
-        "name": "Gần công viên",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 131,
-        "name": "Gần bệnh viện",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 132,
-        "name": "Khu dân trí cao",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
     },
     {
         "id": 134,
@@ -206,21 +142,5 @@
         "groupId": 21,
         "groupCode": "PROPERTY_CRITERIA_GEOMANCY",
         "groupName": "Phong thủy"
-    },
-    {
-        "id": 141,
-        "name": "Gần trung tâm thương mại, khu đô thị",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
-    },
-    {
-        "id": 142,
-        "name": "Gần chợ",
-        "parentId": null,
-        "groupId": 20,
-        "groupCode": "PROPERTY_CRITERIA_FACILITIES",
-        "groupName": "Tiện ích"
     }
 ]

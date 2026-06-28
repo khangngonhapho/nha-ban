@@ -1,0 +1,243 @@
+--- Line 640 ---
+635:         return creds.token
+636:     except Exception as e:
+637:         add_log_message(f"[❌ LỖI] Không thể tạo access token: {str(e)}")
+638:         return None
+639: 
+640: def fetch_google_doc_content(doc_id):
+641:     """Tải nội dung text thô từ một Google Doc dựa trên ID hoặc link của Doc"""
+642:     if not doc_id:
+643:         return None
+644:     doc_id = str(doc_id).strip()
+645:     if "/" in doc_id:
+646:         # Trích xuất ID từ URL Google Doc
+647:         match = re.search(r"/document/d/([a-zA-Z0-9-_]+)", doc_id)
+648:         if match:
+649:             doc_id = match.group(1)
+650:             
+651:     creds = get_google_credentials()
+652:     if not creds:
+653:         add_log_message("[⚠️ GOOGLE DOC] Không tìm thấy credentials hợp lệ để tải prompt từ Google Doc.")
+654:         return None
+655:         
+656:     token = get_google_access_token(creds)
+657:     if not token:
+658:         add_log_message("[⚠️ GOOGLE DOC] Không thể tạo access token để kết nối tới Google Doc.")
+659:         return None
+-----------------
+--- Line 1954 ---
+1949:         
+1950:     api_base = cfg.get("openai_api_base", "https://api.openai.com/v1").strip().rstrip('/')
+1951:     
+1952:     # Tải prompt động từ Google Doc nếu cấu hình
+1953:     doc_id = cfg.get("prompt_google_doc_id", "")
+1954:     doc_prompt = None
+1955:     if doc_id:
+1956:         doc_prompt = fetch_google_doc_content(doc_id)
+1957:         
+1958:     if doc_prompt:
+1959:         system_prompt = doc_prompt
+1960:     else:
+1961:         system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+1962:         
+1963:     # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+1964:     json_suffix = (
+1965:         "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+1966:         "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+1967:         "{\n"
+1968:         "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+1969:         "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+1970:         "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+1971:         "}"
+1972:     )
+1973:     if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+-----------------
+--- Line 1956 ---
+1951:     
+1952:     # Tải prompt động từ Google Doc nếu cấu hình
+1953:     doc_id = cfg.get("prompt_google_doc_id", "")
+1954:     doc_prompt = None
+1955:     if doc_id:
+1956:         doc_prompt = fetch_google_doc_content(doc_id)
+1957:         
+1958:     if doc_prompt:
+1959:         system_prompt = doc_prompt
+1960:     else:
+1961:         system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+1962:         
+1963:     # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+1964:     json_suffix = (
+1965:         "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+1966:         "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+1967:         "{\n"
+1968:         "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+1969:         "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+1970:         "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+1971:         "}"
+1972:     )
+1973:     if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+1974:         system_prompt += json_suffix
+1975:     
+-----------------
+--- Line 1958 ---
+1953:     doc_id = cfg.get("prompt_google_doc_id", "")
+1954:     doc_prompt = None
+1955:     if doc_id:
+1956:         doc_prompt = fetch_google_doc_content(doc_id)
+1957:         
+1958:     if doc_prompt:
+1959:         system_prompt = doc_prompt
+1960:     else:
+1961:         system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+1962:         
+1963:     # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+1964:     json_suffix = (
+1965:         "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+1966:         "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+1967:         "{\n"
+1968:         "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+1969:         "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+1970:         "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+1971:         "}"
+1972:     )
+1973:     if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+1974:         system_prompt += json_suffix
+1975:     
+1976:     # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
+1977:     so_nha = safe_str(d.get("Ngo_So_nha"))
+-----------------
+--- Line 1959 ---
+1954:     doc_prompt = None
+1955:     if doc_id:
+1956:         doc_prompt = fetch_google_doc_content(doc_id)
+1957:         
+1958:     if doc_prompt:
+1959:         system_prompt = doc_prompt
+1960:     else:
+1961:         system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+1962:         
+1963:     # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+1964:     json_suffix = (
+1965:         "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+1966:         "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+1967:         "{\n"
+1968:         "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+1969:         "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+1970:         "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+1971:         "}"
+1972:     )
+1973:     if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+1974:         system_prompt += json_suffix
+1975:     
+1976:     # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
+1977:     so_nha = safe_str(d.get("Ngo_So_nha"))
+1978:     duong_truoc_nha = safe_str(d.get("Duong_truoc_nha_m"))
+-----------------
+--- Line 2104 ---
+2099:                 "message": "Chưa cấu hình OpenAI API Key. Vui lòng vào mục 'Cấu hình Hệ thống & API' để thiết lập."
+2100:             }), 400
+2101:             
+2102:         # Tải prompt động từ Google Doc nếu cấu hình
+2103:         doc_id = cfg.get("prompt_google_doc_id", "")
+2104:         doc_prompt = None
+2105:         if doc_id:
+2106:             doc_prompt = fetch_google_doc_content(doc_id)
+2107:             
+2108:         if doc_prompt:
+2109:             system_prompt = doc_prompt
+2110:         else:
+2111:             system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+2112:             
+2113:         # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+2114:         json_suffix = (
+2115:             "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+2116:             "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+2117:             "{\n"
+2118:             "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+2119:             "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+2120:             "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+2121:             "}"
+2122:         )
+2123:         if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+-----------------
+--- Line 2106 ---
+2101:             
+2102:         # Tải prompt động từ Google Doc nếu cấu hình
+2103:         doc_id = cfg.get("prompt_google_doc_id", "")
+2104:         doc_prompt = None
+2105:         if doc_id:
+2106:             doc_prompt = fetch_google_doc_content(doc_id)
+2107:             
+2108:         if doc_prompt:
+2109:             system_prompt = doc_prompt
+2110:         else:
+2111:             system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+2112:             
+2113:         # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+2114:         json_suffix = (
+2115:             "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+2116:             "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+2117:             "{\n"
+2118:             "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+2119:             "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+2120:             "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+2121:             "}"
+2122:         )
+2123:         if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+2124:             system_prompt += json_suffix
+2125:         
+-----------------
+--- Line 2108 ---
+2103:         doc_id = cfg.get("prompt_google_doc_id", "")
+2104:         doc_prompt = None
+2105:         if doc_id:
+2106:             doc_prompt = fetch_google_doc_content(doc_id)
+2107:             
+2108:         if doc_prompt:
+2109:             system_prompt = doc_prompt
+2110:         else:
+2111:             system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+2112:             
+2113:         # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+2114:         json_suffix = (
+2115:             "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+2116:             "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+2117:             "{\n"
+2118:             "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+2119:             "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+2120:             "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+2121:             "}"
+2122:         )
+2123:         if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+2124:             system_prompt += json_suffix
+2125:         
+2126:         # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
+2127:         so_nha = safe_str(data.get("soNha"))
+-----------------
+--- Line 2109 ---
+2104:         doc_prompt = None
+2105:         if doc_id:
+2106:             doc_prompt = fetch_google_doc_content(doc_id)
+2107:             
+2108:         if doc_prompt:
+2109:             system_prompt = doc_prompt
+2110:         else:
+2111:             system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+2112:             
+2113:         # Nối chỉ thị JSON để đảm bảo AI trả về cấu trúc chính xác
+2114:         json_suffix = (
+2115:             "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
+2116:             "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
+2117:             "{\n"
+2118:             "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
+2119:             "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+2120:             "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
+2121:             "}"
+2122:         )
+2123:         if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+2124:             system_prompt += json_suffix
+2125:         
+2126:         # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
+2127:         so_nha = safe_str(data.get("soNha"))
+2128:         duong_truoc_nha = safe_str(data.get("duongTruocNha"))
+-----------------

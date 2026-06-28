@@ -322,6 +322,13 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-29 (Nghiệm thu US-111 - Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang - TEST PASS)
+*   **Mã User Story:** `US-111`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Sửa lỗi Specificity CSS Accordion**: Loại bỏ các thao tác gán cứng inline `style.display = 'block'` và `style.display = 'none'` trên `.accordion-content` trong module `static/js/lego_detail_admin.js`, khắc phục triệt để lỗi xung đột độ ưu tiên CSS khiến các accordion bị khóa trạng thái sau khi reload.
+     - **Cơ chế Dọn dẹp Phòng thủ (Defense-in-depth)**: Bổ sung lệnh `content.style.removeProperty('display')` trực tiếp vào hàm `toggleAdminAccordion` để tự động dọn dẹp mọi style inline phát sinh khi người dùng click thủ công.
+     - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho 3 bộ test Playwright E2E (`test_e2e_curation.py`, `test_e2e_filters.py`, `test_e2e_curation_save_changes.py`) trên cả hai viewports Desktop & Mobile.
+
 ### 2026-06-28 (Nghiệm thu US-110 - Quản lý và Biên tập Hướng nhà - TEST PASS)
 *   **Mã User Story:** `US-110`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1228,6 +1235,8 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-111:** Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang ✅ Done 2026-06-29
+- [x] **US-110:** Quản lý và Biên tập Hướng nhà ✅ Done 2026-06-28
 - [x] **US-109:** Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool ✅ Done 2026-06-27
 - [x] **US-108:** Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') ✅ Done 2026-06-26
 - [x] **US-107:** Đồng bộ Realtime và Hiển thị Toàn bộ Căn nhà từ Pool trên Canvas (Bao gồm Căn chưa lên sóng) ✅ Done 2026-06-26

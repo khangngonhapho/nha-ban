@@ -577,7 +577,7 @@ module.exports = async (req, res) => {
     }
 
     // Tải prompt động từ Google Doc
-    const docId = cfg.prompt_google_doc_id || '12LaUJ-34eolQ9ElgQhpe5k9Mh_bn4B7p31DQAZ1Ncto';
+    const docId = cfg.prompt_google_doc_id || '1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE';
     let systemPrompt = '';
     if (docId) {
       try {
@@ -607,7 +607,7 @@ module.exports = async (req, res) => {
       "{\n" +
       "  \"tieuDeChinh\": \"Tiêu đề public chính (viết theo hướng dẫn của Mục 1 thuộc Bước 3)\",\n" +
       "  \"tieuDePhu\": \"Tiêu đề phụ public (bắt buộc viết hoa toàn bộ, bắt đầu bằng biểu tượng 🏩, viết theo hướng dẫn của Mục 2 thuộc Bước 3)\",\n" +
-      "  \"moTaChiTiet\": \"Mô tả chi tiết (bắt đầu bằng chữ 'Mô tả:', tiếp nối ngay bên dưới là các dòng con bắt đầu bằng dấu gạch bạt dài '–' theo hướng dẫn của Mục 3 thuộc Bước 3)\",\n" +
+      "  \"moTaChiTiet\": \"Mô tả chi tiết (bắt đầu bằng chữ 'Mô tả:', tiếp nối ngay bên dưới là các dòng con bắt đầu bằng dấu cộng '+' theo hướng dẫn của Mục 3 thuộc Bước 3)\",\n" +
       "  \"gocNhinDauTu\": \"Góc nhìn đầu tư (bắt đầu bằng dòng tiêu đề viết hoa toàn bộ 'GÓC NHÌN ĐẦU TƯ...' sau đó là các dòng con bắt đầu bằng dấu chấm tròn nhỏ '•' theo hướng dẫn của Mục 4 thuộc Bước 3. Để trống nếu không thỏa mãn bộ lọc điều kiện)\",\n" +
       "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n" +
       "}";
@@ -791,7 +791,7 @@ module.exports = async (req, res) => {
       // Ghép tiêu đề phụ, mô tả chi tiết và góc nhìn đầu tư lại thành mô tả public
       let moTaRaw = '';
       if (tieuDePhuClean) {
-        moTaRaw += tieuDePhuClean.trim() + '\n';
+        moTaRaw += tieuDePhuClean.trim() + '\n\n';
       }
       if (moTaChiTietClean) {
         moTaRaw += moTaChiTietClean.trim();

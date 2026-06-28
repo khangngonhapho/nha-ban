@@ -1,0 +1,141 @@
+
+=== Found in source_sheet_ai.gs ===
+Line 6: // 0. CẤU HÌNH API KEY (Thay thế bằng OpenAI API Key thực tế của bạn)
+Line 7: var OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Điền OpenAI API Key của bạn vào đây
+Line 11: var savedKey = PropertiesService.getScriptProperties().getProperty('OPENAI_API_KEY');
+Line 13: OPENAI_API_KEY = savedKey.trim();
+Line 65: var aiResult = callOpenAI(String(rawData));
+Line 76: * Hàm kết nối API của OpenAI phục vụ Viết tin đăng
+Line 78: function callOpenAI(rawData) {
+Line 79: var systemPrompt = "Bạn là một chuyên gia môi giới bất động sản tại TP.HCM.\n" +
+Line 113: {"role": "system", "content": systemPrompt},
+Line 123: "Authorization": "Bearer " + OPENAI_API_KEY
+Line 130: var response = UrlFetchApp.fetch("https://api.openai.com/v1/chat/completions", options);
+Line 198: var systemPrompt = "Bạn là AI chuyên viết tiêu đề BDS tối ưu chuẩn SEO cho trang batdongsan.com.vn.\n" +
+Line 237: var resultObj = callOpenAI_Source(systemPrompt, userPrompt);
+Line 251: * Hàm gọi OpenAI API phục vụ Viết Tiêu đề BDS
+Line 253: function callOpenAI_Source(systemPrompt, userPrompt) {
+Line 254: if (!OPENAI_API_KEY) return null;
+Line 259: {"role": "system", "content": systemPrompt},
+Line 269: "Authorization": "Bearer " + OPENAI_API_KEY,
+Line 277: var response = UrlFetchApp.fetch("https://api.openai.com/v1/chat/completions", options);
+Line 283: console.error("Lỗi gọi OpenAI API từ Source:", e);
+
+=== Found in pool_backend_v3.gs ===
+Line 920: // TÍCH HỢP AI OPENAI (TÌM PHƯỜNG CŨ)
+Line 922: var OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Điền OpenAI API Key của bạn vào đây
+Line 926: var savedKey = PropertiesService.getScriptProperties().getProperty('OPENAI_API_KEY');
+Line 928: OPENAI_API_KEY = savedKey.trim();
+Line 937: * Hàm gọi OpenAI API dùng chung
+Line 938: * @param {string} systemPrompt
+Line 942: function callOpenAI_Unified(systemPrompt, userPrompt) {
+Line 943: if (!OPENAI_API_KEY || OPENAI_API_KEY.includes("xxxxxxxx")) return null;
+Line 948: {"role": "system", "content": systemPrompt},
+Line 958: "Authorization": "Bearer " + OPENAI_API_KEY,
+Line 966: var response = UrlFetchApp.fetch("https://api.openai.com/v1/chat/completions", options);
+Line 972: console.error("Lỗi gọi OpenAI API:", e);
+Line 1018: var systemPrompt = "Bạn đóng vai một Chuyên gia môi giới nhà phố 15 năm kinh nghiệm tại trung tâm TP.HCM.\n" +
+Line 1137: var resultObj = callOpenAI_Unified(systemPrompt, userPrompt);
+
+=== Found in curator.html ===
+Line 1005: <!-- Ẩn OpenAI API Key trên giao diện theo yêu cầu (đọc cố định từ cấu hình hệ thống) -->
+Line 1008: <label>🔑 OPENAI API KEY</label>
+Line 1009: <input type="password" id="cfg-openai-key" placeholder="sk-proj-..." value="">
+Line 1013: <label>🤖 OPENAI SYSTEM PROMPT (LUẬT THÉP VÀ CẤU TRÚC AI BIÊN TẬP)</label>
+Line 1014: <textarea id="cfg-openai-prompt" rows="8" style="resize: vertical; font-family: monospace; font-size: 11px; color: var(--text-main); background: rgba(0,0,0,0.2); border: 1px solid 
+Line 1688: throw new Error(errData.message || "Lỗi khi gọi API OpenAI.");
+Line 1862: document.getElementById('cfg-openai-key').value = cfg.openai_api_key || '';
+Line 1863: document.getElementById('cfg-openai-prompt').value = cfg.openai_system_prompt || '';
+Line 1886: openai_api_key: document.getElementById('cfg-openai-key').value.stripOrEmpty(),
+Line 1887: openai_system_prompt: document.getElementById('cfg-openai-prompt').value.trim(),
+
+=== Found in curator_html_data.py ===
+Line 2: CURATOR_HTML_CONTENT = '<!DOCTYPE html>\n<html lang="vi">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <titl
+
+=== Found in scratch_refactor.py ===
+Line 16: var OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Line 19: * Hàm gọi OpenAI API dùng chung
+Line 20: * @param {string} systemPrompt
+Line 24: function callOpenAI_Unified(systemPrompt, userPrompt) {
+Line 25: if (!OPENAI_API_KEY || OPENAI_API_KEY.includes("xxxxxxxx")) return null;
+Line 30: {"role": "system", "content": systemPrompt},
+Line 40: "Authorization": "Bearer " + OPENAI_API_KEY,
+Line 48: var response = UrlFetchApp.fetch("https://api.openai.com/v1/chat/completions", options);
+Line 54: console.error("Lỗi gọi OpenAI API:", e);
+Line 98: var systemPrompt = "Bạn đóng vai một Chuyên gia môi giới nhà phố 15 năm kinh nghiệm tại trung tâm TP.HCM.\\nNhiệm vụ của bạn là nhận thông tin của 1 căn nhà và sinh ra bài đăng chu
+Line 132: var resultObj = callOpenAI_Unified(systemPrompt, userPrompt);
+
+=== Found in manager.py ===
+Line 272: DEFAULT_CONFIG = {
+Line 286: "openai_api_base": "https://api.openai.com/v1",
+Line 287: "openai_api_key": os.environ.get("OPENAI_API_KEY", ""),
+Line 289: "openai_system_prompt": (
+Line 391: cfg = DEFAULT_CONFIG.copy()
+Line 396: # Trọc vào chuỗi trống thì bỏ qua để lấy giá trị mặc định của DEFAULT_CONFIG
+Line 402: return DEFAULT_CONFIG.copy()
+Line 1871: for k in DEFAULT_CONFIG.keys():
+Line 1873: # Bảo vệ chống ghi đè OpenAI API Key bằng chuỗi trống hoặc placeholder từ UI
+Line 1874: if k == "openai_api_key":
+Line 1893: if "openai_api_key" in client_cfg and client_cfg["openai_api_key"]:
+Line 1894: key = client_cfg["openai_api_key"]
+Line 1896: client_cfg["openai_api_key"] = f"{key[:8]}...xxxx...{key[-4:]}"
+Line 1944: """Gọi OpenAI gpt-4o-mini để tự động sinh Tiêu đề, Mô tả và tìm Phường cũ cho 1 căn"""
+Line 1945: api_key = cfg.get("openai_api_key", "").strip()
+Line 1947: add_log_message("[⚠️ AUTO-AI] Chưa cấu hình OpenAI API Key. Bỏ qua gọi AI và dùng fallback format.")
+Line 1950: api_base = cfg.get("openai_api_base", "https://api.openai.com/v1").strip().rstrip('/')
+Line 1959: system_prompt = doc_prompt
+Line 1961: system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+Line 1973: if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+Line 1974: system_prompt += json_suffix
+Line 2029: {"role": "system", "content": system_prompt},
+Line 2047: add_log_message(f"[🤖 AUTO-AI] Nhận kết quả từ OpenAI: {ai_message}")
+Line 2081: err_msg = res_json.get("error", {}).get("message", "Lỗi không xác định từ OpenAI.")
+Line 2082: add_log_message(f"[❌ AUTO-AI ERROR] OpenAI API Error: {err_msg}. Dùng fallback format.")
+Line 2085: add_log_message(f"[❌ AUTO-AI ERROR] Lỗi khi gọi OpenAI API: {str(e)}. Dùng fallback format.")
+Line 2090: """Gọi OpenAI gpt-4o-mini để sinh Tiêu đề, Mô tả và tìm Phường cũ"""
+Line 2095: api_key = cfg.get("openai_api_key", "").strip()
+Line 2099: "message": "Chưa cấu hình OpenAI API Key. Vui lòng vào mục 'Cấu hình Hệ thống & API' để thiết lập."
+Line 2109: system_prompt = doc_prompt
+Line 2111: system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+Line 2123: if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+Line 2124: system_prompt += json_suffix
+Line 2179: {"role": "system", "content": system_prompt},
+Line 2186: api_base = cfg.get("openai_api_base", "https://api.openai.com/v1").strip().rstrip('/')
+Line 2198: add_log_message(f"[🤖 AI] Nhận kết quả từ OpenAI: {ai_message}")
+Line 2201: # Lấy key linh hoạt chống lỗi OpenAI tự đổi tên hoặc định dạng key
+Line 2235: err_msg = res_json.get("error", {}).get("message", "Lỗi không xác định từ OpenAI.")
+Line 2236: return jsonify({"status": "error", "message": f"OpenAI API Error: {err_msg}"}), response.status_code
+Line 2239: return jsonify({"status": "error", "message": f"Lỗi gọi OpenAI API: {str(e)}"}), 500
+
+=== Found in api\index.js ===
+Line 7: const DEFAULT_SYSTEM_PROMPT = `Bạn hãy đóng vai là Đầu chủ Trà Mi - chuyên gia viết bài và định vị bất động sản nhà phố cao cấp tại TP.HCM. Nhiệm vụ của bạn là tiếp nhận dữ liệu th
+Line 499: const apiKey = (process.env.OPENAI_API_KEY || cfg.openai_api_key || '').trim();
+Line 503: message: 'Chưa cấu hình OpenAI API Key. Vui lòng thiết lập trong file config hoặc biến môi trường.'
+Line 509: let systemPrompt = '';
+Line 521: systemPrompt = docPrompt;
+Line 529: if (!systemPrompt) {
+Line 530: systemPrompt = cfg.openai_system_prompt || DEFAULT_SYSTEM_PROMPT;
+Line 545: if (!systemPrompt.includes('tieuDeChinh') &&
+Line 546: !systemPrompt.includes('tieu_de_chinh') &&
+Line 547: !systemPrompt.includes('tieuDe') &&
+Line 548: !systemPrompt.includes('tieu_de')) {
+Line 549: systemPrompt += jsonSuffix;
+Line 613: const openaiApiBase = (cfg.openai_api_base || 'https://api.openai.com/v1').replace(/\/$/, '');
+Line 616: const openAiResponse = await fetch(`${openaiApiBase}/chat/completions`, {
+Line 625: { role: 'system', content: systemPrompt },
+Line 633: const resJson = await openAiResponse.json();
+Line 634: if (!openAiResponse.ok) {
+Line 635: const errMsg = resJson.error?.message || 'Lỗi không xác định từ OpenAI.';
+Line 636: return res.status(openAiResponse.status).json({ status: 'error', message: `OpenAI API Error: ${errMsg}` });
+Line 640: console.log(`[🤖 AI] Nhận kết quả từ OpenAI: ${aiMessage}`);
+Line 644: // Trích xuất các trường linh hoạt chống lỗi OpenAI tự đổi tên hoặc định dạng key
+Line 748: console.error('Error calling OpenAI API in Node.js:', err);
+Line 749: return res.status(500).json({ status: 'error', message: `Lỗi gọi OpenAI API: ${err.message}` });
+
+=== Found in scratch\test_ai_curation.py ===
+Line 17: api_key = cfg.get("openai_api_key", "")
+Line 19: print(f"OpenAI API Base: {cfg.get('openai_api_base')}")
+Line 20: print(f"OpenAI API Key: {masked_key}")
+
+=== Found in scratch\search_prompt_gpt.py ===
+Line 4: keywords = ["system_prompt", "systemPrompt", "openai", "openai_system_prompt", "DEFAULT_CONFIG"]

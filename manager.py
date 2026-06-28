@@ -395,7 +395,7 @@ DEFAULT_CONFIG = {
     "delay_page_max": 10.0,
     "openai_api_base": "https://api.openai.com/v1",
     "openai_api_key": os.environ.get("OPENAI_API_KEY", ""),
-    "prompt_google_doc_id": "12LaUJ-34eolQ9ElgQhpe5k9Mh_bn4B7p31DQAZ1Ncto",
+    "prompt_google_doc_id": "1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE",
     "openai_system_prompt": get_default_system_prompt(),
     "json_ui_fields": ["Criteria_Duong_truoc_nha"],
     "json_ui_filters": [
@@ -2016,6 +2016,68 @@ def generate_fallback_content_python(d):
         "phuong_cu": ""
     }
 
+def parse_and_join_ai_response(ai_data):
+    tieu_de_chinh = ""
+    for k in ["tieuDeChinh", "tieu_de_chinh", "tieuDeChinhPublic", "tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "Tiêu đề", "tiêu đề"]:
+        if k in ai_data and ai_data[k]:
+            tieu_de_chinh = str(ai_data[k])
+            break
+    if not tieu_de_chinh:
+        tieu_de_chinh = next((str(v) for k, v in ai_data.items() if "tieu" in k.lower() and "phu" not in k.lower()), "")
+
+    tieu_de_phu = ""
+    for k in ["tieuDePhu", "tieu_de_phu", "tieuPhu", "tieu_phu"]:
+        if k in ai_data and ai_data[k]:
+            tieu_de_phu = str(ai_data[k])
+            break
+    if not tieu_de_phu:
+        tieu_de_phu = next((str(v) for k, v in ai_data.items() if "tieu" in k.lower() and "phu" in k.lower()), "")
+
+    mo_ta_chi_tiet = ""
+    for k in ["moTaChiTiet", "mo_ta_chi_tiet", "moTa", "mo_ta", "moTaPublic", "mo_ta_public", "Mô tả", "mô tả"]:
+        if k in ai_data and ai_data[k]:
+            mo_ta_chi_tiet = str(ai_data[k])
+            break
+    if not mo_ta_chi_tiet:
+        mo_ta_chi_tiet = next((str(v) for k, v in ai_data.items() if "mo" in k.lower() and "phuong" not in k.lower() and "phu" not in k.lower()), "")
+
+    goc_nhin_dau_tu = ""
+    for k in ["gocNhinDauTu", "goc_nhin_dau_tu", "gocNhin", "goc_nhin"]:
+        if k in ai_data and ai_data[k]:
+            goc_nhin_dau_tu = str(ai_data[k])
+            break
+    if not goc_nhin_dau_tu:
+        goc_nhin_dau_tu = next((str(v) for k, v in ai_data.items() if "goc" in k.lower() or "dau_tu" in k.lower()), "")
+
+    phuong_cu = ""
+    for k in ["phuongCu", "phuong_cu", "phuong cu", "Phường cũ", "phường cũ"]:
+        if k in ai_data and ai_data[k]:
+            phuong_cu = str(ai_data[k])
+            break
+    if not phuong_cu:
+        phuong_cu = next((str(v) for k, v in ai_data.items() if "phuong" in k.lower() or "old" in k.lower()), "")
+
+    tieu_de_clean = trim_tieu_de_bds(tieu_de_chinh).replace("**", "")
+    tieu_de_phu_clean = tieu_de_phu.replace("**", "") if tieu_de_phu else ""
+    mo_ta_chi_tiet_clean = mo_ta_chi_tiet.replace("**", "") if mo_ta_chi_tiet else ""
+    goc_nhin_dau_tu_clean = goc_nhin_dau_tu.replace("**", "") if goc_nhin_dau_tu else ""
+
+    mo_ta_raw = ""
+    if tieu_de_phu_clean:
+        mo_ta_raw += tieu_de_phu_clean.strip() + "\n\n"
+    if mo_ta_chi_tiet_clean:
+        mo_ta_raw += mo_ta_chi_tiet_clean.strip()
+    if goc_nhin_dau_tu_clean and goc_nhin_dau_tu_clean.strip():
+        gnd = goc_nhin_dau_tu_clean.strip()
+        if not gnd.startswith("---"):
+            mo_ta_raw += "\n---\n"
+        else:
+            mo_ta_raw += "\n"
+        mo_ta_raw += gnd
+
+    mo_ta_clean = mo_ta_raw.replace("**", "") if mo_ta_raw else ""
+    return tieu_de_clean, mo_ta_clean, phuong_cu
+
 def generate_ai_curation_for_listing_backend(d, cfg):
     """Gọi OpenAI gpt-4o-mini để tự động sinh Tiêu đề, Mô tả và tìm Phường cũ cho 1 căn"""
     api_key = cfg.get("openai_api_key", "").strip()
@@ -2041,12 +2103,14 @@ def generate_ai_curation_for_listing_backend(d, cfg):
         "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
         "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
         "{\n"
-        "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
-        "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+        "  \"tieuDeChinh\": \"Tiêu đề public chính (viết theo hướng dẫn của Mục 1 thuộc Bước 3)\",\n"
+        "  \"tieuDePhu\": \"Tiêu đề phụ public (bắt buộc viết hoa toàn bộ, bắt đầu bằng biểu tượng 🏩, viết theo hướng dẫn của Mục 2 thuộc Bước 3)\",\n"
+        "  \"moTaChiTiet\": \"Mô tả chi tiết (bắt đầu bằng chữ 'Mô tả:', tiếp nối ngay bên dưới là các dòng con bắt đầu bằng dấu cộng '+' theo hướng dẫn của Mục 3 thuộc Bước 3)\",\n"
+        "  \"gocNhinDauTu\": \"Góc nhìn đầu tư (bắt đầu bằng dòng tiêu đề viết hoa toàn bộ 'GÓC NHÌN ĐẦU TƯ...' sau đó là các dòng con bắt đầu bằng dấu chấm tròn nhỏ '•' theo hướng dẫn của Mục 4 thuộc Bước 3. Để trống nếu không thỏa mãn bộ lọc điều kiện)",\n"
         "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
         "}"
     )
-    if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+    if "tieuDeChinh" not in system_prompt or "moTaChiTiet" not in system_prompt:
         system_prompt += json_suffix
     
     # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
@@ -2123,34 +2187,10 @@ def generate_ai_curation_for_listing_backend(d, cfg):
             add_log_message(f"[🤖 AUTO-AI] Nhận kết quả từ OpenAI: {ai_message}")
             ai_data = json.loads(ai_message)
             
-            tieu_de_raw = ""
-            for k in ["tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "tieu de", "Tiêu đề", "tiêu đề"]:
-                if k in ai_data and ai_data[k]:
-                    tieu_de_raw = ai_data[k]
-                    break
-            if not tieu_de_raw:
-                tieu_de_raw = next((v for k, v in ai_data.items() if "tieu" in k.lower()), "")
-
-            mo_ta_raw = ""
-            for k in ["moTa", "mo_ta", "moTaPublic", "mo_ta_public", "mo ta", "Mô tả", "mô tả"]:
-                if k in ai_data and ai_data[k]:
-                    mo_ta_raw = ai_data[k]
-                    break
-            if not mo_ta_raw:
-                mo_ta_raw = next((v for k, v in ai_data.items() if "mo" in k.lower() and "phuong" not in k.lower()), "")
-
-            phuong_cu_raw = ""
-            for k in ["phuongCu", "phuong_cu", "phuong cu", "Phường cũ", "phường cũ"]:
-                if k in ai_data and ai_data[k]:
-                    phuong_cu_raw = ai_data[k]
-                    break
-            if not phuong_cu_raw:
-                phuong_cu_raw = next((v for k, v in ai_data.items() if "phuong" in k.lower() or "old" in k.lower()), "")
-
-            tieu_de_clean = trim_tieu_de_bds(tieu_de_raw)
+            tieu_de_clean, mo_ta_clean, phuong_cu_raw = parse_and_join_ai_response(ai_data)
             return {
                 "tieu_de_public": tieu_de_clean,
-                "mo_ta_public": mo_ta_raw,
+                "mo_ta_public": mo_ta_clean,
                 "phuong_cu": phuong_cu_raw
             }
         else:
@@ -2191,12 +2231,14 @@ def ai_generate():
             "\n\n🚨 BẮT BUỘC ĐỊNH DẠNG ĐẦU RA (OUTPUT FORMAT):\n"
             "Bạn PHẢI trả về kết quả dưới dạng JSON object duy nhất có cấu trúc chính xác sau, không chứa ký tự markdown (như ```json) hay văn bản nào bên ngoài:\n"
             "{\n"
-            "  \"tieuDe\": \"Tiêu đề public viết theo hướng dẫn của Bước 3\",\n"
-            "  \"moTa\": \"Mô tả chi tiết viết theo hướng dẫn của Bước 3\",\n"
+            "  \"tieuDeChinh\": \"Tiêu đề public chính (viết theo hướng dẫn của Mục 1 thuộc Bước 3)\",\n"
+            "  \"tieuDePhu\": \"Tiêu đề phụ public (bắt buộc viết hoa toàn bộ, bắt đầu bằng biểu tượng 🏩, viết theo hướng dẫn của Mục 2 thuộc Bước 3)\",\n"
+            "  \"moTaChiTiet\": \"Mô tả chi tiết (bắt đầu bằng chữ 'Mô tả:', tiếp nối ngay bên dưới là các dòng con bắt đầu bằng dấu cộng '+' theo hướng dẫn của Mục 3 thuộc Bước 3)\",\n"
+            "  \"gocNhinDauTu\": \"Góc nhìn đầu tư (bắt đầu bằng dòng tiêu đề viết hoa toàn bộ 'GÓC NHÌN ĐẦU TƯ...' sau đó là các dòng con bắt đầu bằng dấu chấm tròn nhỏ '•' theo hướng dẫn của Mục 4 thuộc Bước 3. Để trống nếu không thỏa mãn bộ lọc điều kiện)\",\n"
             "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
             "}"
         )
-        if "tieuDe" not in system_prompt or "moTa" not in system_prompt:
+        if "tieuDeChinh" not in system_prompt or "moTaChiTiet" not in system_prompt:
             system_prompt += json_suffix
         
         # 1. Tính toán Tiền tố địa chỉ (Mặt tiền / HXH)
@@ -2274,37 +2316,11 @@ def ai_generate():
             add_log_message(f"[🤖 AI] Nhận kết quả từ OpenAI: {ai_message}")
             ai_data = json.loads(ai_message)
             
-            # Lấy key linh hoạt chống lỗi OpenAI tự đổi tên hoặc định dạng key
-            tieu_de_raw = ""
-            for k in ["tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "tieu de", "Tiêu đề", "tiêu đề"]:
-                if k in ai_data and ai_data[k]:
-                    tieu_de_raw = ai_data[k]
-                    break
-            if not tieu_de_raw:
-                tieu_de_raw = next((v for k, v in ai_data.items() if "tieu" in k.lower()), "")
-
-            mo_ta_raw = ""
-            for k in ["moTa", "mo_ta", "moTaPublic", "mo_ta_public", "mo ta", "Mô tả", "mô tả"]:
-                if k in ai_data and ai_data[k]:
-                    mo_ta_raw = ai_data[k]
-                    break
-            if not mo_ta_raw:
-                mo_ta_raw = next((v for k, v in ai_data.items() if "mo" in k.lower() and "phuong" not in k.lower()), "")
-
-            phuong_cu_raw = ""
-            for k in ["phuongCu", "phuong_cu", "phuong cu", "Phường cũ", "phường cũ"]:
-                if k in ai_data and ai_data[k]:
-                    phuong_cu_raw = ai_data[k]
-                    break
-            if not phuong_cu_raw:
-                phuong_cu_raw = next((v for k, v in ai_data.items() if "phuong" in k.lower() or "old" in k.lower()), "")
-
-            tieu_de_clean = trim_tieu_de_bds(tieu_de_raw)
-            
+            tieu_de_clean, mo_ta_clean, phuong_cu_raw = parse_and_join_ai_response(ai_data)
             return jsonify({
                 "status": "success",
                 "tieu_de_public": tieu_de_clean,
-                "mo_ta_public": mo_ta_raw,
+                "mo_ta_public": mo_ta_clean,
                 "phuong_cu": phuong_cu_raw
             })
         else:

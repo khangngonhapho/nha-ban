@@ -1,0 +1,108 @@
+Line 211: ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+
+--- Around Line 211 ---
+206:                   </div>
+207: 
+208:                   <div class="admin-edit-group">
+209:                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+210:                       <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+211:                       ${p.isFromPoolOnly ? `<button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>` : ''}
+212:                     </div>
+213:                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
+214:                   </div>
+215: 
+216:                   <div class="admin-edit-group">
+217:                     <label for="editMoTaBds">Mô tả public:</label>
+218:                     <textarea id="editMoTaBds" rows="12" placeholder="Nhập mô tả công khai cho khách hàng..." style="font-size: 10px; font-weight: 500; line-height: 1.4; font-family: inherit; padding: 6px;">${p.isFromPoolOnly ? '' : (p.m || p.raw_mo_ta_public || '')}</textarea>
+219:                   </div>
+220: 
+221:                   ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
+222: 
+223:                   ${renderImageEditorWidget(p)}
+224: 
+225:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+226:                     <div class="admin-edit-group">
+227:                       <label for="editHuong">Hướng nhà:</label>
+228:                       <select id="editHuong">
+229:                         <option value="-">Chưa xác định</option>
+230:                         <option value="Đông">Đông</option>
+231:                         <option value="Tây">Tây</option>
+232:                         <option value="Nam">Nam</option>
+233:                         <option value="Bắc">Bắc</option>
+234:                         <option value="Đông Nam">Đông Nam</option>
+235:                         <option value="Đông Bắc">Đông Bắc</option>
+236:                         <option value="Tây Nam">Tây Nam</option>
+237:                         <option value="Tây Bắc">Tây Bắc</option>
+238:                       </select>
+239:                     </div>
+240:                     
+241:                     <div class="admin-edit-group">
+242:                       <label for="editDuong">Đường trước nhà:</label>
+243:                       <select id="editDuong">
+244:                         <option value="-">Chưa xác định</option>
+245:                         <option value="Hẻm ba gác">Hẻm ba gác</option>
+246:                         <option value="Hẻm ô tô lý thuyết">Hẻm ô tô lý thuyết</option>
+247:                         <option value="Hẻm ô tô">Hẻm ô tô</option>
+248:                         <option value="Mặt tiền đường">Mặt tiền đường</option>
+249:                       </select>
+250:                     </div>
+251:                   </div>
+252: 
+253:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+254:                     <div class="admin-edit-group">
+255:                       <label for="editDanhGia">Đánh giá:</label>
+256:                       <select id="editDanhGia">
+257:                         <option value="">Bình thường</option>
+258:                         <option value="Hàng Ngon">💎 Ngon</option>
+259:                         <option value="Hàng Lỗi">⚠️ Lỗi</option>
+260:                       </select>
+261:                     </div>
+262: 
+263:                     <div class="admin-edit-group">
+264:                       <label for="editTinhTrang">Tình trạng:</label>
+265:                       <select id="editTinhTrang">
+266:                         <option value="Bình thường">Bình thường</option>
+267:                         <option value="Mới">Mới</option>
+268:                         <option value="Nát">Nát</option>
+269:                         <option value="Đã bán">Đã bán</option>
+270:                         <option value="Ẩn">Ẩn</option>
+271:                       </select>
+272:                     </div>
+273:                   </div>
+274: 
+275:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+276:                     <div class="admin-edit-group">
+277:                       <label for="editSoPn">Số phòng ngủ:</label>
+278:                       <input type="number" id="editSoPn" value="${p.so_pn !== '-' ? p.so_pn : ''}" placeholder="Số phòng...">
+279:                     </div>
+280: 
+281:                     <div class="admin-edit-group">
+282:                       <label for="editSoWc">Số WC:</label>
+283:                       <input type="number" id="editSoWc" value="${(p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || '')}" placeholder="Số WC...">
+284:                     </div>
+285:                   </div>
+286: 
+287:                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+288:                     <div class="admin-edit-group row-group">
+289:                       <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checked' : ''}>
+290:                       <label for="editNguTret" style="font-weight:700;">Có ngủ trệt</label>
+291:                     </div>
+292: 
+293:                     <div class="admin-edit-group row-group">
+294:                       <input type="checkbox" id="editChdv" ${p.chdv === 'Có' ? 'checked' : ''}>
+295:                       <label for="editChdv" style="font-weight:700;">Có CHDV</label>
+296:                     </div>
+297:                   </div>
+298:                 </form>
+299:               </div>
+300:             </div>
+301: 
+302:             ${(p.id && !p.isFromPoolOnly) ? `
+303:             <!-- ACCORDION 3: PREVIEW KHÁCH HÀNG -->
+304:             <div class="accordion-item" id="accPreview">
+305:               <div class="accordion-header is-red" onclick="toggleAdminAccordion(this)">
+306:                 <span>📄 PREVIEW KHÁCH HÀNG</span>
+307:                 <span class="arrow">▶</span>
+308:               </div>
+309:               <div class="accordion-content">
+310:                 <div class="preview-webview-container" style="position: relative; width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
