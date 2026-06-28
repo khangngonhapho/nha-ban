@@ -322,6 +322,15 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-28 (Nghiệm thu US-110 - Quản lý và Biên tập Hướng nhà - TEST PASS)
+*   **Mã User Story:** `US-110`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Trích xuất Hướng từ API & DOM**: Cập nhật logic cào trong `fetcher.py`, `manager.py`, và `pool_lego.py` để lấy Hướng thô từ mảng criteria API (HOUSE_DIRECTION) hoặc thẻ DOM hiển thị nhãn `"hướng nhà"`/`"hướng"`.
+     - **Bổ sung cột custom_huong**: Mở rộng schema bảng `listings` thêm cột `custom_huong` để lưu trữ hướng đã biên tập của Admin, mặc định khởi tạo bằng hướng thô khi cào mới.
+     - **Hợp nhất dữ liệu Sheets**: Sửa lỗi off-by-one index trong `restore_db_from_sheets.py` để khôi phục đúng Hướng thô gốc về SQLite cột `Huong` và Hướng biên tập về cột `custom_huong`.
+     - **Giao diện Client & Admin**: Hiển thị Hướng read-only trên giao diện khách hàng, Hướng gốc thô trên giao diện Admin, và đồng bộ dropdown chọn Hướng trong bảng Biên tập.
+     - **Kiểm thử E2E Playwright**: Đạt tỷ lệ **100% PASS** cho tất cả các kịch bản kiểm thử.
+
 ### 2026-06-27 (Nghiệm thu US-109 - Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool - TEST PASS)
 *   **Mã User Story:** `US-109`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
