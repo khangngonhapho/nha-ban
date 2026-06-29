@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Khang Ngô BDS - Thiên Khôi List Scraper
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Cào nhanh thông tin nhà phố từ danh sách Thiên Khôi về local server Khang Ngô
 // @author       Antigravity
 // @match        https://*.thienkhoi.com/*
