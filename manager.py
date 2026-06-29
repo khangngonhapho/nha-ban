@@ -3896,7 +3896,7 @@ def api_recrawl_all():
     """API kích hoạt tiến trình cào lại định kỳ chạy ngầm toàn bộ CSDL và tổng hợp thay đổi"""
     def run_recrawl():
         try:
-            pool_lego.recrawl_all_listings(add_log_message)
+            pool_lego.recrawl_all_listings(add_log_message=add_log_message)
         except Exception as e:
             add_log_message(f"[❌ LỖI] Lỗi tiến trình cào lại ngầm: {str(e)}")
             

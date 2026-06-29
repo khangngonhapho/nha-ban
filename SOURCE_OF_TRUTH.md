@@ -322,6 +322,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-29 (Nghiệm thu US-115 - Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng - TEST PASS)
+*   **Mã User Story:** `US-115`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Phục hồi Cơ sở dữ liệu**: Xóa tệp `raw_archive.db` bị hỏng cấu trúc trang vật lý và chạy thành công script `restore_db_from_sheets.py` để dựng lại CSDL local sạch gồm 666 căn, bảo toàn toàn bộ liên kết hình ảnh tự chụp (R2).
+    - **Sửa lỗi cú pháp gọi API (manager.py)**: Đặt tên tham số `add_log_message=add_log_message` tại dòng 3899 trong `pool_lego.recrawl_all_listings` để sửa lỗi truyền nhầm đối tượng hàm làm crash tiến trình cào ngầm.
+    - **Cào bù dữ liệu ngầm**: Kích hoạt script `crawl_raw_json_pool1.py` để liên tục tải bù `raw_json_full` ngầm bằng cookie mới cung cấp.
+    - **Kiểm thử E2E tự động**: Chạy thành công bộ test Playwright E2E (`test_e2e_filters.py`, `test_e2e_curation.py`) đạt tỉ lệ **100% PASS**.
+
 ### 2026-06-29 (Nghiệm thu US-114 - Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets - TEST PASS)
 *   **Mã User Story:** `US-114`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1262,6 +1270,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-115:** Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng – Done 2026-06-29
 - [x] **US-114:** Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets ✅ Done 2026-06-29
 - [x] **US-113:** Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone ✅ Done 2026-06-29
 - [x] **US-112:** Đảm bảo thực hiện prompt mới khi bấm nút "Tự động điền" trong biên tập chi tiết ✅ Done 2026-06-29

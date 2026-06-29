@@ -3,16 +3,17 @@
 Last updated: 2026-06-29
 
 ## Stats
-- Total: 123
+- Total: 124
 - backlog: 3
 - draft: 0
 - in-progress: 0
-- done: 21
+- done: 22
 - accepted: 93
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-115 | Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng | done | S | 2026-06-29 | `docs/stories/_inbox/US-115_fix_malformed_sqlite_database.md`, `restore_db_from_sheets.py`, `manager.py` |
 | US-114 | Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets | accepted | S | 2026-06-29 | `docs/stories/_inbox/US-114_fix_startup_syntax_and_formula_errors.md`, `manager.py`, `pool_lego.py` |
 | US-113 | Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone | accepted | S    | 2026-06-29 | `docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md`, `static/js/lego_detail_client.js`, `static/css/global.css` |
 | US-112 | Đảm bảo thực hiện prompt mới khi bấm nút "Tự động điền" trong biên tập chi tiết | accepted | S | 2026-06-29 | `docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md`, `settings.json`, `api/index.js`, `manager.py` |
@@ -141,6 +142,7 @@ Last updated: 2026-06-29
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-115_fix_malformed_sqlite_database|US-115]]: Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng (done)
 - [[US-114_fix_startup_syntax_and_formula_errors|US-114]]: Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets (accepted)
 - [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
