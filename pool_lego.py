@@ -422,6 +422,10 @@ def init_db(db_file=None):
         
     conn = sqlite3.connect(db_file, timeout=30.0)
     cursor = conn.cursor()
+    try:
+        cursor.execute("PRAGMA journal_mode=WAL;")
+    except Exception:
+        pass
 
     # Xác định pool system đang hoạt động
     is_pool2 = False

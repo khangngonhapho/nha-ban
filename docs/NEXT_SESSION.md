@@ -7,7 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
-*   **US-115 (Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng):** **[DONE - 2026-06-29]** Khôi phục sạch cơ sở dữ liệu local thành công 666 căn từ Google Sheets Pool và Source, sửa lỗi cú pháp gọi API trong manager.py và kích hoạt tiến trình cào bù raw_json_full ngầm. Tất cả 2 bộ test Playwright E2E đều đạt 100% PASS.
+*   **US-115 (Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng):** **[IN-PROGRESS]** Tiến hành khôi phục cơ sở dữ liệu local từ Google Sheets để đồng bộ danh sách ~590 căn sạch mới nhất và chạy test E2E Playwright.
 *   **US-114 (Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets):** **[ACCEPTED - 2026-06-29]** Khắc phục lỗi cú pháp tại dòng 2109 of manager.py làm hỏng CHAY_APP.bat. Thêm hàm helper escape_sheets_value trong pool_lego.py tự động chèn dấu nháy đơn (') trước các chuỗi bắt đầu bằng -, +, = (ngoại trừ =IMAGE() của hệ thống) để ép định dạng text thô trên Google Sheets, sửa triệt để lỗi công thức #ERROR! trên Sheets và hiển thị #ERROR trên Vercel.
 *   **US-113 (Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone):** **[ACCEPTED - 2026-06-29]** Khắc phục triệt để lỗi chớp đen màn hình khi phóng to/kéo ảnh trên thiết bị iOS (iPhone Safari/Chrome) bằng cách tắt CSS transition động trong quá trình thao tác cảm ứng, đồng thời kích hoạt Hardware Acceleration (tăng tốc phần cứng GPU) qua `translate3d` và thuộc tính CSS layer optimization (`backface-visibility: hidden`). Bảo toàn trạng thái zoom & focus vị trí xem chi tiết khi người dùng nhấc ngón tay (`touchend`). Đã chạy toàn bộ các kịch bản kiểm thử Playwright E2E đạt 100% PASS.
 *   **US-112 (Đồng bộ siêu cấu trúc Master Prompt mới cho Tự động điền AI trên Vercel và Local):** **[ACCEPTED - 2026-06-29]** Cập nhật ID Google Doc prompt thành ID mới (`1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE`). Đồng bộ cấu trúc jsonSuffix 5 trường ở Node.js và Python local. Triển khai hàm trợ giúp làm sạch ký tự in đậm `**` và nối chuỗi mô tả/góc nhìn đầu tư theo các quy tắc mới (khoảng cách dòng trống `\n\n` và phân cách `---`). Chạy toàn bộ 4 bộ test E2E Playwright đạt 100% PASS và deploy lên live Production.
@@ -59,6 +59,8 @@
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký US-115.
 *   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật trạng thái đang xử lý US-115.
 *   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Ghi nhận log thay đổi US-115.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Cấu hình SQLite WAL mode.
+*   [static/js/thienkhoi_list_scraper.user.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/thienkhoi_list_scraper.user.js) — Vá lỗi ngắt cào hàng loạt.
 
 ---
 *Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-114 accepted & E2E tests 100% passed).*

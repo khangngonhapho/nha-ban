@@ -534,7 +534,12 @@
         const bulkBtn = document.getElementById('kn-btn-bulk-scrape');
         if (bulkBtn) bulkBtn.textContent = "Đang cào hàng loạt...";
 
+        let isAuthError = false;
         for (let i = 0; i < checkboxes.length; i++) {
+            if (isAuthError) {
+                writeLog("🚨 Đã dừng cào hàng loạt do lỗi xác thực.");
+                break;
+            }
             const tkId = checkboxes[i].value;
             const item = detectedListings.find(l => l.id === tkId);
             const title = item ? item.title : '';
@@ -576,6 +581,10 @@
                                     cardBtn.title = resData.message;
                                 }
                                 writeLog(`❌ [${i+1}/${checkboxes.length}] Thất bại: ${resData.message || "Lỗi chưa rõ"}`);
+                                if (response.status === 401 || response.status === 403 || (resData.message && (resData.message.includes("token") || resData.message.includes("Cookie") || resData.message.includes("hết hạn")))) {
+                                    writeLog(`🚨 [NGẮT TIẾN TRÌNH] Phát hiện lỗi xác thực (Token/Cookie hết hạn hoặc không hợp lệ). Ngừng cào hàng loạt!`);
+                                    isAuthError = true;
+                                }
                             }
                         } catch(e) {
                             if (cardBtn) cardBtn.className = "kn-scrape-btn failed";
@@ -602,8 +611,13 @@
         isCrawlingBulk = false;
         if (bulkBtn) bulkBtn.textContent = "Cào các căn đã chọn";
         updateFloatingPanel();
-        writeLog("🏁 HOÀN TẤT TIẾN TRÌNH CÀO HÀNG LOẠT!");
-        showToast("Đã hoàn tất cào hàng loạt!");
+        if (isAuthError) {
+            writeLog("🚨 TIẾN TRÌNH CÀO HÀNG LOẠT BỊ NGẮT DO LỖI XÁC THỰC!");
+            showToast("Cào hàng loạt bị ngắt do lỗi xác thực!");
+        } else {
+            writeLog("🏁 HOÀN TẤT TIẾN TRÌNH CÀO HÀNG LOẠT!");
+            showToast("Đã hoàn tất cào hàng loạt!");
+        }
     }
 
     let isChecking = false;
