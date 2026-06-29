@@ -2106,7 +2106,7 @@ def generate_ai_curation_for_listing_backend(d, cfg):
         "  \"tieuDeChinh\": \"Tiêu đề public chính (viết theo hướng dẫn của Mục 1 thuộc Bước 3)\",\n"
         "  \"tieuDePhu\": \"Tiêu đề phụ public (bắt buộc viết hoa toàn bộ, bắt đầu bằng biểu tượng 🏩, viết theo hướng dẫn của Mục 2 thuộc Bước 3)\",\n"
         "  \"moTaChiTiet\": \"Mô tả chi tiết (bắt đầu bằng chữ 'Mô tả:', tiếp nối ngay bên dưới là các dòng con bắt đầu bằng dấu cộng '+' theo hướng dẫn của Mục 3 thuộc Bước 3)\",\n"
-        "  \"gocNhinDauTu\": \"Góc nhìn đầu tư (bắt đầu bằng dòng tiêu đề viết hoa toàn bộ 'GÓC NHÌN ĐẦU TƯ...' sau đó là các dòng con bắt đầu bằng dấu chấm tròn nhỏ '•' theo hướng dẫn của Mục 4 thuộc Bước 3. Để trống nếu không thỏa mãn bộ lọc điều kiện)",\n"
+        "  \"gocNhinDauTu\": \"Góc nhìn đầu tư (bắt đầu bằng dòng tiêu đề viết hoa toàn bộ 'GÓC NHÌN ĐẦU TƯ...' sau đó là các dòng con bắt đầu bằng dấu chấm tròn nhỏ '•' theo hướng dẫn của Mục 4 thuộc Bước 3. Để trống nếu không thỏa mãn bộ lọc điều kiện)\",\n"
         "  \"phuongCu\": \"Tên phường cũ (nếu có sáp nhập phường, hoặc để trống)\"\n"
         "}"
     )

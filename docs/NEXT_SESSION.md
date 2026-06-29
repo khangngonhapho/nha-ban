@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-114 (Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets):** **[ACCEPTED - 2026-06-29]** Khắc phục lỗi cú pháp tại dòng 2109 of manager.py làm hỏng CHAY_APP.bat. Thêm hàm helper escape_sheets_value trong pool_lego.py tự động chèn dấu nháy đơn (') trước các chuỗi bắt đầu bằng -, +, = (ngoại trừ =IMAGE() của hệ thống) để ép định dạng text thô trên Google Sheets, sửa triệt để lỗi công thức #ERROR! trên Sheets và hiển thị #ERROR trên Vercel.
 *   **US-113 (Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone):** **[ACCEPTED - 2026-06-29]** Khắc phục triệt để lỗi chớp đen màn hình khi phóng to/kéo ảnh trên thiết bị iOS (iPhone Safari/Chrome) bằng cách tắt CSS transition động trong quá trình thao tác cảm ứng, đồng thời kích hoạt Hardware Acceleration (tăng tốc phần cứng GPU) qua `translate3d` và thuộc tính CSS layer optimization (`backface-visibility: hidden`). Bảo toàn trạng thái zoom & focus vị trí xem chi tiết khi người dùng nhấc ngón tay (`touchend`). Đã chạy toàn bộ các kịch bản kiểm thử Playwright E2E đạt 100% PASS.
 *   **US-112 (Đồng bộ siêu cấu trúc Master Prompt mới cho Tự động điền AI trên Vercel và Local):** **[ACCEPTED - 2026-06-29]** Cập nhật ID Google Doc prompt thành ID mới (`1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE`). Đồng bộ cấu trúc jsonSuffix 5 trường ở Node.js và Python local. Triển khai hàm trợ giúp làm sạch ký tự in đậm `**` và nối chuỗi mô tả/góc nhìn đầu tư theo các quy tắc mới (khoảng cách dòng trống `\n\n` và phân cách `---`). Chạy toàn bộ 4 bộ test E2E Playwright đạt 100% PASS và deploy lên live Production.
 *   **US-111 (Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang):** **[ACCEPTED - 2026-06-29]** Khắc phục lỗi Specificity CSS Accordion bằng cách loại bỏ các gán cứng inline style display trên phần tử `.accordion-content`, bàn giao quyền điều khiển hiển thị hoàn toàn cho class `.expanded`. Bổ sung dọn dẹp phòng thủ trong hàm `toggleAdminAccordion`. Đã chạy 3 bộ test Playwright E2E đạt 100% PASS và deploy lên live Production.
@@ -53,12 +54,13 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [static/js/lego_detail_client.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_client.js) — Cập nhật logic dịch chuyển sang translate3d, quản lý transition và touch handler để fix chớp đen trên iOS.
-*   [static/css/global.css](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/css/global.css) — Bổ sung CSS GPU optimization (.lb-img).
-*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký và cập nhật trạng thái US-113 thành accepted.
-*   [docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md) — Tài liệu User Story US-113.
-*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật tài liệu Next Session.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Sửa lỗi cú pháp dòng 2109 trong gocNhinDauTu json_suffix.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Thêm hàm escape_sheets_value và tích hợp vào build_row_data và publish_listing.
+*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký US-114 và cập nhật trạng thái thành accepted.
+*   [docs/stories/_inbox/US-114_fix_startup_syntax_and_formula_errors.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-114_fix_startup_syntax_and_formula_errors.md) — Tài liệu User Story US-114.
+*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật kế hoạch NEXT_SESSION.
+*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Log lịch sử thay đổi US-114.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-113 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-114 accepted & E2E tests 100% passed).*
 

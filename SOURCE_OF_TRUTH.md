@@ -322,6 +322,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-29 (Nghiệm thu US-114 - Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets - TEST PASS)
+*   **Mã User Story:** `US-114`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Sửa lỗi cú pháp Python (manager.py)**: Escape dấu nháy kép đóng cho chuỗi `"gocNhinDauTu"` tại dòng 2109 trong biến `json_suffix` để khắc phục lỗi `SyntaxError: unexpected character after line continuation character` làm hỏng tệp `CHAY_APP.bat`.
+     - **Ngăn lỗi công thức Google Sheets (pool_lego.py)**: Tạo hàm helper `escape_sheets_value` tự động chèn dấu nháy đơn `'` phía trước các giá trị bắt đầu bằng `-`, `+`, hoặc `=` (bỏ qua công thức hợp lệ `=IMAGE(`) để ép kiểu dữ liệu text thô trên Sheets, sửa triệt để lỗi `#ERROR!` trên Sheets và trang chi tiết Vercel.
+     - **Tích hợp đồng bộ**: Áp dụng hàm `escape_sheets_value` khi chuẩn bị dữ liệu trong cả `build_row_data` (chế độ Pool2) và `publish_listing` (chế độ Pool1).
+     - **Kiểm thử E2E tự động**: Chạy thành công bộ E2E Playwright tests (`test_e2e_filters.py`, `test_e2e_curation.py`) đạt tỷ lệ **100% PASS**.
+
 ### 2026-06-29 (Nghiệm thu US-113 - Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone - TEST PASS)
 *   **Mã User Story:** `US-113`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1358,7 +1366,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 3. **Nếu thay đổi schema Sheet** → cập nhật bảng section 3
 4. **Nếu đổi password/SĐT** → cập nhật section 4 và 5
 
-*File này được tạo và duy trì bởi Antigravity AI Assistant. Cập nhật lần cuối: 2026-06-11.*
+*File này được tạo và duy trì bởi Antigravity AI Assistant. Cập nhật lần cuối: 2026-06-29.*
 
 
 ## QUY TẮC ĐẶT TÊN (NAMING CONVENTIONS)

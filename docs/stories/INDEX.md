@@ -3,16 +3,17 @@
 Last updated: 2026-06-29
 
 ## Stats
-- Total: 122
+- Total: 123
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 21
-- accepted: 92
+- accepted: 93
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-114 | Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets | accepted | S | 2026-06-29 | `docs/stories/_inbox/US-114_fix_startup_syntax_and_formula_errors.md`, `manager.py`, `pool_lego.py` |
 | US-113 | Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone | accepted | S    | 2026-06-29 | `docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md`, `static/js/lego_detail_client.js`, `static/css/global.css` |
 | US-112 | Đảm bảo thực hiện prompt mới khi bấm nút "Tự động điền" trong biên tập chi tiết | accepted | S | 2026-06-29 | `docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md`, `settings.json`, `api/index.js`, `manager.py` |
 | US-111 | Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang | accepted | S | 2026-06-29 | `static/js/lego_detail_admin.js` |
@@ -140,6 +141,7 @@ Last updated: 2026-06-29
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-114_fix_startup_syntax_and_formula_errors|US-114]]: Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets (accepted)
 - [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-109_mapping_crawled_title_to_noidungchinh|US-109]]: Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool (accepted)

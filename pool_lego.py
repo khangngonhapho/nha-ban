@@ -292,6 +292,20 @@ PUBLIC_WHITELIST_HEADERS_BASE = [
     "Last updated"
 ]
 
+def escape_sheets_value(val):
+    """
+    Tránh lỗi công thức khi ghi lên Google Sheets bằng USER_ENTERED.
+    Nếu nội dung bắt đầu bằng '-', '+', hoặc '=' và không phải là công thức hệ thống tự tạo
+    như =IMAGE(, tự động thêm dấu nháy đơn (') ở đầu để ép kiểu text thô.
+    """
+    if not isinstance(val, str):
+        return val
+    if val.startswith('-') or val.startswith('+') or val.startswith('='):
+        if val.upper().startswith('=IMAGE('):
+            return val
+        return "'" + val
+    return val
+
 def build_row_data(headers, data_dict):
     """
     Phân giải chỉ số cột động: Nhận mảng headers thực tế từ sheet và data_dict dữ liệu,
@@ -308,7 +322,7 @@ def build_row_data(headers, data_dict):
                 break
         if val is None:
             val = ""
-        row.append(str(val))
+        row.append(escape_sheets_value(str(val)))
     return row
 
 def gen_id_khang_ngo_python(so_nha, duong, quan):
@@ -1683,7 +1697,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                         add_log_message(f"[⚠️ WARNING] Không thể lưu System ID mới vào SQLite: {str(e_db)}")
                 
                 val_str = str(val) if val is not None else ""
-                row_data.append(val_str)
+                row_data.append(escape_sheets_value(val_str))
                 row_data_escaped.append(escape_tsv_field(val_str))
         
         if sheet:
