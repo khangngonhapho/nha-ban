@@ -322,6 +322,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-06-29 (Nghiệm thu US-113 - Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone - TEST PASS)
+*   **Mã User Story:** `US-113`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+     - **Tối ưu hóa touch handlers & transitions (lego_detail_client.js)**: Tắt CSS transitions động của hình ảnh khi bắt đầu chạm/di chuyển (`touchstart`, `touchmove`) và chỉ bật lại trước khi co nhỏ về `scale(1)` trong `touchend`, loại bỏ hoàn toàn hiện tượng xung đột hoạt họa gây giật/chớp nháy của WebKit.
+     - **Tăng tốc phần cứng GPU (translate3d)**: Chuyển đổi toàn bộ các phép biến đổi 2D (`translate`/`translateX`) sang 3D (`translate3d`) cho ảnh Lightbox, slide track, và chạm vuốt Legacy Gallery, ép buộc trình duyệt iOS Safari sử dụng bộ xử lý GPU để duy trì layer kết xuất ổn định.
+     - **Tối ưu hóa phân lớp đồ họa CSS (global.css)**: Thêm các thuộc tính tối ưu hóa phân lớp đồ họa đồ họa (`backface-visibility: hidden`, `perspective: 1000`) cho class `.lb-img` để ngăn trình duyệt WebKit tự động thu hồi/giải phóng layer đồ họa khi thả ngón tay (`touchend`).
+     - **Kiểm thử E2E tự động**: Kiểm tra ổn định qua 2 bộ test Playwright E2E (`test_e2e_filters.py`, `test_e2e_curation.py`) đạt tỷ lệ **100% PASS**.
+
 ### 2026-06-29 (Nghiệm thu US-112 - Đồng bộ siêu cấu trúc Master Prompt mới cho Tự động điền AI trên Vercel và Local - TEST PASS)
 *   **Mã User Story:** `US-112`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1246,6 +1254,8 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-113:** Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone ✅ Done 2026-06-29
+- [x] **US-112:** Đảm bảo thực hiện prompt mới khi bấm nút "Tự động điền" trong biên tập chi tiết ✅ Done 2026-06-29
 - [x] **US-111:** Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang ✅ Done 2026-06-29
 - [x] **US-110:** Quản lý và Biên tập Hướng nhà ✅ Done 2026-06-28
 - [x] **US-109:** Lấy tiêu đề thô cào về lưu vào cột Nội dung chính trên Pool ✅ Done 2026-06-27

@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-113 (Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone):** **[ACCEPTED - 2026-06-29]** Khắc phục triệt để lỗi chớp đen màn hình khi phóng to/kéo ảnh trên thiết bị iOS (iPhone Safari/Chrome) bằng cách tắt CSS transition động trong quá trình thao tác cảm ứng, đồng thời kích hoạt Hardware Acceleration (tăng tốc phần cứng GPU) qua `translate3d` và thuộc tính CSS layer optimization (`backface-visibility: hidden`). Bảo toàn trạng thái zoom & focus vị trí xem chi tiết khi người dùng nhấc ngón tay (`touchend`). Đã chạy toàn bộ các kịch bản kiểm thử Playwright E2E đạt 100% PASS.
 *   **US-112 (Đồng bộ siêu cấu trúc Master Prompt mới cho Tự động điền AI trên Vercel và Local):** **[ACCEPTED - 2026-06-29]** Cập nhật ID Google Doc prompt thành ID mới (`1-VlvYmwY9_22dULAF4Xtlooa8A8VUfiV3OVU01OaoGE`). Đồng bộ cấu trúc jsonSuffix 5 trường ở Node.js và Python local. Triển khai hàm trợ giúp làm sạch ký tự in đậm `**` và nối chuỗi mô tả/góc nhìn đầu tư theo các quy tắc mới (khoảng cách dòng trống `\n\n` và phân cách `---`). Chạy toàn bộ 4 bộ test E2E Playwright đạt 100% PASS và deploy lên live Production.
 *   **US-111 (Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang):** **[ACCEPTED - 2026-06-29]** Khắc phục lỗi Specificity CSS Accordion bằng cách loại bỏ các gán cứng inline style display trên phần tử `.accordion-content`, bàn giao quyền điều khiển hiển thị hoàn toàn cho class `.expanded`. Bổ sung dọn dẹp phòng thủ trong hàm `toggleAdminAccordion`. Đã chạy 3 bộ test Playwright E2E đạt 100% PASS và deploy lên live Production.
 *   **US-110 (Quản lý và Biên tập Hướng nhà):** **[ACCEPTED - 2026-06-28]** Tự động bóc tách Hướng từ DOM/API Thiên Khôi lưu vào cột Huong/custom_huong trong SQLite và đồng bộ lên Google Sheets Pool (cột R) & Source (cột M). Thiết lập giao diện bộ lọc Hướng 8 hướng tiêu chuẩn và mặc định Hướng trong form biên tập chi tiết trùng với Hướng gốc khi chưa chỉnh sửa. Đã kiểm thử Playwright E2E đạt 100% PASS và deploy lên live Production.
@@ -52,15 +53,12 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [settings.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/settings.json) — Cập nhật prompt_google_doc_id thành ID mới.
-*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — Cập nhật default docId, jsonSuffix và logic ghép moTaRaw của Vercel Node.js.
-*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Thêm hàm parse_and_join_ai_response và đồng bộ logic Tự động điền local.
-*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký và cập nhật trạng thái US-112 thành accepted.
-*   [docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md) — Cập nhật trạng thái story thành accepted và hoàn thành acceptance criteria.
-*   [index.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/index.html) — Cập nhật cache-busting version tự động.
-*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Ghi nhận change log phiên hiện tại.
+*   [static/js/lego_detail_client.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_client.js) — Cập nhật logic dịch chuyển sang translate3d, quản lý transition và touch handler để fix chớp đen trên iOS.
+*   [static/css/global.css](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/css/global.css) — Bổ sung CSS GPU optimization (.lb-img).
+*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký và cập nhật trạng thái US-113 thành accepted.
+*   [docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md) — Tài liệu User Story US-113.
 *   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật tài liệu Next Session.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-112 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-113 accepted & E2E tests 100% passed).*
 

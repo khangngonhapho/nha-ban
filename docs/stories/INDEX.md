@@ -3,16 +3,17 @@
 Last updated: 2026-06-29
 
 ## Stats
-- Total: 121
+- Total: 122
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 21
-- accepted: 91
+- accepted: 92
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-113 | Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone | accepted | S    | 2026-06-29 | `docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md`, `static/js/lego_detail_client.js`, `static/css/global.css` |
 | US-112 | Đảm bảo thực hiện prompt mới khi bấm nút "Tự động điền" trong biên tập chi tiết | accepted | S | 2026-06-29 | `docs/stories/_inbox/US-112_ensure_new_prompt_autofill.md`, `settings.json`, `api/index.js`, `manager.py` |
 | US-111 | Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang | accepted | S | 2026-06-29 | `static/js/lego_detail_admin.js` |
 | US-110 | Quản lý và Biên tập Hướng nhà (Direction Curation & Management)        | accepted | M    | 2026-06-28 | `fetcher.py`, `manager.py`, `pool_lego.py`, `restore_db_from_sheets.py`, `static/js/lego_detail_client.js`, `static/js/lego_detail_admin.js`, `static/js/lego_filters.js` |
@@ -227,6 +228,7 @@ Last updated: 2026-06-29
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-113_fix_iphone_image_zoom_black_screen|US-113]]: Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone (accepted)
 - [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-108_fix_curation_shadowing_render|US-108]]: Sửa lỗi save Curation: Cannot read properties of undefined (reading 'img_mat_tien') (accepted)
