@@ -1191,6 +1191,83 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         except Exception:
             raw_sodo_tk = []
 
+        # Tái sử dụng ảnh R2 cũ từ file backup (US-116)
+        r2_by_tk_id_file = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/r2_images_by_tk_id.json"
+        r2_by_tk_id = {}
+        if os.path.exists(r2_by_tk_id_file):
+            try:
+                with open(r2_by_tk_id_file, "r", encoding="utf-8") as r2_f:
+                    r2_by_tk_id = json.load(r2_f)
+            except Exception:
+                pass
+        
+        tk_r2_data = r2_by_tk_id.get(tk_id)
+        if tk_r2_data:
+            # Xác định các ảnh sơ đồ thửa đất để đối chiếu
+            col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
+            col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+            col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
+            col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
+            col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
+            original_sodo1 = d.get(col_sodo1_key)
+            original_sodo2 = d.get(col_sodo2_key)
+            original_sodo3 = d.get(col_sodo3_key)
+            original_sodo4 = d.get(col_sodo4_key)
+            original_sodo5 = d.get(col_sodo5_key)
+            stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
+
+            for idx, img_url in enumerate(raw_images_tk):
+                stripped_url = img_url.split('?')[0] if img_url else ""
+                if stripped_url in images_mapping:
+                    continue
+                orig_filename = stripped_url.split('/')[-1]
+                base_name = orig_filename.split('.')[0]
+                r2_url = None
+                
+                # 1. Khớp theo tên file gốc trong filenames
+                if orig_filename in tk_r2_data.get("filenames", {}):
+                    r2_url = tk_r2_data["filenames"][orig_filename]
+                elif base_name in tk_r2_data.get("filenames", {}):
+                    r2_url = tk_r2_data["filenames"][base_name]
+                else:
+                    is_diag = (stripped_url in stripped_sodo) or \
+                              (original_sodo1 and stripped_url == original_sodo1.split('?')[0]) or \
+                              (original_sodo2 and stripped_url == original_sodo2.split('?')[0]) or \
+                              (original_sodo3 and stripped_url == original_sodo3.split('?')[0]) or \
+                              (original_sodo4 and stripped_url == original_sodo4.split('?')[0]) or \
+                              (original_sodo5 and stripped_url == original_sodo5.split('?')[0])
+                    
+                    if is_diag:
+                        # Thử lấy số từ tên file sơ đồ (vd sodo2 -> 2)
+                        digits = "".join(filter(str.isdigit, base_name))
+                        if digits and digits in tk_r2_data.get("sodo", {}):
+                            r2_url = tk_r2_data["sodo"][digits]
+                        else:
+                            sodo_num = None
+                            if original_sodo1 and stripped_url == original_sodo1.split('?')[0]: sodo_num = "1"
+                            elif original_sodo2 and stripped_url == original_sodo2.split('?')[0]: sodo_num = "2"
+                            elif original_sodo3 and stripped_url == original_sodo3.split('?')[0]: sodo_num = "3"
+                            elif original_sodo4 and stripped_url == original_sodo4.split('?')[0]: sodo_num = "4"
+                            elif original_sodo5 and stripped_url == original_sodo5.split('?')[0]: sodo_num = "5"
+                            else:
+                                try:
+                                    sodo_idx = raw_sodo_tk.index(img_url)
+                                    sodo_num = str(sodo_idx + 1)
+                                except ValueError:
+                                    pass
+                            if sodo_num and sodo_num in tk_r2_data.get("sodo", {}):
+                                r2_url = tk_r2_data["sodo"][sodo_num]
+                    else:
+                        # Nếu tên file là số đại diện cho stt gốc (vd: 22.jpg -> 22)
+                        if base_name.isdigit() and base_name in tk_r2_data.get("images", {}):
+                            r2_url = tk_r2_data["images"][base_name]
+                        # Khớp theo stt của danh sách cào mới
+                        elif str(idx + 1) in tk_r2_data.get("images", {}):
+                            r2_url = tk_r2_data["images"][str(idx + 1)]
+                        
+                if r2_url:
+                    images_mapping[img_url] = r2_url
+
         # Xác định URL ảnh sơ đồ thửa đất của căn này để bỏ qua nén
         col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
         col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
