@@ -1003,11 +1003,13 @@ def create_drive_folder(folder_name, parent_id, token):
 # TIẾN TRÌNH TỰ ĐỘNG DI CƯ HÌNH ẢNH CHẠY NGẦM (BACKGROUND AUTO-MIGRATION)
 # ==================================================
 IS_MIGRATION_ACTIVE = False
+SHOULD_STOP_MIGRATION = False
 MIGRATION_LOCK = threading.Lock()
 
 def run_auto_migration_wrapper(cookie):
-    global IS_MIGRATION_ACTIVE
+    global IS_MIGRATION_ACTIVE, SHOULD_STOP_MIGRATION
     try:
+        SHOULD_STOP_MIGRATION = False
         run_image_migration_thread(limit=None, cookie=cookie)
     except Exception as e:
         add_log_message(f"[❌ AUTO-MIGRATION ERROR] Lỗi trong tiến trình di cư tự động: {str(e)}")
@@ -1016,8 +1018,9 @@ def run_auto_migration_wrapper(cookie):
             IS_MIGRATION_ACTIVE = False
 
 def run_auto_migration_wrapper_with_limit(limit, cookie):
-    global IS_MIGRATION_ACTIVE
+    global IS_MIGRATION_ACTIVE, SHOULD_STOP_MIGRATION
     try:
+        SHOULD_STOP_MIGRATION = False
         run_image_migration_thread(limit=limit, cookie=cookie)
     except Exception as e:
         add_log_message(f"[❌ MIGRATION ERROR] Lỗi trong tiến trình di cư thủ công: {str(e)}")
@@ -1078,6 +1081,9 @@ def start_auto_migration_scheduler():
 
 def run_image_migration_thread(limit, cookie, target_tk_id=None):
     """Tải và di cư hình ảnh chạy ngầm hoặc đồng bộ căn cụ thể (Throttled Mode)"""
+    global SHOULD_STOP_MIGRATION
+    SHOULD_STOP_MIGRATION = False
+    
     if target_tk_id:
         add_log_message(f"[🚀] KHỞI ĐỘNG TIẾN TRÌNH DI CƯ HÌNH ẢNH CHO CĂN: {target_tk_id}...")
     else:
@@ -1141,6 +1147,10 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
     
     processed = 0
     for row in rows:
+        if SHOULD_STOP_MIGRATION:
+            add_log_message("[🛑] ĐÃ YÊU CẦU DỪNG TIẾN TRÌNH DI CƯ HÌNH ẢNH!")
+            break
+            
         if limit and processed >= limit:
             break
             
@@ -2547,6 +2557,12 @@ def trigger_migration():
     t.start()
     
     return jsonify({"status": "success", "message": "Đã bắt đầu di cư hình ảnh lên Drive chạy ngầm!"})
+
+@app.route('/api/stop_migration', methods=['POST'])
+def stop_migration_endpoint():
+    global SHOULD_STOP_MIGRATION
+    SHOULD_STOP_MIGRATION = True
+    return jsonify({"status": "success", "message": "Đã gửi yêu cầu dừng di cư hình ảnh."})
 
 @app.route('/api/crawl/sessions', methods=['GET'])
 def get_crawl_sessions():

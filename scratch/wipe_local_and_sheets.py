@@ -28,30 +28,35 @@ def main():
     print("[+] Đang kết nối tới Google Sheets...")
     spreadsheet = client.open_by_key(sheet_id)
     
-    # 1. Dọn dẹp tab Pool (Clear từ dòng 2 trở đi)
+    # 1. Dọn dẹp tab Pool (Xóa từ dòng 2 trở đi, giữ lại 1 dòng trống cuối cùng)
     try:
         pool_sheet = spreadsheet.worksheet("Pool")
         pool_row_count = pool_sheet.row_count
-        if pool_row_count >= 2:
-            print(f"[+] Đang dọn dẹp tab 'Pool' (dòng 2 -> {pool_row_count})...")
-            pool_sheet.batch_clear([f"A2:ZZ{pool_row_count}"])
+        if pool_row_count >= 3:
+            print(f"[+] Đang dọn dẹp và xóa dòng tab 'Pool' (dòng 2 -> {pool_row_count - 1})...")
+            pool_sheet.delete_rows(2, pool_row_count - 1)
             print("[+] Dọn dẹp tab 'Pool' hoàn tất.")
+        elif pool_row_count == 2:
+            print("[+] Chỉ có 2 dòng, thực hiện clear nội dung dòng 2...")
+            pool_sheet.batch_clear(["A2:ZZ2"])
         else:
             print("[*] Tab 'Pool' không có dòng dữ liệu để dọn dẹp.")
     except Exception as e:
         print(f"[-] Lỗi dọn dẹp tab 'Pool': {e}")
         
-    # 2. Dọn dẹp tab Source (Clear từ dòng 3 trở đi)
+    # 2. Dọn dẹp tab Source (Xóa từ dòng 3 trở đi, giữ lại 1 dòng trống cuối cùng)
     try:
-        # Source sheet ID is hardcoded in pool_lego.py as "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
         source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
         source_spreadsheet = client.open_by_key(source_sheet_id)
         source_sheet = source_spreadsheet.worksheet("Source")
         source_row_count = source_sheet.row_count
-        if source_row_count >= 3:
-            print(f"[+] Đang dọn dẹp tab 'Source' (dòng 3 -> {source_row_count})...")
-            source_sheet.batch_clear([f"A3:ZZ{source_row_count}"])
+        if source_row_count >= 4:
+            print(f"[+] Đang dọn dẹp và xóa dòng tab 'Source' (dòng 3 -> {source_row_count - 1})...")
+            source_sheet.delete_rows(3, source_row_count - 1)
             print("[+] Dọn dẹp tab 'Source' hoàn tất.")
+        elif source_row_count == 3:
+            print("[+] Chỉ có 3 dòng, thực hiện clear nội dung dòng 3...")
+            source_sheet.batch_clear(["A3:ZZ3"])
         else:
             print("[*] Tab 'Source' không có dòng dữ liệu để dọn dẹp.")
     except Exception as e:

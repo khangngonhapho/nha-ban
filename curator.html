@@ -1147,7 +1147,10 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-gold" style="width: 100%;" onclick="startMigration()">🖼️ BẮT ĐẦU DI CƯ HÌNH ẢNH</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-gold" style="flex: 1;" onclick="startMigration()">🖼️ BẮT ĐẦU DI CƯ</button>
+                        <button class="btn" style="flex: 1; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red);" onclick="stopMigration()">🛑 DỪNG DI CƯ</button>
+                    </div>
                     
                     <div class="progress-bar-wrapper" id="migrate-progress-wrapper" style="display: none;">
                         <div class="progress-bar-fill" id="migrate-progress-fill"></div>
@@ -2354,6 +2357,23 @@
                         }
                         fill.style.width = `${w}%`;
                     }, 3000);
+                }
+            });
+        }
+
+        function stopMigration() {
+            fetch('/api/stop_migration', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🛑 Đã yêu cầu dừng tiến trình di cư hình ảnh!', 'red');
+                    const wrapper = document.getElementById('migrate-progress-wrapper');
+                    if (wrapper) wrapper.style.display = 'none';
+                } else {
+                    alert('Lỗi: ' + data.message);
                 }
             });
         }
