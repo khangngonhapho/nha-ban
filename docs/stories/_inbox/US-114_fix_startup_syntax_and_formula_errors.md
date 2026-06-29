@@ -41,11 +41,11 @@ size: S
 
 ## 📝 Task Checklist (TODO)
 - [x] **Khảo sát & Viết tài liệu:** Viết tài liệu User Story `US-114` (Đã hoàn thành tệp này)
-- [ ] **Đồng bộ Index:** Cập nhật tệp [INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md)
-- [ ] **Sửa lỗi khởi chạy:** Sửa lỗi cú pháp dòng 2109 trong [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py)
-- [ ] **Sửa lỗi Google Sheets:** Thêm hàm `escape_sheets_value` và tích hợp vào `pool_lego.py`
-- [ ] **Kiểm thử tự động:** Chạy kịch bản test E2E để đảm bảo không lỗi hồi quy
-- [ ] **Nghiệm thu:** Cập nhật trạng thái story sang `done` hoặc `accepted` trong `INDEX.md`, `NEXT_SESSION.md` và `SOURCE_OF_TRUTH.md`
+- [x] **Đồng bộ Index:** Cập nhật tệp [INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md)
+- [x] **Sửa lỗi khởi chạy:** Sửa lỗi cú pháp dòng 2109 trong [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py)
+- [x] **Sửa lỗi Google Sheets:** Thêm hàm `escape_sheets_value` và tích hợp vào `pool_lego.py`
+- [x] **Kiểm thử tự động:** Chạy kịch bản test E2E để đảm bảo không lỗi hồi quy
+- [x] **Nghiệm thu:** Cập nhật trạng thái story sang `done` hoặc `accepted` trong `INDEX.md`, `NEXT_SESSION.md` và `SOURCE_OF_TRUTH.md`
 
 ## Verification Plan
 
@@ -62,3 +62,15 @@ size: S
 3. Bấm xuất bản/lên sóng để hệ thống đồng bộ lên Google Sheets.
 4. Truy cập Google Sheets kiểm tra xem ô "Mô tả chi tiết" hiển thị đúng dạng văn bản thô `- Nhà đẹp...` thay vì lỗi `#ERROR!`.
 5. Truy cập trang chi tiết trên Vercel/Local để xem nội dung hiển thị bình thường.
+
+## 🧠 Retro, Lessons Learned & Good Practices
+
+### Lessons Learned
+1. **Lỗi cú pháp nối chuỗi JSON Suffix**:
+   - Khi nối thêm chuỗi JSON suffix để chỉ thị AI, cần chú ý escape tất cả các ký tự nháy kép của các trường JSON (ví dụ `\"gocNhinDauTu\"`). Việc thiếu ký tự escape nháy kép đóng `" ... )"` thay vì `" ... )\""` sẽ kết thúc chuỗi literal của Python sớm và dẫn đến lỗi biên dịch `SyntaxError`.
+   - **Bài học:** Cần bổ sung test-run khởi động server Flask cục bộ trong kịch bản CI hoặc git pre-commit hooks để ngăn chặn đẩy code lỗi cú pháp lên nhánh chính.
+
+2. **Lỗi công thức khi ghi Google Sheets với USER_ENTERED**:
+   - Google Sheets API khi gọi với `valueInputOption="USER_ENTERED"` sẽ cố gắng biên dịch và parse tất cả các giá trị bắt đầu bằng `-`, `+`, hoặc `=` thành công thức. Các giá trị văn bản thô như mô tả chi tiết bắt đầu bằng các dấu này sẽ gây ra lỗi cú pháp công thức `#ERROR!`.
+   - **Bài học:** Các giá trị chuỗi nhập vào tự nhiên có nguy cơ bắt đầu bằng dấu `-` hoặc `+` (danh sách liệt kê) cần phải được làm sạch hoặc tự động thêm dấu nháy đơn `'` ở đầu trước khi ghi lên Google Sheets. Dấu nháy đơn này giúp Google Sheets coi ô đó là văn bản thuần tuý và tự động ẩn nháy đơn đi khi hiển thị hoặc khi lấy dữ liệu ra qua API.
+

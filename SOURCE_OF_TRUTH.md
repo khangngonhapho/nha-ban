@@ -1262,6 +1262,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-114:** Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets ✅ Done 2026-06-29
 - [x] **US-113:** Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone ✅ Done 2026-06-29
 - [x] **US-112:** Đảm bảo thực hiện prompt mới khi bấm nút "Tự động điền" trong biên tập chi tiết ✅ Done 2026-06-29
 - [x] **US-111:** Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang ✅ Done 2026-06-29
