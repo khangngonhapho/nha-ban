@@ -12,6 +12,20 @@ import re
 import json
 import random
 import sqlite3
+
+# Tối ưu hóa SQLite WAL mode và Timeout chống lỗi "database disk image is malformed" / "database is locked"
+_orig_sqlite_connect = sqlite3.connect
+def robust_sqlite_connect(database, timeout=30.0, *args, **kwargs):
+    conn = _orig_sqlite_connect(database, timeout=max(timeout, 30.0), *args, **kwargs)
+    try:
+        conn.execute("PRAGMA journal_mode=WAL;")
+        conn.execute("PRAGMA synchronous=NORMAL;")
+        conn.execute("PRAGMA busy_timeout=30000;")
+    except Exception:
+        pass
+    return conn
+sqlite3.connect = robust_sqlite_connect
+
 import time
 import threading
 from datetime import datetime
