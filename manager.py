@@ -156,8 +156,8 @@ def backup_database():
         # Thêm bản mới vào danh sách để tính toán xoay vòng
         backups.append(backup_path)
         
-        # Giữ lại tối đa 15 bản sao lưu gần nhất (dung lượng nhẹ ~27MB/file)
-        while len(backups) > 15:
+        # Giữ lại tối đa 5 bản sao lưu gần nhất (dung lượng nhẹ ~27MB/file)
+        while len(backups) > 5:
             try:
                 os.remove(backups.pop(0))
             except Exception:
@@ -1136,6 +1136,21 @@ def start_auto_migration_scheduler():
             # Nghỉ 15 giây trước khi quét lần tiếp theo
             time.sleep(15)
 
+    t = threading.Thread(target=scheduler_loop)
+    t.daemon = True
+    t.start()
+
+def start_periodic_backup_scheduler():
+    """Khởi động bộ lập lịch tự động sao lưu CSDL định kỳ chạy ngầm (quét mỗi 1 giờ)"""
+    def scheduler_loop():
+        # Đợi 15 giây cho server khởi chạy hoàn tất trước khi quét lượt đầu
+        time.sleep(15)
+        while True:
+            try:
+                backup_database()
+            except Exception:
+                pass
+            time.sleep(3600)  # Lặp lại sau mỗi 1 giờ
     t = threading.Thread(target=scheduler_loop)
     t.daemon = True
     t.start()
@@ -4150,6 +4165,13 @@ if __name__ == '__main__':
         add_log_message("[🚀] Tính năng tự động di cư hình ảnh chạy ngầm đang được TẮT (Bạn vẫn có thể bấm nút Di cư thủ công trên UI)...")
     except Exception as e:
         add_log_message(f"[⚠️ WARNING] Không thể cấu hình bộ quét di cư: {str(e)}")
+
+    # Tự động kích hoạt bộ sao lưu CSDL định kỳ ngầm
+    try:
+        start_periodic_backup_scheduler()
+        add_log_message("[🚀] Bật tính năng tự động SAO LƯU định kỳ (quét mỗi 1 giờ - tối đa 5 bản)...")
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Không thể khởi chạy bộ sao lưu định kỳ: {str(e)}")
         
     cfg = load_config()
     port = int(os.environ.get("FLASK_PORT", 5000))
