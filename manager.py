@@ -1141,7 +1141,7 @@ def start_auto_migration_scheduler():
     t.start()
 
 def start_periodic_backup_scheduler():
-    """Khởi động bộ lập lịch tự động sao lưu CSDL định kỳ chạy ngầm (quét mỗi 1 giờ)"""
+    """Khởi động bộ lập lịch tự động sao lưu CSDL định kỳ chạy ngầm (quét mỗi 15 phút)"""
     def scheduler_loop():
         # Đợi 15 giây cho server khởi chạy hoàn tất trước khi quét lượt đầu
         time.sleep(15)
@@ -1150,7 +1150,7 @@ def start_periodic_backup_scheduler():
                 backup_database()
             except Exception:
                 pass
-            time.sleep(3600)  # Lặp lại sau mỗi 1 giờ
+            time.sleep(900)  # Lặp lại sau mỗi 15 phút
     t = threading.Thread(target=scheduler_loop)
     t.daemon = True
     t.start()
@@ -4169,7 +4169,7 @@ if __name__ == '__main__':
     # Tự động kích hoạt bộ sao lưu CSDL định kỳ ngầm
     try:
         start_periodic_backup_scheduler()
-        add_log_message("[🚀] Bật tính năng tự động SAO LƯU định kỳ (quét mỗi 1 giờ - tối đa 5 bản)...")
+        add_log_message("[🚀] Bật tính năng tự động SAO LƯU định kỳ (quét mỗi 15 phút - tối đa 5 bản)...")
     except Exception as e:
         add_log_message(f"[⚠️ WARNING] Không thể khởi chạy bộ sao lưu định kỳ: {str(e)}")
         
