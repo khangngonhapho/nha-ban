@@ -931,9 +931,9 @@ const LegoState = {
         const fullList = rows
           .filter(r => r.c[0] && r.c[0].v)
           .map((r, index) => {
-            const dt = parseFloat(cv(r.c[2])) || 0;
+            const dtSoVal = parseFloat(cv(r.c[44])) || parseFloat(cv(r.c[2])) || 0;
             const gia = parseFloat(cv(r.c[5])) || 0;
-            const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+            const giabq = (dtSoVal > 0 && gia > 0) ? Math.round((gia * 1000) / dtSoVal) : 0;
             let rawQ = cv(r.c[6]);
             if (!rawQ) {
               const titleLower = String(cv(r.c[1])).toLowerCase();
@@ -1026,7 +1026,9 @@ const LegoState = {
               ].filter(Boolean),
               system_id: cv(r.c[34]) || (index + 1).toString(),
               so_pn: cv(r.c[29]) || '-',
-              img_mat_tien: cv(r.c[35]) || ''
+              img_mat_tien: cv(r.c[35]) || '',
+              dt_tren_so_custom: cv(r.c[44]) || '',
+              raw_dt_tren_so: cv(r.c[44]) || ''
             };
             
             let jsonUiVal = '';
