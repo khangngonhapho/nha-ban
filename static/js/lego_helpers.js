@@ -98,8 +98,8 @@ window.autoFillCurationDetails = async function() {
       soPhongNgu: p.so_pn !== '-' ? p.so_pn : '',
       soToilet: (p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || ''),
       giaChao: p.raw_gia_chao || p.gia || '',
-      duongTruocNha: p.raw_duong_truoc_nha || p.duong_truoc_nha || '',
-      phanLoaiHem: p.raw_do_rong_hem || p.rong_hem || '',
+      duongTruocNha: p.rong_hem || p.raw_duong_truoc_nha || '',
+      phanLoaiHem: p.duong_truoc_nha || (p.json_ui_parsed && p.json_ui_parsed.Criteria_Duong_truoc_nha) || '',
       phanLoai: p.danh_gia || ''
     };
     

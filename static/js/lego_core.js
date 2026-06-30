@@ -711,7 +711,7 @@ const LegoState = {
               p.raw_so_tang = poolRow[15] || '';
               p.raw_mat_tien = poolRow[16] || '';
               p.raw_duong_truoc_nha = poolRow[60] || '';
-              p.raw_do_rong_hem = poolRow[61] || '';
+              p.raw_do_rong_hem = '';
               p.raw_so_pn = poolRow[64] || '';
               p.raw_so_wc = poolRow[65] || '';
               p.raw_tieu_de_public = poolRow[56] || '';
@@ -754,8 +754,8 @@ const LegoState = {
               p.raw_gia_chao = p.gia || '';
               p.raw_so_tang = p.tang || '';
               p.raw_mat_tien = p.mat || '';
-              p.raw_duong_truoc_nha = p.duong_truoc_nha || '';
-              p.raw_do_rong_hem = p.rong_hem || '';
+              p.raw_duong_truoc_nha = '';
+              p.raw_do_rong_hem = '';
               p.raw_so_pn = p.so_pn || '';
               p.raw_so_wc = '';
               p.raw_tieu_de_public = '';
@@ -827,8 +827,8 @@ const LegoState = {
             phuong: poolRow[4] || '-',
             loai_hinh: poolRow[7] || 'Hẻm',
             huong: poolRow[17] || '-',
-            duong_truoc_nha: poolRow[60] || '-',
-            rong_hem: poolRow[61] || '-',
+            duong_truoc_nha: '-',
+            rong_hem: poolRow[60] || '-',
             tinh_trang: '-',
             danh_gia: '',
             is_invisible: false,
@@ -866,7 +866,7 @@ const LegoState = {
           p.raw_so_tang = poolRow[15] || '';
           p.raw_mat_tien = poolRow[16] || '';
           p.raw_duong_truoc_nha = poolRow[60] || '';
-          p.raw_do_rong_hem = poolRow[61] || '';
+          p.raw_do_rong_hem = '';
           p.raw_so_pn = poolRow[64] || '';
           p.raw_so_wc = poolRow[65] || '';
           p.raw_tieu_de_public = poolRow[56] || '';

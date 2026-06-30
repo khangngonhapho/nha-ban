@@ -3165,7 +3165,7 @@ def handle_listing_detail(tk_id):
                             "Mat_Tien": data.get("mat_tien") or d_v2.get("Mat_Tien") or "",
                             "Chieu_dai": data.get("chieu_dai") or d_v2.get("Chieu_dai") or "",
                             "Huong": d_v2.get("Huong") or "",
-                            "Criteria_Duong_truoc_nha": d_v2.get("Criteria_Duong_truoc_nha") or "",
+                            "Criteria_Duong_truoc_nha": data.get("phan_loai_hem") or d_v2.get("Criteria_Duong_truoc_nha") or "",
                             "Criteria_Noi_that": d_v2.get("Criteria_Noi_that") or "",
                             "Criteria_Thang_may": d_v2.get("Criteria_Thang_may") or "",
                             "Criteria_Loai_ngo": d_v2.get("Criteria_Loai_ngo") or "",

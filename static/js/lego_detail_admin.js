@@ -124,7 +124,11 @@
                 </div>
                 <div class="admin-raw-cell">
                   <span class="label">Đường trước nhà:</span>
-                  <span class="value dotted">${p.raw_duong_truoc_nha || p.duong_truoc_nha || '-'} m</span>
+                  <span class="value dotted">${(p.json_ui_parsed && p.json_ui_parsed.Criteria_Duong_truoc_nha) || '-'}</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Đường vào nhỏ nhất:</span>
+                  <span class="value dotted">${p.raw_duong_truoc_nha ? p.raw_duong_truoc_nha + ' m' : '-'}</span>
                 </div>
                 <div class="admin-raw-cell">
                   <span class="label">Số tầng:</span>
@@ -241,9 +245,14 @@
                         <option value="Tây Bắc">Tây Bắc</option>
                       </select>
                     </div>
-                    
                     <div class="admin-edit-group">
-                      <label for="editDuong">Đường trước nhà:</label>
+                      <!-- Giữ khoảng trống cân đối -->
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editDuong">Đường trước nhà custom:</label>
                       <select id="editDuong">
                         <option value="-">Chưa xác định</option>
                         <option value="Hẻm ba gác">Hẻm ba gác</option>
@@ -251,6 +260,10 @@
                         <option value="Hẻm ô tô">Hẻm ô tô</option>
                         <option value="Mặt tiền đường">Mặt tiền đường</option>
                       </select>
+                    </div>
+                    <div class="admin-edit-group">
+                      <label for="editRongHem">Độ rộng hẻm custom (m):</label>
+                      <input type="text" id="editRongHem" placeholder="Bỏ trống / Nhập độ rộng...">
                     </div>
                   </div>
 
@@ -349,6 +362,9 @@
 
           const editDuong = document.getElementById('editDuong');
           if (editDuong) editDuong.value = p.duong_truoc_nha || '-';
+
+          const editRongHem = document.getElementById('editRongHem');
+          if (editRongHem) editRongHem.value = p.rong_hem === '-' ? '' : (p.rong_hem || '');
 
           const editDanhGia = document.getElementById('editDanhGia');
           if (editDanhGia) editDanhGia.value = p.danh_gia || '';
@@ -2451,7 +2467,7 @@
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
-        const rongHem = p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
+        const rongHem = document.getElementById('editRongHem').value.trim();
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
         const editDtThucTe = document.getElementById('editDtThucTe').value.trim();
@@ -2833,7 +2849,7 @@
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
-        const rongHem = matchedRow[59] || '';
+        const rongHem = document.getElementById('editRongHem').value.trim();
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
         const editDtThucTe = document.getElementById('editDtThucTe').value.trim();

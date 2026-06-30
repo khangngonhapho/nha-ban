@@ -3,16 +3,17 @@
 Last updated: 2026-07-01
 
 ## Stats
-- Total: 126
+- Total: 127
 - backlog: 3
 - draft: 0
-- in-progress: 0
+- in-progress: 1
 - done: 22
 - accepted: 96
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-119 | Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm | in-progress | S | 2026-07-01 | `pool_backend_v3.gs`, `manager.py`, `static/js/lego_core.js`, `static/js/lego_helpers.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-119_street_type_and_alley_width_curation.md` |
 | US-118 | Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail | accepted | S | 2026-07-01 | `pool_backend_v3.gs`, `pool_lego.py`, `manager.py`, `static/js/lego_detail_admin.js`, `static/js/lego_core.js`, `static/js/lego_detail_client.js`, `static/js/lego_helpers.js`, `curator.html`, `canvas.html`, `docs/stories/_inbox/US-118_custom_area_curation.md` |
 | US-117 | Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ | accepted | S | 2026-06-30 | `manager.py`, `docs/stories/_inbox/US-117_periodic_database_backup.md` |
 | US-116 | Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ | accepted | M | 2026-06-30 | `scratch/backup_and_map_curation.py`, `scratch/wipe_local_and_sheets.py`, `scratch/merge_curated_data.py`, `pool_lego.py` |
@@ -145,6 +146,7 @@ Last updated: 2026-07-01
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-119_street_type_and_alley_width_curation|US-119]]: Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm trên Vercel Detail & local Python Backend (in-progress)
 - [[US-118_custom_area_curation|US-118]]: Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail (accepted)
 - [[US-115_fix_malformed_sqlite_database|US-115]]: Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng (in-progress)
 - [[US-114_fix_startup_syntax_and_formula_errors|US-114]]: Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets (accepted)

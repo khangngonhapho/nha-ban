@@ -1294,6 +1294,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [ ] **US-119:** Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm trên Vercel Detail & local Python Backend
 - [x] **US-118:** Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail ✅ Done 2026-07-01
 - [x] **US-117:** Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ ✅ Done 2026-07-01
 - [x] **US-116:** Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ ✅ Done 2026-06-30

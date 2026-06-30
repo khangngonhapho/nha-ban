@@ -428,9 +428,9 @@
 
     if (hemMin !== '' || hemMax !== '') {
       a = a.filter(p => {
-        let val = pFHelper(p.raw_duong_truoc_nha);
+        let val = pFHelper(p.rong_hem);
         if (isNaN(val) || val === 0) {
-          val = pFHelper(p.rong_hem) || 0;
+          val = pFHelper(p.raw_duong_truoc_nha) || 0;
         }
         if (hemMin !== '' && val < pFHelper(hemMin)) return false;
         if (hemMax !== '' && val > pFHelper(hemMax)) return false;
