@@ -828,7 +828,7 @@ const LegoState = {
             loai_hinh: poolRow[7] || 'Hẻm',
             huong: poolRow[17] || '-',
             duong_truoc_nha: '-',
-            rong_hem: poolRow[60] || '-',
+            rong_hem: '-',
             tinh_trang: '-',
             danh_gia: '',
             is_invisible: false,

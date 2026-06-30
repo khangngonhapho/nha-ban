@@ -1779,6 +1779,22 @@
         if (row[c]) poolImgs.push(row[c]);
       }
 
+      let jsonUiVal = row[93] || '';
+      if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
+        for (let i = row.length - 1; i >= 0; i--) {
+          const val = row[i];
+          const valStr = val ? String(val).trim() : '';
+          if (valStr && valStr.startsWith('{') && valStr.endsWith('}')) {
+            jsonUiVal = valStr;
+            break;
+          }
+        }
+      }
+      let json_ui_parsed = {};
+      if (jsonUiVal) {
+        try { json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+      }
+
       const p = {
         temp_id: "pool_" + systemId,
         id: row[55] || systemId || '',
@@ -1794,8 +1810,8 @@
         phuong: row[4] || '-',
         loai_hinh: (row[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
         huong: row[17] || '-',
-        duong_truoc_nha: row[59] || '-',
-        rong_hem: row[60] || '-',
+        duong_truoc_nha: '-',
+        rong_hem: '-',
         tinh_trang: row[61] || '-',
         danh_gia: row[67] || '',
         is_invisible: false,
@@ -1807,6 +1823,7 @@
         system_id: systemId,
         so_pn: row[64] || '-',
         img_mat_tien: row[29] || '',
+        json_ui_parsed: json_ui_parsed,
 
         raw_ten_dau_chu: row[75] || '',
         raw_dt_dau_chu: row[74] || '',
@@ -1825,8 +1842,8 @@
         raw_gia_chao: row[11] || row[58] || '',
         raw_so_tang: row[15] || '',
         raw_mat_tien: row[16] || '',
-        raw_duong_truoc_nha: row[59] || '',
-        raw_do_rong_hem: row[60] || '',
+        raw_duong_truoc_nha: row[60] || '',
+        raw_do_rong_hem: '',
         raw_so_pn: row[64] || '',
         raw_so_wc: row[65] || '',
         raw_tieu_de_public: row[56] || '',
