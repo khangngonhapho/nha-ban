@@ -867,10 +867,17 @@
                                     <div class="canvas-card-title">📐 Kỹ thuật, Diện tích & Kết cấu</div>
                                     <div class="field-pair-list">
                                         <div class="field-pair">
-                                            <span class="field-label">Diện tích đất (m2)</span>
+                                            <span class="field-label">Diện tích Thực tế (m2)</span>
                                             <div class="field-comparison">
                                                 <div><div class="field-label">Pool (Thực tế)</div><div class="val-box raw" id="spec-dt-thuc-raw">-</div></div>
-                                                <div><div class="field-label">Source (Sổ công nhận)</div><div class="val-box curated" id="spec-dt-so-cur">-</div></div>
+                                                <div><div class="field-label">Source (Thực tế)</div><div class="val-box curated" id="spec-dt-thuc-cur">-</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="field-pair">
+                                            <span class="field-label">Diện tích Trên sổ (m2)</span>
+                                            <div class="field-comparison">
+                                                <div><div class="field-label">Pool (Trên sổ)</div><div class="val-box raw" id="spec-dt-so-raw">-</div></div>
+                                                <div><div class="field-label">Source (Sổ)</div><div class="val-box curated" id="spec-dt-so-cur">-</div></div>
                                             </div>
                                         </div>
                                         <div class="field-pair">
@@ -1527,8 +1534,10 @@
             let curDistrict = '';
             let curWardOld = '';
 
-            let rawArea = '';
-            let curArea = '';
+            let rawAreaThuc = '';
+            let curAreaThuc = '';
+            let rawAreaSo = '';
+            let curAreaSo = '';
             let rawNgang = '';
             let curDai = '';
             let rawFloors = '';
@@ -1574,8 +1583,10 @@
                 curWardOld = item.Phuong_cu_AI || item.Phuong_cu_AI_ || '-';
 
                 // Tech Specs
-                rawArea = (item.DT_Thuc_te || item.DT_Th_c_t_ || '-') + ' m²';
-                curArea = (item.DT_Tren_so || item.DT_Tr_n_s_ || item.custom_DT_Tren_so || '-') + ' m²';
+                rawAreaThuc = (item.DT_Thuc_te || item.DT_Th_c_t_ || '-') + ' m²';
+                curAreaThuc = (item.custom_dt_thuc_te || item.DT_Thuc_te || item.DT_Th_c_t_ || '-') + ' m²';
+                rawAreaSo = (item.DT_Tren_so || item.DT_Tr_n_s_ || '-') + ' m²';
+                curAreaSo = (item.custom_dt_so || item.DT_Tren_so || item.DT_Tr_n_s_ || '-') + ' m²';
                 rawNgang = (item.Mat_Tien || item.M_t_Ti_n || '-') + ' m';
                 curDai = (item.Chieu_dai || item.Chi_u_dai || '-') + ' m';
                 rawFloors = item.So_Tang || item.S__T_ng || '-';
@@ -1625,8 +1636,10 @@
                 curDistrict = item.ql || '-';
                 curWardOld = item.phuong_cu || '-';
 
-                rawArea = (item.raw_dt_thuc_te || '-') + ' m²';
-                curArea = (item.dt || '-') + ' m²';
+                rawAreaThuc = (item.raw_dt_thuc_te || '-') + ' m²';
+                curAreaThuc = (item.dt || '-') + ' m²';
+                rawAreaSo = (item.raw_dt_tren_so || '-') + ' m²';
+                curAreaSo = (item.dt_tren_so_custom || '-') + ' m²';
                 rawNgang = (item.raw_mat_tien || '-') + ' m';
                 curDai = (item.dai_nha || '-') + ' m';
                 rawFloors = item.raw_so_tang || '-';
@@ -1674,8 +1687,10 @@
             document.getElementById('loc-quan-cur').innerText = curDistrict;
             document.getElementById('loc-phuong-cu-cur').innerText = curWardOld;
 
-            document.getElementById('spec-dt-thuc-raw').innerText = rawArea;
-            document.getElementById('spec-dt-so-cur').innerText = curArea;
+            document.getElementById('spec-dt-thuc-raw').innerText = rawAreaThuc;
+            document.getElementById('spec-dt-thuc-cur').innerText = curAreaThuc;
+            document.getElementById('spec-dt-so-raw').innerText = rawAreaSo;
+            document.getElementById('spec-dt-so-cur').innerText = curAreaSo;
             document.getElementById('spec-ngang').innerText = rawNgang;
             document.getElementById('spec-dai').innerText = curDai;
             document.getElementById('spec-tang-raw').innerText = rawFloors;

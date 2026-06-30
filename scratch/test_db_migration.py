@@ -22,13 +22,16 @@ def main():
     
     print("Columns in listings table:")
     print("  custom_huong exists:", "custom_huong" in cols)
+    print("  custom_dt_so exists:", "custom_dt_so" in cols)
+    print("  custom_dt_thuc_te exists:", "custom_dt_thuc_te" in cols)
     
-    if "custom_huong" in cols:
-        print("  [✅] custom_huong column successfully verified in raw_archive.db!")
+    success = "custom_huong" in cols and "custom_dt_so" in cols and "custom_dt_thuc_te" in cols
+    if success:
+        print("  [✅] custom columns successfully verified in raw_archive.db!")
         conn.close()
         sys.exit(0)
     else:
-        print("  [❌] custom_huong column is missing!")
+        print("  [❌] One or more custom columns are missing!")
         conn.close()
         sys.exit(1)
 

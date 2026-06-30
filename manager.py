@@ -208,7 +208,9 @@ def normalize_listing_for_client(row):
         "Dien_thoai_Dau_Chu": ["Dien_thoai_Dau_Chu", "_i_n_tho_i___u_Ch_"],
         "Diem_Facebook": ["Diem_Facebook", "_i_m_Facebook"],
         "Ma_Hang": ["Ma_Hang", "M__H_ng"],
-        "Tinh": ["Tinh", "T_nh"]
+        "Tinh": ["Tinh", "T_nh"],
+        "custom_dt_so": ["custom_dt_so"],
+        "custom_dt_thuc_te": ["custom_dt_thuc_te"]
     }
     
     for client_key, db_keys in mapping.items():
@@ -3053,6 +3055,8 @@ def handle_listing_detail(tk_id):
             "CHDV (Admin)": data.get("chdv"),
             "Phường cũ (AI)": data.get("phuong_cu_ai"),
             "custom_huong": data.get("custom_huong"),
+            "custom_dt_so": data.get("custom_dt_so"),
+            "custom_dt_thuc_te": data.get("custom_dt_thuc_te"),
             # Thực tế địa chỉ chỉnh sửa
             "Ngõ/Số nhà": data.get("ngo_so_nha"),
             "Quận": data.get("quan"),

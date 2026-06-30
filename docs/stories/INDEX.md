@@ -1,18 +1,19 @@
 # Stories Index
 
-Last updated: 2026-06-29
+Last updated: 2026-07-01
 
 ## Stats
-- Total: 125
+- Total: 126
 - backlog: 3
 - draft: 0
 - in-progress: 0
 - done: 22
-- accepted: 95
+- accepted: 96
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-118 | Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail | accepted | S | 2026-07-01 | `pool_backend_v3.gs`, `pool_lego.py`, `manager.py`, `static/js/lego_detail_admin.js`, `static/js/lego_core.js`, `static/js/lego_detail_client.js`, `static/js/lego_helpers.js`, `curator.html`, `canvas.html`, `docs/stories/_inbox/US-118_custom_area_curation.md` |
 | US-117 | Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ | accepted | S | 2026-06-30 | `manager.py`, `docs/stories/_inbox/US-117_periodic_database_backup.md` |
 | US-116 | Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ | accepted | M | 2026-06-30 | `scratch/backup_and_map_curation.py`, `scratch/wipe_local_and_sheets.py`, `scratch/merge_curated_data.py`, `pool_lego.py` |
 | US-115 | Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng | done | S | 2026-06-29 | `docs/stories/_inbox/US-115_fix_malformed_sqlite_database.md`, `pool_lego.py`, `static/js/thienkhoi_list_scraper.user.js` |

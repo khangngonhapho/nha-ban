@@ -396,8 +396,12 @@
             <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
           </div>
           <div class="admin-raw-cell">
-            <span class="label">Diện tích:</span>
-            <span class="value dotted">${p.dt} m²</span>
+            <span class="label">DT Trên sổ:</span>
+            <span class="value dotted">${p.dt_tren_so_custom || p.raw_dt_tren_so || '-'} m²</span>
+          </div>
+          <div class="admin-raw-cell">
+            <span class="label">DT Thực tế:</span>
+            <span class="value dotted">${p.dt || p.raw_dt_thuc_te || '-'} m²</span>
           </div>
           <div class="admin-raw-cell">
             <span class="label">Đơn giá:</span>

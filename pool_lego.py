@@ -702,7 +702,9 @@ def init_db(db_file=None):
             "images_mapping_json TEXT",
             "manual_images_json TEXT",
             "raw_sodo_tk_json TEXT",
-            "custom_huong TEXT DEFAULT ''"
+            "custom_huong TEXT DEFAULT ''",
+            "custom_dt_so TEXT DEFAULT ''",
+            "custom_dt_thuc_te TEXT DEFAULT ''"
         ]
 
         for header in POOL_HEADERS:
@@ -740,6 +742,14 @@ def init_db(db_file=None):
                 
             if "custom_huong" not in existing_cols:
                 cursor.execute("ALTER TABLE listings ADD COLUMN custom_huong TEXT DEFAULT ''")
+                conn.commit()
+                
+            if "custom_dt_so" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN custom_dt_so TEXT DEFAULT ''")
+                conn.commit()
+                
+            if "custom_dt_thuc_te" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN custom_dt_thuc_te TEXT DEFAULT ''")
                 conn.commit()
                 
             for header in POOL_HEADERS:

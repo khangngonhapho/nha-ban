@@ -256,7 +256,7 @@ window.getMappedPoolData = function() {
   
   window.MAPPED_POOL_DATA = POOL_ROWS.map((row, index) => {
     const systemId = row[72] || row[71] || '';
-    const dt = parseFloat(row[13] || row[14]) || 0;
+    const dt = parseFloat(row[14] || row[13]) || 0;
     const gia = parseGia(row[11] || row[58]);
     const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 

@@ -587,9 +587,7 @@ const LegoState = {
             if (!sr[3] && !sr[4]) return null;
             
             const targetRowNumber = index + 2;
-            const dt = parseFloat(sr[5]) || 0;
-            const gia = parseGia(sr[8]);
-            const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+            // Sẽ tính gia và giabq sau khi đã khớp và lấy được dt_tren_so_custom từ poolRow hoặc sr[47]
             
             let rawQ = sr[9] || '';
             let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
@@ -651,12 +649,19 @@ const LegoState = {
             ] : sourcePublicImgs;
             const uniqueImgs = [...new Set(allImgs)];
 
+            const rawDtTrenSo = poolRow ? (poolRow[14] || '') : '';
+            const dt_tren_so_custom = sr[47] || rawDtTrenSo || sr[5] || '';
+            const dt_so_val = parseFloat(dt_tren_so_custom) || 0;
+            const gia = parseGia(sr[8]);
+            const giabq = (dt_so_val > 0 && gia > 0) ? Math.round((gia * 1000) / dt_so_val) : 0;
+
             const p = {
               temp_id: index + 1,
               id: sr[3] || '',
               cu_phap: sr[1] || '',
               t: sr[4] || '',
-              dt: sr[5] || '',
+              dt: sr[5] || '', // DT Thực tế (Cột F)
+              dt_tren_so_custom: dt_tren_so_custom,
               tang: sr[6] || '',
               mat: sr[7] || '',
               gia: gia,
@@ -802,15 +807,21 @@ const LegoState = {
 
           const uniqueImgs = [...new Set(poolImgs)];
 
+          const dtVal = parseFloatHelper(poolRow[13]) || 0;
+          const dtSo = parseFloatHelper(poolRow[14]) || 0;
+          const giaVal = parseGia(poolRow[11]) || parseGia(poolRow[58]) || 0;
+          const giabqVal = (dtSo > 0 && giaVal > 0) ? Math.round((giaVal * 1000) / dtSo) : 0;
+
           const p = {
             temp_id: sourceRows.length + prIdx + 1,
             id: poolRow[55] || '',
             cu_phap: poolRow[1] || '',
             t: poolRow[56] || poolRow[55] || 'Chưa biên tập',
-            dt: parseFloatHelper(poolRow[13]) || 0,
+            dt: dtVal, // DT Thực tế
+            dt_tren_so_custom: poolRow[14] || '', // DT Trên sổ
             tang: poolRow[15] || '',
             mat: poolRow[16] || '',
-            gia: parseGia(poolRow[11]) || parseGia(poolRow[58]) || 0,
+            gia: giaVal,
             q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
             ql: cleanQ.toUpperCase(),
             phuong: poolRow[4] || '-',
@@ -823,7 +834,7 @@ const LegoState = {
             is_invisible: false,
             ngu_tang_tret: '-',
             chdv: '-',
-            giabq: '-',
+            giabq: giabqVal > 0 ? `${giabqVal} tr/m²` : '-',
             m: cleanConsecutiveNewlines(poolRow[10] || ''),
             imgs: uniqueImgs,
             system_id: poolRow[72] || (sourceRows.length + prIdx + 1).toString(),

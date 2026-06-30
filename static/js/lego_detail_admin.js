@@ -288,6 +288,18 @@
                     </div>
                   </div>
 
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editDtThucTe">DT Thực tế (m²):</label>
+                      <input type="number" step="0.1" id="editDtThucTe" value="${p.dt || ''}" placeholder="DT thực tế...">
+                    </div>
+
+                    <div class="admin-edit-group">
+                      <label for="editDtTrenSo">DT Trên sổ (m²):</label>
+                      <input type="number" step="0.1" id="editDtTrenSo" value="${p.dt_tren_so_custom || ''}" placeholder="DT trên sổ...">
+                    </div>
+                  </div>
+
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
                     <div class="admin-edit-group row-group">
                       <input type="checkbox" id="editNguTret" ${p.ngu_tang_tret === 'Có' ? 'checked' : ''}>
@@ -1723,7 +1735,7 @@
       }
 
       // Map row to p structure
-      const dt = parseFloat(row[13] || row[14]) || 0;
+      const dt = parseFloat(row[14] || row[13]) || 0;
       const gia = parseGia(row[11] || row[58]);
       const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
@@ -2441,6 +2453,8 @@
         const rongHem = p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
+        const editDtThucTe = document.getElementById('editDtThucTe').value.trim();
+        const editDtTrenSo = document.getElementById('editDtTrenSo').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
         const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
 
@@ -2476,8 +2490,8 @@
           const finalImages = window.getPublicImagesFromForm(p);
           while (finalImages.length < 15) finalImages.push("");
 
-          // Pad original_row_data to 47 columns
-          while (p.original_row_data.length < 47) p.original_row_data.push("");
+          // Pad original_row_data to 48 columns
+          while (p.original_row_data.length < 48) p.original_row_data.push("");
 
           // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
           for (let i = 0; i < 10; i++) {
@@ -2491,7 +2505,7 @@
         }
 
         if (p.original_row_data) {
-          while (p.original_row_data.length < 47) p.original_row_data.push("");
+          while (p.original_row_data.length < 48) p.original_row_data.push("");
           p.original_row_data[38] = customCoverUrl;
           p.img_mat_tien = customCoverUrl;
 
@@ -2552,6 +2566,7 @@
         }
 
         p.original_row_data[2] = note;
+        p.original_row_data[5] = editDtThucTe; // DT Thực tế (Cột F)
         p.original_row_data[12] = huong;
         p.original_row_data[13] = duong;
         p.original_row_data[14] = rongHem || '-';
@@ -2570,8 +2585,11 @@
           p.json_ui_parsed = {};
         }
         p.original_row_data[46] = JSON.stringify(p.json_ui_parsed);
+        p.original_row_data[47] = editDtTrenSo; // DT Trên sổ (Cột AV)
 
         p.note = note;
+        p.dt = editDtThucTe;
+        p.dt_tren_so_custom = editDtTrenSo;
         p.huong = huong;
         p.duong_truoc_nha = duong;
         p.rong_hem = rongHem || '-';
@@ -2583,7 +2601,7 @@
         p.m = moTaBds;
 
         const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AU${p.source_row_index}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AV${p.source_row_index}?valueInputOption=USER_ENTERED`;
 
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
@@ -2817,6 +2835,8 @@
         const rongHem = matchedRow[59] || '';
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
+        const editDtThucTe = document.getElementById('editDtThucTe').value.trim();
+        const editDtTrenSo = document.getElementById('editDtTrenSo').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
         const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
 
@@ -2904,14 +2924,14 @@
           finalCoverUrl = '';
         }
 
-        // Xây dựng publicRowData 46 cột cho Sheet Source
+        // Xây dựng publicRowData 48 cột cho Sheet Source
         const publicRowData = [
           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
           cuPhap,                        // 1: Cu_phap (Cột B)
           note,                          // 2: Note (Cột C)
           maKhangNgo,                    // 3: id (Cột D)
           tieuDeBds || matchedRow[56],   // 4: tieu_de (Cột E)
-          matchedRow[13],                // 5: dien_tich (Cột F)
+          editDtThucTe,                  // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
           formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
@@ -2952,11 +2972,12 @@
           finalImages[12] || "",         // 43: Ảnh 13 (Cột AR)
           finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
           finalImages[14] || "",         // 45: Ảnh 15 (Cột AT)
-          matchedRow[93] || ""           // 46: JSON_UI (Cột AU)
+          matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
+          editDtTrenSo                   // 47: DT Trên sổ (Cột AV)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AU${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AV${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {
