@@ -1769,6 +1769,7 @@
         cu_phap: "",
         t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
         dt: row[13] || row[14] || '',
+        dt_tren_so_custom: row[14] || '',
         tang: row[15] || '',
         mat: row[16] || '',
         gia: gia,
