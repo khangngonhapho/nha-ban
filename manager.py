@@ -133,18 +133,31 @@ def backup_database():
         # Giúp tránh việc Drive khóa tệp .db live đang được ghi bởi ứng dụng
         backup_dir = "d:/LHTBrain/BDS_Backups"
         os.makedirs(backup_dir, exist_ok=True)
+        
+        # Lấy danh sách các bản backup hiện có
+        backups = sorted(
+            [os.path.join(backup_dir, f) for f in os.listdir(backup_dir) if f.startswith("raw_archive_backup_")],
+            key=os.path.getmtime
+        )
+        
+        # Chỉ sao lưu nếu CSDL có sự thay đổi (mtime mới hơn bản backup gần nhất)
+        if backups:
+            latest_backup = backups[-1]
+            if os.path.getmtime(DB_FILE) <= os.path.getmtime(latest_backup):
+                # Không có thay đổi gì từ lần backup trước, bỏ qua để tránh ghi file thừa trùng lặp
+                return
+                
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_name = f"raw_archive_backup_{timestamp}.db"
         backup_path = os.path.join(backup_dir, backup_name)
         shutil.copy2(DB_FILE, backup_path)
         add_log_message(f"[💾 BACKUP] Tự động sao lưu database thành công: {backup_name}")
         
-        # Giữ lại tối đa 5 bản sao lưu gần nhất
-        backups = sorted(
-            [os.path.join(backup_dir, f) for f in os.listdir(backup_dir) if f.startswith("raw_archive_backup_")],
-            key=os.path.getmtime
-        )
-        while len(backups) > 5:
+        # Thêm bản mới vào danh sách để tính toán xoay vòng
+        backups.append(backup_path)
+        
+        # Giữ lại tối đa 15 bản sao lưu gần nhất (dung lượng nhẹ ~27MB/file)
+        while len(backups) > 15:
             try:
                 os.remove(backups.pop(0))
             except Exception:
