@@ -322,6 +322,14 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-07-01 (Nghiệm thu US-119 - Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm - TEST PASS)
+*   **Mã User Story:** `US-119`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Thông tin Đường trước nhà thô**: Tách biệt hiển thị read-only trong `"Thông tin"` thành `"Đường trước nhà"` (loại đường gốc từ `JSON_UI`) và `"Đường vào nhỏ nhất"` (độ rộng gốc, kèm hậu tố `m`), triệt tiêu lỗi rò rỉ custom street type text vào ô số.
+    - **Biên tập kép độc lập**: Thêm ô nhập `"Độ rộng hẻm custom (m)"` trong panel `"BIÊN TẬP"`, lưu trực tiếp xuống cột `do_rong_hem` trên Source sheet độc lập với dropdown `"Đường trước nhà custom"`.
+    - **Bảo vệ dữ liệu trong Apps Script**: Thiết lập index `14` trong danh sách `protectedIndices` của Apps Script để khóa an toàn trường độ rộng hẻm khỏi bị sync đè.
+    - **Lưu trữ SQLite cục bộ**: Cập nhật lưu trữ `phan_loai_hem` vào cột `Criteria_Duong_truoc_nha` của bảng `listings_custom_v2`, vá lỗi logic fallback của `lego_core.js` khi `poolRow` trống.
+
 ### 2026-07-01 (Nghiệm thu US-118 - Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail - TEST PASS)
 *   **Mã User Story:** `US-118`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1294,7 +1302,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
-- [ ] **US-119:** Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm trên Vercel Detail & local Python Backend
+- [x] **US-119:** Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm trên Vercel Detail & local Python Backend ✅ Done 2026-07-01
 - [x] **US-118:** Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail ✅ Done 2026-07-01
 - [x] **US-117:** Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ ✅ Done 2026-07-01
 - [x] **US-116:** Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ ✅ Done 2026-06-30
