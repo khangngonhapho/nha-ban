@@ -6,15 +6,15 @@ Last updated: 2026-06-29
 - Total: 125
 - backlog: 3
 - draft: 0
-- in-progress: 2
+- in-progress: 0
 - done: 22
-- accepted: 93
+- accepted: 95
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
-| US-117 | Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ | in-progress | S | 2026-06-30 | `manager.py`, `docs/stories/_inbox/US-117_periodic_database_backup.md` |
-| US-116 | Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ | in-progress | M | 2026-06-30 | `scratch/backup_and_map_curation.py`, `scratch/wipe_local_and_sheets.py`, `scratch/merge_curated_data.py`, `pool_lego.py` |
+| US-117 | Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ | accepted | S | 2026-06-30 | `manager.py`, `docs/stories/_inbox/US-117_periodic_database_backup.md` |
+| US-116 | Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ | accepted | M | 2026-06-30 | `scratch/backup_and_map_curation.py`, `scratch/wipe_local_and_sheets.py`, `scratch/merge_curated_data.py`, `pool_lego.py` |
 | US-115 | Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng | done | S | 2026-06-29 | `docs/stories/_inbox/US-115_fix_malformed_sqlite_database.md`, `pool_lego.py`, `static/js/thienkhoi_list_scraper.user.js` |
 | US-114 | Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets | accepted | S | 2026-06-29 | `docs/stories/_inbox/US-114_fix_startup_syntax_and_formula_errors.md`, `manager.py`, `pool_lego.py` |
 | US-113 | Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone | accepted | S    | 2026-06-29 | `docs/stories/_inbox/US-113_fix_iphone_image_zoom_black_screen.md`, `static/js/lego_detail_client.js`, `static/css/global.css` |

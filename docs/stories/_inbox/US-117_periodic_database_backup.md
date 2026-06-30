@@ -1,6 +1,6 @@
 ---
 id: US-117
-status: in-progress
+status: accepted
 date: 2026-06-30
 size: S
 ---
