@@ -7,7 +7,8 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
-*   **US-117 (Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ):** **[ACCEPTED - 2026-07-01]** Tạo script chạy ngầm độc lập `scratch/run_backup_only.py` tích hợp Windows Task Scheduler quét mỗi 15 phút, logs ASCII an toàn, chống sao lưu trùng lặp dựa trên mtime và giới hạn cứng 5 bản gần nhất.
+*   **US-118 (Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail):** **[ACCEPTED - 2026-07-01]** Tách biệt và tùy biến lưu trữ DT Thực tế (Cột F) và DT Trên sổ (Cột AV mới thêm), tính toán Đơn giá chia cho DT Trên sổ, sửa đổi Vercel UI Biên tập & Khách hàng và mở rộng range IMPORTRANGE Public. Đã chạy thử nghiệm Playwright E2E đạt 100% PASS và push thành công lên Production.
+*   **US-117 (Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ):** **[ACCEPTED - 2026-07-01]** Tạo script chạy ngầm độc lập `scratch/run_backup_only.py` tương thích 100% với Windows Task Scheduler quét mỗi 15 phút, logs ASCII an toàn, chống sao lưu trùng lặp dựa trên mtime và giới hạn cứng 5 bản gần nhất.
 *   **US-116 (Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ):** **[ACCEPTED - 2026-06-30]** Tiến hành sao lưu 9,231 ảnh R2 cũ của 685 căn vào tệp JSON, wipe sạch database SQLite cục bộ và Google Sheets tab Pool/Source để cào mới từ đầu, và tự động khôi phục link ảnh R2 cũ từ tệp JSON khi cào tin trùng `tk_id`.
 *   **US-115 (Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng):** **[ACCEPTED - 2026-06-30]** Kích hoạt SQLite WAL Mode trong `pool_lego.py` và vá lỗi lặp vô hạn của Userscript khi gặp lỗi xác thực 401/403. Đã chạy thử nghiệm Playwright E2E đạt 100% PASS và push thành công lên remote repository.
 *   **US-114 (Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets):** **[ACCEPTED - 2026-06-29]** Khắc phục lỗi cú pháp tại dòng 2109 of manager.py làm hỏng CHAY_APP.bat. Thêm hàm helper escape_sheets_value trong pool_lego.py tự động chèn dấu nháy đơn (') trước các chuỗi bắt đầu bằng -, +, = (ngoại trừ =IMAGE() của hệ thống) để ép định dạng text thô trên Google Sheets, sửa triệt để lỗi công thức #ERROR! trên Sheets và hiển thị #ERROR trên Vercel.
@@ -55,8 +56,12 @@
 
 ---
 
-## 3. Các file bị tác động trong phiên vừa qua
-
+*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — Khai báo nạp cột AV (DT Trên sổ) và tính toán đơn giá `giabq` ở client view.
+*   [static/js/lego_detail_client.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_client.js) — Hiển thị cả 2 dòng DT Trên sổ và DT Thực tế cho khách hàng.
+*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — Thêm trường biên tập và sửa lỗi hiển thị/lưu DT Trên sổ từ Pool.
+*   [pool_backend_v3.gs](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_backend_v3.gs) — Bảo vệ cột AV khỏi bị chép đè.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) & [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Đồng bộ SQLite local với cột diện tích mới.
+*   [docs/stories/_inbox/US-118_custom_area_curation.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-118_custom_area_curation.md) — Tài liệu User Story US-118.
 *   [docs/stories/_inbox/US-116_clean_database_reset_and_curation_restore.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-116_clean_database_reset_and_curation_restore.md) — Tài liệu User Story US-116.
 *   [docs/stories/_inbox/US-117_periodic_database_backup.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-117_periodic_database_backup.md) — Tài liệu User Story US-117.
 *   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Logic khớp ảnh R2 và khởi chạy bộ sao lưu định kỳ ngầm.
@@ -64,9 +69,9 @@
 *   [scratch/backup_and_map_curation.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/backup_and_map_curation.py) — Script trích xuất và backup liên kết ảnh R2 từ Google Sheets.
 *   [scratch/wipe_local_and_sheets.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/wipe_local_and_sheets.py) — Script dọn dẹp sạch CSDL SQLite cục bộ và Google Sheets tab Pool/Source.
 *   [scratch/compare_last_records.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/compare_last_records.py) — Tiện ích so khớp và đối chiếu đồng nhất dữ liệu SQLite vs Sheets.
-*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký trạng thái US-116 và US-117.
-*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Cập nhật Change Log và Backlog cho US-116 và US-117.
+*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký trạng thái US-116, US-117, US-118.
+*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Cập nhật Change Log và Backlog cho US-116, US-117, US-118.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-01 (US-116 & US-117 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-01 (US-118 accepted & E2E tests 100% passed).*
 

@@ -145,6 +145,7 @@ Last updated: 2026-07-01
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-118_custom_area_curation|US-118]]: Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail (accepted)
 - [[US-115_fix_malformed_sqlite_database|US-115]]: Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng (in-progress)
 - [[US-114_fix_startup_syntax_and_formula_errors|US-114]]: Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets (accepted)
 - [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)
@@ -225,6 +226,7 @@ Last updated: 2026-07-01
 - [[US-013_replace_noidungchinh|US-013]]: Bỏ Nội dung chính, thêm DT Trên sổ & Hướng (done)
 
 ### Schema & Định nghĩa
+- [[US-118_custom_area_curation|US-118]]: Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-089_pool2_data_system|US-089]]: [Decomposed] Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego (superseded)
 - [[US-089A_pool2_local_core|US-089A]]: Thiết lập CSDL Quan hệ Pool2 & Tích hợp Luồng Cào thô cục bộ (accepted)
@@ -235,6 +237,7 @@ Last updated: 2026-07-01
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-118_custom_area_curation|US-118]]: Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail (accepted)
 - [[US-113_fix_iphone_image_zoom_black_screen|US-113]]: Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone (accepted)
 - [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)

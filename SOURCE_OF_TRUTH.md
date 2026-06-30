@@ -322,6 +322,15 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-07-01 (Nghiệm thu US-118 - Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail - TEST PASS)
+*   **Mã User Story:** `US-118`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Lưu trữ đa diện tích**: Tái sử dụng cột F (index 5) làm diện tích thực tế (DT Thực tế) và thêm mới cột AV (index 47) làm diện tích trên sổ (DT Trên sổ) trên sheet Source. Đồng bộ cơ cấu này sang SQLite local.
+    - **Biên tập kép trên Vercel Admin**: Tách biệt thành 2 trường nhập diện tích (DT Thực tế và DT Trên sổ), bỏ chữ "Custom" trên giao diện.
+    - **Đồng bộ hóa Apps Script**: Cập nhật `pool_backend_v3.gs` để bảo vệ cột AV khỏi bị chép đè khi chạy cào/đồng bộ ngầm.
+    - **Tính toán Đơn giá thông minh**: Đơn giá (`giabq`) ở cả trang chi tiết Khách hàng, trang Admin và Canvas được chuyển đổi thành `(Giá bán * 1000) / DT Trên sổ` (fallback sang DT Thực tế nếu trống).
+    - **Mở rộng phạm vi Public**: Nới rộng công thức `IMPORTRANGE` trên sheet Public đến cột `AV` và sửa đổi `lego_core.js` để nạp cột `AV` cho khách xem không bị trống.
+
 ### 2026-07-01 (Nghiệm thu US-117 - Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ - TEST PASS)
 *   **Mã User Story:** `US-117`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1285,6 +1294,7 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-118:** Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail ✅ Done 2026-07-01
 - [x] **US-117:** Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ ✅ Done 2026-07-01
 - [x] **US-116:** Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ ✅ Done 2026-06-30
 - [x] **US-115:** Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng – Done 2026-06-29
