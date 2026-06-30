@@ -122,6 +122,36 @@ from pool_lego import POOL_HEADERS, remove_accents, get_safe_col_name, gen_id_kh
 
 # File cấu hình & cơ sở dữ liệu (Dùng đường dẫn tuyệt đối dựa trên PROJECT_ROOT)
 DB_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, get_db_file()))
+
+def backup_database():
+    """Tự động sao lưu database SQLite sang thư mục đồng bộ an toàn dạng tĩnh"""
+    try:
+        if not os.path.exists(DB_FILE):
+            return
+        import shutil
+        # Thư mục backup lưu trong thư mục đồng bộ Drive dưới dạng file tĩnh
+        # Giúp tránh việc Drive khóa tệp .db live đang được ghi bởi ứng dụng
+        backup_dir = "d:/LHTBrain/BDS_Backups"
+        os.makedirs(backup_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_name = f"raw_archive_backup_{timestamp}.db"
+        backup_path = os.path.join(backup_dir, backup_name)
+        shutil.copy2(DB_FILE, backup_path)
+        add_log_message(f"[💾 BACKUP] Tự động sao lưu database thành công: {backup_name}")
+        
+        # Giữ lại tối đa 5 bản sao lưu gần nhất
+        backups = sorted(
+            [os.path.join(backup_dir, f) for f in os.listdir(backup_dir) if f.startswith("raw_archive_backup_")],
+            key=os.path.getmtime
+        )
+        while len(backups) > 5:
+            try:
+                os.remove(backups.pop(0))
+            except Exception:
+                pass
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Không thể tự động sao lưu database: {str(e)}")
+
 LISTINGS_TABLE = "listings_v2" if "raw_archive_v2.db" in DB_FILE else "listings"
 CONFIG_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "settings.json"))
 COOKIE_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, "thienkhoi_cookie.txt"))
@@ -798,6 +828,8 @@ def run_crawler_thread(url, cookie, district, limit, start_page=None):
         # Khôi phục nguyên trạng
         fetcher.print = old_print
         sys.exit = old_exit
+        # Sao lưu cơ sở dữ liệu tĩnh lên thư mục backup sau khi cào xong
+        backup_database()
 
 # ==================================================
 # TẢI HÌNH ẢNH CỤC BỘ / GOOGLE DRIVE UPLOAD CHẠY NGẦM
@@ -1030,6 +1062,7 @@ def run_auto_migration_wrapper(cookie):
     finally:
         with MIGRATION_LOCK:
             IS_MIGRATION_ACTIVE = False
+        backup_database()
 
 def run_auto_migration_wrapper_with_limit(limit, cookie):
     global IS_MIGRATION_ACTIVE, SHOULD_STOP_MIGRATION
@@ -1041,6 +1074,7 @@ def run_auto_migration_wrapper_with_limit(limit, cookie):
     finally:
         with MIGRATION_LOCK:
             IS_MIGRATION_ACTIVE = False
+        backup_database()
 
 def start_auto_migration_scheduler():
     """Bắt đầu vòng lặp quét tự động di cư hình ảnh chạy ngầm"""
