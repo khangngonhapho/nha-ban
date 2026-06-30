@@ -123,7 +123,7 @@
                   <span class="value dotted">${p.dai_nha || '-'} m</span>
                 </div>
                 <div class="admin-raw-cell">
-                  <span class="label">Đường trước nhà:</span>
+                  <span class="label">Đ. trước:</span>
                   <span class="value dotted">${(p.json_ui_parsed && p.json_ui_parsed.Criteria_Duong_truoc_nha) || '-'}</span>
                 </div>
                 <div class="admin-raw-cell">
