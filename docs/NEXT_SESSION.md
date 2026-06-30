@@ -7,7 +7,8 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
-*   **US-116 (Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ):** **[IN-PROGRESS]** Tiến hành sao lưu dữ liệu biên tập cũ và lập bản đồ ID/curation theo địa chỉ chuẩn hóa để phục vụ dọn dẹp và cào mới sạch sẽ dữ liệu.
+*   **US-117 (Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ):** **[ACCEPTED - 2026-07-01]** Tạo script chạy ngầm độc lập `scratch/run_backup_only.py` tích hợp Windows Task Scheduler quét mỗi 15 phút, logs ASCII an toàn, chống sao lưu trùng lặp dựa trên mtime và giới hạn cứng 5 bản gần nhất.
+*   **US-116 (Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ):** **[ACCEPTED - 2026-06-30]** Tiến hành sao lưu 9,231 ảnh R2 cũ của 685 căn vào tệp JSON, wipe sạch database SQLite cục bộ và Google Sheets tab Pool/Source để cào mới từ đầu, và tự động khôi phục link ảnh R2 cũ từ tệp JSON khi cào tin trùng `tk_id`.
 *   **US-115 (Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng):** **[ACCEPTED - 2026-06-30]** Kích hoạt SQLite WAL Mode trong `pool_lego.py` và vá lỗi lặp vô hạn của Userscript khi gặp lỗi xác thực 401/403. Đã chạy thử nghiệm Playwright E2E đạt 100% PASS và push thành công lên remote repository.
 *   **US-114 (Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets):** **[ACCEPTED - 2026-06-29]** Khắc phục lỗi cú pháp tại dòng 2109 of manager.py làm hỏng CHAY_APP.bat. Thêm hàm helper escape_sheets_value trong pool_lego.py tự động chèn dấu nháy đơn (') trước các chuỗi bắt đầu bằng -, +, = (ngoại trừ =IMAGE() của hệ thống) để ép định dạng text thô trên Google Sheets, sửa triệt để lỗi công thức #ERROR! trên Sheets và hiển thị #ERROR trên Vercel.
 *   **US-113 (Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone):** **[ACCEPTED - 2026-06-29]** Khắc phục triệt để lỗi chớp đen màn hình khi phóng to/kéo ảnh trên thiết bị iOS (iPhone Safari/Chrome) bằng cách tắt CSS transition động trong quá trình thao tác cảm ứng, đồng thời kích hoạt Hardware Acceleration (tăng tốc phần cứng GPU) qua `translate3d` và thuộc tính CSS layer optimization (`backface-visibility: hidden`). Bảo toàn trạng thái zoom & focus vị trí xem chi tiết khi người dùng nhấc ngón tay (`touchend`). Đã chạy toàn bộ các kịch bản kiểm thử Playwright E2E đạt 100% PASS.
@@ -56,13 +57,16 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [docs/stories/_inbox/US-115_fix_malformed_sqlite_database.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-115_fix_malformed_sqlite_database.md) — Tài liệu User Story US-115.
-*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký US-115.
-*   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Cập nhật trạng thái đang xử lý US-115.
-*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Ghi nhận log thay đổi US-115.
-*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Cấu hình SQLite WAL mode.
-*   [static/js/thienkhoi_list_scraper.user.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/thienkhoi_list_scraper.user.js) — Vá lỗi ngắt cào hàng loạt.
+*   [docs/stories/_inbox/US-116_clean_database_reset_and_curation_restore.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-116_clean_database_reset_and_curation_restore.md) — Tài liệu User Story US-116.
+*   [docs/stories/_inbox/US-117_periodic_database_backup.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-117_periodic_database_backup.md) — Tài liệu User Story US-117.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Logic khớp ảnh R2 và khởi chạy bộ sao lưu định kỳ ngầm.
+*   [scratch/run_backup_only.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/run_backup_only.py) — Script chạy sao lưu định kỳ ngầm độc lập cho Windows Task Scheduler.
+*   [scratch/backup_and_map_curation.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/backup_and_map_curation.py) — Script trích xuất và backup liên kết ảnh R2 từ Google Sheets.
+*   [scratch/wipe_local_and_sheets.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/wipe_local_and_sheets.py) — Script dọn dẹp sạch CSDL SQLite cục bộ và Google Sheets tab Pool/Source.
+*   [scratch/compare_last_records.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/compare_last_records.py) — Tiện ích so khớp và đối chiếu đồng nhất dữ liệu SQLite vs Sheets.
+*   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Đăng ký trạng thái US-116 và US-117.
+*   [SOURCE_OF_TRUTH.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/SOURCE_OF_TRUTH.md) — Cập nhật Change Log và Backlog cho US-116 và US-117.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-06-29 (US-114 accepted & E2E tests 100% passed).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-01 (US-116 & US-117 accepted & E2E tests 100% passed).*
 

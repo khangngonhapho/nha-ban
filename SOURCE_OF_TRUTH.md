@@ -322,6 +322,21 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 ## 7. 📝 LỊCH SỬ THAY ĐỔI (Change Log)
 
+### 2026-07-01 (Nghiệm thu US-117 - Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ - TEST PASS)
+*   **Mã User Story:** `US-117`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Chạy ngầm độc lập**: Tạo script `scratch/run_backup_only.py` tương thích 100% với Windows Task Scheduler để tự động quét và sao lưu CSDL SQLite cục bộ sang Drive (`d:/LHTBrain/BDS_Backups`) mỗi 15 phút mà không cần mở server `manager.py`.
+    - **Sửa lỗi mã hóa ký tự (UnicodeEncodeError)**: Chuẩn hóa toàn bộ logs in ra màn hình terminal của script thành ASCII không dấu để ngăn Windows CMD bị crash khi Task Scheduler kích hoạt chạy ngầm.
+    - **Chống sao lưu trùng lặp**: Đối chiếu thời gian sửa đổi (mtime) để chỉ sao lưu khi CSDL thực sự có thay đổi mới, xoay vòng giữ lại tối đa 5 bản gần nhất.
+    - **Tích hợp server**: Kích hoạt bộ quét định kỳ chạy ngầm trong `manager.py` quét mỗi 15 phút.
+
+### 2026-06-30 (Nghiệm thu US-116 - Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ - TEST PASS)
+*   **Mã User Story:** `US-116`
+*   **Các thay đổi thực tế đã deploy & nghiệm thu:**
+    - **Bản đồ ảnh cũ**: Quét qua 665 dòng trên tab `Pool` và trích xuất thành công 9,231 liên kết hình ảnh R2 cũ lưu trữ vào `r2_images_by_tk_id.json` theo định dạng `tk_id`.
+    - **Dọn dẹp hệ thống (Wipe)**: Sử dụng script `wipe_local_and_sheets.py` để xóa sạch CSDL SQLite cục bộ cũ cùng toàn bộ các dòng dữ liệu trên tab `Pool` và `Source` của Google Sheets (giữ nguyên header).
+    - **Khôi phục ảnh R2 tự động**: Tích hợp thuật toán tra cứu link ảnh R2 cũ từ tệp JSON trong `manager.py` khi di cư ảnh của can trùng `tk_id`, bỏ qua bước tải/nén/upload lại để tiết kiệm tài nguyên.
+
 ### 2026-06-29 (Nghiệm thu US-115 - Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng - TEST PASS)
 *   **Mã User Story:** `US-115`
 *   **Các thay đổi thực tế đã deploy & nghiệm thu:**
@@ -1270,6 +1285,8 @@ Module `pool_lego.py` đóng vai trò là khối Lego điều phối dữ liệu
 
 > Cập nhật khi có thêm yêu cầu mới
 
+- [x] **US-117:** Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ ✅ Done 2026-07-01
+- [x] **US-116:** Reset CSDL và Khôi phục/Vá Dữ liệu biên tập theo Địa chỉ ✅ Done 2026-06-30
 - [x] **US-115:** Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng – Done 2026-06-29
 - [x] **US-114:** Khắc phục lỗi cú pháp khởi chạy CHAY_APP.bat và lỗi công thức #ERROR trên Google Sheets ✅ Done 2026-06-29
 - [x] **US-113:** Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone ✅ Done 2026-06-29
