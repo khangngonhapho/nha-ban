@@ -2614,7 +2614,14 @@
                     'Sơ đồ': 'Sơ đồ',
                     'Hẻm': 'Hẻm',
                     'Nội thất': 'Nội thất',
-                    'Ẩn': 'Ẩn/Bỏ qua'
+                    'Ẩn': 'Ẩn/Bỏ qua',
+                    'cover': 'Nền',
+                    'facade': 'Mặt tiền',
+                    'diagram': 'Sơ đồ',
+                    'alley': 'Hẻm',
+                    'interior': 'Nội thất',
+                    'hidden': 'Ẩn/Bỏ qua',
+                    'deleted': 'Đã xóa trên TK'
                 };
 
                 const labelStyle = {
@@ -2623,16 +2630,23 @@
                     'Sơ đồ': 'background: var(--accent-gold); color:#000;',
                     'Hẻm': 'background: var(--accent-blue); color:#fff;',
                     'Nội thất': 'background: var(--accent-cyan); color:#000;',
-                    'Ẩn': 'background: var(--accent-slate); color:#fff;'
+                    'Ẩn': 'background: var(--accent-slate); color:#fff;',
+                    'cover': 'background: var(--accent-green); color:#000;',
+                    'facade': 'background: var(--accent-red); color:#fff;',
+                    'diagram': 'background: var(--accent-gold); color:#000;',
+                    'alley': 'background: var(--accent-blue); color:#fff;',
+                    'interior': 'background: var(--accent-cyan); color:#000;',
+                    'hidden': 'background: var(--accent-slate); color:#fff;',
+                    'deleted': 'background: #ef4444; color:#fff;'
                 };
 
-                const isDimmed = item.role === 'Ẩn' || item.visible === false;
+                const isDimmed = item.role === 'Ẩn' || item.role === 'hidden' || item.role === 'deleted' || item.visible === false;
                 const cardStyle = isDimmed ? 'opacity: 0.4;' : '';
 
                 card.innerHTML = `
                     <div class="image-wrapper" style="${cardStyle} position: relative;">
                         <img src="${item.url}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'100%\' height=\'100%\' fill=\'%231e293b\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'sans-serif\' font-size=\'14\' fill=\'%2394a3b8\'>Ảnh lỗi hoặc Đang di cư...</text></svg>';">
-                        <span class="image-role-badge" style="${labelStyle[item.role]}">${roleLabels[item.role]}</span>
+                        <span class="image-role-badge" style="${labelStyle[item.role] || 'background: var(--accent-cyan); color:#000;'}">${roleLabels[item.role] || item.role}</span>
                         <div class="visibility-checkbox-container" style="position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 4px; display: flex; align-items: center; gap: 4px; z-index: 10;">
                             <input type="checkbox" id="visible-check-${index}" ${item.visible !== false ? 'checked' : ''} onchange="toggleImageVisibility(${index}, this.checked)" style="cursor: pointer; width: 14px; height: 14px; margin: 0;">
                             <label for="visible-check-${index}" style="color: #fff; font-size: 11px; font-weight: bold; cursor: pointer; margin: 0;">Hiện</label>
@@ -2640,14 +2654,14 @@
                     </div>
                     <div class="image-controls">
                         <div class="role-btn-group">
-                            <span class="role-btn role-bia ${item.role === 'Bìa' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Bìa')">Nền</span>
-                            <span class="role-btn role-mt ${item.role === 'Mặt tiền' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Mặt tiền')">MT</span>
-                            <span class="role-btn role-sodo ${item.role === 'Sơ đồ' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Sơ đồ')">Sơ đồ</span>
+                            <span class="role-btn role-bia ${item.role === 'Bìa' || item.role === 'cover' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Bìa')">Nền</span>
+                            <span class="role-btn role-mt ${item.role === 'Mặt tiền' || item.role === 'facade' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Mặt tiền')">MT</span>
+                            <span class="role-btn role-sodo ${item.role === 'Sơ đồ' || item.role === 'diagram' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Sơ đồ')">Sơ đồ</span>
                         </div>
                         <div class="role-btn-group">
-                            <span class="role-btn role-hem ${item.role === 'Hẻm' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Hẻm')">Hẻm</span>
-                            <span class="role-btn role-public ${item.role === 'Nội thất' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Nội thất')">N.Thất</span>
-                            <span class="role-btn role-an ${item.role === 'Ẩn' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Ẩn')">Ẩn</span>
+                            <span class="role-btn role-hem ${(item.role === 'Hẻm' || item.role === 'alley') && item.visible !== false ? 'active' : ''}" onclick="assignImageRole(${index}, 'Hẻm')">Hẻm</span>
+                            <span class="role-btn role-public ${(item.role === 'Nội thất' || item.role === 'interior') && item.visible !== false ? 'active' : ''}" onclick="assignImageRole(${index}, 'Nội thất')">N.Thất</span>
+                            <span class="role-btn role-an ${item.visible === false || item.role === 'deleted' || item.role === 'hidden' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Ẩn')">Ẩn</span>
                         </div>
                         <div class="order-btn-group">
                             <button class="order-btn" onclick="moveImage(${index}, -1)" ${index === 0 ? 'disabled' : ''}>◀ Trái</button>

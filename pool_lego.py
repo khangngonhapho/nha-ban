@@ -997,6 +997,63 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
                 existing_urls.add(url)
         conn.commit()
 
+    # Tự động đánh dấu ảnh bị xóa từ TK
+    try:
+        # Kiểm tra xem bảng listings_images có tồn tại không
+        cursor.execute("SELECT 1 FROM listings_images LIMIT 1")
+        
+        grouped_urls_set = set(url.strip() for url in grouped_urls if url.strip())
+        
+        # Lấy các ảnh cào cũ trong db
+        cursor.execute(
+            "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? AND (origin = 'crawl' OR origin IS NULL OR origin = '')",
+            (tk_id,)
+        )
+        db_crawled_imgs = cursor.fetchall()
+        
+        has_updates = False
+        deleted_urls = set()
+        for db_url, r2_url, db_role in db_crawled_imgs:
+            if db_url not in grouped_urls_set and db_role != "deleted":
+                cursor.execute(
+                    "UPDATE listings_images SET role = 'deleted', is_hidden = 1 WHERE tk_id = ? AND image_url = ?",
+                    (tk_id, db_url)
+                )
+                deleted_urls.add(db_url)
+                if r2_url:
+                    deleted_urls.add(r2_url)
+                has_updates = True
+                
+        if has_updates:
+            # Đồng bộ sang curated_config_json trong bảng listings/listings_v2
+            row_cur = cursor.execute(f"SELECT curated_config_json FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+            if row_cur and row_cur[0]:
+                try:
+                    curated_data = json.loads(row_cur[0])
+                    curated_images = []
+                    if isinstance(curated_data, dict):
+                        curated_images = curated_data.get("images", [])
+                    elif isinstance(curated_data, list):
+                        curated_images = curated_data
+                        
+                    cur_updated = False
+                    for img in curated_images:
+                        if isinstance(img, dict) and img.get("url"):
+                            img_url = img["url"].strip()
+                            if img_url in deleted_urls and img.get("role") != "deleted":
+                                img["role"] = "deleted"
+                                img["visible"] = False
+                                cur_updated = True
+                                
+                    if cur_updated:
+                        new_curated_json = json.dumps(curated_data if isinstance(curated_data, dict) else {"images": curated_images}, ensure_ascii=False)
+                        cursor.execute(f"UPDATE {target_table} SET curated_config_json = ? WHERE tk_id = ?", (new_curated_json, tk_id))
+                except Exception:
+                    pass
+            conn.commit()
+    except Exception:
+        pass
+
     conn.close()
 
 
