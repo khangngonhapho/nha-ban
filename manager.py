@@ -3079,11 +3079,14 @@ def handle_listing_detail(tk_id):
             "Bìa": "cover",
             "Hẻm": "alley",
             "Nội thất": "interior",
+            "Ẩn": "hidden",
             "diagram": "diagram",
             "facade": "facade",
             "cover": "cover",
             "alley": "alley",
-            "interior": "interior"
+            "interior": "interior",
+            "hidden": "hidden",
+            "deleted": "deleted"
         }
         
         migrated_images = []
@@ -3116,13 +3119,14 @@ def handle_listing_detail(tk_id):
                 image_url = url
                 r2_url = images_mapping.get(image_url, None)
                 
+            is_hidden_val = 1 if (not visible or resolved_role in ["hidden", "deleted"]) else 0
             migrated_images.append({
                 "image_url": image_url,
                 "r2_url": r2_url,
                 "role": resolved_role,
                 "sequence_index": idx,
                 "origin": origin,
-                "is_hidden": 0 if visible else 1
+                "is_hidden": is_hidden_val
             })
             
         try:
