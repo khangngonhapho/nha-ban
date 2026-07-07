@@ -65,7 +65,7 @@ POOL_HEADERS = [
     "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
     "Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20",
     "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25",
-    "JSON_UI"
+    "JSON_UI", "Images_Admin_JSON"
 ]
 
 LISTINGS_V2_COLS = [
@@ -409,6 +409,8 @@ def get_db_file():
     Storage:
         RAM (Không lưu đĩa).
     """
+    if os.environ.get("STAGING") == "true":
+        return "raw_archive_staging.db"
     try:
         config_file = "settings.json"
         if os.path.exists(config_file):
@@ -570,14 +572,16 @@ def init_db(db_file=None):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS listings_images (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            tk_id TEXT,
+            tk_id TEXT NOT NULL,
+            system_id TEXT,
             image_url TEXT,
             r2_url TEXT,
             role TEXT,
             sequence_index INTEGER,
             edited_by TEXT,
             origin TEXT DEFAULT 'crawl',
-            FOREIGN KEY(tk_id) REFERENCES listings_v2(tk_id) ON DELETE CASCADE
+            is_hidden INTEGER DEFAULT 0,
+            uploaded_at TEXT
         )
         """)
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_listings_images_tk_id ON listings_images(tk_id)")
@@ -715,6 +719,26 @@ def init_db(db_file=None):
         cursor.execute(create_table_sql)
         conn.commit()
 
+        # Bảng listings_images cho Pool1
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS listings_images (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tk_id TEXT,
+            system_id TEXT,
+            image_url TEXT,
+            r2_url TEXT,
+            role TEXT,
+            sequence_index INTEGER,
+            edited_by TEXT,
+            origin TEXT DEFAULT 'crawl',
+            is_hidden INTEGER DEFAULT 0,
+            uploaded_at TEXT,
+            FOREIGN KEY(tk_id) REFERENCES listings(tk_id) ON DELETE CASCADE
+        )
+        """)
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_listings_images_tk_id ON listings_images(tk_id)")
+        conn.commit()
+
         # Di cư tự động (Migration) cho listings Pool1
         try:
             cursor.execute("PRAGMA table_info(listings)")
@@ -750,6 +774,14 @@ def init_db(db_file=None):
                 
             if "custom_dt_thuc_te" not in existing_cols:
                 cursor.execute("ALTER TABLE listings ADD COLUMN custom_dt_thuc_te TEXT DEFAULT ''")
+                conn.commit()
+
+            if "images_admin_json" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN images_admin_json TEXT")
+                conn.commit()
+
+            if "images_public_json" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN images_public_json TEXT")
                 conn.commit()
                 
             for header in POOL_HEADERS:
@@ -1144,9 +1176,14 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
         # 3. Lấy cấu hình các Spreadsheet ID
         creds = get_google_credentials()
         cfg = load_config()
-        raw_sheet_id = cfg.get("pool2_raw_sheet_id")
-        custom_sheet_id = cfg.get("pool2_custom_sheet_id")
-        public_sheet_id = cfg.get("pool2_public_sheet_id")
+        if os.environ.get("STAGING") == "true":
+            raw_sheet_id = cfg.get("staging_pool_sheet_id") or cfg.get("pool2_raw_sheet_id")
+            custom_sheet_id = cfg.get("staging_source_sheet_id") or cfg.get("pool2_custom_sheet_id")
+            public_sheet_id = cfg.get("staging_public_sheet_id") or cfg.get("pool2_public_sheet_id")
+        else:
+            raw_sheet_id = cfg.get("pool2_raw_sheet_id")
+            custom_sheet_id = cfg.get("pool2_custom_sheet_id")
+            public_sheet_id = cfg.get("pool2_public_sheet_id")
     
         if not (creds and raw_sheet_id and custom_sheet_id and public_sheet_id):
             add_log_message("[❌ LỖI] Thiếu cấu hình Spreadsheet IDs Pool2 trong settings.json")
@@ -1594,7 +1631,10 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
     
         creds = get_google_credentials()
         cfg = load_config()
-        sheet_id = cfg.get("sheet_id")
+        if os.environ.get("STAGING") == "true":
+            sheet_id = cfg.get("staging_pool_sheet_id") or cfg.get("sheet_id")
+        else:
+            sheet_id = cfg.get("sheet_id")
     
         next_row = 3
         sheet = None
@@ -1666,7 +1706,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                 "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25",
                 "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
                 "Last Crawl",
-                "Mã Khang Ngô (ID)"
+                "Mã Khang Ngô (ID)",
+                "Images_Admin_JSON"
             ]
         
             for idx, header in enumerate(POOL_HEADERS):
@@ -1737,7 +1778,10 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     add_log_message(f"[⚡] Đang chèn chốt dòng mới lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
                     sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED', inherit_from_before=True)
             
-                source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
+                if os.environ.get("STAGING") == "true":
+                    source_sheet_id = cfg.get("staging_source_sheet_id") or "1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk"
+                else:
+                    source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
                 try:
                     source_spreadsheet = client.open_by_key(source_sheet_id)
                     source_sheet = source_spreadsheet.worksheet("Source")
@@ -2637,9 +2681,14 @@ def add_column_to_google_sheets_v2(safe_name, header_name, is_public, get_google
     """
     creds = get_google_credentials()
     cfg = load_config()
-    raw_sheet_id = cfg.get("pool2_raw_sheet_id")
-    custom_sheet_id = cfg.get("pool2_custom_sheet_id")
-    public_sheet_id = cfg.get("pool2_public_sheet_id")
+    if os.environ.get("STAGING") == "true":
+        raw_sheet_id = cfg.get("staging_pool_sheet_id") or cfg.get("pool2_raw_sheet_id")
+        custom_sheet_id = cfg.get("staging_source_sheet_id") or cfg.get("pool2_custom_sheet_id")
+        public_sheet_id = cfg.get("staging_public_sheet_id") or cfg.get("pool2_public_sheet_id")
+    else:
+        raw_sheet_id = cfg.get("pool2_raw_sheet_id")
+        custom_sheet_id = cfg.get("pool2_custom_sheet_id")
+        public_sheet_id = cfg.get("pool2_public_sheet_id")
     
     if not creds:
         add_log_message("[⚠️ ERROR Sheets] Không thể lấy Google Credentials để cập nhật header Sheets.")

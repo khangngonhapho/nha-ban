@@ -2135,6 +2135,25 @@ def handle_config():
             key = client_cfg["openai_api_key"]
             if len(key) > 12:
                 client_cfg["openai_api_key"] = f"{key[:8]}...xxxx...{key[-4:]}"
+        
+        # Quyết định Spreadsheet IDs động dựa vào chế độ STAGING
+        is_staging = os.environ.get("STAGING") == "true"
+        is_pool2 = (client_cfg.get("active_pool_system") == "Pool2")
+        
+        if is_staging:
+            client_cfg["sheet_id"] = client_cfg.get("staging_public_sheet_id") or "1fDe5nrllgXBdGmYXlIhlYp0sJ_BPuarpD1DjsK_7JWw"
+            client_cfg["pool_sheet_id"] = client_cfg.get("staging_pool_sheet_id") or "1Nc8OwSHwacvuuS4blI8U9BrDOlVx6S6u9fU3AaKBYdY"
+            client_cfg["source_sheet_id"] = client_cfg.get("staging_source_sheet_id") or "1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk"
+        else:
+            if is_pool2:
+                client_cfg["sheet_id"] = client_cfg.get("pool2_public_sheet_id") or ""
+                client_cfg["pool_sheet_id"] = client_cfg.get("pool2_raw_sheet_id") or ""
+                client_cfg["source_sheet_id"] = client_cfg.get("pool2_custom_sheet_id") or ""
+            else:
+                client_cfg["sheet_id"] = "1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0"
+                client_cfg["pool_sheet_id"] = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
+                client_cfg["source_sheet_id"] = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
+                
         return jsonify({"status": "success", "config": client_cfg})
 
 # ==================================================
@@ -3014,10 +3033,114 @@ def handle_listing_detail(tk_id):
         data = request.json
         curated_config = data.get("curated_config")
         
-        # Cập nhật cột curated_config_json trước
+        # 1. Cập nhật bảng listings_images và tạo cấu trúc JSON hình ảnh mới
+        images_mapping = {}
+        system_id = ""
+        try:
+            row_db = cursor.execute("SELECT images_mapping_json, System_ID FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+            if row_db:
+                system_id = row_db[1] or ""
+                if row_db[0]:
+                    images_mapping = json.loads(row_db[0])
+        except Exception:
+            pass
+            
+        r2_to_orig = {v: k for k, v in images_mapping.items() if v}
+        
+        cfg_settings = {}
+        if os.path.exists("settings.json"):
+            try:
+                with open("settings.json", "r", encoding="utf-8") as f:
+                    cfg_settings = json.load(f)
+            except Exception:
+                pass
+        r2_public_url = cfg_settings.get("r2_public_url", "")
+        
+        role_map_vi_to_en = {
+            "Sơ đồ": "diagram",
+            "Mặt tiền": "facade",
+            "Bìa": "cover",
+            "Hẻm": "alley",
+            "Nội thất": "interior",
+            "diagram": "diagram",
+            "facade": "facade",
+            "cover": "cover",
+            "alley": "alley",
+            "interior": "interior"
+        }
+        
+        migrated_images = []
+        images_list = curated_config.get("images", []) if isinstance(curated_config, dict) else []
+        for idx, img in enumerate(images_list):
+            if not isinstance(img, dict) or not img.get("url"):
+                continue
+            url = img.get("url").strip()
+            vi_role = img.get("role", "Nội thất")
+            resolved_role = role_map_vi_to_en.get(vi_role, "interior")
+            visible = img.get("visible", True)
+            
+            # Phân loại origin
+            filename = os.path.basename(url)
+            origin = "crawl"
+            if filename.startswith("SYS-") or img.get("origin") == "self":
+                origin = "self"
+                
+            # Phân biệt r2_url vs image_url
+            is_r2 = False
+            if r2_public_url and r2_public_url in url:
+                is_r2 = True
+            elif "r2.dev" in url or "r2.cloudflarestorage.com" in url:
+                is_r2 = True
+                
+            if is_r2:
+                r2_url = url
+                image_url = r2_to_orig.get(r2_url, r2_url)
+            else:
+                image_url = url
+                r2_url = images_mapping.get(image_url, None)
+                
+            migrated_images.append({
+                "image_url": image_url,
+                "r2_url": r2_url,
+                "role": resolved_role,
+                "sequence_index": idx,
+                "origin": origin,
+                "is_hidden": 0 if visible else 1
+            })
+            
+        try:
+            # Xóa các bản ghi cũ và lưu lại các bản ghi mới
+            cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (tk_id,))
+            for img in migrated_images:
+                cursor.execute("""
+                    INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    tk_id,
+                    system_id,
+                    img["image_url"],
+                    img["r2_url"],
+                    img["role"],
+                    img["sequence_index"],
+                    img["origin"],
+                    img["is_hidden"]
+                ))
+        except Exception as e_img_save:
+            add_log_message(f"[⚠️ WARNING] Không thể ghi nhận bảng listings_images: {str(e_img_save)}")
+            
+        images_admin_json_str = json.dumps(migrated_images, ensure_ascii=False)
+        
+        public_urls = [
+            img["r2_url"] if img["r2_url"] else img["image_url"]
+            for img in migrated_images
+            if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]
+        ]
+        images_public_json_str = json.dumps(public_urls, ensure_ascii=False)
+        
+        # Cập nhật cột JSON và cấu hình chính
         cursor.execute(
-            f"UPDATE {LISTINGS_TABLE} SET curated_config_json = ? WHERE tk_id = ?",
-            (json.dumps(curated_config, ensure_ascii=False), tk_id)
+            f"UPDATE {LISTINGS_TABLE} SET curated_config_json = ?, images_admin_json = ?, images_public_json = ? WHERE tk_id = ?",
+            (json.dumps(curated_config, ensure_ascii=False), images_admin_json_str, images_public_json_str, tk_id)
         )
 
         # Cập nhật manual_images_json cho Pool1 (đồng bộ nếu có ảnh thủ công bị xóa khỏi curated_config)
@@ -3096,15 +3219,6 @@ def handle_listing_detail(tk_id):
         for key, val in fields_to_update.items():
             safe_col = get_safe_col_name(key)
             if safe_col in db_cols:
-                # TRÁNH CẬP NHẬT CÁC CỘT PHẲNG HÌNH ẢNH Ở POOL1 (LISTINGS TABLE)
-                if LISTINGS_TABLE == "listings":
-                    is_flat_image = (
-                        key in ["Hình Nhận Diện", "Hình Mặt Tiền", "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)"] or
-                        key.startswith("Hình Hẻm ") or
-                        key.startswith("Ảnh ")
-                    )
-                    if is_flat_image:
-                        continue
                 update_cols.append(f"`{safe_col}` = ?")
                 update_vals.append(str(val) if val is not None else "")
             

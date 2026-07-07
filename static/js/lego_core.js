@@ -484,6 +484,19 @@ const LegoState = {
 
   // Sheets Loading Logic
   async loadData() {
+    // Tải cấu hình Spreadsheet IDs từ API backend trước
+    try {
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'success' && data.config) {
+          this.config = data.config;
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load spreadsheet IDs from /api/config:", e);
+    }
+
     const old = document.getElementById('_gs');
     if (old) old.remove();
     const oldAdmin = document.getElementById('_gs_admin');
@@ -538,8 +551,8 @@ const LegoState = {
       this.secureLoadAttempted = true;
       this.emit('dataLoading', 'secure');
 
-      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
-      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const POOL_SHEET_ID = (this.config && this.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = (this.config && this.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
 
       try {
         const controller = new AbortController();
@@ -620,28 +633,50 @@ const LegoState = {
               return isMatch;
             });
 
-            const poolImgs = [];
+            let poolImgs = [];
             if (poolRow) {
-              if (poolRow[27]) poolImgs.push(poolRow[27]);
-              if (poolRow[28]) poolImgs.push(poolRow[28]);
-              if (poolRow[29]) poolImgs.push(poolRow[29]);
-              if (poolRow[80]) poolImgs.push(poolRow[80]);
-              if (poolRow[81]) poolImgs.push(poolRow[81]);
-              if (poolRow[82]) poolImgs.push(poolRow[82]);
-
-              for (let c = 40; c <= 54; c++) {
-                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              const imagesAdminJsonStr = poolRow[172];
+              if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
+                try {
+                  const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+                  poolImgs = parsedAdmin.map(img => img.r2_url || img.url);
+                } catch (e) {
+                  // fallback
+                }
               }
-              for (let c = 83; c <= 92; c++) {
-                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              if (!poolImgs || poolImgs.length === 0) {
+                if (poolRow[27]) poolImgs.push(poolRow[27]);
+                if (poolRow[28]) poolImgs.push(poolRow[28]);
+                if (poolRow[29]) poolImgs.push(poolRow[29]);
+                if (poolRow[80]) poolImgs.push(poolRow[80]);
+                if (poolRow[81]) poolImgs.push(poolRow[81]);
+                if (poolRow[82]) poolImgs.push(poolRow[82]);
+
+                for (let c = 40; c <= 54; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
+                for (let c = 83; c <= 92; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
               }
             }
 
-            const sourcePublicImgs = [
-              sr[20], sr[21], sr[22], sr[23], sr[24],
-              sr[25], sr[26], sr[27], sr[28], sr[29],
-              sr[41], sr[42], sr[43], sr[44], sr[45]
-            ].filter(Boolean);
+            let sourcePublicImgs = [];
+            const imagesPublicJsonStr = sr[48];
+            if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
+              try {
+                sourcePublicImgs = JSON.parse(imagesPublicJsonStr);
+              } catch (e) {
+                // fallback
+              }
+            }
+            if (!sourcePublicImgs || sourcePublicImgs.length === 0) {
+              sourcePublicImgs = [
+                sr[20], sr[21], sr[22], sr[23], sr[24],
+                sr[25], sr[26], sr[27], sr[28], sr[29],
+                sr[41], sr[42], sr[43], sr[44], sr[45]
+              ].filter(Boolean);
+            }
 
             const allImgs = poolRow ? [
               ...poolImgs,
@@ -773,19 +808,30 @@ const LegoState = {
         poolDataRows.forEach((poolRow, prIdx) => {
           if (matchedPoolRowIndexes.has(prIdx)) return;
 
-          const poolImgs = [];
-          if (poolRow[27]) poolImgs.push(poolRow[27]);
-          if (poolRow[28]) poolImgs.push(poolRow[28]);
-          if (poolRow[29]) poolImgs.push(poolRow[29]);
-          if (poolRow[80]) poolImgs.push(poolRow[80]);
-          if (poolRow[81]) poolImgs.push(poolRow[81]);
-          if (poolRow[82]) poolImgs.push(poolRow[82]);
-
-          for (let c = 40; c <= 54; c++) {
-            if (poolRow[c]) poolImgs.push(poolRow[c]);
+          let poolImgs = [];
+          const imagesAdminJsonStr = poolRow[172];
+          if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
+            try {
+              const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+              poolImgs = parsedAdmin.map(img => img.r2_url || img.url);
+            } catch (e) {
+              // fallback
+            }
           }
-          for (let c = 83; c <= 92; c++) {
-            if (poolRow[c]) poolImgs.push(poolRow[c]);
+          if (!poolImgs || poolImgs.length === 0) {
+            if (poolRow[27]) poolImgs.push(poolRow[27]);
+            if (poolRow[28]) poolImgs.push(poolRow[28]);
+            if (poolRow[29]) poolImgs.push(poolRow[29]);
+            if (poolRow[80]) poolImgs.push(poolRow[80]);
+            if (poolRow[81]) poolImgs.push(poolRow[81]);
+            if (poolRow[82]) poolImgs.push(poolRow[82]);
+
+            for (let c = 40; c <= 54; c++) {
+              if (poolRow[c]) poolImgs.push(poolRow[c]);
+            }
+            for (let c = 83; c <= 92; c++) {
+              if (poolRow[c]) poolImgs.push(poolRow[c]);
+            }
           }
 
           let rawQ = poolRow[3] || '';
@@ -923,7 +969,7 @@ const LegoState = {
 
   loadPublicDataFallback() {
     this.emit('dataLoading', 'public');
-    const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    const SHEET_ID = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
 
     window.__gsCallback = (response) => {
       try {

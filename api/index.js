@@ -858,9 +858,34 @@ module.exports = async (req, res) => {
     }
     try {
       const cfg = loadConfig();
+      const isStaging = process.env.STAGING === 'true';
+      const isPool2 = (cfg.active_pool_system === 'Pool2');
+
+      let resolvedPublicSheetId = '';
+      let resolvedPoolSheetId = '';
+      let resolvedSourceSheetId = '';
+
+      if (isStaging) {
+        resolvedPublicSheetId = cfg.staging_public_sheet_id || '1fDe5nrllgXBdGmYXlIhlYp0sJ_BPuarpD1DjsK_7JWw';
+        resolvedPoolSheetId = cfg.staging_pool_sheet_id || '1Nc8OwSHwacvuuS4blI8U9BrDOlVx6S6u9fU3AaKBYdY';
+        resolvedSourceSheetId = cfg.staging_source_sheet_id || '1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk';
+      } else {
+        if (isPool2) {
+          resolvedPublicSheetId = cfg.pool2_public_sheet_id || '';
+          resolvedPoolSheetId = cfg.pool2_raw_sheet_id || '';
+          resolvedSourceSheetId = cfg.pool2_custom_sheet_id || '';
+        } else {
+          resolvedPublicSheetId = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+          resolvedPoolSheetId = cfg.sheet_id || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+          resolvedSourceSheetId = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+        }
+      }
+
       // Chỉ trả về các trường an toàn không chứa credentials nhạy cảm
       const safeConfig = {
-        sheet_id: cfg.sheet_id || '',
+        sheet_id: resolvedPublicSheetId,
+        pool_sheet_id: resolvedPoolSheetId,
+        source_sheet_id: resolvedSourceSheetId,
         active_pool_system: cfg.active_pool_system || 'Pool1',
         json_ui_filters: cfg.json_ui_filters || [],
         json_ui_fields: cfg.json_ui_fields || []

@@ -1,11 +1,11 @@
 # Stories Index
 
-Last updated: 2026-07-01
+Last updated: 2026-07-07
 
 ## Stats
-- Total: 127
+- Total: 129
 - backlog: 3
-- draft: 0
+- draft: 2
 - in-progress: 0
 - done: 22
 - accepted: 97
@@ -13,6 +13,8 @@ Last updated: 2026-07-01
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-120A | Quản lý & Sắp xếp Hình ảnh Công khai dạng JSON | draft | M | 2026-07-07 | `pool_backend_v3.gs`, `pool_lego.py`, `manager.py`, `static/js/lego_detail_client.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-120A_public_image_curation_json_sync.md` |
+| US-120 | Quản lý Hình ảnh Đa Nguồn và Đồng bộ Dữ liệu Lâu dài | draft | L | 2026-07-07 | `pool_backend_v3.gs`, `pool_lego.py`, `manager.py`, `static/js/lego_detail_client.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-120_image_multi_source_and_long_term_sync.md` |
 | US-119 | Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm | accepted | S | 2026-07-01 | `pool_backend_v3.gs`, `manager.py`, `static/js/lego_core.js`, `static/js/lego_helpers.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-119_street_type_and_alley_width_curation.md` |
 | US-118 | Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail | accepted | S | 2026-07-01 | `pool_backend_v3.gs`, `pool_lego.py`, `manager.py`, `static/js/lego_detail_admin.js`, `static/js/lego_core.js`, `static/js/lego_detail_client.js`, `static/js/lego_helpers.js`, `curator.html`, `canvas.html`, `docs/stories/_inbox/US-118_custom_area_curation.md` |
 | US-117 | Tự động hóa Sao lưu Định kỳ CSDL SQLite cục bộ | accepted | S | 2026-06-30 | `manager.py`, `docs/stories/_inbox/US-117_periodic_database_backup.md` |
@@ -146,6 +148,8 @@ Last updated: 2026-07-01
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-120A_public_image_curation_json_sync|US-120A]]: Quản lý & Sắp xếp Hình ảnh Công khai dạng JSON (draft)
+- [[US-120_image_multi_source_and_long_term_sync|US-120]]: Quản lý Hình ảnh Đa Nguồn và Đồng bộ Dữ liệu Lâu dài (draft)
 - [[US-119_street_type_and_alley_width_curation|US-119]]: Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm trên Vercel Detail & local Python Backend (accepted)
 - [[US-118_custom_area_curation|US-118]]: Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail (accepted)
 - [[US-115_fix_malformed_sqlite_database|US-115]]: Khắc phục lỗi cơ sở dữ liệu SQLite bị hỏng (malformed) khi khởi chạy ứng dụng (in-progress)
@@ -228,6 +232,7 @@ Last updated: 2026-07-01
 - [[US-013_replace_noidungchinh|US-013]]: Bỏ Nội dung chính, thêm DT Trên sổ & Hướng (done)
 
 ### Schema & Định nghĩa
+- [[US-120_image_multi_source_and_long_term_sync|US-120]]: Quản lý Hình ảnh Đa Nguồn và Đồng bộ Dữ liệu Lâu dài (draft)
 - [[US-118_custom_area_curation|US-118]]: Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail (accepted)
 - [[US-110_direction_curation_management|US-110]]: Quản lý và Biên tập Hướng nhà (accepted)
 - [[US-089_pool2_data_system|US-089]]: [Decomposed] Thiết kế hệ thống Pool2 - Phân hệ dữ liệu mới theo kiến trúc Lego (superseded)
@@ -239,6 +244,7 @@ Last updated: 2026-07-01
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-120_image_multi_source_and_long_term_sync|US-120]]: Quản lý Hình ảnh Đa Nguồn và Đồng bộ Dữ liệu Lâu dài (draft)
 - [[US-118_custom_area_curation|US-118]]: Tùy biến Diện tích Sổ & Diện tích Thực tế trên Sheet Source và Vercel Detail (accepted)
 - [[US-113_fix_iphone_image_zoom_black_screen|US-113]]: Sửa lỗi chớp chớp đen màn hình khi phóng to và kéo hình ảnh trên iPhone (accepted)
 - [[US-111_fix_edit_panel_lockup_after_publish|US-111]]: Sửa lỗi khóa panel Biên Tập sau khi vừa lên sóng và tự động tải lại trang (accepted)

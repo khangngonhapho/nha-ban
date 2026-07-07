@@ -121,7 +121,10 @@ git push origin main
 
 | Mục                          | Giá trị                                                                                               |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Sheet ID**            | `1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0`                                                        |
+| **Sheet ID (Production)**     | `1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0`                                                        |
+| **Staging Pool Sheet**        | `1Nc8OwSHwacvuuS4blI8U9BrDOlVx6S6u9fU3AaKBYdY` ([Link](https://docs.google.com/spreadsheets/d/1Nc8OwSHwacvuuS4blI8U9BrDOlVx6S6u9fU3AaKBYdY/edit?gid=1779989226#gid=1779989226)) |
+| **Staging Source Sheet**      | `1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk` ([Link](https://docs.google.com/spreadsheets/d/1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk/edit?gid=1142618999#gid=1142618999)) |
+| **Staging Public Sheet**      | `1fDe5nrllgXBdGmYXlIhlYp0sJ_BPuarpD1DjsK_7JWw` ([Link](https://docs.google.com/spreadsheets/d/1fDe5nrllgXBdGmYXlIhlYp0sJ_BPuarpD1DjsK_7JWw/edit?gid=0#gid=0)) |
 | **Truy cập dữ liệu** | JSONP endpoint (tránh CORS khi mở local)                                                              |
 | **Endpoint**            | `https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback` |
 
