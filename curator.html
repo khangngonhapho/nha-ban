@@ -1866,7 +1866,7 @@
                         if (cfg.db_file) {
                             document.getElementById('db-filename').innerText = cfg.db_file;
                         }
-                        document.getElementById('cfg-sheet-id').value = cfg.sheet_id || '';
+                        document.getElementById('cfg-sheet-id').value = cfg.pool_sheet_id || cfg.sheet_id || '';
                         document.getElementById('cfg-drive-folder').value = cfg.drive_folder_id || '';
                         document.getElementById('cfg-openai-key').value = cfg.openai_api_key || '';
                         document.getElementById('cfg-openai-prompt').value = cfg.openai_system_prompt || '';
@@ -1890,7 +1890,7 @@
 
         function saveConfig() {
             const payload = {
-                sheet_id: document.getElementById('cfg-sheet-id').value.stripOrEmpty(),
+                pool_sheet_id: document.getElementById('cfg-sheet-id').value.stripOrEmpty(),
                 drive_folder_id: document.getElementById('cfg-drive-folder').value.stripOrEmpty(),
                 openai_api_key: document.getElementById('cfg-openai-key').value.stripOrEmpty(),
                 openai_system_prompt: document.getElementById('cfg-openai-prompt').value.trim(),

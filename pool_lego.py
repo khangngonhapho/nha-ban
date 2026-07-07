@@ -1648,11 +1648,12 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             
                 try:
                     sheet = spreadsheet.worksheet("Pool")
-                except Exception:
-                    try:
-                        sheet = spreadsheet.worksheet("Source")
-                    except Exception:
-                        sheet = spreadsheet.get_worksheet(0)
+                except Exception as e:
+                    # Throw a clear exception if 'Pool' worksheet is missing, preventing dangerous write fallbacks to 'Source'
+                    raise Exception(
+                        f"Không tìm thấy tab 'Pool' trong Google Sheet '{spreadsheet.title}' (ID: {sheet_id}). "
+                        f"Vui lòng kiểm tra lại cấu hình ID Google Sheets hoặc cấu trúc các tab."
+                    )
                     
                 try:
                     col_a_values = sheet.col_values(1)

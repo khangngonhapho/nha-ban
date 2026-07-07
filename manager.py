@@ -2109,8 +2109,24 @@ def handle_config():
     if request.method == 'POST':
         data = request.json
         cfg = load_config()
+        is_staging = os.environ.get("STAGING") == "true"
+        is_pool2 = (cfg.get("active_pool_system") == "Pool2")
+
+        # Map pool_sheet_id dynamically to correct key depending on active system mode
+        if "pool_sheet_id" in data:
+            val = data["pool_sheet_id"].strip() if isinstance(data["pool_sheet_id"], str) else ""
+            if is_staging:
+                cfg["staging_pool_sheet_id"] = val
+            elif is_pool2:
+                cfg["pool2_raw_sheet_id"] = val
+            else:
+                cfg["sheet_id"] = val
+
+        # Ignore sheet_id key if sent from client in Staging or Pool2 mode to protect production credentials
         for k in DEFAULT_CONFIG.keys():
             if k in data:
+                if k == "sheet_id" and (is_staging or is_pool2):
+                    continue
                 # Bảo vệ chống ghi đè OpenAI API Key bằng chuỗi trống hoặc placeholder từ UI
                 if k == "openai_api_key":
                     new_key = data[k].strip() if isinstance(data[k], str) else ""

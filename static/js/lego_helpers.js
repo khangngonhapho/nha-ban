@@ -127,7 +127,7 @@ window.autoFillCurationDetails = async function() {
       
       p.phuong_cu = data.phuong_cu || '';
       if (p.original_row_data) {
-        p.original_row_data[66] = data.phuong_cu || '';
+        p.original_row_data[31] = data.phuong_cu || '';
       }
       if (p.pool_row_data) {
         p.pool_row_data[66] = data.phuong_cu || '';
