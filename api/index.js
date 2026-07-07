@@ -888,7 +888,8 @@ module.exports = async (req, res) => {
         source_sheet_id: resolvedSourceSheetId,
         active_pool_system: cfg.active_pool_system || 'Pool1',
         json_ui_filters: cfg.json_ui_filters || [],
-        json_ui_fields: cfg.json_ui_fields || []
+        json_ui_fields: cfg.json_ui_fields || [],
+        db_file: isStaging ? 'raw_archive_staging.db' : 'raw_archive.db'
       };
       return res.status(200).json({ status: 'success', config: safeConfig });
     } catch (err) {

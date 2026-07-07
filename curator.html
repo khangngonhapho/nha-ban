@@ -844,7 +844,7 @@
             </a>
             <div class="widget-item">
                 <span class="dot-indicator dot-green" id="db-indicator"></span>
-                <span>SQLite Database: <strong>raw_archive.db</strong></span>
+                <span>SQLite Database: <strong id="db-filename">raw_archive.db</strong></span>
             </div>
             <div class="widget-item">
                 <span class="dot-indicator dot-green" id="cookie-indicator"></span>
@@ -1863,6 +1863,9 @@
                 .then(data => {
                     if (data.status === 'success') {
                         const cfg = data.config;
+                        if (cfg.db_file) {
+                            document.getElementById('db-filename').innerText = cfg.db_file;
+                        }
                         document.getElementById('cfg-sheet-id').value = cfg.sheet_id || '';
                         document.getElementById('cfg-drive-folder').value = cfg.drive_folder_id || '';
                         document.getElementById('cfg-openai-key').value = cfg.openai_api_key || '';

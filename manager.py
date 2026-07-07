@@ -2154,6 +2154,7 @@ def handle_config():
                 client_cfg["pool_sheet_id"] = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
                 client_cfg["source_sheet_id"] = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
                 
+        client_cfg["db_file"] = os.path.basename(DB_FILE)
         return jsonify({"status": "success", "config": client_cfg})
 
 # ==================================================
