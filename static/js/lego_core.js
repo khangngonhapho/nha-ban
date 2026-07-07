@@ -639,7 +639,9 @@ const LegoState = {
               if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
                 try {
                   const parsedAdmin = JSON.parse(imagesAdminJsonStr);
-                  poolImgs = parsedAdmin.map(img => img.r2_url || img.url);
+                  poolImgs = parsedAdmin
+                    .filter(img => img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn')
+                    .map(img => img.r2_url || img.url);
                 } catch (e) {
                   // fallback
                 }
@@ -813,7 +815,9 @@ const LegoState = {
           if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
             try {
               const parsedAdmin = JSON.parse(imagesAdminJsonStr);
-              poolImgs = parsedAdmin.map(img => img.r2_url || img.url);
+              poolImgs = parsedAdmin
+                .filter(img => img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn')
+                .map(img => img.r2_url || img.url);
             } catch (e) {
               // fallback
             }
