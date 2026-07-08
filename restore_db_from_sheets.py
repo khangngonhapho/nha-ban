@@ -259,10 +259,179 @@ def restore_database():
                 if s_val and not (s_val.startswith("#") and s_val.endswith("!")):
                     custom_huong_val = s_val
                         
+        # Reconstruct curated images config & populate listings_images table
+        images_list = []
+        images_admin_json_str = row_dict.get("Images_Admin_JSON", "").strip()
+        if images_admin_json_str:
+            try:
+                parsed = json.loads(images_admin_json_str)
+                role_map_en_to_vi = {
+                    "diagram": "Sơ đồ",
+                    "facade": "Mặt tiền",
+                    "cover": "Bìa",
+                    "alley": "Hẻm",
+                    "interior": "Nội thất",
+                    "hidden": "Ẩn",
+                    "deleted": "deleted"
+                }
+                if isinstance(parsed, list):
+                    for img in parsed:
+                        if isinstance(img, dict) and img.get("image_url"):
+                            en_role = img.get("role", "interior")
+                            vi_role = role_map_en_to_vi.get(en_role, "Nội thất")
+                            is_hidden = img.get("is_hidden", 0) == 1
+                            images_list.append({
+                                "url": img.get("r2_url") or img.get("image_url"),
+                                "role": vi_role,
+                                "visible": not is_hidden
+                            })
+            except Exception:
+                images_list = []
+
+        if not images_list:
+            # Fallback to reconstructing from flat columns
+            def parse_indices(val):
+                if not val:
+                    return []
+                res = []
+                for x in str(val).split(","):
+                    x_clean = x.strip()
+                    if x_clean.isdigit():
+                        res.append(int(x_clean))
+                return res
+
+            public_interior_indices = parse_indices(row_dict.get("Ảnh Public (VD: 1,3,5)", ""))
+            public_alley_indices = parse_indices(row_dict.get("Ảnh Hẻm Public (VD: 1,2)", ""))
+
+            # 1. Cover
+            cover_url = row_dict.get("Hình Nhận Diện", "").strip()
+            if cover_url and cover_url.startswith("http"):
+                images_list.append({
+                    "url": cover_url,
+                    "role": "Bìa",
+                    "visible": True
+                })
+
+            # 2. Facade
+            facade_url = row_dict.get("Hình Mặt Tiền", "").strip()
+            if facade_url and facade_url.startswith("http"):
+                if not any(img["url"] == facade_url for img in images_list):
+                    images_list.append({
+                        "url": facade_url,
+                        "role": "Mặt tiền",
+                        "visible": False
+                    })
+
+            # 3. Alleys
+            for i in range(1, 11):
+                url = row_dict.get(f"Hình Hẻm {i}", "").strip()
+                if url and url.startswith("http"):
+                    if not any(img["url"] == url for img in images_list):
+                        is_visible = i in public_alley_indices
+                        images_list.append({
+                            "url": url,
+                            "role": "Hẻm",
+                            "visible": is_visible
+                        })
+
+            # 4. Interiors
+            for i in range(1, 26):
+                url = row_dict.get(f"Ảnh {i}", "").strip()
+                if url and url.startswith("http"):
+                    if not any(img["url"] == url for img in images_list):
+                        is_visible = i in public_interior_indices
+                        images_list.append({
+                            "url": url,
+                            "role": "Nội thất",
+                            "visible": is_visible
+                        })
+
+            # 5. Diagrams
+            for i in range(1, 6):
+                url = row_dict.get(f"Sơ đồ thửa đất {i}", "").strip()
+                if url and url.startswith("http"):
+                    if not any(img["url"] == url for img in images_list):
+                        images_list.append({
+                            "url": url,
+                            "role": "Sơ đồ",
+                            "visible": False
+                        })
+
+        ma_khang_ngo_id = row_dict.get("Mã Khang Ngô (ID)", "").strip()
+        curated_config = {
+            "images": images_list,
+            "Mã_Khang_Ngô__ID_": ma_khang_ngo_id
+        }
+        curated_config_json_str = json.dumps(curated_config, ensure_ascii=False)
+
+        # Build migrated_images list for listings_images and images_admin_json/images_public_json
+        migrated_images = []
+        role_map_vi_to_en = {
+            "Sơ đồ": "diagram",
+            "Mặt tiền": "facade",
+            "Bìa": "cover",
+            "Hẻm": "alley",
+            "Nội thất": "interior",
+            "Ẩn": "hidden",
+            "deleted": "deleted"
+        }
+        for seq_idx, img in enumerate(images_list):
+            vi_role = img.get("role", "Nội thất")
+            resolved_role = role_map_vi_to_en.get(vi_role, "interior")
+            is_visible = img.get("visible", True)
+            is_hidden_val = 1 if (not is_visible or resolved_role in ["hidden", "deleted", "diagram", "facade"]) else 0
+            
+            migrated_images.append({
+                "image_url": img["url"],
+                "r2_url": img["url"],
+                "role": resolved_role,
+                "sequence_index": seq_idx,
+                "origin": "crawl",
+                "is_hidden": is_hidden_val
+            })
+
+        images_admin_json_str_to_save = json.dumps(migrated_images, ensure_ascii=False)
+        
+        public_urls = [
+            img["r2_url"] if img["r2_url"] else img["image_url"]
+            for img in migrated_images
+            if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]
+        ]
+        images_public_json_str_to_save = json.dumps(public_urls, ensure_ascii=False)
+
+        # Write to listings_images
+        try:
+            cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (tk_id,))
+            for img in migrated_images:
+                cursor.execute("""
+                    INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    tk_id,
+                    pool_sys_id,
+                    img["image_url"],
+                    img["r2_url"],
+                    img["role"],
+                    img["sequence_index"],
+                    img["origin"],
+                    img["is_hidden"]
+                ))
+        except Exception as e_img_save:
+            print(f"  - [⚠️ WARNING] Lỗi chèn listings_images cho {tk_id}: {str(e_img_save)}")
+
         # Chuẩn bị câu lệnh insert vào SQLite
-        columns = ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "custom_huong"]
-        placeholders = ["?", "?", "?", "?", "?"]
-        insert_vals = [tk_id, status, json.dumps(reconstructed_drive_images), json.dumps(reconstructed_drive_images), custom_huong_val]
+        columns = ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "custom_huong", "curated_config_json", "images_admin_json", "images_public_json"]
+        placeholders = ["?", "?", "?", "?", "?", "?", "?", "?"]
+        insert_vals = [
+            tk_id, 
+            status, 
+            json.dumps(reconstructed_drive_images), 
+            json.dumps(reconstructed_drive_images), 
+            custom_huong_val,
+            curated_config_json_str,
+            images_admin_json_str_to_save,
+            images_public_json_str_to_save
+        ]
         
         for header in POOL_HEADERS:
             safe_col = get_safe_col_name(header)

@@ -2588,8 +2588,8 @@
         function sortImagesConfig() {
             // Sắp xếp: Không phải 'Ẩn' lên trên đầu, 'Ẩn' xuống dưới cùng
             imagesConfig.sort((a, b) => {
-                const aIsHidden = a.role === 'Ẩn';
-                const bIsHidden = b.role === 'Ẩn';
+                const aIsHidden = a.role === 'Ẩn' || a.role === 'hidden' || a.role === 'deleted' || a.visible === false;
+                const bIsHidden = b.role === 'Ẩn' || b.role === 'hidden' || b.role === 'deleted' || b.visible === false;
                 if (aIsHidden && !bIsHidden) return 1;
                 if (!aIsHidden && bIsHidden) return -1;
                 return 0; // Giữ nguyên thứ tự tương đối
@@ -2682,9 +2682,11 @@
         function assignImageRole(idx, role) {
             // Nếu đổi thành Bìa (Nền)
             if (role === 'Bìa') {
-                // Reset Bìa (Nền) cũ về Ẩn
+                // Reset Bìa (Nền) cũ về Nội thất
                 imagesConfig.forEach(item => {
-                    if (item.role === 'Bìa') item.role = 'Ẩn';
+                    if (item.role === 'Bìa' || item.role === 'cover') {
+                        item.role = 'Nội thất';
+                    }
                 });
                 
                 // Gán vai trò Bìa cho ảnh được chọn
@@ -2698,15 +2700,20 @@
                     imagesConfig[idx] = temp;
                 }
             } else if (role === 'Mặt tiền') {
-                // Reset Mặt tiền cũ về Ẩn
+                // Reset Mặt tiền cũ về Nội thất
                 imagesConfig.forEach(item => {
-                    if (item.role === 'Mặt tiền') item.role = 'Ẩn';
+                    if (item.role === 'Mặt tiền' || item.role === 'facade') {
+                        item.role = 'Nội thất';
+                    }
                 });
-                imagesConfig[idx].role = role;
+                imagesConfig[idx].role = 'Mặt tiền';
                 imagesConfig[idx].visible = false;
+            } else if (role === 'Ẩn') {
+                imagesConfig[idx].visible = false;
+                // Giữ nguyên role gốc!
             } else {
                 imagesConfig[idx].role = role;
-                if (role === 'Sơ đồ' || role === 'Ẩn') {
+                if (role === 'Sơ đồ') {
                     imagesConfig[idx].visible = false;
                 } else if (role === 'Hẻm' || role === 'Nội thất') {
                     imagesConfig[idx].visible = true;
@@ -2748,10 +2755,10 @@
             const publicIndices = [];
             const hemIndices = [];
             imagesConfig.slice(0, 15).forEach((img, i) => {
-                if (img.role === 'Nội thất') {
+                if ((img.role === 'Nội thất' || img.role === 'interior') && img.visible !== false) {
                     publicIndices.push(i + 1);
                 }
-                if (img.role === 'Hẻm') {
+                if ((img.role === 'Hẻm' || img.role === 'alley') && img.visible !== false) {
                     hemIndices.push(i + 1);
                 }
             });

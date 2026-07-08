@@ -776,11 +776,12 @@ def init_db(db_file=None):
                 cursor.execute("ALTER TABLE listings ADD COLUMN custom_dt_thuc_te TEXT DEFAULT ''")
                 conn.commit()
 
-            if "images_admin_json" not in existing_cols:
+            existing_cols_lower = [c.lower() for c in existing_cols]
+            if "images_admin_json" not in existing_cols_lower:
                 cursor.execute("ALTER TABLE listings ADD COLUMN images_admin_json TEXT")
                 conn.commit()
 
-            if "images_public_json" not in existing_cols:
+            if "images_public_json" not in existing_cols_lower:
                 cursor.execute("ALTER TABLE listings ADD COLUMN images_public_json TEXT")
                 conn.commit()
                 
