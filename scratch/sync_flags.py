@@ -18,9 +18,12 @@ def sync_flags(add_log_message=print):
     settings = read_settings()
     
     # 1. Determine active sheet ID
+    is_staging = os.environ.get("STAGING") == "true"
     active_system = settings.get("active_pool_system", "Pool1")
     
-    if active_system == "Pool2":
+    if is_staging:
+        sheet_id = settings.get("staging_pool_sheet_id") or "1Nc8OwSHwacvuuS4blI8U9BrDOlVx6S6u9fU3AaKBYdY"
+    elif active_system == "Pool2":
         # Pool2 uses custom sheet
         sheet_id = settings.get("pool2_custom_sheet_id")
     else:
