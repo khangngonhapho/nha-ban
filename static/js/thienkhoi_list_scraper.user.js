@@ -22,7 +22,7 @@
     } catch (e) {
         console.warn("[Khang Ngô BDS] Không thể truy cập localStorage:", e);
     }
-    let getLocalUrl = () => `http://localhost:${localPort}`;
+    let getLocalUrl = () => `http://127.0.0.1:${localPort}`;
 
     // STYLES
     const styles = `
