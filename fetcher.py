@@ -395,15 +395,14 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
     global DELAY_HOUSE_MIN, DELAY_HOUSE_MAX, DELAY_PAGE_MIN, DELAY_PAGE_MAX
     init_db()
 
-    # Tự động nạp cấu hình thời gian nghỉ/tốc độ cào tin từ file cấu hình
     try:
         from core.config import read_settings
         cfg = read_settings()
-                if "delay_house_min" in cfg: DELAY_HOUSE_MIN = float(cfg["delay_house_min"])
-                if "delay_house_max" in cfg: DELAY_HOUSE_MAX = float(cfg["delay_house_max"])
-                if "delay_page_min" in cfg: DELAY_PAGE_MIN = float(cfg["delay_page_min"])
-                if "delay_page_max" in cfg: DELAY_PAGE_MAX = float(cfg["delay_page_max"])
-                print(f"[*] Áp dụng tốc độ cào: Căn ({DELAY_HOUSE_MIN}s - {DELAY_HOUSE_MAX}s) | Trang ({DELAY_PAGE_MIN}s - {DELAY_PAGE_MAX}s)")
+        if "delay_house_min" in cfg: DELAY_HOUSE_MIN = float(cfg["delay_house_min"])
+        if "delay_house_max" in cfg: DELAY_HOUSE_MAX = float(cfg["delay_house_max"])
+        if "delay_page_min" in cfg: DELAY_PAGE_MIN = float(cfg["delay_page_min"])
+        if "delay_page_max" in cfg: DELAY_PAGE_MAX = float(cfg["delay_page_max"])
+        print(f"[*] Áp dụng tốc độ cào: Căn ({DELAY_HOUSE_MIN}s - {DELAY_HOUSE_MAX}s) | Trang ({DELAY_PAGE_MIN}s - {DELAY_PAGE_MAX}s)")
     except Exception as e:
         print(f"[⚠️ WARNING] Không thể đọc cấu hình tốc độ cào, sử dụng mặc định: {str(e)}")
 
@@ -831,15 +830,14 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
 def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_district=None, start_page=None):
     global DELAY_HOUSE_MIN, DELAY_HOUSE_MAX, DELAY_PAGE_MIN, DELAY_PAGE_MAX
     init_db()
-
     try:
         from core.config import read_settings
         cfg = read_settings()
-                if "delay_house_min" in cfg: DELAY_HOUSE_MIN = float(cfg["delay_house_min"])
-                if "delay_house_max" in cfg: DELAY_HOUSE_MAX = float(cfg["delay_house_max"])
-                if "delay_page_min" in cfg: DELAY_PAGE_MIN = float(cfg["delay_page_min"])
-                if "delay_page_max" in cfg: DELAY_PAGE_MAX = float(cfg["delay_page_max"])
-                print(f"[*] Áp dụng tốc độ cào: Căn ({DELAY_HOUSE_MIN}s - {DELAY_HOUSE_MAX}s) | Trang ({DELAY_PAGE_MIN}s - {DELAY_PAGE_MAX}s)")
+        if "delay_house_min" in cfg: DELAY_HOUSE_MIN = float(cfg["delay_house_min"])
+        if "delay_house_max" in cfg: DELAY_HOUSE_MAX = float(cfg["delay_house_max"])
+        if "delay_page_min" in cfg: DELAY_PAGE_MIN = float(cfg["delay_page_min"])
+        if "delay_page_max" in cfg: DELAY_PAGE_MAX = float(cfg["delay_page_max"])
+        print(f"[*] Áp dụng tốc độ cào: Căn ({DELAY_HOUSE_MIN}s - {DELAY_HOUSE_MAX}s) | Trang ({DELAY_PAGE_MIN}s - {DELAY_PAGE_MAX}s)")
     except Exception as e:
         print(f"[⚠️ WARNING] Không thể đọc cấu hình tốc độ cào, sử dụng mặc định: {str(e)}")
 
