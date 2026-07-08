@@ -2195,23 +2195,8 @@
           finalImages[13] || "",         // 44: anh_14 (Cột AS)
           finalImages[14] || "",         // 45: anh_15 (Cột AT)
           matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
-          JSON.stringify(finalImages.filter(Boolean)), // 47: Images_Public_JSON (Cột AV)
-          (function() {
-            const curatedImages = [];
-            if (window.imageEditorSlides) {
-              window.imageEditorSlides.forEach((slide, idx) => {
-                curatedImages.push({
-                  image_url: slide.url,
-                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
-                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-                  sequence_index: idx + 1,
-                  origin: 'thienkhoi',
-                  is_hidden: slide.visible === false ? 1 : 0
-                });
-              });
-            }
-            return JSON.stringify(curatedImages);
-          })()                           // 48: Images_Admin_JSON (Cột AW)
+          matchedRow[14] || "",          // 47: DT Trên sổ (Cột AV)
+          JSON.stringify(finalImages.filter(Boolean)) // 48: Images_Public_JSON (Cột AW)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
@@ -2238,6 +2223,34 @@
         try {
           const poolRowNumber = rows.indexOf(matchedRow) + 2;
           const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+          
+          // Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
+          try {
+            const curatedImages = [];
+            if (window.imageEditorSlides) {
+              window.imageEditorSlides.forEach((slide, idx) => {
+                curatedImages.push({
+                  image_url: slide.url,
+                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
+                  sequence_index: idx + 1,
+                  origin: 'thienkhoi',
+                  is_hidden: slide.visible === false ? 1 : 0
+                });
+              });
+            }
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CP${poolRowNumber}:CP${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool:", e);
+          }
+
           await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CA${poolRowNumber}:CA${poolRowNumber}?valueInputOption=USER_ENTERED`, {
             method: 'PUT',
             headers: {
@@ -2668,8 +2681,9 @@
         p.t = tieuDeBds;
         p.original_row_data[39] = "";
         p.original_row_data[46] = JSON.stringify(p.json_ui_parsed);
-        p.original_row_data[47] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AV)
-        
+        p.original_row_data[47] = editDtTrenSo; // DT Trên sổ (Cột AV)
+        p.original_row_data[48] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AW)
+
         const curatedImages = [];
         if (window.imageEditorSlides) {
           window.imageEditorSlides.forEach((slide, idx) => {
@@ -2683,7 +2697,6 @@
             });
           });
         }
-        p.original_row_data[48] = JSON.stringify(curatedImages); // Images_Admin_JSON (Cột AW)
 
         p.note = note;
         p.dt = editDtThucTe;
@@ -2723,6 +2736,21 @@
         if (p.pool_row_index && p.pool_row_data) {
           const POOL_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
           
+          // 0. Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
+          try {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CP${p.pool_row_index}:CP${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
+            });
+            p.pool_row_data[94] = JSON.stringify(curatedImages);
+          } catch (e) {
+            console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool:", e);
+          }
+
           // 1. Đồng bộ các ảnh Sổ thửa đất (cột AB:AC)
           try {
             await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!AB${p.pool_row_index}:AC${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
@@ -3071,23 +3099,8 @@
           finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
           finalImages[14] || "",         // 45: Ảnh 15 (Cột AT)
           matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
-          JSON.stringify(finalImages.filter(Boolean)), // 47: Images_Public_JSON (Cột AV)
-          (function() {
-            const curatedImages = [];
-            if (window.imageEditorSlides) {
-              window.imageEditorSlides.forEach((slide, idx) => {
-                curatedImages.push({
-                  image_url: slide.url,
-                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
-                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-                  sequence_index: idx + 1,
-                  origin: 'thienkhoi',
-                  is_hidden: slide.visible === false ? 1 : 0
-                });
-              });
-            }
-            return JSON.stringify(curatedImages);
-          })()                           // 48: Images_Admin_JSON (Cột AW)
+          editDtTrenSo,                  // 47: DT Trên sổ (Cột AV)
+          JSON.stringify(finalImages.filter(Boolean)) // 48: Images_Public_JSON (Cột AW)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
@@ -3127,6 +3140,33 @@
             });
           } catch (e) {
             console.warn("Không thể đồng bộ thay đổi Sổ sang Pool thô:", e);
+          }
+
+          // 0a. Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
+          try {
+            const curatedImages = [];
+            if (window.imageEditorSlides) {
+              window.imageEditorSlides.forEach((slide, idx) => {
+                curatedImages.push({
+                  image_url: slide.url,
+                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
+                  sequence_index: idx + 1,
+                  origin: 'thienkhoi',
+                  is_hidden: slide.visible === false ? 1 : 0
+                });
+              });
+            }
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CP${poolRowNumber}:CP${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
+            });
+          } catch (e) {
+            console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool trong publish:", e);
           }
 
           // 0b. Cập nhật Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)

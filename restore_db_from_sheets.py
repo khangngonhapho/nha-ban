@@ -265,13 +265,9 @@ def restore_database():
                         
         # Reconstruct curated images config & populate listings_images table
         images_list = []
-        images_admin_json_str = ""
-        if pool_sys_id and pool_sys_id in source_dict:
-            s_row = source_dict[pool_sys_id]
-            if len(s_row) > 48:
-                images_admin_json_str = s_row[48].strip()
-        if not images_admin_json_str:
-            images_admin_json_str = row_dict.get("Images_Admin_JSON", "").strip()
+        
+        # Images_Admin_JSON is ONLY stored on the Pool sheet
+        images_admin_json_str = row_dict.get("Images_Admin_JSON", "").strip()
         if images_admin_json_str:
             try:
                 parsed = json.loads(images_admin_json_str)
@@ -298,6 +294,51 @@ def restore_database():
             except Exception:
                 images_list = []
 
+        # If published, override the visibility & order of images using the Source sheet's Images_Public_JSON
+        if pool_sys_id and pool_sys_id in source_dict:
+            s_row = source_dict[pool_sys_id]
+            source_public_urls = []
+            if len(s_row) > 48:
+                pub_str = s_row[48].strip()
+                if pub_str.startswith("[") and pub_str.endswith("]"):
+                    try:
+                        source_public_urls = json.loads(pub_str)
+                    except Exception:
+                        pass
+                        
+            # Normalize URLs for comparison
+            def norm_url(u):
+                if not u: return ""
+                return u.split("?")[0].strip().lower()
+                
+            if images_list and source_public_urls:
+                aligned_images = []
+                # First, find public images in the exact order of source_public_urls
+                for pub_url in source_public_urls:
+                    if not pub_url: continue
+                    norm_pub = norm_url(pub_url)
+                    matched = None
+                    for img in images_list:
+                        if norm_url(img["url"]) == norm_pub:
+                            matched = img
+                            break
+                    if matched:
+                        matched["visible"] = True
+                        aligned_images.append(matched)
+                    else:
+                        # Fallback if image not in curated config list
+                        aligned_images.append({
+                            "url": pub_url,
+                            "role": "Nội thất",
+                            "visible": True
+                        })
+                # Then, append any remaining images from images_list (which are hidden)
+                for img in images_list:
+                    if not any(norm_url(x["url"]) == norm_url(img["url"]) for x in aligned_images):
+                        img["visible"] = False
+                        aligned_images.append(img)
+                images_list = aligned_images
+
         if not images_list:
             # Fallback to reconstructing from flat columns
             def parse_indices(val):
@@ -317,17 +358,31 @@ def restore_database():
             source_public_interiors = set()
             if pool_sys_id and pool_sys_id in source_dict:
                 s_row = source_dict[pool_sys_id]
-                # Cols 21 to 30 (indices 20 to 29) are Ảnh 1 to 10
-                for url in s_row[20:30]:
-                    url_clean = url.strip()
-                    if url_clean.startswith("http"):
-                        source_public_interiors.add(url_clean)
-                # Cols 42 to 46 (indices 41 to 45) are Ảnh 11 to 15
-                if len(s_row) > 45:
-                    for url in s_row[41:46]:
+                # Try to use Images_Public_JSON (index 48) first
+                has_pub_json = False
+                if len(s_row) > 48:
+                    pub_str = s_row[48].strip()
+                    if pub_str.startswith("[") and pub_str.endswith("]"):
+                        try:
+                            source_public_urls = json.loads(pub_str)
+                            for u in source_public_urls:
+                                if u.strip().startswith("http"):
+                                    source_public_interiors.add(u.strip())
+                            has_pub_json = True
+                        except Exception:
+                            pass
+                if not has_pub_json:
+                    # Cols 21 to 30 (indices 20 to 29) are Ảnh 1 to 10
+                    for url in s_row[20:30]:
                         url_clean = url.strip()
                         if url_clean.startswith("http"):
                             source_public_interiors.add(url_clean)
+                    # Cols 42 to 46 (indices 41 to 45) are Ảnh 11 to 15
+                    if len(s_row) > 45:
+                        for url in s_row[41:46]:
+                            url_clean = url.strip()
+                            if url_clean.startswith("http"):
+                                source_public_interiors.add(url_clean)
 
             # 1. Cover
             cover_url = row_dict.get("Hình Nhận Diện", "").strip()
