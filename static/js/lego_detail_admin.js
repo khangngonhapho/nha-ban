@@ -44,9 +44,14 @@
         return;
       }
       
-      // 2. Lấy danh sách URL ảnh từ curatedImages (lọc bỏ các ảnh bị xóa hoàn toàn)
+      // 2. Lấy danh sách URL ảnh từ curatedImages (chỉ lấy ảnh tự upload/R2, lọc bỏ các ảnh crawl và ảnh bị xóa)
+      const isUserUploaded = (url) => {
+        if (!url) return false;
+        return url.startsWith('https://pub-') || url.includes('r2.dev') || url.includes('r2.cloudflarestorage.com');
+      };
+      
       const imageUrls = curatedImages
-        .filter(img => img.role !== 'deleted')
+        .filter(img => img.role !== 'deleted' && (img.origin === 'self' || img.origin === 'user' || isUserUploaded(img.image_url || img.r2_url)))
         .map(img => img.image_url || img.r2_url)
         .filter(url => url && url.trim() !== "");
         
