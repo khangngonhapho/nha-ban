@@ -129,7 +129,7 @@ async function getGoogleAccessToken(creds) {
 
   const payload = {
     iss: creds.client_email,
-    scope: 'https://www.googleapis.com/auth/drive.readonly',
+    scope: 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets.readonly',
     aud: tokenUri,
     exp: exp,
     iat: iat
@@ -276,6 +276,28 @@ async function fetchGoogleDocContent(docId, accessToken) {
   }
   
   return null;
+}
+
+function parseSheetFlags(rows) {
+  if (!rows || rows.length <= 1) return {};
+  const headers = rows[0].map(h => String(h).trim());
+  const nameIdx = headers.indexOf("Tên Flag");
+  const valIdx = headers.indexOf("Giá Trị Hiện Tại");
+  const statusIdx = headers.indexOf("Trạng Thái");
+
+  if (nameIdx === -1 || valIdx === -1) return {};
+
+  const flags = {};
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const name = String(row[nameIdx] || '').trim();
+    const val = String(row[valIdx] || '').trim();
+    const status = statusIdx !== -1 ? String(row[statusIdx] || '').trim() : 'active';
+    if (name && status === 'active') {
+      flags[name] = (val.toUpperCase() === 'TRUE');
+    }
+  }
+  return flags;
 }
 
 function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId) {
@@ -881,6 +903,39 @@ module.exports = async (req, res) => {
         }
       }
 
+      // Fetch dynamic feature flags from Google Sheets
+      let dynamicFlags = {};
+      try {
+        const creds = getCredentials();
+        if (creds && resolvedPoolSheetId) {
+          const accessToken = await getGoogleAccessToken(creds);
+          if (accessToken) {
+            const range = 'Feature_Flags!A1:G50';
+            const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${resolvedPoolSheetId}/values/${encodeURIComponent(range)}`;
+            
+            const fetchPromise = fetch(sheetsUrl, {
+              headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Google Sheets fetch timeout')), 4000)
+            );
+            const sheetsRes = await Promise.race([fetchPromise, timeoutPromise]);
+            if (sheetsRes.ok) {
+              const data = await sheetsRes.json();
+              if (data && data.values) {
+                dynamicFlags = parseSheetFlags(data.values);
+                console.log('[🤖 DYNAMIC FLAGS] Loaded from Google Sheets:', dynamicFlags);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching dynamic feature flags from sheets, falling back:', err);
+      }
+
+      // Merge: Sheets flags override settings.json local flags
+      const mergedFlags = Object.assign({}, cfg.feature_flags || {}, dynamicFlags);
+
       // Chỉ trả về các trường an toàn không chứa credentials nhạy cảm
       const safeConfig = {
         sheet_id: resolvedPublicSheetId,
@@ -890,7 +945,7 @@ module.exports = async (req, res) => {
         json_ui_filters: cfg.json_ui_filters || [],
         json_ui_fields: cfg.json_ui_fields || [],
         db_file: isStaging ? 'raw_archive_staging.db' : 'raw_archive.db',
-        maintenance_mode: cfg.feature_flags ? (cfg.feature_flags.maintenance_mode === true) : false
+        maintenance_mode: mergedFlags.maintenance_mode === true
       };
       return res.status(200).json({ status: 'success', config: safeConfig });
     } catch (err) {

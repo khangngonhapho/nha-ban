@@ -165,7 +165,34 @@ def handle_config():
                 client_cfg["pool_sheet_id"] = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
                 client_cfg["source_sheet_id"] = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
                 
-        client_cfg["maintenance_mode"] = client_cfg.get("feature_flags", {}).get("maintenance_mode", False)
+        # Đọc động feature flags từ Google Sheets với cơ chế fallback an toàn
+        dynamic_flags = {}
+        try:
+            active_sheet_id = client_cfg.get("pool_sheet_id")
+            if active_sheet_id:
+                import gspread
+                creds = manager.get_google_credentials()
+                if creds:
+                    gc = gspread.authorize(creds)
+                    # Mở worksheet và đọc nhanh
+                    sh = gc.open_by_key(active_sheet_id)
+                    wks = sh.worksheet("Feature_Flags")
+                    records = wks.get_all_records()
+                    for row in records:
+                        name = row.get("Tên Flag")
+                        val = row.get("Giá Trị Hiện Tại")
+                        status = row.get("Trạng Thái")
+                        if name and status == "active":
+                            dynamic_flags[name] = (str(val).upper() == "TRUE")
+        except Exception:
+            # Fallback thầm lặng nếu không kết nối được hoặc lỗi cấu hình
+            pass
+
+        # Gộp cờ từ Google Sheets đè lên settings.json
+        local_flags = client_cfg.get("feature_flags") or {}
+        merged_flags = {**local_flags, **dynamic_flags}
+        client_cfg["feature_flags"] = merged_flags
+        client_cfg["maintenance_mode"] = merged_flags.get("maintenance_mode", False)
         return jsonify({"status": "success", "config": client_cfg})
 
 @routes_system.route('/api/logs', methods=['GET'])
