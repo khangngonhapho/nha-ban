@@ -26,21 +26,14 @@ def remove_accents(input_str):
     return _remove_accents(input_str)
 
 def get_db_file():
-    try:
-        config_file = "settings.json"
-        if os.path.exists(config_file):
-            with open(config_file, 'r', encoding='utf-8') as f:
-                cfg = json.load(f)
-                if cfg.get("active_pool_system") == "Pool2":
-                    return "raw_archive_v2.db"
-    except Exception:
-        pass
-    return "raw_archive.db"
+    """⚠️ DELEGATED: Đã chuyển sang core.db.get_db_file()"""
+    from core.db import get_db_file as _get_db_file
+    return _get_db_file()
 
 def get_listings_table_name(db_file):
-    if "raw_archive_v2.db" in db_file:
-        return "listings_v2"
-    return "listings"
+    """⚠️ DELEGATED: Đã chuyển sang core.db.get_listings_table_name()"""
+    from core.db import get_listings_table_name as _get_table_name
+    return _get_table_name(db_file)
 
 def get_db_stats(db_file, table_name):
     if not os.path.exists(db_file):

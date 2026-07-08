@@ -16,14 +16,12 @@ import sqlite3
 # Tối ưu hóa SQLite WAL mode và Timeout chống lỗi "database disk image is malformed" / "database is locked"
 _orig_sqlite_connect = sqlite3.connect
 def robust_sqlite_connect(database, timeout=30.0, *args, **kwargs):
-    conn = _orig_sqlite_connect(database, timeout=max(timeout, 30.0), *args, **kwargs)
-    try:
-        conn.execute("PRAGMA journal_mode=WAL;")
-        conn.execute("PRAGMA synchronous=NORMAL;")
-        conn.execute("PRAGMA busy_timeout=30000;")
-    except Exception:
-        pass
-    return conn
+    """
+    ⚠️ DELEGATED: Logic đã chuyển sang core.db.robust_sqlite_connect()
+    Monkey-patch giữ nguyên để tất cả sqlite3.connect() trong app dùng WAL.
+    """
+    from core.db import robust_sqlite_connect as _robust_connect
+    return _robust_connect(database, timeout, *args, **kwargs)
 sqlite3.connect = robust_sqlite_connect
 
 import time
@@ -272,24 +270,10 @@ def get_db_file():
     """
     Xác định và trả về đường dẫn tệp tin SQLite đang được hệ thống kích hoạt.
     
-    Returns:
-        str: Đường dẫn tệp tin SQLite.
-        
-    Storage:
-        RAM (Không lưu đĩa).
+    ⚠️ DELEGATED: Logic đã chuyển sang core.db.get_db_file()
     """
-    if os.environ.get("STAGING") == "true":
-        return "raw_archive_staging.db"
-    try:
-        config_file = "settings.json"
-        if os.path.exists(config_file):
-            with open(config_file, 'r', encoding='utf-8') as f:
-                cfg = json.load(f)
-                if cfg.get("active_pool_system") == "Pool2":
-                    return "raw_archive_v2.db"
-    except Exception:
-        pass
-    return "raw_archive.db"
+    from core.db import get_db_file as _get_db_file
+    return _get_db_file()
 
 def init_db(db_file=None):
     """
