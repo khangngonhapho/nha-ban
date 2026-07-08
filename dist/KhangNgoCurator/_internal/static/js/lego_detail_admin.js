@@ -536,35 +536,70 @@
       const domSodo4 = forceNew ? null : document.getElementById('editSodo4Url');
       const domSodo5 = forceNew ? null : document.getElementById('editSodo5Url');
 
+      let sodo1Url = '', sodo2Url = '', sodo3Url = '', sodo4Url = '', sodo5Url = '';
+      let facadeUrl = '';
+
       const cards = [];
       
-      const sodo1Url = domSodo1 ? domSodo1.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(1)] : p.raw_sodo1);
-      if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url });
-      
-      const sodo2Url = domSodo2 ? domSodo2.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(2)] : p.raw_sodo2);
-      if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+      if (p.curated_config && Array.isArray(p.curated_config.images)) {
+        let sodoCount = 0;
+        let interiorCount = 0;
+        let alleyCount = 0;
+        p.curated_config.images.forEach(img => {
+          if (!img || !img.url) return;
+          const role = img.role || 'Nội thất';
+          if (role === 'Mặt tiền' || role === 'facade') {
+            cards.push({ type: "facade", index: 0, url: img.url });
+          } else if (role === 'Bìa' || role === 'cover') {
+            cards.push({ type: "cover", index: 0, url: img.url });
+          } else if (role === 'Sơ đồ' || role === 'diagram') {
+            sodoCount++;
+            cards.push({ type: "sodo", index: sodoCount, url: img.url });
+          } else if (role === 'Hẻm' || role === 'alley') {
+            alleyCount++;
+            cards.push({ type: "alley", index: alleyCount, url: img.url });
+          } else {
+            interiorCount++;
+            cards.push({ type: "interior", index: interiorCount, url: img.url });
+          }
+        });
 
-      const sodo3Url = domSodo3 ? domSodo3.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(3)] : p.raw_sodo3);
-      if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
-
-      const sodo4Url = domSodo4 ? domSodo4.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(4)] : p.raw_sodo4);
-      if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
-
-      const sodo5Url = domSodo5 ? domSodo5.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5);
-      if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
-      
-      const facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
-      if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
-      
-      for (let i = 1; i <= 25; i++) {
-        const idx = window.getPoolInteriorColIdx(i);
-        const url = p.pool_row_data ? p.pool_row_data[idx] : (p.imgs && p.imgs[i - 1]);
-        if (url) cards.push({ type: "interior", index: i, url: url });
-      }
-      
-      for (let i = 1; i <= 10; i++) {
-        const url = p.pool_row_data ? p.pool_row_data[window.getPoolAlleyColIdx(i)] : null;
-        if (url) cards.push({ type: "alley", index: i, url: url });
+        sodo1Url = cards.find(c => c.type === 'sodo' && c.index === 1)?.url || '';
+        sodo2Url = cards.find(c => c.type === 'sodo' && c.index === 2)?.url || '';
+        sodo3Url = cards.find(c => c.type === 'sodo' && c.index === 3)?.url || '';
+        sodo4Url = cards.find(c => c.type === 'sodo' && c.index === 4)?.url || '';
+        sodo5Url = cards.find(c => c.type === 'sodo' && c.index === 5)?.url || '';
+        facadeUrl = cards.find(c => c.type === 'facade')?.url || '';
+      } else {
+        sodo1Url = domSodo1 ? domSodo1.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(1)] : p.raw_sodo1);
+        if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url });
+        
+        sodo2Url = domSodo2 ? domSodo2.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(2)] : p.raw_sodo2);
+        if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+  
+        sodo3Url = domSodo3 ? domSodo3.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(3)] : p.raw_sodo3);
+        if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
+  
+        sodo4Url = domSodo4 ? domSodo4.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(4)] : p.raw_sodo4);
+        if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
+  
+        sodo5Url = domSodo5 ? domSodo5.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5);
+        if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
+        
+        facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
+        if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
+        
+        const maxInterior = p.imgs ? Math.max(25, p.imgs.length) : 25;
+        for (let i = 1; i <= maxInterior; i++) {
+          const idx = window.getPoolInteriorColIdx(i);
+          const url = p.pool_row_data ? p.pool_row_data[idx] : (p.imgs && p.imgs[i - 1]);
+          if (url) cards.push({ type: "interior", index: i, url: url });
+        }
+        
+        for (let i = 1; i <= 10; i++) {
+          const url = p.pool_row_data ? p.pool_row_data[window.getPoolAlleyColIdx(i)] : null;
+          if (url) cards.push({ type: "alley", index: i, url: url });
+        }
       }
 
       const isSodoUrl = (url) => {
