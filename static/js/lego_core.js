@@ -101,13 +101,13 @@ function generateAdminTitleFromNộiDungChinh(p) {
   if (!p) return '';
   let poolItem = p;
   if (!p.isFromPoolOnly && LegoState.POOL_ROWS && LegoState.POOL_ROWS.length && p.system_id) {
-    const row = LegoState.POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(p.system_id).trim());
+    const row = LegoState.POOL_ROWS.find(r => String(r[window.getPoolColumnIndex("System_ID", 72)] || r[window.getPoolColumnIndex("System ID", 71)] || '').trim() === String(p.system_id).trim());
     if (row) {
       poolItem = {
-        raw_noi_dung_chinh: String(row[9] || '').replace(/\r\n|\r|\n/g, ' '),
-        raw_so_nha: String(row[6] || ''),
-        raw_ten_duong: String(row[5] || ''),
-        t: String(row[56] || row[55] || row[9] || '')
+        raw_noi_dung_chinh: String(row[window.getPoolColumnIndex("Nội dung chính", 9)] || '').replace(/\r\n|\r|\n/g, ' '),
+        raw_so_nha: String(row[window.getPoolColumnIndex("Số nhà", 6)] || ''),
+        raw_ten_duong: String(row[window.getPoolColumnIndex("Tên đường", 5)] || ''),
+        t: String(row[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || row[window.getPoolColumnIndex("id", 55)] || row[window.getPoolColumnIndex("Nội dung chính", 9)] || '')
       };
     }
   }
@@ -664,12 +664,12 @@ const LegoState = {
         const fullList = sourceRows
           .map((sr, index) => {
             if (index === 0) return null; // Bỏ qua hàng tiêu đề
-            if (!sr[3] && !sr[4]) return null;
+            if (!sr[window.getSourceColumnIndex("id", 3)] && !sr[window.getSourceColumnIndex("tieu_de", 4)]) return null;
             
             const targetRowNumber = index + 2;
             // Sẽ tính gia và giabq sau khi đã khớp và lấy được dt_tren_so_custom từ poolRow hoặc sr[47]
             
-            let rawQ = sr[9] || '';
+            let rawQ = sr[window.getSourceColumnIndex("quan", 9)] || '';
             let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
             if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
             
@@ -685,12 +685,12 @@ const LegoState = {
             else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
             else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
             else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
-            const srSystemId = sr[37] || '';
-            const srId = sr[3] || '';
+            const srSystemId = sr[window.getSourceColumnIndex("System ID", 37)] || '';
+            const srId = sr[window.getSourceColumnIndex("id", 3)] || '';
 
             const poolRow = poolDataRows.find((pr, prIdx) => {
-              const prSystemId = pr[72] || '';
-              const prId = pr[55] || '';
+              const prSystemId = pr[window.getPoolColumnIndex("System_ID", 72)] || pr[window.getPoolColumnIndex("System ID", 71)] || '';
+              const prId = pr[window.getPoolColumnIndex("id", 55)] || '';
               const isMatch = (srSystemId && prSystemId === srSystemId) || 
                               (srId && prId === srId) ||
                               (srSystemId && prId === srSystemId);
@@ -702,7 +702,7 @@ const LegoState = {
 
             let poolImgs = [];
             if (poolRow) {
-              const imagesAdminJsonStr = poolRow[172];
+              const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 172)];
               if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
                 try {
                   const parsedAdmin = JSON.parse(imagesAdminJsonStr);
@@ -714,24 +714,42 @@ const LegoState = {
                 }
               }
               if (!poolImgs || poolImgs.length === 0) {
-                if (poolRow[27]) poolImgs.push(poolRow[27]);
-                if (poolRow[28]) poolImgs.push(poolRow[28]);
-                if (poolRow[29]) poolImgs.push(poolRow[29]);
-                if (poolRow[80]) poolImgs.push(poolRow[80]);
-                if (poolRow[81]) poolImgs.push(poolRow[81]);
-                if (poolRow[82]) poolImgs.push(poolRow[82]);
+                const sodoIdxs = [
+                  window.getPoolColumnIndex("Sơ đồ 1", 27),
+                  window.getPoolColumnIndex("Sơ đồ 2", 28),
+                  window.getPoolColumnIndex("Hình Mặt Tiền", 29),
+                  window.getPoolColumnIndex("Sơ đồ 3", 80),
+                  window.getPoolColumnIndex("Sơ đồ 4", 81),
+                  window.getPoolColumnIndex("Sơ đồ 5", 82)
+                ];
+                sodoIdxs.forEach(idx => {
+                  if (poolRow[idx]) poolImgs.push(poolRow[idx]);
+                });
 
-                for (let c = 40; c <= 54; c++) {
-                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                for (let i = 1; i <= 25; i++) {
+                  const idx = window.getPoolColumnIndex(`Ảnh ${i}`, -1);
+                  if (idx !== -1 && poolRow[idx]) poolImgs.push(poolRow[idx]);
                 }
-                for (let c = 83; c <= 92; c++) {
-                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                
+                if (poolImgs.length === 0) {
+                  if (poolRow[27]) poolImgs.push(poolRow[27]);
+                  if (poolRow[28]) poolImgs.push(poolRow[28]);
+                  if (poolRow[29]) poolImgs.push(poolRow[29]);
+                  if (poolRow[80]) poolImgs.push(poolRow[80]);
+                  if (poolRow[81]) poolImgs.push(poolRow[81]);
+                  if (poolRow[82]) poolImgs.push(poolRow[82]);
+                  for (let c = 40; c <= 54; c++) {
+                    if (poolRow[c]) poolImgs.push(poolRow[c]);
+                  }
+                  for (let c = 83; c <= 92; c++) {
+                    if (poolRow[c]) poolImgs.push(poolRow[c]);
+                  }
                 }
               }
             }
 
             let sourcePublicImgs = [];
-            const imagesPublicJsonStr = sr[48];
+            const imagesPublicJsonStr = sr[window.getSourceColumnIndex("Images_Public_JSON", 48)];
             if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
               try {
                 sourcePublicImgs = JSON.parse(imagesPublicJsonStr);
@@ -740,11 +758,20 @@ const LegoState = {
               }
             }
             if (!sourcePublicImgs || sourcePublicImgs.length === 0) {
-              sourcePublicImgs = [
-                sr[20], sr[21], sr[22], sr[23], sr[24],
-                sr[25], sr[26], sr[27], sr[28], sr[29],
-                sr[41], sr[42], sr[43], sr[44], sr[45]
-              ].filter(Boolean);
+              const fallbackUrls = [];
+              for (let i = 1; i <= 15; i++) {
+                const idx = window.getSourceColumnIndex(`anh_${i}`, -1);
+                if (idx !== -1 && sr[idx]) {
+                  fallbackUrls.push(sr[idx]);
+                }
+              }
+              if (fallbackUrls.length === 0) {
+                const defaultIdxs = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 41, 42, 43, 44, 45];
+                defaultIdxs.forEach(dIdx => {
+                  if (sr[dIdx]) fallbackUrls.push(sr[dIdx]);
+                });
+              }
+              sourcePublicImgs = fallbackUrls;
             }
 
             const allImgs = poolRow ? [
@@ -753,43 +780,43 @@ const LegoState = {
             ] : sourcePublicImgs;
             const uniqueImgs = [...new Set(allImgs)];
 
-            const rawDtTrenSo = poolRow ? (poolRow[14] || '') : '';
-            const dt_tren_so_custom = sr[47] || rawDtTrenSo || sr[5] || '';
+            const rawDtTrenSo = poolRow ? (poolRow[window.getPoolColumnIndex("DT Trên sổ", 14)] || '') : '';
+            const dt_tren_so_custom = sr[window.getSourceColumnIndex("DT Trên sổ", 47)] || rawDtTrenSo || sr[window.getSourceColumnIndex("dien_tich", 5)] || '';
             const dt_so_val = parseFloat(dt_tren_so_custom) || 0;
-            const gia = parseGia(sr[8]);
+            const gia = parseGia(sr[window.getSourceColumnIndex("gia", 8)]);
             const giabq = (dt_so_val > 0 && gia > 0) ? Math.round((gia * 1000) / dt_so_val) : 0;
 
             const p = {
               temp_id: index + 1,
-              id: sr[3] || '',
-              cu_phap: sr[1] || '',
-              t: sr[4] || '',
-              dt: sr[5] || '', // DT Thực tế (Cột F)
+              id: sr[window.getSourceColumnIndex("id", 3)] || '',
+              cu_phap: sr[window.getSourceColumnIndex("cu_phap", 1)] || '',
+              t: sr[window.getSourceColumnIndex("tieu_de", 4)] || '',
+              dt: sr[window.getSourceColumnIndex("dien_tich", 5)] || '', // DT Thực tế (Cột F)
               dt_tren_so_custom: dt_tren_so_custom,
-              tang: sr[6] || '',
-              mat: sr[7] || '',
+              tang: sr[window.getSourceColumnIndex("so_tang", 6)] || '',
+              mat: sr[window.getSourceColumnIndex("mat_tien", 7)] || '',
               gia: gia,
               q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
               ql: cleanQ.toUpperCase(),
-              phuong: sr[10] || '-',
-              loai_hinh: sr[11] || 'Hẻm',
-              huong: sr[12] || '-',
-              duong_truoc_nha: sr[13] || '-',
-              rong_hem: sr[14] || '-',
-              tinh_trang: sr[15] || '-',
-              danh_gia: sr[16] || '',
-              is_invisible: (sr[15] || '').toLowerCase().includes('ẩn') ||
-                            (sr[15] || '').toLowerCase().includes('đã bán') ||
-                            (sr[15] || '').toLowerCase().includes('invisible'),
-              ngu_tang_tret: sr[17] || '-',
-              chdv: sr[18] || '-',
+              phuong: sr[window.getSourceColumnIndex("phuong", 10)] || '-',
+              loai_hinh: sr[window.getSourceColumnIndex("loai_hinh", 11)] || 'Hẻm',
+              huong: sr[window.getSourceColumnIndex("huong_nha", 12)] || '-',
+              duong_truoc_nha: sr[window.getSourceColumnIndex("duong_truoc_nha", 13)] || '-',
+              rong_hem: sr[window.getSourceColumnIndex("do_rong_hem", 14)] || '-',
+              tinh_trang: sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '-',
+              danh_gia: sr[window.getSourceColumnIndex("danh_gia", 16)] || '',
+              is_invisible: (sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '').toLowerCase().includes('ẩn') ||
+                            (sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '').toLowerCase().includes('đã bán') ||
+                            (sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '').toLowerCase().includes('invisible'),
+              ngu_tang_tret: sr[window.getSourceColumnIndex("ngu_tang_tret", 17)] || '-',
+              chdv: sr[window.getSourceColumnIndex("chdv", 18)] || '-',
               giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-              m: cleanConsecutiveNewlines(sr[19] || ''),
+              m: cleanConsecutiveNewlines(sr[window.getSourceColumnIndex("mo_ta", 19)] || ''),
               imgs: uniqueImgs,
-              system_id: sr[37] || (index + 1).toString(),
-              so_pn: sr[32] || '-',
-              img_mat_tien: sr[38] || '',
-              ten_duong: sr[34] || '',
+              system_id: sr[window.getSourceColumnIndex("System ID", 37)] || (index + 1).toString(),
+              so_pn: sr[window.getSourceColumnIndex("so_pn", 32)] || '-',
+              img_mat_tien: sr[window.getSourceColumnIndex("Hình Mặt Tiền", 38)] || '',
+              ten_duong: sr[window.getSourceColumnIndex("ten_duong", 34)] || '',
               
               original_row_data: sr,
               source_row_index: targetRowNumber
@@ -797,34 +824,34 @@ const LegoState = {
             p.dai_nha = getDaiNha(p);
 
             if (poolRow) {
-              p.raw_ten_dau_chu = poolRow[75] || '';
-              p.raw_dt_dau_chu = poolRow[74] || '';
-              p.raw_link_fb = poolRow[76] || '';
-              p.raw_noi_dung_chinh = String(poolRow[9] || '').replace(/\r\n|\r|\n/g, ' ');
-              p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
-              p.raw_sodo1 = poolRow[27] || '';
-              p.raw_sodo2 = poolRow[28] || '';
-              p.raw_sodo3 = poolRow[80] || '';
-              p.raw_sodo4 = poolRow[81] || '';
-              p.raw_sodo5 = poolRow[82] || '';
-              p.raw_so_nha = poolRow[6] || '';
-              p.raw_ten_duong = poolRow[5] || '';
-              p.raw_dt_thuc_te = poolRow[13] || '';
-              p.raw_dt_tren_so = poolRow[14] || '';
-              p.raw_gia_chao = poolRow[11] || poolRow[58] || '';
-              p.raw_so_tang = poolRow[15] || '';
-              p.raw_mat_tien = poolRow[16] || '';
-              p.raw_duong_truoc_nha = poolRow[60] || '';
+              p.raw_ten_dau_chu = poolRow[window.getPoolColumnIndex("Tên đầu chủ", 75)] || '';
+              p.raw_dt_dau_chu = poolRow[window.getPoolColumnIndex("ĐT Đầu chủ", 74)] || '';
+              p.raw_link_fb = poolRow[window.getPoolColumnIndex("FB Link", 76)] || '';
+              p.raw_noi_dung_chinh = String(poolRow[window.getPoolColumnIndex("Nội dung chính", 9)] || '').replace(/\r\n|\r|\n/g, ' ');
+              p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[window.getPoolColumnIndex("Mô tả chi tiết", 10)] || '');
+              p.raw_sodo1 = poolRow[window.getPoolColumnIndex("Sơ đồ 1", 27)] || '';
+              p.raw_sodo2 = poolRow[window.getPoolColumnIndex("Sơ đồ 2", 28)] || '';
+              p.raw_sodo3 = poolRow[window.getPoolColumnIndex("Sơ đồ 3", 80)] || '';
+              p.raw_sodo4 = poolRow[window.getPoolColumnIndex("Sơ đồ 4", 81)] || '';
+              p.raw_sodo5 = poolRow[window.getPoolColumnIndex("Sơ đồ 5", 82)] || '';
+              p.raw_so_nha = poolRow[window.getPoolColumnIndex("Số nhà", 6)] || '';
+              p.raw_ten_duong = poolRow[window.getPoolColumnIndex("Tên đường", 5)] || '';
+              p.raw_dt_thuc_te = poolRow[window.getPoolColumnIndex("DT thực tế", 13)] || '';
+              p.raw_dt_tren_so = poolRow[window.getPoolColumnIndex("DT Trên sổ", 14)] || '';
+              p.raw_gia_chao = poolRow[window.getPoolColumnIndex("Giá chào", 11)] || poolRow[window.getPoolColumnIndex("Giá chốt", 58)] || '';
+              p.raw_so_tang = poolRow[window.getPoolColumnIndex("Số Tầng", 15)] || '';
+              p.raw_mat_tien = poolRow[window.getPoolColumnIndex("Mặt Tiền", 16)] || '';
+              p.raw_duong_truoc_nha = poolRow[window.getPoolColumnIndex("Đường trước nhà", 60)] || '';
               p.raw_do_rong_hem = '';
-              p.raw_so_pn = poolRow[64] || '';
-              p.raw_so_wc = poolRow[65] || '';
-              p.raw_tieu_de_public = poolRow[56] || '';
-              p.raw_mo_ta_public = poolRow[57] || '';
-              p.raw_phan_loai = poolRow[7] || '';
+              p.raw_so_pn = poolRow[window.getPoolColumnIndex("Số PN", 64)] || '';
+              p.raw_so_wc = poolRow[window.getPoolColumnIndex("Số WC", 65)] || '';
+              p.raw_tieu_de_public = poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || '';
+              p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
+              p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
               p.pool_row_index = poolDataRows.indexOf(poolRow) + 2;
               p.pool_row_data = poolRow;
               
-              let jsonUiVal = poolRow[93] || '';
+              let jsonUiVal = poolRow[window.getPoolColumnIndex("JSON_UI", 93)] || '';
               if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
                 for (let i = poolRow.length - 1; i >= 0; i--) {
                   const val = poolRow[i];
@@ -878,7 +905,7 @@ const LegoState = {
           if (matchedPoolRowIndexes.has(prIdx)) return;
 
           let poolImgs = [];
-          const imagesAdminJsonStr = poolRow[172];
+          const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 172)];
           if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
             try {
               const parsedAdmin = JSON.parse(imagesAdminJsonStr);
@@ -890,22 +917,40 @@ const LegoState = {
             }
           }
           if (!poolImgs || poolImgs.length === 0) {
-            if (poolRow[27]) poolImgs.push(poolRow[27]);
-            if (poolRow[28]) poolImgs.push(poolRow[28]);
-            if (poolRow[29]) poolImgs.push(poolRow[29]);
-            if (poolRow[80]) poolImgs.push(poolRow[80]);
-            if (poolRow[81]) poolImgs.push(poolRow[81]);
-            if (poolRow[82]) poolImgs.push(poolRow[82]);
+            const sodoIdxs = [
+              window.getPoolColumnIndex("Sơ đồ 1", 27),
+              window.getPoolColumnIndex("Sơ đồ 2", 28),
+              window.getPoolColumnIndex("Hình Mặt Tiền", 29),
+              window.getPoolColumnIndex("Sơ đồ 3", 80),
+              window.getPoolColumnIndex("Sơ đồ 4", 81),
+              window.getPoolColumnIndex("Sơ đồ 5", 82)
+            ];
+            sodoIdxs.forEach(idx => {
+              if (poolRow[idx]) poolImgs.push(poolRow[idx]);
+            });
 
-            for (let c = 40; c <= 54; c++) {
-              if (poolRow[c]) poolImgs.push(poolRow[c]);
+            for (let i = 1; i <= 25; i++) {
+              const idx = window.getPoolColumnIndex(`Ảnh ${i}`, -1);
+              if (idx !== -1 && poolRow[idx]) poolImgs.push(poolRow[idx]);
             }
-            for (let c = 83; c <= 92; c++) {
-              if (poolRow[c]) poolImgs.push(poolRow[c]);
+            
+            if (poolImgs.length === 0) {
+              if (poolRow[27]) poolImgs.push(poolRow[27]);
+              if (poolRow[28]) poolImgs.push(poolRow[28]);
+              if (poolRow[29]) poolImgs.push(poolRow[29]);
+              if (poolRow[80]) poolImgs.push(poolRow[80]);
+              if (poolRow[81]) poolImgs.push(poolRow[81]);
+              if (poolRow[82]) poolImgs.push(poolRow[82]);
+              for (let c = 40; c <= 54; c++) {
+                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              }
+              for (let c = 83; c <= 92; c++) {
+                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              }
             }
           }
 
-          let rawQ = poolRow[3] || '';
+          let rawQ = poolRow[window.getPoolColumnIndex("quan", 3)] || '';
           let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
           if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
 
@@ -924,26 +969,26 @@ const LegoState = {
 
           const uniqueImgs = [...new Set(poolImgs)];
 
-          const dtVal = parseFloatHelper(poolRow[13]) || 0;
-          const dtSo = parseFloatHelper(poolRow[14]) || 0;
-          const giaVal = parseGia(poolRow[11]) || parseGia(poolRow[58]) || 0;
+          const dtVal = parseFloatHelper(poolRow[window.getPoolColumnIndex("DT thực tế", 13)]) || 0;
+          const dtSo = parseFloatHelper(poolRow[window.getPoolColumnIndex("DT Trên sổ", 14)]) || 0;
+          const giaVal = parseGia(poolRow[window.getPoolColumnIndex("Giá chào", 11)]) || parseGia(poolRow[window.getPoolColumnIndex("Giá chốt", 58)]) || 0;
           const giabqVal = (dtSo > 0 && giaVal > 0) ? Math.round((giaVal * 1000) / dtSo) : 0;
 
           const p = {
             temp_id: sourceRows.length + prIdx + 1,
-            id: poolRow[55] || '',
-            cu_phap: poolRow[1] || '',
-            t: poolRow[56] || poolRow[55] || 'Chưa biên tập',
+            id: poolRow[window.getPoolColumnIndex("id", 55)] || '',
+            cu_phap: poolRow[window.getPoolColumnIndex("cu_phap", 1)] || '',
+            t: poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || poolRow[window.getPoolColumnIndex("id", 55)] || 'Chưa biên tập',
             dt: dtVal, // DT Thực tế
-            dt_tren_so_custom: poolRow[14] || '', // DT Trên sổ
-            tang: poolRow[15] || '',
-            mat: poolRow[16] || '',
+            dt_tren_so_custom: poolRow[window.getPoolColumnIndex("DT Trên sổ", 14)] || '', // DT Trên sổ
+            tang: poolRow[window.getPoolColumnIndex("Số Tầng", 15)] || '',
+            mat: poolRow[window.getPoolColumnIndex("Mặt Tiền", 16)] || '',
             gia: giaVal,
             q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
             ql: cleanQ.toUpperCase(),
-            phuong: poolRow[4] || '-',
-            loai_hinh: poolRow[7] || 'Hẻm',
-            huong: poolRow[17] || '-',
+            phuong: poolRow[window.getPoolColumnIndex("phuong", 4)] || '-',
+            loai_hinh: poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || 'Hẻm',
+            huong: poolRow[window.getPoolColumnIndex("huong_nha", 17)] || '-',
             duong_truoc_nha: '-',
             rong_hem: '-',
             tinh_trang: '-',
@@ -952,12 +997,12 @@ const LegoState = {
             ngu_tang_tret: '-',
             chdv: '-',
             giabq: giabqVal > 0 ? `${giabqVal} tr/m²` : '-',
-            m: cleanConsecutiveNewlines(poolRow[10] || ''),
+            m: cleanConsecutiveNewlines(poolRow[window.getPoolColumnIndex("Mô tả chi tiết", 10)] || ''),
             imgs: uniqueImgs,
-            system_id: poolRow[72] || (sourceRows.length + prIdx + 1).toString(),
-            so_pn: poolRow[64] || '-',
-            img_mat_tien: poolRow[29] || '',
-            ten_duong: poolRow[5] || '',
+            system_id: poolRow[window.getPoolColumnIndex("System_ID", 72)] || poolRow[window.getPoolColumnIndex("System ID", 71)] || (sourceRows.length + prIdx + 1).toString(),
+            so_pn: poolRow[window.getPoolColumnIndex("Số PN", 64)] || '-',
+            img_mat_tien: poolRow[window.getPoolColumnIndex("Hình Mặt Tiền", 29)] || '',
+            ten_duong: poolRow[window.getPoolColumnIndex("Tên đường", 5)] || '',
 
             original_row_data: null,
             source_row_index: null,
@@ -965,34 +1010,34 @@ const LegoState = {
           };
           p.dai_nha = getDaiNha(p);
 
-          p.raw_ten_dau_chu = poolRow[75] || '';
-          p.raw_dt_dau_chu = poolRow[74] || '';
-          p.raw_link_fb = poolRow[76] || '';
-          p.raw_noi_dung_chinh = String(poolRow[9] || '').replace(/\r\n|\r|\n/g, ' ');
-          p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[10] || '');
-          p.raw_sodo1 = poolRow[27] || '';
-          p.raw_sodo2 = poolRow[28] || '';
-          p.raw_sodo3 = poolRow[80] || '';
-          p.raw_sodo4 = poolRow[81] || '';
-          p.raw_sodo5 = poolRow[82] || '';
-          p.raw_so_nha = poolRow[6] || '';
-          p.raw_ten_duong = poolRow[5] || '';
-          p.raw_dt_thuc_te = poolRow[13] || '';
-          p.raw_dt_tren_so = poolRow[14] || '';
-          p.raw_gia_chao = poolRow[11] || poolRow[58] || '';
-          p.raw_so_tang = poolRow[15] || '';
-          p.raw_mat_tien = poolRow[16] || '';
-          p.raw_duong_truoc_nha = poolRow[60] || '';
+          p.raw_ten_dau_chu = poolRow[window.getPoolColumnIndex("Tên đầu chủ", 75)] || '';
+          p.raw_dt_dau_chu = poolRow[window.getPoolColumnIndex("ĐT Đầu chủ", 74)] || '';
+          p.raw_link_fb = poolRow[window.getPoolColumnIndex("FB Link", 76)] || '';
+          p.raw_noi_dung_chinh = String(poolRow[window.getPoolColumnIndex("Nội dung chính", 9)] || '').replace(/\r\n|\r|\n/g, ' ');
+          p.raw_mo_ta_chi_tiet = cleanConsecutiveNewlines(poolRow[window.getPoolColumnIndex("Mô tả chi tiết", 10)] || '');
+          p.raw_sodo1 = poolRow[window.getPoolColumnIndex("Sơ đồ 1", 27)] || '';
+          p.raw_sodo2 = poolRow[window.getPoolColumnIndex("Sơ đồ 2", 28)] || '';
+          p.raw_sodo3 = poolRow[window.getPoolColumnIndex("Sơ đồ 3", 80)] || '';
+          p.raw_sodo4 = poolRow[window.getPoolColumnIndex("Sơ đồ 4", 81)] || '';
+          p.raw_sodo5 = poolRow[window.getPoolColumnIndex("Sơ đồ 5", 82)] || '';
+          p.raw_so_nha = poolRow[window.getPoolColumnIndex("Số nhà", 6)] || '';
+          p.raw_ten_duong = poolRow[window.getPoolColumnIndex("Tên đường", 5)] || '';
+          p.raw_dt_thuc_te = poolRow[window.getPoolColumnIndex("DT thực tế", 13)] || '';
+          p.raw_dt_tren_so = poolRow[window.getPoolColumnIndex("DT Trên sổ", 14)] || '';
+          p.raw_gia_chao = poolRow[window.getPoolColumnIndex("Giá chào", 11)] || poolRow[window.getPoolColumnIndex("Giá chốt", 58)] || '';
+          p.raw_so_tang = poolRow[window.getPoolColumnIndex("Số Tầng", 15)] || '';
+          p.raw_mat_tien = poolRow[window.getPoolColumnIndex("Mặt Tiền", 16)] || '';
+          p.raw_duong_truoc_nha = poolRow[window.getPoolColumnIndex("Đường trước nhà", 60)] || '';
           p.raw_do_rong_hem = '';
-          p.raw_so_pn = poolRow[64] || '';
-          p.raw_so_wc = poolRow[65] || '';
-          p.raw_tieu_de_public = poolRow[56] || '';
-          p.raw_mo_ta_public = poolRow[57] || '';
-          p.raw_phan_loai = poolRow[7] || '';
+          p.raw_so_pn = poolRow[window.getPoolColumnIndex("Số PN", 64)] || '';
+          p.raw_so_wc = poolRow[window.getPoolColumnIndex("Số WC", 65)] || '';
+          p.raw_tieu_de_public = poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || '';
+          p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
+          p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
           p.pool_row_index = prIdx + 2;
           p.pool_row_data = poolRow;
 
-          let jsonUiVal = poolRow[93] || '';
+          let jsonUiVal = poolRow[window.getPoolColumnIndex("JSON_UI", 93)] || '';
           if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
             for (let i = poolRow.length - 1; i >= 0; i--) {
               const val = poolRow[i];

@@ -1822,3 +1822,46 @@ window.executeGenerateQuickLink = function() {
   }
 };
 
+// Dynamic Google Sheets column helpers (US-120A & Rule 6)
+window.getColumnLetter = function(colIdx) {
+  let letter = "";
+  let temp = colIdx;
+  while (temp >= 0) {
+    letter = String.fromCharCode((temp % 26) + 65) + letter;
+    temp = Math.floor(temp / 26) - 1;
+  }
+  return letter;
+};
+
+window.getPoolColumnLetter = function(headerName, fallbackCol = 'CQ') {
+  if (window.LegoState && window.LegoState.POOL_HEADERS) {
+    const idx = window.LegoState.POOL_HEADERS.indexOf(headerName);
+    if (idx !== -1) return window.getColumnLetter(idx);
+  }
+  return fallbackCol;
+};
+
+window.getSourceColumnLetter = function(headerName, fallbackCol = 'AW') {
+  if (window.LegoState && window.LegoState.SOURCE_HEADERS) {
+    const idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
+    if (idx !== -1) return window.getColumnLetter(idx);
+  }
+  return fallbackCol;
+};
+
+window.getPoolColumnIndex = function(headerName, fallbackIdx = 94) {
+  if (window.LegoState && window.LegoState.POOL_HEADERS) {
+    const idx = window.LegoState.POOL_HEADERS.indexOf(headerName);
+    if (idx !== -1) return idx;
+  }
+  return fallbackIdx;
+};
+
+window.getSourceColumnIndex = function(headerName, fallbackIdx = 48) {
+  if (window.LegoState && window.LegoState.SOURCE_HEADERS) {
+    const idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
+    if (idx !== -1) return idx;
+  }
+  return fallbackIdx;
+};
+

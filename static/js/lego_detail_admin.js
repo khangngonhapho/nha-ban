@@ -4,52 +4,12 @@
 (function() {
   'use strict';
 
-  // Helper functions to dynamically map Google Sheets column headers to column letters and indices
-  function getColumnLetter(colIdx) {
-    let letter = "";
-    let temp = colIdx;
-    while (temp >= 0) {
-      letter = String.fromCharCode((temp % 26) + 65) + letter;
-      temp = Math.floor(temp / 26) - 1;
-    }
-    return letter;
-  }
-
-  function getPoolColumnLetter(headerName, fallbackCol = 'CQ') {
-    if (window.LegoState && window.LegoState.POOL_HEADERS) {
-      const idx = window.LegoState.POOL_HEADERS.indexOf(headerName);
-      if (idx !== -1) {
-        return getColumnLetter(idx);
-      }
-    }
-    return fallbackCol;
-  }
-
-  function getSourceColumnLetter(headerName, fallbackCol = 'AW') {
-    if (window.LegoState && window.LegoState.SOURCE_HEADERS) {
-      const idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
-      if (idx !== -1) {
-        return getColumnLetter(idx);
-      }
-    }
-    return fallbackCol;
-  }
-
-  function getPoolColumnIndex(headerName, fallbackIdx = 94) {
-    if (window.LegoState && window.LegoState.POOL_HEADERS) {
-      const idx = window.LegoState.POOL_HEADERS.indexOf(headerName);
-      if (idx !== -1) return idx;
-    }
-    return fallbackIdx;
-  }
-
-  function getSourceColumnIndex(headerName, fallbackIdx = 48) {
-    if (window.LegoState && window.LegoState.SOURCE_HEADERS) {
-      const idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
-      if (idx !== -1) return idx;
-    }
-    return fallbackIdx;
-  }
+  // Use global dynamic helper functions from lego_helpers.js (US-120A & Rule 6)
+  const getColumnLetter = window.getColumnLetter;
+  const getPoolColumnLetter = window.getPoolColumnLetter;
+  const getSourceColumnLetter = window.getSourceColumnLetter;
+  const getPoolColumnIndex = window.getPoolColumnIndex;
+  const getSourceColumnIndex = window.getSourceColumnIndex;
 
   // Export module LegoDetailAdmin
   window.LegoDetailAdmin = {
