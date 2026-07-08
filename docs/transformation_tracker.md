@@ -1,8 +1,8 @@
 ---
 project: BDS-KhangNgo Architecture Modernization
 started: 2026-07-09
-current_module: MOD-05
-overall_progress: 5/7 modules completed
+current_module: MOD-06
+overall_progress: 6/7 modules completed
 last_updated: 2026-07-09
 ---
 
@@ -17,10 +17,10 @@ last_updated: 2026-07-09
 | MOD-03 | Sheets Client | ✅ done | 2026-07-09 |
 | MOD-04 | API Routes Split | ✅ done | 2026-07-09 |
 | MOD-05 | Template Components | ✅ done | 2026-07-09 |
-| MOD-06 | Documentation Split | ⬜ pending | — |
+| MOD-06 | Documentation Split | ✅ done | 2026-07-09 |
 | MOD-07 | Agent & Skills Upgrade | ⬜ pending | — |
 
-## Current Module: MOD-05 — Template Components
+## Current Module: MOD-06 — Documentation Split
 
 - Status: ✅ COMPLETED
 - Current Step: SEAL
@@ -33,16 +33,18 @@ last_updated: 2026-07-09
 
 | Task | Bước | Mô tả | Trạng thái |
 |------|------|-------|------------|
-| MOD-05.1 | PREPARE | Viết `tests/test_templates.py` — snapshot tests cho generated HTML | `[x]` ✅ 7 unit tests |
-| MOD-05.2 | EXTRACT | Tạo `templates/components/styles.py` | `[x]` ✅ extracted base CSS |
-| MOD-05.3 | EXTRACT | Tạo `templates/components/header.py` | `[x]` ✅ extracted header |
-| MOD-05.4 | EXTRACT | Tạo `templates/components/criteria_grid.py` | `[x]` ✅ extracted criteria |
-| MOD-05.5 | EXTRACT | Tạo `templates/components/image_grid.py` | `[x]` ✅ extracted images |
-| MOD-05.6 | EXTRACT | Tạo `templates/components/specs_table.py` | `[x]` ✅ extracted specs & contact |
-| MOD-05.7 | EXTRACT | Tạo `templates/components/detail_view.py` | `[x]` ✅ extracted layout |
-| MOD-05.8 | WIRE | Refactor `query_helper.py` sử dụng `render_detail_view` | `[x]` ✅ query_helper refactored |
-| MOD-05.9 | VERIFY | Unit + E2E + Smoke tests → 100% PASS | `[x]` ✅ 90/90 passed |
-| MOD-05.10 | SEAL | Git commit + update tracker | `[x]` ✅ committed |
+| MOD-06.1 | CREATE | Tạo `docs/business_rules/INDEX.md` | `[x]` ✅ business rules index |
+| MOD-06.2 | CREATE | Tạo `docs/business_rules/naming_conventions.md` | `[x]` ✅ naming conventions |
+| MOD-06.3 | CREATE | Tạo `docs/business_rules/pricing_rules.md` | `[x]` ✅ pricing rules |
+| MOD-06.4 | CREATE | Tạo `docs/business_rules/image_classification.md` | `[x]` ✅ image rules |
+| MOD-06.5 | CREATE | Tạo `docs/business_rules/data_security.md` | `[x]` ✅ data security |
+| MOD-06.6 | CREATE | Tạo `docs/business_rules/curation_workflow.md` | `[x]` ✅ curation workflow |
+| MOD-06.7 | CREATE | Tạo `docs/business_rules/search_filter_rules.md` | `[x]` ✅ search & filter rules |
+| MOD-06.8 | CREATE | Tạo `docs/architecture/system_overview.md` | `[x]` ✅ system overview |
+| MOD-06.9 | CREATE | Tạo `docs/architecture/api_reference.md` | `[x]` ✅ API reference |
+| MOD-06.10 | WIRE | Refactor `SOURCE_OF_TRUTH.md` với links mới | `[x]` ✅ SOURCE_OF_TRUTH.md updated |
+| MOD-06.11 | VERIFY | Kiểm tra links và chạy verification suite | `[x]` ✅ 90 unit tests + E2E pass |
+| MOD-06.12 | SEAL | Git commit + update tracker | `[x]` ✅ committed |
 
 ## Stability Gates History
 
@@ -53,7 +55,7 @@ last_updated: 2026-07-09
 | MOD-03 | ✅ 76/76 | ✅ 4/4 | ⏭️ skipped | ✅ PO | 2026-07-09 |
 | MOD-04 | ✅ 83/83 | ✅ 4/4 | ⏭️ skipped | ✅ PO | 2026-07-09 |
 | MOD-05 | ✅ 90/90 | ✅ 4/4 | ✅ passed | ✅ PO | 2026-07-09 |
-| MOD-06 | ⬜ | ⬜ | ⬜ | ⬜ | — |
+| MOD-06 | ✅ 90/90 | ✅ 4/4 | ✅ passed | ✅ PO | 2026-07-09 |
 | MOD-07 | ⬜ | ⬜ | ⬜ | ⬜ | — |
 
 ## Session Log
@@ -66,5 +68,7 @@ last_updated: 2026-07-09
 | S3 | 2026-07-09 | MOD-03 | MOD-03.1–MOD-03.7 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: 1 function (read_settings) replacing scattered inline settings.json reading, 76 unit + 4 E2E pass |
 | S4 | 2026-07-09 | MOD-04 | MOD-04.1–MOD-04.7 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Split Flask endpoints from manager.py into 6 Blueprint modules, 83 unit + 4 E2E pass |
 | S5 | 2026-07-09 | MOD-05 | MOD-05.1–MOD-05.10 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Modularize HTML viewer templates into component files under templates/components/, 90 unit + 4 E2E pass |
+| S6 | 2026-07-09 | MOD-06 | MOD-06.1–MOD-06.12 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Split monolithic SOURCE_OF_TRUTH.md (187KB) into small modular documents under docs/business_rules/ and docs/architecture/ |
+
 
 
