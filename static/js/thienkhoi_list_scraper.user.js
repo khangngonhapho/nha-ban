@@ -376,6 +376,42 @@
         runAi = localStorage.getItem('kn_run_ai') === 'true';
     } catch (e) {}
 
+    // FETCH ACTIVE SERVER DATABASE MODE
+    function fetchServerMode() {
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: `${getLocalUrl()}/api/config`,
+            onload: function(response) {
+                if (response.status === 200) {
+                    try {
+                        const data = JSON.parse(response.responseText);
+                        const cfg = data.config || {};
+                        const isStaging = cfg.is_staging;
+                        const dbFile = cfg.db_file || "raw_archive.db";
+                        
+                        const dbEl = document.getElementById('kn-db-mode');
+                        if (dbEl) {
+                            dbEl.textContent = isStaging ? "STAGING" : "PRODUCTION";
+                            dbEl.style.color = isStaging ? "#fbbf24" : "#10b981";
+                            dbEl.title = `Database: ${dbFile}`;
+                        }
+                        writeLog(`🖥️ Đang kết nối CSDL: ${dbFile} (${isStaging ? "STAGING" : "PRODUCTION"})`);
+                    } catch (e) {
+                        console.error("[Khang Ngô BDS] Lỗi parse phản hồi server mode:", e);
+                    }
+                }
+            },
+            onerror: function(err) {
+                const dbEl = document.getElementById('kn-db-mode');
+                if (dbEl) {
+                    dbEl.textContent = "OFFLINE";
+                    dbEl.style.color = "#ef4444";
+                }
+                writeLog("❌ Không thể kết nối với server local để xác định CSDL.");
+            }
+        });
+    }
+
     // CHECK A BATCH OF LISTING IDS FOR LOCAL EXISTENCE
     function checkExistLocally(tkIds) {
         const idsToCheck = tkIds.map(id => id.toLowerCase()).filter(id => !checkedIds.has(id));
@@ -759,6 +795,10 @@
                     <span>Số căn phát hiện:</span>
                     <span class="kn-stat-val" id="kn-detected-count">0</span>
                 </div>
+                <div class="kn-stat-row">
+                    <span>Môi trường CSDL:</span>
+                    <span class="kn-stat-val" id="kn-db-mode" style="color: #fbbf24; font-weight: 700;">Đang kết nối...</span>
+                </div>
                 
                 <!-- Listings Checklist -->
                 <div class="kn-listings-list" id="kn-listings-checklist">
@@ -858,6 +898,7 @@
 
         writeLog("Khởi tạo hệ thống Scraper...");
         syncCookies();
+        fetchServerMode();
     }
 
     // UPDATE FLOATING PANEL DATA

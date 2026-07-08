@@ -193,6 +193,12 @@ def handle_config():
         merged_flags = {**local_flags, **dynamic_flags}
         client_cfg["feature_flags"] = merged_flags
         client_cfg["maintenance_mode"] = merged_flags.get("maintenance_mode", False)
+        
+        # Thêm thông tin môi trường và database
+        client_cfg["is_staging"] = is_staging
+        from core.db import get_db_file
+        client_cfg["db_file"] = get_db_file()
+        
         return jsonify({"status": "success", "config": client_cfg})
 
 @routes_system.route('/api/logs', methods=['GET'])
