@@ -35,8 +35,9 @@
     return null;
   }
 
-  async function backupPoolImagesSelf(token, poolSheetId, maHang, address, curatedImages) {
+  async function backupPoolImagesSelf(token, poolSheetId, p, address, curatedImages) {
     try {
+      const maHang = p.tk_id;
       // 1. Định vị dòng self của mã căn này trên sheet Pool_Images
       const rowIndex = await getPoolImagesSelfRowIndex(token, poolSheetId, maHang);
       if (!rowIndex) {
@@ -44,14 +45,23 @@
         return;
       }
       
-      // 2. Lấy danh sách URL ảnh từ curatedImages (chỉ lấy ảnh tự upload/R2, lọc bỏ các ảnh crawl và ảnh bị xóa)
-      const isUserUploaded = (url) => {
-        if (!url) return false;
-        return url.startsWith('https://pub-') || url.includes('r2.dev') || url.includes('r2.cloudflarestorage.com');
+      const normalizeImgUrl = (url) => {
+        if (!url) return "";
+        return url.split('?')[0].trim().toLowerCase();
       };
       
+      // Lấy danh sách URL ảnh cào gốc để đối chiếu
+      const rawUrls = (p.raw_images_tk || []).concat(p.raw_drive_images || []).map(url => normalizeImgUrl(url));
+      
+      // 2. Lấy danh sách URL ảnh từ curatedImages (chỉ lấy ảnh tự upload/R2, lọc bỏ các ảnh crawl và ảnh bị xóa)
       const imageUrls = curatedImages
-        .filter(img => img.role !== 'deleted' && (img.origin === 'self' || img.origin === 'user' || isUserUploaded(img.image_url || img.r2_url)))
+        .filter(img => {
+          if (img.role === 'deleted') return false;
+          const url = img.image_url || img.r2_url;
+          if (!url) return false;
+          const norm = normalizeImgUrl(url);
+          return !rawUrls.includes(norm);
+        })
         .map(img => img.image_url || img.r2_url)
         .filter(url => url && url.trim() !== "");
         
@@ -2359,7 +2369,7 @@
             // Backup hình ảnh sang sheet Pool_Images dòng self
             try {
               const addressStr = (((matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (matchedRow[getPoolColumnIndex("Đường", 5)] || ""))).trim();
-              await backupPoolImagesSelf(token, POOL_SHEET_ID, p.tk_id, addressStr, curatedImages);
+              await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
             } catch (e_backup) {
               console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
             }
@@ -2868,7 +2878,7 @@
             // Backup hình ảnh sang sheet Pool_Images dòng self
             try {
               const addressStr = (((p.pool_row_data[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (p.pool_row_data[getPoolColumnIndex("Đường", 5)] || ""))).trim();
-              await backupPoolImagesSelf(token, POOL_SHEET_ID, p.tk_id, addressStr, curatedImages);
+              await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
             } catch (e_backup) {
               console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
             }
@@ -3298,7 +3308,7 @@
             // Backup hình ảnh sang sheet Pool_Images dòng self
             try {
               const addressStr = (((matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (matchedRow[getPoolColumnIndex("Đường", 5)] || ""))).trim();
-              await backupPoolImagesSelf(token, POOL_SHEET_ID, p.tk_id, addressStr, curatedImages);
+              await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
             } catch (e_backup) {
               console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
             }
