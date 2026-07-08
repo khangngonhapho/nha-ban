@@ -1678,6 +1678,22 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     add_log_message(f"[⚡] Đang chèn chốt dòng mới lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
                     sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED', inherit_from_before=True)
             
+                try:
+                    raw_imgs = []
+                    raw_images_tk_json_str = d.get("raw_images_tk_json")
+                    if raw_images_tk_json_str:
+                        raw_imgs = json.loads(raw_images_tk_json_str)
+                    
+                    # Ngõ/Số nhà ở index 6, Đường ở index 5
+                    address_str = ""
+                    if len(row_data) > 6:
+                        address_str = f"{row_data[6]} {row_data[5]}".strip()
+                    
+                    init_pool_images_rows(spreadsheet, tk_id, address_str, raw_imgs)
+                    update_pool_images_crawl_row(spreadsheet, tk_id, address_str, raw_imgs)
+                except Exception as e_backup:
+                    add_log_message(f"[⚠️ WARNING] Không thể xử lý backup trên Pool_Images: {str(e_backup)}")
+
                 if os.environ.get("STAGING") == "true":
                     source_sheet_id = cfg.get("staging_source_sheet_id") or "1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk"
                 else:
@@ -2693,6 +2709,182 @@ def append_column_to_docs(header_name, safe_name, is_public, description):
                 print(f"[✅ Docs] Đã cập nhật docs/data_dictionary.md cho cột '{header_name}'.")
         except Exception as e_docs:
             print(f"[⚠️ ERROR append_column_to_docs dict] {str(e_docs)}")
+
+
+def ensure_pool_images_sheet_exists(spreadsheet):
+    """
+    Kiểm tra và tự động tạo tab Pool_Images nếu chưa tồn tại.
+    """
+    try:
+        sheet = spreadsheet.worksheet("Pool_Images")
+    except Exception:
+        # Tạo mới tab
+        sheet = spreadsheet.add_worksheet(title="Pool_Images", rows=1000, cols=60)
+        # Khởi tạo header cơ bản
+        headers = ["Mã", "Địa chỉ", "Loại", "Số lượng", "Ảnh 1", "Ảnh 2", "Ảnh 3"]
+        sheet.update(range_name='A1:G1', values=[headers])
+    return sheet
+
+
+def ensure_pool_images_headers(sheet, target_images_count):
+    """
+    Mở rộng số cột tiêu đề ảnh trên sheet Pool_Images động nếu số lượng ảnh mới vượt quá số cột hiện tại.
+    """
+    try:
+        # Đọc hàng 1
+        headers = sheet.row_values(1)
+    except Exception:
+        headers = ["Mã", "Địa chỉ", "Loại", "Số lượng"]
+        
+    current_len = len(headers)
+    required_len = 4 + target_images_count  # A, B, C, D + K ảnh
+    
+    if current_len < required_len:
+        # Thêm các cột Ảnh mới
+        for i in range(current_len - 3, target_images_count + 1):
+            headers.append(f"Ảnh {i}")
+        # Ghi đè lại hàng 1
+        import gspread
+        col_letter = gspread.utils.rowcol_to_a1(1, len(headers)).replace("1", "")
+        try:
+            sheet.update(range_name=f"A1:{col_letter}1", values=[headers])
+        except Exception as e:
+            print(f"[⚠️ WARNING] Không thể mở rộng header cho Pool_Images: {str(e)}")
+
+
+def init_pool_images_rows(spreadsheet, tk_id, address, raw_images_list):
+    """
+    Khởi tạo 2 dòng crawl/self kề nhau trên tab Pool_Images cho mã căn tk_id nếu chưa tồn tại.
+    Dòng crawl chứa danh sách ảnh thô. Dòng self để trống hoàn toàn các cột ảnh.
+    """
+    sheet = ensure_pool_images_sheet_exists(spreadsheet)
+    
+    # Đọc cột A (Mã) và C (Loại) để kiểm tra xem đã có dòng nào chưa
+    try:
+        col_a = sheet.col_values(1)
+        col_c = sheet.col_values(3)
+    except Exception as e:
+        print(f"[⚠️ WARNING] Không thể đọc dữ liệu Pool_Images để kiểm tra: {str(e)}")
+        return
+        
+    # Tìm xem tk_id đã có dòng crawl chưa
+    has_crawl = False
+    for idx, (m, l) in enumerate(zip(col_a, col_c)):
+        if m.strip() == tk_id.strip() and l.strip() == "crawl":
+            has_crawl = True
+            break
+            
+    if not has_crawl:
+        # Chưa có, tiến hành chèn cặp dòng mới kề sát nhau vào cuối bảng
+        # Mở rộng số cột của sheet nếu số lượng ảnh cào lớn hơn số cột hiện tại
+        ensure_pool_images_headers(sheet, len(raw_images_list))
+        
+        # Dòng crawl
+        crawl_row = [tk_id, address, "crawl", len(raw_images_list)] + raw_images_list
+        # Dòng self (trống các cột ảnh)
+        self_row = [tk_id, address, "self", 0]
+        
+        try:
+            # Ghi cả 2 dòng kề nhau vào cuối
+            next_idx = len(col_a) + 1
+            if next_idx < 2:
+                next_idx = 2
+            
+            import gspread
+            col_letter = gspread.utils.rowcol_to_a1(1, max(len(crawl_row), len(self_row))).replace("1", "")
+            sheet.update(range_name=f"A{next_idx}:{col_letter}{next_idx+1}", values=[crawl_row, self_row], value_input_option='USER_ENTERED')
+            print(f"[✅ Backup] Khởi tạo thành công 2 dòng crawl/self kề nhau cho căn {tk_id} trên Pool_Images.")
+        except Exception as e:
+            print(f"[❌ LỖI] Lỗi chèn dòng mới vào Pool_Images: {str(e)}")
+
+
+def update_pool_images_crawl_row(spreadsheet, tk_id, address, raw_images_list):
+    """
+    Cập nhật danh sách ảnh thô mới cào về vào dòng crawl trên sheet Pool_Images.
+    Bảo toàn dòng self nguyên vẹn.
+    """
+    sheet = ensure_pool_images_sheet_exists(spreadsheet)
+    
+    try:
+        col_a = sheet.col_values(1)
+        col_c = sheet.col_values(3)
+    except Exception as e:
+        print(f"[⚠️ WARNING] Không thể đọc dữ liệu Pool_Images để cập nhật: {str(e)}")
+        return
+        
+    # Tìm dòng crawl của tk_id
+    crawl_row_idx = -1
+    for idx, (m, l) in enumerate(zip(col_a, col_c)):
+        if m.strip() == tk_id.strip() and l.strip() == "crawl":
+            crawl_row_idx = idx + 1 # 1-based index
+            break
+            
+    if crawl_row_idx != -1:
+        # Đã tìm thấy, tiến hành cập nhật
+        # Mở rộng số cột của sheet nếu số lượng ảnh mới lớn hơn số cột hiện tại
+        ensure_pool_images_headers(sheet, len(raw_images_list))
+        
+        # Xóa sạch các cột ảnh cũ (chèn mảng trống rộng)
+        try:
+            # Ghi đè 100 cột trống bắt đầu từ cột E (ảnh 1) để xóa ảnh cũ
+            empty_row = [""] * 100
+            sheet.update(range_name=f"E{crawl_row_idx}:DD{crawl_row_idx}", values=[empty_row])
+        except Exception as e_clear:
+            print(f"[⚠️ WARNING] Không thể xóa ảnh cũ trên Pool_Images: {str(e_clear)}")
+            
+        # Ghi đè dòng mới
+        crawl_row = [tk_id, address, "crawl", len(raw_images_list)] + raw_images_list
+        import gspread
+        col_letter = gspread.utils.rowcol_to_a1(1, len(crawl_row)).replace("1", "")
+        try:
+            sheet.update(range_name=f"A{crawl_row_idx}:{col_letter}{crawl_row_idx}", values=[crawl_row], value_input_option='USER_ENTERED')
+            print(f"[✅ Backup] Cập nhật thành công dòng crawl cho căn {tk_id} trên Pool_Images.")
+        except Exception as e:
+            print(f"[❌ LỖI] Lỗi cập nhật dòng crawl trên Pool_Images: {str(e)}")
+
+
+def update_pool_images_self_row(spreadsheet, tk_id, address, curated_images_list):
+    """
+    Cập nhật danh sách ảnh đã biên tập (curated) vào dòng self trên sheet Pool_Images.
+    """
+    sheet = ensure_pool_images_sheet_exists(spreadsheet)
+    
+    try:
+        col_a = sheet.col_values(1)
+        col_c = sheet.col_values(3)
+    except Exception as e:
+        print(f"[⚠️ WARNING] Không thể đọc dữ liệu Pool_Images để cập nhật self: {str(e)}")
+        return
+        
+    # Tìm dòng self của tk_id
+    self_row_idx = -1
+    for idx, (m, l) in enumerate(zip(col_a, col_c)):
+        if m.strip() == tk_id.strip() and l.strip() == "self":
+            self_row_idx = idx + 1 # 1-based index
+            break
+            
+    if self_row_idx != -1:
+        # Đã tìm thấy, tiến hành cập nhật
+        # Mở rộng số cột của sheet nếu số lượng ảnh mới lớn hơn số cột hiện tại
+        ensure_pool_images_headers(sheet, len(curated_images_list))
+        
+        # Xóa sạch các cột ảnh cũ (chèn mảng trống rộng)
+        try:
+            empty_row = [""] * 100
+            sheet.update(range_name=f"E{self_row_idx}:DD{self_row_idx}", values=[empty_row])
+        except Exception as e_clear:
+            print(f"[⚠️ WARNING] Không thể xóa ảnh cũ trên Pool_Images: {str(e_clear)}")
+            
+        # Ghi đè dòng mới
+        self_row = [tk_id, address, "self", len(curated_images_list)] + curated_images_list
+        import gspread
+        col_letter = gspread.utils.rowcol_to_a1(1, len(self_row)).replace("1", "")
+        try:
+            sheet.update(range_name=f"A{self_row_idx}:{col_letter}{self_row_idx}", values=[self_row], value_input_option='USER_ENTERED')
+            print(f"[✅ Backup] Cập nhật thành công dòng self cho căn {tk_id} trên Pool_Images.")
+        except Exception as e:
+            print(f"[❌ LỖI] Lỗi cập nhật dòng self trên Pool_Images: {str(e)}")
+
 
 # Tự động nạp các cột tùy biến khi import module
 load_custom_columns()

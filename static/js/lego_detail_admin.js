@@ -11,6 +11,100 @@
   const getPoolColumnIndex = window.getPoolColumnIndex;
   const getSourceColumnIndex = window.getSourceColumnIndex;
 
+  async function getPoolImagesSelfRowIndex(token, poolSheetId, maHang) {
+    try {
+      const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!A2:C`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!res.ok) {
+        throw new Error(`Status ${res.status}`);
+      }
+      const data = await res.json();
+      const rows = data.values || [];
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        if (row && row[0] && row[0].trim() === maHang.trim() && row[2] && row[2].trim() === "self") {
+          return i + 2; // Since A2 is row index 2
+        }
+      }
+    } catch (e) {
+      console.warn("Lỗi khi tra cứu dòng trên Pool_Images:", e);
+    }
+    return null;
+  }
+
+  async function backupPoolImagesSelf(token, poolSheetId, maHang, address, curatedImages) {
+    try {
+      // 1. Định vị dòng self của mã căn này trên sheet Pool_Images
+      const rowIndex = await getPoolImagesSelfRowIndex(token, poolSheetId, maHang);
+      if (!rowIndex) {
+        console.warn(`[Pool_Images] Không tìm thấy dòng self cho mã căn ${maHang} để backup.`);
+        return;
+      }
+      
+      // 2. Lấy danh sách URL ảnh từ curatedImages (lọc bỏ các ảnh bị xóa hoàn toàn)
+      const imageUrls = curatedImages
+        .filter(img => img.role !== 'deleted')
+        .map(img => img.image_url || img.r2_url)
+        .filter(url => url && url.trim() !== "");
+        
+      // 3. Đọc tiêu đề hiện tại để mở rộng cột tiêu đề nếu cần
+      const currentHeadersRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!A1:ZZ1`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (currentHeadersRes.ok) {
+        const currentHeadersData = await currentHeadersRes.json();
+        const currentHeaders = currentHeadersData.values ? currentHeadersData.values[0] : [];
+        const requiredLen = 4 + imageUrls.length;
+        if (currentHeaders.length < requiredLen) {
+          const newHeaders = [...currentHeaders];
+          while (newHeaders.length < requiredLen) {
+            newHeaders.push(`Ảnh ${newHeaders.length - 3}`);
+          }
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!A1?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ values: [newHeaders] })
+          });
+        }
+      }
+      
+      // 4. Xóa sạch các cột hình ảnh cũ từ cột E trở đi bằng cách ghi đè một dòng trống dài (200 cột)
+      const emptyRow = Array(200).fill("");
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!E${rowIndex}?valueInputOption=USER_ENTERED`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ values: [emptyRow] })
+      });
+      
+      // 5. Ghi dữ liệu mới vào dòng self bắt đầu từ cột A
+      const selfRowData = [maHang, address, "self", imageUrls.length, ...imageUrls];
+      const writeRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!A${rowIndex}?valueInputOption=USER_ENTERED`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ values: [selfRowData] })
+      });
+      if (writeRes.ok) {
+        console.log(`[Pool_Images] Đã backup thành công dòng self cho căn ${maHang} (dòng ${rowIndex}).`);
+      } else {
+        console.warn(`[Pool_Images] Lỗi ghi dữ liệu dòng self: ${writeRes.status}`);
+      }
+    } catch (e) {
+      console.warn("[Pool_Images] Lỗi tiến trình backupPoolImagesSelf:", e);
+    }
+  }
+
   // Export module LegoDetailAdmin
   window.LegoDetailAdmin = {
     render: render
@@ -2256,6 +2350,14 @@
               },
               body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
             });
+            
+            // Backup hình ảnh sang sheet Pool_Images dòng self
+            try {
+              const addressStr = (((matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (matchedRow[getPoolColumnIndex("Đường", 5)] || ""))).trim();
+              await backupPoolImagesSelf(token, POOL_SHEET_ID, p.tk_id, addressStr, curatedImages);
+            } catch (e_backup) {
+              console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
+            }
           } catch (e) {
             console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool:", e);
           }
@@ -2757,6 +2859,14 @@
               },
               body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
             });
+            
+            // Backup hình ảnh sang sheet Pool_Images dòng self
+            try {
+              const addressStr = (((p.pool_row_data[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (p.pool_row_data[getPoolColumnIndex("Đường", 5)] || ""))).trim();
+              await backupPoolImagesSelf(token, POOL_SHEET_ID, p.tk_id, addressStr, curatedImages);
+            } catch (e_backup) {
+              console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
+            }
             const imagesAdminPoolIdx = getPoolColumnIndex("Images_Admin_JSON", 94);
             p.pool_row_data[imagesAdminPoolIdx] = JSON.stringify(curatedImages);
           } catch (e) {
@@ -3179,6 +3289,14 @@
               },
               body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
             });
+            
+            // Backup hình ảnh sang sheet Pool_Images dòng self
+            try {
+              const addressStr = (((matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (matchedRow[getPoolColumnIndex("Đường", 5)] || ""))).trim();
+              await backupPoolImagesSelf(token, POOL_SHEET_ID, p.tk_id, addressStr, curatedImages);
+            } catch (e_backup) {
+              console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
+            }
           } catch (e) {
             console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool trong publish:", e);
           }

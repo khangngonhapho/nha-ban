@@ -1799,6 +1799,20 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
     add_log_message(f"[🏁] HOÀN TẤT LUỒNG DI CƯ: Đã xử lý {processed} căn.")
 
 
+def execute_publish_listing(tk_id):
+    """
+    Wrapper chuyển tiếp cuộc gọi xuất bản tin lên Google Sheets bằng cách gọi pool_lego.publish_listing.
+    """
+    import pool_lego
+    return pool_lego.publish_listing(
+        tk_id=tk_id,
+        get_google_credentials=get_google_credentials,
+        load_config=load_config,
+        add_log_message=add_log_message,
+        db_file=DB_FILE
+    )
+
+
 # ==================================================
 # API ENDPOINTS (BLUEPRINTS REGISTRATION)
 # ==================================================
