@@ -2239,7 +2239,7 @@
                 });
               });
             }
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CP${poolRowNumber}:CP${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CQ${poolRowNumber}:CQ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -2736,9 +2736,9 @@
         if (p.pool_row_index && p.pool_row_data) {
           const POOL_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
           
-          // 0. Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
+          // 0. Đồng bộ Images_Admin_JSON sang Pool (Cột CQ)
           try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CP${p.pool_row_index}:CP${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CQ${p.pool_row_index}:CQ${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -3157,7 +3157,7 @@
                 });
               });
             }
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CP${poolRowNumber}:CP${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CQ${poolRowNumber}:CQ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
