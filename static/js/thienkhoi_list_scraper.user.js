@@ -894,6 +894,10 @@
                 localStorage.setItem('kn_scraper_port', localPort);
             } catch (err) {}
             writeLog(`Đổi cổng kết nối sang: ${localPort}`);
+            fetchServerMode();
+            checkedIds.clear();
+            localListingIds.clear();
+            scanListings();
         });
 
         writeLog("Khởi tạo hệ thống Scraper...");
