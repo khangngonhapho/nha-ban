@@ -33,8 +33,12 @@ def restore_database():
     print("\n[2/4] Đang kết nối API và tải dữ liệu từ Google Sheets Pool và Source...")
     creds = get_google_credentials()
     cfg = load_config()
-    sheet_id = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
-    source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
+    if os.environ.get("STAGING") == "true":
+        sheet_id = cfg.get("staging_pool_sheet_id") or cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
+        source_sheet_id = cfg.get("staging_source_sheet_id") or "1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk"
+    else:
+        sheet_id = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
+        source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
     
     if not creds:
         print("[❌ LỖI] Thiếu file credentials.json!")
@@ -303,6 +307,22 @@ def restore_database():
             public_interior_indices = parse_indices(row_dict.get("Ảnh Public (VD: 1,3,5)", ""))
             public_alley_indices = parse_indices(row_dict.get("Ảnh Hẻm Public (VD: 1,2)", ""))
 
+            # Extract public interior URLs from Source sheet if published
+            source_public_interiors = set()
+            if pool_sys_id and pool_sys_id in source_dict:
+                s_row = source_dict[pool_sys_id]
+                # Cols 21 to 30 (indices 20 to 29) are Ảnh 1 to 10
+                for url in s_row[20:30]:
+                    url_clean = url.strip()
+                    if url_clean.startswith("http"):
+                        source_public_interiors.add(url_clean)
+                # Cols 42 to 46 (indices 41 to 45) are Ảnh 11 to 15
+                if len(s_row) > 45:
+                    for url in s_row[41:46]:
+                        url_clean = url.strip()
+                        if url_clean.startswith("http"):
+                            source_public_interiors.add(url_clean)
+
             # 1. Cover
             cover_url = row_dict.get("Hình Nhận Diện", "").strip()
             if cover_url and cover_url.startswith("http"):
@@ -339,7 +359,10 @@ def restore_database():
                 url = row_dict.get(f"Ảnh {i}", "").strip()
                 if url and url.startswith("http"):
                     if not any(img["url"] == url for img in images_list):
-                        is_visible = i in public_interior_indices
+                        if pool_sys_id and pool_sys_id in source_dict:
+                            is_visible = url in source_public_interiors
+                        else:
+                            is_visible = i in public_interior_indices
                         images_list.append({
                             "url": url,
                             "role": "Nội thất",
