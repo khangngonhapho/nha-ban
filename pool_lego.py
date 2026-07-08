@@ -1680,9 +1680,25 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             
                 try:
                     raw_imgs = []
-                    raw_images_tk_json_str = d.get("raw_images_tk_json")
-                    if raw_images_tk_json_str:
-                        raw_imgs = json.loads(raw_images_tk_json_str)
+                    images_admin_json_str = d.get("images_admin_json")
+                    if images_admin_json_str:
+                        try:
+                            parsed = json.loads(images_admin_json_str)
+                            if isinstance(parsed, list):
+                                for img in parsed:
+                                    if isinstance(img, dict) and img.get("role") != "deleted":
+                                        url = img.get("r2_url") or img.get("image_url") or ""
+                                        if url.strip():
+                                            is_self = img.get("origin") in ["self", "user"] or "r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url
+                                            if not is_self:
+                                                raw_imgs.append(url.strip())
+                        except Exception:
+                            pass
+                    if not raw_imgs and d.get("raw_images_tk_json"):
+                        try:
+                            raw_imgs = json.loads(d.get("raw_images_tk_json"))
+                        except Exception:
+                            pass
                     
                     # Ngõ/Số nhà ở index 6, Đường ở index 5
                     address_str = ""
