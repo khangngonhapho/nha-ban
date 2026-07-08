@@ -165,6 +165,7 @@ def handle_config():
                 client_cfg["pool_sheet_id"] = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
                 client_cfg["source_sheet_id"] = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
                 
+        client_cfg["maintenance_mode"] = client_cfg.get("feature_flags", {}).get("maintenance_mode", False)
         return jsonify({"status": "success", "config": client_cfg})
 
 @routes_system.route('/api/logs', methods=['GET'])
