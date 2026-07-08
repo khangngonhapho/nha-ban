@@ -265,7 +265,13 @@ def restore_database():
                         
         # Reconstruct curated images config & populate listings_images table
         images_list = []
-        images_admin_json_str = row_dict.get("Images_Admin_JSON", "").strip()
+        images_admin_json_str = ""
+        if pool_sys_id and pool_sys_id in source_dict:
+            s_row = source_dict[pool_sys_id]
+            if len(s_row) > 48:
+                images_admin_json_str = s_row[48].strip()
+        if not images_admin_json_str:
+            images_admin_json_str = row_dict.get("Images_Admin_JSON", "").strip()
         if images_admin_json_str:
             try:
                 parsed = json.loads(images_admin_json_str)

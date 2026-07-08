@@ -2194,11 +2194,28 @@
           finalImages[12] || "",         // 43: anh_13 (Cột AR)
           finalImages[13] || "",         // 44: anh_14 (Cột AS)
           finalImages[14] || "",         // 45: anh_15 (Cột AT)
-          matchedRow[93] || ""           // 46: JSON_UI (Cột AU)
+          matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
+          JSON.stringify(finalImages.filter(Boolean)), // 47: Images_Public_JSON (Cột AV)
+          (function() {
+            const curatedImages = [];
+            if (window.imageEditorSlides) {
+              window.imageEditorSlides.forEach((slide, idx) => {
+                curatedImages.push({
+                  image_url: slide.url,
+                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
+                  sequence_index: idx + 1,
+                  origin: 'thienkhoi',
+                  is_hidden: slide.visible === false ? 1 : 0
+                });
+              });
+            }
+            return JSON.stringify(curatedImages);
+          })()                           // 48: Images_Admin_JSON (Cột AW)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AU${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AW${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {
@@ -2559,8 +2576,8 @@
           const finalImages = window.getPublicImagesFromForm(p);
           while (finalImages.length < 15) finalImages.push("");
 
-          // Pad original_row_data to 48 columns
-          while (p.original_row_data.length < 48) p.original_row_data.push("");
+          // Pad original_row_data to 49 columns
+          while (p.original_row_data.length < 49) p.original_row_data.push("");
 
           // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
           for (let i = 0; i < 10; i++) {
@@ -2574,7 +2591,7 @@
         }
 
         if (p.original_row_data) {
-          while (p.original_row_data.length < 48) p.original_row_data.push("");
+          while (p.original_row_data.length < 49) p.original_row_data.push("");
           p.original_row_data[38] = customCoverUrl;
           p.img_mat_tien = customCoverUrl;
 
@@ -2650,11 +2667,23 @@
         p.original_row_data[4] = tieuDeBds;
         p.t = tieuDeBds;
         p.original_row_data[39] = "";
-        if (!p.json_ui_parsed) {
-          p.json_ui_parsed = {};
-        }
         p.original_row_data[46] = JSON.stringify(p.json_ui_parsed);
-        p.original_row_data[47] = editDtTrenSo; // DT Trên sổ (Cột AV)
+        p.original_row_data[47] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AV)
+        
+        const curatedImages = [];
+        if (window.imageEditorSlides) {
+          window.imageEditorSlides.forEach((slide, idx) => {
+            curatedImages.push({
+              image_url: slide.url,
+              r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+              role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
+              sequence_index: idx + 1,
+              origin: 'thienkhoi',
+              is_hidden: slide.visible === false ? 1 : 0
+            });
+          });
+        }
+        p.original_row_data[48] = JSON.stringify(curatedImages); // Images_Admin_JSON (Cột AW)
 
         p.note = note;
         p.dt = editDtThucTe;
@@ -2670,7 +2699,7 @@
         p.m = moTaBds;
 
         const SOURCE_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AV${p.source_row_index}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AW${p.source_row_index}?valueInputOption=USER_ENTERED`;
 
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
@@ -3042,11 +3071,27 @@
           finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
           finalImages[14] || "",         // 45: Ảnh 15 (Cột AT)
           matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
-          editDtTrenSo                   // 47: DT Trên sổ (Cột AV)
+          JSON.stringify(finalImages.filter(Boolean)), // 47: Images_Public_JSON (Cột AV)
+          (function() {
+            const curatedImages = [];
+            if (window.imageEditorSlides) {
+              window.imageEditorSlides.forEach((slide, idx) => {
+                curatedImages.push({
+                  image_url: slide.url,
+                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
+                  sequence_index: idx + 1,
+                  origin: 'thienkhoi',
+                  is_hidden: slide.visible === false ? 1 : 0
+                });
+              });
+            }
+            return JSON.stringify(curatedImages);
+          })()                           // 48: Images_Admin_JSON (Cột AW)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AV${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AW${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {
