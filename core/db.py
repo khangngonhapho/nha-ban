@@ -114,12 +114,10 @@ def get_db_file() -> str:
     if os.environ.get("STAGING") == "true":
         return "raw_archive_staging.db"
     try:
-        config_file = "settings.json"
-        if os.path.exists(config_file):
-            with open(config_file, 'r', encoding='utf-8') as f:
-                cfg = json.load(f)
-                if cfg.get("active_pool_system") == "Pool2":
-                    return "raw_archive_v2.db"
+        from core.config import read_settings
+        cfg = read_settings()
+        if cfg.get("active_pool_system") == "Pool2":
+            return "raw_archive_v2.db"
     except Exception:
         pass
     return "raw_archive.db"

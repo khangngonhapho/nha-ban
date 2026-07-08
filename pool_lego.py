@@ -120,14 +120,8 @@ def extract_json_ui_data(raw_json_dict):
     Trích xuất các trường cấu hình từ raw_json_dict (detail_data của Thiên Khôi)
     để tạo thành đối tượng JSON UI tinh gọn.
     """
-    cfg = {}
-    try:
-        config_file = "settings.json"
-        if os.path.exists(config_file):
-            with open(config_file, 'r', encoding='utf-8') as f:
-                cfg = json.load(f)
-    except Exception:
-        pass
+    from core.config import read_settings
+    cfg = read_settings()
         
     fields = cfg.get("json_ui_fields") or ["Criteria_Duong_truoc_nha"]
     
@@ -299,12 +293,10 @@ def init_db(db_file=None):
     # Xác định pool system đang hoạt động
     is_pool2 = False
     try:
-        config_file = "settings.json"
-        if os.path.exists(config_file):
-            with open(config_file, 'r', encoding='utf-8') as f:
-                cfg = json.load(f)
-                if cfg.get("active_pool_system") == "Pool2":
-                    is_pool2 = True
+        from core.config import read_settings
+        cfg = read_settings()
+        if cfg.get("active_pool_system") == "Pool2":
+            is_pool2 = True
     except Exception:
         pass
 
@@ -697,12 +689,10 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
     # Xác định pool system đang hoạt động
     is_pool2 = False
     try:
-        config_file = "settings.json"
-        if os.path.exists(config_file):
-            with open(config_file, 'r', encoding='utf-8') as f:
-                cfg = json.load(f)
-                if cfg.get("active_pool_system") == "Pool2":
-                    is_pool2 = True
+        from core.config import read_settings
+        cfg = read_settings()
+        if cfg.get("active_pool_system") == "Pool2":
+            is_pool2 = True
     except Exception:
         pass
 
@@ -1313,12 +1303,10 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
         # Xác định pool system đang hoạt động
         is_pool2 = False
         try:
-            config_file = "settings.json"
-            if os.path.exists(config_file):
-                with open(config_file, 'r', encoding='utf-8') as f:
-                    cfg = json.load(f)
-                    if cfg.get("active_pool_system") == "Pool2":
-                        is_pool2 = True
+            from core.config import read_settings
+            cfg = read_settings()
+            if cfg.get("active_pool_system") == "Pool2":
+                is_pool2 = True
         except Exception:
             pass
         
@@ -2529,43 +2517,41 @@ def load_custom_columns():
     """
     global LISTINGS_V2_COLS, CUSTOM_HEADERS, PUBLIC_WHITELIST_HEADERS_BASE, RAW_LISTINGS_HEADERS
     try:
-        config_file = "settings.json"
-        if os.path.exists(config_file):
-            with open(config_file, 'r', encoding='utf-8') as f:
-                cfg = json.load(f)
-                custom_cols = cfg.get("custom_schema_columns", [])
-                for col in custom_cols:
-                    name = col.get("column_name")
-                    safe_name = get_safe_col_name(name)
-                    is_public = col.get("is_public", False)
-                    
-                    # Tránh nạp trùng lặp
-                    if safe_name not in LISTINGS_V2_COLS:
-                        LISTINGS_V2_COLS.append(safe_name)
-                    if name not in CUSTOM_HEADERS and safe_name not in CUSTOM_HEADERS:
-                        CUSTOM_HEADERS.append(name)
-                    if is_public:
-                        if "Last updated" in PUBLIC_WHITELIST_HEADERS_BASE:
-                            idx = PUBLIC_WHITELIST_HEADERS_BASE.index("Last updated")
-                            if name not in PUBLIC_WHITELIST_HEADERS_BASE and safe_name not in PUBLIC_WHITELIST_HEADERS_BASE:
-                                PUBLIC_WHITELIST_HEADERS_BASE.insert(idx, name)
-                        else:
-                            if name not in PUBLIC_WHITELIST_HEADERS_BASE and safe_name not in PUBLIC_WHITELIST_HEADERS_BASE:
-                                PUBLIC_WHITELIST_HEADERS_BASE.append(name)
+        from core.config import read_settings
+        cfg = read_settings()
+        custom_cols = cfg.get("custom_schema_columns", [])
+        for col in custom_cols:
+            name = col.get("column_name")
+            safe_name = get_safe_col_name(name)
+            is_public = col.get("is_public", False)
             
-            # Recompute RAW_LISTINGS_HEADERS
-            raw_headers = [
-                "tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"
-            ] + [col for col in LISTINGS_V2_COLS if col not in ["tk_id", "status"]] + EXPLICIT_CRITERIA_COLS
+            # Tránh nạp trùng lặp
+            if safe_name not in LISTINGS_V2_COLS:
+                LISTINGS_V2_COLS.append(safe_name)
+            if name not in CUSTOM_HEADERS and safe_name not in CUSTOM_HEADERS:
+                CUSTOM_HEADERS.append(name)
+            if is_public:
+                if "Last updated" in PUBLIC_WHITELIST_HEADERS_BASE:
+                    idx = PUBLIC_WHITELIST_HEADERS_BASE.index("Last updated")
+                    if name not in PUBLIC_WHITELIST_HEADERS_BASE and safe_name not in PUBLIC_WHITELIST_HEADERS_BASE:
+                        PUBLIC_WHITELIST_HEADERS_BASE.insert(idx, name)
+                else:
+                    if name not in PUBLIC_WHITELIST_HEADERS_BASE and safe_name not in PUBLIC_WHITELIST_HEADERS_BASE:
+                        PUBLIC_WHITELIST_HEADERS_BASE.append(name)
             
-            _seen = set()
-            _raw_dedup = []
-            for _col in raw_headers:
-                _name = get_safe_col_name(_col)
-                if _name not in _seen:
-                    _seen.add(_name)
-                    _raw_dedup.append(_name)
-            RAW_LISTINGS_HEADERS = _raw_dedup
+        # Recompute RAW_LISTINGS_HEADERS
+        raw_headers = [
+            "tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"
+        ] + [col for col in LISTINGS_V2_COLS if col not in ["tk_id", "status"]] + EXPLICIT_CRITERIA_COLS
+        
+        _seen = set()
+        _raw_dedup = []
+        for _col in raw_headers:
+            _name = get_safe_col_name(_col)
+            if _name not in _seen:
+                _seen.add(_name)
+                _raw_dedup.append(_name)
+        RAW_LISTINGS_HEADERS = _raw_dedup
     except Exception as e:
         print(f"[⚠️ ERROR load_custom_columns] {str(e)}")
 
