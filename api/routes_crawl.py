@@ -18,6 +18,17 @@ routes_crawl = Blueprint('routes_crawl', __name__)
 ACTIVE_CRAWLER_THREAD = None
 ACTIVE_CRAWLER_LOCK = threading.Lock()
 
+def set_listing_crawl_failed(tk_id, reason):
+    import manager
+    try:
+        conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
+        cursor = conn.cursor()
+        cursor.execute(f"UPDATE {manager.LISTINGS_TABLE} SET status = ? WHERE tk_id = ?", (f"crawl_failed:{reason}", tk_id))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        manager.add_log_message(f"[⚠️ WARNING] Lỗi cập nhật trạng thái lỗi cào cho {tk_id}: {str(e)}")
+
 @routes_crawl.route('/api/crawl', methods=['POST'])
 def trigger_crawl():
     """Kích hoạt tiến trình cào tin ngầm hoặc lưu Cookie"""
@@ -250,7 +261,7 @@ def recrawl_single_listing(tk_id):
                 pass
                 
         if not cookie:
-            manager.set_listing_crawl_failed(tk_id, "cookie_expired")
+            set_listing_crawl_failed(tk_id, "cookie_expired")
             return jsonify({"status": "error", "message": "Không tìm thấy Cookie Thiên Khôi. Vui lòng cập nhật Cookie trước."}), 400
             
         manager.add_log_message(f"[🚀] BẮT ĐẦU TIẾN TRÌNH CÀO LÈ 1 CĂN: {tk_id} - URL: {detail_url}")
@@ -277,20 +288,20 @@ def recrawl_single_listing(tk_id):
                     headers["Authorization"] = f"Bearer {access_token}"
                     r = requests.get(detail_api_url, headers=headers, timeout=20)
                 else:
-                    manager.set_listing_crawl_failed(tk_id, "cookie_expired")
+                    set_listing_crawl_failed(tk_id, "cookie_expired")
                     return jsonify({"status": "error", "message": "Access token hết hạn và không thể refresh."}), 401
                     
             if r.status_code in [400, 404]:
-                manager.set_listing_crawl_failed(tk_id, "deleted")
+                set_listing_crawl_failed(tk_id, "deleted")
                 return jsonify({"status": "error", "message": f"Căn nhà đã bị khóa nguồn hoặc xóa trên Thiên Khôi (Mã lỗi {r.status_code})."}), 400
             elif r.status_code != 200:
-                manager.set_listing_crawl_failed(tk_id, "http_error")
+                set_listing_crawl_failed(tk_id, "http_error")
                 return jsonify({"status": "error", "message": f"Thiên Khôi API phản hồi mã lỗi {r.status_code}"}), 500
                 
             detail_json = r.json()
             detail_data = detail_json.get("data") or {}
             if not detail_data:
-                manager.set_listing_crawl_failed(tk_id, "exception")
+                set_listing_crawl_failed(tk_id, "exception")
                 return jsonify({"status": "error", "message": "Nội dung phản hồi API trống."}), 400
                 
             ma_hang = detail_data.get("code") or tk_id
@@ -567,10 +578,10 @@ def recrawl_single_listing(tk_id):
         
         r = requests.get(detail_url, headers=headers, timeout=20)
         if r.status_code in [400, 404]:
-            manager.set_listing_crawl_failed(tk_id, "deleted")
+            set_listing_crawl_failed(tk_id, "deleted")
             return jsonify({"status": "error", "message": f"Căn nhà đã bị khóa nguồn hoặc xóa trên Thiên Khôi (HTTP {r.status_code})."}), 400
         elif r.status_code != 200:
-            manager.set_listing_crawl_failed(tk_id, "http_error")
+            set_listing_crawl_failed(tk_id, "http_error")
             return jsonify({"status": "error", "message": f"Thiên Khôi phản hồi mã lỗi HTTP {r.status_code}"}), 500
             
         if "security.html" in r.url or "Account/Login" in r.url or "login" in r.url.lower():
@@ -581,7 +592,7 @@ def recrawl_single_listing(tk_id):
                 winsound.Beep(800, 450)
             except Exception:
                 pass
-            manager.set_listing_crawl_failed(tk_id, "cookie_expired")
+            set_listing_crawl_failed(tk_id, "cookie_expired")
             return jsonify({"status": "error", "message": "Cookie đã hết hạn hoặc bị chặn bảo mật bởi Thiên Khôi."}), 401
             
         from bs4 import BeautifulSoup
@@ -589,7 +600,7 @@ def recrawl_single_listing(tk_id):
         
         # Kiểm tra tính hợp lệ của trang chi tiết để tránh ghi đè dữ liệu trống
         if not soup_detail.select_one('#Detail_sNoiDung') and not soup_detail.select_one('#Detail_sDiaChi') and not soup_detail.select_one('#Detail_iGiaChaoHopDong_show'):
-            manager.set_listing_crawl_failed(tk_id, "cookie_expired")
+            set_listing_crawl_failed(tk_id, "cookie_expired")
             return jsonify({"status": "error", "message": "Không tìm thấy nội dung chi tiết căn nhà trên trang Thiên Khôi. Vui lòng cập nhật lại Cookie."}), 400
             
         # Bóc tách DOM bằng helper của fetcher
@@ -835,5 +846,5 @@ def recrawl_single_listing(tk_id):
         
     except Exception as e:
         manager.add_log_message(f"[❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e)}")
-        manager.set_listing_crawl_failed(tk_id, "exception")
+        set_listing_crawl_failed(tk_id, "exception")
         return jsonify({"status": "error", "message": f"Gặp sự cố khi cào lại: {str(e)}"}), 500
