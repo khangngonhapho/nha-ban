@@ -123,8 +123,12 @@
                   <span class="value dotted">${p.dai_nha || '-'} m</span>
                 </div>
                 <div class="admin-raw-cell">
-                  <span class="label">Đường trước nhà:</span>
-                  <span class="value dotted">${p.raw_duong_truoc_nha || p.duong_truoc_nha || '-'} m</span>
+                  <span class="label">Đ. trước:</span>
+                  <span class="value dotted">${(p.json_ui_parsed && p.json_ui_parsed.Criteria_Duong_truoc_nha) || '-'}</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Đường vào nhỏ nhất:</span>
+                  <span class="value dotted">${p.raw_duong_truoc_nha ? p.raw_duong_truoc_nha + ' m' : '-'}</span>
                 </div>
                 <div class="admin-raw-cell">
                   <span class="label">Số tầng:</span>
@@ -137,6 +141,10 @@
                 <div class="admin-raw-cell">
                   <span class="label">Số WC:</span>
                   <span class="value dotted">${p.raw_so_wc || '-'} WC</span>
+                </div>
+                <div class="admin-raw-cell">
+                  <span class="label">Hướng gốc:</span>
+                  <span class="value dotted">${(p.pool_row_data && p.pool_row_data[17]) || p.huong || '-'}</span>
                 </div>
                 <div class="admin-raw-cell">
                   <span class="label">Giá chào:</span>
@@ -237,9 +245,14 @@
                         <option value="Tây Bắc">Tây Bắc</option>
                       </select>
                     </div>
-                    
                     <div class="admin-edit-group">
-                      <label for="editDuong">Đường trước nhà:</label>
+                      <!-- Giữ khoảng trống cân đối -->
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editDuong">Đường trước nhà custom:</label>
                       <select id="editDuong">
                         <option value="-">Chưa xác định</option>
                         <option value="Hẻm ba gác">Hẻm ba gác</option>
@@ -247,6 +260,10 @@
                         <option value="Hẻm ô tô">Hẻm ô tô</option>
                         <option value="Mặt tiền đường">Mặt tiền đường</option>
                       </select>
+                    </div>
+                    <div class="admin-edit-group">
+                      <label for="editRongHem">Độ rộng hẻm custom (m):</label>
+                      <input type="text" id="editRongHem" placeholder="Bỏ trống / Nhập độ rộng...">
                     </div>
                   </div>
 
@@ -281,6 +298,18 @@
                     <div class="admin-edit-group">
                       <label for="editSoWc">Số WC:</label>
                       <input type="number" id="editSoWc" value="${(p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || '')}" placeholder="Số WC...">
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editDtThucTe">DT Thực tế (m²):</label>
+                      <input type="number" step="0.1" id="editDtThucTe" value="${p.dt || ''}" placeholder="DT thực tế...">
+                    </div>
+
+                    <div class="admin-edit-group">
+                      <label for="editDtTrenSo">DT Trên sổ (m²):</label>
+                      <input type="number" step="0.1" id="editDtTrenSo" value="${p.dt_tren_so_custom || ''}" placeholder="DT trên sổ...">
                     </div>
                   </div>
 
@@ -320,10 +349,22 @@
         window.CURRENT_EDITING_LISTING = p;
         setTimeout(() => {
           const editHuong = document.getElementById('editHuong');
-          if (editHuong) editHuong.value = p.huong || '-';
+          if (editHuong) {
+            let defaultVal = p.huong || '-';
+            if (defaultVal === '-' || defaultVal === '') {
+              const rawHuong = (p.pool_row_data && p.pool_row_data[17]) || '';
+              if (rawHuong && rawHuong !== '-') {
+                defaultVal = rawHuong;
+              }
+            }
+            editHuong.value = defaultVal;
+          }
 
           const editDuong = document.getElementById('editDuong');
           if (editDuong) editDuong.value = p.duong_truoc_nha || '-';
+
+          const editRongHem = document.getElementById('editRongHem');
+          if (editRongHem) editRongHem.value = p.rong_hem === '-' ? '' : (p.rong_hem || '');
 
           const editDanhGia = document.getElementById('editDanhGia');
           if (editDanhGia) editDanhGia.value = p.danh_gia || '';
@@ -397,7 +438,7 @@
                   accPreview.style.display = 'block';
                   accPreview.classList.add('expanded');
                   const content = accPreview.querySelector('.accordion-content');
-                  if (content) content.style.display = 'block';
+                  if (content) content.style.removeProperty('display');
                   const arrow = accPreview.querySelector('.arrow');
                   if (arrow) arrow.textContent = '▼';
                 }
@@ -444,7 +485,7 @@
             if (accPreview) {
               accPreview.classList.add('expanded');
               const content = accPreview.querySelector('.accordion-content');
-              if (content) content.style.display = 'block';
+              if (content) content.style.removeProperty('display');
               const arrow = accPreview.querySelector('.arrow');
               if (arrow) arrow.textContent = '▼';
               
@@ -456,7 +497,7 @@
             if (accSource) {
               accSource.classList.remove('expanded');
               const content = accSource.querySelector('.accordion-content');
-              if (content) content.style.display = 'none';
+              if (content) content.style.removeProperty('display');
               const arrow = accSource.querySelector('.arrow');
               if (arrow) arrow.textContent = '▶';
             }
@@ -682,7 +723,7 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
-          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }
         }
@@ -1620,7 +1661,7 @@
             }
 
             const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
-            if (publicInteriorInput && assignedIdx <= 15) {
+            if (publicInteriorInput && assignedIdx <= 25) {
               let currentVal = publicInteriorInput.value.trim();
               let indices = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
               if (!indices.includes(String(assignedIdx))) {
@@ -1710,7 +1751,7 @@
       }
 
       // Map row to p structure
-      const dt = parseFloat(row[13] || row[14]) || 0;
+      const dt = parseFloat(row[14] || row[13]) || 0;
       const gia = parseGia(row[11] || row[58]);
       const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
@@ -1738,12 +1779,29 @@
         if (row[c]) poolImgs.push(row[c]);
       }
 
+      let jsonUiVal = row[93] || '';
+      if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
+        for (let i = row.length - 1; i >= 0; i--) {
+          const val = row[i];
+          const valStr = val ? String(val).trim() : '';
+          if (valStr && valStr.startsWith('{') && valStr.endsWith('}')) {
+            jsonUiVal = valStr;
+            break;
+          }
+        }
+      }
+      let json_ui_parsed = {};
+      if (jsonUiVal) {
+        try { json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+      }
+
       const p = {
         temp_id: "pool_" + systemId,
         id: row[55] || systemId || '',
         cu_phap: "",
         t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
         dt: row[13] || row[14] || '',
+        dt_tren_so_custom: row[14] || '',
         tang: row[15] || '',
         mat: row[16] || '',
         gia: gia,
@@ -1752,8 +1810,8 @@
         phuong: row[4] || '-',
         loai_hinh: (row[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
         huong: row[17] || '-',
-        duong_truoc_nha: row[59] || '-',
-        rong_hem: row[60] || '-',
+        duong_truoc_nha: '-',
+        rong_hem: '-',
         tinh_trang: row[61] || '-',
         danh_gia: row[67] || '',
         is_invisible: false,
@@ -1765,6 +1823,7 @@
         system_id: systemId,
         so_pn: row[64] || '-',
         img_mat_tien: row[29] || '',
+        json_ui_parsed: json_ui_parsed,
 
         raw_ten_dau_chu: row[75] || '',
         raw_dt_dau_chu: row[74] || '',
@@ -1783,8 +1842,8 @@
         raw_gia_chao: row[11] || row[58] || '',
         raw_so_tang: row[15] || '',
         raw_mat_tien: row[16] || '',
-        raw_duong_truoc_nha: row[59] || '',
-        raw_do_rong_hem: row[60] || '',
+        raw_duong_truoc_nha: row[60] || '',
+        raw_do_rong_hem: '',
         raw_so_pn: row[64] || '',
         raw_so_wc: row[65] || '',
         raw_tieu_de_public: row[56] || '',
@@ -1887,8 +1946,8 @@
         btnElement.innerHTML = '⌛...';
       }
       
-      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
-      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const POOL_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
       
       try {
         // Step 1: Đọc toàn bộ Sheet Pool
@@ -2169,6 +2228,11 @@
       const arrow = header.querySelector('.arrow');
       const isExpanded = item.classList.contains('expanded');
       
+      const content = item.querySelector('.accordion-content');
+      if (content) {
+        content.style.removeProperty('display');
+      }
+
       if (isExpanded) {
         item.classList.remove('expanded');
         if (arrow) arrow.textContent = '▶';
@@ -2250,7 +2314,7 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
-          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }
         }
@@ -2269,7 +2333,7 @@
             }
           });
         }
-        return finalImages.slice(0, 15).filter(Boolean);
+        return finalImages.slice(0, 25).filter(Boolean);
       }
     };
   // === openZoomOverlay ===
@@ -2420,9 +2484,11 @@
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
-        const rongHem = p.raw_duong_truoc_nha || p.duong_truoc_nha || '';
+        const rongHem = document.getElementById('editRongHem').value.trim();
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
+        const editDtThucTe = document.getElementById('editDtThucTe').value.trim();
+        const editDtTrenSo = document.getElementById('editDtTrenSo').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
         const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
 
@@ -2458,8 +2524,8 @@
           const finalImages = window.getPublicImagesFromForm(p);
           while (finalImages.length < 15) finalImages.push("");
 
-          // Pad original_row_data to 47 columns
-          while (p.original_row_data.length < 47) p.original_row_data.push("");
+          // Pad original_row_data to 48 columns
+          while (p.original_row_data.length < 48) p.original_row_data.push("");
 
           // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
           for (let i = 0; i < 10; i++) {
@@ -2473,7 +2539,7 @@
         }
 
         if (p.original_row_data) {
-          while (p.original_row_data.length < 47) p.original_row_data.push("");
+          while (p.original_row_data.length < 48) p.original_row_data.push("");
           p.original_row_data[38] = customCoverUrl;
           p.img_mat_tien = customCoverUrl;
 
@@ -2534,6 +2600,7 @@
         }
 
         p.original_row_data[2] = note;
+        p.original_row_data[5] = editDtThucTe; // DT Thực tế (Cột F)
         p.original_row_data[12] = huong;
         p.original_row_data[13] = duong;
         p.original_row_data[14] = rongHem || '-';
@@ -2551,10 +2618,12 @@
         if (!p.json_ui_parsed) {
           p.json_ui_parsed = {};
         }
-        p.json_ui_parsed["Criteria_Duong_truoc_nha"] = duong;
         p.original_row_data[46] = JSON.stringify(p.json_ui_parsed);
+        p.original_row_data[47] = editDtTrenSo; // DT Trên sổ (Cột AV)
 
         p.note = note;
+        p.dt = editDtThucTe;
+        p.dt_tren_so_custom = editDtTrenSo;
         p.huong = huong;
         p.duong_truoc_nha = duong;
         p.rong_hem = rongHem || '-';
@@ -2565,8 +2634,8 @@
         p.so_pn = soPn || '-';
         p.m = moTaBds;
 
-        const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AU${p.source_row_index}?valueInputOption=USER_ENTERED`;
+        const SOURCE_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AV${p.source_row_index}?valueInputOption=USER_ENTERED`;
 
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
@@ -2588,7 +2657,7 @@
 
         // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
         if (p.pool_row_index && p.pool_row_data) {
-          const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+          const POOL_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
           
           // 1. Đồng bộ các ảnh Sổ thửa đất (cột AB:AC)
           try {
@@ -2751,8 +2820,8 @@
         btnElement.innerHTML = '⌛';
       }
       
-      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
-      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const POOL_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
       
       try {
         // Step 1: Đọc Sheet Pool để lấy dòng gốc
@@ -2797,9 +2866,11 @@
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
-        const rongHem = matchedRow[59] || '';
+        const rongHem = document.getElementById('editRongHem').value.trim();
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
+        const editDtThucTe = document.getElementById('editDtThucTe').value.trim();
+        const editDtTrenSo = document.getElementById('editDtTrenSo').value.trim();
         const nguTret = document.getElementById('editNguTret').checked ? 'Có' : 'Không';
         const chdv = document.getElementById('editChdv').checked ? 'Có' : 'Không';
 
@@ -2887,14 +2958,14 @@
           finalCoverUrl = '';
         }
 
-        // Xây dựng publicRowData 46 cột cho Sheet Source
+        // Xây dựng publicRowData 48 cột cho Sheet Source
         const publicRowData = [
           `=IMAGE(AM${targetRowNumber})`, // 0: Hinh_mat_tien (Cột A)
           cuPhap,                        // 1: Cu_phap (Cột B)
           note,                          // 2: Note (Cột C)
           maKhangNgo,                    // 3: id (Cột D)
           tieuDeBds || matchedRow[56],   // 4: tieu_de (Cột E)
-          matchedRow[13],                // 5: dien_tich (Cột F)
+          editDtThucTe,                  // 5: dien_tich (Cột F)
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
           formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
@@ -2935,11 +3006,12 @@
           finalImages[12] || "",         // 43: Ảnh 13 (Cột AR)
           finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
           finalImages[14] || "",         // 45: Ảnh 15 (Cột AT)
-          matchedRow[93] || ""           // 46: JSON_UI (Cột AU)
+          matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
+          editDtTrenSo                   // 47: DT Trên sổ (Cột AV)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AU${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AV${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {

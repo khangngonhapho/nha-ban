@@ -484,6 +484,19 @@ const LegoState = {
 
   // Sheets Loading Logic
   async loadData() {
+    // Tải cấu hình Spreadsheet IDs từ API backend trước
+    try {
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'success' && data.config) {
+          this.config = data.config;
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load spreadsheet IDs from /api/config:", e);
+    }
+
     const old = document.getElementById('_gs');
     if (old) old.remove();
     const oldAdmin = document.getElementById('_gs_admin');
@@ -538,8 +551,8 @@ const LegoState = {
       this.secureLoadAttempted = true;
       this.emit('dataLoading', 'secure');
 
-      const POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
-      const SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+      const POOL_SHEET_ID = (this.config && this.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+      const SOURCE_SHEET_ID = (this.config && this.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
 
       try {
         const controller = new AbortController();
@@ -587,9 +600,7 @@ const LegoState = {
             if (!sr[3] && !sr[4]) return null;
             
             const targetRowNumber = index + 2;
-            const dt = parseFloat(sr[5]) || 0;
-            const gia = parseGia(sr[8]);
-            const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+            // Sẽ tính gia và giabq sau khi đã khớp và lấy được dt_tren_so_custom từ poolRow hoặc sr[47]
             
             let rawQ = sr[9] || '';
             let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
@@ -622,28 +633,52 @@ const LegoState = {
               return isMatch;
             });
 
-            const poolImgs = [];
+            let poolImgs = [];
             if (poolRow) {
-              if (poolRow[27]) poolImgs.push(poolRow[27]);
-              if (poolRow[28]) poolImgs.push(poolRow[28]);
-              if (poolRow[29]) poolImgs.push(poolRow[29]);
-              if (poolRow[80]) poolImgs.push(poolRow[80]);
-              if (poolRow[81]) poolImgs.push(poolRow[81]);
-              if (poolRow[82]) poolImgs.push(poolRow[82]);
-
-              for (let c = 40; c <= 54; c++) {
-                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              const imagesAdminJsonStr = poolRow[172];
+              if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
+                try {
+                  const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+                  poolImgs = parsedAdmin
+                    .filter(img => img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn')
+                    .map(img => img.r2_url || img.url);
+                } catch (e) {
+                  // fallback
+                }
               }
-              for (let c = 83; c <= 92; c++) {
-                if (poolRow[c]) poolImgs.push(poolRow[c]);
+              if (!poolImgs || poolImgs.length === 0) {
+                if (poolRow[27]) poolImgs.push(poolRow[27]);
+                if (poolRow[28]) poolImgs.push(poolRow[28]);
+                if (poolRow[29]) poolImgs.push(poolRow[29]);
+                if (poolRow[80]) poolImgs.push(poolRow[80]);
+                if (poolRow[81]) poolImgs.push(poolRow[81]);
+                if (poolRow[82]) poolImgs.push(poolRow[82]);
+
+                for (let c = 40; c <= 54; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
+                for (let c = 83; c <= 92; c++) {
+                  if (poolRow[c]) poolImgs.push(poolRow[c]);
+                }
               }
             }
 
-            const sourcePublicImgs = [
-              sr[20], sr[21], sr[22], sr[23], sr[24],
-              sr[25], sr[26], sr[27], sr[28], sr[29],
-              sr[41], sr[42], sr[43], sr[44], sr[45]
-            ].filter(Boolean);
+            let sourcePublicImgs = [];
+            const imagesPublicJsonStr = sr[48];
+            if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
+              try {
+                sourcePublicImgs = JSON.parse(imagesPublicJsonStr);
+              } catch (e) {
+                // fallback
+              }
+            }
+            if (!sourcePublicImgs || sourcePublicImgs.length === 0) {
+              sourcePublicImgs = [
+                sr[20], sr[21], sr[22], sr[23], sr[24],
+                sr[25], sr[26], sr[27], sr[28], sr[29],
+                sr[41], sr[42], sr[43], sr[44], sr[45]
+              ].filter(Boolean);
+            }
 
             const allImgs = poolRow ? [
               ...poolImgs,
@@ -651,12 +686,19 @@ const LegoState = {
             ] : sourcePublicImgs;
             const uniqueImgs = [...new Set(allImgs)];
 
+            const rawDtTrenSo = poolRow ? (poolRow[14] || '') : '';
+            const dt_tren_so_custom = sr[47] || rawDtTrenSo || sr[5] || '';
+            const dt_so_val = parseFloat(dt_tren_so_custom) || 0;
+            const gia = parseGia(sr[8]);
+            const giabq = (dt_so_val > 0 && gia > 0) ? Math.round((gia * 1000) / dt_so_val) : 0;
+
             const p = {
               temp_id: index + 1,
               id: sr[3] || '',
               cu_phap: sr[1] || '',
               t: sr[4] || '',
-              dt: sr[5] || '',
+              dt: sr[5] || '', // DT Thực tế (Cột F)
+              dt_tren_so_custom: dt_tren_so_custom,
               tang: sr[6] || '',
               mat: sr[7] || '',
               gia: gia,
@@ -706,7 +748,7 @@ const LegoState = {
               p.raw_so_tang = poolRow[15] || '';
               p.raw_mat_tien = poolRow[16] || '';
               p.raw_duong_truoc_nha = poolRow[60] || '';
-              p.raw_do_rong_hem = poolRow[61] || '';
+              p.raw_do_rong_hem = '';
               p.raw_so_pn = poolRow[64] || '';
               p.raw_so_wc = poolRow[65] || '';
               p.raw_tieu_de_public = poolRow[56] || '';
@@ -749,8 +791,8 @@ const LegoState = {
               p.raw_gia_chao = p.gia || '';
               p.raw_so_tang = p.tang || '';
               p.raw_mat_tien = p.mat || '';
-              p.raw_duong_truoc_nha = p.duong_truoc_nha || '';
-              p.raw_do_rong_hem = p.rong_hem || '';
+              p.raw_duong_truoc_nha = '';
+              p.raw_do_rong_hem = '';
               p.raw_so_pn = p.so_pn || '';
               p.raw_so_wc = '';
               p.raw_tieu_de_public = '';
@@ -768,19 +810,32 @@ const LegoState = {
         poolDataRows.forEach((poolRow, prIdx) => {
           if (matchedPoolRowIndexes.has(prIdx)) return;
 
-          const poolImgs = [];
-          if (poolRow[27]) poolImgs.push(poolRow[27]);
-          if (poolRow[28]) poolImgs.push(poolRow[28]);
-          if (poolRow[29]) poolImgs.push(poolRow[29]);
-          if (poolRow[80]) poolImgs.push(poolRow[80]);
-          if (poolRow[81]) poolImgs.push(poolRow[81]);
-          if (poolRow[82]) poolImgs.push(poolRow[82]);
-
-          for (let c = 40; c <= 54; c++) {
-            if (poolRow[c]) poolImgs.push(poolRow[c]);
+          let poolImgs = [];
+          const imagesAdminJsonStr = poolRow[172];
+          if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
+            try {
+              const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+              poolImgs = parsedAdmin
+                .filter(img => img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn')
+                .map(img => img.r2_url || img.url);
+            } catch (e) {
+              // fallback
+            }
           }
-          for (let c = 83; c <= 92; c++) {
-            if (poolRow[c]) poolImgs.push(poolRow[c]);
+          if (!poolImgs || poolImgs.length === 0) {
+            if (poolRow[27]) poolImgs.push(poolRow[27]);
+            if (poolRow[28]) poolImgs.push(poolRow[28]);
+            if (poolRow[29]) poolImgs.push(poolRow[29]);
+            if (poolRow[80]) poolImgs.push(poolRow[80]);
+            if (poolRow[81]) poolImgs.push(poolRow[81]);
+            if (poolRow[82]) poolImgs.push(poolRow[82]);
+
+            for (let c = 40; c <= 54; c++) {
+              if (poolRow[c]) poolImgs.push(poolRow[c]);
+            }
+            for (let c = 83; c <= 92; c++) {
+              if (poolRow[c]) poolImgs.push(poolRow[c]);
+            }
           }
 
           let rawQ = poolRow[3] || '';
@@ -802,28 +857,34 @@ const LegoState = {
 
           const uniqueImgs = [...new Set(poolImgs)];
 
+          const dtVal = parseFloatHelper(poolRow[13]) || 0;
+          const dtSo = parseFloatHelper(poolRow[14]) || 0;
+          const giaVal = parseGia(poolRow[11]) || parseGia(poolRow[58]) || 0;
+          const giabqVal = (dtSo > 0 && giaVal > 0) ? Math.round((giaVal * 1000) / dtSo) : 0;
+
           const p = {
             temp_id: sourceRows.length + prIdx + 1,
             id: poolRow[55] || '',
             cu_phap: poolRow[1] || '',
             t: poolRow[56] || poolRow[55] || 'Chưa biên tập',
-            dt: parseFloatHelper(poolRow[13]) || 0,
+            dt: dtVal, // DT Thực tế
+            dt_tren_so_custom: poolRow[14] || '', // DT Trên sổ
             tang: poolRow[15] || '',
             mat: poolRow[16] || '',
-            gia: parseGia(poolRow[11]) || parseGia(poolRow[58]) || 0,
+            gia: giaVal,
             q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
             ql: cleanQ.toUpperCase(),
             phuong: poolRow[4] || '-',
             loai_hinh: poolRow[7] || 'Hẻm',
             huong: poolRow[17] || '-',
-            duong_truoc_nha: poolRow[60] || '-',
-            rong_hem: poolRow[61] || '-',
+            duong_truoc_nha: '-',
+            rong_hem: '-',
             tinh_trang: '-',
             danh_gia: '',
             is_invisible: false,
             ngu_tang_tret: '-',
             chdv: '-',
-            giabq: '-',
+            giabq: giabqVal > 0 ? `${giabqVal} tr/m²` : '-',
             m: cleanConsecutiveNewlines(poolRow[10] || ''),
             imgs: uniqueImgs,
             system_id: poolRow[72] || (sourceRows.length + prIdx + 1).toString(),
@@ -855,7 +916,7 @@ const LegoState = {
           p.raw_so_tang = poolRow[15] || '';
           p.raw_mat_tien = poolRow[16] || '';
           p.raw_duong_truoc_nha = poolRow[60] || '';
-          p.raw_do_rong_hem = poolRow[61] || '';
+          p.raw_do_rong_hem = '';
           p.raw_so_pn = poolRow[64] || '';
           p.raw_so_wc = poolRow[65] || '';
           p.raw_tieu_de_public = poolRow[56] || '';
@@ -912,7 +973,7 @@ const LegoState = {
 
   loadPublicDataFallback() {
     this.emit('dataLoading', 'public');
-    const SHEET_ID = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    const SHEET_ID = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
 
     window.__gsCallback = (response) => {
       try {
@@ -920,9 +981,9 @@ const LegoState = {
         const fullList = rows
           .filter(r => r.c[0] && r.c[0].v)
           .map((r, index) => {
-            const dt = parseFloat(cv(r.c[2])) || 0;
+            const dtSoVal = parseFloat(cv(r.c[44])) || parseFloat(cv(r.c[2])) || 0;
             const gia = parseFloat(cv(r.c[5])) || 0;
-            const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
+            const giabq = (dtSoVal > 0 && gia > 0) ? Math.round((gia * 1000) / dtSoVal) : 0;
             let rawQ = cv(r.c[6]);
             if (!rawQ) {
               const titleLower = String(cv(r.c[1])).toLowerCase();
@@ -1015,7 +1076,9 @@ const LegoState = {
               ].filter(Boolean),
               system_id: cv(r.c[34]) || (index + 1).toString(),
               so_pn: cv(r.c[29]) || '-',
-              img_mat_tien: cv(r.c[35]) || ''
+              img_mat_tien: cv(r.c[35]) || '',
+              dt_tren_so_custom: cv(r.c[44]) || '',
+              raw_dt_tren_so: cv(r.c[44]) || ''
             };
             
             let jsonUiVal = '';

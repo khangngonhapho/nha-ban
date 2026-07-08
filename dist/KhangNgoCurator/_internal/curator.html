@@ -844,7 +844,7 @@
             </a>
             <div class="widget-item">
                 <span class="dot-indicator dot-green" id="db-indicator"></span>
-                <span>SQLite Database: <strong>raw_archive.db</strong></span>
+                <span>SQLite Database: <strong id="db-filename">raw_archive.db</strong></span>
             </div>
             <div class="widget-item">
                 <span class="dot-indicator dot-green" id="cookie-indicator"></span>
@@ -1147,7 +1147,10 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-gold" style="width: 100%;" onclick="startMigration()">🖼️ BẮT ĐẦU DI CƯ HÌNH ẢNH</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-gold" style="flex: 1;" onclick="startMigration()">🖼️ BẮT ĐẦU DI CƯ</button>
+                        <button class="btn" style="flex: 1; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red);" onclick="stopMigration()">🛑 DỪNG DI CƯ</button>
+                    </div>
                     
                     <div class="progress-bar-wrapper" id="migrate-progress-wrapper" style="display: none;">
                         <div class="progress-bar-fill" id="migrate-progress-fill"></div>
@@ -1860,7 +1863,10 @@
                 .then(data => {
                     if (data.status === 'success') {
                         const cfg = data.config;
-                        document.getElementById('cfg-sheet-id').value = cfg.sheet_id || '';
+                        if (cfg.db_file) {
+                            document.getElementById('db-filename').innerText = cfg.db_file;
+                        }
+                        document.getElementById('cfg-sheet-id').value = cfg.pool_sheet_id || cfg.sheet_id || '';
                         document.getElementById('cfg-drive-folder').value = cfg.drive_folder_id || '';
                         document.getElementById('cfg-openai-key').value = cfg.openai_api_key || '';
                         document.getElementById('cfg-openai-prompt').value = cfg.openai_system_prompt || '';
@@ -1884,7 +1890,7 @@
 
         function saveConfig() {
             const payload = {
-                sheet_id: document.getElementById('cfg-sheet-id').value.stripOrEmpty(),
+                pool_sheet_id: document.getElementById('cfg-sheet-id').value.stripOrEmpty(),
                 drive_folder_id: document.getElementById('cfg-drive-folder').value.stripOrEmpty(),
                 openai_api_key: document.getElementById('cfg-openai-key').value.stripOrEmpty(),
                 openai_system_prompt: document.getElementById('cfg-openai-prompt').value.trim(),
@@ -2358,6 +2364,23 @@
             });
         }
 
+        function stopMigration() {
+            fetch('/api/stop_migration', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🛑 Đã yêu cầu dừng tiến trình di cư hình ảnh!', 'red');
+                    const wrapper = document.getElementById('migrate-progress-wrapper');
+                    if (wrapper) wrapper.style.display = 'none';
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            });
+        }
+
         // ==========================================
         // COOKIE CACHE DIALOG
         // ==========================================
@@ -2565,8 +2588,8 @@
         function sortImagesConfig() {
             // Sắp xếp: Không phải 'Ẩn' lên trên đầu, 'Ẩn' xuống dưới cùng
             imagesConfig.sort((a, b) => {
-                const aIsHidden = a.role === 'Ẩn';
-                const bIsHidden = b.role === 'Ẩn';
+                const aIsHidden = a.role === 'Ẩn' || a.role === 'hidden' || a.role === 'deleted' || a.visible === false;
+                const bIsHidden = b.role === 'Ẩn' || b.role === 'hidden' || b.role === 'deleted' || b.visible === false;
                 if (aIsHidden && !bIsHidden) return 1;
                 if (!aIsHidden && bIsHidden) return -1;
                 return 0; // Giữ nguyên thứ tự tương đối
@@ -2591,7 +2614,14 @@
                     'Sơ đồ': 'Sơ đồ',
                     'Hẻm': 'Hẻm',
                     'Nội thất': 'Nội thất',
-                    'Ẩn': 'Ẩn/Bỏ qua'
+                    'Ẩn': 'Ẩn/Bỏ qua',
+                    'cover': 'Nền',
+                    'facade': 'Mặt tiền',
+                    'diagram': 'Sơ đồ',
+                    'alley': 'Hẻm',
+                    'interior': 'Nội thất',
+                    'hidden': 'Ẩn/Bỏ qua',
+                    'deleted': 'Đã xóa trên TK'
                 };
 
                 const labelStyle = {
@@ -2600,16 +2630,23 @@
                     'Sơ đồ': 'background: var(--accent-gold); color:#000;',
                     'Hẻm': 'background: var(--accent-blue); color:#fff;',
                     'Nội thất': 'background: var(--accent-cyan); color:#000;',
-                    'Ẩn': 'background: var(--accent-slate); color:#fff;'
+                    'Ẩn': 'background: var(--accent-slate); color:#fff;',
+                    'cover': 'background: var(--accent-green); color:#000;',
+                    'facade': 'background: var(--accent-red); color:#fff;',
+                    'diagram': 'background: var(--accent-gold); color:#000;',
+                    'alley': 'background: var(--accent-blue); color:#fff;',
+                    'interior': 'background: var(--accent-cyan); color:#000;',
+                    'hidden': 'background: var(--accent-slate); color:#fff;',
+                    'deleted': 'background: #ef4444; color:#fff;'
                 };
 
-                const isDimmed = item.role === 'Ẩn' || item.visible === false;
+                const isDimmed = item.role === 'Ẩn' || item.role === 'hidden' || item.role === 'deleted' || item.visible === false;
                 const cardStyle = isDimmed ? 'opacity: 0.4;' : '';
 
                 card.innerHTML = `
                     <div class="image-wrapper" style="${cardStyle} position: relative;">
                         <img src="${item.url}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'100%\' height=\'100%\' fill=\'%231e293b\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'sans-serif\' font-size=\'14\' fill=\'%2394a3b8\'>Ảnh lỗi hoặc Đang di cư...</text></svg>';">
-                        <span class="image-role-badge" style="${labelStyle[item.role]}">${roleLabels[item.role]}</span>
+                        <span class="image-role-badge" style="${labelStyle[item.role] || 'background: var(--accent-cyan); color:#000;'}">${roleLabels[item.role] || item.role}</span>
                         <div class="visibility-checkbox-container" style="position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 4px; display: flex; align-items: center; gap: 4px; z-index: 10;">
                             <input type="checkbox" id="visible-check-${index}" ${item.visible !== false ? 'checked' : ''} onchange="toggleImageVisibility(${index}, this.checked)" style="cursor: pointer; width: 14px; height: 14px; margin: 0;">
                             <label for="visible-check-${index}" style="color: #fff; font-size: 11px; font-weight: bold; cursor: pointer; margin: 0;">Hiện</label>
@@ -2617,14 +2654,14 @@
                     </div>
                     <div class="image-controls">
                         <div class="role-btn-group">
-                            <span class="role-btn role-bia ${item.role === 'Bìa' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Bìa')">Nền</span>
-                            <span class="role-btn role-mt ${item.role === 'Mặt tiền' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Mặt tiền')">MT</span>
-                            <span class="role-btn role-sodo ${item.role === 'Sơ đồ' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Sơ đồ')">Sơ đồ</span>
+                            <span class="role-btn role-bia ${item.role === 'Bìa' || item.role === 'cover' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Bìa')">Nền</span>
+                            <span class="role-btn role-mt ${item.role === 'Mặt tiền' || item.role === 'facade' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Mặt tiền')">MT</span>
+                            <span class="role-btn role-sodo ${item.role === 'Sơ đồ' || item.role === 'diagram' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Sơ đồ')">Sơ đồ</span>
                         </div>
                         <div class="role-btn-group">
-                            <span class="role-btn role-hem ${item.role === 'Hẻm' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Hẻm')">Hẻm</span>
-                            <span class="role-btn role-public ${item.role === 'Nội thất' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Nội thất')">N.Thất</span>
-                            <span class="role-btn role-an ${item.role === 'Ẩn' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Ẩn')">Ẩn</span>
+                            <span class="role-btn role-hem ${(item.role === 'Hẻm' || item.role === 'alley') && item.visible !== false ? 'active' : ''}" onclick="assignImageRole(${index}, 'Hẻm')">Hẻm</span>
+                            <span class="role-btn role-public ${(item.role === 'Nội thất' || item.role === 'interior') && item.visible !== false ? 'active' : ''}" onclick="assignImageRole(${index}, 'Nội thất')">N.Thất</span>
+                            <span class="role-btn role-an ${item.visible === false || item.role === 'deleted' || item.role === 'hidden' ? 'active' : ''}" onclick="assignImageRole(${index}, 'Ẩn')">Ẩn</span>
                         </div>
                         <div class="order-btn-group">
                             <button class="order-btn" onclick="moveImage(${index}, -1)" ${index === 0 ? 'disabled' : ''}>◀ Trái</button>
@@ -2645,9 +2682,11 @@
         function assignImageRole(idx, role) {
             // Nếu đổi thành Bìa (Nền)
             if (role === 'Bìa') {
-                // Reset Bìa (Nền) cũ về Ẩn
+                // Reset Bìa (Nền) cũ về Nội thất
                 imagesConfig.forEach(item => {
-                    if (item.role === 'Bìa') item.role = 'Ẩn';
+                    if (item.role === 'Bìa' || item.role === 'cover') {
+                        item.role = 'Nội thất';
+                    }
                 });
                 
                 // Gán vai trò Bìa cho ảnh được chọn
@@ -2661,12 +2700,17 @@
                     imagesConfig[idx] = temp;
                 }
             } else if (role === 'Mặt tiền') {
-                // Reset Mặt tiền cũ về Ẩn
+                // Reset Mặt tiền cũ về Nội thất
                 imagesConfig.forEach(item => {
-                    if (item.role === 'Mặt tiền') item.role = 'Ẩn';
+                    if (item.role === 'Mặt tiền' || item.role === 'facade') {
+                        item.role = 'Nội thất';
+                    }
                 });
-                imagesConfig[idx].role = role;
+                imagesConfig[idx].role = 'Mặt tiền';
                 imagesConfig[idx].visible = false;
+            } else if (role === 'Ẩn') {
+                imagesConfig[idx].visible = false;
+                // Giữ nguyên role gốc!
             } else {
                 imagesConfig[idx].role = role;
                 if (role === 'Sơ đồ') {
@@ -2704,17 +2748,17 @@
             // Lọc ảnh Hẻm tuần tự đưa vào Hình Hẻm 1-10
             const hemImgs = imagesConfig.filter(img => img.role === 'Hẻm').map(img => img.url).slice(0, 10);
             
-            // Điền tuần tự toàn bộ ảnh vào Ảnh 1 - Ảnh 15 bất kể role (giữ order)
-            const publicImgs = imagesConfig.map(img => img.url).slice(0, 15);
+            // Điền tuần tự toàn bộ ảnh vào Ảnh 1 - Ảnh 25 bất kể role (giữ order)
+            const publicImgs = imagesConfig.map(img => img.url).slice(0, 25);
 
-            // Tìm vị trí 1-based của ảnh Nội thất và ảnh Hẻm trong chuỗi Ảnh 1-15
+            // Tìm vị trí 1-based của ảnh Nội thất và ảnh Hẻm trong chuỗi Ảnh 1-25
             const publicIndices = [];
             const hemIndices = [];
-            imagesConfig.slice(0, 15).forEach((img, i) => {
-                if (img.role === 'Nội thất') {
+            imagesConfig.slice(0, 25).forEach((img, i) => {
+                if ((img.role === 'Nội thất' || img.role === 'interior') && img.visible !== false) {
                     publicIndices.push(i + 1);
                 }
-                if (img.role === 'Hẻm') {
+                if ((img.role === 'Hẻm' || img.role === 'alley') && img.visible !== false) {
                     hemIndices.push(i + 1);
                 }
             });

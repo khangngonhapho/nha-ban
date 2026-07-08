@@ -2748,13 +2748,13 @@
             // Lọc ảnh Hẻm tuần tự đưa vào Hình Hẻm 1-10
             const hemImgs = imagesConfig.filter(img => img.role === 'Hẻm').map(img => img.url).slice(0, 10);
             
-            // Điền tuần tự toàn bộ ảnh vào Ảnh 1 - Ảnh 15 bất kể role (giữ order)
-            const publicImgs = imagesConfig.map(img => img.url).slice(0, 15);
+            // Điền tuần tự toàn bộ ảnh vào Ảnh 1 - Ảnh 25 bất kể role (giữ order)
+            const publicImgs = imagesConfig.map(img => img.url).slice(0, 25);
 
-            // Tìm vị trí 1-based của ảnh Nội thất và ảnh Hẻm trong chuỗi Ảnh 1-15
+            // Tìm vị trí 1-based của ảnh Nội thất và ảnh Hẻm trong chuỗi Ảnh 1-25
             const publicIndices = [];
             const hemIndices = [];
-            imagesConfig.slice(0, 15).forEach((img, i) => {
+            imagesConfig.slice(0, 25).forEach((img, i) => {
                 if ((img.role === 'Nội thất' || img.role === 'interior') && img.visible !== false) {
                     publicIndices.push(i + 1);
                 }

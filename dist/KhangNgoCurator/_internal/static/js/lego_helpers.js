@@ -98,8 +98,8 @@ window.autoFillCurationDetails = async function() {
       soPhongNgu: p.so_pn !== '-' ? p.so_pn : '',
       soToilet: (p.original_row_data && p.original_row_data[33] !== '-') ? p.original_row_data[33] : (p.raw_so_wc || ''),
       giaChao: p.raw_gia_chao || p.gia || '',
-      duongTruocNha: p.raw_duong_truoc_nha || p.duong_truoc_nha || '',
-      phanLoaiHem: p.raw_do_rong_hem || p.rong_hem || '',
+      duongTruocNha: p.rong_hem || p.raw_duong_truoc_nha || '',
+      phanLoaiHem: p.duong_truoc_nha || (p.json_ui_parsed && p.json_ui_parsed.Criteria_Duong_truoc_nha) || '',
       phanLoai: p.danh_gia || ''
     };
     
@@ -127,7 +127,7 @@ window.autoFillCurationDetails = async function() {
       
       p.phuong_cu = data.phuong_cu || '';
       if (p.original_row_data) {
-        p.original_row_data[66] = data.phuong_cu || '';
+        p.original_row_data[31] = data.phuong_cu || '';
       }
       if (p.pool_row_data) {
         p.pool_row_data[66] = data.phuong_cu || '';
@@ -256,7 +256,7 @@ window.getMappedPoolData = function() {
   
   window.MAPPED_POOL_DATA = POOL_ROWS.map((row, index) => {
     const systemId = row[72] || row[71] || '';
-    const dt = parseFloat(row[13] || row[14]) || 0;
+    const dt = parseFloat(row[14] || row[13]) || 0;
     const gia = parseGia(row[11] || row[58]);
     const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
@@ -552,6 +552,17 @@ window.saveState = function() {
   const shareToken = new URLSearchParams(window.location.search).get('s');
   if (!window.isAdmin || shareBitmask || shareToken) return;
   
+  const serializedDynamicFilters = {};
+  if (window.activeDynamicFilters) {
+    for (const [field, val] of Object.entries(window.activeDynamicFilters)) {
+      if (val instanceof Set) {
+        serializedDynamicFilters[field] = { type: 'set', data: [...val] };
+      } else {
+        serializedDynamicFilters[field] = val;
+      }
+    }
+  }
+  
   const state = {
     districts: [...selDistricts],
     wards: [...selWards],
@@ -578,7 +589,7 @@ window.saveState = function() {
       phongMax: document.getElementById('filterPhongMax')?.value || ''
     },
     criteria: Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val')),
-    dynamicFilters: window.activeDynamicFilters
+    dynamicFilters: serializedDynamicFilters
   };
   localStorage.setItem('adminState', JSON.stringify(state));
 };
@@ -645,11 +656,35 @@ window.restoreState = function() {
     }
 
     if (state.dynamicFilters) {
-      window.activeDynamicFilters = state.dynamicFilters;
-      for (const [field, val] of Object.entries(window.activeDynamicFilters)) {
-        const selectEl = document.getElementById(`filter_${field}`);
-        if (selectEl) {
-          selectEl.value = val || '';
+      window.activeDynamicFilters = {};
+      for (const [field, val] of Object.entries(state.dynamicFilters)) {
+        if (val && typeof val === 'object' && val.type === 'set' && Array.isArray(val.data)) {
+          const newSet = new Set(val.data);
+          window.activeDynamicFilters[field] = newSet;
+          
+          // Re-check checkboxes in the UI if rendered
+          const optionsDiv = document.getElementById(`dynamic_options_${field}`);
+          if (optionsDiv) {
+            optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+              cb.checked = newSet.has(cb.value);
+            });
+            const placeholder = document.getElementById(`dynamic_placeholder_${field}`);
+            if (placeholder) {
+              if (newSet.size === 0) {
+                placeholder.textContent = 'Tất cả';
+                placeholder.style.color = 'rgba(44, 44, 46, 0.5)';
+              } else {
+                placeholder.textContent = [...newSet].join(', ');
+                placeholder.style.color = '#2c2c2e';
+              }
+            }
+          }
+        } else {
+          window.activeDynamicFilters[field] = val;
+          const selectEl = document.getElementById(`filter_${field}`);
+          if (selectEl) {
+            selectEl.value = val || '';
+          }
         }
       }
     } else {

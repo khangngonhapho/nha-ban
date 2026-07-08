@@ -723,7 +723,7 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
-          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }
         }
@@ -1661,7 +1661,7 @@
             }
 
             const publicInteriorInput = document.getElementById('editPublicInteriorIndices');
-            if (publicInteriorInput && assignedIdx <= 15) {
+            if (publicInteriorInput && assignedIdx <= 25) {
               let currentVal = publicInteriorInput.value.trim();
               let indices = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
               if (!indices.includes(String(assignedIdx))) {
@@ -2314,7 +2314,7 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
-          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 15) {
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }
         }
@@ -2333,7 +2333,7 @@
             }
           });
         }
-        return finalImages.slice(0, 15).filter(Boolean);
+        return finalImages.slice(0, 25).filter(Boolean);
       }
     };
   // === openZoomOverlay ===
