@@ -4,6 +4,53 @@
 (function() {
   'use strict';
 
+  // Helper functions to dynamically map Google Sheets column headers to column letters and indices
+  function getColumnLetter(colIdx) {
+    let letter = "";
+    let temp = colIdx;
+    while (temp >= 0) {
+      letter = String.fromCharCode((temp % 26) + 65) + letter;
+      temp = Math.floor(temp / 26) - 1;
+    }
+    return letter;
+  }
+
+  function getPoolColumnLetter(headerName, fallbackCol = 'CQ') {
+    if (window.LegoState && window.LegoState.POOL_HEADERS) {
+      const idx = window.LegoState.POOL_HEADERS.indexOf(headerName);
+      if (idx !== -1) {
+        return getColumnLetter(idx);
+      }
+    }
+    return fallbackCol;
+  }
+
+  function getSourceColumnLetter(headerName, fallbackCol = 'AW') {
+    if (window.LegoState && window.LegoState.SOURCE_HEADERS) {
+      const idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
+      if (idx !== -1) {
+        return getColumnLetter(idx);
+      }
+    }
+    return fallbackCol;
+  }
+
+  function getPoolColumnIndex(headerName, fallbackIdx = 94) {
+    if (window.LegoState && window.LegoState.POOL_HEADERS) {
+      const idx = window.LegoState.POOL_HEADERS.indexOf(headerName);
+      if (idx !== -1) return idx;
+    }
+    return fallbackIdx;
+  }
+
+  function getSourceColumnIndex(headerName, fallbackIdx = 48) {
+    if (window.LegoState && window.LegoState.SOURCE_HEADERS) {
+      const idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
+      if (idx !== -1) return idx;
+    }
+    return fallbackIdx;
+  }
+
   // Export module LegoDetailAdmin
   window.LegoDetailAdmin = {
     render: render
@@ -2194,13 +2241,14 @@
           finalImages[12] || "",         // 43: anh_13 (Cột AR)
           finalImages[13] || "",         // 44: anh_14 (Cột AS)
           finalImages[14] || "",         // 45: anh_15 (Cột AT)
-          matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
-          matchedRow[14] || "",          // 47: DT Trên sổ (Cột AV)
+          matchedRow[getPoolColumnIndex("JSON_UI", 93)] || "",          // 46: JSON_UI (Cột AU)
+          matchedRow[getPoolColumnIndex("DT Trên sổ", 14)] || "",          // 47: DT Trên sổ (Cột AV)
           JSON.stringify(finalImages.filter(Boolean)) // 48: Images_Public_JSON (Cột AW)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AW${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const lastSourceCol = getSourceColumnLetter("Images_Public_JSON", "AW");
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {
@@ -2239,7 +2287,8 @@
                 });
               });
             }
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CQ${poolRowNumber}:CQ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${poolRowNumber}:${imagesAdminCol}${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -2680,9 +2729,9 @@
         p.original_row_data[4] = tieuDeBds;
         p.t = tieuDeBds;
         p.original_row_data[39] = "";
-        p.original_row_data[46] = JSON.stringify(p.json_ui_parsed);
-        p.original_row_data[47] = editDtTrenSo; // DT Trên sổ (Cột AV)
-        p.original_row_data[48] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AW)
+        p.original_row_data[getSourceColumnIndex("JSON_UI", 46)] = JSON.stringify(p.json_ui_parsed);
+        p.original_row_data[getSourceColumnIndex("DT Trên sổ", 47)] = editDtTrenSo; // DT Trên sổ (Cột AV)
+        p.original_row_data[getSourceColumnIndex("Images_Public_JSON", 48)] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AW)
 
         const curatedImages = [];
         if (window.imageEditorSlides) {
@@ -2712,7 +2761,8 @@
         p.m = moTaBds;
 
         const SOURCE_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:AW${p.source_row_index}?valueInputOption=USER_ENTERED`;
+        const lastSourceCol = getSourceColumnLetter("Images_Public_JSON", "AW");
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${p.source_row_index}:${lastSourceCol}${p.source_row_index}?valueInputOption=USER_ENTERED`;
 
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
@@ -2738,7 +2788,8 @@
           
           // 0. Đồng bộ Images_Admin_JSON sang Pool (Cột CQ)
           try {
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CQ${p.pool_row_index}:CQ${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+            const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${p.pool_row_index}:${imagesAdminCol}${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -2746,7 +2797,8 @@
               },
               body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
             });
-            p.pool_row_data[94] = JSON.stringify(curatedImages);
+            const imagesAdminPoolIdx = getPoolColumnIndex("Images_Admin_JSON", 94);
+            p.pool_row_data[imagesAdminPoolIdx] = JSON.stringify(curatedImages);
           } catch (e) {
             console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool:", e);
           }
@@ -3098,13 +3150,14 @@
           finalImages[12] || "",         // 43: Ảnh 13 (Cột AR)
           finalImages[13] || "",         // 44: Ảnh 14 (Cột AS)
           finalImages[14] || "",         // 45: Ảnh 15 (Cột AT)
-          matchedRow[93] || "",          // 46: JSON_UI (Cột AU)
+          matchedRow[getPoolColumnIndex("JSON_UI", 93)] || "",          // 46: JSON_UI (Cột AU)
           editDtTrenSo,                  // 47: DT Trên sổ (Cột AV)
           JSON.stringify(finalImages.filter(Boolean)) // 48: Images_Public_JSON (Cột AW)
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:AW${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        const lastSourceCol = getSourceColumnLetter("Images_Public_JSON", "AW");
+        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
         const writeRes = await fetch(writeUrl, {
           method: 'PUT',
           headers: {
@@ -3157,7 +3210,8 @@
                 });
               });
             }
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!CQ${poolRowNumber}:CQ${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+            const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${poolRowNumber}:${imagesAdminCol}${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
