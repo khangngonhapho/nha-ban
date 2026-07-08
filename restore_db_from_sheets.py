@@ -441,6 +441,9 @@ def restore_database():
                             "visible": False
                         })
 
+        if images_list:
+            reconstructed_drive_images = [img["url"] for img in images_list]
+
         ma_khang_ngo_id = row_dict.get("Mã Khang Ngô (ID)", "").strip()
         curated_config = {
             "images": images_list,
