@@ -1,8 +1,8 @@
 ---
 project: BDS-KhangNgo Architecture Modernization
 started: 2026-07-09
-current_module: MOD-06
-overall_progress: 6/7 modules completed
+current_module: MOD-07
+overall_progress: 7/7 modules completed
 last_updated: 2026-07-09
 ---
 
@@ -18,9 +18,9 @@ last_updated: 2026-07-09
 | MOD-04 | API Routes Split | ✅ done | 2026-07-09 |
 | MOD-05 | Template Components | ✅ done | 2026-07-09 |
 | MOD-06 | Documentation Split | ✅ done | 2026-07-09 |
-| MOD-07 | Agent & Skills Upgrade | ⬜ pending | — |
+| MOD-07 | Agent & Skills Upgrade | ✅ done | 2026-07-09 |
 
-## Current Module: MOD-06 — Documentation Split
+## Current Module: MOD-07 — Agent & Skills Upgrade
 
 - Status: ✅ COMPLETED
 - Current Step: SEAL
@@ -33,18 +33,14 @@ last_updated: 2026-07-09
 
 | Task | Bước | Mô tả | Trạng thái |
 |------|------|-------|------------|
-| MOD-06.1 | CREATE | Tạo `docs/business_rules/INDEX.md` | `[x]` ✅ business rules index |
-| MOD-06.2 | CREATE | Tạo `docs/business_rules/naming_conventions.md` | `[x]` ✅ naming conventions |
-| MOD-06.3 | CREATE | Tạo `docs/business_rules/pricing_rules.md` | `[x]` ✅ pricing rules |
-| MOD-06.4 | CREATE | Tạo `docs/business_rules/image_classification.md` | `[x]` ✅ image rules |
-| MOD-06.5 | CREATE | Tạo `docs/business_rules/data_security.md` | `[x]` ✅ data security |
-| MOD-06.6 | CREATE | Tạo `docs/business_rules/curation_workflow.md` | `[x]` ✅ curation workflow |
-| MOD-06.7 | CREATE | Tạo `docs/business_rules/search_filter_rules.md` | `[x]` ✅ search & filter rules |
-| MOD-06.8 | CREATE | Tạo `docs/architecture/system_overview.md` | `[x]` ✅ system overview |
-| MOD-06.9 | CREATE | Tạo `docs/architecture/api_reference.md` | `[x]` ✅ API reference |
-| MOD-06.10 | WIRE | Refactor `SOURCE_OF_TRUTH.md` với links mới | `[x]` ✅ SOURCE_OF_TRUTH.md updated |
-| MOD-06.11 | VERIFY | Kiểm tra links và chạy verification suite | `[x]` ✅ 90 unit tests + E2E pass |
-| MOD-06.12 | SEAL | Git commit + update tracker | `[x]` ✅ committed |
+| MOD-07.1 | CREATE | Tạo `.agents/AGENTS.md` (Rules cốt lõi & Module Map) | `[x]` ✅ AGENTS.md created |
+| MOD-07.2 | CREATE | Tạo skill `fix-bug` (`.agents/skills/fix-bug/SKILL.md`) | `[x]` ✅ fix-bug skill |
+| MOD-07.3 | CREATE | Tạo skill `new-feature` (`.agents/skills/new-feature/SKILL.md`) | `[x]` ✅ new-feature skill |
+| MOD-07.4 | CREATE | Tạo skill `data-sync` (`.agents/skills/data-sync/SKILL.md`) | `[x]` ✅ data-sync skill |
+| MOD-07.5 | CREATE | Tạo skill `refactor-module` (`.agents/skills/refactor-module/SKILL.md`) | `[x]` ✅ refactor-module skill |
+| MOD-07.6 | WIRE | Refactor `BDS-AGENTS.md` (Rút gọn và link sang các tệp mới) | `[x]` ✅ BDS-AGENTS.md refactored |
+| MOD-07.7 | VERIFY | Kiểm tra tính năng load skills & chạy kiểm thử hồi quy | `[x]` ✅ 90 unit tests + E2E pass |
+| MOD-07.8 | SEAL | Cập nhật tiến trình, Git commit | `[x]` ✅ committed |
 
 ## Stability Gates History
 
@@ -56,7 +52,7 @@ last_updated: 2026-07-09
 | MOD-04 | ✅ 83/83 | ✅ 4/4 | ⏭️ skipped | ✅ PO | 2026-07-09 |
 | MOD-05 | ✅ 90/90 | ✅ 4/4 | ✅ passed | ✅ PO | 2026-07-09 |
 | MOD-06 | ✅ 90/90 | ✅ 4/4 | ✅ passed | ✅ PO | 2026-07-09 |
-| MOD-07 | ⬜ | ⬜ | ⬜ | ⬜ | — |
+| MOD-07 | ✅ 90/90 | ✅ 4/4 | ✅ passed | ✅ PO | 2026-07-09 |
 
 ## Session Log
 
@@ -69,6 +65,8 @@ last_updated: 2026-07-09
 | S4 | 2026-07-09 | MOD-04 | MOD-04.1–MOD-04.7 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Split Flask endpoints from manager.py into 6 Blueprint modules, 83 unit + 4 E2E pass |
 | S5 | 2026-07-09 | MOD-05 | MOD-05.1–MOD-05.10 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Modularize HTML viewer templates into component files under templates/components/, 90 unit + 4 E2E pass |
 | S6 | 2026-07-09 | MOD-06 | MOD-06.1–MOD-06.12 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Split monolithic SOURCE_OF_TRUTH.md (187KB) into small modular documents under docs/business_rules/ and docs/architecture/ |
+| S7 | 2026-07-09 | MOD-07 | MOD-07.1–MOD-07.8 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Establish standard Agent Customizations directory at .agents/ with core AGENTS.md rules ledger and 5 specialized skills |
+
 
 
 
