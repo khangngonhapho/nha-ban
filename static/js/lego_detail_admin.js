@@ -664,19 +664,21 @@
         p.curated_config.images.forEach(img => {
           if (!img || !img.url) return;
           const role = img.role || 'Nội thất';
+          const originVal = img.origin === 'thienkhoi' ? 'crawl' : (img.origin === 'user' ? 'self' : (img.origin || 'crawl'));
+          const cardObj = { url: img.url, origin: originVal };
           if (role === 'Mặt tiền' || role === 'facade') {
-            cards.push({ type: "facade", index: 0, url: img.url });
+            cards.push({ type: "facade", index: 0, ...cardObj });
           } else if (role === 'Bìa' || role === 'cover') {
-            cards.push({ type: "cover", index: 0, url: img.url });
+            cards.push({ type: "cover", index: 0, ...cardObj });
           } else if (role === 'Sơ đồ' || role === 'diagram') {
             sodoCount++;
-            cards.push({ type: "sodo", index: sodoCount, url: img.url });
+            cards.push({ type: "sodo", index: sodoCount, ...cardObj });
           } else if (role === 'Hẻm' || role === 'alley') {
             alleyCount++;
-            cards.push({ type: "alley", index: alleyCount, url: img.url });
+            cards.push({ type: "alley", index: alleyCount, ...cardObj });
           } else {
             interiorCount++;
-            cards.push({ type: "interior", index: interiorCount, url: img.url });
+            cards.push({ type: "interior", index: interiorCount, ...cardObj });
           }
         });
 
@@ -687,34 +689,45 @@
         sodo5Url = cards.find(c => c.type === 'sodo' && c.index === 5)?.url || '';
         facadeUrl = cards.find(c => c.type === 'facade')?.url || '';
       } else {
+        const getRawOrigin = (url) => {
+          if (!url) return 'crawl';
+          if (window.uploadedUrls && window.uploadedUrls.has(url)) {
+            return 'self';
+          }
+          if (url.includes('SYS-') || url.includes('/scratch/') || url.includes('cloudinary.com')) {
+            return 'self';
+          }
+          return 'crawl';
+        };
+
         sodo1Url = domSodo1 ? domSodo1.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(1)] : p.raw_sodo1);
-        if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url });
+        if (sodo1Url) cards.push({ type: "sodo", index: 1, url: sodo1Url, origin: getRawOrigin(sodo1Url) });
         
         sodo2Url = domSodo2 ? domSodo2.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(2)] : p.raw_sodo2);
-        if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url });
+        if (sodo2Url) cards.push({ type: "sodo", index: 2, url: sodo2Url, origin: getRawOrigin(sodo2Url) });
   
         sodo3Url = domSodo3 ? domSodo3.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(3)] : p.raw_sodo3);
-        if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url });
+        if (sodo3Url) cards.push({ type: "sodo", index: 3, url: sodo3Url, origin: getRawOrigin(sodo3Url) });
   
         sodo4Url = domSodo4 ? domSodo4.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(4)] : p.raw_sodo4);
-        if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url });
+        if (sodo4Url) cards.push({ type: "sodo", index: 4, url: sodo4Url, origin: getRawOrigin(sodo4Url) });
   
         sodo5Url = domSodo5 ? domSodo5.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5);
-        if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url });
+        if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url, origin: getRawOrigin(sodo5Url) });
         
         facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
-        if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl });
+        if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl, origin: getRawOrigin(facadeUrl) });
         
         const maxInterior = p.imgs ? Math.max(25, p.imgs.length) : 25;
         for (let i = 1; i <= maxInterior; i++) {
           const idx = window.getPoolInteriorColIdx(i);
           const url = p.pool_row_data ? p.pool_row_data[idx] : (p.imgs && p.imgs[i - 1]);
-          if (url) cards.push({ type: "interior", index: i, url: url });
+          if (url) cards.push({ type: "interior", index: i, url: url, origin: getRawOrigin(url) });
         }
         
         for (let i = 1; i <= 10; i++) {
           const url = p.pool_row_data ? p.pool_row_data[window.getPoolAlleyColIdx(i)] : null;
-          if (url) cards.push({ type: "alley", index: i, url: url });
+          if (url) cards.push({ type: "alley", index: i, url: url, origin: getRawOrigin(url) });
         }
       }
 
@@ -1777,6 +1790,8 @@
 
           const uploadedUrl = await uploadFileToR2(file, uploadType, p.id || p.system_id);
           lastUploadedUrl = uploadedUrl;
+          window.uploadedUrls = window.uploadedUrls || new Set();
+          window.uploadedUrls.add(uploadedUrl);
 
           if (uploadType === "sodo") {
             const sodoInput = document.getElementById(`editSodo${sodoIndex}Url`);
@@ -2346,12 +2361,15 @@
             const curatedImages = [];
             if (window.imageEditorSlides) {
               window.imageEditorSlides.forEach((slide, idx) => {
+                let slideOrigin = slide.origin || 'crawl';
+                if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
+                if (slideOrigin === 'user') slideOrigin = 'self';
                 curatedImages.push({
                   image_url: slide.url,
                   r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
                   role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
                   sequence_index: idx + 1,
-                  origin: 'thienkhoi',
+                  origin: slideOrigin,
                   is_hidden: slide.visible === false ? 1 : 0
                 });
               });
@@ -2822,12 +2840,15 @@
         const curatedImages = [];
         if (window.imageEditorSlides) {
           window.imageEditorSlides.forEach((slide, idx) => {
+            let slideOrigin = slide.origin || 'crawl';
+            if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
+            if (slideOrigin === 'user') slideOrigin = 'self';
             curatedImages.push({
               image_url: slide.url,
               r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
               role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
               sequence_index: idx + 1,
-              origin: 'thienkhoi',
+              origin: slideOrigin,
               is_hidden: slide.visible === false ? 1 : 0
             });
           });
@@ -3294,12 +3315,15 @@
             const curatedImages = [];
             if (window.imageEditorSlides) {
               window.imageEditorSlides.forEach((slide, idx) => {
+                let slideOrigin = slide.origin || 'crawl';
+                if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
+                if (slideOrigin === 'user') slideOrigin = 'self';
                 curatedImages.push({
                   image_url: slide.url,
                   r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
                   role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
                   sequence_index: idx + 1,
-                  origin: 'thienkhoi',
+                  origin: slideOrigin,
                   is_hidden: slide.visible === false ? 1 : 0
                 });
               });
