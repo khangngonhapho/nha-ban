@@ -48,6 +48,29 @@ window.LegoRenderAdmin = {
     const displayTitle = String(adminTitle).includes(p.gia + ' tỷ') ? adminTitle : adminTitle + ' ' + p.gia + ' tỷ';
     const isSelected = SELECTED_IDS.has(String(p.id));
 
+    // Format ISO date string to DD/MM/YYYY
+    const formatDate = (isoStr) => {
+      if (!isoStr || isoStr === 'None') return '';
+      try {
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return isoStr;
+        const date = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${date}/${month}/${year}`;
+      } catch (e) {
+        return isoStr;
+      }
+    };
+
+    const jsonUi = p.json_ui_parsed || {};
+    const createdAt = jsonUi.createdAt || '';
+    const updatedAt = jsonUi.updatedAt || '';
+    const listedAt = jsonUi.listedAt || '';
+
+    const displayListed = listedAt ? formatDate(listedAt) : (createdAt ? formatDate(createdAt) : '');
+    const displayUpdated = updatedAt ? formatDate(updatedAt) : '';
+
     c.innerHTML = `
       <div class="crow">
         <div class="ibox">
@@ -71,6 +94,12 @@ window.LegoRenderAdmin = {
               <span>📞</span> 
               ${p.raw_dt_dau_chu ? `<a href="tel:${window.formatPhone(p.raw_dt_dau_chu)}" onclick="event.stopPropagation();" style="color: var(--red); text-decoration: underline; font-weight: 800;">${window.formatPhone(p.raw_dt_dau_chu)}</a>` : 'Chưa có SĐT'}
             </div>
+            ${(displayListed || displayUpdated) ? `
+              <div style="font-size: 11px; margin-top: 4px; color: #7f8c8d; display: flex; flex-direction: column; gap: 2px; line-height: 1.35; font-weight: 500;">
+                ${displayListed ? `<span>📅 Niêm yết: ${displayListed}</span>` : ''}
+                ${displayUpdated ? `<span>🔄 Cập nhật: ${displayUpdated}</span>` : ''}
+              </div>
+            ` : ''}
           </div>
           <div class="cfoot" style="margin-top: 6px;">
             ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
