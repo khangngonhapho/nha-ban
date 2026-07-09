@@ -1389,9 +1389,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                         if not isinstance(img, dict):
                             continue
                         role = img.get("role")
-                        is_hidden = role in ["Ẩn", "hidden"]
-                        is_invisible_non_sodo = (img.get("visible") is False and role not in ["Sơ đồ", "diagram"])
-                        if is_hidden or is_invisible_non_sodo:
+                        is_hidden = role in ["Ẩn", "hidden", "deleted"]
+                        if is_hidden:
                             continue
                         filtered_images.append(img)
                 
@@ -1692,6 +1691,11 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                                             is_self = (img.get("origin") in ["self", "user"]) if img.get("origin") else ("r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url)
                                             if not is_self:
                                                 raw_imgs.append(url.strip())
+                        except Exception:
+                            pass
+                    if not raw_imgs and d.get("raw_drive_images_json"):
+                        try:
+                            raw_imgs = json.loads(d.get("raw_drive_images_json"))
                         except Exception:
                             pass
                     if not raw_imgs and d.get("raw_images_tk_json"):

@@ -18,7 +18,64 @@ def restore_database():
     print("👉 Hợp nhất dọn dẹp đôn ảnh nhà thật chuẩn US-055!")
     print("======================================================================")
     
-    # 1. Khởi tạo database SQLite sạch sẽ với đầy đủ cấu hình cột
+    # 1. Đọc hình ảnh hiện tại từ SQLite cục bộ trước khi xóa để làm bộ nhớ đệm chống mất ảnh (US-055 Guard)
+    existing_images = {}
+    if os.path.exists(DB_FILE):
+        try:
+            conn_old = sqlite3.connect(DB_FILE)
+            cursor_old = conn_old.cursor()
+            
+            # Kiểm tra xem bảng listings có tồn tại không
+            cursor_old.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='listings'")
+            table_exists = cursor_old.fetchone()
+            
+            if table_exists:
+                # Kiểm tra các cột trong bảng listings
+                cursor_old.execute("PRAGMA table_info(listings)")
+                cols_old = {r[1] for r in cursor_old.fetchall()}
+                
+                req_cols = ["tk_id", "curated_config_json", "raw_images_tk_json", "raw_drive_images_json", "Images_Admin_JSON", "images_public_json", "status"]
+                valid_cols = [c for c in req_cols if c in cols_old]
+                
+                if "tk_id" in valid_cols:
+                    sql_select = f"SELECT {', '.join(valid_cols)} FROM listings"
+                    rows_old = cursor_old.execute(sql_select).fetchall()
+                    
+                    for r in rows_old:
+                        row_dict_old = dict(zip(valid_cols, r))
+                        tk_id = row_dict_old.get("tk_id")
+                        if not tk_id:
+                            continue
+                            
+                        curated = row_dict_old.get("curated_config_json")
+                        raw_tk = row_dict_old.get("raw_images_tk_json")
+                        
+                        has_real_images = False
+                        if curated:
+                            try:
+                                parsed_curated = json.loads(curated)
+                                imgs = parsed_curated.get("images", [])
+                                if any(img.get("role") not in ["Sơ đồ", "diagram"] for img in imgs if isinstance(img, dict)):
+                                    has_real_images = True
+                            except Exception:
+                                pass
+                                
+                        if not has_real_images and raw_tk:
+                            try:
+                                raw_urls = json.loads(raw_tk)
+                                if len(raw_urls) > 1:
+                                    has_real_images = True
+                            except Exception:
+                                pass
+                                
+                        if has_real_images:
+                            existing_images[tk_id] = row_dict_old
+                            
+            conn_old.close()
+            print(f"  - [🛡️ Bảo vệ] Đã lưu trữ bộ nhớ đệm {len(existing_images)} căn nhà có hình ảnh từ CSDL SQLite hiện tại.")
+        except Exception as e:
+            print(f"  - [⚠️ Bảo vệ] Không thể đọc CSDL SQLite cũ để sao lưu hình ảnh: {str(e)}")
+
     print("[1/4] Khởi tạo cấu trúc database SQLite rỗng...")
     if os.path.exists(DB_FILE):
         try:
@@ -71,6 +128,26 @@ def restore_database():
         except Exception as e:
             print(f"[⚠️ WARNING] Không thể đọc dữ liệu từ sheet Source, dữ liệu biên tập sẽ không được hợp nhất: {str(e)}")
             source_values = []
+
+        # Đọc dữ liệu từ Pool_Images sheet (Hệ thống lưu ảnh cào thô)
+        print("  - Đang đọc dữ liệu Google Sheets Pool_Images...")
+        pool_images_map = {}
+        try:
+            pool_images_sheet = spreadsheet.worksheet("Pool_Images")
+            pool_images_values = pool_images_sheet.get_all_values()
+            if pool_images_values:
+                for row in pool_images_values:
+                    if not row or len(row) < 4:
+                        continue
+                    p_tk_id = row[0].strip()
+                    p_type = row[2].strip()
+                    if p_type == "crawl":
+                        p_images = [url.strip() for url in row[4:] if url.strip().startswith("http")]
+                        if p_images:
+                            pool_images_map[p_tk_id] = p_images
+                print(f"  - [✅ Pool_Images] Đã lập bản đồ map cho {len(pool_images_map)} căn nhà có hình ảnh cào gốc.")
+        except Exception as e_pi:
+            print(f"[⚠️ WARNING] Không thể đọc dữ liệu từ sheet Pool_Images: {str(e_pi)}")
             
     except Exception as e:
         print(f"[❌ LỖI] Lỗi kết nối Google Sheets: {str(e)}")
@@ -440,6 +517,72 @@ def restore_database():
                             "role": "Sơ đồ",
                             "visible": False
                         })
+
+        # US-055 & Pool_Images recovery guards
+        has_non_diag_images = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in images_list)
+        
+        # 1. Nếu trên Sheets bị trống/chỉ có sơ đồ, kiểm tra xem SQLite cũ (cache) có hình ảnh không
+        if (not has_non_diag_images) and tk_id in existing_images:
+            cache = existing_images[tk_id]
+            cached_curated_str = cache.get("curated_config_json")
+            cached_images = []
+            if cached_curated_str:
+                try:
+                    parsed_cache = json.loads(cached_curated_str)
+                    cached_images = parsed_cache.get("images", [])
+                except Exception:
+                    pass
+            
+            if not cached_images and cache.get("Images_Admin_JSON"):
+                try:
+                    parsed_admin = json.loads(cache.get("Images_Admin_JSON"))
+                    role_map_en_to_vi = {
+                        "diagram": "Sơ đồ", "facade": "Mặt tiền", "cover": "Bìa",
+                        "alley": "Hẻm", "interior": "Nội thất", "hidden": "Ẩn", "deleted": "deleted"
+                    }
+                    for img in parsed_admin:
+                        if isinstance(img, dict) and img.get("image_url"):
+                            cached_images.append({
+                                "url": img.get("r2_url") or img.get("image_url"),
+                                "role": role_map_en_to_vi.get(img.get("role", "interior"), "Nội thất"),
+                                "visible": img.get("is_hidden", 0) == 0
+                            })
+                except Exception:
+                    pass
+
+            if cached_images:
+                has_cached_non_diag = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in cached_images)
+                if has_cached_non_diag:
+                    images_list = cached_images
+                    has_non_diag_images = True
+                    print(f"  - [🛡️ Bảo vệ US-055] Phục hồi thành công {len(images_list)} ảnh từ bộ nhớ đệm CSDL cũ cho căn {tk_id}.")
+
+        # 2. Nếu vẫn trống/chỉ có sơ đồ, kiểm tra xem Pool_Images có backup hình ảnh không
+        if (not has_non_diag_images) and tk_id in pool_images_map:
+            raw_urls = pool_images_map[tk_id]
+            images_list = []
+            
+            # Giữ các ảnh sơ đồ từ sheets trước
+            diag_urls = [row_dict.get(f"Sơ đồ thửa đất {i}", "").strip() for i in range(1, 6)]
+            diag_urls = [u for u in diag_urls if u]
+            for d_url in diag_urls:
+                images_list.append({"url": d_url, "role": "Sơ đồ", "visible": False})
+                
+            # Thêm ảnh nội thất từ Pool_Images
+            for url in raw_urls:
+                is_diag = False
+                for d_url in diag_urls:
+                    if url.split("?")[0] == d_url.split("?")[0]:
+                        is_diag = True
+                        break
+                if not is_diag:
+                    images_list.append({"url": url, "role": "Nội thất", "visible": True})
+            
+            has_non_diag_images = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in images_list)
+            if has_non_diag_images:
+                # Thiết lập trạng thái thành 'raw_text' để kích hoạt di cư lại tự động lên R2
+                status = "raw_text"
+                print(f"  - [🔄 Khôi phục Sheets] Phục hồi thành công {len(images_list)} ảnh thô từ Pool_Images cho căn {tk_id}. Đặt lại status -> 'raw_text'")
 
         if images_list:
             reconstructed_drive_images = [img["url"] for img in images_list]

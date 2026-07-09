@@ -1593,6 +1593,45 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     "images": new_images_list,
                     "Mã_Khang_Ngô__ID_": d.get("Ma_Khang_Ngo_ID", "")
                 }
+                
+                # Đóng gói dữ liệu Images_Admin_JSON và images_public_json cho bảng listings
+                role_map_vi_to_en = {
+                    "Sơ đồ": "diagram",
+                    "Mặt tiền": "facade",
+                    "Bìa": "cover",
+                    "Hẻm": "alley",
+                    "Nội thất": "interior",
+                    "Ẩn": "hidden",
+                    "deleted": "deleted",
+                    "diagram": "diagram",
+                    "facade": "facade",
+                    "cover": "cover",
+                    "alley": "alley",
+                    "interior": "interior",
+                    "hidden": "hidden"
+                }
+                migrated_images = []
+                for idx, img in enumerate(new_images_list):
+                    url = img.get("url")
+                    vi_role = img.get("role", "Nội thất")
+                    resolved_role = role_map_vi_to_en.get(vi_role, "interior")
+                    visible = img.get("visible", True)
+                    is_hidden_val = 1 if (not visible or resolved_role in ["hidden", "deleted"]) else 0
+                    migrated_images.append({
+                        "image_url": url,
+                        "r2_url": url,
+                        "role": resolved_role,
+                        "sequence_index": idx,
+                        "origin": "crawl",
+                        "is_hidden": is_hidden_val
+                    })
+                images_admin_json_str = json.dumps(migrated_images, ensure_ascii=False)
+                public_urls = [
+                    img["r2_url"] if img["r2_url"] else img["image_url"]
+                    for img in migrated_images
+                    if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]
+                ]
+                images_public_json_str = json.dumps(public_urls, ensure_ascii=False)
             
             # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập
             col_ma_kn = get_safe_col_name("Mã Khang Ngô (ID)")
@@ -1653,6 +1692,8 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             if LISTINGS_TABLE == "listings":
                 update_fields["curated_config_json"] = json.dumps(new_curated_config, ensure_ascii=False)
                 update_fields["images_mapping_json"] = json.dumps(new_images_mapping, ensure_ascii=False)
+                update_fields["Images_Admin_JSON"] = images_admin_json_str
+                update_fields["images_public_json"] = images_public_json_str
                 
                 # Loại bỏ các cột phẳng hình ảnh ở Pool1
                 image_fields_to_skip = {
