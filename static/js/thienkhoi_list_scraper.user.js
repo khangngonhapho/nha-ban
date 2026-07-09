@@ -16,9 +16,9 @@
     'use strict';
 
     // CONFIGURATION
-    let localPort = '5000';
+    let localPort = '5001';
     try {
-        localPort = localStorage.getItem('kn_scraper_port') || '5000';
+        localPort = localStorage.getItem('kn_scraper_port') || '5001';
     } catch (e) {
         console.warn("[Khang Ngô BDS] Không thể truy cập localStorage:", e);
     }
@@ -889,7 +889,7 @@
 
         // Port change
         document.getElementById('kn-port-input').addEventListener('change', (e) => {
-            localPort = e.target.value.trim() || '5000';
+            localPort = e.target.value.trim() || '5001';
             try {
                 localStorage.setItem('kn_scraper_port', localPort);
             } catch (err) {}

@@ -2046,7 +2046,7 @@ if __name__ == '__main__':
         add_log_message(f"[⚠️ WARNING] Không thể khởi chạy bộ sao lưu định kỳ: {str(e)}")
         
     cfg = load_config()
-    port = int(os.environ.get("FLASK_PORT", 5000))
+    port = int(os.environ.get("FLASK_PORT", 5001))
     add_log_message(f"[*] Khởi chạy local server tại: http://localhost:{port}")
     
     # Tự động kích hoạt mở trình duyệt tab mới sau 1.5 giây
