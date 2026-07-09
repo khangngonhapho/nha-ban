@@ -212,8 +212,15 @@ def main(dry_run=True, limit=5, all_flag=False):
                 if "cloudfront.net" in row[c_idx] or "proptech" in row[c_idx]:
                     has_raw_cloudfront = True
                     
-        # Điều kiện khôi phục: Căn bị trống ảnh hoàn toàn hoặc còn chứa link thô Cloudfront
-        if (not has_flat_images) or has_raw_cloudfront:
+        # Kiểm tra xem Images_Admin_JSON trên Sheets có trống hoặc chưa được khởi tạo không
+        has_empty_admin_json = False
+        if images_admin_json_idx > -1:
+            admin_val = row[images_admin_json_idx].strip() if images_admin_json_idx < len(row) else ""
+            if not admin_val or admin_val == "[]":
+                has_empty_admin_json = True
+                    
+        # Điều kiện khôi phục: Căn bị trống ảnh hoàn toàn, còn chứa link thô Cloudfront, hoặc trường Images_Admin_JSON trên Sheets trống
+        if (not has_flat_images) or has_raw_cloudfront or has_empty_admin_json:
             # Nhóm ảnh sơ đồ hiện có từ sheets
             diag_cols = [f"Sơ đồ thửa đất {i}" for i in range(1, 6)]
             diag_urls = []
