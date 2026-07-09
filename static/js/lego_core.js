@@ -1238,7 +1238,7 @@ const LegoState = {
 
     const s = document.createElement('script');
     s.id = '_gs';
-    s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback`;
+    s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback&t=${Date.now()}`;
     s.onerror = () => this.emit('dataLoadError', 'Không kết nối được Google Sheets. Kiểm tra SHEET_ID và quyền truy cập.');
     document.head.appendChild(s);
   }

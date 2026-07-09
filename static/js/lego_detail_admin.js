@@ -2430,6 +2430,15 @@
       } else {
         item.classList.add('expanded');
         if (arrow) arrow.textContent = '▼';
+        
+        // Force preview iframe reload on expand (US-120A)
+        if (item.id === 'accPreview') {
+          const iframe = item.querySelector('iframe');
+          if (iframe) {
+            const originalSrc = iframe.src.split('&cb=')[0];
+            iframe.src = originalSrc + '&cb=' + Date.now();
+          }
+        }
       }
     };
   // === getPublicImagesFromForm ===
