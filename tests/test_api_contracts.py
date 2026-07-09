@@ -74,3 +74,19 @@ class TestAPIContracts:
         data = response.get_json()
         assert isinstance(data, dict)
         assert "exists" in data or "status" in data
+
+    def test_view_images_page(self, client):
+        """GET /view-images trả về mã 200 và nội dung HTML."""
+        response = client.get('/view-images')
+        assert response.status_code == 200
+        assert b"<!DOCTYPE html>" in response.data or b"<html" in response.data
+
+    def test_proxy_download_missing_url(self, client):
+        """GET /api/proxy-download không có url trả về mã 400."""
+        response = client.get('/api/proxy-download')
+        assert response.status_code == 400
+
+    def test_proxy_download_invalid_url(self, client):
+        """GET /api/proxy-download với url không hợp lệ trả về mã 500."""
+        response = client.get('/api/proxy-download?url=http://invalid-url-domain-non-existent.xyz')
+        assert response.status_code == 500

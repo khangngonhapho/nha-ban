@@ -55,6 +55,43 @@ def canvas_view():
     resp.headers['Expires'] = '0'
     return resp
 
+@routes_curation.route('/view-images')
+@routes_curation.route('/view-images.html')
+def view_images():
+    """Trả về giao diện xem và tải ảnh hàng loạt view-images.html"""
+    if os.path.exists("view-images.html"):
+        with open("view-images.html", "r", encoding="utf-8") as f:
+            content = f.read()
+    else:
+        return "view-images.html not found", 404
+    resp = Response(content, mimetype='text/html')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
+
+@routes_curation.route('/api/proxy-download')
+def proxy_download():
+    """API Proxy tải ảnh từ xa không bị chặn CORS"""
+    target_url = request.args.get('url')
+    filename = request.args.get('filename', 'image.jpg')
+    if not target_url:
+        return "Missing url parameter", 400
+    try:
+        r = requests.get(target_url, stream=True, timeout=10)
+        r.raise_for_status()
+        
+        clean_filename = filename.replace('"', '').replace('\\', '')
+        
+        headers = {
+            'Content-Type': r.headers.get('Content-Type', 'application/octet-stream'),
+            'Content-Disposition': f'attachment; filename="{clean_filename}"',
+            'Cache-Control': 'public, max-age=2592000'
+        }
+        return Response(r.content, headers=headers)
+    except Exception as e:
+        return f"Failed to proxy image: {str(e)}", 500
+
 @routes_curation.route('/api/ai/generate', methods=['POST'])
 def ai_generate():
     """Gọi OpenAI gpt-4o-mini để sinh Tiêu đề, Mô tả và tìm Phường cũ"""
