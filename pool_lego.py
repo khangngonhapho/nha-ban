@@ -2414,7 +2414,7 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
                     continue
                 if m_type in ["parcel_map", "certificate_image"]:
                     sodo_images.append(m_url)
-                elif m_type in ["property_image", "checkin_image"]:
+                else:
                     property_images.append(m_url)
                         
             channels_list = detail_data.get("channels") or []
