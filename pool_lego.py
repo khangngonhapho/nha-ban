@@ -2153,7 +2153,7 @@ def sync_p1_to_p2(src_db, tgt_db, input_so_nha, input_duong, add_log_message):
                     url = img.get('url') if isinstance(img, dict) else str(img)
                     if url:
                         curated_images.append(url)
-                        origin = 'self' if ('r2.dev' in url or 'cloudinary.com' in url) else 'crawl'
+                        origin = img.get('origin') if (isinstance(img, dict) and img.get('origin')) else ('self' if ('r2.dev' in url or 'cloudinary.com' in url) else 'crawl')
                         role = img.get('role', 'interior') if isinstance(img, dict) else 'interior'
                         images_to_insert.append({
                             'image_url': url,
