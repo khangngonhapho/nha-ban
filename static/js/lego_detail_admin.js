@@ -2351,7 +2351,7 @@
                   r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
                   role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
                   sequence_index: idx + 1,
-                  origin: 'thienkhoi',
+                  origin: 'crawl',
                   is_hidden: slide.visible === false ? 1 : 0
                 });
               });
@@ -2818,7 +2818,7 @@
               r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
               role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
               sequence_index: idx + 1,
-              origin: 'thienkhoi',
+              origin: 'crawl',
               is_hidden: slide.visible === false ? 1 : 0
             });
           });
@@ -3290,7 +3290,7 @@
                   r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
                   role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
                   sequence_index: idx + 1,
-                  origin: 'thienkhoi',
+                  origin: 'crawl',
                   is_hidden: slide.visible === false ? 1 : 0
                 });
               });
