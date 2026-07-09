@@ -572,6 +572,31 @@
       }
     }
 
+    function sanitizeJsonString(str) {
+      let cleaned = str.trim();
+      
+      // Strip markdown code block backticks if present
+      cleaned = cleaned.replace(/^```(json)?/i, '').replace(/```$/, '').trim();
+      
+      if (cleaned.startsWith('[') || cleaned.startsWith('{')) {
+        try {
+          return JSON.parse(cleaned);
+        } catch (e) {
+          try {
+            // Replace single quotes and curly quotes with double quotes
+            let normalized = cleaned
+              .replace(/'/g, '"')
+              .replace(/“/g, '"')
+              .replace(/”/g, '"');
+            return JSON.parse(normalized);
+          } catch (err2) {
+            return null;
+          }
+        }
+      }
+      return null;
+    }
+
     function processUrls() {
       const input = document.getElementById('urlInput').value.trim();
       if (!input) {
@@ -580,19 +605,13 @@
       }
 
       // Check if it's JSON input
-      let parsedJson = null;
-      if (input.startsWith('[') || input.startsWith('{')) {
-        try {
-          parsedJson = JSON.parse(input);
-        } catch (e) {
-          // Fallback to text parsing if JSON parsing fails
-        }
-      }
+      const parsedJson = sanitizeJsonString(input);
 
       if (parsedJson) {
         const arr = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
         imagesList = arr
           .map((obj, idx) => {
+            if (!obj || typeof obj !== 'object') return null;
             const url = obj.r2_url || obj.image_url || obj.url;
             if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
               return null;
@@ -610,19 +629,16 @@
           })
           .filter(Boolean);
       } else {
-        // Split by whitespace/tabs/newlines
-        const tokens = input.split(/\s+/);
+        // Fallback: Smart Regex URL Extractor
+        const urlRegex = /(https?:\/\/[^\s"'`,{}()\[\]\\]+)/g;
+        const matches = input.match(urlRegex) || [];
         
-        // Parse valid URLs (starting with http)
-        imagesList = tokens
-          .map(u => u.trim())
-          .filter(u => u.startsWith('http://') || u.startsWith('https://'))
-          .map((url, idx) => ({
-            id: `img-${idx}-${Date.now()}`,
-            url: url,
-            filename: extractFilename(url),
-            selected: true
-          }));
+        imagesList = matches.map((url, idx) => ({
+          id: `img-${idx}-${Date.now()}`,
+          url: url,
+          filename: extractFilename(url),
+          selected: true
+        }));
       }
 
       if (imagesList.length === 0) {
@@ -643,15 +659,18 @@
         card.id = `card-${img.id}`;
 
         // Construct metadata HTML if metadata exists
-        const hasMeta = img.role || img.sequence_index !== '' || img.origin || img.is_hidden !== '';
+        const hasMeta = (img.role && img.role !== '') || 
+                        (img.sequence_index !== undefined && img.sequence_index !== '') || 
+                        (img.origin && img.origin !== '') || 
+                        (img.is_hidden !== undefined && img.is_hidden !== '');
         let metaHtml = '';
         if (hasMeta) {
           metaHtml = `
             <div class="img-meta-tags">
               ${img.role ? `<span class="meta-tag role-tag" data-role="${img.role}">${img.role}</span>` : ''}
-              ${img.sequence_index !== '' ? `<span class="meta-tag index-tag">Idx: ${img.sequence_index}</span>` : ''}
+              ${img.sequence_index !== undefined && img.sequence_index !== '' ? `<span class="meta-tag index-tag">Idx: ${img.sequence_index}</span>` : ''}
               ${img.origin ? `<span class="meta-tag origin-tag">${img.origin}</span>` : ''}
-              ${img.is_hidden !== '' ? `
+              ${img.is_hidden !== undefined && img.is_hidden !== '' ? `
                 <span class="meta-tag visibility-tag ${img.is_hidden === 1 ? 'hidden-tag' : 'visible-tag'}">
                   ${img.is_hidden === 1 ? 'Ẩn (Hidden)' : 'Hiện (Show)'}
                 </span>
