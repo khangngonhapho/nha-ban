@@ -1089,18 +1089,64 @@ const LegoState = {
 
     window.__gsCallback = (response) => {
       try {
+        const cols = response.table.cols || [];
+        const getColIdx = (headerKey, fallback) => {
+          const lowerKey = headerKey.toLowerCase();
+          for (let i = 0; i < cols.length; i++) {
+            const label = (cols[i].label || "").toLowerCase();
+            if (label === lowerKey || label.split(/\s+/).includes(lowerKey)) {
+              return i;
+            }
+          }
+          for (let i = 0; i < cols.length; i++) {
+            const label = (cols[i].label || "").toLowerCase();
+            if (label.includes(lowerKey)) return i;
+          }
+          return fallback;
+        };
+
+        const colMap = {
+          id: getColIdx("id", 0),
+          tieu_de: getColIdx("tieu_de", 1),
+          dien_tich: getColIdx("dien_tich", 2),
+          so_tang: getColIdx("so_tang", 3),
+          mat_tien: getColIdx("mat_tien", 4),
+          gia: getColIdx("gia", 5),
+          quan: getColIdx("quan", 6),
+          phuong: getColIdx("phuong", 7),
+          loai_hinh: getColIdx("loai_hinh", 8),
+          huong_nha: getColIdx("huong_nha", 9),
+          duong_truoc_nha: getColIdx("duong_truoc_nha", 10),
+          do_rong_hem: getColIdx("do_rong_hem", 11),
+          tinh_trang_nha: getColIdx("tinh_trang_nha", 12),
+          danh_gia: getColIdx("danh_gia", 13),
+          ngu_tang_tret: getColIdx("ngu_tang_tret", 14),
+          chdv: getColIdx("chdv", 15),
+          mo_ta: getColIdx("mo_ta", 16),
+          system_id: getColIdx("System ID", 34),
+          hinh_mat_tien: getColIdx("hinh_mat_tien", 35),
+          so_pn: getColIdx("so_pn", 29),
+          so_wc: getColIdx("so_wc", 30),
+          ten_duong: getColIdx("ten_duong", 31),
+          gio_dang: getColIdx("gio_dang", 32),
+          trang_thai: getColIdx("trang_thai", 33),
+          dt_tren_so: getColIdx("dt_tren_so", 44),
+          images_public_json: getColIdx("images_public_json", 45),
+          json_ui: getColIdx("json_ui", 43)
+        };
+
         const rows = response.table.rows;
         const fullList = rows
-          .filter(r => r.c[0] && r.c[0].v)
+          .filter(r => r.c[colMap.id] && r.c[colMap.id].v)
           .map((r, index) => {
-            const dtSoVal = parseFloat(cv(r.c[44])) || parseFloat(cv(r.c[2])) || 0;
-            const gia = parseFloat(cv(r.c[5])) || 0;
+            const dtSoVal = parseFloat(cv(r.c[colMap.dt_tren_so])) || parseFloat(cv(r.c[colMap.dien_tich])) || 0;
+            const gia = parseFloat(cv(r.c[colMap.gia])) || 0;
             const giabq = (dtSoVal > 0 && gia > 0) ? Math.round((gia * 1000) / dtSoVal) : 0;
-            let rawQ = cv(r.c[6]);
+            let rawQ = cv(r.c[colMap.quan]);
             if (!rawQ) {
-              const titleLower = String(cv(r.c[1])).toLowerCase();
-              const phuongLower = String(cv(r.c[7])).toLowerCase();
-              const descLower = String(cv(r.c[16])).toLowerCase();
+              const titleLower = String(cv(r.c[colMap.tieu_de])).toLowerCase();
+              const phuongLower = String(cv(r.c[colMap.phuong])).toLowerCase();
+              const descLower = String(cv(r.c[colMap.mo_ta])).toLowerCase();
               const textToSearch = titleLower + " " + phuongLower + " " + descLower;
               if (textToSearch.includes('phú nhuận') || /\bpn\b/i.test(textToSearch) || textToSearch.includes('cầu kiệu')) rawQ = 'PN';
               else if (textToSearch.includes('tân bình') || /\btb\b/i.test(textToSearch) || textToSearch.includes('tân sơn nhất') || textToSearch.includes('tân hòa')) rawQ = 'TB';
@@ -1158,31 +1204,31 @@ const LegoState = {
             
             const p = {
               temp_id: index + 1,
-              id: cv(r.c[0]),
+              id: cv(r.c[colMap.id]),
               cu_phap: '',
-              t: cv(r.c[1]),
-              dt: cv(r.c[2]),
-              tang: cv(r.c[3]),
-              mat: cv(r.c[4]),
-              gia: cv(r.c[5]),
+              t: cv(r.c[colMap.tieu_de]),
+              dt: cv(r.c[colMap.dien_tich]),
+              tang: cv(r.c[colMap.so_tang]),
+              mat: cv(r.c[colMap.mat_tien]),
+              gia: cv(r.c[colMap.gia]),
               q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
               ql: cleanQ.toUpperCase(),
-              phuong: cv(r.c[7]) || '-',
-              loai_hinh: cv(r.c[8]) || 'Hẻm',
-              huong: cv(r.c[9]) || '-',
-              duong_truoc_nha: cv(r.c[10]) || '-',
-              rong_hem: cv(r.c[11]) || '-',
-              tinh_trang: cv(r.c[12]) || '-',
-              danh_gia: cv(r.c[13]) || '',
-              is_invisible: (cv(r.c[12]) || '').toLowerCase().includes('ẩn') ||
-                (cv(r.c[12]) || '').toLowerCase().includes('đã bán') ||
-                (cv(r.c[12]) || '').toLowerCase().includes('invisible'),
-              ngu_tang_tret: cv(r.c[14]) || '-',
-              chdv: cv(r.c[15]) || '-',
+              phuong: cv(r.c[colMap.phuong]) || '-',
+              loai_hinh: cv(r.c[colMap.loai_hinh]) || 'Hẻm',
+              huong: cv(r.c[colMap.huong_nha]) || '-',
+              duong_truoc_nha: cv(r.c[colMap.duong_truoc_nha]) || '-',
+              rong_hem: cv(r.c[colMap.do_rong_hem]) || '-',
+              tinh_trang: cv(r.c[colMap.tinh_trang_nha]) || '-',
+              danh_gia: cv(r.c[colMap.danh_gia]) || '',
+              is_invisible: (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('ẩn') ||
+                (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('đã bán') ||
+                (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('invisible'),
+              ngu_tang_tret: cv(r.c[colMap.ngu_tang_tret]) || '-',
+              chdv: cv(r.c[colMap.chdv]) || '-',
               giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-              m: cv(r.c[16]),
+              m: cv(r.c[colMap.mo_ta]),
               imgs: (() => {
-                const imagesPublicJsonStr = (r.c && r.c[45]) ? cv(r.c[45]) : "";
+                const imagesPublicJsonStr = (r.c && r.c[colMap.images_public_json]) ? cv(r.c[colMap.images_public_json]) : "";
                 if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
                   try {
                     const parsedPublic = JSON.parse(imagesPublicJsonStr);
@@ -1193,21 +1239,33 @@ const LegoState = {
                     console.warn("Lỗi parse Images_Public_JSON:", e);
                   }
                 }
-                return [
-                  cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]),
-                  cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26]),
-                  cv(r.c[38]), cv(r.c[39]), cv(r.c[40]), cv(r.c[41]), cv(r.c[42])
-                ].filter(Boolean);
+                const fallbackUrls = [];
+                for (let i = 1; i <= 15; i++) {
+                  const idx = getColIdx(`anh_${i}`, -1);
+                  if (idx !== -1 && r.c[idx]) {
+                    fallbackUrls.push(cv(r.c[idx]));
+                  }
+                }
+                if (fallbackUrls.length === 0) {
+                  const defaultIdxs = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 38, 39, 40, 41, 42];
+                  defaultIdxs.forEach(dIdx => {
+                    if (r.c[dIdx]) fallbackUrls.push(cv(r.c[dIdx]));
+                  });
+                }
+                return fallbackUrls.filter(Boolean);
               })(),
-              system_id: cv(r.c[34]) || (index + 1).toString(),
-              so_pn: cv(r.c[29]) || '-',
-              img_mat_tien: cv(r.c[35]) || '',
-              dt_tren_so_custom: cv(r.c[44]) || '',
-              raw_dt_tren_so: cv(r.c[44]) || ''
+              system_id: cv(r.c[colMap.system_id]) || (index + 1).toString(),
+              so_pn: cv(r.c[colMap.so_pn]) || '-',
+              img_mat_tien: cv(r.c[colMap.hinh_mat_tien]) || '',
+              dt_tren_so_custom: cv(r.c[colMap.dt_tren_so]) || '',
+              raw_dt_tren_so: cv(r.c[colMap.dt_tren_so]) || ''
             };
             
             let jsonUiVal = '';
-            if (r.c && r.c.length) {
+            if (colMap.json_ui !== -1 && r.c[colMap.json_ui]) {
+              jsonUiVal = cv(r.c[colMap.json_ui]);
+            }
+            if (!jsonUiVal && r.c && r.c.length) {
               for (let i = r.c.length - 1; i >= 0; i--) {
                 const val = cv(r.c[i]);
                 const valStr = val ? String(val).trim() : '';
