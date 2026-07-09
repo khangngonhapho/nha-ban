@@ -578,6 +578,18 @@
       // Strip markdown code block backticks if present
       cleaned = cleaned.replace(/^```(json)?/i, '').replace(/```$/, '').trim();
       
+      // Strip leading and trailing double quotes if they wrap a JSON array or object
+      if (cleaned.startsWith('"')) {
+        let temp = cleaned.substring(1);
+        if (temp.endsWith('"')) {
+          temp = temp.substring(0, temp.length - 1);
+        }
+        temp = temp.trim();
+        if (temp.startsWith('[') || temp.startsWith('{')) {
+          cleaned = temp;
+        }
+      }
+
       if (cleaned.startsWith('[') || cleaned.startsWith('{')) {
         try {
           return JSON.parse(cleaned);
@@ -611,7 +623,19 @@
         const arr = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
         imagesList = arr
           .map((obj, idx) => {
-            if (!obj || typeof obj !== 'object') return null;
+            if (!obj) return null;
+            if (typeof obj === 'string') {
+              if (obj.startsWith('http://') || obj.startsWith('https://')) {
+                return {
+                  id: `img-${idx}-${Date.now()}`,
+                  url: obj,
+                  filename: extractFilename(obj),
+                  selected: true
+                };
+              }
+              return null;
+            }
+            if (typeof obj !== 'object') return null;
             const url = obj.r2_url || obj.image_url || obj.url;
             if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
               return null;
