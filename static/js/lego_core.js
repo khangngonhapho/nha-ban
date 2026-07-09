@@ -1181,11 +1181,24 @@ const LegoState = {
               chdv: cv(r.c[15]) || '-',
               giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
               m: cv(r.c[16]),
-              imgs: [
-                cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]),
-                cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26]),
-                cv(r.c[38]), cv(r.c[39]), cv(r.c[40]), cv(r.c[41]), cv(r.c[42])
-              ].filter(Boolean),
+              imgs: (() => {
+                const imagesPublicJsonStr = (r.c && r.c[48]) ? cv(r.c[48]) : "";
+                if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
+                  try {
+                    const parsedPublic = JSON.parse(imagesPublicJsonStr);
+                    if (Array.isArray(parsedPublic) && parsedPublic.length > 0) {
+                      return parsedPublic;
+                    }
+                  } catch (e) {
+                    console.warn("Lỗi parse Images_Public_JSON:", e);
+                  }
+                }
+                return [
+                  cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]),
+                  cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26]),
+                  cv(r.c[38]), cv(r.c[39]), cv(r.c[40]), cv(r.c[41]), cv(r.c[42])
+                ].filter(Boolean);
+              })(),
               system_id: cv(r.c[34]) || (index + 1).toString(),
               so_pn: cv(r.c[29]) || '-',
               img_mat_tien: cv(r.c[35]) || '',
