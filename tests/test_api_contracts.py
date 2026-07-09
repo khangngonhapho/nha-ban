@@ -90,3 +90,17 @@ class TestAPIContracts:
         """GET /api/proxy-download với url không hợp lệ trả về mã 500."""
         response = client.get('/api/proxy-download?url=http://invalid-url-domain-non-existent.xyz')
         assert response.status_code == 500
+
+    def test_manifest_json(self, client):
+        """GET /manifest.json trả về mã 200 và content-type application/json."""
+        response = client.get('/manifest.json')
+        assert response.status_code == 200
+        assert b"manifest" in response.data or b"start_url" in response.data
+        assert "application/json" in response.content_type
+
+    def test_service_worker_js(self, client):
+        """GET /sw.js trả về mã 200 và content-type application/javascript."""
+        response = client.get('/sw.js')
+        assert response.status_code == 200
+        assert b"CACHE_NAME" in response.data or b"self.addEventListener" in response.data
+        assert "application/javascript" in response.content_type

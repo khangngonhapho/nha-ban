@@ -898,8 +898,52 @@ module.exports = async (req, res) => {
       return res.status(200).send(Buffer.from(buffer));
     } catch (err) {
       console.error('Error in proxy-download:', err);
-      return res.status(500).send(`Failed to proxy image: ${err.message}`);
     }
+  }
+
+  // Serve manifest.json for PWA
+  if (pathname === '/manifest.json') {
+    let manifestHtml = '';
+    const manifestPaths = [
+      path.join(__dirname, '..', 'manifest.json'),
+      path.join(process.cwd(), 'manifest.json'),
+      path.join(__dirname, 'manifest.json')
+    ];
+    for (const p of manifestPaths) {
+      try {
+        if (fs.existsSync(p)) {
+          manifestHtml = fs.readFileSync(p, 'utf8');
+          break;
+        }
+      } catch (err) {}
+    }
+    if (!manifestHtml) {
+      return res.status(404).send('manifest.json not found');
+    }
+    return res.status(200).setHeader('Content-Type', 'application/json; charset=utf-8').send(manifestHtml);
+  }
+
+  // Serve sw.js for PWA
+  if (pathname === '/sw.js') {
+    let swJs = '';
+    const swPaths = [
+      path.join(__dirname, '..', 'sw.js'),
+      path.join(process.cwd(), 'sw.js'),
+      path.join(__dirname, 'sw.js')
+    ];
+    for (const p of swPaths) {
+      try {
+        if (fs.existsSync(p)) {
+          swJs = fs.readFileSync(p, 'utf8');
+          break;
+        }
+      } catch (err) {}
+    }
+    if (!swJs) {
+      return res.status(404).send('sw.js not found');
+    }
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return res.status(200).setHeader('Content-Type', 'application/javascript; charset=utf-8').send(swJs);
   }
 
   // 4. Endpoint config an toàn cho client (US-100)
