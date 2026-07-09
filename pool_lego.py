@@ -1689,7 +1689,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                                     if isinstance(img, dict) and img.get("role") != "deleted":
                                         url = img.get("r2_url") or img.get("image_url") or ""
                                         if url.strip():
-                                            is_self = img.get("origin") in ["self", "user"] or "r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url
+                                            is_self = (img.get("origin") in ["self", "user"]) if img.get("origin") else ("r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url)
                                             if not is_self:
                                                 raw_imgs.append(url.strip())
                         except Exception:
