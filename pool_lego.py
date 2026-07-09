@@ -2414,13 +2414,8 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
                     continue
                 if m_type in ["parcel_map", "certificate_image"]:
                     sodo_images.append(m_url)
-                elif m_type in ["property_image"]:
+                elif m_type in ["property_image", "checkin_image"]:
                     property_images.append(m_url)
-                    
-            if not property_images:
-                for m in media:
-                    if m.get("type") == "checkin_image" and m.get("url"):
-                        property_images.append(m.get("url"))
                         
             channels_list = detail_data.get("channels") or []
             channels_str = ", ".join([str(c) for c in channels_list if c])
