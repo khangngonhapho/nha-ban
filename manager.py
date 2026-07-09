@@ -1799,6 +1799,198 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
     add_log_message(f"[🏁] HOÀN TẤT LUỒNG DI CƯ: Đã xử lý {processed} căn.")
 
 
+def generate_fallback_content_python(d):
+    so_nha = safe_str(d.get("Ngo_So_nha") or d.get("Ngo_So_nha_") or "")
+    duong = safe_str(d.get("Duong") or d.get("Duong_") or "")
+    dt = safe_str(d.get("DT_Thuc_te") or d.get("DT_Thuc_te_") or d.get("Dien_tich") or "")
+    tang = safe_str(d.get("So_Tang") or d.get("So_Tang_") or "")
+    mat = safe_str(d.get("Mat_Tien") or d.get("Mat_Tien_") or "")
+    dai = safe_str(d.get("Chieu_dai") or d.get("Chieu_dai_") or "")
+    gia = safe_str(d.get("Gia_chao") or d.get("Gia_chao_") or "")
+
+    kich_thuoc = f"{mat}x{dai}" if mat and dai else ""
+    try:
+        gia_ty = float(gia)
+        if gia_ty > 100:
+            gia_ty = gia_ty / 1000
+        gia_format = f"{gia_ty}T" if gia_ty > 0 else ""
+    except ValueError:
+        gia_format = gia
+
+    title_parts = []
+    if duong:
+        title_parts.append(duong)
+    if dt:
+        title_parts.append(f"{dt}m2")
+    if kich_thuoc:
+        title_parts.append(kich_thuoc)
+    if tang:
+        title_parts.append(f"{tang} tầng")
+    if gia_format:
+        title_parts.append(gia_format)
+
+    title = " - ".join(title_parts)
+    desc = d.get("Mo_ta_chi_tiet") or d.get("Noi_dung_chinh") or ""
+    return {
+        "tieu_de_public": title,
+        "mo_ta_public": desc,
+        "phuong_cu": ""
+    }
+
+def generate_ai_curation_for_listing_backend(d, cfg):
+    import requests
+    import json
+    api_key = cfg.get("openai_api_key", "").strip()
+    if not api_key:
+        add_log_message("[🤖 AUTO-AI] Chưa cấu hình OpenAI API Key. Bỏ qua gọi AI và dùng fallback format.")
+        return generate_fallback_content_python(d)
+
+    api_base = cfg.get("openai_api_base", "https://api.openai.com/v1").strip().rstrip('/')
+    system_prompt = cfg.get("openai_system_prompt", DEFAULT_CONFIG["openai_system_prompt"])
+
+    so_nha = safe_str(d.get("Ngo_So_nha") or d.get("Ngo_So_nha_") or "")
+    duong_truoc_nha = safe_str(d.get("Duong_truoc_nha_m") or d.get("Duong_truoc_nha_m_") or "")
+    phan_loai_hem = safe_str(d.get("Phan_loai_Hem") or d.get("Phan_loai_Hem_") or "").lower()
+
+    is_mat_tien = False
+    if so_nha:
+        if "." not in so_nha:
+            is_mat_tien = True
+    elif "mặt tiền" in phan_loai_hem or "mặt phố" in phan_loai_hem:
+        is_mat_tien = True
+
+    try:
+        width_val = float(duong_truoc_nha) if duong_truoc_nha else 0.0
+    except ValueError:
+        width_val = 0.0
+
+    tien_to = ""
+    if is_mat_tien:
+        tien_to = "Mặt tiền "
+    elif width_val >= 4.0:
+        tien_to = "HXH "
+
+    gia_chao = d.get("Gia_chao") or d.get("Gia_chao_") or ""
+    try:
+        gia_ty = float(gia_chao)
+        if gia_ty > 100:
+            gia_ty = gia_ty / 1000
+        gia_format = f"{gia_ty} tỷ" if gia_ty > 0 else ""
+    except ValueError:
+        gia_format = gia_chao
+
+    user_prompt = (
+        "THÔNG TIN CĂN NHÀ:\n"
+        f"- Địa chỉ: {d.get('Ngo_So_nha', '')} {d.get('Duong', '')}, Phường {d.get('Phuong', '')}, Quận {d.get('Quan', '')}\n"
+        f"- Nội dung chính gốc (chứa kích thước ở đầu): {d.get('Noi_dung_chinh', '')}\n"
+        f"- DT Thực tế: {d.get('DT_Thuc_te', '')}m2 | DT Trên sổ: {d.get('DT_Tren_so', '')}m2\n"
+        f"- Chiều ngang (mặt tiền): {d.get('Mat_Tien', '')}m\n"
+        f"- Hướng: {d.get('Huong', '')}\n"
+        f"- Kết cấu: {d.get('So_Tang', '')} tầng, {d.get('So_phong_ngu', '')} PN, {d.get('So_nha_ve_sinh', '')} WC\n"
+        f"- Hẻm: {d.get('Phan_loai_Hem', '')} (Rộng: {d.get('Duong_truoc_nha_m', '')}m)\n"
+        f"- Giá: {gia_format}\n"
+        f"- Phân loại / Tag USP: {d.get('Phan_loai', '')}\n"
+        f"- Điểm nổi bật của căn nhà (nguồn USP chính): {d.get('Mo_ta_chi_tiet', '')}\n\n"
+        "LƯU Ý QUAN TRỌNG: Đọc kỹ 'Nội dung chính gốc', 'Phân loại / Tag USP' và 'Điểm nổi bật' — bắt buộc phản ánh các thông số kỹ thuật và ưu điểm vào Tiêu đề và Mô tả. BẮT BUỘC bắt đầu phần tiêu đề trực tiếp bằng tiền tố '" + tien_to + "' kết hợp liền mạch với Tên đường (TUYỆT ĐỐI không chèn thêm bất kỳ dấu gạch ngang, dấu chấm hay ký tự đặc biệt nào giữa tiền tố này và tên đường, Ví dụ: " + (f"'{tien_to}Trần Quang Diệu - ...'" if tien_to else "'Trần Quang Diệu - ...'") + ").\n"
+        "🚨 YÊU CẦU ĐỊNH DẠNG: Bắt buộc phải trả về kết quả dưới định dạng JSON sạch (respond in json format) theo đúng cấu trúc yêu cầu trong System Prompt."
+    )
+
+    payload = {
+        "model": "gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "temperature": 0.3,
+        "response_format": {"type": "json_object"}
+    }
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(f"{api_base}/chat/completions", json=payload, headers=headers, timeout=30)
+        res_json = response.json()
+
+        if response.status_code == 200:
+            ai_message = res_json["choices"][0]["message"]["content"]
+            add_log_message(f"[🤖 AI] Nhận kết quả từ OpenAI: {ai_message}")
+            ai_data = json.loads(ai_message)
+
+            tieu_de_raw = ""
+            for k in ["tieuDe", "tieu_de", "tieuDePublic", "tieu_de_public", "tieu de", "Tiêu đề", "tiêu đề"]:
+                if k in ai_data and ai_data[k]:
+                    tieu_de_raw = ai_data[k]
+                    break
+            if not tieu_de_raw:
+                tieu_de_raw = next((v for k, v in ai_data.items() if "tieu" in k.lower()), "")
+
+            mo_ta_raw = ""
+            for k in ["moTa", "mo_ta", "moTaPublic", "mo_ta_public", "mo ta", "Mô tả", "mô tả"]:
+                if k in ai_data and ai_data[k]:
+                    mo_ta_raw = ai_data[k]
+                    break
+            if not mo_ta_raw:
+                mo_ta_raw = next((v for k, v in ai_data.items() if "mo" in k.lower() and "phuong" not in k.lower()), "")
+
+            phuong_cu_raw = ""
+            for k in ["phuongCu", "phuong_cu", "phuong cu", "Phường cũ", "phường cũ"]:
+                if k in ai_data and ai_data[k]:
+                    phuong_cu_raw = ai_data[k]
+                    break
+            if not phuong_cu_raw:
+                phuong_cu_raw = next((v for k, v in ai_data.items() if "phuong" in k.lower() or "old" in k.lower()), "")
+
+            tieu_de_clean = trim_tieu_de_bds(tieu_de_raw)
+            return {
+                "tieu_de_public": tieu_de_clean,
+                "mo_ta_public": mo_ta_raw,
+                "phuong_cu": phuong_cu_raw
+            }
+        else:
+            err_msg = res_json.get("error", {}).get("message", "Lỗi không xác định từ OpenAI.")
+            add_log_message(f"[🤖 AUTO-AI ERROR] OpenAI API Error: {err_msg}. Dùng fallback format.")
+            return generate_fallback_content_python(d)
+    except Exception as e:
+        add_log_message(f"[🤖 AUTO-AI ERROR] Lỗi khi gửi OpenAI API: {str(e)}. Dùng fallback format.")
+        return generate_fallback_content_python(d)
+
+def run_ai_curation_for_crawled_listing(tk_id, data):
+    import sqlite3
+    import json
+    import pool_lego
+    run_ai = data.get("run_ai", False)
+    if run_ai:
+        try:
+            cfg = load_config()
+            conn_check = sqlite3.connect(DB_FILE, timeout=30.0)
+            conn_check.row_factory = sqlite3.Row
+            cursor_check = conn_check.cursor()
+            saved_row = cursor_check.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
+            conn_check.close()
+
+            if saved_row:
+                d_norm = normalize_listing_for_client(saved_row)
+                ai_result = generate_ai_curation_for_listing_backend(d_norm, cfg)
+                if ai_result:
+                    conn_update = sqlite3.connect(DB_FILE, timeout=30.0)
+                    cursor_update = conn_update.cursor()
+                    col_tieu_de = pool_lego.get_safe_col_name("Tiêu đề Public")
+                    col_mo_ta = pool_lego.get_safe_col_name("Mô tả Public")
+                    col_phuong_cu = pool_lego.get_safe_col_name("Phường cũ (AI)")
+
+                    cursor_update.execute(
+                        f"UPDATE {LISTINGS_TABLE} SET `{col_tieu_de}` = ?, `{col_mo_ta}` = ?, `{col_phuong_cu}` = ? WHERE tk_id = ?",
+                        (ai_result.get("tieu_de_public", ""), ai_result.get("mo_ta_public", ""), ai_result.get("phuong_cu", ""), tk_id)
+                    )
+                    conn_update.commit()
+                    conn_update.close()
+                    add_log_message(f"[⚡ AUTO-AI SUCCESS] Đã tự động tạo Tiêu đề Public và Mô tả bằng AI cho căn {tk_id}")
+        except Exception as e_ai:
+            add_log_message(f"[❌ AUTO-AI ERROR] Lỗi tự động tạo Curation AI cho căn {tk_id}: {str(e_ai)}")
+
 def execute_publish_listing(tk_id):
     """
     Wrapper chuyển tiếp cuộc gọi xuất bản tin lên Google Sheets bằng cách gọi pool_lego.publish_listing.
