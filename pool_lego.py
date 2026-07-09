@@ -1680,7 +1680,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             
                 try:
                     raw_imgs = []
-                    images_admin_json_str = d.get("images_admin_json")
+                    images_admin_json_str = d.get("images_admin_json") or d.get("Images_Admin_JSON")
                     if images_admin_json_str:
                         try:
                             parsed = json.loads(images_admin_json_str)
