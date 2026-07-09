@@ -2806,6 +2806,13 @@ def init_pool_images_rows(spreadsheet, tk_id, address, raw_images_list):
             if next_idx < 2:
                 next_idx = 2
             
+            # Tự động mở rộng số dòng nếu vượt quá giới hạn hiện tại của sheet
+            current_row_count = sheet.row_count
+            required_rows = next_idx + 1
+            if required_rows > current_row_count:
+                rows_to_add = max(100, required_rows - current_row_count)
+                sheet.add_rows(rows_to_add)
+            
             import gspread
             col_letter = gspread.utils.rowcol_to_a1(1, max(len(crawl_row), len(self_row))).replace("1", "")
             sheet.update(range_name=f"A{next_idx}:{col_letter}{next_idx+1}", values=[crawl_row, self_row], value_input_option='USER_ENTERED')
