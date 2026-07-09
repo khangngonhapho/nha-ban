@@ -1160,13 +1160,8 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                             continue
                         if m_type in ["parcel_map", "certificate_image"]:
                             sodo_images.append(m_url)
-                        elif m_type in ["property_image"]:
+                        elif m_type in ["property_image", "checkin_image"]:
                             property_images.append(m_url)
-
-                    if not property_images:
-                        for m in media:
-                            if m.get("type") == "checkin_image" and m.get("url"):
-                                property_images.append(m.get("url"))
 
                     # Channels and tags processing
                     channels_list = detail_data.get("channels") or []
