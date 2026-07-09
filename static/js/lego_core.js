@@ -1182,7 +1182,7 @@ const LegoState = {
               giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
               m: cv(r.c[16]),
               imgs: (() => {
-                const imagesPublicJsonStr = (r.c && r.c[48]) ? cv(r.c[48]) : "";
+                const imagesPublicJsonStr = (r.c && r.c[45]) ? cv(r.c[45]) : "";
                 if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
                   try {
                     const parsedPublic = JSON.parse(imagesPublicJsonStr);
