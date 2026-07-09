@@ -665,7 +665,8 @@
           if (!img || !img.url) return;
           const role = img.role || 'Nội thất';
           const originVal = img.origin === 'thienkhoi' ? 'crawl' : (img.origin === 'user' ? 'self' : (img.origin || 'crawl'));
-          const cardObj = { url: img.url, origin: originVal };
+          const isImgVisible = img.visible !== false && img.is_hidden !== 1;
+          const cardObj = { url: img.url, origin: originVal, visible: isImgVisible };
           if (role === 'Mặt tiền' || role === 'facade') {
             cards.push({ type: "facade", index: 0, ...cardObj });
           } else if (role === 'Bìa' || role === 'cover') {
@@ -786,7 +787,18 @@
         currentInteriorIndices = domPublicInterior.value;
         currentAlleyIndices = domPublicAlley.value;
       } else {
-        if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
+        if (p.curated_config && Array.isArray(p.curated_config.images)) {
+          const intIndices = [];
+          const alleyIndices = [];
+          cards.forEach(c => {
+            if (c.visible !== false) {
+              if (c.type === "interior") intIndices.push(c.index);
+              if (c.type === "alley") alleyIndices.push(c.index);
+            }
+          });
+          currentInteriorIndices = intIndices.join(',');
+          currentAlleyIndices = alleyIndices.join(',');
+        } else if (!p.isFromPoolOnly && p.pool_row_data && (p.pool_row_data[62] || p.pool_row_data[63])) {
           currentInteriorIndices = String(p.pool_row_data[62] || '').trim();
           currentAlleyIndices = String(p.pool_row_data[63] || '').trim();
         } else if (!p.isFromPoolOnly && p.pool_row_data) {
@@ -1487,6 +1499,14 @@
           isPublic = publicIntIndices.includes(String(c.index));
         } else if (c.type === "alley") {
           isPublic = publicAlleyIndices.includes(String(c.index));
+        }
+        
+        if (c.type === "interior" || c.type === "alley") {
+          c.visible = isPublic;
+        } else if (c.type === "facade" || c.type === "cover") {
+          c.visible = true;
+        } else if (c.type === "sodo") {
+          c.visible = false;
         }
         
         const orderInd = document.getElementById(`carouselOrderIndicator-${idx}`);
