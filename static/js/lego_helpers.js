@@ -28,7 +28,8 @@ window.formatPhone = function(phone) {
 
 // Tracking helper
 window.trackAction = function(action, details = "") {
-  if (window.isAdmin || !window.trackingCustomerName) return; // Không track Admin
+  const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+  if (window.isAdmin || isPreview || !window.trackingCustomerName) return; // Không track Admin hoặc Preview
   const TRACKING_URL = 'https://script.google.com/macros/s/AKfycbxsFXAQiX11LaSAslvefiv7ncWcHVgeyyd8Gi2pgRAneHhyZpE0AZKjP4rRrHD15oNN1g/exec';
   try {
     fetch(TRACKING_URL, {
