@@ -337,6 +337,83 @@
       text-overflow: ellipsis;
     }
 
+    /* Image Metadata Tags */
+    .img-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .role-tag[data-role="diagram"] {
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .role-tag[data-role="facade"] {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .role-tag[data-role="alley"] {
+      background: rgba(20, 184, 166, 0.15);
+      color: #2dd4bf;
+      border: 1px solid rgba(20, 184, 166, 0.3);
+    }
+
+    .role-tag[data-role="interior"] {
+      background: rgba(129, 140, 248, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(129, 140, 248, 0.3);
+    }
+
+    .role-tag {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .index-tag {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .origin-tag {
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-style: italic;
+      text-transform: none;
+    }
+
+    .visibility-tag.visible-tag {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .visibility-tag.hidden-tag {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
     .img-actions {
       display: flex;
       justify-content: space-between;
@@ -498,23 +575,55 @@
     function processUrls() {
       const input = document.getElementById('urlInput').value.trim();
       if (!input) {
-        alert('Vui lòng dán danh sách URL ảnh!');
+        alert('Vui lòng dán danh sách URL ảnh hoặc mã JSON!');
         return;
       }
 
-      // Split by whitespace/tabs/newlines
-      const tokens = input.split(/\s+/);
-      
-      // Parse valid URLs (starting with http)
-      imagesList = tokens
-        .map(u => u.trim())
-        .filter(u => u.startsWith('http://') || u.startsWith('https://'))
-        .map((url, idx) => ({
-          id: `img-${idx}-${Date.now()}`,
-          url: url,
-          filename: extractFilename(url),
-          selected: true
-        }));
+      // Check if it's JSON input
+      let parsedJson = null;
+      if (input.startsWith('[') || input.startsWith('{')) {
+        try {
+          parsedJson = JSON.parse(input);
+        } catch (e) {
+          // Fallback to text parsing if JSON parsing fails
+        }
+      }
+
+      if (parsedJson) {
+        const arr = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
+        imagesList = arr
+          .map((obj, idx) => {
+            const url = obj.r2_url || obj.image_url || obj.url;
+            if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
+              return null;
+            }
+            return {
+              id: `img-${idx}-${Date.now()}`,
+              url: url,
+              filename: extractFilename(url),
+              selected: true,
+              role: obj.role || '',
+              sequence_index: obj.sequence_index !== undefined ? obj.sequence_index : '',
+              origin: obj.origin || '',
+              is_hidden: obj.is_hidden !== undefined ? obj.is_hidden : ''
+            };
+          })
+          .filter(Boolean);
+      } else {
+        // Split by whitespace/tabs/newlines
+        const tokens = input.split(/\s+/);
+        
+        // Parse valid URLs (starting with http)
+        imagesList = tokens
+          .map(u => u.trim())
+          .filter(u => u.startsWith('http://') || u.startsWith('https://'))
+          .map((url, idx) => ({
+            id: `img-${idx}-${Date.now()}`,
+            url: url,
+            filename: extractFilename(url),
+            selected: true
+          }));
+      }
 
       if (imagesList.length === 0) {
         alert('Không tìm thấy URL hình ảnh hợp lệ nào!');
@@ -533,6 +642,24 @@
         card.className = `img-card ${img.selected ? 'selected' : ''}`;
         card.id = `card-${img.id}`;
 
+        // Construct metadata HTML if metadata exists
+        const hasMeta = img.role || img.sequence_index !== '' || img.origin || img.is_hidden !== '';
+        let metaHtml = '';
+        if (hasMeta) {
+          metaHtml = `
+            <div class="img-meta-tags">
+              ${img.role ? `<span class="meta-tag role-tag" data-role="${img.role}">${img.role}</span>` : ''}
+              ${img.sequence_index !== '' ? `<span class="meta-tag index-tag">Idx: ${img.sequence_index}</span>` : ''}
+              ${img.origin ? `<span class="meta-tag origin-tag">${img.origin}</span>` : ''}
+              ${img.is_hidden !== '' ? `
+                <span class="meta-tag visibility-tag ${img.is_hidden === 1 ? 'hidden-tag' : 'visible-tag'}">
+                  ${img.is_hidden === 1 ? 'Ẩn (Hidden)' : 'Hiện (Show)'}
+                </span>
+              ` : ''}
+            </div>
+          `;
+        }
+
         card.innerHTML = `
           <div class="card-checkbox">
             <label class="checkbox-container" style="gap: 0;">
@@ -548,6 +675,7 @@
           
           <div class="img-info">
             <div class="img-name" title="${img.filename}">${img.filename}</div>
+            ${metaHtml}
             <div class="img-actions">
               <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;" onclick="downloadSingle('${img.url}', '${img.filename}')">
                 <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
