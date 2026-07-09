@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trình Xem & Tải Ảnh Hàng Loạt - Khang Ngô Nhà Phố</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- PWA Integration -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tải Ảnh BDS">
+  <link rel="apple-touch-icon" href="/static/img/icon-192.png">
+  
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.7);
+      --card-hover: rgba(30, 41, 69, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(56, 189, 248, 0.4);
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --accent: #f43f5e;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px 16px;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.03) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #fff 0%, #cbd5e1 50%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      margin-bottom: 24px;
+      transition: border-color 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      padding: 16px;
+      font-family: monospace;
+      font-size: 14px;
+      resize: vertical;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn:disabled {
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: var(--text-muted) !important;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Toolbar Section */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-stats {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .toolbar-stats span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Checkbox Styles */
+    .checkbox-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .custom-checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-hover);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .checkbox-container input {
+      display: none;
+    }
+
+    .checkbox-container input:checked + .custom-checkbox {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-container input:checked + .custom-checkbox::after {
+      content: '✓';
+      color: #000;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    /* Grid Layout */
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 8px;
+    }
+
+    .img-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .img-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-hover);
+      box-shadow: 0 12px 24px rgba(56, 189, 248, 0.08);
+      background: var(--card-hover);
+    }
+
+    .img-card.selected {
+      border-color: var(--primary);
+    }
+
+    .img-preview-container {
+      width: 100%;
+      height: 200px;
+      position: relative;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .img-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .img-card:hover .img-preview {
+      transform: scale(1.05);
+    }
+
+    /* Card Checkbox Overlay */
+    .card-checkbox {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 10;
+      background: rgba(11, 15, 25, 0.7);
+      padding: 6px;
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .img-index {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(11, 15, 25, 0.7);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 10;
+    }
+
+    .img-info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+    }
+
+    .img-name {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Image Metadata Tags */
+    .img-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .role-tag[data-role="diagram"] {
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .role-tag[data-role="facade"] {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .role-tag[data-role="alley"] {
+      background: rgba(20, 184, 166, 0.15);
+      color: #2dd4bf;
+      border: 1px solid rgba(20, 184, 166, 0.3);
+    }
+
+    .role-tag[data-role="interior"] {
+      background: rgba(129, 140, 248, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(129, 140, 248, 0.3);
+    }
+
+    .role-tag {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .index-tag {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .origin-tag {
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-style: italic;
+      text-transform: none;
+    }
+
+    .visibility-tag.visible-tag {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .visibility-tag.hidden-tag {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .img-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    /* Progress and Loading overlays */
+    .download-status-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      display: none;
+    }
+
+    .download-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      transition: width 0.2s ease;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border-left-color: var(--primary);
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Instructions / Guide Alert */
+    .alert-guide {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #93c5fd;
+      font-size: 14px;
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .alert-guide svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--primary);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 640px) {
+      .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .toolbar-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="download-status-bar" id="progressBarContainer">
+    <div class="download-progress-fill" id="progressBar"></div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>BDS Khang Ngô</h1>
+      <p>Trình xem & tải hình ảnh hàng loạt gốc chất lượng cao</p>
+    </header>
+
+    <!-- Paste area -->
+    <div class="card">
+      <div class="input-group">
+        <label class="input-label" for="urlInput">Dán danh sách URL hình ảnh vào đây:</label>
+        <textarea id="urlInput" placeholder="Ví dụ:&#10;https://pub-.../img_1.jpg   https://pub-.../img_2.jpg&#10;https://pub-.../img_3.jpg   https://pub-.../img_4.jpg"></textarea>
+        <div style="display: flex; gap: 12px; margin-top: 4px;">
+          <button class="btn" id="parseBtn" onclick="processUrls()">
+            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z"/>
+            </svg>
+            Hiển thị ảnh
+          </button>
+          <button class="btn btn-secondary" onclick="clearInput()">Xóa</button>
+        </div>
+      </div>
+      
+      <div class="alert-guide">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-.04.022c-.29.176-.417.509-.35.833.042.203.09.419.121.627M12 9.75V9m0 12.75a9.75 9.75 0 110-19.5 9.75 9.75 0 010 19.5z" />
+        </svg>
+        <div>
+          <strong>Lưu ý:</strong> Hỗ trợ dán danh sách URL phân cách bằng phím Tab, khoảng trắng hoặc ngắt dòng. Hệ thống sẽ giữ nguyên thứ tự dán và không tự động loại bỏ các liên kết trùng lặp. Khi tải nhiều ảnh, vui lòng bấm <strong>"Cho phép"</strong> nếu trình duyệt yêu cầu quyền tải về nhiều tệp cùng lúc.
+        </div>
+      </div>
+    </div>
+
+    <!-- Viewer & Toolbar (Hidden until loaded) -->
+    <div id="viewerContainer" style="display: none;">
+      <div class="toolbar">
+        <div class="toolbar-stats" id="statsText">
+          Đang hiển thị <span>0</span> ảnh. Đã chọn: <span id="checkedCount">0</span> / <span id="totalCount">0</span>
+        </div>
+        
+        <div class="toolbar-actions">
+          <label class="checkbox-container">
+            <input type="checkbox" id="checkAllToggle" checked onchange="toggleAll(this.checked)">
+            <span class="custom-checkbox"></span>
+            Chọn tất cả
+          </label>
+          
+          <button class="btn" id="downloadBtn" onclick="downloadSelected()">
+            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+            </svg>
+            Tải ảnh đã chọn
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid of images -->
+      <div class="images-grid" id="imagesGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    let imagesList = [];
+
+    function clearInput() {
+      document.getElementById('urlInput').value = '';
+    }
+
+    function extractFilename(url) {
+      try {
+        const urlObj = new URL(url);
+        const pathname = urlObj.pathname;
+        const lastPart = pathname.substring(pathname.lastIndexOf('/') + 1);
+        return lastPart ? decodeURIComponent(lastPart) : 'image.jpg';
+      } catch (e) {
+        return 'image.jpg';
+      }
+    }
+
+    function sanitizeJsonString(str) {
+      let cleaned = str.trim();
+      
+      // Strip markdown code block backticks if present
+      cleaned = cleaned.replace(/^```(json)?/i, '').replace(/```$/, '').trim();
+      
+      // Strip leading and trailing double quotes if they wrap a JSON array or object
+      if (cleaned.startsWith('"')) {
+        let temp = cleaned.substring(1);
+        if (temp.endsWith('"')) {
+          temp = temp.substring(0, temp.length - 1);
+        }
+        temp = temp.trim();
+        if (temp.startsWith('[') || temp.startsWith('{')) {
+          cleaned = temp;
+        }
+      }
+
+      if (cleaned.startsWith('[') || cleaned.startsWith('{')) {
+        try {
+          return JSON.parse(cleaned);
+        } catch (e) {
+          try {
+            // Replace single quotes and curly quotes with double quotes
+            let normalized = cleaned
+              .replace(/'/g, '"')
+              .replace(/“/g, '"')
+              .replace(/”/g, '"');
+            return JSON.parse(normalized);
+          } catch (err2) {
+            return null;
+          }
+        }
+      }
+      return null;
+    }
+
+    function processUrls() {
+      const input = document.getElementById('urlInput').value.trim();
+      if (!input) {
+        alert('Vui lòng dán danh sách URL ảnh hoặc mã JSON!');
+        return;
+      }
+
+      // Check if it's JSON input
+      const parsedJson = sanitizeJsonString(input);
+
+      if (parsedJson) {
+        const arr = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
+        imagesList = arr
+          .map((obj, idx) => {
+            if (!obj) return null;
+            if (typeof obj === 'string') {
+              if (obj.startsWith('http://') || obj.startsWith('https://')) {
+                return {
+                  id: `img-${idx}-${Date.now()}`,
+                  url: obj,
+                  filename: extractFilename(obj),
+                  selected: true
+                };
+              }
+              return null;
+            }
+            if (typeof obj !== 'object') return null;
+            const url = obj.r2_url || obj.image_url || obj.url;
+            if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
+              return null;
+            }
+            return {
+              id: `img-${idx}-${Date.now()}`,
+              url: url,
+              filename: extractFilename(url),
+              selected: true,
+              role: obj.role || '',
+              sequence_index: obj.sequence_index !== undefined ? obj.sequence_index : '',
+              origin: obj.origin || '',
+              is_hidden: obj.is_hidden !== undefined ? obj.is_hidden : ''
+            };
+          })
+          .filter(Boolean);
+      } else {
+        // Fallback: Smart Regex URL Extractor
+        const urlRegex = /(https?:\/\/[^\s"'`,{}()\[\]\\]+)/g;
+        const matches = input.match(urlRegex) || [];
+        
+        imagesList = matches.map((url, idx) => ({
+          id: `img-${idx}-${Date.now()}`,
+          url: url,
+          filename: extractFilename(url),
+          selected: true
+        }));
+      }
+
+      if (imagesList.length === 0) {
+        alert('Không tìm thấy URL hình ảnh hợp lệ nào!');
+        return;
+      }
+
+      renderGrid();
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('imagesGrid');
+      grid.innerHTML = '';
+
+      imagesList.forEach((img, index) => {
+        const card = document.createElement('div');
+        card.className = `img-card ${img.selected ? 'selected' : ''}`;
+        card.id = `card-${img.id}`;
+
+        // Construct metadata HTML if metadata exists
+        const hasMeta = (img.role && img.role !== '') || 
+                        (img.sequence_index !== undefined && img.sequence_index !== '') || 
+                        (img.origin && img.origin !== '') || 
+                        (img.is_hidden !== undefined && img.is_hidden !== '');
+        let metaHtml = '';
+        if (hasMeta) {
+          metaHtml = `
+            <div class="img-meta-tags">
+              ${img.role ? `<span class="meta-tag role-tag" data-role="${img.role}">${img.role}</span>` : ''}
+              ${img.sequence_index !== undefined && img.sequence_index !== '' ? `<span class="meta-tag index-tag">Idx: ${img.sequence_index}</span>` : ''}
+              ${img.origin ? `<span class="meta-tag origin-tag">${img.origin}</span>` : ''}
+              ${img.is_hidden !== undefined && img.is_hidden !== '' ? `
+                <span class="meta-tag visibility-tag ${img.is_hidden === 1 ? 'hidden-tag' : 'visible-tag'}">
+                  ${img.is_hidden === 1 ? 'Ẩn (Hidden)' : 'Hiện (Show)'}
+                </span>
+              ` : ''}
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="card-checkbox">
+            <label class="checkbox-container" style="gap: 0;">
+              <input type="checkbox" id="check-${img.id}" ${img.selected ? 'checked' : ''} onchange="toggleCard('${img.id}', this.checked)">
+              <span class="custom-checkbox"></span>
+            </label>
+          </div>
+          <span class="img-index">#${index + 1}</span>
+          
+          <div class="img-preview-container">
+            <img class="img-preview" src="${img.url}" alt="Preview #${index + 1}" onerror="handleImageError(this)" loading="lazy">
+          </div>
+          
+          <div class="img-info">
+            <div class="img-name" title="${img.filename}">${img.filename}</div>
+            ${metaHtml}
+            <div class="img-actions">
+              <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;" onclick="downloadSingle('${img.url}', '${img.filename}')">
+                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Tải về
+              </button>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      // Show viewer container
+      document.getElementById('viewerContainer').style.display = 'block';
+      document.getElementById('checkAllToggle').checked = true;
+      updateStats();
+
+      // Scroll smoothly to viewer
+      document.getElementById('viewerContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function handleImageError(imgElem) {
+      imgElem.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23f43f5e" stroke-width="1.5"><rect width="20" height="20" x="2" y="2" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+      imgElem.style.opacity = '0.5';
+    }
+
+    function toggleCard(id, checked) {
+      const img = imagesList.find(i => i.id === id);
+      if (img) {
+        img.selected = checked;
+        const card = document.getElementById(`card-${id}`);
+        if (checked) {
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      }
+      
+      // Update check all state
+      const allSelected = imagesList.every(i => i.selected);
+      document.getElementById('checkAllToggle').checked = allSelected;
+      
+      updateStats();
+    }
+
+    function toggleAll(checked) {
+      imagesList.forEach(img => {
+        img.selected = checked;
+        const checkEl = document.getElementById(`check-${img.id}`);
+        if (checkEl) checkEl.checked = checked;
+        
+        const card = document.getElementById(`card-${img.id}`);
+        if (card) {
+          if (checked) card.classList.add('selected');
+          else card.classList.remove('selected');
+        }
+      });
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = imagesList.length;
+      const checked = imagesList.filter(i => i.selected).length;
+      
+      document.getElementById('totalCount').innerText = total;
+      document.getElementById('checkedCount').innerText = checked;
+      
+      const statsText = document.getElementById('statsText');
+      statsText.innerHTML = `Đang hiển thị <span>${total}</span> ảnh. Đã chọn: <span>${checked}</span> / <span>${total}</span>`;
+      
+      // Disable download button if none selected
+      document.getElementById('downloadBtn').disabled = (checked === 0);
+    }
+
+    function downloadSingle(url, filename) {
+      // Build the proxy download URL
+      const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
+      
+      // Trigger download using iframe or a tag click
+      const a = document.createElement('a');
+      a.href = proxyUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    async function downloadSelected() {
+      const selectedImages = imagesList.filter(i => i.selected);
+      if (selectedImages.length === 0) return;
+
+      const parseBtn = document.getElementById('parseBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const checkAllToggle = document.getElementById('checkAllToggle');
+      const progressBarContainer = document.getElementById('progressBarContainer');
+      const progressBar = document.getElementById('progressBar');
+
+      // Lock buttons
+      downloadBtn.disabled = true;
+      parseBtn.disabled = true;
+      checkAllToggle.disabled = true;
+      
+      progressBarContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+
+      const originalBtnHtml = downloadBtn.innerHTML;
+      
+      for (let i = 0; i < selectedImages.length; i++) {
+        const img = selectedImages[i];
+        
+        // Update UI status
+        downloadBtn.innerHTML = `<span class="spinner"></span> Đang tải ${i + 1}/${selectedImages.length}...`;
+        
+        // Progress bar calculation
+        const percent = Math.round(((i + 1) / selectedImages.length) * 100);
+        progressBar.style.width = `${percent}%`;
+
+        // Trigger download
+        downloadSingle(img.url, img.filename);
+
+        // Sleep to avoid browser pop-up blocking
+        if (i < selectedImages.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      }
+
+      // Finish state
+      downloadBtn.innerHTML = `✓ Hoàn thành!`;
+      progressBar.style.width = '100%';
+      
+      setTimeout(() => {
+        downloadBtn.innerHTML = originalBtnHtml;
+        downloadBtn.disabled = false;
+        parseBtn.disabled = false;
+        checkAllToggle.disabled = false;
+        progressBarContainer.style.display = 'none';
+        progressBar.style.width = '0%';
+      }, 2000);
+    }
+  </script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => {
+            console.log('ServiceWorker registered:', reg.scope);
+            reg.onupdatefound = () => {
+              const installingWorker = reg.installing;
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    console.log('New update installed. Reloading...');
+                    window.location.reload();
+                  }
+                }
+              };
+            };
+          })
+          .catch(err => console.log('ServiceWorker registration failed:', err));
+      });
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+    }
+  </script>
+</body>
+</html>

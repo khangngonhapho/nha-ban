@@ -873,6 +873,79 @@ module.exports = async (req, res) => {
     }
   }
 
+  // Endpoint proxy download images to avoid CORS and force attachment download
+  if (pathname === '/api/proxy-download') {
+    const targetUrl = req.query.url;
+    let filename = req.query.filename || 'image.jpg';
+
+    if (!targetUrl) {
+      return res.status(400).send('Missing url parameter');
+    }
+
+    try {
+      const response = await fetch(targetUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch remote image: status ${response.status}`);
+      }
+
+      const contentType = response.headers.get('content-type') || 'application/octet-stream';
+      const buffer = await response.arrayBuffer();
+
+      res.setHeader('Content-Type', contentType);
+      const cleanFilename = String(filename).replace(/["\\]/g, '');
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanFilename)}"`);
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+      return res.status(200).send(Buffer.from(buffer));
+    } catch (err) {
+      console.error('Error in proxy-download:', err);
+    }
+  }
+
+  // Serve manifest.json for PWA
+  if (pathname === '/manifest.json') {
+    let manifestHtml = '';
+    const manifestPaths = [
+      path.join(__dirname, '..', 'manifest.json'),
+      path.join(process.cwd(), 'manifest.json'),
+      path.join(__dirname, 'manifest.json')
+    ];
+    for (const p of manifestPaths) {
+      try {
+        if (fs.existsSync(p)) {
+          manifestHtml = fs.readFileSync(p, 'utf8');
+          break;
+        }
+      } catch (err) {}
+    }
+    if (!manifestHtml) {
+      return res.status(404).send('manifest.json not found');
+    }
+    return res.status(200).setHeader('Content-Type', 'application/json; charset=utf-8').send(manifestHtml);
+  }
+
+  // Serve sw.js for PWA
+  if (pathname === '/sw.js') {
+    let swJs = '';
+    const swPaths = [
+      path.join(__dirname, '..', 'sw.js'),
+      path.join(process.cwd(), 'sw.js'),
+      path.join(__dirname, 'sw.js')
+    ];
+    for (const p of swPaths) {
+      try {
+        if (fs.existsSync(p)) {
+          swJs = fs.readFileSync(p, 'utf8');
+          break;
+        }
+      } catch (err) {}
+    }
+    if (!swJs) {
+      return res.status(404).send('sw.js not found');
+    }
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return res.status(200).setHeader('Content-Type', 'application/javascript; charset=utf-8').send(swJs);
+  }
+
   // 4. Endpoint config an toàn cho client (US-100)
   if (pathname === '/api/config') {
     if (req.method !== 'GET') {
@@ -974,6 +1047,28 @@ module.exports = async (req, res) => {
       return res.status(404).send('canvas.html not found');
     }
     return res.status(200).setHeader('Content-Type', 'text/html; charset=utf-8').send(canvasHtml);
+  }
+
+  // Serve view-images.html for bulk image viewer tool
+  if (pathname === '/view-images' || pathname === '/view-images.html') {
+    let viewImagesHtml = '';
+    const viewImagesPaths = [
+      path.join(__dirname, '..', 'view-images.html'),
+      path.join(process.cwd(), 'view-images.html'),
+      path.join(__dirname, 'view-images.html')
+    ];
+    for (const p of viewImagesPaths) {
+      try {
+        if (fs.existsSync(p)) {
+          viewImagesHtml = fs.readFileSync(p, 'utf8');
+          break;
+        }
+      } catch (err) {}
+    }
+    if (!viewImagesHtml) {
+      return res.status(404).send('view-images.html not found');
+    }
+    return res.status(200).setHeader('Content-Type', 'text/html; charset=utf-8').send(viewImagesHtml);
   }
 
   let html = '';
