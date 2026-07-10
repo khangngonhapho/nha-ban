@@ -133,7 +133,7 @@
     </style>
     <script>
         // Resize window to control panel size on startup
-        window.resizeTo(480, 680);
+        window.resizeTo(480, 750);
 
         function runScript(filename) {
             try {
@@ -189,6 +189,11 @@
         <div class="group-title">4. Quản trị tệp tin sao lưu</div>
         <button class="btn btn-folder" onclick="openFolder('d:\\LHTBrain\\BDS_Backups')">
             📂 Mở thư mục sao lưu CSDL (Backups)
+        </button>
+
+        <div class="group-title">5. Quản trị Git &amp; Xuất Bản</div>
+        <button class="btn" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);" onclick="runScript('UP_PRODUCTION.bat')">
+            🚀 Xuất bản code lên Production (Deploy Live)
         </button>
     </div>
 
