@@ -97,8 +97,9 @@ window.LegoRenderAdmin = {
               ${p.raw_dt_dau_chu ? `<a href="tel:${window.formatPhone(p.raw_dt_dau_chu)}" onclick="event.stopPropagation();" style="color: var(--red); text-decoration: underline; font-weight: 800;">${window.formatPhone(p.raw_dt_dau_chu)}</a>` : 'Chưa có SĐT'}
             </div>
             ${(displayListed || displayUpdated) ? `
-              <div style="font-size: 11px; margin-top: 4px; color: #7f8c8d; display: flex; flex-direction: column; gap: 2px; line-height: 1.35; font-weight: 500;">
+              <div style="font-size: 11px; margin-top: 4px; color: #7f8c8d; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.35; font-weight: 500;">
                 ${displayListed ? `<span>📅 Niêm yết: ${displayListed}</span>` : ''}
+                ${(displayListed && displayUpdated) ? `<span style="opacity: 0.5;">·</span>` : ''}
                 ${displayUpdated ? `<span>🔄 Cập nhật: ${displayUpdated}</span>` : ''}
               </div>
             ` : ''}
