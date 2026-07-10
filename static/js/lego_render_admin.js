@@ -24,17 +24,22 @@ window.LegoRenderAdmin = {
     
     // Choose cover/thumbnail URL prioritizing image mat tien
     let thumbUrl = '';
+    
+    // Prioritize facadeImg from curated_config if available
+    let facadeImg = '';
+    if (p.curated_config && p.curated_config.images) {
+      const found = p.curated_config.images.find(img => img.role === 'Mặt tiền' || img.role === 'facade');
+      if (found) facadeImg = found.url;
+    }
+    
     const effectiveImgMatTien = (curatedListing && curatedListing.img_mat_tien) ? curatedListing.img_mat_tien : p.img_mat_tien;
-    if (effectiveImgMatTien) {
+    
+    if (facadeImg) {
+      thumbUrl = facadeImg;
+    } else if (effectiveImgMatTien) {
       thumbUrl = effectiveImgMatTien;
     } else {
-      // Dò tìm hình có role 'Mặt tiền' hoặc 'facade' trong curated_config
-      let facadeImg = '';
-      if (p.curated_config && p.curated_config.images) {
-        const found = p.curated_config.images.find(img => img.role === 'Mặt tiền' || img.role === 'facade');
-        if (found) facadeImg = found.url;
-      }
-      thumbUrl = facadeImg || cleanImgUrls[0] || imgUrls[0];
+      thumbUrl = cleanImgUrls[0] || imgUrls[0];
     }
     const thumb = thumbUrl ? window.fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
     

@@ -928,19 +928,12 @@
       const normFinalImages = finalImages.filter(Boolean).map(url => normalizeImgUrl(url));
 
       const getCardSortWeight = (c) => {
-        const normUrl = normalizeImgUrl(c.url);
-        if (!normUrl) return 99;
-
-        if (isSodoUrl(c.url)) return 1;
-
-        if (normMatTien && normUrl === normMatTien) return 2;
-
-        const publicIdx = normFinalImages.indexOf(normUrl);
-        if (publicIdx !== -1) {
-          return 3 + publicIdx / 100;
+        const cleanUrl = c.url.split('?')[0];
+        const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+        if (match) {
+          return parseInt(match[1], 10);
         }
-
-        return 5;
+        return 9999;
       };
 
       renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));

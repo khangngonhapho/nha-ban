@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bds-khangngo-pwa-v11';
+const CACHE_NAME = 'bds-khangngo-pwa-v12';
 const ASSETS = [
   '/view-images',
   '/static/img/icon-192.png',

@@ -1534,22 +1534,30 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 # Trích xuất danh sách R2 URLs mới cào
                 new_r2_urls = list(new_images_mapping.values())
                 
-                # Tìm ảnh property_image đầu tiên trong new_images_mapping làm ảnh đại diện Admin
+                # Tìm ảnh property_image đầu tiên hoặc ảnh Mặt tiền đã biên tập trước đó trong new_images_mapping làm ảnh đại diện Admin
                 first_property_r2 = ""
-                stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
+                curated_facade_url = ""
+                for img in old_images:
+                    if isinstance(img, dict) and img.get("role") in ["Mặt tiền", "facade"]:
+                        curated_facade_url = img.get("url")
+                        break
                 
-                for img_url in raw_images_tk:
-                    stripped_img = img_url.split('?')[0] if img_url else ""
-                    is_diag = (stripped_img in stripped_sodo) or \
-                              (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
-                              (original_sodo2 and stripped_img == original_sodo2.split('?')[0]) or \
-                              (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
-                              (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
-                              (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
-                    if not is_diag:
-                        if img_url in new_images_mapping:
-                            first_property_r2 = new_images_mapping[img_url]
-                            break
+                if curated_facade_url and curated_facade_url in new_r2_urls:
+                    first_property_r2 = curated_facade_url
+                else:
+                    stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
+                    for img_url in raw_images_tk:
+                        stripped_img = img_url.split('?')[0] if img_url else ""
+                        is_diag = (stripped_img in stripped_sodo) or \
+                                  (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
+                                  (original_sodo2 and stripped_img == original_sodo2.split('?')[0]) or \
+                                  (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
+                                  (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
+                                  (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
+                        if not is_diag:
+                            if img_url in new_images_mapping:
+                                first_property_r2 = new_images_mapping[img_url]
+                                break
 
                 new_images_list = []
                 added_urls = set()
@@ -1646,6 +1654,16 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                                 "visible": visible
                             })
                             added_urls.add(r2_url)
+                
+                # Sắp xếp new_images_list theo thứ tự của chỉ số số ở đuôi link ảnh để giữ đúng thứ tự gốc
+                def get_img_sort_key(img):
+                    url = img.get("url") or ""
+                    url_clean = url.split('?')[0]
+                    match = re.search(r'_(\d+)\.[a-zA-Z0-9]+$', url_clean)
+                    if match:
+                        return int(match.group(1))
+                    return 9999
+                new_images_list.sort(key=get_img_sort_key)
                 
                 new_curated_config = {
                     "images": new_images_list,
