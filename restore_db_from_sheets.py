@@ -12,22 +12,247 @@ from manager import (
 )
 from pool_lego import init_db, POOL_HEADERS
 
+def backup_master_database(master_db_path):
+    """Sao lưu CSDL Gốc trước khi hợp nhất và xoay vòng lưu tối đa 10 ngày"""
+    try:
+        if not os.path.exists(master_db_path):
+            return
+        import shutil
+        backup_dir = "d:/LHTBrain/BDS_Backups"
+        os.makedirs(backup_dir, exist_ok=True)
+        
+        db_basename = os.path.splitext(os.path.basename(master_db_path))[0]
+        # Quét các bản backup tương ứng với CSDL này
+        backups = sorted(
+            [os.path.join(backup_dir, f) for f in os.listdir(backup_dir) if f.startswith(f"{db_basename}_backup_")],
+            key=os.path.getmtime
+        )
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_name = f"{db_basename}_backup_{timestamp}.db"
+        backup_path = os.path.join(backup_dir, backup_name)
+        
+        shutil.copy2(master_db_path, backup_path)
+        print(f"  - [Backup] Đã sao lưu CSDL Gốc thành công: {backup_name}")
+        
+        backups.append(backup_path)
+        
+        # Giữ tối đa 10 bản sao lưu
+        while len(backups) > 10:
+            try:
+                os.remove(backups.pop(0))
+            except Exception:
+                pass
+    except Exception as e:
+        print(f"  - [⚠️ WARNING] Không thể sao lưu CSDL Gốc: {str(e)}")
+
+def merge_temp_to_master(temp_db_path, master_db_path):
+    print("\n[+] Đang hợp nhất dữ liệu từ CSDL Tạm vào CSDL Gốc...")
+    if not os.path.exists(temp_db_path):
+        print("[-] Không tìm thấy CSDL Tạm để hợp nhất.")
+        return
+        
+    # Nếu CSDL Gốc chưa tồn tại (chưa bao giờ chạy), ta chỉ cần copy tệp temp sang master
+    if not os.path.exists(master_db_path):
+        import shutil
+        shutil.copy2(temp_db_path, master_db_path)
+        print("  - [Master] CSDL Gốc chưa tồn tại. Đã tạo mới CSDL Gốc bằng CSDL Tạm.")
+        return
+
+    # Kết nối CSDL Gốc
+    conn = sqlite3.connect(master_db_path, timeout=60.0)
+    cursor = conn.cursor()
+    
+    # ATTACH CSDL Tạm
+    cursor.execute("ATTACH DATABASE ? AS temp_db", (temp_db_path,))
+    
+    # 1. Lấy danh sách cột của bảng listings (loại bỏ cột 'id' tự tăng để tránh xung đột UNIQUE)
+    cursor.execute("PRAGMA table_info(listings)")
+    cols = [r[1] for r in cursor.fetchall() if r[1] != 'id']
+    
+    # 2. Truy vấn dữ liệu từ temp_db.listings
+    sql_select = f"SELECT {', '.join([f'`{c}`' for c in cols])} FROM temp_db.listings"
+    temp_rows = cursor.execute(sql_select).fetchall()
+    print(f"  - Đang hợp nhất {len(temp_rows)} căn từ CSDL Tạm vào CSDL Gốc...")
+    
+    # Tạo map cột để dễ truy xuất
+    col_to_idx = {c: i for i, c in enumerate(cols)}
+    
+    inserted_count = 0
+    updated_count = 0
+    
+    for row in temp_rows:
+        tk_id = row[col_to_idx["tk_id"]]
+        if not tk_id:
+            continue
+            
+        # Lấy thông tin bản ghi hiện có trong Master
+        existing = cursor.execute(
+            "SELECT status, raw_images_tk_json, raw_drive_images_json, Images_Admin_JSON, images_public_json, curated_config_json, raw_json_full, raw_sodo_tk_json FROM listings WHERE tk_id = ?",
+            (tk_id,)
+        ).fetchone()
+        
+        if existing:
+            # Bản ghi đã tồn tại -> CẬP NHẬT (UPDATE)
+            existing_dict = {
+                "status": existing[0],
+                "raw_images_tk_json": existing[1],
+                "raw_drive_images_json": existing[2],
+                "Images_Admin_JSON": existing[3],
+                "images_public_json": existing[4],
+                "curated_config_json": existing[5],
+                "raw_json_full": existing[6],
+                "raw_sodo_tk_json": existing[7]
+            }
+            
+            update_parts = []
+            update_vals = []
+            
+            for col in cols:
+                if col in ["id", "tk_id"]:
+                    continue
+                    
+                val = row[col_to_idx[col]]
+                
+                # BẢO VỆ DỮ LIỆU CỤC BỘ: Nếu trường này ở CSDL Tạm trống, và CSDL Gốc có giá trị
+                if col in ["raw_json_full", "raw_images_tk_json", "raw_drive_images_json", "raw_sodo_tk_json", "Images_Admin_JSON", "images_admin_json", "images_public_json", "curated_config_json"]:
+                    master_key = col
+                    if col == "images_admin_json":
+                        master_key = "Images_Admin_JSON"
+                    master_val = existing_dict.get(master_key) or ""
+                    
+                    is_empty_temp = not val or val == "[]" or val == '{"images": [], "Mã_Khang_Ngô__ID_": ""}' or val == "{}"
+                    if master_val and is_empty_temp:
+                        val = master_val
+                        
+                update_parts.append(f"`{col}` = ?")
+                update_vals.append(val)
+                
+            update_vals.append(tk_id)
+            update_sql = f"UPDATE listings SET {', '.join(update_parts)} WHERE tk_id = ?"
+            cursor.execute(update_sql, update_vals)
+            updated_count += 1
+            
+            # Cập nhật listings_images cho căn này
+            temp_admin_val = row[col_to_idx.get("Images_Admin_JSON") or col_to_idx.get("images_admin_json") or 0]
+            is_temp_admin_empty = not temp_admin_val or temp_admin_val == "[]"
+            
+            if not is_temp_admin_empty:
+                cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (tk_id,))
+                cursor.execute("""
+                    INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
+                    SELECT tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden
+                    FROM temp_db.listings_images WHERE tk_id = ?
+                """, (tk_id,))
+        else:
+            # Bản ghi chưa tồn tại -> THÊM MỚI (INSERT)
+            placeholders = ", ".join(["?"] * len(cols))
+            insert_vals = [row[col_to_idx[col]] for col in cols]
+            insert_sql = f"INSERT INTO listings ({', '.join([f'`{c}`' for c in cols])}) VALUES ({placeholders})"
+            cursor.execute(insert_sql, insert_vals)
+            inserted_count += 1
+            
+            # Sao chép listings_images từ CSDL Tạm cho căn mới
+            cursor.execute("""
+                INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
+                SELECT tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden
+                FROM temp_db.listings_images WHERE tk_id = ?
+            """, (tk_id,))
+            
+    # 3. Soft Delete: Đánh dấu status = 'sheet_deleted' cho các căn có trong Master nhưng KHÔNG có trong Temp
+    del_rows = cursor.execute("SELECT tk_id FROM listings WHERE tk_id NOT IN (SELECT tk_id FROM temp_db.listings)").fetchall()
+    soft_deleted_count = 0
+    for r in del_rows:
+        del_tk_id = r[0]
+        current_status_row = cursor.execute("SELECT status FROM listings WHERE tk_id = ?", (del_tk_id,)).fetchone()
+        if current_status_row and current_status_row[0] != "sheet_deleted":
+            cursor.execute("UPDATE listings SET status = 'sheet_deleted' WHERE tk_id = ?", (del_tk_id,))
+            soft_deleted_count += 1
+            
+    if soft_deleted_count > 0:
+        print(f"  - [Soft Delete] Đã chuyển trạng thái sang 'sheet_deleted' cho {soft_deleted_count} căn bị xóa trên Sheets.")
+    
+    conn.commit()
+    # DETACH CSDL Tạm
+    cursor.execute("DETACH DATABASE temp_db")
+    conn.close()
+    
+    print(f"  - [Hoàn tất hợp nhất] Đã cập nhật {updated_count} căn, thêm mới {inserted_count} căn vào CSDL Gốc.")
+
 def restore_database():
     print("======================================================================")
     print("🔄 BẮT ĐẦU KHÔI PHỤC DATABASE SQLITE CỤC BỘ TỪ GOOGLE SHEETS POOL")
     print("👉 Hợp nhất dọn dẹp đôn ảnh nhà thật chuẩn US-055!")
     print("======================================================================")
     
-    # 1. Khởi tạo database SQLite sạch sẽ với đầy đủ cấu hình cột
-    print("[1/4] Khởi tạo cấu trúc database SQLite rỗng...")
+    # 1. Đọc hình ảnh hiện tại từ SQLite cục bộ trước khi xóa để làm bộ nhớ đệm chống mất ảnh (US-055 Guard)
+    existing_images = {}
     if os.path.exists(DB_FILE):
         try:
-            os.remove(DB_FILE)
-            print("  - Đã dọn dẹp file SQLite 0KB cũ.")
-        except Exception as e:
-            print(f"  - Lỗi dọn dẹp file SQLite: {str(e)}")
+            conn_old = sqlite3.connect(DB_FILE)
+            cursor_old = conn_old.cursor()
             
-    init_db()
+            # Kiểm tra xem bảng listings có tồn tại không
+            cursor_old.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='listings'")
+            table_exists = cursor_old.fetchone()
+            
+            if table_exists:
+                # Kiểm tra các cột trong bảng listings
+                cursor_old.execute("PRAGMA table_info(listings)")
+                cols_old = {r[1] for r in cursor_old.fetchall()}
+                
+                req_cols = ["tk_id", "curated_config_json", "raw_images_tk_json", "raw_drive_images_json", "Images_Admin_JSON", "images_public_json", "status"]
+                valid_cols = [c for c in req_cols if c in cols_old]
+                
+                if "tk_id" in valid_cols:
+                    sql_select = f"SELECT {', '.join(valid_cols)} FROM listings"
+                    rows_old = cursor_old.execute(sql_select).fetchall()
+                    
+                    for r in rows_old:
+                        row_dict_old = dict(zip(valid_cols, r))
+                        tk_id = row_dict_old.get("tk_id")
+                        if not tk_id:
+                            continue
+                            
+                        curated = row_dict_old.get("curated_config_json")
+                        raw_tk = row_dict_old.get("raw_images_tk_json")
+                        
+                        has_real_images = False
+                        if curated:
+                            try:
+                                parsed_curated = json.loads(curated)
+                                imgs = parsed_curated.get("images", [])
+                                if any(img.get("role") not in ["Sơ đồ", "diagram"] for img in imgs if isinstance(img, dict)):
+                                    has_real_images = True
+                            except Exception:
+                                pass
+                                
+                        if not has_real_images and raw_tk:
+                            try:
+                                raw_urls = json.loads(raw_tk)
+                                if len(raw_urls) > 1:
+                                    has_real_images = True
+                            except Exception:
+                                pass
+                                
+                        if has_real_images:
+                            existing_images[tk_id] = row_dict_old
+                            
+            conn_old.close()
+            print(f"  - [🛡️ Bảo vệ] Đã lưu trữ bộ nhớ đệm {len(existing_images)} căn nhà có hình ảnh từ CSDL SQLite hiện tại.")
+        except Exception as e:
+            print(f"  - [⚠️ Bảo vệ] Không thể đọc CSDL SQLite cũ để sao lưu hình ảnh: {str(e)}")
+
+    db_file_temp = DB_FILE + ".temp"
+    print(f"[1/4] Khởi tạo cấu trúc database SQLite tạm: {db_file_temp}...")
+    if os.path.exists(db_file_temp):
+        try:
+            os.remove(db_file_temp)
+            print("  - Đã dọn dẹp file SQLite Temp cũ.")
+        except Exception as e:
+            print(f"  - Lỗi dọn dẹp file SQLite Temp: {str(e)}")
+            
+    init_db(db_file=db_file_temp)
     
     # 2. Kết nối Google Sheets và tải toàn bộ dữ liệu Pool & Source
     print("\n[2/4] Đang kết nối API và tải dữ liệu từ Google Sheets Pool và Source...")
@@ -71,6 +296,26 @@ def restore_database():
         except Exception as e:
             print(f"[⚠️ WARNING] Không thể đọc dữ liệu từ sheet Source, dữ liệu biên tập sẽ không được hợp nhất: {str(e)}")
             source_values = []
+
+        # Đọc dữ liệu từ Pool_Images sheet (Hệ thống lưu ảnh cào thô)
+        print("  - Đang đọc dữ liệu Google Sheets Pool_Images...")
+        pool_images_map = {}
+        try:
+            pool_images_sheet = spreadsheet.worksheet("Pool_Images")
+            pool_images_values = pool_images_sheet.get_all_values()
+            if pool_images_values:
+                for row in pool_images_values:
+                    if not row or len(row) < 4:
+                        continue
+                    p_tk_id = row[0].strip()
+                    p_type = row[2].strip()
+                    if p_type == "crawl":
+                        p_images = [url.strip() for url in row[4:] if url.strip().startswith("http")]
+                        if p_images:
+                            pool_images_map[p_tk_id] = p_images
+                print(f"  - [✅ Pool_Images] Đã lập bản đồ map cho {len(pool_images_map)} căn nhà có hình ảnh cào gốc.")
+        except Exception as e_pi:
+            print(f"[⚠️ WARNING] Không thể đọc dữ liệu từ sheet Pool_Images: {str(e_pi)}")
             
     except Exception as e:
         print(f"[❌ LỖI] Lỗi kết nối Google Sheets: {str(e)}")
@@ -98,7 +343,7 @@ def restore_database():
     # 3. Duyệt và ghi nhận vào SQLite cục bộ
     print("\n[3/4] Đang khôi phục dữ liệu vào SQLite và dọn dẹp hình ảnh...")
     
-    conn = sqlite3.connect(DB_FILE, timeout=30.0)
+    conn = sqlite3.connect(db_file_temp, timeout=30.0)
     cursor = conn.cursor()
     
     restored_count = 0
@@ -441,6 +686,72 @@ def restore_database():
                             "visible": False
                         })
 
+        # US-055 & Pool_Images recovery guards
+        has_non_diag_images = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in images_list)
+        
+        # 1. Nếu trên Sheets bị trống/chỉ có sơ đồ, kiểm tra xem SQLite cũ (cache) có hình ảnh không
+        if (not has_non_diag_images) and tk_id in existing_images:
+            cache = existing_images[tk_id]
+            cached_curated_str = cache.get("curated_config_json")
+            cached_images = []
+            if cached_curated_str:
+                try:
+                    parsed_cache = json.loads(cached_curated_str)
+                    cached_images = parsed_cache.get("images", [])
+                except Exception:
+                    pass
+            
+            if not cached_images and cache.get("Images_Admin_JSON"):
+                try:
+                    parsed_admin = json.loads(cache.get("Images_Admin_JSON"))
+                    role_map_en_to_vi = {
+                        "diagram": "Sơ đồ", "facade": "Mặt tiền", "cover": "Bìa",
+                        "alley": "Hẻm", "interior": "Nội thất", "hidden": "Ẩn", "deleted": "deleted"
+                    }
+                    for img in parsed_admin:
+                        if isinstance(img, dict) and img.get("image_url"):
+                            cached_images.append({
+                                "url": img.get("r2_url") or img.get("image_url"),
+                                "role": role_map_en_to_vi.get(img.get("role", "interior"), "Nội thất"),
+                                "visible": img.get("is_hidden", 0) == 0
+                            })
+                except Exception:
+                    pass
+
+            if cached_images:
+                has_cached_non_diag = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in cached_images)
+                if has_cached_non_diag:
+                    images_list = cached_images
+                    has_non_diag_images = True
+                    print(f"  - [🛡️ Bảo vệ US-055] Phục hồi thành công {len(images_list)} ảnh từ bộ nhớ đệm CSDL cũ cho căn {tk_id}.")
+
+        # 2. Nếu vẫn trống/chỉ có sơ đồ, kiểm tra xem Pool_Images có backup hình ảnh không
+        if (not has_non_diag_images) and tk_id in pool_images_map:
+            raw_urls = pool_images_map[tk_id]
+            images_list = []
+            
+            # Giữ các ảnh sơ đồ từ sheets trước
+            diag_urls = [row_dict.get(f"Sơ đồ thửa đất {i}", "").strip() for i in range(1, 6)]
+            diag_urls = [u for u in diag_urls if u]
+            for d_url in diag_urls:
+                images_list.append({"url": d_url, "role": "Sơ đồ", "visible": False})
+                
+            # Thêm ảnh nội thất từ Pool_Images
+            for url in raw_urls:
+                is_diag = False
+                for d_url in diag_urls:
+                    if url.split("?")[0] == d_url.split("?")[0]:
+                        is_diag = True
+                        break
+                if not is_diag:
+                    images_list.append({"url": url, "role": "Nội thất", "visible": True})
+            
+            has_non_diag_images = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in images_list)
+            if has_non_diag_images:
+                # Thiết lập trạng thái thành 'raw_text' để kích hoạt di cư lại tự động lên R2
+                status = "raw_text"
+                print(f"  - [🔄 Khôi phục Sheets] Phục hồi thành công {len(images_list)} ảnh thô từ Pool_Images cho căn {tk_id}. Đặt lại status -> 'raw_text'")
+
         if images_list:
             reconstructed_drive_images = [img["url"] for img in images_list]
 
@@ -532,7 +843,19 @@ def restore_database():
 
     conn.commit()
     conn.close()
-    print(f"  - [💾 SQLite Complete] Đã khôi phục thành công {restored_count} căn vào SQLite cục bộ!")
+    print(f"  - [💾 SQLite Temp Complete] Đã nạp thành công {restored_count} căn vào CSDL Tạm!")
+
+    # Thực hiện sao lưu CSDL Gốc và hợp nhất dữ liệu từ CSDL Tạm vào CSDL Gốc
+    backup_master_database(DB_FILE)
+    merge_temp_to_master(db_file_temp, DB_FILE)
+
+    # Dọn dẹp tệp CSDL Tạm
+    if os.path.exists(db_file_temp):
+        try:
+            os.remove(db_file_temp)
+            print("  - Đã dọn dẹp file SQLite Tạm sau khi hợp nhất.")
+        except Exception as e_rm:
+            print(f"  - [⚠️ WARNING] Không thể xóa file SQLite Tạm: {str(e_rm)}")
 
     # 4. Đồng bộ ngược lên Google Sheets Pool các cột ảnh thường đã dọn dẹp
     if repaired_sheets_items:

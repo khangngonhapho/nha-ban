@@ -97,20 +97,22 @@ os.chdir(PROJECT_ROOT)
 static_folder = os.path.join(PROJECT_ROOT, 'static')
 
 # Giải phóng port 5000 nếu bị kẹt
-def free_port_5000():
+def free_ports():
     try:
         import subprocess
         output = subprocess.check_output("netstat -aon", shell=True).decode('utf-8', errors='ignore')
         for line in output.strip().split('\n'):
-            if "LISTENING" in line and ":5000" in line:
+            if "LISTENING" in line and (":5000" in line or ":5001" in line):
                 parts = line.strip().split()
                 if len(parts) >= 5:
                     pid = parts[-1]
-                    subprocess.run(f"taskkill /f /pid {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    if int(pid) != os.getpid():
+                        subprocess.run(f"taskkill /f /pid {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass
 
-free_port_5000()
+free_ports()
+
 
 from curator_html_data import CURATOR_HTML_CONTENT
 
@@ -147,8 +149,9 @@ def backup_database():
                 # Không có thay đổi gì từ lần backup trước, bỏ qua để tránh ghi file thừa trùng lặp
                 return
                 
+        db_basename = os.path.splitext(os.path.basename(DB_FILE))[0]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_name = f"raw_archive_backup_{timestamp}.db"
+        backup_name = f"{db_basename}_backup_{timestamp}.db"
         backup_path = os.path.join(backup_dir, backup_name)
         shutil.copy2(DB_FILE, backup_path)
         add_log_message(f"[💾 BACKUP] Tự động sao lưu database thành công: {backup_name}")
@@ -156,8 +159,8 @@ def backup_database():
         # Thêm bản mới vào danh sách để tính toán xoay vòng
         backups.append(backup_path)
         
-        # Giữ lại tối đa 5 bản sao lưu gần nhất (dung lượng nhẹ ~27MB/file)
-        while len(backups) > 5:
+        # Giữ lại tối đa 10 bản sao lưu gần nhất (dung lượng nhẹ ~27MB/file)
+        while len(backups) > 10:
             try:
                 os.remove(backups.pop(0))
             except Exception:
@@ -1593,6 +1596,45 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     "images": new_images_list,
                     "Mã_Khang_Ngô__ID_": d.get("Ma_Khang_Ngo_ID", "")
                 }
+                
+                # Đóng gói dữ liệu Images_Admin_JSON và images_public_json cho bảng listings
+                role_map_vi_to_en = {
+                    "Sơ đồ": "diagram",
+                    "Mặt tiền": "facade",
+                    "Bìa": "cover",
+                    "Hẻm": "alley",
+                    "Nội thất": "interior",
+                    "Ẩn": "hidden",
+                    "deleted": "deleted",
+                    "diagram": "diagram",
+                    "facade": "facade",
+                    "cover": "cover",
+                    "alley": "alley",
+                    "interior": "interior",
+                    "hidden": "hidden"
+                }
+                migrated_images = []
+                for idx, img in enumerate(new_images_list):
+                    url = img.get("url")
+                    vi_role = img.get("role", "Nội thất")
+                    resolved_role = role_map_vi_to_en.get(vi_role, "interior")
+                    visible = img.get("visible", True)
+                    is_hidden_val = 1 if (not visible or resolved_role in ["hidden", "deleted"]) else 0
+                    migrated_images.append({
+                        "image_url": url,
+                        "r2_url": url,
+                        "role": resolved_role,
+                        "sequence_index": idx,
+                        "origin": "crawl",
+                        "is_hidden": is_hidden_val
+                    })
+                images_admin_json_str = json.dumps(migrated_images, ensure_ascii=False)
+                public_urls = [
+                    img["r2_url"] if img["r2_url"] else img["image_url"]
+                    for img in migrated_images
+                    if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]
+                ]
+                images_public_json_str = json.dumps(public_urls, ensure_ascii=False)
             
             # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập
             col_ma_kn = get_safe_col_name("Mã Khang Ngô (ID)")
@@ -1653,6 +1695,8 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             if LISTINGS_TABLE == "listings":
                 update_fields["curated_config_json"] = json.dumps(new_curated_config, ensure_ascii=False)
                 update_fields["images_mapping_json"] = json.dumps(new_images_mapping, ensure_ascii=False)
+                update_fields["Images_Admin_JSON"] = images_admin_json_str
+                update_fields["images_public_json"] = images_public_json_str
                 
                 # Loại bỏ các cột phẳng hình ảnh ở Pool1
                 image_fields_to_skip = {

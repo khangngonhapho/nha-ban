@@ -146,3 +146,15 @@ class TestCoreConfigReadSettings:
         )
         from core.config import read_settings
         assert read_settings() == _read_settings_inline()
+
+    def test_json_ui_fields_contains_dates(self):
+        """Đảm bảo json_ui_fields chứa các trường ngày để render (US-127)."""
+        from core.config import read_settings
+        # Đọc thực tế settings.json của project (ở root)
+        project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        settings_path = os.path.join(project_dir, "settings.json")
+        result = read_settings(settings_path)
+        fields = result.get("json_ui_fields") or []
+        assert "createdAt" in fields
+        assert "updatedAt" in fields
+        assert "listedAt" in fields

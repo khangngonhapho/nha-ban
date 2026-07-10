@@ -780,10 +780,39 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
 
     raw_images_tk_json_val = json.dumps(grouped_urls)
     raw_sodo_tk_json_val = json.dumps(ordered_diagrams)
+    status_to_update = "raw_text"
         
     if existing:
+        # PHÒNG VỆ MẤT ẢNH: Nếu có ảnh cũ trong CSDL và số lượng ảnh cào mới ít hơn
+        db_raw_images_str = ""
+        db_status = ""
+        row_existing = cursor.execute(f"SELECT status, raw_images_tk_json FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+        if row_existing:
+            db_status = row_existing[0] or ""
+            db_raw_images_str = row_existing[1] or ""
+            
+        db_raw_images = []
+        if db_raw_images_str:
+            try:
+                db_raw_images = json.loads(db_raw_images_str)
+            except Exception:
+                pass
+                
+        if db_raw_images and len(grouped_urls) < len(db_raw_images):
+            # Giữ nguyên ảnh cũ để tránh mất hình nội thất khi tin đã bán bị ẩn hình
+            raw_images_tk_json_val = db_raw_images_str
+            status_to_update = db_status if db_status else "raw_complete"
+            
+            # Cứ giữ nguyên raw_sodo_tk_json cũ
+            if "raw_sodo_tk_json" in db_cols:
+                row_sodo = cursor.execute(f"SELECT raw_sodo_tk_json FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+                if row_sodo and row_sodo[0]:
+                    raw_sodo_tk_json_val = row_sodo[0]
+            
+            print(f"[🛡️ Bảo vệ ảnh] {tk_id}: Giữ nguyên {len(db_raw_images)} ảnh cũ (ảnh mới: {len(grouped_urls)}). Trạng thái giữ nguyên: {status_to_update}")
+
         update_parts = ["status = ?", "raw_images_tk_json = ?"]
-        values = ["raw_text", raw_images_tk_json_val]
+        values = [status_to_update, raw_images_tk_json_val]
         if "raw_sodo_tk_json" in db_cols:
             update_parts.append("raw_sodo_tk_json = ?")
             values.append(raw_sodo_tk_json_val)
@@ -1389,9 +1418,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                         if not isinstance(img, dict):
                             continue
                         role = img.get("role")
-                        is_hidden = role in ["Ẩn", "hidden"]
-                        is_invisible_non_sodo = (img.get("visible") is False and role not in ["Sơ đồ", "diagram"])
-                        if is_hidden or is_invisible_non_sodo:
+                        is_hidden = role in ["Ẩn", "hidden", "deleted"]
+                        if is_hidden:
                             continue
                         filtered_images.append(img)
                 
@@ -1692,6 +1720,11 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                                             is_self = (img.get("origin") in ["self", "user"]) if img.get("origin") else ("r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url)
                                             if not is_self:
                                                 raw_imgs.append(url.strip())
+                        except Exception:
+                            pass
+                    if not raw_imgs and d.get("raw_drive_images_json"):
+                        try:
+                            raw_imgs = json.loads(d.get("raw_drive_images_json"))
                         except Exception:
                             pass
                     if not raw_imgs and d.get("raw_images_tk_json"):

@@ -1227,6 +1227,7 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                         "sideOpenSpace": str(detail_data.get("sideOpenSpace") or ""),
                         "createdAt": str(detail_data.get("createdAt") or ""),
                         "updatedAt": str(detail_data.get("updatedAt") or ""),
+                        "listedAt": str(detail_data.get("listedAt") or ""),
                         "commissionType": str(detail_data.get("commissionType") or ""),
                         "commissionValue": str(detail_data.get("commissionValue") or ""),
                         "isDispute": "1" if detail_data.get("isDispute") else "0",
