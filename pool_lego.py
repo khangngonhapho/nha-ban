@@ -1635,7 +1635,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                 "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
                 "Last Crawl",
                 "Mã Khang Ngô (ID)",
-                "Images_Admin_JSON"
+                "Images_Admin_JSON",
+                "JSON_UI"
             ]
         
             for idx, header in enumerate(POOL_HEADERS):
