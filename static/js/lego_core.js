@@ -729,7 +729,8 @@ const LegoState = {
                   };
                   poolImgs = parsedAdmin
                     .filter(img => window.isAdmin || (img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn'))
-                    .map(img => img.r2_url || img.url);
+                    .map(img => img.r2_url || img.image_url || img.url)
+                    .filter(Boolean);
                 } catch (e) {
                   // fallback
                 }
@@ -956,7 +957,8 @@ const LegoState = {
               };
               poolImgs = parsedAdmin
                 .filter(img => window.isAdmin || (img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn'))
-                .map(img => img.r2_url || img.url);
+                .map(img => img.r2_url || img.image_url || img.url)
+                .filter(Boolean);
             } catch (e) {
               // fallback
             }
