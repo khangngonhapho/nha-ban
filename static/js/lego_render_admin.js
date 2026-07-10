@@ -98,9 +98,9 @@ window.LegoRenderAdmin = {
             </div>
             ${(displayListed || displayUpdated) ? `
               <div style="font-size: 11px; margin-top: 4px; color: #7f8c8d; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.35; font-weight: 500;">
-                ${displayListed ? `<span>📅 Niêm yết: ${displayListed}</span>` : ''}
+                ${displayListed ? `<span>📅 ${displayListed}</span>` : ''}
                 ${(displayListed && displayUpdated) ? `<span style="opacity: 0.5;">·</span>` : ''}
-                ${displayUpdated ? `<span>🔄 Cập nhật: ${displayUpdated}</span>` : ''}
+                ${displayUpdated ? `<span>🔄 ${displayUpdated}</span>` : ''}
               </div>
             ` : ''}
           </div>
