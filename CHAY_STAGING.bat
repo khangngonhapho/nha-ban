@@ -11,6 +11,9 @@ echo [*] Dang khoi dong Local Flask Server (STAGING)...
 echo [*] Ung dung se tu dong chay tai: http://localhost:5001
 echo.
 
+:: Tu dong mo trinh duyet den website local (STAGING)
+start "" "http://localhost:5001"
+
 :: Khoi dong server Flask o terminal hien tai voi STAGING=true
 python manager.py
 
