@@ -156,8 +156,8 @@ def backup_database():
         # Thêm bản mới vào danh sách để tính toán xoay vòng
         backups.append(backup_path)
         
-        # Giữ lại tối đa 5 bản sao lưu gần nhất (dung lượng nhẹ ~27MB/file)
-        while len(backups) > 5:
+        # Giữ lại tối đa 10 bản sao lưu gần nhất (dung lượng nhẹ ~27MB/file)
+        while len(backups) > 10:
             try:
                 os.remove(backups.pop(0))
             except Exception:

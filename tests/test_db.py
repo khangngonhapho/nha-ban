@@ -17,6 +17,7 @@ import sys
 import os
 import sqlite3
 import tempfile
+import json
 import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -244,3 +245,120 @@ class TestGetDbFileDuplicate:
         settings.write_text("NOT JSON", encoding="utf-8")
         monkeypatch.chdir(tmp_path)
         assert get_db_file() == qh_get_db_file()
+
+
+# =============================================================================
+# 5. SAVE_RAW_TO_SQLITE IMAGE PROTECTION — US-129
+# =============================================================================
+class TestSaveRawToSqliteImageProtection:
+    """Verify: save_raw_to_sqlite() bảo vệ ảnh cũ khi cào mới có ít ảnh hơn."""
+
+    def test_preserves_images_when_fewer_new_images(self, tmp_path):
+        from pool_lego import init_db, save_raw_to_sqlite
+        db_path = str(tmp_path / "test_protect.db")
+        init_db(db_file=db_path)
+
+        tk_id = "test-tk-1"
+        metadata = {"Mã Hàng": "TKBDFWDW", "Giá chào": "10 tỷ", "Nội dung chính": "Bán nhà"}
+        images_old = ["http://r2.com/img1.jpg", "http://r2.com/img2.jpg", "http://r2.com/img3.jpg"]
+
+        # Lần 1: Cào được 3 ảnh
+        save_raw_to_sqlite(tk_id, metadata, images_old, db_file=db_path)
+
+        conn = sqlite3.connect(db_path)
+        row = conn.execute("SELECT status, raw_images_tk_json, Gia_chao FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+        conn.close()
+        assert row[0] == "raw_text"
+        assert json.loads(row[1]) == images_old
+        assert row[2] == "10 tỷ"
+
+        # Đặt status thành raw_complete để mô phỏng đã xử lý
+        conn = sqlite3.connect(db_path)
+        conn.execute("UPDATE listings SET status = 'raw_complete' WHERE tk_id = ?", (tk_id,))
+        conn.commit()
+        conn.close()
+
+        # Lần 2: Cào lại chỉ được 1 ảnh (ví dụ bị ẩn hoặc bán)
+        images_new = ["http://r2.com/img1.jpg"]
+        metadata_updated = {"Mã Hàng": "TKBDFWDW", "Giá chào": "9 tỷ", "Nội dung chính": "Bán nhà giá rẻ"}
+        save_raw_to_sqlite(tk_id, metadata_updated, images_new, db_file=db_path)
+
+        conn = sqlite3.connect(db_path)
+        row = conn.execute("SELECT status, raw_images_tk_json, Gia_chao FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+        conn.close()
+
+        # Kiểm tra: Ảnh cũ và status cũ được bảo toàn, nhưng metadata (Gia_chao) vẫn được cập nhật
+        assert row[0] == "raw_complete"
+        assert json.loads(row[1]) == images_old
+        assert row[2] == "9 tỷ"
+
+
+# =============================================================================
+# 6. MERGE_TEMP_TO_MASTER — US-129
+# =============================================================================
+class TestMergeTempToMaster:
+    """Verify: merge_temp_to_master() hợp nhất dữ liệu từ CSDL Temp vào Master."""
+
+    def test_merge_inserts_updates_and_soft_deletes(self, tmp_path):
+        from pool_lego import init_db
+        from restore_db_from_sheets import merge_temp_to_master
+
+        master_db = str(tmp_path / "master.db")
+        temp_db = str(tmp_path / "temp.db")
+
+        init_db(db_file=master_db)
+        init_db(db_file=temp_db)
+
+        # Cài đặt Master DB có:
+        # - test-1 (có raw_json_full và Images_Admin_JSON)
+        # - test-2 (sẽ bị xóa trên Sheets nên không có trong Temp DB)
+        conn = sqlite3.connect(master_db)
+        conn.execute("""
+            INSERT INTO listings (tk_id, status, raw_json_full, Images_Admin_JSON, Gia_chao)
+            VALUES (?, ?, ?, ?, ?)
+        """, ("test-1", "published", "{\"api\": \"data\"}", "[\"r2_url_1\"]", "10 tỷ"))
+        conn.execute("""
+            INSERT INTO listings (tk_id, status, Gia_chao)
+            VALUES (?, ?, ?)
+        """, ("test-2", "published", "5 tỷ"))
+        conn.commit()
+        conn.close()
+
+        # Cài đặt Temp DB có:
+        # - test-1 (dữ liệu mới từ Sheets: Gia_chao='9 tỷ', nhưng Images_Admin_JSON và raw_json_full trống)
+        # - test-3 (căn mới)
+        conn = sqlite3.connect(temp_db)
+        conn.execute("""
+            INSERT INTO listings (tk_id, status, Images_Admin_JSON, raw_json_full, Gia_chao)
+            VALUES (?, ?, ?, ?, ?)
+        """, ("test-1", "raw_text", "[]", "", "9 tỷ"))
+        conn.execute("""
+            INSERT INTO listings (tk_id, status, Gia_chao)
+            VALUES (?, ?, ?)
+        """, ("test-3", "raw_text", "8 tỷ"))
+        conn.commit()
+        conn.close()
+
+        # Chạy merge
+        merge_temp_to_master(temp_db, master_db)
+
+        conn = sqlite3.connect(master_db)
+        
+        # 1. Kiểm tra test-1: Cập nhật Gia_chao, giữ nguyên raw_json_full & Images_Admin_JSON
+        t1 = conn.execute("SELECT status, raw_json_full, Images_Admin_JSON, Gia_chao FROM listings WHERE tk_id = 'test-1'").fetchone()
+        assert t1[3] == "9 tỷ"
+        assert t1[1] == "{\"api\": \"data\"}"
+        assert t1[2] == "[\"r2_url_1\"]"
+
+        # 2. Kiểm tra test-2: Đã bị Soft Delete (status = 'sheet_deleted')
+        t2 = conn.execute("SELECT status, Gia_chao FROM listings WHERE tk_id = 'test-2'").fetchone()
+        assert t2[0] == "sheet_deleted"
+        assert t2[1] == "5 tỷ"
+
+        # 3. Kiểm tra test-3: Căn mới được thêm vào
+        t3 = conn.execute("SELECT status, Gia_chao FROM listings WHERE tk_id = 'test-3'").fetchone()
+        assert t3 is not None
+        assert t3[1] == "8 tỷ"
+
+        conn.close()
+
