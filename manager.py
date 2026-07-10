@@ -149,8 +149,9 @@ def backup_database():
                 # Không có thay đổi gì từ lần backup trước, bỏ qua để tránh ghi file thừa trùng lặp
                 return
                 
+        db_basename = os.path.splitext(os.path.basename(DB_FILE))[0]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_name = f"raw_archive_backup_{timestamp}.db"
+        backup_name = f"{db_basename}_backup_{timestamp}.db"
         backup_path = os.path.join(backup_dir, backup_name)
         shutil.copy2(DB_FILE, backup_path)
         add_log_message(f"[💾 BACKUP] Tự động sao lưu database thành công: {backup_name}")

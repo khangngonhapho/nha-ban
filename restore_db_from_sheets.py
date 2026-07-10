@@ -21,14 +21,15 @@ def backup_master_database(master_db_path):
         backup_dir = "d:/LHTBrain/BDS_Backups"
         os.makedirs(backup_dir, exist_ok=True)
         
-        # Quét các bản backup
+        db_basename = os.path.splitext(os.path.basename(master_db_path))[0]
+        # Quét các bản backup tương ứng với CSDL này
         backups = sorted(
-            [os.path.join(backup_dir, f) for f in os.listdir(backup_dir) if f.startswith("raw_archive_backup_")],
+            [os.path.join(backup_dir, f) for f in os.listdir(backup_dir) if f.startswith(f"{db_basename}_backup_")],
             key=os.path.getmtime
         )
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_name = f"raw_archive_backup_{timestamp}.db"
+        backup_name = f"{db_basename}_backup_{timestamp}.db"
         backup_path = os.path.join(backup_dir, backup_name)
         
         shutil.copy2(master_db_path, backup_path)
