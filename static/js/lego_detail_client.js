@@ -378,21 +378,7 @@
       const cleanImgs = (p.imgs || []).filter(url => {
         return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
       });
-      const sortedImgs = cleanImgs.sort((a, b) => {
-        const getIdx = (url) => {
-          const norm = window.normalizeImgUrl ? window.normalizeImgUrl(url) : '';
-          if (p.curated_config && Array.isArray(p.curated_config.images)) {
-            const found = p.curated_config.images.find(img => (window.normalizeImgUrl ? window.normalizeImgUrl(img.url) : '') === norm);
-            if (found && typeof found.sequence_index === 'number') {
-              return found.sequence_index;
-            }
-          }
-          const cleanUrl = url.split('?')[0];
-          const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
-          return match ? parseInt(match[1], 10) : 9999;
-        };
-        return getIdx(a) - getIdx(b);
-      });
+      const sortedImgs = cleanImgs;
 
       sbody.innerHTML = `
         <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>

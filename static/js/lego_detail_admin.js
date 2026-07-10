@@ -532,20 +532,7 @@
             });
           }
 
-          const getImgIndex = (url) => {
-            const norm = normalizeImgUrl(url);
-            if (p.curated_config && Array.isArray(p.curated_config.images)) {
-              const found = p.curated_config.images.find(img => normalizeImgUrl(img.url) === norm);
-              if (found && typeof found.sequence_index === 'number') {
-                return found.sequence_index;
-              }
-            }
-            const cleanUrl = url.split('?')[0];
-            const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
-            return match ? parseInt(match[1], 10) : 9999;
-          };
-          sImgs.sort((a, b) => getImgIndex(a) - getImgIndex(b));
-          nImgs.sort((a, b) => getImgIndex(a) - getImgIndex(b));
+
 
           setupScrollCarousel('carouselNha', nImgs, false);
           setupScrollCarousel('carouselSo', sImgs, true);
