@@ -1517,6 +1517,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     except Exception as e:
                         add_log_message(f"  [❌ LỖI] Di cư Sơ đồ {sodo_num} thất bại: {str(e)}")
 
+            first_property_r2 = ""
             # Smart Image Merge (Trộn ảnh thông minh) cho Pool1
             if LISTINGS_TABLE == "listings":
                 try:
@@ -1530,6 +1531,26 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 elif isinstance(curated_data, list):
                     old_images = curated_data
                 
+                # Trích xuất danh sách R2 URLs mới cào
+                new_r2_urls = list(new_images_mapping.values())
+                
+                # Tìm ảnh property_image đầu tiên trong new_images_mapping làm ảnh đại diện Admin
+                first_property_r2 = ""
+                stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
+                
+                for img_url in raw_images_tk:
+                    stripped_img = img_url.split('?')[0] if img_url else ""
+                    is_diag = (stripped_img in stripped_sodo) or \
+                              (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
+                              (original_sodo2 and stripped_img == original_sodo2.split('?')[0]) or \
+                              (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
+                              (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
+                              (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
+                    if not is_diag:
+                        if img_url in new_images_mapping:
+                            first_property_r2 = new_images_mapping[img_url]
+                            break
+
                 new_images_list = []
                 added_urls = set()
                 
@@ -1542,53 +1563,65 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                         new_images_list.append(img)
                         added_urls.add(url)
                 
-                # 2. Bảo toàn và cập nhật các ảnh di cư cũ
-                stripped_new_mapping = {}
-                for k, v in new_images_mapping.items():
-                    if k:
-                        stripped_new_mapping[k.split('?')[0]] = v
-                        
+                # 2. Xử lý các ảnh cũ (bao gồm cả ảnh cào cũ và ảnh bị xóa)
                 for img in old_images:
                     if not isinstance(img, dict):
                         continue
                     url = img.get("url")
-                    if url in manual_images:
+                    if url in manual_images or url in added_urls:
                         continue
-                    
-                    orig_tk_url = None
-                    for k, v in images_mapping.items():
-                        if v == url:
-                            orig_tk_url = k
-                            break
-                    
-                    if orig_tk_url:
-                        stripped_orig_tk = orig_tk_url.split('?')[0]
-                        if stripped_orig_tk in stripped_new_mapping:
-                            # Ảnh cũ vẫn còn trên Thiên Khôi -> Giữ nguyên (bỏ qua vì đã xử lý rồi)
-                            if url not in added_urls:
-                                new_images_list.append(img)
-                                added_urls.add(url)
-                        else:
-                            # Ảnh cũ đã bị Thiên Khôi xóa -> Vẫn giữ lại, update visible = False & role = "deleted"
-                            if url not in added_urls:
-                                img_copy = dict(img)
+                        
+                    # Nếu ảnh cũ có trong danh sách R2 URLs mới cào -> Giữ lại và khôi phục trạng thái nếu cần
+                    if url in new_r2_urls:
+                        img_copy = dict(img)
+                        # Nếu trước đây bị đánh dấu deleted, khôi phục lại vai trò chính xác
+                        if img_copy.get("role") == "deleted":
+                            orig_img_url = None
+                            for k, v in new_images_mapping.items():
+                                if v == url:
+                                    orig_img_url = k
+                                    break
+                            
+                            is_diag = False
+                            if orig_img_url:
+                                stripped_img = orig_img_url.split('?')[0]
+                                is_diag = (stripped_img in stripped_sodo) or \
+                                          (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
+                                          (original_sodo2 and stripped_img == original_sodo2.split('?')[0]) or \
+                                          (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
+                                          (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
+                                          (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
+                            
+                            if is_diag:
+                                img_copy["role"] = "Sơ đồ"
                                 img_copy["visible"] = False
-                                img_copy["role"] = "deleted"
-                                new_images_list.append(img_copy)
-                                added_urls.add(url)
+                            elif url == first_property_r2:
+                                img_copy["role"] = "Mặt tiền"
+                                img_copy["visible"] = True
+                            else:
+                                img_copy["role"] = "Nội thất"
+                                img_copy["visible"] = False
+                        
+                        # Đảm bảo ảnh mặt tiền đầu tiên luôn có role Mặt tiền nếu chưa có role đặc biệt nào khác
+                        if url == first_property_r2 and img_copy.get("role") not in ["Mặt tiền", "Bìa", "Sơ đồ"]:
+                            img_copy["role"] = "Mặt tiền"
+                            img_copy["visible"] = True
+
+                        new_images_list.append(img_copy)
+                        added_urls.add(url)
                     else:
-                        # Không tìm thấy mapping nhưng đã có trong old_images -> Vẫn giữ lại
-                        if url not in added_urls:
-                            new_images_list.append(img)
-                            added_urls.add(url)
+                        # Ảnh cũ không còn trên Thiên Khôi nữa -> Đánh dấu deleted
+                        img_copy = dict(img)
+                        img_copy["visible"] = False
+                        img_copy["role"] = "deleted"
+                        new_images_list.append(img_copy)
+                        added_urls.add(url)
                 
-                # 3. Thêm các ảnh di cư mới cào vào cuối danh sách (mặc định visible = False để chỉ hiện cho admin biên tập)
+                # 3. Thêm các ảnh cào mới hoàn toàn (chưa có trong old_images)
                 for img_url in raw_images_tk:
                     if img_url in new_images_mapping:
                         r2_url = new_images_mapping[img_url]
                         if r2_url not in added_urls:
-                            visible = False
-                            
                             stripped_img = img_url.split('?')[0] if img_url else ""
                             is_diag = (stripped_img in stripped_sodo) or \
                                       (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
@@ -1596,7 +1629,16 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                                       (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
                                       (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
                                       (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
-                            role = "Sơ đồ" if is_diag else "Nội thất"
+                            
+                            if is_diag:
+                                role = "Sơ đồ"
+                                visible = False
+                            elif r2_url == first_property_r2:
+                                role = "Mặt tiền"
+                                visible = True
+                            else:
+                                role = "Nội thất"
+                                visible = False
                             
                             new_images_list.append({
                                 "url": r2_url,
@@ -1642,11 +1684,18 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                         "is_hidden": is_hidden_val
                     })
                 images_admin_json_str = json.dumps(migrated_images, ensure_ascii=False)
-                public_urls = [
-                    img["r2_url"] if img["r2_url"] else img["image_url"]
-                    for img in migrated_images
-                    if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]
-                ]
+                
+                # Phân tách và sắp xếp mảng public: ảnh có role cover (Bìa) lên đầu, loại bỏ facade (Mặt tiền)
+                cover_urls = []
+                other_urls = []
+                for img in migrated_images:
+                    if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]:
+                        url = img["r2_url"] if img["r2_url"] else img["image_url"]
+                        if img["role"] == "cover":
+                            cover_urls.append(url)
+                        else:
+                            other_urls.append(url)
+                public_urls = cover_urls + other_urls
                 images_public_json_str = json.dumps(public_urls, ensure_ascii=False)
 
                 flat_sodo = []
@@ -1686,6 +1735,8 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             mo_ta_public = row[col_mo_ta] if col_mo_ta in row.keys() else ""
             phuong_cu_ai = row[col_phuong_cu] if col_phuong_cu in row.keys() else ""
             hinh_mat_tien = row[col_mat_tien] if col_mat_tien in row.keys() else ""
+            if not hinh_mat_tien and first_property_r2:
+                hinh_mat_tien = first_property_r2
             anh_pub = row[col_anh_pub] if col_anh_pub in row.keys() else ""
             anh_hem_pub = row[col_anh_hem_pub] if col_anh_hem_pub in row.keys() else ""
             
