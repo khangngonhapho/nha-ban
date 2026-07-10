@@ -1655,16 +1655,6 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                             })
                             added_urls.add(r2_url)
                 
-                # Sắp xếp new_images_list theo thứ tự của chỉ số số ở đuôi link ảnh để giữ đúng thứ tự gốc
-                def get_img_sort_key(img):
-                    url = img.get("url") or ""
-                    url_clean = url.split('?')[0]
-                    match = re.search(r'_(\d+)\.[a-zA-Z0-9]+$', url_clean)
-                    if match:
-                        return int(match.group(1))
-                    return 9999
-                new_images_list.sort(key=get_img_sort_key)
-                
                 new_curated_config = {
                     "images": new_images_list,
                     "Mã_Khang_Ngô__ID_": d.get("Ma_Khang_Ngo_ID", "")

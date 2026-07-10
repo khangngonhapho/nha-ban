@@ -533,6 +533,13 @@
           }
 
           const getImgIndex = (url) => {
+            const norm = normalizeImgUrl(url);
+            if (p.curated_config && Array.isArray(p.curated_config.images)) {
+              const found = p.curated_config.images.find(img => normalizeImgUrl(img.url) === norm);
+              if (found && typeof found.sequence_index === 'number') {
+                return found.sequence_index;
+              }
+            }
             const cleanUrl = url.split('?')[0];
             const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
             return match ? parseInt(match[1], 10) : 9999;
@@ -2467,31 +2474,7 @@
           
           // Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
           try {
-            const curatedImages = [];
-            if (window.imageEditorSlides) {
-              window.imageEditorSlides.forEach((slide) => {
-                let slideOrigin = slide.origin || 'crawl';
-                if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
-                if (slideOrigin === 'user') slideOrigin = 'self';
-                curatedImages.push({
-                  image_url: slide.url,
-                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
-                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-                  sequence_index: 0,
-                  origin: slideOrigin,
-                  is_hidden: slide.visible === false ? 1 : 0
-                });
-              });
-              const getUrlIndex = (url) => {
-                const cleanUrl = (url || '').split('?')[0];
-                const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
-                return match ? parseInt(match[1], 10) : 9999;
-              };
-              curatedImages.sort((a, b) => getUrlIndex(a.image_url) - getUrlIndex(b.image_url));
-              curatedImages.forEach((img, idx) => {
-                img.sequence_index = idx + 1;
-              });
-            }
+            const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
             const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
             await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${poolRowNumber}:${imagesAdminCol}${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
@@ -2955,31 +2938,7 @@
         p.original_row_data[getSourceColumnIndex("DT Trên sổ", 47)] = editDtTrenSo; // DT Trên sổ (Cột AV)
         p.original_row_data[getSourceColumnIndex("Images_Public_JSON", 48)] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AW)
 
-        const curatedImages = [];
-        if (window.imageEditorSlides) {
-          window.imageEditorSlides.forEach((slide) => {
-            let slideOrigin = slide.origin || 'crawl';
-            if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
-            if (slideOrigin === 'user') slideOrigin = 'self';
-            curatedImages.push({
-              image_url: slide.url,
-              r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
-              role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-              sequence_index: 0,
-              origin: slideOrigin,
-              is_hidden: slide.visible === false ? 1 : 0
-            });
-          });
-          const getUrlIndex = (url) => {
-            const cleanUrl = (url || '').split('?')[0];
-            const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
-            return match ? parseInt(match[1], 10) : 9999;
-          };
-          curatedImages.sort((a, b) => getUrlIndex(a.image_url) - getUrlIndex(b.image_url));
-          curatedImages.forEach((img, idx) => {
-            img.sequence_index = idx + 1;
-          });
-        }
+        const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
 
         p.note = note;
         p.dt = editDtThucTe;
@@ -3439,31 +3398,7 @@
 
           // 0a. Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
           try {
-            const curatedImages = [];
-            if (window.imageEditorSlides) {
-              window.imageEditorSlides.forEach((slide) => {
-                let slideOrigin = slide.origin || 'crawl';
-                if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
-                if (slideOrigin === 'user') slideOrigin = 'self';
-                curatedImages.push({
-                  image_url: slide.url,
-                  r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
-                  role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-                  sequence_index: 0,
-                  origin: slideOrigin,
-                  is_hidden: slide.visible === false ? 1 : 0
-                });
-              });
-              const getUrlIndex = (url) => {
-                const cleanUrl = (url || '').split('?')[0];
-                const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
-                return match ? parseInt(match[1], 10) : 9999;
-              };
-              curatedImages.sort((a, b) => getUrlIndex(a.image_url) - getUrlIndex(b.image_url));
-              curatedImages.forEach((img, idx) => {
-                img.sequence_index = idx + 1;
-              });
-            }
+            const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
             const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
             await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${poolRowNumber}:${imagesAdminCol}${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',
@@ -3597,6 +3532,61 @@
         }
       }
     };
+
+  window.buildCuratedImages = function(p, slides) {
+    const curatedImages = [];
+    if (!slides) return curatedImages;
+
+    const oldImages = (p && p.curated_config && Array.isArray(p.curated_config.images)) ? p.curated_config.images : [];
+    const oldUrls = oldImages.map(img => normalizeImgUrl(img.url)).filter(Boolean);
+
+    const slideMap = {};
+    slides.forEach((slide, idx) => {
+      const norm = normalizeImgUrl(slide.url);
+      if (norm) {
+        slideMap[norm] = { slide, idx };
+      }
+    });
+
+    oldImages.forEach((oldImg) => {
+      const norm = normalizeImgUrl(oldImg.url);
+      if (norm && slideMap[norm]) {
+        const { slide, idx } = slideMap[norm];
+        let slideOrigin = slide.origin || oldImg.origin || 'crawl';
+        if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
+        if (slideOrigin === 'user') slideOrigin = 'self';
+
+        curatedImages.push({
+          image_url: oldImg.url,
+          r2_url: oldImg.url.startsWith('https://pub-') ? oldImg.url : '',
+          role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
+          sequence_index: idx + 1,
+          origin: slideOrigin,
+          is_hidden: slide.visible === false ? 1 : 0
+        });
+      }
+    });
+
+    slides.forEach((slide, idx) => {
+      const norm = normalizeImgUrl(slide.url);
+      if (norm && !oldUrls.includes(norm)) {
+        let slideOrigin = slide.origin || 'crawl';
+        if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
+        if (slideOrigin === 'user') slideOrigin = 'self';
+
+        curatedImages.push({
+          image_url: slide.url,
+          r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+          role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
+          sequence_index: idx + 1,
+          origin: slideOrigin,
+          is_hidden: slide.visible === false ? 1 : 0
+        });
+      }
+    });
+
+    return curatedImages;
+  };
 
   // Register remaining aliases on window for backward compatibility
   window.compressImageClientSide = compressImageClientSide;

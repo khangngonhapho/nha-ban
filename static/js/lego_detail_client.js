@@ -380,6 +380,13 @@
       });
       const sortedImgs = cleanImgs.sort((a, b) => {
         const getIdx = (url) => {
+          const norm = window.normalizeImgUrl ? window.normalizeImgUrl(url) : '';
+          if (p.curated_config && Array.isArray(p.curated_config.images)) {
+            const found = p.curated_config.images.find(img => (window.normalizeImgUrl ? window.normalizeImgUrl(img.url) : '') === norm);
+            if (found && typeof found.sequence_index === 'number') {
+              return found.sequence_index;
+            }
+          }
           const cleanUrl = url.split('?')[0];
           const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
           return match ? parseInt(match[1], 10) : 9999;
