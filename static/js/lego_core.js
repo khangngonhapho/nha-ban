@@ -701,13 +701,34 @@ const LegoState = {
             });
 
             let poolImgs = [];
+            let tempCuratedConfig = null;
             if (poolRow) {
-              const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 172)];
+              const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 94)];
               if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
                 try {
                   const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+                  const roleMapEnToVi = {
+                    "diagram": "Sơ đồ",
+                    "facade": "Mặt tiền",
+                    "cover": "Bìa",
+                    "alley": "Hẻm",
+                    "interior": "Nội thất",
+                    "hidden": "Ẩn",
+                    "deleted": "deleted"
+                  };
+                  tempCuratedConfig = {
+                    images: parsedAdmin.map(img => {
+                      const roleVi = roleMapEnToVi[img.role] || img.role || 'Nội thất';
+                      const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
+                      return {
+                        url: img.r2_url || img.image_url || img.url || '',
+                        role: roleVi,
+                        visible: isVisible
+                      };
+                    })
+                  };
                   poolImgs = parsedAdmin
-                    .filter(img => img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn')
+                    .filter(img => window.isAdmin || (img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn'))
                     .map(img => img.r2_url || img.url);
                 } catch (e) {
                   // fallback
@@ -822,6 +843,9 @@ const LegoState = {
               source_row_index: targetRowNumber
             };
             p.dai_nha = getDaiNha(p);
+            if (tempCuratedConfig) {
+              p.curated_config = tempCuratedConfig;
+            }
 
             if (poolRow) {
               p.raw_ten_dau_chu = poolRow[window.getPoolColumnIndex("Tên đầu chủ", 75)] || '';
@@ -905,12 +929,33 @@ const LegoState = {
           if (matchedPoolRowIndexes.has(prIdx)) return;
 
           let poolImgs = [];
-          const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 172)];
+          let tempCuratedConfig = null;
+          const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 94)];
           if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
             try {
               const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+              const roleMapEnToVi = {
+                "diagram": "Sơ đồ",
+                "facade": "Mặt tiền",
+                "cover": "Bìa",
+                "alley": "Hẻm",
+                "interior": "Nội thất",
+                "hidden": "Ẩn",
+                "deleted": "deleted"
+              };
+              tempCuratedConfig = {
+                images: parsedAdmin.map(img => {
+                  const roleVi = roleMapEnToVi[img.role] || img.role || 'Nội thất';
+                  const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
+                  return {
+                    url: img.r2_url || img.image_url || img.url || '',
+                    role: roleVi,
+                    visible: isVisible
+                  };
+                })
+              };
               poolImgs = parsedAdmin
-                .filter(img => img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn')
+                .filter(img => window.isAdmin || (img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn'))
                 .map(img => img.r2_url || img.url);
             } catch (e) {
               // fallback
@@ -1036,6 +1081,9 @@ const LegoState = {
           p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
           p.pool_row_index = prIdx + 2;
           p.pool_row_data = poolRow;
+          if (tempCuratedConfig) {
+            p.curated_config = tempCuratedConfig;
+          }
 
           let jsonUiVal = poolRow[window.getPoolColumnIndex("JSON_UI", 93)] || '';
           if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {

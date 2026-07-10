@@ -1648,6 +1648,29 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]
                 ]
                 images_public_json_str = json.dumps(public_urls, ensure_ascii=False)
+
+                flat_sodo = []
+                flat_hem = []
+                flat_anh = []
+                for img in migrated_images:
+                    url = img.get("r2_url") or img.get("image_url") or ""
+                    if not url:
+                        continue
+                    role = img.get("role")
+                    if role in ["diagram", "Sơ đồ"]:
+                        flat_sodo.append(url)
+                    elif role in ["alley", "Hẻm"]:
+                        flat_hem.append(url)
+                    else:
+                        flat_anh.append(url)
+
+                clean_sodo1 = flat_sodo[0] if len(flat_sodo) > 0 else ""
+                clean_sodo2 = flat_sodo[1] if len(flat_sodo) > 1 else ""
+                clean_sodo3 = flat_sodo[2] if len(flat_sodo) > 2 else ""
+                clean_sodo4 = flat_sodo[3] if len(flat_sodo) > 3 else ""
+                clean_sodo5 = flat_sodo[4] if len(flat_sodo) > 4 else ""
+
+                house_links = flat_anh
             
             # 2. Truy vấn dữ liệu cũ để tránh ghi đè làm mất thông tin đã biên tập
             col_ma_kn = get_safe_col_name("Mã Khang Ngô (ID)")
@@ -1688,10 +1711,13 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             update_fields[col_sodo4_key] = clean_sodo4
             update_fields[col_sodo5_key] = clean_sodo5
             
-            # Hẻm images (Bảo toàn dữ liệu cũ)
+            # Hẻm images
             for i in range(10):
                 col_name = get_safe_col_name(f"Hình Hẻm {i+1}")
-                val = row[col_name] if col_name in row.keys() else None
+                if LISTINGS_TABLE == "listings":
+                    val = flat_hem[i] if i < len(flat_hem) else ""
+                else:
+                    val = row[col_name] if col_name in row.keys() else None
                 update_fields[col_name] = val or ""
             
             # Ảnh 1 to Ảnh 25 (Chứa tất cả 25 ảnh nội thất/ngoại thất thô)
@@ -1711,19 +1737,13 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 update_fields["Images_Admin_JSON"] = images_admin_json_str
                 update_fields["images_public_json"] = images_public_json_str
                 
-                # Loại bỏ các cột phẳng hình ảnh ở Pool1
+                # Chỉ loại bỏ các trường curation phụ, giữ lại toàn bộ cột ảnh phẳng để ghi nhận đồng bộ
                 image_fields_to_skip = {
                     get_safe_col_name("Hình Nhận Diện"),
                     get_safe_col_name("Hình Mặt Tiền"),
                     get_safe_col_name("Ảnh Public (VD: 1,3,5)"),
                     get_safe_col_name("Ảnh Hẻm Public (VD: 1,2)")
                 }
-                for i in range(1, 6):
-                    image_fields_to_skip.add(get_safe_col_name(f"Sơ đồ thửa đất {i}"))
-                for i in range(1, 11):
-                    image_fields_to_skip.add(get_safe_col_name(f"Hình Hẻm {i}"))
-                for i in range(1, 26):
-                    image_fields_to_skip.add(get_safe_col_name(f"Ảnh {i}"))
                 
                 valid_update_fields = {k: v for k, v in update_fields.items() if k in db_cols and k not in image_fields_to_skip}
             else:
