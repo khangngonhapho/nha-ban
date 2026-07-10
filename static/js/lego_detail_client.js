@@ -375,7 +375,8 @@
         return norm !== '' && norm === normMatTien;
       };
 
-      const cleanImgs = (p.imgs || []).filter(url => {
+      const baseImgs = (p.images_public && p.images_public.length > 0) ? p.images_public : (p.imgs || []);
+      const cleanImgs = baseImgs.filter(url => {
         return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
       });
       const sortedImgs = cleanImgs;

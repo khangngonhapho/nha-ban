@@ -835,6 +835,7 @@ const LegoState = {
               giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
               m: cleanConsecutiveNewlines(sr[window.getSourceColumnIndex("mo_ta", 19)] || ''),
               imgs: uniqueImgs,
+              images_public: sourcePublicImgs,
               system_id: sr[window.getSourceColumnIndex("System ID", 37)] || (index + 1).toString(),
               so_pn: sr[window.getSourceColumnIndex("so_pn", 32)] || '-',
               img_mat_tien: sr[window.getSourceColumnIndex("Hình Mặt Tiền", 38)] || '',
@@ -1252,6 +1253,19 @@ const LegoState = {
             else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
             else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
             
+            let parsedPublicImgs = [];
+            const imagesPublicJsonStr = (r.c && r.c[colMap.images_public_json]) ? cv(r.c[colMap.images_public_json]) : "";
+            if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
+              try {
+                const parsed = JSON.parse(imagesPublicJsonStr);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                  parsedPublicImgs = parsed;
+                }
+              } catch (e) {
+                console.warn("Lỗi parse Images_Public_JSON:", e);
+              }
+            }
+
             const p = {
               temp_id: index + 1,
               id: cv(r.c[colMap.id]),
@@ -1277,18 +1291,7 @@ const LegoState = {
               chdv: cv(r.c[colMap.chdv]) || '-',
               giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
               m: cv(r.c[colMap.mo_ta]),
-              imgs: (() => {
-                const imagesPublicJsonStr = (r.c && r.c[colMap.images_public_json]) ? cv(r.c[colMap.images_public_json]) : "";
-                if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
-                  try {
-                    const parsedPublic = JSON.parse(imagesPublicJsonStr);
-                    if (Array.isArray(parsedPublic) && parsedPublic.length > 0) {
-                      return parsedPublic;
-                    }
-                  } catch (e) {
-                    console.warn("Lỗi parse Images_Public_JSON:", e);
-                  }
-                }
+              imgs: parsedPublicImgs.length > 0 ? parsedPublicImgs : (() => {
                 const fallbackUrls = [];
                 for (let i = 1; i <= 15; i++) {
                   const idx = getColIdx(`anh_${i}`, -1);
@@ -1304,6 +1307,7 @@ const LegoState = {
                 }
                 return fallbackUrls.filter(Boolean);
               })(),
+              images_public: parsedPublicImgs,
               system_id: cv(r.c[colMap.system_id]) || (index + 1).toString(),
               so_pn: cv(r.c[colMap.so_pn]) || '-',
               img_mat_tien: cv(r.c[colMap.hinh_mat_tien]) || '',

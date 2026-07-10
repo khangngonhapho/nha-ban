@@ -2559,7 +2559,43 @@
       const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
       const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
 
-      const targetMatTien = customCoverUrl || p.img_mat_tien || (poolRowData ? poolRowData[29] : '') || '';
+      // Dynamic image URL resolver helper
+      const getImageUrl = (type, index) => {
+        if (window.imageEditorSlides && window.imageEditorSlides.length > 0) {
+          const found = window.imageEditorSlides.find(c => c.type === type && c.index === index);
+          if (found) return found.url;
+        }
+        if (p.curated_config && Array.isArray(p.curated_config.images)) {
+          let interiorCount = 0;
+          let alleyCount = 0;
+          let sodoCount = 0;
+          for (let img of p.curated_config.images) {
+            if (!img || !img.url) continue;
+            const role = img.role || 'Nội thất';
+            if (type === 'facade' && (role === 'Mặt tiền' || role === 'facade')) return img.url;
+            if (type === 'cover' && (role === 'Bìa' || role === 'cover')) return img.url;
+            if (type === 'interior' && (role === 'Nội thất' || role === 'interior')) {
+              interiorCount++;
+              if (interiorCount === index) return img.url;
+            } else if (type === 'alley' && (role === 'Hẻm' || role === 'alley')) {
+              alleyCount++;
+              if (alleyCount === index) return img.url;
+            } else if (type === 'sodo' && (role === 'Sơ đồ' || role === 'diagram')) {
+              sodoCount++;
+              if (sodoCount === index) return img.url;
+            }
+          }
+        }
+        if (poolRowData) {
+          if (type === 'facade') return poolRowData[29] || '';
+          if (type === 'interior') return poolRowData[window.getPoolInteriorColIdx(index)] || '';
+          if (type === 'alley') return poolRowData[window.getPoolAlleyColIdx(index)] || '';
+          if (type === 'sodo') return poolRowData[window.getPoolSodoColIdx(index)] || '';
+        }
+        return '';
+      };
+
+      const targetMatTien = customCoverUrl || p.img_mat_tien || getImageUrl('facade', 0) || '';
       const normMatTien = normalizeImgUrl(targetMatTien);
       const isFacadeUrl = (url) => {
         if (!url) return false;
@@ -2571,11 +2607,11 @@
         const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
         const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
 
-        const sodo1Url = (document.getElementById('editSodo1Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(1)] : p.raw_sodo1) || '').trim();
-        const sodo2Url = (document.getElementById('editSodo2Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(2)] : p.raw_sodo2) || '').trim();
-        const sodo3Url = (document.getElementById('editSodo3Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(3)] : p.raw_sodo3) || '').trim();
-        const sodo4Url = (document.getElementById('editSodo4Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(4)] : p.raw_sodo4) || '').trim();
-        const sodo5Url = (document.getElementById('editSodo5Url')?.value || (poolRowData ? poolRowData[window.getPoolSodoColIdx(5)] : p.raw_sodo5) || '').trim();
+        const sodo1Url = (document.getElementById('editSodo1Url')?.value || getImageUrl('sodo', 1) || p.raw_sodo1 || '').trim();
+        const sodo2Url = (document.getElementById('editSodo2Url')?.value || getImageUrl('sodo', 2) || p.raw_sodo2 || '').trim();
+        const sodo3Url = (document.getElementById('editSodo3Url')?.value || getImageUrl('sodo', 3) || p.raw_sodo3 || '').trim();
+        const sodo4Url = (document.getElementById('editSodo4Url')?.value || getImageUrl('sodo', 4) || p.raw_sodo4 || '').trim();
+        const sodo5Url = (document.getElementById('editSodo5Url')?.value || getImageUrl('sodo', 5) || p.raw_sodo5 || '').trim();
         const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
         const isSodoUrl = (url) => {
           if (!url) return false;
@@ -2590,13 +2626,12 @@
         }
         if (!publicCover) {
           const candidates = [];
-          const interior1Idx = window.getPoolInteriorColIdx(1);
-          if (poolRowData[interior1Idx] && (!window.isListingSodoUrl || !window.isListingSodoUrl(poolRowData[interior1Idx], p)) && !isFacadeUrl(poolRowData[interior1Idx])) {
-            candidates.push(poolRowData[interior1Idx]);
+          const int1Url = getImageUrl('interior', 1);
+          if (int1Url && (!window.isListingSodoUrl || !window.isListingSodoUrl(int1Url, p)) && !isFacadeUrl(int1Url)) {
+            candidates.push(int1Url);
           }
-          // poolRowData[29] (raw facade) is completely excluded!
           for (let i = 0; i < noithatIndices.length; i++) {
-            const url = poolRowData[window.getPoolInteriorColIdx(noithatIndices[i])];
+            const url = getImageUrl('interior', noithatIndices[i]);
             if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
               candidates.push(url);
               break;
@@ -2613,7 +2648,7 @@
         let addedHem = 0;
         for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
           const hemIdx = hemIndices[i];
-          const hemUrl = poolRowData[window.getPoolAlleyColIdx(hemIdx)];
+          const hemUrl = getImageUrl('alley', hemIdx);
           if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p)) && !isFacadeUrl(hemUrl)) {
             finalImages.push(hemUrl);
             addedHem++;
@@ -2622,7 +2657,7 @@
         
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
-          const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
+          const imgUrl = getImageUrl('interior', imgIdx);
           if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }

@@ -17,7 +17,8 @@ window.LegoRenderClient = {
     const activeCollectionName = options.activeCollectionName || '';
     
     // Filter out Facebook and sodo images to get public cover
-    const imgUrls = (p.imgs || []).filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
+    const baseImgs = (p.images_public && p.images_public.length > 0) ? p.images_public : (p.imgs || []);
+    const imgUrls = baseImgs.filter(u => !u.includes('facebook.com') && !u.includes('fb.watch') && !u.includes('fb.gg'));
     const cleanImgUrls = imgUrls.filter(u => !(window.isListingSodoUrl && window.isListingSodoUrl(u, p)));
     const thumbUrl = cleanImgUrls[0] || imgUrls[0];
     const thumb = thumbUrl ? window.fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
