@@ -1936,12 +1936,48 @@
         return;
       }
 
+      // Dynamic column mapping for pool listing (US-131 check headers dynamically)
+      const idCol = window.getPoolColumnIndex("id", 55);
+      const tieuDeBdsCol = window.getPoolColumnIndex("Tiêu đề BDS", 56);
+      const noiDungChinhCol = window.getPoolColumnIndex("Nội dung chính", 9);
+      const moTaChiTietCol = window.getPoolColumnIndex("Mô tả chi tiết", 10);
+      const dtThucTeCol = window.getPoolColumnIndex("DT thực tế", 13);
+      const dtTrenSoCol = window.getPoolColumnIndex("DT Trên sổ", 14);
+      const soTangCol = window.getPoolColumnIndex("Số Tầng", 15);
+      const matTienCol = window.getPoolColumnIndex("Mặt Tiền", 16);
+      const phuongCol = window.getPoolColumnIndex("phuong", 4);
+      const phanLoaiCol = window.getPoolColumnIndex("Phân Loại", 7);
+      const huongCol = window.getPoolColumnIndex("huong_nha", 17);
+      const tinhTrangCol = window.getPoolColumnIndex("tinh_trang_nha", 61);
+      const danhGiaCol = window.getPoolColumnIndex("danh_gia", 67);
+      const nguCol = window.getPoolColumnIndex("ngu_tang_tret", 68);
+      const chdvCol = window.getPoolColumnIndex("chdv", 69);
+      const moTaBdsCol = window.getPoolColumnIndex("Mô tả BDS", 57);
+      const soPnCol = window.getPoolColumnIndex("Số PN", 64);
+      const soWcCol = window.getPoolColumnIndex("Số WC", 65);
+      const imgMatTienCol = window.getPoolColumnIndex("Hình Mặt Tiền", 29);
+      const giaChaoCol = window.getPoolColumnIndex("Giá chào", 11);
+      const giaChotCol = window.getPoolColumnIndex("Giá chốt", 58);
+      
+      const tenDauChuCol = window.getPoolColumnIndex("Tên đầu chủ", 75);
+      const dtDauChuCol = window.getPoolColumnIndex("ĐT Đầu chủ", 74);
+      const fbLinkCol = window.getPoolColumnIndex("FB Link", 76);
+      const sodo1Col = window.getPoolColumnIndex("Sơ đồ 1", 27);
+      const sodo2Col = window.getPoolColumnIndex("Sơ đồ 2", 28);
+      const sodo3Col = window.getPoolColumnIndex("Sơ đồ 3", 80);
+      const sodo4Col = window.getPoolColumnIndex("Sơ đồ 4", 81);
+      const sodo5Col = window.getPoolColumnIndex("Sơ đồ 5", 82);
+      const soNhaCol = window.getPoolColumnIndex("Số nhà", 6);
+      const tenDuongCol = window.getPoolColumnIndex("Tên đường", 5);
+      const duongTruocNhaCol = window.getPoolColumnIndex("Đường trước nhà", 60);
+      const quanCol = window.getPoolColumnIndex("quan", 3);
+
       // Map row to p structure
-      const dt = parseFloat(row[14] || row[13]) || 0;
-      const gia = parseGia(row[11] || row[58]);
+      const dt = parseFloat(row[dtTrenSoCol] || row[dtThucTeCol]) || 0;
+      const gia = parseGia(row[giaChaoCol] || row[giaChotCol]);
       const giabq = (dt > 0 && gia > 0) ? Math.round((gia * 1000) / dt) : 0;
 
-      let rawQ = row[3] || '';
+      let rawQ = row[quanCol] || '';
       let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
       if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
       const cleanQLower = cleanQ.toLowerCase();
@@ -2022,39 +2058,6 @@
       if (jsonUiVal) {
         try { json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
       }
-
-      // Dynamic column mapping for pool listing (US-131 check headers dynamically)
-      const idCol = window.getPoolColumnIndex("id", 55);
-      const tieuDeBdsCol = window.getPoolColumnIndex("Tiêu đề BDS", 56);
-      const noiDungChinhCol = window.getPoolColumnIndex("Nội dung chính", 9);
-      const moTaChiTietCol = window.getPoolColumnIndex("Mô tả chi tiết", 10);
-      const dtThucTeCol = window.getPoolColumnIndex("DT thực tế", 13);
-      const dtTrenSoCol = window.getPoolColumnIndex("DT Trên sổ", 14);
-      const soTangCol = window.getPoolColumnIndex("Số Tầng", 15);
-      const matTienCol = window.getPoolColumnIndex("Mặt Tiền", 16);
-      const phuongCol = window.getPoolColumnIndex("phuong", 4);
-      const phanLoaiCol = window.getPoolColumnIndex("Phân Loại", 7);
-      const huongCol = window.getPoolColumnIndex("huong_nha", 17);
-      const tinhTrangCol = window.getPoolColumnIndex("tinh_trang_nha", 61);
-      const danhGiaCol = window.getPoolColumnIndex("danh_gia", 67);
-      const nguCol = window.getPoolColumnIndex("ngu_tang_tret", 68);
-      const chdvCol = window.getPoolColumnIndex("chdv", 69);
-      const moTaBdsCol = window.getPoolColumnIndex("Mô tả BDS", 57);
-      const soPnCol = window.getPoolColumnIndex("Số PN", 64);
-      const soWcCol = window.getPoolColumnIndex("Số WC", 65);
-      const imgMatTienCol = window.getPoolColumnIndex("Hình Mặt Tiền", 29);
-      
-      const tenDauChuCol = window.getPoolColumnIndex("Tên đầu chủ", 75);
-      const dtDauChuCol = window.getPoolColumnIndex("ĐT Đầu chủ", 74);
-      const fbLinkCol = window.getPoolColumnIndex("FB Link", 76);
-      const sodo1Col = window.getPoolColumnIndex("Sơ đồ 1", 27);
-      const sodo2Col = window.getPoolColumnIndex("Sơ đồ 2", 28);
-      const sodo3Col = window.getPoolColumnIndex("Sơ đồ 3", 80);
-      const sodo4Col = window.getPoolColumnIndex("Sơ đồ 4", 81);
-      const sodo5Col = window.getPoolColumnIndex("Sơ đồ 5", 82);
-      const soNhaCol = window.getPoolColumnIndex("Số nhà", 6);
-      const tenDuongCol = window.getPoolColumnIndex("Tên đường", 5);
-      const duongTruocNhaCol = window.getPoolColumnIndex("Đường trước nhà", 60);
 
       const p = {
         temp_id: "pool_" + systemId,
