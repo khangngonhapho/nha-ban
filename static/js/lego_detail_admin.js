@@ -2469,7 +2469,7 @@
           try {
             const curatedImages = [];
             if (window.imageEditorSlides) {
-              window.imageEditorSlides.forEach((slide, idx) => {
+              window.imageEditorSlides.forEach((slide) => {
                 let slideOrigin = slide.origin || 'crawl';
                 if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
                 if (slideOrigin === 'user') slideOrigin = 'self';
@@ -2477,10 +2477,19 @@
                   image_url: slide.url,
                   r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
                   role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-                  sequence_index: idx + 1,
+                  sequence_index: 0,
                   origin: slideOrigin,
                   is_hidden: slide.visible === false ? 1 : 0
                 });
+              });
+              const getUrlIndex = (url) => {
+                const cleanUrl = (url || '').split('?')[0];
+                const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+                return match ? parseInt(match[1], 10) : 9999;
+              };
+              curatedImages.sort((a, b) => getUrlIndex(a.image_url) - getUrlIndex(b.image_url));
+              curatedImages.forEach((img, idx) => {
+                img.sequence_index = idx + 1;
               });
             }
             const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
@@ -2948,7 +2957,7 @@
 
         const curatedImages = [];
         if (window.imageEditorSlides) {
-          window.imageEditorSlides.forEach((slide, idx) => {
+          window.imageEditorSlides.forEach((slide) => {
             let slideOrigin = slide.origin || 'crawl';
             if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
             if (slideOrigin === 'user') slideOrigin = 'self';
@@ -2956,10 +2965,19 @@
               image_url: slide.url,
               r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
               role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-              sequence_index: idx + 1,
+              sequence_index: 0,
               origin: slideOrigin,
               is_hidden: slide.visible === false ? 1 : 0
             });
+          });
+          const getUrlIndex = (url) => {
+            const cleanUrl = (url || '').split('?')[0];
+            const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+            return match ? parseInt(match[1], 10) : 9999;
+          };
+          curatedImages.sort((a, b) => getUrlIndex(a.image_url) - getUrlIndex(b.image_url));
+          curatedImages.forEach((img, idx) => {
+            img.sequence_index = idx + 1;
           });
         }
 
@@ -3423,7 +3441,7 @@
           try {
             const curatedImages = [];
             if (window.imageEditorSlides) {
-              window.imageEditorSlides.forEach((slide, idx) => {
+              window.imageEditorSlides.forEach((slide) => {
                 let slideOrigin = slide.origin || 'crawl';
                 if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
                 if (slideOrigin === 'user') slideOrigin = 'self';
@@ -3431,10 +3449,19 @@
                   image_url: slide.url,
                   r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
                   role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-                  sequence_index: idx + 1,
+                  sequence_index: 0,
                   origin: slideOrigin,
                   is_hidden: slide.visible === false ? 1 : 0
                 });
+              });
+              const getUrlIndex = (url) => {
+                const cleanUrl = (url || '').split('?')[0];
+                const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+                return match ? parseInt(match[1], 10) : 9999;
+              };
+              curatedImages.sort((a, b) => getUrlIndex(a.image_url) - getUrlIndex(b.image_url));
+              curatedImages.forEach((img, idx) => {
+                img.sequence_index = idx + 1;
               });
             }
             const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
