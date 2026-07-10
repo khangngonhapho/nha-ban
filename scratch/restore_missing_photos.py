@@ -45,9 +45,12 @@ def classify_image_origin(url, tk_id, raw_drive_images):
         
     return "crawl"
 
-def main(dry_run=True, limit=5, all_flag=False):
+def main(dry_run=True, limit=5, all_flag=False, target_khang_ngo_ids=None):
     print("==========================================================")
-    print(f"🔄 TIẾN TRÌNH KHÔI PHỤC & DỌN DẸP ẢNH R2 TỪ SQLITE (DRY_RUN={dry_run}, LIMIT={limit if not all_flag else 'ALL'})")
+    if target_khang_ngo_ids:
+        print(f"🔄 TIẾN TRÌNH KHÔI PHỤC & DỌN DẸP ẢNH R2 TỪ SQLITE (DRY_RUN={dry_run}, TARGET_IDS={target_khang_ngo_ids})")
+    else:
+        print(f"🔄 TIẾN TRÌNH KHÔI PHỤC & DỌN DẸP ẢNH R2 TỪ SQLITE (DRY_RUN={dry_run}, LIMIT={limit if not all_flag else 'ALL'})")
     print("==========================================================")
     
     # 1. Đọc dữ liệu từ SQLite cục bộ làm Source of Truth
@@ -65,7 +68,7 @@ def main(dry_run=True, limit=5, all_flag=False):
     db_cols = {r[1] for r in cursor.fetchall()}
     
     sql_cols = ["tk_id", "status"]
-    for c in ["raw_drive_images_json", "Images_Admin_JSON", "curated_config_json"]:
+    for c in ["raw_drive_images_json", "Images_Admin_JSON", "curated_config_json", "Ma_Khang_Ngo_ID"]:
         if c in db_cols:
             sql_cols.append(c)
             
@@ -78,6 +81,16 @@ def main(dry_run=True, limit=5, all_flag=False):
         tk_id = d.get("tk_id")
         if not tk_id:
             continue
+            
+        ma_khang_ngo = d.get("Ma_Khang_Ngo_ID", "")
+        
+        # Nếu có chỉ định danh sách cần test, thực hiện lọc
+        if target_khang_ngo_ids:
+            mkn_clean = str(ma_khang_ngo).strip().upper()
+            tk_clean = str(tk_id).strip().upper()
+            # Khớp cả Mã Khang Ngô ID và tk_id để linh hoạt
+            if not any(x in [mkn_clean, tk_clean] for x in target_khang_ngo_ids):
+                continue
             
         # Trích xuất ảnh R2 di cư
         raw_drive_images = []
@@ -303,8 +316,8 @@ def main(dry_run=True, limit=5, all_flag=False):
                 'db_raw_drive': db_raw_drive
             })
             
-    # Giới hạn số lượng căn chạy thử
-    if not all_flag and limit > 0:
+    # Giới hạn số lượng căn chạy thử (chỉ áp dụng khi không chỉ định target_khang_ngo_ids cụ thể)
+    if not target_khang_ngo_ids and not all_flag and limit > 0:
         updates_pool = updates_pool[:limit]
         print(f"⚠️ Chế độ GIỚI HẠN: Chỉ xử lý {len(updates_pool)} căn đầu tiên để kiểm tra.")
         

@@ -371,6 +371,16 @@
                     Bảng thao tác quản trị
                 </div>
                 <div class="action-list">
+                    <div style="margin-bottom: 12px; background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color);">
+                        <label style="font-size: 11px; font-weight: bold; color: var(--accent-amber); text-transform: uppercase; display: block; margin-bottom: 6px;">
+                            🎯 Chọn Mã Khang Ngô cần khôi phục ảnh (Tùy chọn)
+                        </label>
+                        <input type="text" id="target-khang-ngo-ids" placeholder="Ví dụ: HWZOITITTN, MWHBIT (Cách nhau bởi dấu phẩy)" 
+                               style="width: 100%; padding: 8px 12px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); font-size: 12px; outline: none; transition: 0.3s;">
+                        <small style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 4px; line-height: 1.4;">
+                            * Để trống sẽ mặc định khôi phục 5 căn đầu tiên khớp điều kiện thiếu ảnh.
+                        </small>
+                    </div>
                     <button class="action-button btn-prd" onclick="runAction('restore_prd')">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18" /></svg>
                         Đồng bộ CSDL Production (Sheets ➔ PRD)
@@ -480,10 +490,12 @@
             consoleOutput.innerText += `\n>>> [Yêu cầu] Bắt đầu kích hoạt hành động: ${actionName}...\n`;
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
             
+            const targetIdsVal = document.getElementById('target-khang-ngo-ids') ? document.getElementById('target-khang-ngo-ids').value : '';
+            
             fetch('/api/system/run-action', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: actionName })
+                body: JSON.stringify({ action: actionName, target_ids: targetIdsVal })
             })
             .then(res => res.json())
             .then(data => {

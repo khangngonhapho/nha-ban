@@ -381,6 +381,9 @@ def run_system_action():
                 import builtins
                 from scratch.restore_missing_photos import main as restore_photos_main
                 
+                target_ids_str = data.get("target_ids", "").strip()
+                target_ids = [x.strip().upper() for x in target_ids_str.split(",") if x.strip()] if target_ids_str else None
+                
                 original_print = builtins.print
                 def custom_print(*args, **kwargs):
                     msg = " ".join(str(arg) for arg in args)
@@ -389,7 +392,7 @@ def run_system_action():
                 builtins.print = custom_print
                 
                 try:
-                    restore_photos_main(dry_run=True, limit=5, all_flag=False)
+                    restore_photos_main(dry_run=True, limit=5, all_flag=False, target_khang_ngo_ids=target_ids)
                     manager.add_log_message("[✅ Thành công] Hoàn tất mô phỏng khôi phục ảnh R2!")
                 finally:
                     builtins.print = original_print
@@ -398,6 +401,9 @@ def run_system_action():
                 import builtins
                 from scratch.restore_missing_photos import main as restore_photos_main
                 
+                target_ids_str = data.get("target_ids", "").strip()
+                target_ids = [x.strip().upper() for x in target_ids_str.split(",") if x.strip()] if target_ids_str else None
+                
                 original_print = builtins.print
                 def custom_print(*args, **kwargs):
                     msg = " ".join(str(arg) for arg in args)
@@ -406,7 +412,7 @@ def run_system_action():
                 builtins.print = custom_print
                 
                 try:
-                    restore_photos_main(dry_run=False, limit=5, all_flag=False)
+                    restore_photos_main(dry_run=False, limit=5, all_flag=False, target_khang_ngo_ids=target_ids)
                     manager.add_log_message("[✅ Thành công] Hoàn tất khôi phục ảnh R2 lên Google Sheets!")
                 finally:
                     builtins.print = original_print
