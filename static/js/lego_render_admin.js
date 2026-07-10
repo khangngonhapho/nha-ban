@@ -28,7 +28,13 @@ window.LegoRenderAdmin = {
     if (effectiveImgMatTien) {
       thumbUrl = effectiveImgMatTien;
     } else {
-      thumbUrl = cleanImgUrls[0] || imgUrls[0];
+      // Dò tìm hình có role 'Mặt tiền' hoặc 'facade' trong curated_config
+      let facadeImg = '';
+      if (p.curated_config && p.curated_config.images) {
+        const found = p.curated_config.images.find(img => img.role === 'Mặt tiền' || img.role === 'facade');
+        if (found) facadeImg = found.url;
+      }
+      thumbUrl = facadeImg || cleanImgUrls[0] || imgUrls[0];
     }
     const thumb = thumbUrl ? window.fixImgUrl(thumbUrl, 'w400') : 'https://via.placeholder.com/300x200?text=No+Photo';
     

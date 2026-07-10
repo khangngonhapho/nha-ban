@@ -1788,13 +1788,14 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 update_fields["Images_Admin_JSON"] = images_admin_json_str
                 update_fields["images_public_json"] = images_public_json_str
                 
-                # Chỉ loại bỏ các trường curation phụ, giữ lại toàn bộ cột ảnh phẳng để ghi nhận đồng bộ
                 image_fields_to_skip = {
                     get_safe_col_name("Hình Nhận Diện"),
-                    get_safe_col_name("Hình Mặt Tiền"),
                     get_safe_col_name("Ảnh Public (VD: 1,3,5)"),
                     get_safe_col_name("Ảnh Hẻm Public (VD: 1,2)")
                 }
+                old_hinh_mat_tien = row[col_mat_tien] if col_mat_tien in row.keys() else ""
+                if old_hinh_mat_tien:
+                    image_fields_to_skip.add(col_mat_tien)
                 
                 valid_update_fields = {k: v for k, v in update_fields.items() if k in db_cols and k not in image_fields_to_skip}
             else:
