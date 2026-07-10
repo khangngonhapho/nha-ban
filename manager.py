@@ -1564,18 +1564,31 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     if orig_tk_url:
                         stripped_orig_tk = orig_tk_url.split('?')[0]
                         if stripped_orig_tk in stripped_new_mapping:
-                            new_r2_url = stripped_new_mapping[stripped_orig_tk]
-                            if new_r2_url not in added_urls:
+                            # Ảnh cũ vẫn còn trên Thiên Khôi -> Giữ nguyên (bỏ qua vì đã xử lý rồi)
+                            if url not in added_urls:
+                                new_images_list.append(img)
+                                added_urls.add(url)
+                        else:
+                            # Ảnh cũ đã bị Thiên Khôi xóa -> Vẫn giữ lại, update visible = False & role = "deleted"
+                            if url not in added_urls:
                                 img_copy = dict(img)
-                                img_copy["url"] = new_r2_url
+                                img_copy["visible"] = False
+                                img_copy["role"] = "deleted"
                                 new_images_list.append(img_copy)
-                                added_urls.add(new_r2_url)
+                                added_urls.add(url)
+                    else:
+                        # Không tìm thấy mapping nhưng đã có trong old_images -> Vẫn giữ lại
+                        if url not in added_urls:
+                            new_images_list.append(img)
+                            added_urls.add(url)
                 
-                # 3. Thêm các ảnh di cư mới cào vào cuối danh sách
+                # 3. Thêm các ảnh di cư mới cào vào cuối danh sách (mặc định visible = False để chỉ hiện cho admin biên tập)
                 for img_url in raw_images_tk:
                     if img_url in new_images_mapping:
                         r2_url = new_images_mapping[img_url]
                         if r2_url not in added_urls:
+                            visible = False
+                            
                             stripped_img = img_url.split('?')[0] if img_url else ""
                             is_diag = (stripped_img in stripped_sodo) or \
                                       (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
@@ -1584,7 +1597,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                                       (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
                                       (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
                             role = "Sơ đồ" if is_diag else "Nội thất"
-                            visible = False if role in ["Sơ đồ", "Mặt tiền"] else True
+                            
                             new_images_list.append({
                                 "url": r2_url,
                                 "role": role,

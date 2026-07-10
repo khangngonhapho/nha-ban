@@ -1622,34 +1622,38 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             while len(updated_row) < len(POOL_HEADERS):
                 updated_row.append("")
             
-            IMAGE_HEADERS = [
-                "Hình Nhận Diện",
-                "Sơ đồ thửa đất 1", "Sơ đồ thửa đất 2", "Sơ đồ thửa đất 3", "Sơ đồ thửa đất 4", "Sơ đồ thửa đất 5",
-                "Hình Mặt Tiền",
-                "Hình Hẻm 1", "Hình Hẻm 2", "Hình Hẻm 3", "Hình Hẻm 4", "Hình Hẻm 5", 
-                "Hình Hẻm 6", "Hình Hẻm 7", "Hình Hẻm 8", "Hình Hẻm 9", "Hình Hẻm 10",
+            PROTECTED_HEADERS = {
+                "Mã Hàng", "System ID", "Mã Khang Ngô (ID)",
+                "Hình Nhận Diện", "Hình Mặt Tiền",
                 "Ảnh 1", "Ảnh 2", "Ảnh 3", "Ảnh 4", "Ảnh 5", "Ảnh 6", "Ảnh 7", "Ảnh 8",
                 "Ảnh 9", "Ảnh 10", "Ảnh 11", "Ảnh 12", "Ảnh 13", "Ảnh 14", "Ảnh 15",
-                "Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20", 
+                "Ảnh 16", "Ảnh 17", "Ảnh 18", "Ảnh 19", "Ảnh 20",
                 "Ảnh 21", "Ảnh 22", "Ảnh 23", "Ảnh 24", "Ảnh 25",
+                "Tiêu đề Public", "Mô tả Public", "Giá Public",
+                "Phân loại Hẻm", "Đường trước nhà (m)", "Tình trạng nhà",
                 "Ảnh Public (VD: 1,3,5)", "Ảnh Hẻm Public (VD: 1,2)",
-                "Last Crawl",
-                "Mã Khang Ngô (ID)",
-                "Images_Admin_JSON",
-                "JSON_UI"
-            ]
+                "Phường cũ (AI)", "Đánh giá (Admin)", "Ngủ trệt (Admin)",
+                "CHDV (Admin)", "Duyệt Public", "Trạng thái Public"
+            }
         
             for idx, header in enumerate(POOL_HEADERS):
-                if header in IMAGE_HEADERS:
+                # Bảo vệ cột nếu nằm trong danh sách PROTECTED_HEADERS hoặc tên cột chứa chữ "custom" (không phân biệt hoa thường)
+                if header in PROTECTED_HEADERS or "custom" in header.lower():
+                    val = existing_row[idx] if idx < len(existing_row) else ""
+                else:
                     safe_col = get_safe_col_name(header)
                     val = d.get(safe_col, "")
-                    if header == "Hình Nhận Diện":
-                        val = f"=IMAGE(AD{existing_row_index})"
-                    elif header == "Last Crawl":
+                    
+                    # Các xử lý ghi đè đặc trưng
+                    if header == "Last Crawl":
                         val = d.get("Last_Crawl", "") or datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    elif header == "Last Sync":
+                        val = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    elif header == "Tên đầu chủ (BX)":
+                        val = d.get("Ten_Dau_Chu_Hop_dong", "")
                 
-                    val_str = str(val) if val is not None else ""
-                    updated_row[idx] = val_str
+                val_str = str(val) if val is not None else ""
+                updated_row[idx] = val_str
                 
             row_data = updated_row
             row_data_escaped = [escape_tsv_field(str(x)) for x in row_data]

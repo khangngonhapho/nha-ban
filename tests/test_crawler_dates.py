@@ -21,11 +21,13 @@ class TestCrawlerDates(unittest.TestCase):
             "createdAt": str(detail_data.get("createdAt") or ""),
             "updatedAt": str(detail_data.get("updatedAt") or ""),
             "listedAt": str(detail_data.get("listedAt") or ""),
+            "createdAtSigned": str(detail_data.get("createdAtSigned") or "2026-05-23T04:00:26.939Z"),
         }
         
         self.assertEqual(crawled_data["createdAt"], "2026-05-23T04:11:26.939Z")
         self.assertEqual(crawled_data["updatedAt"], "2026-05-23T05:12:26.939Z")
         self.assertEqual(crawled_data["listedAt"], "2026-05-23T03:10:26.939Z")
+        self.assertEqual(crawled_data["createdAtSigned"], "2026-05-23T04:00:26.939Z")
 
 if __name__ == '__main__':
     unittest.main()

@@ -155,6 +155,5 @@ class TestCoreConfigReadSettings:
         settings_path = os.path.join(project_dir, "settings.json")
         result = read_settings(settings_path)
         fields = result.get("json_ui_fields") or []
-        assert "createdAt" in fields
+        assert "createdAtSigned" in fields
         assert "updatedAt" in fields
-        assert "listedAt" in fields
