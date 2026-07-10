@@ -549,6 +549,7 @@
 
             if (p.isFromPoolOnly) {
               const savePoolBtn = document.getElementById('savePoolBtn');
+              const warningPoolBtn = document.getElementById('warningPoolBtn');
               const poolSaveNotice = document.getElementById('poolSaveNotice');
               if (isFilled) {
                 const accPreview = document.getElementById('accPreview');
@@ -562,6 +563,7 @@
                 }
                 if (floatActions) floatActions.style.display = 'flex';
                 if (savePoolBtn) savePoolBtn.style.setProperty('display', 'flex', 'important');
+                if (warningPoolBtn) warningPoolBtn.style.setProperty('display', 'none', 'important');
 
                 if (poolSaveNotice) {
                   poolSaveNotice.style.color = '#27ae60';
@@ -572,6 +574,7 @@
               } else {
                 if (floatActions) floatActions.style.display = 'none';
                 if (savePoolBtn) savePoolBtn.style.setProperty('display', 'none', 'important');
+                if (warningPoolBtn) warningPoolBtn.style.setProperty('display', 'flex', 'important');
 
                 if (poolSaveNotice) {
                   poolSaveNotice.style.color = '#e74c3c';
