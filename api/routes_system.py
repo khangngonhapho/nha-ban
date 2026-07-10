@@ -244,3 +244,185 @@ def save_cookie_endpoint():
     except Exception as e:
         manager.add_log_message(f"[❌ LỖI] Không thể ghi file cookie: {str(e)}")
         return jsonify({"status": "error", "message": f"Không thể ghi file cookie: {str(e)}"}), 500
+
+
+@routes_system.route('/system')
+def system_dashboard():
+    """Trả về giao diện quản trị hệ thống và CSDL nội bộ"""
+    import os
+    from flask import Response
+    if os.path.exists("system.html"):
+        with open("system.html", "r", encoding="utf-8") as f:
+            content = f.read()
+    else:
+        return "system.html not found", 404
+    resp = Response(content, mimetype='text/html')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
+
+
+@routes_system.route('/api/system/status', methods=['GET'])
+def system_status():
+    import manager
+    import os
+    import sqlite3
+    from datetime import datetime
+    
+    cfg = manager.load_config()
+    is_staging = os.environ.get("STAGING") == "true"
+    is_pool2 = (cfg.get("active_pool_system") == "Pool2")
+    
+    active_mode = "PRODUCTION"
+    if is_staging:
+        active_mode = "STAGING"
+    elif is_pool2:
+        active_mode = "POOL2 (V2)"
+        
+    db_files = ["raw_archive.db", "raw_archive_staging.db", "raw_archive_v2.db"]
+    db_status = {}
+    
+    for f in db_files:
+        path = os.path.join(manager.PROJECT_ROOT, f)
+        exists = os.path.exists(path)
+        size = 0
+        mtime = ""
+        total_listings = 0
+        raw_json_count = 0
+        
+        if exists:
+            size = os.path.getsize(path)
+            mtime = datetime.fromtimestamp(os.path.getmtime(path)).strftime("%Y-%m-%d %H:%M:%S")
+            try:
+                conn = sqlite3.connect(path, timeout=5.0)
+                cursor = conn.cursor()
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='listings'")
+                if cursor.fetchone():
+                    total_listings = cursor.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
+                    raw_json_count = cursor.execute("SELECT COUNT(*) FROM listings WHERE raw_json_full IS NOT NULL AND raw_json_full != ''").fetchone()[0]
+                conn.close()
+            except Exception:
+                pass
+                
+        db_status[f] = {
+            "exists": exists,
+            "size_mb": round(size / (1024 * 1024), 2),
+            "modified": mtime,
+            "total_listings": total_listings,
+            "raw_json_count": raw_json_count
+        }
+        
+    backup_dir = "d:/LHTBrain/BDS_Backups"
+    backups = []
+    if os.path.exists(backup_dir):
+        try:
+            backups = sorted([
+                {
+                    "name": f,
+                    "size_mb": round(os.path.getsize(os.path.join(backup_dir, f)) / (1024 * 1024), 2),
+                    "created": datetime.fromtimestamp(os.path.getmtime(os.path.join(backup_dir, f))).strftime("%Y-%m-%d %H:%M:%S")
+                }
+                for f in os.listdir(backup_dir) if f.startswith("raw_archive_backup_")
+            ], key=lambda x: x["created"], reverse=True)
+        except Exception:
+            pass
+            
+    safe_cfg = {}
+    for k, v in cfg.items():
+        if any(sec in k.lower() for sec in ["key", "secret", "password", "token"]):
+            safe_cfg[k] = "••••••••••••"
+        else:
+            safe_cfg[k] = v
+            
+    return jsonify({
+        "status": "success",
+        "active_mode": active_mode,
+        "db_status": db_status,
+        "backups": backups,
+        "config": safe_cfg
+    })
+
+
+@routes_system.route('/api/system/run-action', methods=['POST'])
+def run_system_action():
+    import manager
+    import threading
+    import os
+    
+    data = request.json or {}
+    action = data.get("action")
+    
+    if action not in ["restore_prd", "restore_stg", "recover_raw_json", "restore_r2_dry", "restore_r2_real"]:
+        return jsonify({"status": "error", "message": "Hành động không hợp lệ."}), 400
+        
+    def worker():
+        try:
+            manager.add_log_message(f"[⚙️ Hệ thống] Bắt đầu thực hiện hành động: {action}...")
+            
+            if action == "restore_prd":
+                os.environ["STAGING"] = "false"
+                from restore_db_from_sheets import restore_database
+                restore_database()
+                manager.add_log_message("[✅ Thành công] Hoàn tất khôi phục CSDL Production từ Google Sheets!")
+                
+            elif action == "restore_stg":
+                os.environ["STAGING"] = "true"
+                from restore_db_from_sheets import restore_database
+                restore_database()
+                manager.add_log_message("[✅ Thành công] Hoàn tất khôi phục CSDL Staging từ Google Sheets!")
+                
+            elif action == "recover_raw_json":
+                from scratch.recover_raw_json import recover_data
+                recover_data()
+                manager.add_log_message("[✅ Thành công] Hoàn tất cứu hộ dữ liệu raw_json_full từ Backup!")
+                
+            elif action == "restore_r2_dry":
+                import builtins
+                from scratch.restore_missing_photos import main as restore_photos_main
+                
+                target_ids_str = data.get("target_ids", "").strip()
+                target_ids = [x.strip().upper() for x in target_ids_str.split(",") if x.strip()] if target_ids_str else None
+                
+                original_print = builtins.print
+                def custom_print(*args, **kwargs):
+                    msg = " ".join(str(arg) for arg in args)
+                    manager.add_log_message(msg)
+                    original_print(*args, **kwargs)
+                builtins.print = custom_print
+                
+                try:
+                    restore_photos_main(dry_run=True, limit=5, all_flag=False, target_khang_ngo_ids=target_ids)
+                    manager.add_log_message("[✅ Thành công] Hoàn tất mô phỏng khôi phục ảnh R2!")
+                finally:
+                    builtins.print = original_print
+                    
+            elif action == "restore_r2_real":
+                import builtins
+                from scratch.restore_missing_photos import main as restore_photos_main
+                
+                target_ids_str = data.get("target_ids", "").strip()
+                target_ids = [x.strip().upper() for x in target_ids_str.split(",") if x.strip()] if target_ids_str else None
+                
+                original_print = builtins.print
+                def custom_print(*args, **kwargs):
+                    msg = " ".join(str(arg) for arg in args)
+                    manager.add_log_message(msg)
+                    original_print(*args, **kwargs)
+                builtins.print = custom_print
+                
+                try:
+                    restore_photos_main(dry_run=False, limit=5, all_flag=False, target_khang_ngo_ids=target_ids)
+                    manager.add_log_message("[✅ Thành công] Hoàn tất khôi phục ảnh R2 lên Google Sheets!")
+                finally:
+                    builtins.print = original_print
+                
+        except Exception as e:
+            manager.add_log_message(f"[❌ LỖI] Gặp lỗi khi thực hiện hành động {action}: {str(e)}")
+            
+    threading.Thread(target=worker, daemon=True).start()
+    
+    return jsonify({
+        "status": "success",
+        "message": f"Đã kích hoạt hành động '{action}' chạy ngầm thành công. Theo dõi log tiến trình ở console."
+    })
