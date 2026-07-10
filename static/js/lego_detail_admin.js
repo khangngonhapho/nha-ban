@@ -1958,14 +1958,56 @@
       else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
 
       const poolImgs = [];
-      for (let c = 40; c <= 54; c++) {
-        if (row[c]) poolImgs.push(row[c]);
-      }
-      for (let c = 83; c <= 92; c++) {
-        if (row[c]) poolImgs.push(row[c]);
+      const imagesAdminJsonCol = window.getPoolColumnIndex("Images_Admin_JSON", 94);
+      const imagesAdminJsonStr = row[imagesAdminJsonCol] || '';
+      let tempCuratedConfig = null;
+
+      if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
+        try {
+          const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+          const roleMapEnToVi = {
+            "diagram": "Sơ đồ",
+            "facade": "Mặt tiền",
+            "cover": "Bìa",
+            "alley": "Hẻm",
+            "interior": "Nội thất",
+            "hidden": "Ẩn",
+            "deleted": "deleted"
+          };
+          tempCuratedConfig = {
+            images: parsedAdmin.map(img => {
+              const roleVi = roleMapEnToVi[img.role] || img.role || 'Nội thất';
+              const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
+              return {
+                url: img.r2_url || img.image_url || img.url || '',
+                role: roleVi,
+                visible: isVisible
+              };
+            })
+          };
+          const r2Imgs = parsedAdmin
+            .filter(img => window.isAdmin || (img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn'))
+            .map(img => img.r2_url || img.image_url || img.url)
+            .filter(Boolean);
+          if (r2Imgs && r2Imgs.length > 0) {
+            poolImgs.push(...r2Imgs);
+          }
+        } catch (e) {
+          console.warn("Failed to parse Images_Admin_JSON in openPoolS:", e);
+        }
       }
 
-      let jsonUiVal = row[93] || '';
+      if (poolImgs.length === 0) {
+        for (let c = 40; c <= 54; c++) {
+          if (row[c]) poolImgs.push(row[c]);
+        }
+        for (let c = 83; c <= 92; c++) {
+          if (row[c]) poolImgs.push(row[c]);
+        }
+      }
+
+      const jsonUiCol = window.getPoolColumnIndex("JSON_UI", 93);
+      let jsonUiVal = row[jsonUiCol] || '';
       if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
         for (let i = row.length - 1; i >= 0; i--) {
           const val = row[i];
@@ -1981,59 +2023,93 @@
         try { json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
       }
 
+      // Dynamic column mapping for pool listing (US-131 check headers dynamically)
+      const idCol = window.getPoolColumnIndex("id", 55);
+      const tieuDeBdsCol = window.getPoolColumnIndex("Tiêu đề BDS", 56);
+      const noiDungChinhCol = window.getPoolColumnIndex("Nội dung chính", 9);
+      const moTaChiTietCol = window.getPoolColumnIndex("Mô tả chi tiết", 10);
+      const dtThucTeCol = window.getPoolColumnIndex("DT thực tế", 13);
+      const dtTrenSoCol = window.getPoolColumnIndex("DT Trên sổ", 14);
+      const soTangCol = window.getPoolColumnIndex("Số Tầng", 15);
+      const matTienCol = window.getPoolColumnIndex("Mặt Tiền", 16);
+      const phuongCol = window.getPoolColumnIndex("phuong", 4);
+      const phanLoaiCol = window.getPoolColumnIndex("Phân Loại", 7);
+      const huongCol = window.getPoolColumnIndex("huong_nha", 17);
+      const tinhTrangCol = window.getPoolColumnIndex("tinh_trang_nha", 61);
+      const danhGiaCol = window.getPoolColumnIndex("danh_gia", 67);
+      const nguCol = window.getPoolColumnIndex("ngu_tang_tret", 68);
+      const chdvCol = window.getPoolColumnIndex("chdv", 69);
+      const moTaBdsCol = window.getPoolColumnIndex("Mô tả BDS", 57);
+      const soPnCol = window.getPoolColumnIndex("Số PN", 64);
+      const soWcCol = window.getPoolColumnIndex("Số WC", 65);
+      const imgMatTienCol = window.getPoolColumnIndex("Hình Mặt Tiền", 29);
+      
+      const tenDauChuCol = window.getPoolColumnIndex("Tên đầu chủ", 75);
+      const dtDauChuCol = window.getPoolColumnIndex("ĐT Đầu chủ", 74);
+      const fbLinkCol = window.getPoolColumnIndex("FB Link", 76);
+      const sodo1Col = window.getPoolColumnIndex("Sơ đồ 1", 27);
+      const sodo2Col = window.getPoolColumnIndex("Sơ đồ 2", 28);
+      const sodo3Col = window.getPoolColumnIndex("Sơ đồ 3", 80);
+      const sodo4Col = window.getPoolColumnIndex("Sơ đồ 4", 81);
+      const sodo5Col = window.getPoolColumnIndex("Sơ đồ 5", 82);
+      const soNhaCol = window.getPoolColumnIndex("Số nhà", 6);
+      const tenDuongCol = window.getPoolColumnIndex("Tên đường", 5);
+      const duongTruocNhaCol = window.getPoolColumnIndex("Đường trước nhà", 60);
+
       const p = {
         temp_id: "pool_" + systemId,
-        id: row[55] || systemId || '',
+        id: row[idCol] || systemId || '',
         cu_phap: "",
-        t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
-        dt: row[13] || row[14] || '',
-        dt_tren_so_custom: row[14] || '',
-        tang: row[15] || '',
-        mat: row[16] || '',
+        t: row[tieuDeBdsCol] || row[idCol] || row[noiDungChinhCol] || 'Căn nhà thô từ Pool',
+        dt: row[dtThucTeCol] || row[dtTrenSoCol] || '',
+        dt_tren_so_custom: row[dtTrenSoCol] || '',
+        tang: row[soTangCol] || '',
+        mat: row[matTienCol] || '',
         gia: gia,
         q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
         ql: cleanQ.toUpperCase(),
-        phuong: row[4] || '-',
-        loai_hinh: (row[6] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
-        huong: row[17] || '-',
+        phuong: row[phuongCol] || '-',
+        loai_hinh: (row[soNhaCol] || "").toString().includes(".") ? "Hẻm" : "Mặt tiền",
+        huong: row[huongCol] || '-',
         duong_truoc_nha: '-',
         rong_hem: '-',
-        tinh_trang: row[61] || '-',
-        danh_gia: row[67] || '',
+        tinh_trang: row[tinhTrangCol] || '-',
+        danh_gia: row[danhGiaCol] || '',
         is_invisible: false,
-        ngu_tang_tret: row[68] || '-',
-        chdv: row[69] || '-',
+        ngu_tang_tret: row[nguCol] || '-',
+        chdv: row[chdvCol] || '-',
         giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-        m: row[57] || '',
-        imgs: poolImgs,
+        m: row[moTaBdsCol] || '',
+        imgs: [...new Set(poolImgs)],
         system_id: systemId,
-        so_pn: row[64] || '-',
-        img_mat_tien: row[29] || '',
+        so_pn: row[soPnCol] || '-',
+        img_mat_tien: row[imgMatTienCol] || '',
         json_ui_parsed: json_ui_parsed,
+        curated_config: tempCuratedConfig,
 
-        raw_ten_dau_chu: row[75] || '',
-        raw_dt_dau_chu: row[74] || '',
-        raw_link_fb: row[76] || '',
-        raw_noi_dung_chinh: String(row[9] || '').replace(/\r\n|\r|\n/g, ' '),
-        raw_mo_ta_chi_tiet: row[10] || '',
-        raw_sodo1: row[27] || '',
-        raw_sodo2: row[28] || '',
-        raw_sodo3: row[80] || '',
-        raw_sodo4: row[81] || '',
-        raw_sodo5: row[82] || '',
-        raw_so_nha: row[6] || '',
-        raw_ten_duong: row[5] || '',
-        raw_dt_thuc_te: row[13] || '',
-        raw_dt_tren_so: row[14] || '',
-        raw_gia_chao: row[11] || row[58] || '',
-        raw_so_tang: row[15] || '',
-        raw_mat_tien: row[16] || '',
-        raw_duong_truoc_nha: row[60] || '',
+        raw_ten_dau_chu: row[tenDauChuCol] || '',
+        raw_dt_dau_chu: row[dtDauChuCol] || '',
+        raw_link_fb: row[fbLinkCol] || '',
+        raw_noi_dung_chinh: String(row[noiDungChinhCol] || '').replace(/\r\n|\r|\n/g, ' '),
+        raw_mo_ta_chi_tiet: row[moTaChiTietCol] || '',
+        raw_sodo1: row[sodo1Col] || '',
+        raw_sodo2: row[sodo2Col] || '',
+        raw_sodo3: row[sodo3Col] || '',
+        raw_sodo4: row[sodo4Col] || '',
+        raw_sodo5: row[sodo5Col] || '',
+        raw_so_nha: row[soNhaCol] || '',
+        raw_ten_duong: row[tenDuongCol] || '',
+        raw_dt_thuc_te: row[dtThucTeCol] || '',
+        raw_dt_tren_so: row[dtTrenSoCol] || '',
+        raw_gia_chao: row[giaChaoCol] || row[giaChotCol] || '',
+        raw_so_tang: row[soTangCol] || '',
+        raw_mat_tien: row[matTienCol] || '',
+        raw_duong_truoc_nha: row[duongTruocNhaCol] || '',
         raw_do_rong_hem: '',
-        raw_so_pn: row[64] || '',
-        raw_so_wc: row[65] || '',
-        raw_tieu_de_public: row[56] || '',
-        raw_mo_ta_public: row[57] || '',
+        raw_so_pn: row[soPnCol] || '',
+        raw_so_wc: row[soWcCol] || '',
+        raw_tieu_de_public: row[tieuDeBdsCol] || '',
+        raw_mo_ta_public: row[moTaBdsCol] || '',
         pool_row_index: POOL_ROWS.indexOf(row) + 2,
 
         isFromPoolOnly: true,
