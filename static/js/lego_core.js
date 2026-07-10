@@ -922,6 +922,9 @@ const LegoState = {
               p.pool_row_data = null;
             }
 
+            if (!p.json_ui_parsed.Criteria_Loai_BDS) {
+              p.json_ui_parsed.Criteria_Loai_BDS = p.loai_hinh === "Mặt tiền" ? "Nhà mặt phố" : "Nhà trong ngõ, ngách, hẻm";
+            }
             return p;
           })
           .filter(Boolean);
@@ -1102,6 +1105,9 @@ const LegoState = {
           p.json_ui_parsed = {};
           if (jsonUiVal) {
             try { p.json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+          }
+          if (!p.json_ui_parsed.Criteria_Loai_BDS) {
+            p.json_ui_parsed.Criteria_Loai_BDS = p.loai_hinh === "Mặt tiền" ? "Nhà mặt phố" : "Nhà trong ngõ, ngách, hẻm";
           }
 
           unmatchedList.push(p);
@@ -1332,6 +1338,9 @@ const LegoState = {
             p.json_ui_parsed = {};
             if (jsonUiVal) {
               try { p.json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
+            }
+            if (!p.json_ui_parsed.Criteria_Loai_BDS) {
+              p.json_ui_parsed.Criteria_Loai_BDS = p.loai_hinh === "Mặt tiền" ? "Nhà mặt phố" : "Nhà trong ngõ, ngách, hẻm";
             }
             
             p.dai_nha = getDaiNha(p);

@@ -301,9 +301,10 @@
             const cpMatch = removeAccents(p.cu_phap).includes(subCleaned);
             const soNhaMatch = removeAccents(p.raw_so_nha).includes(subCleaned) || (p.cu_phap && removeAccents(p.cu_phap.split(' ')[0]).includes(subCleaned));
             const duongMatch = removeAccents(p.raw_ten_duong).includes(subCleaned) || removeAccents(p.ten_duong).includes(subCleaned);
+            const loaiHinhMatch = removeAccents(p.loai_hinh).includes(subCleaned) || (p.json_ui_parsed && p.json_ui_parsed.Criteria_Loai_BDS && removeAccents(p.json_ui_parsed.Criteria_Loai_BDS).includes(subCleaned));
             
             return idMatch || titleMatch || streetMatch || pMatch || qMatch ||
-                   dauChuMatch || dtMatch || cpMatch || soNhaMatch || duongMatch;
+                   dauChuMatch || dtMatch || cpMatch || soNhaMatch || duongMatch || loaiHinhMatch;
           });
         });
       } else {
@@ -324,7 +325,8 @@
             (svCleaned === 'go vap' && p.q === 'gv') ||
             (svCleaned === 'quan 3' && p.q === 'q3') ||
             (svCleaned === 'quan 10' && p.q === 'q10');
-          return idMatch || tMatch || dMatch || pMatch || qMatch;
+          const loaiHinhMatch = removeAccents(p.loai_hinh).includes(svCleaned) || (p.json_ui_parsed && p.json_ui_parsed.Criteria_Loai_BDS && removeAccents(p.json_ui_parsed.Criteria_Loai_BDS).includes(svCleaned));
+          return idMatch || tMatch || dMatch || pMatch || qMatch || loaiHinhMatch;
         });
       }
     }
