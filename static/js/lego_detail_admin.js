@@ -2821,6 +2821,7 @@
       }
 
       try {
+        let cleanPublicImages = [];
         const note = document.getElementById('editNote').value.trim();
         const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
         const moTaBds = document.getElementById('editMoTaBds').value.trim();
@@ -2906,7 +2907,7 @@
             p.original_row_data[20] = newCover;
           }
 
-          const cleanPublicImages = [];
+          cleanPublicImages = [];
           for (let i = 20; i <= 29; i++) {
             const url = p.original_row_data[i];
             if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
