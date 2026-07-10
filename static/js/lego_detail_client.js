@@ -379,9 +379,12 @@
         return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
       });
       const sortedImgs = cleanImgs.sort((a, b) => {
-        const aVis = (a.includes('facebook.com') || a.includes('fb.watch') || a.includes('fb.gg')) ? 1 : 0;
-        const bVis = (b.includes('facebook.com') || b.includes('fb.watch') || b.includes('fb.gg')) ? 1 : 0;
-        return bVis - aVis;
+        const getIdx = (url) => {
+          const cleanUrl = url.split('?')[0];
+          const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+          return match ? parseInt(match[1], 10) : 9999;
+        };
+        return getIdx(a) - getIdx(b);
       });
 
       sbody.innerHTML = `

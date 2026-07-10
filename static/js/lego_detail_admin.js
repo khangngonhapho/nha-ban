@@ -532,6 +532,14 @@
             });
           }
 
+          const getImgIndex = (url) => {
+            const cleanUrl = url.split('?')[0];
+            const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+            return match ? parseInt(match[1], 10) : 9999;
+          };
+          sImgs.sort((a, b) => getImgIndex(a) - getImgIndex(b));
+          nImgs.sort((a, b) => getImgIndex(a) - getImgIndex(b));
+
           setupScrollCarousel('carouselNha', nImgs, false);
           setupScrollCarousel('carouselSo', sImgs, true);
 
