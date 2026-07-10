@@ -136,6 +136,9 @@ window.autoFillCurationDetails = async function() {
       
       if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
       if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+      if (typeof window.validateCurationForm === 'function') {
+        window.validateCurationForm();
+      }
       
       showToast("🤖 AI biên tập Tiêu đề và Mô tả thành công!", "success");
     } else {
@@ -150,6 +153,9 @@ window.autoFillCurationDetails = async function() {
     
     if (editTieuDe) editTieuDe.dispatchEvent(new Event('input'));
     if (editMoTa) editMoTa.dispatchEvent(new Event('input'));
+    if (typeof window.validateCurationForm === 'function') {
+      window.validateCurationForm();
+    }
   } finally {
     if (btn) {
       btn.innerHTML = originalBtnText;

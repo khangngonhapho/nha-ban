@@ -548,8 +548,8 @@
             const floatActions = document.getElementById('adminDetailFloatActions');
 
             if (p.isFromPoolOnly) {
-              const savePoolBtn = document.getElementById('savePoolBtn');
-              const warningPoolBtn = document.getElementById('warningPoolBtn');
+              const savePoolBtn = document.getElementById('savePoolBtn') || document.querySelector('.save-pool-btn');
+              const warningPoolBtn = document.getElementById('warningPoolBtn') || document.querySelector('.warning-pool-btn');
               const poolSaveNotice = document.getElementById('poolSaveNotice');
               if (isFilled) {
                 const accPreview = document.getElementById('accPreview');

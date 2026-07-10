@@ -640,8 +640,8 @@
           html += `<button class="dial-btn-item share-btn-float" onclick="shareZaloFromAdminDetail('${activeDetailListing.id}')" title="Gửi Zalo" style="background:#f39c12 !important; color:#1c1c1e !important; font-size:18px !important;">🔗</button>`;
         } else if (isFromPool) {
           html += `<button class="dial-btn-item download-btn-float" onclick="window.downloadAllListingImages('${activeDetailListing.id}')" title="Tải toàn bộ hình ảnh" style="background:#3498db !important; color:white !important; font-size:18px !important;">📥</button>`;
-          html += `<button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${activeDetailListing.system_id}', this)" title="Lên sóng & Lưu" style="display: none; background:#27ae60 !important; color:white !important; font-size:18px !important;">🚀</button>`;
-          html += `<button class="dial-btn-item warning-pool-btn" id="warningPoolBtn" onclick="if(typeof window.showToast==='function'){window.showToast('⚠️ Vui lòng nhập đủ Tiêu đề và Mô tả Public trước khi lên sóng!', 'warning');}else{alert('Vui lòng nhập đủ Tiêu đề và Mô tả Public trước khi lên sóng!');}" title="Nhập đủ thông tin trước khi lên sóng" style="background:#e74c3c !important; color:white !important; font-size:18px !important;">🚀</button>`;
+          html += `<button class="dial-btn-item save-pool-btn" id="savePoolBtn" onclick="saveNewListingFromPool('${activeDetailListing.system_id}', this)" title="Lên sóng & Lưu" style="display: none !important; background:#27ae60 !important; color:white !important; font-size:18px !important;">🚀</button>`;
+          html += `<button class="dial-btn-item warning-pool-btn" id="warningPoolBtn" onclick="if(typeof window.showToast==='function'){window.showToast('⚠️ Vui lòng nhập đủ Tiêu đề và Mô tả Public trước khi lên sóng!', 'warning');}else{alert('Vui lòng nhập đủ Tiêu đề và Mô tả Public trước khi lên sóng!');}" title="Nhập đủ thông tin trước khi lên sóng" style="display: flex !important; background:#e74c3c !important; color:white !important; font-size:18px !important;">🚀</button>`;
         }
       } else if (mode === 'colView') {
         html = `
