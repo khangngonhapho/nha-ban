@@ -353,7 +353,7 @@ def run_system_action():
     data = request.json or {}
     action = data.get("action")
     
-    if action not in ["restore_prd", "restore_stg", "recover_raw_json"]:
+    if action not in ["restore_prd", "restore_stg", "recover_raw_json", "restore_r2_dry", "restore_r2_real"]:
         return jsonify({"status": "error", "message": "Hành động không hợp lệ."}), 400
         
     def worker():
@@ -376,6 +376,40 @@ def run_system_action():
                 from scratch.recover_raw_json import recover_data
                 recover_data()
                 manager.add_log_message("[✅ Thành công] Hoàn tất cứu hộ dữ liệu raw_json_full từ Backup!")
+                
+            elif action == "restore_r2_dry":
+                import builtins
+                from scratch.restore_missing_photos import main as restore_photos_main
+                
+                original_print = builtins.print
+                def custom_print(*args, **kwargs):
+                    msg = " ".join(str(arg) for arg in args)
+                    manager.add_log_message(msg)
+                    original_print(*args, **kwargs)
+                builtins.print = custom_print
+                
+                try:
+                    restore_photos_main(dry_run=True, limit=5, all_flag=False)
+                    manager.add_log_message("[✅ Thành công] Hoàn tất mô phỏng khôi phục ảnh R2!")
+                finally:
+                    builtins.print = original_print
+                    
+            elif action == "restore_r2_real":
+                import builtins
+                from scratch.restore_missing_photos import main as restore_photos_main
+                
+                original_print = builtins.print
+                def custom_print(*args, **kwargs):
+                    msg = " ".join(str(arg) for arg in args)
+                    manager.add_log_message(msg)
+                    original_print(*args, **kwargs)
+                builtins.print = custom_print
+                
+                try:
+                    restore_photos_main(dry_run=False, limit=5, all_flag=False)
+                    manager.add_log_message("[✅ Thành công] Hoàn tất khôi phục ảnh R2 lên Google Sheets!")
+                finally:
+                    builtins.print = original_print
                 
         except Exception as e:
             manager.add_log_message(f"[❌ LỖI] Gặp lỗi khi thực hiện hành động {action}: {str(e)}")

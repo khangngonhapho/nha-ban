@@ -133,7 +133,7 @@
     </style>
     <script>
         // Resize window to control panel size on startup
-        window.resizeTo(480, 580);
+        window.resizeTo(480, 680);
 
         function runScript(filename) {
             try {
@@ -178,7 +178,15 @@
             ⚙️ Đồng bộ / Khôi phục CSDL STAGING
         </button>
 
-        <div class="group-title">3. Quản trị tệp tin sao lưu</div>
+        <div class="group-title">3. Khôi phục ảnh R2 lên Google Sheets</div>
+        <button class="btn" style="background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); margin-bottom: 8px;" onclick="runScript('python scratch/restore_missing_photos.py')">
+            🖼️ Mô phỏng khôi phục ảnh (Dry Run - 5 căn)
+        </button>
+        <button class="btn" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);" onclick="runScript('python scratch/restore_missing_photos.py --run')">
+            ⚡ Ghi đè khôi phục ảnh thực tế (5 căn)
+        </button>
+
+        <div class="group-title">4. Quản trị tệp tin sao lưu</div>
         <button class="btn btn-folder" onclick="openFolder('d:\\LHTBrain\\BDS_Backups')">
             📂 Mở thư mục sao lưu CSDL (Backups)
         </button>
