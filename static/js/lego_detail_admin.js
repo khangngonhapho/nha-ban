@@ -716,7 +716,7 @@
         sodo5Url = domSodo5 ? domSodo5.value : (p.pool_row_data ? p.pool_row_data[window.getPoolSodoColIdx(5)] : p.raw_sodo5);
         if (sodo5Url) cards.push({ type: "sodo", index: 5, url: sodo5Url, origin: getRawOrigin(sodo5Url) });
         
-        facadeUrl = p.pool_row_data ? p.pool_row_data[29] : p.img_mat_tien;
+        facadeUrl = p.pool_row_data ? p.pool_row_data[window.getPoolColumnIndex("Hình Mặt Tiền", 29)] : p.img_mat_tien;
         if (facadeUrl) cards.push({ type: "facade", index: 0, url: facadeUrl, origin: getRawOrigin(facadeUrl) });
         
         const maxInterior = p.imgs ? Math.max(25, p.imgs.length) : 25;
@@ -764,7 +764,16 @@
       const renderedCards = cards.filter(c => c.shouldRender);
 
       // Recover current selected public interior/alley indices
-      let currentCover = domCover ? domCover.value : ((p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || ''));
+      let currentCover = domCover ? domCover.value : '';
+      if (!currentCover) {
+        if (p.curated_config && p.curated_config.images) {
+          const found = p.curated_config.images.find(img => img.role === 'Mặt tiền' || img.role === 'facade');
+          if (found) currentCover = found.url;
+        }
+        if (!currentCover) {
+          currentCover = ((p.isFromPoolOnly && p.pool_row_data) ? '' : (p.img_mat_tien || ''));
+        }
+      }
       let currentPublicCover = '';
       if (domPublicCover) {
         currentPublicCover = domPublicCover.value;
