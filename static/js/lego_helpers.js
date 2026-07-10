@@ -343,6 +343,35 @@ window.getMappedPoolData = function() {
     };
     p.dai_nha = window.getDaiNha(p);
     
+    // Parse Images_Admin_JSON cho Kho Pool của Admin
+    const imagesAdminColIdx = window.getPoolColumnIndex ? window.getPoolColumnIndex("Images_Admin_JSON", 94) : 94;
+    const imagesAdminJsonStr = row[imagesAdminColIdx];
+    if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
+      try {
+        const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+        const roleMapEnToVi = {
+          "diagram": "Sơ đồ",
+          "facade": "Mặt tiền",
+          "cover": "Bìa",
+          "alley": "Hẻm",
+          "interior": "Nội thất",
+          "hidden": "Ẩn",
+          "deleted": "deleted"
+        };
+        p.curated_config = {
+          images: parsedAdmin.map(img => {
+            const roleVi = roleMapEnToVi[img.role] || img.role || 'Nội thất';
+            const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
+            return {
+              url: img.r2_url || img.image_url || img.url || '',
+              role: roleVi,
+              visible: isVisible
+            };
+          })
+        };
+      } catch (e) {}
+    }
+    
     // Parse JSON_UI cho Kho Pool của Admin
     let jsonUiVal = row[93] || '';
     if (!jsonUiVal || !String(jsonUiVal).trim().startsWith('{')) {
