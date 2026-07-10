@@ -64,12 +64,8 @@ window.LegoRenderAdmin = {
     };
 
     const jsonUi = p.json_ui_parsed || {};
-    const createdAt = jsonUi.createdAt || '';
-    const updatedAt = jsonUi.updatedAt || '';
-    const listedAt = jsonUi.listedAt || '';
-
-    const displayListed = listedAt ? formatDate(listedAt) : (createdAt ? formatDate(createdAt) : '');
-    const displayUpdated = updatedAt ? formatDate(updatedAt) : '';
+    const displayListed = formatDate(jsonUi.createdAtSigned || '');
+    const displayUpdated = formatDate(jsonUi.updatedAt || '');
 
     c.innerHTML = `
       <div class="crow">
