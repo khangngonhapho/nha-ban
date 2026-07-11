@@ -453,6 +453,11 @@
       background: rgba(239, 68, 68, 0.04);
     }
 
+    .customer-card.whitelisted {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.04);
+    }
+
     .customer-header {
       display: flex;
       justify-content: space-between;
@@ -697,7 +702,22 @@
         </div>
       </div>
 
-      <!-- Tab 3: Links Registry (Liên kết) -->
+      <!-- Tab 3: Whitelist (Admin Test) -->
+      <div id="tabWhitelist" class="tab-content">
+        <div class="section-title">
+          <span>Nhật ký Admin Test (Whitelist)</span>
+          <span class="section-badge" id="whitelistCount" style="background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.4); color: #3b82f6;">0</span>
+        </div>
+        
+        <div id="whitelistList">
+          <div class="loader">
+            <div class="spinner"></div>
+            <span>Đang nạp nhật ký admin...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Links Registry (Liên kết) -->
       <div id="tabLinks" class="tab-content">
         <div class="section-title">
           <span>Danh sách Link Chia sẻ</span>
@@ -726,6 +746,10 @@
       <span class="icon">🚫</span>
       <span>Chặn SĐT</span>
     </div>
+    <div class="nav-item" onclick="switchTab('tabWhitelist', this)">
+      <span class="icon">⚙️</span>
+      <span>Whitelist</span>
+    </div>
     <div class="nav-item" onclick="switchTab('tabLinks', this)">
       <span class="icon">📋</span>
       <span>Liên kết</span>
@@ -746,6 +770,7 @@
     let authRefreshTimer = null;
     let globalBlacklist = [];
     let globalLogs = [];
+    const WHITELIST_PHONES = ['0908130555', '0901234567'];
 
     // Check auth status on load
     window.addEventListener('DOMContentLoaded', () => {
@@ -1086,11 +1111,6 @@
       
       logs.forEach(log => {
         const parsed = parseCustomerInfo(log.name);
-        
-        if (parsed.phone === '0908130555') {
-          return;
-        }
-        
         const key = parsed.phone !== 'SĐT ẩn' ? parsed.phone : log.name;
         
         if (!groups[key]) {
@@ -1145,9 +1165,11 @@
     function renderLogsAndBlacklist() {
       const logsContainer = document.getElementById('logsList');
       const blacklistContainer = document.getElementById('blacklistList');
+      const whitelistContainer = document.getElementById('whitelistList');
       
       const logCountBadge = document.getElementById('logCount');
       const blacklistCountBadge = document.getElementById('blacklistCount');
+      const whitelistCountBadge = document.getElementById('whitelistCount');
       
       const activeBlocked = globalBlacklist.filter(b => b.status === 'Active');
       const blockedPhones = activeBlocked.map(b => b.phone).filter(Boolean);
@@ -1155,13 +1177,16 @@
       // 1. Group all logs
       const customerGroups = groupLogsByCustomer(globalLogs);
       
-      // 2. Separate into Active and Blocked groups
+      // 2. Separate into Active, Blocked and Whitelisted groups
       const activeGroups = [];
       const blockedGroups = [];
+      const whitelistGroups = [];
       
       customerGroups.forEach(cust => {
         if (cust.phone && blockedPhones.includes(cust.phone)) {
           blockedGroups.push(cust);
+        } else if (cust.phone && WHITELIST_PHONES.includes(cust.phone)) {
+          whitelistGroups.push(cust);
         } else {
           activeGroups.push(cust);
         }
@@ -1290,6 +1315,48 @@
           `;
         });
         blacklistContainer.innerHTML = blacklistHtml;
+      }
+
+      // 6. Render Whitelisted Groups (Whitelist Tab)
+      whitelistCountBadge.textContent = whitelistGroups.length;
+      if (whitelistGroups.length === 0) {
+        whitelistContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚙️</div>
+            <p>Không có nhật ký chạy thử nào của Admin/Test</p>
+          </div>
+        `;
+      } else {
+        let whitelistHtml = '';
+        whitelistGroups.forEach(cust => {
+          let actionsHtml = '';
+          cust.actions.forEach(act => {
+            const dateStr = act.lastTimestamp ? formatDateTime(act.lastTimestamp) : '';
+            const countBadgeHtml = act.count > 1 ? `<span class="badge-count">x${act.count}</span>` : '';
+            actionsHtml += `
+              <div class="action-row">
+                <div class="action-info">
+                  <span class="action-type">${act.action} ${countBadgeHtml}</span>
+                  <span class="action-time">${dateStr}</span>
+                </div>
+                <div class="action-details">${act.details}</div>
+              </div>
+            `;
+          });
+
+          whitelistHtml += `
+            <div class="card customer-card whitelisted">
+              <div class="customer-header">
+                <span class="customer-title" style="color: #3b82f6;">${cust.name} (${cust.phone})</span>
+                <span class="badge-count" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);">Admin Test</span>
+              </div>
+              <div class="customer-history">
+                ${actionsHtml}
+              </div>
+            </div>
+          `;
+        });
+        whitelistContainer.innerHTML = whitelistHtml;
       }
     }
 
