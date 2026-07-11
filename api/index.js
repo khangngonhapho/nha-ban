@@ -115,9 +115,14 @@ function getCredentials() {
 }
 
 async function getGoogleAccessToken(creds) {
-  if (!creds || !creds.private_key || !creds.client_email) {
-    console.error('Missing credentials or private_key/client_email');
-    return null;
+  if (!creds) {
+    throw new Error("Missing credentials: creds object is null or undefined.");
+  }
+  if (!creds.private_key) {
+    throw new Error("Missing private_key in credentials.");
+  }
+  if (!creds.client_email) {
+    throw new Error("Missing client_email in credentials.");
   }
 
   let privateKey = creds.private_key;
@@ -170,13 +175,11 @@ async function getGoogleAccessToken(creds) {
 
     const data = await response.json();
     if (!response.ok) {
-      console.error('Google token exchange failed:', data);
-      return null;
+      throw new Error(`Google token exchange failed: ${JSON.stringify(data)}`);
     }
     return data.access_token;
   } catch (err) {
-    console.error('Error generating Google access token:', err);
-    return null;
+    throw new Error(`Error generating Google access token: ${err.message}`);
   }
 }
 
