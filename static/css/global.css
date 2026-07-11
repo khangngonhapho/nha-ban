@@ -3675,9 +3675,17 @@
     .desktop-only {
       display: inline-block !important;
     }
+    .mobile-only {
+      display: none !important;
+    }
     @media (max-width: 767px) {
-      .desktop-only {
+      .desktop-only,
+      body.is-admin .desktop-only,
+      body.is-admin select.desktop-only {
         display: none !important;
+      }
+      .mobile-only {
+        display: inline-block !important;
       }
       .spec-value-group input.date-input {
         width: 115px !important;
