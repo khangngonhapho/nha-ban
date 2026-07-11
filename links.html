@@ -464,6 +464,20 @@
       align-items: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       padding-bottom: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-icon {
+      font-size: 10px;
+      color: var(--sub);
+      margin-left: 6px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .customer-history.collapsed {
+      display: none;
     }
 
     .customer-title {
@@ -1210,7 +1224,7 @@
       // Sort blocked groups by block date/last active time descending
       blockedGroups.sort((a, b) => b.lastActive - a.lastActive);
       
-      // 4. Render Active Groups (Logs Tab)
+      // 4. Render Active Groups (Logs Tab - Mặc định EXtended)
       logCountBadge.textContent = activeGroups.length;
       if (activeGroups.length === 0) {
         logsContainer.innerHTML = `
@@ -1244,8 +1258,8 @@
 
           logsHtml += `
             <div class="card customer-card ${cust.hasLeak ? 'warn-leak' : ''}">
-              <div class="customer-header">
-                <span class="customer-title">${cust.name} (${cust.phone})</span>
+              <div class="customer-header" onclick="if (!event.target.closest('button')) toggleCardHistory(this)">
+                <span class="customer-title">${cust.name} (${cust.phone}) <span class="toggle-icon">▲</span></span>
                 ${blockAction}
               </div>
               <div class="customer-history">
@@ -1257,7 +1271,7 @@
         logsContainer.innerHTML = logsHtml;
       }
       
-      // 5. Render Blocked Groups (Blacklist Tab)
+      // 5. Render Blocked Groups (Blacklist Tab - Mặc định EXtended)
       blacklistCountBadge.textContent = blockedGroups.length;
       if (blockedGroups.length === 0) {
         blacklistContainer.innerHTML = `
@@ -1300,8 +1314,8 @@
 
           blacklistHtml += `
             <div class="card customer-card warn-leak">
-              <div class="customer-header">
-                <span class="customer-title" style="color: var(--red);">${cust.name} (${cust.phone})</span>
+              <div class="customer-header" onclick="if (!event.target.closest('button')) toggleCardHistory(this)">
+                <span class="customer-title" style="color: var(--red);">${cust.name} (${cust.phone}) <span class="toggle-icon">▲</span></span>
                 ${unblockAction}
               </div>
               <div class="customer-history">
@@ -1317,7 +1331,7 @@
         blacklistContainer.innerHTML = blacklistHtml;
       }
 
-      // 6. Render Whitelisted Groups (Whitelist Tab)
+      // 6. Render Whitelisted Groups (Whitelist Tab - Mặc định COLLAPSED)
       whitelistCountBadge.textContent = whitelistGroups.length;
       if (whitelistGroups.length === 0) {
         whitelistContainer.innerHTML = `
@@ -1346,17 +1360,34 @@
 
           whitelistHtml += `
             <div class="card customer-card whitelisted">
-              <div class="customer-header">
-                <span class="customer-title" style="color: #3b82f6;">${cust.name} (${cust.phone})</span>
+              <div class="customer-header" onclick="if (!event.target.closest('button')) toggleCardHistory(this)">
+                <span class="customer-title" style="color: #3b82f6;">${cust.name} (${cust.phone}) <span class="toggle-icon">▼</span></span>
                 <span class="badge-count" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);">Admin Test</span>
               </div>
-              <div class="customer-history">
+              <div class="customer-history collapsed">
                 ${actionsHtml}
               </div>
             </div>
           `;
         });
         whitelistContainer.innerHTML = whitelistHtml;
+      }
+    }
+
+    // Toggle expand/collapse card history list
+    function toggleCardHistory(headerEl) {
+      const card = headerEl.closest('.customer-card');
+      const history = card.querySelector('.customer-history');
+      const icon = headerEl.querySelector('.toggle-icon');
+      
+      if (!history) return;
+      
+      if (history.classList.contains('collapsed')) {
+        history.classList.remove('collapsed');
+        if (icon) icon.textContent = '▲';
+      } else {
+        history.classList.add('collapsed');
+        if (icon) icon.textContent = '▼';
       }
     }
 
