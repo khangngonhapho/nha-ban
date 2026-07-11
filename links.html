@@ -642,6 +642,105 @@
     .toast.show {
       transform: translateY(0);
     }
+
+    /* CRM Lifecycle Styling (US-140) */
+    .lifecycle-container {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    
+    .lifecycle-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--sub);
+      transition: all 0.2s;
+      user-select: none;
+    }
+    
+    .lifecycle-pill:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    
+    .lifecycle-pill:active {
+      transform: translateY(0);
+    }
+
+    .lifecycle-pill.active.cold {
+      background: rgba(156, 163, 175, 0.15);
+      color: #9ca3af;
+      border-color: rgba(156, 163, 175, 0.4);
+    }
+    
+    .lifecycle-pill.active.warm {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    
+    .lifecycle-pill.active.hot {
+      background: rgba(249, 115, 22, 0.15);
+      color: #fb923c;
+      border-color: rgba(249, 115, 22, 0.4);
+    }
+    
+    .lifecycle-pill.active.deposit {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+    
+    .lifecycle-pill.active.done {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    /* Viền thẻ Card tương ứng trạng thái */
+    .customer-card.card-cold {
+      border-left: 3px solid #9ca3af !important;
+    }
+    .customer-card.card-warm {
+      border-left: 3px solid #3b82f6 !important;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.08);
+    }
+    .customer-card.card-hot {
+      border-left: 3px solid #f97316 !important;
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.12);
+    }
+    .customer-card.card-deposit {
+      border-left: 3px solid #a855f7 !important;
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.12);
+    }
+    .customer-card.card-done {
+      border-left: 3px solid #22c55e !important;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.08);
+    }
+
+    .phone-link a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.2s;
+      vertical-align: middle;
+      font-size: 11px;
+    }
+
+    .phone-link a:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.1);
+    }
   </style>
 </head>
 <body>
@@ -784,6 +883,7 @@
     let authRefreshTimer = null;
     let globalBlacklist = [];
     let globalLogs = [];
+    let globalCustomerProfiles = [];
     const WHITELIST_PHONES = ['0908130555', '0901234567', '0931088939'];
 
     // Check auth status on load
@@ -975,6 +1075,19 @@
         }
       } catch (err) {
         showToast("Lỗi kết nối API nhật ký: " + err.message, "❌");
+      }
+
+      // Load customer profiles (CRM)
+      try {
+        const res = await fetch('/api/customers/profiles', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          globalCustomerProfiles = data.profiles || [];
+        }
+      } catch (err) {
+        console.warn("Lỗi tải thông tin khách hàng:", err.message);
       }
 
       // Render cả 2 tab Nhật ký & Chặn phối hợp
@@ -1238,6 +1351,20 @@
       // Sort blocked groups by block date/last active time descending
       blockedGroups.sort((a, b) => b.lastActive - a.lastActive);
       
+      // Helper to generate contact links
+      function getContactLinksHtml(phone, name) {
+        if (!phone || phone.trim() === 'SĐT ẩn' || !/^[0-9\+\.\-\s]+$/.test(phone)) {
+          return '';
+        }
+        const cleanPhone = phone.replace(/[\s\-\.]/g, '');
+        return `
+          <span class="phone-link" style="margin-left: 6px;">
+            <a href="https://zalo.me/${cleanPhone}" target="_blank" title="Chat Zalo" onclick="event.stopPropagation();">💬</a>
+            <a href="tel:${cleanPhone}" title="Gọi điện" onclick="event.stopPropagation();" style="margin-left: 4px;">📞</a>
+          </span>
+        `;
+      }
+
       // 4. Render Active Groups (Logs Tab - Mặc định EXtended)
       logCountBadge.textContent = activeGroups.length;
       if (activeGroups.length === 0) {
@@ -1270,14 +1397,58 @@
             `;
           });
 
+          // Fetch CRM profile values
+          const custPhoneCompare = cleanPhoneForCompare(cust.phone);
+          const profile = globalCustomerProfiles.find(p => cleanPhoneForCompare(p.raw_phone) === custPhoneCompare) || {};
+          const noteVal = profile.note || '';
+          const currentStatus = profile.lifecycle_status || 'Lạnh';
+
+          const borderClass = {
+            'Lạnh': 'card-cold',
+            'Ấm': 'card-warm',
+            'Nóng': 'card-hot',
+            'Cọc': 'card-deposit',
+            'Done': 'card-done'
+          }[currentStatus] || 'card-cold';
+
+          // Build status selection pills
+          const statusOptions = [
+            { key: 'Lạnh', class: 'cold', label: 'Lạnh' },
+            { key: 'Ấm', class: 'warm', label: 'Ấm' },
+            { key: 'Nóng', class: 'hot', label: 'Nóng' },
+            { key: 'Cọc', class: 'deposit', label: 'Cọc' },
+            { key: 'Done', class: 'done', label: 'Done' }
+          ];
+
+          let pillsHtml = `<div class="lifecycle-container" onclick="event.stopPropagation();">`;
+          statusOptions.forEach(opt => {
+            const activeClass = currentStatus === opt.key ? 'active' : '';
+            pillsHtml += `
+              <span class="lifecycle-pill ${opt.class} ${activeClass}" 
+                    onclick="updateCustomerStatus('${cust.phone}', '${cust.name}', '${opt.key}', this)">
+                ${opt.label}
+              </span>
+            `;
+          });
+          pillsHtml += `</div>`;
+
           logsHtml += `
-            <div class="card customer-card ${cust.hasLeak ? 'warn-leak' : ''}">
-              <div class="customer-header" onclick="if (!event.target.closest('button')) toggleCardHistory(this)">
-                <span class="customer-title">${cust.name} (${cust.phone}) <span class="toggle-icon">▲</span></span>
+            <div class="card customer-card ${borderClass} ${cust.hasLeak ? 'warn-leak' : ''}">
+              <div class="customer-header" onclick="if (!event.target.closest('button') && !event.target.closest('.phone-link')) toggleCardHistory(this)">
+                <span class="customer-title">${cust.name} (${cust.phone}) ${getContactLinksHtml(cust.phone, cust.name)} <span class="toggle-icon">▲</span></span>
                 ${blockAction}
               </div>
               <div class="customer-history">
                 ${actionsHtml}
+              </div>
+              <div class="crm-footer" style="padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.01);" onclick="event.stopPropagation();">
+                <div style="font-size: 11px; color: var(--sub); margin-bottom: 4px; font-weight: 600;">Ghi chú nhu cầu:</div>
+                <textarea class="form-input" style="width:100%; height:44px; font-size:12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 4px 6px; resize: none; color: var(--main);" 
+                          placeholder="Nhập ghi chú cho khách..."
+                          onblur="updateCustomerNote('${cust.phone}', '${cust.name}', this.value)">${noteVal}</textarea>
+                
+                <div style="font-size: 11px; color: var(--sub); margin-top: 8px; margin-bottom: 4px; font-weight: 600;">Trạng thái chăm sóc:</div>
+                ${pillsHtml}
               </div>
             </div>
           `;
@@ -1498,6 +1669,87 @@
       }).catch(err => {
         showToast("Không thể copy: " + err, "⚠️");
       });
+    }
+
+    async function updateCustomerNote(phone, name, note) {
+      const token = localStorage.getItem('g_access_token');
+      try {
+        const res = await fetch('/api/customers/profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ phone, name, note })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          showToast("Đã lưu ghi chú khách hàng", "👤");
+          const cleanPhone = phone.replace(/[\s\-\.]/g, '');
+          const phoneHash = data.phone_hash;
+          let profile = globalCustomerProfiles.find(p => p.phone_hash === phoneHash);
+          if (profile) {
+            profile.note = note;
+          } else {
+            globalCustomerProfiles.push({ raw_phone: cleanPhone, phone_hash: phoneHash, name, note, lifecycle_status: 'Lạnh' });
+          }
+        } else {
+          showToast("Lỗi lưu ghi chú: " + data.error, "⚠️");
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối lưu ghi chú: " + err.message, "❌");
+      }
+    }
+
+    async function updateCustomerStatus(phone, name, status, el) {
+      const token = localStorage.getItem('g_access_token');
+      
+      // Update UI local trước để phản hồi mượt mà
+      const card = el.closest('.customer-card');
+      if (card) {
+        card.classList.remove('card-cold', 'card-warm', 'card-hot', 'card-deposit', 'card-done');
+        const borderClass = {
+          'Lạnh': 'card-cold',
+          'Ấm': 'card-warm',
+          'Nóng': 'card-hot',
+          'Cọc': 'card-deposit',
+          'Done': 'card-done'
+        }[status] || 'card-cold';
+        card.classList.add(borderClass);
+      }
+      
+      const container = el.closest('.lifecycle-container');
+      if (container) {
+        container.querySelectorAll('.lifecycle-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+      }
+
+      try {
+        const res = await fetch('/api/customers/profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ phone, name, lifecycle_status: status })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          showToast(`Đã chuyển trạng thái sang [${status}]`, "🟢");
+          const cleanPhone = phone.replace(/[\s\-\.]/g, '');
+          const phoneHash = data.phone_hash;
+          let profile = globalCustomerProfiles.find(p => p.phone_hash === phoneHash);
+          if (profile) {
+            profile.lifecycle_status = status;
+          } else {
+            globalCustomerProfiles.push({ raw_phone: cleanPhone, phone_hash: phoneHash, name, note: '', lifecycle_status: status });
+          }
+        } else {
+          showToast("Lỗi lưu trạng thái: " + data.error, "⚠️");
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối lưu trạng thái: " + err.message, "❌");
+      }
     }
   </script>
 </body>

@@ -704,6 +704,18 @@ def init_db(db_file=None):
         status TEXT NOT NULL DEFAULT 'Active'
     )
     """)
+    
+    # Bảng customer_profiles để lưu ghi chú và trạng thái vòng đời khách hàng (US-140)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS customer_profiles (
+        raw_phone TEXT,
+        phone_hash TEXT PRIMARY KEY,
+        name TEXT,
+        note TEXT,
+        lifecycle_status TEXT DEFAULT 'Lạnh',
+        updated_at TEXT
+    )
+    """)
     conn.commit()
     conn.close()
 

@@ -172,15 +172,37 @@ def merge_temp_to_master(temp_db_path, master_db_path):
     if soft_deleted_count > 0:
         print(f"  - [Soft Delete] Đã chuyển trạng thái sang 'sheet_deleted' cho {soft_deleted_count} căn bị xóa trên Sheets.")
     
+    # 4. Hợp nhất các bảng quản lý liên kết, blacklist và customer profiles từ CSDL Tạm sang CSDL Gốc
+    # Vì các bảng này không cần giữ vết lịch sử phức tạp như listings, ta chép trực tiếp từ temp_db sang
+    cursor.execute("DELETE FROM shared_links")
+    cursor.execute("INSERT INTO shared_links SELECT * FROM temp_db.shared_links")
+    
+    cursor.execute("DELETE FROM phone_blacklist")
+    cursor.execute("INSERT INTO phone_blacklist SELECT * FROM temp_db.phone_blacklist")
+    
+    # Khởi tạo bảng customer_profiles trên master db nếu chưa có (phòng thủ)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS customer_profiles (
+        raw_phone TEXT,
+        phone_hash TEXT PRIMARY KEY,
+        name TEXT,
+        note TEXT,
+        lifecycle_status TEXT DEFAULT 'Lạnh',
+        updated_at TEXT
+    )
+    """)
+    cursor.execute("DELETE FROM customer_profiles")
+    cursor.execute("INSERT INTO customer_profiles SELECT * FROM temp_db.customer_profiles")
+
     conn.commit()
     # DETACH CSDL Tạm
     cursor.execute("DETACH DATABASE temp_db")
     conn.close()
     
-    print(f"  - [Hoàn tất hợp nhất] Đã cập nhật {updated_count} căn, thêm mới {inserted_count} căn vào CSDL Gốc.")
+    print(f"  - [Hoàn tất hợp nhất] Đã hợp nhấtlistings, shared_links, phone_blacklist và customer_profiles vào CSDL Gốc.")
 
-def restore_links_and_blacklist(client):
-    print("\n🔄 Đang đồng bộ bảng Links và Blacklist SĐT từ Tracking Log...")
+def restore_links_and_blacklist(client, db_path):
+    print(f"\n🔄 Đang đồng bộ bảng Links, Blacklist và Customer Profiles từ Tracking Log vào tệp CSDL Tạm: {db_path}...")
     TRACKING_SHEET_ID = "1zCAP0pUSZdVNxbEkVl94y_hJc1ShM4PqtB-fxpm_I5Y"
     try:
         spreadsheet = client.open_by_key(TRACKING_SHEET_ID)
@@ -190,7 +212,7 @@ def restore_links_and_blacklist(client):
             link_sheet = spreadsheet.worksheet("Link_Registry")
             link_rows = link_sheet.get_all_values()
             if len(link_rows) > 1:
-                conn = sqlite3.connect(DB_FILE, timeout=30.0)
+                conn = sqlite3.connect(db_path, timeout=30.0)
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM shared_links")
                 for r in link_rows[1:]:
@@ -201,7 +223,7 @@ def restore_links_and_blacklist(client):
                         """, (r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
                 conn.commit()
                 conn.close()
-                print(f"  - [Link Registry] Đã đồng bộ ngược {len(link_rows)-1} liên kết về SQLite local.")
+                print(f"  - [Link Registry] Đã nạp {len(link_rows)-1} liên kết vào CSDL Tạm.")
         except Exception as e_link:
             print(f"  - [⚠️ WARNING Link Registry] Không thể đồng bộ: {str(e_link)}")
 
@@ -210,7 +232,7 @@ def restore_links_and_blacklist(client):
             blacklist_sheet = spreadsheet.worksheet("Phone_Blacklist")
             bl_rows = blacklist_sheet.get_all_values()
             if len(bl_rows) > 1:
-                conn = sqlite3.connect(DB_FILE, timeout=30.0)
+                conn = sqlite3.connect(db_path, timeout=30.0)
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM phone_blacklist")
                 for r in bl_rows[1:]:
@@ -221,9 +243,40 @@ def restore_links_and_blacklist(client):
                         """, (r[0], r[1], r[2], r[3], r[4]))
                 conn.commit()
                 conn.close()
-                print(f"  - [Phone Blacklist] Đã đồng bộ ngược {len(bl_rows)-1} số điện thoại chặn về SQLite local.")
+                print(f"  - [Phone Blacklist] Đã nạp {len(bl_rows)-1} số điện thoại chặn vào CSDL Tạm.")
         except Exception as e_bl:
             print(f"  - [⚠️ WARNING Phone Blacklist] Không thể đồng bộ: {str(e_bl)}")
+
+        # 3. Đồng bộ Customer_Profiles (US-140)
+        try:
+            profile_sheet = spreadsheet.worksheet("Customer_Profiles")
+            cp_rows = profile_sheet.get_all_values()
+            if len(cp_rows) > 1:
+                conn = sqlite3.connect(db_path, timeout=30.0)
+                cursor = conn.cursor()
+                # Khởi tạo bảng customer_profiles trên db tạm trước khi insert (phòng thủ)
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS customer_profiles (
+                    raw_phone TEXT,
+                    phone_hash TEXT PRIMARY KEY,
+                    name TEXT,
+                    note TEXT,
+                    lifecycle_status TEXT DEFAULT 'Lạnh',
+                    updated_at TEXT
+                )
+                """)
+                cursor.execute("DELETE FROM customer_profiles")
+                for r in cp_rows[1:]:
+                    if len(r) >= 6 and r[1]:
+                        cursor.execute("""
+                            INSERT OR REPLACE INTO customer_profiles (raw_phone, phone_hash, name, note, lifecycle_status, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """, (r[0], r[1], r[2], r[3], r[4], r[5]))
+                conn.commit()
+                conn.close()
+                print(f"  - [Customer Profiles] Đã nạp {len(cp_rows)-1} hồ sơ khách hàng vào CSDL Tạm.")
+        except Exception as e_cp:
+            print(f"  - [⚠️ WARNING Customer Profiles] Không thể đồng bộ: {str(e_cp)}")
             
     except Exception as e:
         print(f"  - [⚠️ WARNING Links Sync] Lỗi kết nối hoặc mở spreadsheet: {str(e)}")
@@ -894,6 +947,12 @@ def restore_database():
     conn.close()
     print(f"  - [💾 SQLite Temp Complete] Đã nạp thành công {restored_count} căn vào CSDL Tạm!")
 
+    # Đồng bộ ngược links, blacklist và customer profiles từ Sheets vào CSDL Tạm
+    try:
+        restore_links_and_blacklist(client, db_file_temp)
+    except Exception as e_lbl:
+        print(f"  - [⚠️ WARNING Links/Blacklist/Profiles Sync] Lỗi đồng bộ vào CSDL Tạm: {str(e_lbl)}")
+
     # Thực hiện sao lưu CSDL Gốc và hợp nhất dữ liệu từ CSDL Tạm vào CSDL Gốc
     backup_master_database(DB_FILE)
     merge_temp_to_master(db_file_temp, DB_FILE)
@@ -929,11 +988,6 @@ def restore_database():
         print(f"  - [✅ Sheets Success] Đã đồng bộ chép đè an toàn thành công {synced_count} căn lên Google Sheets Pool!")
     else:
         print("\n[4/4] Tuyệt vời! Không phát hiện căn nào bị lẫn sơ đồ trong Ảnh 1.")
-
-    try:
-        restore_links_and_blacklist(client)
-    except Exception as e_lbl:
-        print(f"  - [⚠️ WARNING Links/Blacklist Sync] Lỗi: {str(e_lbl)}")
 
     print("======================================================================")
     print(f"🏁 KHÔI PHỤC DATABASE THÀNH CÔNG: Đã tái tạo {restored_count} căn, sửa sạch {len(repaired_sheets_items)} căn bị lỗi.")

@@ -750,6 +750,119 @@ module.exports = async (req, res) => {
     }
   }
 
+  // Route: GET /api/customers/profiles
+  if (pathname === '/api/customers/profiles') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      const creds = getCredentials();
+      const accessToken = await getGoogleAccessToken(creds);
+      
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A2:F`;
+      const response = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (response.status === 404) {
+        return res.status(200).json({ status: 'success', profiles: [] });
+      }
+      const data = await response.json();
+      const profiles = (data.values || []).map(row => ({
+        raw_phone: row[0] || '',
+        phone_hash: row[1] || '',
+        name: row[2] || '',
+        note: row[3] || '',
+        lifecycle_status: row[4] || 'Lạnh',
+        updated_at: row[5] || ''
+      }));
+      
+      return res.status(200).json({ status: 'success', profiles });
+    } catch (err) {
+      console.error('Error getting customer profiles:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/customers/profile
+  if (pathname === '/api/customers/profile') {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      let body = req.body;
+      if (typeof body === 'string') body = JSON.parse(body);
+      if (!body) {
+        const buffers = [];
+        for await (const chunk of req) {
+          buffers.push(chunk);
+        }
+        const data = Buffer.concat(buffers).toString();
+        body = JSON.parse(data);
+      }
+      const { phone, name, note, lifecycle_status } = body || {};
+      if (!phone) {
+        return res.status(400).json({ error: 'Missing phone number' });
+      }
+      const cleanPhone = phone.replace(/[\s\-\.]/g, '');
+      const crypto = require('crypto');
+      const phoneHash = crypto.createHash('sha256').update(cleanPhone).digest('hex');
+      const updatedAt = new Date().toISOString();
+      
+      const creds = getCredentials();
+      const accessToken = await getGoogleAccessToken(creds);
+      
+      // Get all hashes to locate existing row
+      const hashesUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!B:B`;
+      const hashesRes = await fetch(hashesUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+      const hashesData = await hashesRes.json();
+      const hashes = (hashesData.values || []).map(row => row[0]);
+      const idx = hashes.indexOf(phoneHash);
+      
+      let currentNote = note !== undefined ? note : '';
+      let currentStatus = lifecycle_status !== undefined ? lifecycle_status : 'Lạnh';
+      let currentName = name || '';
+      
+      if (idx !== -1) {
+        const rowIdx = idx + 1;
+        // Fetch current row to preserve note/status/name if not provided
+        const rowUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A${rowIdx}:F${rowIdx}`;
+        const rowRes = await fetch(rowUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+        const rowData = await rowRes.json();
+        const vals = rowData.values ? rowData.values[0] : [];
+        if (!currentName) currentName = vals[2] || '';
+        if (note === undefined) currentNote = vals[3] || '';
+        if (lifecycle_status === undefined) currentStatus = vals[4] || 'Lạnh';
+        
+        const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A${rowIdx}:F${rowIdx}?valueInputOption=USER_ENTERED`;
+        const putRes = await fetch(updateUrl, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            values: [[cleanPhone, phoneHash, currentName, currentNote, currentStatus, updatedAt]]
+          })
+        });
+        if (!putRes.ok) {
+          throw new Error(`Failed to update sheet row: ${putRes.status}`);
+        }
+      } else {
+        const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A:F:append?valueInputOption=USER_ENTERED`;
+        const postRes = await fetch(appendUrl, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            values: [[cleanPhone, phoneHash, currentName, currentNote, currentStatus, updatedAt]]
+          })
+        });
+        if (!postRes.ok) {
+          throw new Error(`Failed to append sheet row: ${postRes.status}`);
+        }
+      }
+      return res.status(200).json({ status: 'success', message: 'Customer profile updated', phone_hash: phoneHash });
+    } catch (err) {
+      console.error('Error updating customer profile:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
   // Serve static files packaged in the function bundle (e.g. global.css)
   if (pathname.startsWith('/static/')) {
     try {

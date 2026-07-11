@@ -70,6 +70,14 @@ def ensure_sheet_tabs_exists(client):
         formula = '=QUERY(Phone_Blacklist!A:E, "SELECT B WHERE E = \'Active\'", 1)'
         public_blacklist_sheet.update(range_name='A1', values=[[formula]], value_input_option='USER_ENTERED')
 
+    # 5. Customer_Profiles
+    try:
+        profile_sheet = spreadsheet.worksheet("Customer_Profiles")
+    except Exception:
+        profile_sheet = spreadsheet.add_worksheet(title="Customer_Profiles", rows=1000, cols=6)
+        headers = ["Raw_Phone", "Phone_Hash", "Name", "Note", "Lifecycle_Status", "Updated_At"]
+        profile_sheet.update(range_name='A1:F1', values=[headers])
+
     return spreadsheet
 
 @routes_links.route('/api/links/register', methods=['POST'])
@@ -337,6 +345,91 @@ def list_links():
             "status": "success",
             "links": links,
             "blacklist": blacklist
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@routes_links.route('/api/customers/profiles', methods=['GET'])
+def list_customer_profiles():
+    """Lấy danh sách thông tin và vòng đời khách hàng từ SQLite local"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM customer_profiles")
+        profiles = [dict(row) for row in cursor.fetchall()]
+        conn.close()
+        return jsonify({
+            "status": "success",
+            "profiles": profiles
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@routes_links.route('/api/customers/profile', methods=['POST'])
+def update_customer_profile():
+    """Cập nhật ghi chú nhu cầu và trạng thái vòng đời khách hàng (CRM)"""
+    import manager
+    try:
+        data = request.get_json(force=True) or {}
+        raw_phone = data.get("phone", "").strip()
+        name = data.get("name", "").strip()
+        note = data.get("note") # Có thể là None nếu chỉ update status
+        lifecycle_status = data.get("lifecycle_status") # Có thể là None nếu chỉ update note
+
+        if not raw_phone:
+            return jsonify({"status": "error", "message": "Thiếu số điện thoại khách hàng."}), 400
+
+        clean_phone = raw_phone.replace(" ", "").replace("-", "").replace(".", "")
+        if not clean_phone:
+            return jsonify({"status": "error", "message": "Số điện thoại không hợp lệ."}), 400
+
+        phone_hash = hashlib.sha256(clean_phone.encode('utf-8')).hexdigest()
+        updated_at = datetime.now().isoformat()
+
+        # 1. Cập nhật SQLite cục bộ
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT * FROM customer_profiles WHERE phone_hash = ?", (phone_hash,))
+        existing = cursor.fetchone()
+        
+        new_note = note if note is not None else (existing['note'] if existing else '')
+        new_status = lifecycle_status if lifecycle_status is not None else (existing['lifecycle_status'] if existing else 'Lạnh')
+        new_name = name if name else (existing['name'] if existing else '')
+        
+        cursor.execute("""
+            INSERT OR REPLACE INTO customer_profiles (raw_phone, phone_hash, name, note, lifecycle_status, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (clean_phone, phone_hash, new_name, new_note, new_status, updated_at))
+        conn.commit()
+        conn.close()
+
+        # 2. Cập nhật lên Google Sheets
+        try:
+            client = get_sheets_client()
+            spreadsheet = ensure_sheet_tabs_exists(client)
+            profile_sheet = spreadsheet.worksheet("Customer_Profiles")
+            
+            hashes = profile_sheet.col_values(2)
+            if phone_hash in hashes:
+                row_idx = hashes.index(phone_hash) + 1
+                row_vals = profile_sheet.row_values(row_idx)
+                # Bảo toàn name nếu client gửi trống
+                final_name = new_name if new_name else (row_vals[2] if len(row_vals) > 2 else '')
+                profile_sheet.update(range_name=f"A{row_idx}:F{row_idx}", values=[[clean_phone, phone_hash, final_name, new_note, new_status, updated_at]])
+            else:
+                row_data = [clean_phone, phone_hash, new_name, new_note, new_status, updated_at]
+                profile_sheet.append_row(row_data, value_input_option='USER_ENTERED')
+            manager.add_log_message(f"[👤 PROFILE] Đã lưu thông tin SĐT {clean_phone} lên Google Sheets thành công.")
+        except Exception as e_sheet:
+            manager.add_log_message(f"[⚠️ WARNING PROFILE] Lỗi đồng bộ Sheets: {str(e_sheet)}")
+
+        return jsonify({
+            "status": "success",
+            "message": "Cập nhật thông tin khách hàng thành công.",
+            "phone_hash": phone_hash
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
