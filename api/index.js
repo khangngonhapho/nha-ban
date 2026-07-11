@@ -176,11 +176,11 @@ async function getGoogleAccessToken(creds) {
 
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(`Google token exchange failed: ${JSON.stringify(data)}`);
+      throw new Error(`Google token exchange failed for ${creds.client_email} (${creds.project_id || 'no-project'}): ${JSON.stringify(data)}`);
     }
     return data.access_token;
   } catch (err) {
-    throw new Error(`Error generating Google access token: ${err.message}`);
+    throw new Error(`Error generating Google access token for ${creds.client_email} (${creds.project_id || 'no-project'}): ${err.message}`);
   }
 }
 
