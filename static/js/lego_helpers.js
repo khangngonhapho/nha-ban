@@ -866,11 +866,7 @@ window.changeSortType = function(val) {
   window.saveState();
   if (typeof render === 'function') render();
 };
-  }
-  window.updateSortButtonsUI();
-  window.saveState();
-  if (typeof render === 'function') render();
-};
+
 
 window.toggleSortPrice = function() {
   if (window.currentSortType === 'price') {
