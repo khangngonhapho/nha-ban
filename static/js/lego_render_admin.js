@@ -83,7 +83,7 @@ window.LegoRenderAdmin = {
     const donGia = (area > 0 && price > 0) ? (price * 1000 / area) : 0;
     const donGiaText = donGia > 0 ? ` (${donGia.toFixed(1)}tr)` : '';
 
-    const donGiaStr = donGia > 0 ? `(${donGia.toFixed(1)}tr)` : '';
+    const donGiaStr = donGia > 0 ? `${donGia.toFixed(1)}tr/m²` : '';
     let priceHistoryHtml = `
       <div style="display: flex; align-items: center; gap: 4px; justify-content: flex-end;">
         ${donGiaStr ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">${donGiaStr}</span>` : ''}
@@ -104,8 +104,8 @@ window.LegoRenderAdmin = {
         
         const oldDg = formatGiabqValue(oldPrice, area);
         const newDg = formatGiabqValue(newPrice, area);
-        const oldDgStr = oldDg > 0 ? `(${oldDg.toFixed(1)}tr)` : '';
-        const newDgStr = newDg > 0 ? `(${newDg.toFixed(1)}tr)` : '';
+        const oldDgStr = oldDg > 0 ? `${oldDg.toFixed(1)}tr/m²` : '';
+        const newDgStr = newDg > 0 ? `${newDg.toFixed(1)}tr/m²` : '';
         
         priceHistoryHtml = `
           <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 11.5px; justify-content: flex-end;">
