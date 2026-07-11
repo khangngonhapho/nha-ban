@@ -1116,11 +1116,16 @@
 
     function parseCustomerInfo(nameStr) {
       if (!nameStr) return { name: 'Khách ẩn danh', phone: 'SĐT ẩn' };
-      const phoneMatch = nameStr.match(/(\d{9,11})$/);
-      const phone = phoneMatch ? phoneMatch[1] : '';
+      
+      const phoneMatch = nameStr.match(/\d{9,11}/);
+      const phone = phoneMatch ? phoneMatch[0] : '';
+      
       let cleanName = nameStr;
-      if (phoneMatch) {
-        cleanName = nameStr.substring(0, phoneMatch.index).replace(/[\s\-–—]+$/, '').trim();
+      if (phone) {
+        cleanName = nameStr.replace(phone, '')
+                           .replace(/[\(\)\-\–\—\s\:\*\|]+/g, ' ')
+                           .replace(/\s+/g, ' ')
+                           .trim();
       }
       return { name: cleanName || 'Khách ẩn danh', phone: phone || 'SĐT ẩn' };
     }
