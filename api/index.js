@@ -138,6 +138,10 @@ async function getGoogleAccessToken(creds) {
     privateKey = privateKey.replace(/\\n/g, '\n');
   }
 
+  const spaceCount = (privateKey.match(/ /g) || []).length;
+  const plusCount = (privateKey.match(/\+/g) || []).length;
+  const slashCount = (privateKey.match(/\//g) || []).length;
+
   const keyFingerprint = crypto.createHash('sha256').update(privateKey || '').digest('hex').substring(0, 8);
   const keyLength = (privateKey || '').length;
   const keyId = (creds.private_key_id || 'no-key-id').substring(0, 8);
@@ -187,11 +191,11 @@ async function getGoogleAccessToken(creds) {
 
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(`Google token exchange failed for ${creds.client_email} (project: ${creds.project_id || 'no-project'} via ${creds._source || 'unknown'}, key_id: ${keyId}..., len: ${keyLength}, sha: ${keyFingerprint}): ${JSON.stringify(data)}`);
+      throw new Error(`Google token exchange failed for ${creds.client_email} (project: ${creds.project_id || 'no-project'} via ${creds._source || 'unknown'}, key_id: ${keyId}..., len: ${keyLength}, spaces: ${spaceCount}, pluses: ${plusCount}, slashes: ${slashCount}, sha: ${keyFingerprint}): ${JSON.stringify(data)}`);
     }
     return data.access_token;
   } catch (err) {
-    throw new Error(`Error generating Google access token for ${creds.client_email} (project: ${creds.project_id || 'no-project'} via ${creds._source || 'unknown'}, key_id: ${keyId}..., len: ${keyLength}, sha: ${keyFingerprint}): ${err.message}`);
+    throw new Error(`Error generating Google access token for ${creds.client_email} (project: ${creds.project_id || 'no-project'} via ${creds._source || 'unknown'}, key_id: ${keyId}..., len: ${keyLength}, spaces: ${spaceCount}, pluses: ${plusCount}, slashes: ${slashCount}, sha: ${keyFingerprint}): ${err.message}`);
   }
 }
 
