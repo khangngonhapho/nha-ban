@@ -229,6 +229,16 @@ def recrawl_single_listing(tk_id):
     except Exception:
         pass
         
+    # US-134: Đồng bộ Cookie mới từ Extension gửi lên
+    cookie_payload = data.get("cookie")
+    if cookie_payload:
+        try:
+            with open(manager.COOKIE_FILE, "w", encoding="utf-8") as f:
+                f.write(cookie_payload.strip())
+            manager.add_log_message("[🔑] ĐÃ ĐỒNG BỘ COOKIE MỚI TỪ EXTENSION")
+        except Exception as e_cook:
+            manager.add_log_message(f"[❌ LỖI] Không thể ghi file cookie từ extension: {str(e_cook)}")
+            
     try:
         conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
