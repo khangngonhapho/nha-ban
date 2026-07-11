@@ -981,37 +981,59 @@
       container.innerHTML = html;
     }
 
+    function parseCustomerInfo(nameStr) {
+      if (!nameStr) return { name: 'Khách ẩn danh', phone: 'SĐT ẩn' };
+      // Tìm số điện thoại 9-11 chữ số ở cuối chuỗi
+      const phoneMatch = nameStr.match(/(\d{9,11})$/);
+      const phone = phoneMatch ? phoneMatch[1] : '';
+      let cleanName = nameStr;
+      if (phoneMatch) {
+        cleanName = nameStr.substring(0, phoneMatch.index).replace(/[\s\-–—]+$/, '').trim();
+      }
+      return { name: cleanName || 'Khách ẩn danh', phone: phone || 'SĐT ẩn' };
+    }
+
     // Render Activity Logs
     function groupLogsByCustomer(logs) {
       const groups = {};
       
       logs.forEach(log => {
-        const name = log.name || 'Khách ẩn danh';
-        const phone = log.phone || 'SĐT ẩn';
-        const key = `${phone}_${name}`;
+        const parsed = parseCustomerInfo(log.name);
+        
+        // Loại bỏ SĐT của Admin Test "0908130555"
+        if (parsed.phone === '0908130555') {
+          return;
+        }
+        
+        const key = parsed.phone !== 'SĐT ẩn' ? parsed.phone : log.name;
         
         if (!groups[key]) {
           groups[key] = {
-            name: name,
-            phone: phone,
+            name: parsed.name,
+            phone: parsed.phone,
             hasLeak: false,
             actions: []
           };
         }
         
-        if (log.action === 'Link bị chuyển tiếp') {
+        // Cột phone trong Sheet chứa Action Type (Xem chi tiết, Mở danh sách nhà...)
+        const actionType = log.phone || 'Hoạt động';
+        
+        if (actionType === 'Link bị chuyển tiếp') {
           groups[key].hasLeak = true;
         }
         
-        // Group actions for this customer
-        const actionKey = `${log.action}_${log.details || ''}`;
+        // Cột action trong Sheet chứa thông tin chi tiết của hành động (Tên căn nhà, số lượng căn...)
+        const actionDetail = log.action + (log.details ? ` - ${log.details}` : '');
+        const actionKey = `${actionType}_${actionDetail}`;
+        
         let actionGroup = groups[key].actions.find(a => a.key === actionKey);
         
         if (!actionGroup) {
           actionGroup = {
             key: actionKey,
-            action: log.action,
-            details: log.details || '',
+            action: actionType,
+            details: actionDetail,
             count: 0,
             lastTimestamp: 0
           };
@@ -1027,10 +1049,12 @@
       
       const groupsArray = Object.values(groups).map(g => {
         g.lastActive = Math.max(...g.actions.map(a => a.lastTimestamp), 0);
+        // Sắp xếp lịch sử hành động của từng khách theo thời gian mới nhất lên đầu
         g.actions.sort((a, b) => b.lastTimestamp - a.lastTimestamp);
         return g;
       });
       
+      // Sắp xếp danh sách khách hàng theo hoạt động gần đây nhất lên đầu
       groupsArray.sort((a, b) => b.lastActive - a.lastActive);
       return groupsArray;
     }
