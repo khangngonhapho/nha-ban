@@ -328,38 +328,38 @@
                 }
               };
 
-              const historyLines = [];
+              const parseDateDMY = (dmyStr) => {
+                if (!dmyStr) return null;
+                const parts = dmyStr.split('/');
+                if (parts.length < 3) return null;
+                return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+              };
+
+              const dateKy = formatDateOnly(jsonUi.createdAtSigned);
+              const dateUp = formatDateOnly(jsonUi.updatedAt);
+              const upDt = parseDateDMY(dateUp);
+
+              const historyLinesObj = [];
               
               // 1. Ngày ký hợp đồng
-              if (jsonUi.createdAtSigned) {
-                const dateKy = formatDateOnly(jsonUi.createdAtSigned);
-                if (dateKy) {
-                  historyLines.push(`
+              if (dateKy) {
+                historyLinesObj.push({
+                  dateStr: dateKy,
+                  dateObj: parseDateDMY(dateKy),
+                  isContract: true,
+                  html: `
                     <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
                       <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${dateKy}</span>
                       <span style="color: #2c3e50; font-weight: 500;">Hợp đồng ký đầu chủ</span>
                     </div>
-                  `);
-                }
-              }
-              
-              // 2. Ngày cập nhật Thiên Khôi
-              if (jsonUi.updatedAt) {
-                const dateUp = formatDateOnly(jsonUi.updatedAt);
-                if (dateUp) {
-                  historyLines.push(`
-                    <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
-                      <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${dateUp}</span>
-                      <span style="color: #2c3e50; font-weight: 500;">Cập nhật trên nguồn</span>
-                    </div>
-                  `);
-                }
+                  `
+                });
               }
               
               // Fallback area calculation to compute price per sqm
               const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || parseFloat(p.dt) || 0;
               
-              // 3. Các thay đổi cào quét
+              // 2. Các thay đổi cào quét
               history.forEach(item => {
                 let changeDesc = '';
                 if (item.type === 'price') {
@@ -378,30 +378,53 @@
                   changeDesc = `Cập nhật khác (${item.field || ''})`;
                 }
                 
-                const dateOnly = (item.date || '').split(' ')[0];
-                historyLines.push(`
-                  <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
-                    <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${dateOnly}</span>
-                    <span style="color: #2c3e50; font-weight: 500;">${changeDesc}</span>
-                  </div>
-                `);
+                let displayDate = (item.date || '').split(' ')[0];
+                const itemDt = parseDateDMY(displayDate);
+                if (itemDt && upDt && itemDt > upDt) {
+                  displayDate = dateUp;
+                }
+                
+                historyLinesObj.push({
+                  dateStr: displayDate,
+                  dateObj: parseDateDMY(displayDate),
+                  isContract: false,
+                  html: `
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
+                      <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${displayDate}</span>
+                      <span style="color: #2c3e50; font-weight: 500;">${changeDesc}</span>
+                    </div>
+                  `
+                });
               });
               
-              if (historyLines.length === 0) return '';
+              if (historyLinesObj.length === 0) return '';
+
+              // Sắp xếp theo ngày gần nhất nằm trên cùng (giảm dần)
+              // Nếu cùng ngày, xếp "Hợp đồng ký đầu chủ" nằm dưới cùng
+              historyLinesObj.sort((a, b) => {
+                const timeA = a.dateObj ? a.dateObj.getTime() : 0;
+                const timeB = b.dateObj ? b.dateObj.getTime() : 0;
+                if (timeA !== timeB) {
+                  return timeB - timeA;
+                }
+                if (a.isContract && !b.isContract) return 1;
+                if (!a.isContract && b.isContract) return -1;
+                return 0;
+              });
               
               const lastCrawlVal = p.last_crawl || (p.json_ui_parsed && p.json_ui_parsed.Last_Crawl) || '';
               return `
                 <div class="admin-raw-title" style="margin-top:14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <span>Lịch sử thay đổi</span>
-                    <span style="background: var(--blue); color: white; border-radius: 50%; font-size: 10px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold;">${historyLines.length}</span>
+                    <span style="background: var(--blue); color: white; border-radius: 50%; font-size: 10px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold;">${historyLinesObj.length}</span>
                   </div>
                   <div style="font-size: 11px; color: #7f8c8d; font-weight: normal; font-family: monospace;">
                     Cập nhật đến: ${lastCrawlVal}
                   </div>
                 </div>
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-top: 6px; max-height: 200px; overflow-y: auto;">
-                  ${historyLines.join('')}
+                  ${historyLinesObj.map(x => x.html).join('')}
                 </div>
               `;
             })()}

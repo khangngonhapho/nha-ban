@@ -343,6 +343,7 @@ window.getMappedPoolData = function() {
       raw_tieu_de_public: row[56] || '',
       raw_mo_ta_public: row[57] || '',
       pool_row_index: POOL_ROWS.indexOf(row) + 2,
+      last_crawl: row[window.getPoolColumnIndex ? window.getPoolColumnIndex("Last_Crawl", 83) : 83] || '',
 
       isFromPoolOnly: true,
       pool_row_data: row
