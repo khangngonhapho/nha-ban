@@ -124,11 +124,27 @@ window.LegoRenderAdmin = {
 
     const st = window.getHouseStatus ? window.getHouseStatus(p) : 'Đang bán';
     let badgeColor = '#27ae60';
-    if (st === 'Đã cọc') badgeColor = '#e67e22';
-    else if (st === 'Đã bán') badgeColor = 'var(--red)';
-    else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
+    let stAbbr = st;
+    if (st === 'Đang bán') {
+      badgeColor = '#27ae60';
+      stAbbr = 'Đ.Bán';
+    } else if (st === 'Đã cọc') {
+      badgeColor = '#e67e22';
+      stAbbr = 'Đ.Cọc';
+    } else if (st === 'Đã bán') {
+      badgeColor = 'var(--red)';
+      stAbbr = 'Đã bán';
+    } else if (st === 'Ngừng bán') {
+      badgeColor = '#7f8c8d';
+      stAbbr = 'Ngừng bán';
+    }
     
-    const statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
+    const statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${stAbbr}</div>`;
+
+    const houseType = window.getHouseTypeDisplay ? window.getHouseTypeDisplay(p) : '';
+    let houseTypeAbbr = houseType;
+    if (houseType === 'Mặt tiền') houseTypeAbbr = 'M.Tiền';
+    else if (houseType === 'Chung cư') houseTypeAbbr = 'CC';
 
     c.innerHTML = `
       <div class="crow">
@@ -148,7 +164,7 @@ window.LegoRenderAdmin = {
               <div style="display: flex; align-items: center; gap: 4px;">
                 <span>📍</span> P.${p.phuong}, Q.${p.ql}
               </div>
-              <span style="color: ${badgeColor}; font-weight: 800; white-space: nowrap;">● ${st}</span>
+              <span style="color: ${badgeColor}; font-weight: 800; white-space: nowrap;">● ${stAbbr}</span>
             </div>
             <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               <span>👤</span> ${p.raw_ten_dau_chu || 'Chưa rõ đầu chủ'}
@@ -168,7 +184,7 @@ window.LegoRenderAdmin = {
           <div class="cfoot" style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; width: 100%;">
             ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
             <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 4px;">
-              <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseTypeDisplay(p)}</span>
+              <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${houseTypeAbbr}</span>
               ${priceHistoryHtml}
             </div>
           </div>

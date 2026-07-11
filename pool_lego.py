@@ -264,6 +264,15 @@ def gen_id_khang_ngo_python(so_nha, duong, quan):
     from core.business_rules import gen_id_khang_ngo_python as _gen_id
     return _gen_id(so_nha, duong, quan)
 
+def clean_sheet_formula_prefix(val):
+    """
+    Loại bỏ ký tự khởi đầu công thức Google Sheets ở đầu chuỗi văn bản thô.
+    
+    ⚠️ DELEGATED: Logic đã chuyển sang core.business_rules.clean_sheet_formula_prefix()
+    """
+    from core.business_rules import clean_sheet_formula_prefix as _clean
+    return _clean(val)
+
 def get_db_file():
     """
     Xác định và trả về đường dẫn tệp tin SQLite đang được hệ thống kích hoạt.
@@ -729,13 +738,11 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
             suffix = parts[-1].upper() if parts else ""
             metadata["Mã Hàng"] = f"TK-{suffix}"
 
-    from core.business_rules import clean_formula_prefix
     for key, val in metadata.items():
         safe_col = key if key in explicit_criteria_cols else get_safe_col_name(key)
         # Chỉ giữ lại những cột thực sự tồn tại trong CSDL mục tiêu
         if safe_col in db_cols and safe_col not in ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"]:
-            val_str = str(val) if val is not None else ""
-            cleaned_metadata[safe_col] = clean_formula_prefix(val_str)
+            cleaned_metadata[safe_col] = clean_sheet_formula_prefix(val)
 
     # Đảm bảo Last_Crawl luôn nằm trong JSON_UI để đồng bộ lên Vercel
     json_ui_str = cleaned_metadata.get("JSON_UI", "")
@@ -2383,7 +2390,7 @@ def sync_p1_to_p2(src_db, tgt_db, input_so_nha, input_duong, add_log_message):
     
     custom_valid_fields = {k: v for k, v in custom_fields.items() if k in custom_db_cols}
     c_cols = list(custom_valid_fields.keys())
-    c_vals = [custom_valid_fields[k] for k in c_cols]
+    c_vals = [clean_sheet_formula_prefix(custom_valid_fields[k]) for k in c_cols]
     c_placeholders = ", ".join(["?"] * len(c_cols))
     t_cursor.execute(f"INSERT OR REPLACE INTO listings_custom_v2 ({', '.join([f'`{c}`' for c in c_cols])}) VALUES ({c_placeholders})", c_vals)
     

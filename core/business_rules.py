@@ -263,21 +263,23 @@ def escape_sheets_value(val):
     return val
 
 
-def clean_formula_prefix(val):
+def clean_sheet_formula_prefix(val):
     """
-    Loại bỏ dấu '+', '-', '=' ở đầu chuỗi văn bản để tránh lỗi công thức Google Sheets.
-    Không xử lý nếu là chuỗi JSON.
+    Loại bỏ các ký tự bắt đầu công thức Google Sheets (+, -, =) ở đầu chuỗi text
+    để tránh lỗi #ERROR! khi publish lên sheet. Không loại bỏ nếu là số hợp lệ.
     """
-    if not isinstance(val, str):
-        return val
-    val_strip = val.strip()
-    if val_strip.startswith(('[', '{')):
-        return val
-    if val_strip.startswith(('+', '-', '=')):
-        while val_strip.startswith(('+', '-', '=')):
-            val_strip = val_strip[1:].strip()
-        return val_strip
-    return val
+    if val is None:
+        return ""
+    val_str = str(val)
+    val_strip = val_str.strip()
+    if val_strip and val_strip[0] in ('+', '-', '='):
+        try:
+            float(val_strip)
+            return val_str
+        except ValueError:
+            cleaned = re.sub(r'^[+\-=]+', '', val_strip).strip()
+            return cleaned
+    return val_str
 
 
 # =============================================================================

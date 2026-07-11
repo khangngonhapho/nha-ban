@@ -250,7 +250,7 @@ def handle_listing_detail(tk_id):
     """Lấy chi tiết hoặc cập nhật cấu hình biên tập cho 1 căn"""
     import manager
     import pool_lego
-    from pool_lego import gen_id_khang_ngo_python, get_safe_col_name
+    from pool_lego import gen_id_khang_ngo_python, get_safe_col_name, clean_sheet_formula_prefix
     
     if not os.path.exists(manager.DB_FILE):
         return jsonify({"status": "error", "message": "Database không tồn tại"}), 404
@@ -518,13 +518,11 @@ def handle_listing_detail(tk_id):
         # Xây dựng câu lệnh Update SQL động
         update_cols = []
         update_vals = []
-        from core.business_rules import clean_formula_prefix
         for key, val in fields_to_update.items():
             safe_col = get_safe_col_name(key)
             if safe_col in db_cols:
                 update_cols.append(f"`{safe_col}` = ?")
-                val_str = str(val) if val is not None else ""
-                update_vals.append(clean_formula_prefix(val_str))
+                update_vals.append(clean_sheet_formula_prefix(val))
             
         if update_cols:
             update_vals.append(tk_id)
@@ -635,7 +633,7 @@ def handle_listing_detail(tk_id):
                             for col_k, col_v in valid_custom_data.items():
                                 if col_k != "System_ID":
                                     update_pairs.append(f"`{col_k}` = ?")
-                                    update_custom_vals.append(str(col_v) if col_v is not None else "")
+                                    update_custom_vals.append(clean_sheet_formula_prefix(col_v))
                             update_custom_vals.append(system_id)
                             cursor.execute(
                                 f"UPDATE listings_custom_v2 SET {', '.join(update_pairs)} WHERE System_ID = ?",
@@ -645,7 +643,7 @@ def handle_listing_detail(tk_id):
                             # INSERT
                             cols_list = list(valid_custom_data.keys())
                             placeholders = ["?"] * len(cols_list)
-                            insert_vals = [str(valid_custom_data[col_k]) if valid_custom_data[col_k] is not None else "" for col_k in cols_list]
+                            insert_vals = [clean_sheet_formula_prefix(valid_custom_data[col_k]) for col_k in cols_list]
                             cursor.execute(
                                 f"INSERT INTO listings_custom_v2 ({', '.join(cols_list)}) VALUES ({', '.join(placeholders)})",
                                 insert_vals
@@ -702,13 +700,13 @@ def apply_diff():
             
         if custom_row:
             set_clause = ", ".join([f"`{k}` = ?" for k in update_fields.keys()])
-            vals = list(update_fields.values()) + [system_id]
+            vals = [clean_sheet_formula_prefix(v) for v in update_fields.values()] + [system_id]
             cursor.execute(f"UPDATE listings_custom_v2 SET {set_clause} WHERE System_ID = ?", vals)
         else:
             insert_fields = dict(update_fields)
             insert_fields['System_ID'] = system_id
             cols = list(insert_fields.keys())
-            vals = list(insert_fields.values())
+            vals = [clean_sheet_formula_prefix(insert_fields[c]) for c in cols]
             placeholders = ", ".join(["?"] * len(cols))
             cursor.execute(f"INSERT INTO listings_custom_v2 ({', '.join([f'`{c}`' for c in cols])}) VALUES ({placeholders})", vals)
             

@@ -20,6 +20,7 @@ from pool_lego import (
     gen_id_khang_ngo_python,
     normalize_address,
     escape_sheets_value,
+    clean_sheet_formula_prefix,
 )
 
 
@@ -274,33 +275,29 @@ class TestRemoveAccentsDuplicate:
 
 
 # =============================================================================
-# 7. CLEAN_FORMULA_PREFIX — Loại bỏ dấu công thức ở đầu chuỗi
+# 7. CLEAN_SHEET_FORMULA_PREFIX — Sanitize Google Sheets formula injection
 # =============================================================================
-class TestCleanFormulaPrefix:
-    """Kiểm tra clean_formula_prefix() loại bỏ dấu +, -, = ở đầu chuỗi text."""
+class TestCleanSheetFormulaPrefix:
+    """Lock behavior: clean_sheet_formula_prefix() làm sạch chuỗi text."""
 
-    def test_normal_text_unchanged(self):
-        from core.business_rules import clean_formula_prefix
-        assert clean_formula_prefix("Hello") == "Hello"
+    def test_clean_plus_prefix(self):
+        assert clean_sheet_formula_prefix("+ Vị trí: Đắc địa") == "Vị trí: Đắc địa"
+        assert clean_sheet_formula_prefix("++ Vị trí: Đắc địa") == "Vị trí: Đắc địa"
 
-    def test_prefix_removed(self):
-        from core.business_rules import clean_formula_prefix
-        assert clean_formula_prefix("+ Vị trí đẹp") == "Vị trí đẹp"
-        assert clean_formula_prefix("- Nhà đẹp") == "Nhà đẹp"
-        assert clean_formula_prefix("= Nhà đẹp") == "Nhà đẹp"
+    def test_clean_minus_prefix(self):
+        assert clean_sheet_formula_prefix("- Hẻm xe hơi") == "Hẻm xe hơi"
+        assert clean_sheet_formula_prefix("-- Hẻm xe hơi") == "Hẻm xe hơi"
 
-    def test_multiple_prefixes_removed(self):
-        from core.business_rules import clean_formula_prefix
-        assert clean_formula_prefix("++-- Vị trí") == "Vị trí"
+    def test_clean_equals_prefix(self):
+        assert clean_sheet_formula_prefix("= Nhà đẹp lung linh") == "Nhà đẹp lung linh"
+        assert clean_sheet_formula_prefix("== Nhà đẹp lung linh") == "Nhà đẹp lung linh"
 
-    def test_json_string_unchanged(self):
-        from core.business_rules import clean_formula_prefix
-        js = '{"url": "http://img.jpg"}'
-        assert clean_formula_prefix(js) == js
-        arr = '[1, 2, 3]'
-        assert clean_formula_prefix(arr) == arr
+    def test_preserve_valid_numbers(self):
+        assert clean_sheet_formula_prefix("-12.34567") == "-12.34567"
+        assert clean_sheet_formula_prefix("+100") == "+100"
+        assert clean_sheet_formula_prefix("50") == "50"
+        assert clean_sheet_formula_prefix("-5") == "-5"
 
-    def test_non_string_unchanged(self):
-        from core.business_rules import clean_formula_prefix
-        assert clean_formula_prefix(123) == 123
-        assert clean_formula_prefix(None) is None
+    def test_empty_and_none(self):
+        assert clean_sheet_formula_prefix("") == ""
+        assert clean_sheet_formula_prefix(None) == ""
