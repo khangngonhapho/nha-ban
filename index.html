@@ -18,17 +18,17 @@
     rel="stylesheet">
   <!-- Google Identity Services (GSI) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link rel="stylesheet" href="/static/css/global.css?v=202607112314">
-  <script src="/static/js/lego_mock.js?v=202607112314"></script>
-  <script src="/static/js/lego_core.js?v=202607112314"></script>
-  <script src="/static/js/lego_helpers.js?v=202607112314"></script>
-  <script src="/static/js/lego_render_client.js?v=202607112314"></script>
-  <script src="/static/js/lego_render_admin.js?v=202607112314"></script>
-  <script src="/static/js/lego_filters.js?v=202607112314"></script>
-  <script src="/static/js/lego_collections.js?v=202607112314"></script>
-  <script src="/static/js/lego_lead_capture.js?v=202607112314"></script>
-  <script src="/static/js/lego_detail_client.js?v=202607112314"></script>
-  <script src="/static/js/lego_detail_admin.js?v=202607112314"></script>
+  <link rel="stylesheet" href="/static/css/global.css?v=202607112320">
+  <script src="/static/js/lego_mock.js?v=202607112320"></script>
+  <script src="/static/js/lego_core.js?v=202607112320"></script>
+  <script src="/static/js/lego_helpers.js?v=202607112320"></script>
+  <script src="/static/js/lego_render_client.js?v=202607112320"></script>
+  <script src="/static/js/lego_render_admin.js?v=202607112320"></script>
+  <script src="/static/js/lego_filters.js?v=202607112320"></script>
+  <script src="/static/js/lego_collections.js?v=202607112320"></script>
+  <script src="/static/js/lego_lead_capture.js?v=202607112320"></script>
+  <script src="/static/js/lego_detail_client.js?v=202607112320"></script>
+  <script src="/static/js/lego_detail_admin.js?v=202607112320"></script>
 </head>
 
 <body>
@@ -161,7 +161,10 @@
         <div class="multiselect-options" id="huongOptions"></div>
       </div>
 
-      <!-- 6. Đường trước nhà (gốc) -->
+      <!-- 6. Đường trước nhà gốc -->
+      <div id="dynamic_Criteria_Duong_truoc_nha"></div>
+
+      <!-- 7. Đường trước nhà custom -->
       <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
       <div class="multiselect-container" id="duongMulti" style="display:none">
         <div class="multiselect-trigger" onclick="toggleMultiselect('duongMulti')">
@@ -172,9 +175,6 @@
         </div>
         <div class="multiselect-options" id="duongOptions"></div>
       </div>
-
-      <!-- 7. Đường trước nhà custom (Dynamic Container) -->
-      <div id="dynamic_Criteria_Duong_truoc_nha"></div>
 
       <!-- Fallback container cho dynamic filters khác nếu có -->
       <div id="dynamicFiltersContainer" style="display: none;"></div>
@@ -288,7 +288,7 @@
 
             <!-- Thời gian cập nhật -->
             <div class="spec-item">
-              <span class="spec-label">Thời gian cập nhật:</span>
+              <span class="spec-label">TG cập nhật:</span>
               <div class="spec-value-group">
                 <span class="spec-text">Từ:</span>
                 <input type="date" id="filterUpdatedMin" class="inline-input date-input" oninput="onSearchInput()">
@@ -299,7 +299,7 @@
 
             <!-- Thời gian ký -->
             <div class="spec-item">
-              <span class="spec-label">Thời gian ký nhà:</span>
+              <span class="spec-label">TG ký:</span>
               <div class="spec-value-group">
                 <span class="spec-text">Từ:</span>
                 <input type="date" id="filterSignedMin" class="inline-input date-input" oninput="onSearchInput()">
