@@ -101,9 +101,6 @@ function findCredentialsJson() {
 }
 
 function getCredentials() {
-  const fileCreds = findCredentialsJson();
-  if (fileCreds) return fileCreds;
-  
   if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
     try {
       return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
@@ -111,6 +108,10 @@ function getCredentials() {
       console.error('Error parsing GOOGLE_SERVICE_ACCOUNT_JSON env var:', e);
     }
   }
+
+  const fileCreds = findCredentialsJson();
+  if (fileCreds) return fileCreds;
+  
   return null;
 }
 
