@@ -249,7 +249,12 @@ def restore_links_and_blacklist(client, db_path):
 
         # 3. Đồng bộ Customer_Profiles (US-140)
         try:
-            profile_sheet = spreadsheet.worksheet("Customer_Profiles")
+            try:
+                profile_sheet = spreadsheet.worksheet("Customer_Profiles")
+            except Exception:
+                profile_sheet = spreadsheet.add_worksheet(title="Customer_Profiles", rows=1000, cols=6)
+                headers = ["Raw_Phone", "Phone_Hash", "Name", "Note", "Lifecycle_Status", "Updated_At"]
+                profile_sheet.update(range_name='A1:F1', values=[headers])
             cp_rows = profile_sheet.get_all_values()
             if len(cp_rows) > 1:
                 conn = sqlite3.connect(db_path, timeout=30.0)
@@ -275,6 +280,8 @@ def restore_links_and_blacklist(client, db_path):
                 conn.commit()
                 conn.close()
                 print(f"  - [Customer Profiles] Đã nạp {len(cp_rows)-1} hồ sơ khách hàng vào CSDL Tạm.")
+            else:
+                print("  - [Customer Profiles] Tab trống hoặc chỉ có tiêu đề. Không có dữ liệu khách hàng để nạp.")
         except Exception as e_cp:
             print(f"  - [⚠️ WARNING Customer Profiles] Không thể đồng bộ: {str(e_cp)}")
             
