@@ -159,7 +159,7 @@ window.LegoRenderAdmin = {
           <div class="cfoot" style="margin-top: 6px;">
             ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
             <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseType(p)}</span>
+              <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseTypeDisplay(p)}</span>
               ${priceHistoryHtml}
             </div>
           </div>

@@ -1986,8 +1986,8 @@ window.getSourceColumnIndex = function(headerName, fallbackIdx = 48) {
 };
 
 window.getHouseType = function(p) {
-  if (p.JSON_UI && p.JSON_UI.Criteria_Loai_BDS) {
-    return p.JSON_UI.Criteria_Loai_BDS;
+  if (p.json_ui_parsed && p.json_ui_parsed.Criteria_Loai_BDS) {
+    return p.json_ui_parsed.Criteria_Loai_BDS;
   }
   if (p.loai_hinh) {
     if (p.loai_hinh === 'Hẻm') return 'Nhà trong ngõ, ngách, hẻm';
@@ -1995,5 +1995,13 @@ window.getHouseType = function(p) {
     return p.loai_hinh;
   }
   return 'Nhà trong ngõ, ngách, hẻm';
+};
+
+window.getHouseTypeDisplay = function(p) {
+  const type = window.getHouseType(p);
+  if (type === 'Nhà mặt phố') return 'Mặt tiền';
+  if (type === 'Nhà trong ngõ, ngách, hẻm') return 'Hẻm';
+  if (type === 'Căn hộ chung cư') return 'Chung cư';
+  return type;
 };
 

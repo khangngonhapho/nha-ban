@@ -66,7 +66,7 @@ window.LegoRenderClient = {
             </div>
             <div class="pr-loc">
               <div class="pr" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseType(p)}</span>
+                <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseTypeDisplay(p)}</span>
                 <span class="pv">${p.gia} tỷ${donGiaText}</span>
               </div>
               <div class="loc">
