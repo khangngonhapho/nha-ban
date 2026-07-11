@@ -826,9 +826,7 @@ window.updateStats = function() {
 window.updateSortButtonsUI = function() {
   const val = `${window.currentSortType || 'newest'}_${window.currentSortDir || 'desc'}`;
   const sDesktop = document.getElementById('sortSelect');
-  const sMobile = document.getElementById('sortSelectMobile');
   if (sDesktop) sDesktop.value = val;
-  if (sMobile) sMobile.value = val;
 
   const btnNew = document.getElementById('sortNewBtn');
   const btnPrice = document.getElementById('sortPriceBtn');
@@ -859,9 +857,7 @@ window.changeSortType = function(val) {
   window.currentSortDir = sortDir;
   
   const sDesktop = document.getElementById('sortSelect');
-  const sMobile = document.getElementById('sortSelectMobile');
   if (sDesktop) sDesktop.value = val;
-  if (sMobile) sMobile.value = val;
   
   window.saveState();
   if (typeof render === 'function') render();

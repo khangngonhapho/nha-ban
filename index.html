@@ -18,17 +18,17 @@
     rel="stylesheet">
   <!-- Google Identity Services (GSI) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link rel="stylesheet" href="/static/css/global.css?v=202607112240">
-  <script src="/static/js/lego_mock.js?v=202607112240"></script>
-  <script src="/static/js/lego_core.js?v=202607112240"></script>
-  <script src="/static/js/lego_helpers.js?v=202607112240"></script>
-  <script src="/static/js/lego_render_client.js?v=202607112240"></script>
-  <script src="/static/js/lego_render_admin.js?v=202607112240"></script>
-  <script src="/static/js/lego_filters.js?v=202607112240"></script>
-  <script src="/static/js/lego_collections.js?v=202607112240"></script>
-  <script src="/static/js/lego_lead_capture.js?v=202607112240"></script>
-  <script src="/static/js/lego_detail_client.js?v=202607112240"></script>
-  <script src="/static/js/lego_detail_admin.js?v=202607112240"></script>
+  <link rel="stylesheet" href="/static/css/global.css?v=202607112247">
+  <script src="/static/js/lego_mock.js?v=202607112247"></script>
+  <script src="/static/js/lego_core.js?v=202607112247"></script>
+  <script src="/static/js/lego_helpers.js?v=202607112247"></script>
+  <script src="/static/js/lego_render_client.js?v=202607112247"></script>
+  <script src="/static/js/lego_render_admin.js?v=202607112247"></script>
+  <script src="/static/js/lego_filters.js?v=202607112247"></script>
+  <script src="/static/js/lego_collections.js?v=202607112247"></script>
+  <script src="/static/js/lego_lead_capture.js?v=202607112247"></script>
+  <script src="/static/js/lego_detail_client.js?v=202607112247"></script>
+  <script src="/static/js/lego_detail_admin.js?v=202607112247"></script>
 </head>
 
 <body>
@@ -39,16 +39,15 @@
     <div class="hdr-top">
       <div style="display: flex; align-items: center; gap: 8px;">
         <span class="badge" id="totalBadge">...</span>
-        <select class="sort-select admin-only desktop-only" id="sortSelect" onchange="changeSortType(this.value)" 
-          style="background: #fff; color: #2c3e50; border: 1.5px solid #e2ded6; border-radius: 18px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; font-family: inherit; height: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-left: 4px;">
+        <select class="sort-select" id="sortSelect" onchange="changeSortType(this.value)">
           <option value="newest_desc">⏱️ Mới nhất</option>
           <option value="newest_asc">⏱️ Cũ nhất</option>
-          <option value="price_asc">💰 Giá tăng dần</option>
-          <option value="price_desc">💰 Giá giảm dần</option>
-          <option value="unit_price_asc">🏷️ Đơn giá thấp nhất</option>
-          <option value="updated_at_desc">🔄 Cập nhật mới nhất</option>
-          <option value="dt_so_desc">📐 Diện tích sổ lớn nhất</option>
-          <option value="dt_so_asc">📐 Diện tích sổ nhỏ nhất</option>
+          <option value="price_asc">💰 Giá ↑</option>
+          <option value="price_desc">💰 Giá ↓</option>
+          <option value="unit_price_asc">🏷️ Đơn giá ↓</option>
+          <option value="updated_at_desc">🔄 Update</option>
+          <option value="dt_so_desc">📐 DT sổ ↑</option>
+          <option value="dt_so_asc">📐 DT sổ ↓</option>
         </select>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
@@ -258,23 +257,7 @@
               </div>
             </div>
 
-            <!-- Sắp xếp (Chỉ hiện trên mobile) -->
-            <div class="spec-item admin-only mobile-only">
-              <span class="spec-label">Sắp xếp theo:</span>
-              <div class="spec-value-group" style="width: 100%;">
-                <select id="sortSelectMobile" class="sort-select admin-only" onchange="changeSortType(this.value)"
-                  style="width: 100%; height: 36px; border-radius: 8px; border: 1.5px solid #e2ded6; background: #fff; font-family: inherit; font-size: 13.5px; font-weight: 700; color: #2c3e50; padding: 4px 10px; cursor: pointer; outline: none;">
-                  <option value="newest_desc">⏱️ Mới nhất</option>
-                  <option value="newest_asc">⏱️ Cũ nhất</option>
-                  <option value="price_asc">💰 Giá tăng dần</option>
-                  <option value="price_desc">💰 Giá giảm dần</option>
-                  <option value="unit_price_asc">🏷️ Đơn giá thấp nhất</option>
-                  <option value="updated_at_desc">🔄 Cập nhật mới nhất</option>
-                  <option value="dt_so_desc">📐 Diện tích sổ lớn nhất</option>
-                  <option value="dt_so_asc">📐 Diện tích sổ nhỏ nhất</option>
-                </select>
-              </div>
-            </div>
+
 
             <!-- Thời gian cập nhật -->
             <div class="spec-item">
