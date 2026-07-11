@@ -83,7 +83,13 @@ window.LegoRenderAdmin = {
     const donGia = (area > 0 && price > 0) ? (price * 1000 / area) : 0;
     const donGiaText = donGia > 0 ? ` (${donGia.toFixed(1)}tr)` : '';
 
-    let priceHistoryHtml = `<span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 800;">${p.gia} tỷ${donGiaText}</span>`;
+    const donGiaStr = donGia > 0 ? `(${donGia.toFixed(1)}tr)` : '';
+    let priceHistoryHtml = `
+      <div style="display: flex; align-items: center; gap: 4px; justify-content: flex-end;">
+        ${donGiaStr ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">${donGiaStr}</span>` : ''}
+        <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11.5px; font-weight: 800;">${p.gia} tỷ</span>
+      </div>
+    `;
     if (jsonUi.history && Array.isArray(jsonUi.history)) {
       const priceChanges = jsonUi.history.filter(h => h.type === 'price');
       if (priceChanges.length > 0) {
@@ -91,22 +97,25 @@ window.LegoRenderAdmin = {
         const oldPrice = parseFloat(lastChange.old);
         const newPrice = parseFloat(lastChange.new);
         
-        const formatGiabq = (price, a) => {
-          if (!a || a <= 0) return '';
-          return ` (${((price * 1000) / a).toFixed(1)}tr)`;
+        const formatGiabqValue = (priceVal, a) => {
+          if (!a || a <= 0) return 0;
+          return (priceVal * 1000) / a;
         };
         
-        const oldGiabqStr = formatGiabq(oldPrice, area);
-        const newGiabqStr = formatGiabq(newPrice, area);
+        const oldDg = formatGiabqValue(oldPrice, area);
+        const newDg = formatGiabqValue(newPrice, area);
+        const oldDgStr = oldDg > 0 ? `(${oldDg.toFixed(1)}tr)` : '';
+        const newDgStr = newDg > 0 ? `(${newDg.toFixed(1)}tr)` : '';
         
         priceHistoryHtml = `
-          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 11.5px;">
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 11.5px; justify-content: flex-end;">
             <span style="text-decoration: line-through; color: #7f8c8d; background: #f2f2f2; padding: 2px 6px; border-radius: 4px;">
-              ${oldPrice} tỷ${oldGiabqStr}
+              ${oldDgStr ? `<span style="font-size: 10px; margin-right: 2px; color: #7f8c8d;">${oldDgStr}</span>` : ''}${oldPrice} tỷ
             </span>
             <span style="color: #27ae60; font-weight: 800;">➔</span>
+            ${newDgStr ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">${newDgStr}</span>` : ''}
             <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-weight: 800;">
-              ${newPrice} tỷ${newGiabqStr}
+              ${newPrice} tỷ
             </span>
           </div>
         `;
@@ -156,9 +165,9 @@ window.LegoRenderAdmin = {
               </div>
             ` : ''}
           </div>
-          <div class="cfoot" style="margin-top: 6px;">
+          <div class="cfoot" style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; width: 100%;">
             ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
-            <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 4px;">
               <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseTypeDisplay(p)}</span>
               ${priceHistoryHtml}
             </div>

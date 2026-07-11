@@ -64,14 +64,17 @@ window.LegoRenderClient = {
               <span class="chip" style="color: ${badgeColor}; font-weight: 800; border-color: ${badgeColor};">● ${st}</span>
               ${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
             </div>
-            <div class="pr-loc">
-              <div class="pr" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <div class="loc" style="font-size: 11.5px; color: var(--sub); display: flex; align-items: center; gap: 4px; margin-top: 4px; margin-bottom: 6px;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              P.${p.phuong}, Q.${p.ql}
+            </div>
+            <div class="pr-loc" style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: auto;">
+              <div class="pr" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 4px;">
                 <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseTypeDisplay(p)}</span>
-                <span class="pv">${p.gia} tỷ${donGiaText}</span>
-              </div>
-              <div class="loc">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-                P.${p.phuong}, Q.${p.ql}
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  ${donGia > 0 ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">(${donGia.toFixed(1)}tr)</span>` : ''}
+                  <span class="pv" style="color: #27ae60; font-weight: 800; font-size: 14.5px; background: rgba(39, 174, 96, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">${p.gia} tỷ</span>
+                </div>
               </div>
             </div>
           </div>
