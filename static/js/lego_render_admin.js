@@ -85,7 +85,7 @@ window.LegoRenderAdmin = {
         const lastChange = priceChanges[priceChanges.length - 1];
         const oldPrice = parseFloat(lastChange.old);
         const newPrice = parseFloat(lastChange.new);
-        const area = parseFloat(p.dt_tren_so_custom) || 0;
+        const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || parseFloat(p.dt) || 0;
         
         const formatGiabq = (price, a) => {
           if (!a || a <= 0) return '';
