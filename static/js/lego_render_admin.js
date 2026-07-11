@@ -135,11 +135,11 @@ window.LegoRenderAdmin = {
             <div class="ititle" style="color: var(--red); font-weight: 850; font-size: 14.5px; line-height: 1.35; margin-bottom: 6px;">
               ${displayTitle}
             </div>
-            <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-              <span>📍</span> P.${p.phuong}, Q.${p.ql}
-            </div>
-            <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-              <span style="color: ${badgeColor};">●</span> <span style="font-weight: 500; color: #7f8c8d;">Trạng thái:</span> <span style="color: ${badgeColor}; font-weight: 800;">${st}</span>
+            <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <span>📍</span> P.${p.phuong}, Q.${p.ql}
+              </div>
+              <span style="color: ${badgeColor}; font-weight: 800; white-space: nowrap;">● ${st}</span>
             </div>
             <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               <span>👤</span> ${p.raw_ten_dau_chu || 'Chưa rõ đầu chủ'}
