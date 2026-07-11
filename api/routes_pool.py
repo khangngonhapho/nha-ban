@@ -518,11 +518,13 @@ def handle_listing_detail(tk_id):
         # Xây dựng câu lệnh Update SQL động
         update_cols = []
         update_vals = []
+        from core.business_rules import clean_formula_prefix
         for key, val in fields_to_update.items():
             safe_col = get_safe_col_name(key)
             if safe_col in db_cols:
                 update_cols.append(f"`{safe_col}` = ?")
-                update_vals.append(str(val) if val is not None else "")
+                val_str = str(val) if val is not None else ""
+                update_vals.append(clean_formula_prefix(val_str))
             
         if update_cols:
             update_vals.append(tk_id)

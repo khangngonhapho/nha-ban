@@ -44,7 +44,7 @@ window.LegoRenderClient = {
     else if (st === 'Đã bán') badgeColor = 'var(--red)';
     else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
     
-    const statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
+    const statusBadgeHtml = (st !== 'Đang bán') ? `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>` : '';
 
     c.innerHTML = `
       <div class="crow">
@@ -61,7 +61,7 @@ window.LegoRenderClient = {
               <span class="chip">📐 ${p.dt}m²</span>
               <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
               <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}
-              <span class="chip" style="color: ${badgeColor}; font-weight: 800; border-color: ${badgeColor};">● ${st}</span>
+              ${st !== 'Đang bán' ? `<span class="chip" style="color: ${badgeColor}; font-weight: 800; border-color: ${badgeColor};">● ${st}</span>` : ''}
               ${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
             </div>
             <div class="loc" style="font-size: 11.5px; color: var(--sub); display: flex; align-items: center; gap: 4px; margin-top: 4px; margin-bottom: 6px;">

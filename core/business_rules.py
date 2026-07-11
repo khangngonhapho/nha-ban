@@ -263,6 +263,23 @@ def escape_sheets_value(val):
     return val
 
 
+def clean_formula_prefix(val):
+    """
+    Loại bỏ dấu '+', '-', '=' ở đầu chuỗi văn bản để tránh lỗi công thức Google Sheets.
+    Không xử lý nếu là chuỗi JSON.
+    """
+    if not isinstance(val, str):
+        return val
+    val_strip = val.strip()
+    if val_strip.startswith(('[', '{')):
+        return val
+    if val_strip.startswith(('+', '-', '=')):
+        while val_strip.startswith(('+', '-', '=')):
+            val_strip = val_strip[1:].strip()
+        return val_strip
+    return val
+
+
 # =============================================================================
 # 5. CRITERIA CLASSIFICATION
 # =============================================================================

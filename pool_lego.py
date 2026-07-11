@@ -729,11 +729,13 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
             suffix = parts[-1].upper() if parts else ""
             metadata["Mã Hàng"] = f"TK-{suffix}"
 
+    from core.business_rules import clean_formula_prefix
     for key, val in metadata.items():
         safe_col = key if key in explicit_criteria_cols else get_safe_col_name(key)
         # Chỉ giữ lại những cột thực sự tồn tại trong CSDL mục tiêu
         if safe_col in db_cols and safe_col not in ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"]:
-            cleaned_metadata[safe_col] = str(val) if val is not None else ""
+            val_str = str(val) if val is not None else ""
+            cleaned_metadata[safe_col] = clean_formula_prefix(val_str)
 
     # Đảm bảo Last_Crawl luôn nằm trong JSON_UI để đồng bộ lên Vercel
     json_ui_str = cleaned_metadata.get("JSON_UI", "")

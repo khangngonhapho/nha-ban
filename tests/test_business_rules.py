@@ -271,3 +271,36 @@ class TestRemoveAccentsDuplicate:
         for text in test_cases:
             assert remove_accents(text) == remove_accents_qh(text), \
                 f"Mismatch for '{text}': pool_lego={remove_accents(text)}, query_helper={remove_accents_qh(text)}"
+
+
+# =============================================================================
+# 7. CLEAN_FORMULA_PREFIX — Loại bỏ dấu công thức ở đầu chuỗi
+# =============================================================================
+class TestCleanFormulaPrefix:
+    """Kiểm tra clean_formula_prefix() loại bỏ dấu +, -, = ở đầu chuỗi text."""
+
+    def test_normal_text_unchanged(self):
+        from core.business_rules import clean_formula_prefix
+        assert clean_formula_prefix("Hello") == "Hello"
+
+    def test_prefix_removed(self):
+        from core.business_rules import clean_formula_prefix
+        assert clean_formula_prefix("+ Vị trí đẹp") == "Vị trí đẹp"
+        assert clean_formula_prefix("- Nhà đẹp") == "Nhà đẹp"
+        assert clean_formula_prefix("= Nhà đẹp") == "Nhà đẹp"
+
+    def test_multiple_prefixes_removed(self):
+        from core.business_rules import clean_formula_prefix
+        assert clean_formula_prefix("++-- Vị trí") == "Vị trí"
+
+    def test_json_string_unchanged(self):
+        from core.business_rules import clean_formula_prefix
+        js = '{"url": "http://img.jpg"}'
+        assert clean_formula_prefix(js) == js
+        arr = '[1, 2, 3]'
+        assert clean_formula_prefix(arr) == arr
+
+    def test_non_string_unchanged(self):
+        from core.business_rules import clean_formula_prefix
+        assert clean_formula_prefix(123) == 123
+        assert clean_formula_prefix(None) is None

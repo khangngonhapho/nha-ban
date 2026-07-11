@@ -434,10 +434,12 @@
             <span class="label">Kết cấu:</span>
             <span class="value dotted">${p.tang} tầng</span>
           </div>
+          ${st !== 'Đang bán' ? `
           <div class="admin-raw-cell">
             <span class="label">Trạng thái:</span>
             <span class="value dotted" style="font-weight:800; color: ${statusColor};">${st}</span>
           </div>
+          ` : ''}
         </div>
         <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
         
