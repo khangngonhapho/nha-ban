@@ -70,7 +70,7 @@ window.LegoRenderClient = {
               <div class="pr" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 4px;">
                 <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${window.getHouseTypeDisplay(p)}</span>
                 <div style="display: flex; align-items: center; gap: 4px;">
-                  ${donGia > 0 ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">${donGia.toFixed(1)}tr/m²</span>` : ''}
+                  ${donGia > 0 ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">${window.formatDonGia(donGia)}/m²</span>` : ''}
                   <span class="pv" style="color: #27ae60; font-weight: 800; font-size: 14.5px; background: rgba(39, 174, 96, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">${p.gia} tỷ</span>
                 </div>
               </div>

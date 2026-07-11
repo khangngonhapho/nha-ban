@@ -26,6 +26,16 @@ window.formatPhone = function(phone) {
   return s;
 };
 
+// Format unit price helper (removes trailing .0)
+window.formatDonGia = function(donGia) {
+  if (!donGia || donGia <= 0) return '';
+  let s = donGia.toFixed(1);
+  if (s.endsWith('.0')) {
+    s = s.substring(0, s.length - 2);
+  }
+  return s + 'tr';
+};
+
 // Tracking helper
 window.trackAction = function(action, details = "") {
   const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';

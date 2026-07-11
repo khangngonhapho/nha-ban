@@ -81,44 +81,49 @@ window.LegoRenderAdmin = {
     const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || 0;
     const price = parseFloat(p.gia) || 0;
     const donGia = (area > 0 && price > 0) ? (price * 1000 / area) : 0;
-    const donGiaText = donGia > 0 ? ` (${donGia.toFixed(1)}tr)` : '';
-
-    const donGiaStr = donGia > 0 ? `${donGia.toFixed(1)}tr/m²` : '';
-    let priceHistoryHtml = `
+    const donGiaStr = donGia > 0 ? `${window.formatDonGia(donGia)}/m²` : '';
+    
+    const currentPriceHtml = `
       <div style="display: flex; align-items: center; gap: 4px; justify-content: flex-end;">
         ${donGiaStr ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">${donGiaStr}</span>` : ''}
         <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11.5px; font-weight: 800;">${p.gia} tỷ</span>
       </div>
     `;
+
+    let priceHistoryHtml = '';
+    
+    const formatPriceMoc = (pr) => {
+      const pVal = parseFloat(pr);
+      if (isNaN(pVal) || pVal <= 0) return '';
+      const dg = (area > 0) ? (pVal * 1000 / area) : 0;
+      const dgStr = dg > 0 ? ` (${window.formatDonGia(dg)})` : '';
+      return `${pVal} tỷ${dgStr}`;
+    };
+
     if (jsonUi.history && Array.isArray(jsonUi.history)) {
       const priceChanges = jsonUi.history.filter(h => h.type === 'price');
       if (priceChanges.length > 0) {
-        const lastChange = priceChanges[priceChanges.length - 1];
-        const oldPrice = parseFloat(lastChange.old);
-        const newPrice = parseFloat(lastChange.new);
+        const priceMocs = [];
+        priceMocs.push(priceChanges[0].old);
+        priceChanges.forEach(h => {
+          if (parseFloat(h.new) !== parseFloat(priceMocs[priceMocs.length - 1])) {
+            priceMocs.push(h.new);
+          }
+        });
         
-        const formatGiabqValue = (priceVal, a) => {
-          if (!a || a <= 0) return 0;
-          return (priceVal * 1000) / a;
-        };
-        
-        const oldDg = formatGiabqValue(oldPrice, area);
-        const newDg = formatGiabqValue(newPrice, area);
-        const oldDgStr = oldDg > 0 ? `${oldDg.toFixed(1)}tr/m²` : '';
-        const newDgStr = newDg > 0 ? `${newDg.toFixed(1)}tr/m²` : '';
-        
-        priceHistoryHtml = `
-          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 11.5px; justify-content: flex-end;">
-            <span style="text-decoration: line-through; color: #7f8c8d; background: #f2f2f2; padding: 2px 6px; border-radius: 4px;">
-              ${oldDgStr ? `<span style="font-size: 10px; margin-right: 2px; color: #7f8c8d;">${oldDgStr}</span>` : ''}${oldPrice} tỷ
-            </span>
-            <span style="color: #27ae60; font-weight: 800;">➔</span>
-            ${newDgStr ? `<span style="font-size: 11px; color: #57606f; font-weight: 700; background: #f1f2f6; padding: 2px 6px; border-radius: 4px; border: 1px solid #ced6e0;">${newDgStr}</span>` : ''}
-            <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-weight: 800;">
-              ${newPrice} tỷ
-            </span>
-          </div>
-        `;
+        if (priceMocs.length > 1) {
+          const parts = priceMocs.map((pr, idx) => {
+            const isLast = idx === priceMocs.length - 1;
+            const formatted = formatPriceMoc(pr);
+            if (isLast) {
+              return `<span style="color: #27ae60; font-weight: 800; background: rgba(39, 174, 96, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">${formatted}</span>`;
+            } else {
+              return `<span style="text-decoration: line-through; color: #7f8c8d; font-weight: 500;">${formatted}</span>`;
+            }
+          });
+          
+          priceHistoryHtml = parts.join(' <span style="color: #7f8c8d; font-weight: 800; margin: 0 2px;">➔</span> ');
+        }
       }
     }
 
@@ -180,12 +185,17 @@ window.LegoRenderAdmin = {
                 ${displayUpdated ? `<span>🔄 ${displayUpdated}</span>` : ''}
               </div>
             ` : ''}
+            ${priceHistoryHtml ? `
+              <div style="font-size: 11px; margin-top: 4px; color: #7f8c8d; font-weight: 600; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; text-align: left; justify-content: flex-start; width: 100%;">
+                <span>🏷️</span> ${priceHistoryHtml}
+              </div>
+            ` : ''}
           </div>
           <div class="cfoot" style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; width: 100%;">
             ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
             <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 4px;">
               <span class="house-type-badge" style="font-size: 10.5px; background: #f1f2f6; color: #57606f; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid #ced6e0; white-space: nowrap;">${houseTypeAbbr}</span>
-              ${priceHistoryHtml}
+              ${currentPriceHtml}
             </div>
           </div>
         </div>
