@@ -1108,6 +1108,12 @@
       return `${hh}:${min} ${dd}/${mm}/${yyyy}`;
     }
 
+    function cleanPhoneForCompare(phoneStr) {
+      if (!phoneStr) return '';
+      const clean = phoneStr.replace(/\D/g, ''); // keep only digits
+      return clean.length >= 9 ? clean.slice(-9) : clean;
+    }
+
     function parseCustomerInfo(nameStr) {
       if (!nameStr) return { name: 'Khách ẩn danh', phone: 'SĐT ẩn' };
       const phoneMatch = nameStr.match(/(\d{9,11})$/);
@@ -1186,7 +1192,8 @@
       const whitelistCountBadge = document.getElementById('whitelistCount');
       
       const activeBlocked = globalBlacklist.filter(b => b.status === 'Active');
-      const blockedPhones = activeBlocked.map(b => b.raw_phone).filter(Boolean);
+      const blockedPhonesClean = activeBlocked.map(b => cleanPhoneForCompare(b.raw_phone)).filter(Boolean);
+      const whitelistPhonesClean = WHITELIST_PHONES.map(p => cleanPhoneForCompare(p)).filter(Boolean);
       
       // 1. Group all logs
       const customerGroups = groupLogsByCustomer(globalLogs);
@@ -1197,9 +1204,10 @@
       const whitelistGroups = [];
       
       customerGroups.forEach(cust => {
-        if (cust.phone && blockedPhones.includes(cust.phone)) {
+        const custPhoneClean = cleanPhoneForCompare(cust.phone);
+        if (custPhoneClean && blockedPhonesClean.includes(custPhoneClean)) {
           blockedGroups.push(cust);
-        } else if (cust.phone && WHITELIST_PHONES.includes(cust.phone)) {
+        } else if (custPhoneClean && whitelistPhonesClean.includes(custPhoneClean)) {
           whitelistGroups.push(cust);
         } else {
           activeGroups.push(cust);
@@ -1209,7 +1217,8 @@
       // 3. Add placeholders for blocked numbers that don't have log activities
       activeBlocked.forEach(blocked => {
         const phone = blocked.raw_phone;
-        const exists = blockedGroups.some(g => g.phone === phone);
+        const phoneClean = cleanPhoneForCompare(phone);
+        const exists = blockedGroups.some(g => cleanPhoneForCompare(g.phone) === phoneClean);
         if (!exists && phone) {
           blockedGroups.push({
             name: 'Khách hàng bị chặn',
@@ -1283,7 +1292,8 @@
       } else {
         let blacklistHtml = '';
         blockedGroups.forEach(cust => {
-          const blockRecord = activeBlocked.find(b => b.raw_phone === cust.phone);
+          const custPhoneClean = cleanPhoneForCompare(cust.phone);
+          const blockRecord = activeBlocked.find(b => cleanPhoneForCompare(b.raw_phone) === custPhoneClean);
           const blockHash = blockRecord ? blockRecord.phone_hash : '';
           const blockedAtStr = blockRecord && blockRecord.blocked_at ? formatDateTime(blockRecord.blocked_at) : '';
           const blockedReason = blockRecord ? blockRecord.reason : '(Không rõ)';
