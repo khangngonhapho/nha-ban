@@ -76,6 +76,13 @@ function loadConfig() {
 }
 
 function findCredentialsJson() {
+  try {
+    return require('./credentials.json');
+  } catch (e) {}
+  try {
+    return require('../credentials.json');
+  } catch (e) {}
+
   const paths = [
     path.join(process.cwd(), 'credentials.json'),
     path.join(process.cwd(), '..', 'credentials.json'),
