@@ -524,6 +524,17 @@
       border-radius: 4px;
     }
 
+    .blocked-footer {
+      font-size: 11px;
+      color: var(--red);
+      background: rgba(239, 68, 68, 0.06);
+      border-top: 1px dashed rgba(239, 68, 68, 0.2);
+      padding: 8px;
+      border-radius: 4px;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
     /* Tab Title controls */
     .section-title {
       font-size: 17px;
@@ -733,6 +744,8 @@
   <script>
     let gCodeClient = null;
     let authRefreshTimer = null;
+    let globalBlacklist = [];
+    let globalLogs = [];
 
     // Check auth status on load
     window.addEventListener('DOMContentLoaded', () => {
@@ -904,7 +917,7 @@
         const data = await res.json();
         if (data.status === 'success') {
           renderLinks(data.links);
-          renderBlacklist(data.blacklist);
+          globalBlacklist = data.blacklist || [];
         } else {
           showToast("Không thể tải danh sách từ server: " + data.error, "⚠️");
         }
@@ -919,11 +932,14 @@
         });
         const data = await res.json();
         if (data.status === 'success') {
-          renderLogs(data.logs);
+          globalLogs = data.logs || [];
         }
       } catch (err) {
         showToast("Lỗi kết nối API nhật ký: " + err.message, "❌");
       }
+
+      // Render cả 2 tab Nhật ký & Chặn phối hợp
+      renderLogsAndBlacklist();
     }
 
     // Render Links Registry
@@ -1125,105 +1141,156 @@
       return groupsArray;
     }
 
-    // Render Activity Logs
-    function renderLogs(logs) {
-      const container = document.getElementById('logsList');
-      const countBadge = document.getElementById('logCount');
+    // Render logs and blacklist coordinated
+    function renderLogsAndBlacklist() {
+      const logsContainer = document.getElementById('logsList');
+      const blacklistContainer = document.getElementById('blacklistList');
       
-      if (!logs || logs.length === 0) {
-        container.innerHTML = `
+      const logCountBadge = document.getElementById('logCount');
+      const blacklistCountBadge = document.getElementById('blacklistCount');
+      
+      const activeBlocked = globalBlacklist.filter(b => b.status === 'Active');
+      const blockedPhones = activeBlocked.map(b => b.phone).filter(Boolean);
+      
+      // 1. Group all logs
+      const customerGroups = groupLogsByCustomer(globalLogs);
+      
+      // 2. Separate into Active and Blocked groups
+      const activeGroups = [];
+      const blockedGroups = [];
+      
+      customerGroups.forEach(cust => {
+        if (cust.phone && blockedPhones.includes(cust.phone)) {
+          blockedGroups.push(cust);
+        } else {
+          activeGroups.push(cust);
+        }
+      });
+      
+      // 3. Add placeholders for blocked numbers that don't have log activities
+      activeBlocked.forEach(blocked => {
+        const phone = blocked.phone;
+        const exists = blockedGroups.some(g => g.phone === phone);
+        if (!exists && phone) {
+          blockedGroups.push({
+            name: 'Khách hàng bị chặn',
+            phone: phone,
+            hasLeak: false,
+            actions: [],
+            lastActive: parseSheetDate(blocked.blocked_at).getTime()
+          });
+        }
+      });
+      
+      // Sort blocked groups by block date/last active time descending
+      blockedGroups.sort((a, b) => b.lastActive - a.lastActive);
+      
+      // 4. Render Active Groups (Logs Tab)
+      logCountBadge.textContent = activeGroups.length;
+      if (activeGroups.length === 0) {
+        logsContainer.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">⏱️</div>
-            <p>Chưa có lịch sử hoạt động nào ghi nhận</p>
+            <p>Chưa có nhật ký hoạt động nào từ khách hàng đang hoạt động</p>
           </div>
         `;
-        countBadge.textContent = "0";
-        return;
-      }
+      } else {
+        let logsHtml = '';
+        activeGroups.forEach(cust => {
+          let blockAction = '';
+          if (cust.phone && cust.phone.trim() && cust.phone !== 'SĐT ẩn') {
+            blockAction = `<button class="btn-block-action mini" onclick="blockPhoneNumber('${cust.phone}', 'Chặn từ nhật ký')">🚫 Block SĐT</button>`;
+          }
 
-      countBadge.textContent = logs.length;
-      
-      const customerGroups = groupLogsByCustomer(logs);
-      
-      let html = '';
-      customerGroups.forEach(cust => {
-        let blockAction = '';
-        if (cust.phone && cust.phone.trim() && cust.phone !== 'SĐT ẩn') {
-          blockAction = `<button class="btn-block-action mini" onclick="blockPhoneNumber('${cust.phone}', 'Chặn từ nhật ký')">🚫 Block SĐT</button>`;
-        }
-
-        let actionsHtml = '';
-        cust.actions.forEach(act => {
-          const dateStr = act.lastTimestamp ? formatDateTime(act.lastTimestamp) : '';
-          const countBadgeHtml = act.count > 1 ? `<span class="badge-count">x${act.count}</span>` : '';
-          
-          actionsHtml += `
-            <div class="action-row">
-              <div class="action-info">
-                <span class="action-type">${act.action} ${countBadgeHtml}</span>
-                <span class="action-time">${dateStr}</span>
+          let actionsHtml = '';
+          cust.actions.forEach(act => {
+            const dateStr = act.lastTimestamp ? formatDateTime(act.lastTimestamp) : '';
+            const countBadgeHtml = act.count > 1 ? `<span class="badge-count">x${act.count}</span>` : '';
+            actionsHtml += `
+              <div class="action-row">
+                <div class="action-info">
+                  <span class="action-type">${act.action} ${countBadgeHtml}</span>
+                  <span class="action-time">${dateStr}</span>
+                </div>
+                <div class="action-details">${act.details}</div>
               </div>
-              <div class="action-details">${act.details}</div>
+            `;
+          });
+
+          logsHtml += `
+            <div class="card customer-card ${cust.hasLeak ? 'warn-leak' : ''}">
+              <div class="customer-header">
+                <span class="customer-title">${cust.name} (${cust.phone})</span>
+                ${blockAction}
+              </div>
+              <div class="customer-history">
+                ${actionsHtml}
+              </div>
             </div>
           `;
         });
-
-        html += `
-          <div class="card customer-card ${cust.hasLeak ? 'warn-leak' : ''}">
-            <div class="customer-header">
-              <span class="customer-title">${cust.name} (${cust.phone})</span>
-              ${blockAction}
-            </div>
-            <div class="customer-history">
-              ${actionsHtml}
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    }
-
-    // Render Phone Blacklist
-    function renderBlacklist(blacklist) {
-      const container = document.getElementById('blacklistList');
-      const countBadge = document.getElementById('blacklistCount');
+        logsContainer.innerHTML = logsHtml;
+      }
       
-      // Filter active block list only
-      const activeBlocked = blacklist.filter(b => b.status === 'Active');
-      
-      if (!activeBlocked || activeBlocked.length === 0) {
-        container.innerHTML = `
+      // 5. Render Blocked Groups (Blacklist Tab)
+      blacklistCountBadge.textContent = blockedGroups.length;
+      if (blockedGroups.length === 0) {
+        blacklistContainer.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">🟢</div>
             <p>Danh sách chặn trống. Mọi khách đều sạch!</p>
           </div>
         `;
-        countBadge.textContent = "0";
-        return;
-      }
+      } else {
+        let blacklistHtml = '';
+        blockedGroups.forEach(cust => {
+          const blockRecord = activeBlocked.find(b => b.phone === cust.phone);
+          const blockHash = blockRecord ? blockRecord.phone_hash : '';
+          const blockedAtStr = blockRecord && blockRecord.blocked_at ? formatDateTime(blockRecord.blocked_at) : '';
+          const blockedReason = blockRecord ? blockRecord.reason : '(Không rõ)';
+          
+          let unblockAction = '';
+          if (blockHash) {
+            unblockAction = `<button class="btn-block-action mini" style="background: rgba(34, 197, 94, 0.15); color: var(--green); border-color: rgba(34, 197, 94, 0.25);" onclick="unblockPhone('${blockHash}')">🟢 Gỡ chặn</button>`;
+          }
 
-      countBadge.textContent = activeBlocked.length;
-      
-      let html = '';
-      activeBlocked.forEach(item => {
-        const dateStr = item.blocked_at ? new Date(item.blocked_at).toLocaleDateString('vi-VN') : '';
-        html += `
-          <div class="card blacklist-card">
-            <div class="card-header">
-              <span class="customer-name" style="color: var(--red)">SĐT: ${item.raw_phone}</span>
-              <span class="log-time">Chặn ngày: ${dateStr}</span>
+          let actionsHtml = '';
+          cust.actions.forEach(act => {
+            const dateStr = act.lastTimestamp ? formatDateTime(act.lastTimestamp) : '';
+            const countBadgeHtml = act.count > 1 ? `<span class="badge-count">x${act.count}</span>` : '';
+            actionsHtml += `
+              <div class="action-row">
+                <div class="action-info">
+                  <span class="action-type">${act.action} ${countBadgeHtml}</span>
+                  <span class="action-time">${dateStr}</span>
+                </div>
+                <div class="action-details">${act.details}</div>
+              </div>
+            `;
+          });
+          
+          if (cust.actions.length === 0) {
+            actionsHtml = `<div style="font-size: 11px; color: var(--sub); font-style: italic; padding: 4px 8px;">Không có dữ liệu hoạt động.</div>`;
+          }
+
+          blacklistHtml += `
+            <div class="card customer-card warn-leak">
+              <div class="customer-header">
+                <span class="customer-title" style="color: var(--red);">${cust.name} (${cust.phone})</span>
+                ${unblockAction}
+              </div>
+              <div class="customer-history">
+                ${actionsHtml}
+              </div>
+              <div class="blocked-footer">
+                Chặn ngày: <strong>${blockedAtStr}</strong> <br>
+                Lý do chặn: <strong>${blockedReason}</strong>
+              </div>
             </div>
-            <div class="card-body">
-              <span>Lý do chặn: <strong>${item.reason || '(Không có)'}</strong></span>
-              <span style="font-size:10px; opacity:0.6;">SHA-256: ${item.phone_hash}</span>
-            </div>
-            <div class="card-actions">
-              <button class="card-btn btn-copy" style="background: rgba(34, 197, 94, 0.15); color: var(--green); border-color: rgba(34, 197, 94, 0.25);" onclick="unblockPhone('${item.phone_hash}')">🟢 Gỡ chặn SĐT</button>
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
+          `;
+        });
+        blacklistContainer.innerHTML = blacklistHtml;
+      }
     }
 
     // Actions
