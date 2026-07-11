@@ -731,3 +731,314 @@ def get_existing_listing_ids():
         return jsonify({"status": "success", "existing_ids": existing_ids})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+def parse_price_float(price_str):
+    """Trích xuất giá trị float từ chuỗi giá (ví dụ: '15 tỷ' -> 15.0)"""
+    if not price_str:
+        return 0.0
+    price_str = str(price_str).replace(",", ".").strip().lower()
+    match = re.search(r'(\d+(?:\.\d+)?)', price_str)
+    if match:
+        try:
+            return float(match.group(1))
+        except ValueError:
+            pass
+    return 0.0
+
+def parse_date_text(date_text):
+    """Phân tích date_text từ Extension sang đối tượng datetime.date để so sánh"""
+    import datetime
+    if not date_text:
+        return None
+        
+    date_text = str(date_text).strip().lower()
+    now = datetime.datetime.now()
+    
+    # 1. Trực quan tương đối hôm nay
+    if any(k in date_text for k in ["phút", "giờ", "giây", "hôm nay", "hour", "minute", "second", "today"]):
+        return now.date()
+        
+    # 2. Trực quan tương đối hôm qua
+    if "hôm qua" in date_text or "yesterday" in date_text:
+        return (now - datetime.timedelta(days=1)).date()
+        
+    # 3. Trực quan tương đối x ngày trước
+    match_days = re.search(r'(\d+)\s+ngày\s+trước', date_text)
+    if match_days:
+        days = int(match_days.group(1))
+        return (now - datetime.timedelta(days=days)).date()
+        
+    # 4. Định dạng tuyệt đối DD/MM/YYYY
+    match_date = re.search(r'(\d{1,2})/(\d{1,2})/(\d{4})', date_text)
+    if match_date:
+        d = int(match_date.group(1))
+        m = int(match_date.group(2))
+        y = int(match_date.group(3))
+        try:
+            return datetime.date(y, m, d)
+        except ValueError:
+            pass
+            
+    # 5. Định dạng tuyệt đối YYYY-MM-DD
+    match_date_iso = re.search(r'(\d{4})-(\d{1,2})-(\d{1,2})', date_text)
+    if match_date_iso:
+        y = int(match_date_iso.group(1))
+        m = int(match_date_iso.group(2))
+        d = int(match_date_iso.group(3))
+        try:
+            return datetime.date(y, m, d)
+        except ValueError:
+            pass
+            
+    return None
+
+def parse_db_datetime(dt_str):
+    """Phân tích datetime từ database SQLite sang đối tượng datetime.date"""
+    import datetime
+    if not dt_str or dt_str == 'None':
+        return None
+    dt_str = str(dt_str).strip()
+    
+    try:
+        match_iso = re.match(r'^(\d{4})-(\d{2})-(\d{2})', dt_str)
+        if match_iso:
+            return datetime.date(int(match_iso.group(1)), int(match_iso.group(2)), int(match_iso.group(3)))
+    except Exception:
+        pass
+        
+    try:
+        match_fmt = re.match(r'^(\d{2})/(\d{2})/(\d{4})', dt_str)
+        if match_fmt:
+            return datetime.date(int(match_fmt.group(3)), int(match_fmt.group(2)), int(match_fmt.group(1)))
+    except Exception:
+        pass
+        
+    return None
+
+@routes_pool.route('/api/listings/check_updates', methods=['POST'])
+def check_listings_updates():
+    """Nhận danh sách tin đăng từ Extension, đối chiếu và chỉ ra những căn có thay đổi cần cào lại (chỉ áp dụng tin đã có trong CSDL)"""
+    import manager
+    if not os.path.exists(manager.DB_FILE):
+        return jsonify({"status": "success", "needs_crawl": []})
+        
+    data = {}
+    try:
+        data = request.json or {}
+    except Exception:
+        pass
+        
+    listings = data.get("listings", [])
+    if not listings:
+        return jsonify({"status": "success", "needs_crawl": []})
+        
+    tk_ids = [item.get("tk_id") for item in listings if item.get("tk_id")]
+    if not tk_ids:
+        return jsonify({"status": "success", "needs_crawl": []})
+        
+    needs_crawl = []
+    try:
+        conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        placeholders = ",".join(["?"] * len(tk_ids))
+        query = f"SELECT tk_id, Giá_chào, updatedAt FROM {manager.LISTINGS_TABLE} WHERE tk_id IN ({placeholders})"
+        cursor.execute(query, tk_ids)
+        rows = cursor.fetchall()
+        
+        db_map = {}
+        for r in rows:
+            db_map[r["tk_id"].lower()] = {
+                "price": r["Giá_chào"],
+                "updated_at": r["updatedAt"]
+            }
+            
+        conn.close()
+        
+        for item in listings:
+            tk_id = item.get("tk_id")
+            if not tk_id:
+                continue
+                
+            tk_id_lower = tk_id.lower()
+            # Bắt buộc phải có trong SQLite mới xét (Không thêm mới)
+            if tk_id_lower not in db_map:
+                continue
+                
+            db_item = db_map[tk_id_lower]
+            
+            # 1. So sánh giá
+            card_price_str = item.get("price")
+            db_price_str = db_item["price"]
+            
+            card_price = parse_price_float(card_price_str)
+            db_price = parse_price_float(db_price_str)
+            
+            if card_price > 0 and db_price > 0 and abs(card_price - db_price) > 0.01:
+                needs_crawl.append(tk_id)
+                continue
+                
+            # 2. So sánh ngày
+            card_date_text = item.get("date_text")
+            db_date_str = db_item["updated_at"]
+            
+            card_date = parse_date_text(card_date_text)
+            db_date = parse_db_datetime(db_date_str)
+            
+            if card_date and db_date and card_date > db_date:
+                needs_crawl.append(tk_id)
+                continue
+                
+        return jsonify({"status": "success", "needs_crawl": needs_crawl})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+def run_bulk_check_updates_background():
+    """Hàm chạy ngầm quét kiểm tra và cào lại các căn có sự thay đổi"""
+    import manager
+    import requests
+    import fetcher
+    import time
+    import random
+    
+    cookie = ""
+    if os.path.exists(manager.COOKIE_FILE):
+        try:
+            with open(manager.COOKIE_FILE, "r", encoding="utf-8") as f:
+                cookie = f.read().strip()
+        except Exception:
+            pass
+            
+    if not cookie:
+        manager.add_log_message("[❌ LỖI] Không tìm thấy Cookie Thiên Khôi để chạy quét tự động.")
+        return
+        
+    access_token, _, _ = fetcher.extract_tokens(cookie)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://proptech.thienkhoi.com",
+        "Referer": "https://proptech.thienkhoi.com/"
+    }
+    
+    try:
+        conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT tk_id, Gia_chao, Last_Crawl FROM {manager.LISTINGS_TABLE} WHERE status IS NULL OR status = '' OR status NOT LIKE 'crawl_failed:%'")
+        rows = cursor.fetchall()
+        db_map = {r["tk_id"].lower(): {"price": r["Gia_chao"], "updated_at": r["Last_Crawl"]} for r in rows if r["tk_id"]}
+        conn.close()
+    except Exception as e_db:
+        manager.add_log_message(f"[❌ LỖI] Không thể đọc SQLite khi chạy quét: {str(e_db)}")
+        return
+        
+    manager.add_log_message(f"[🔄] KHỞI ĐỘNG TIẾN TRÌNH QUÉT THAY ĐỔI HÀNG LOẠT CHO {len(db_map)} CĂN TRONG CSDL...")
+    
+    changed_ids = []
+    
+    # Quét 15 trang danh sách mới nhất để phát hiện thay đổi
+    for page in range(1, 16):
+        if fetcher.STOP_REQUESTED:
+            manager.add_log_message("[⚠️] Phát hiện yêu cầu dừng. Hủy tiến trình quét thay đổi hàng loạt.")
+            return
+        list_api_url = "https://backend.thienkhoi.com/product/v1/property"
+        params = {"page": str(page), "limit": "20", "searchBy": "address"}
+        
+        try:
+            r = requests.get(list_api_url, headers=headers, params=params, timeout=20)
+            if r.status_code in [401, 403]:
+                refreshed_cookie = fetcher.try_refresh_tokens(manager.COOKIE_FILE)
+                if refreshed_cookie:
+                    cookie = refreshed_cookie
+                    _, access_token, _ = fetcher.extract_tokens(cookie)
+                    headers["Authorization"] = f"Bearer {access_token}"
+                    r = requests.get(list_api_url, headers=headers, params=params, timeout=20)
+                else:
+                    manager.add_log_message("[❌ LỖI] Phiên đăng nhập hết hạn khi quét. Dừng.")
+                    break
+                    
+            if r.status_code != 200:
+                manager.add_log_message(f"[⚠️ WARNING] Lỗi tải trang danh sách {page}: HTTP {r.status_code}")
+                continue
+                
+            res_json = r.json()
+            listings = (res_json.get("data") or {}).get("data", [])
+            if not listings:
+                break
+                
+            for item in listings:
+                tk_id = item.get("id")
+                if not tk_id:
+                    continue
+                tk_id_lower = tk_id.lower()
+                
+                # CHỈ xử lý các căn đã tồn tại trong SQLite (ko thêm mới)
+                if tk_id_lower not in db_map:
+                    continue
+                    
+                db_item = db_map[tk_id_lower]
+                
+                # So sánh giá
+                card_price = float(item.get("offeringPrice") or 0)
+                db_price = parse_price_float(db_item["price"])
+                price_changed = abs(card_price - db_price) > 0.01
+                
+                # So sánh ngày
+                card_date_str = item.get("updatedAt") or item.get("createdAt")
+                db_date_str = db_item["updated_at"]
+                
+                card_date = parse_db_datetime(card_date_str)
+                db_date = parse_db_datetime(db_date_str)
+                date_changed = card_date and db_date and card_date > db_date
+                
+                if price_changed or date_changed:
+                    if tk_id not in changed_ids:
+                        changed_ids.append(tk_id)
+                        
+        except Exception as e_page:
+            manager.add_log_message(f"[⚠️ WARNING] Lỗi xử lý trang {page}: {str(e_page)}")
+            
+    if not changed_ids:
+        manager.add_log_message("[✅] ĐÃ HOÀN THÀNH QUÉT HÀNG LOẠT: Không phát hiện căn nào thay đổi.")
+        return
+        
+    manager.add_log_message(f"[🎯] PHÁT HIỆN {len(changed_ids)} CĂN CÓ THAY ĐỔI. BẮT ĐẦU CÀO CẬP NHẬT TUẦN TỰ...")
+    
+    active_port = 5001
+    try:
+        from core.config import read_settings
+        active_port = read_settings().get("port", 5001)
+    except Exception:
+        pass
+        
+    for tk_id in changed_ids:
+        if fetcher.STOP_REQUESTED:
+            manager.add_log_message("[⚠️] Phát hiện yêu cầu dừng. Hủy tiến trình cào lại các căn thay đổi.")
+            return
+        # Nghỉ ngẫu nhiên giữa các lượt cào
+        delay = random.uniform(2.0, 4.0)
+        time.sleep(delay)
+        
+        try:
+            url = f"http://127.0.0.1:{active_port}/api/listings/{tk_id}/recrawl"
+            r = requests.post(url, json={"cookie": cookie}, timeout=60)
+            if r.status_code == 200:
+                manager.add_log_message(f"  [✅ Cập nhật] Đã cào và lưu thành công căn có thay đổi: {tk_id}")
+            else:
+                manager.add_log_message(f"  [❌ Thất bại] Lỗi cào lại căn {tk_id}: HTTP {r.status_code}")
+        except Exception as e_crawl:
+            manager.add_log_message(f"  [❌ Thất bại] Lỗi kết nối khi cào lại căn {tk_id}: {str(e_crawl)}")
+            
+    manager.add_log_message("[✅] ĐÃ HOÀN THÀNH QUÉT VÀ CẬP NHẬT THAY ĐỔI HÀNG LOẠT!")
+
+@routes_pool.route('/api/listings/check_all_updates', methods=['POST'])
+def trigger_check_all_updates():
+    """Trigger tiến trình chạy ngầm quét kiểm tra tất cả thay đổi và tự động cào lại"""
+    import threading
+    t = threading.Thread(target=run_bulk_check_updates_background)
+    t.daemon = True
+    t.start()
+    return jsonify({"status": "success", "message": "Đã kích hoạt tiến trình quét và cập nhật thay đổi hàng loạt chạy ngầm. Vui lòng theo dõi logs."})

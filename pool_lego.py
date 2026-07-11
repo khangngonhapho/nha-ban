@@ -781,7 +781,101 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
     raw_images_tk_json_val = json.dumps(grouped_urls)
     raw_sodo_tk_json_val = json.dumps(ordered_diagrams)
     status_to_update = "raw_text"
-        
+    
+    # Nhận diện thay đổi và ghi nhận lịch sử vào JSON_UI
+    if existing:
+        try:
+            # Lấy dòng cũ từ SQLite
+            db_row = cursor.execute(
+                f"SELECT `Gia_chao`, `Mo_ta_chi_tiet`, `Trang_thai`, `JSON_UI` FROM {target_table} WHERE tk_id = ?",
+                (tk_id,)
+            ).fetchone()
+            
+            if db_row:
+                old_price_str = db_row[0] or ""
+                old_desc_str = db_row[1] or ""
+                old_status_str = db_row[2] or ""
+                old_json_ui_str = db_row[3] or ""
+                
+                # Phân tích JSON_UI cũ để lấy mảng history
+                old_history = []
+                if old_json_ui_str:
+                    try:
+                        old_json_ui = json.loads(old_json_ui_str)
+                        if isinstance(old_json_ui, dict) and "history" in old_json_ui:
+                            old_history = old_json_ui["history"]
+                            if not isinstance(old_history, list):
+                                old_history = []
+                    except Exception:
+                        pass
+                
+                # Phân tích dữ liệu mới từ cleaned_metadata
+                new_price_str = cleaned_metadata.get("Gia_chao", "")
+                new_desc_str = cleaned_metadata.get("Mo_ta_chi_tiet", "")
+                new_status_str = cleaned_metadata.get("Trang_thai", "")
+                
+                new_history_entries = []
+                now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                
+                # 1. Kiểm tra đổi giá
+                try:
+                    def parse_price(val_str):
+                        if not val_str: return 0.0
+                        val_str = str(val_str).replace(",", ".").strip()
+                        m = re.search(r'(\d+(?:\.\d+)?)', val_str)
+                        return float(m.group(1)) if m else 0.0
+                    
+                    p_old = parse_price(old_price_str)
+                    p_new = parse_price(new_price_str)
+                    if p_old > 0 and p_new > 0 and abs(p_old - p_new) > 0.01:
+                        new_history_entries.append({
+                            "type": "price",
+                            "field": "offeringPrice",
+                            "old": str(p_old),
+                            "new": str(p_new),
+                            "date": now_str
+                        })
+                        print(f"[🔄 Lịch sử Giá] Căn {tk_id}: Giá thay đổi {p_old} tỷ -> {p_new} tỷ")
+                except Exception as e_price_comp:
+                    print(f"[⚠️ WARNING] Lỗi so sánh giá lịch sử căn {tk_id}: {str(e_price_comp)}")
+                
+                # 2. Kiểm tra đổi trạng thái
+                if old_status_str and new_status_str and old_status_str.strip() != new_status_str.strip():
+                    new_history_entries.append({
+                        "type": "status",
+                        "field": "status",
+                        "old": old_status_str.strip(),
+                        "new": new_status_str.strip(),
+                        "date": now_str
+                    })
+                
+                # 3. Kiểm tra đổi mô tả (chỉ lưu dạng flag thông báo đổi để tránh tràn ô)
+                if old_desc_str and new_desc_str and old_desc_str.strip() != new_desc_str.strip():
+                    new_history_entries.append({
+                        "type": "info",
+                        "field": "description",
+                        "old": "Mô tả cũ",
+                        "new": "Mô tả mới",
+                        "date": now_str
+                    })
+                
+                # Nếu có thay đổi mới, trộn vào JSON_UI
+                if new_history_entries or old_history:
+                    merged_history = old_history + new_history_entries
+                    
+                    new_json_ui_str = cleaned_metadata.get("JSON_UI", "")
+                    new_json_ui_dict = {}
+                    if new_json_ui_str:
+                        try:
+                            new_json_ui_dict = json.loads(new_json_ui_str)
+                        except Exception:
+                            pass
+                    
+                    new_json_ui_dict["history"] = merged_history
+                    cleaned_metadata["JSON_UI"] = json.dumps(new_json_ui_dict, ensure_ascii=False)
+        except Exception as e_hist:
+            print(f"[⚠️ WARNING] Lỗi ghi nhận lịch sử thay đổi căn {tk_id}: {str(e_hist)}")
+
     if existing:
         # PHÒNG VỆ MẤT ẢNH: Nếu có ảnh cũ trong CSDL và số lượng ảnh cào mới ít hơn
         db_raw_images_str = ""

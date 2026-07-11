@@ -308,6 +308,50 @@
             <!-- Google Maps Embed -->
             <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
             <div class="admin-map-container"></div>
+
+            <!-- Lịch sử thay đổi (Change History Timeline) -->
+            ${(() => {
+              const jsonUi = p.json_ui_parsed || {};
+              const history = jsonUi.history || [];
+              if (!history || history.length === 0) return '';
+              
+              const historyItems = history.map(item => {
+                let changeDesc = '';
+                if (item.type === 'price') {
+                  const area = parseFloat(p.dt_tren_so_custom) || 0;
+                  const oldVal = parseFloat(item.old);
+                  const newVal = parseFloat(item.new);
+                  const formatGiabq = (price, a) => {
+                    if (!a || a <= 0) return '';
+                    return ` (${((price * 1000) / a).toFixed(1)}tr)`;
+                  };
+                  changeDesc = `Thay đổi giá chào: <span style="text-decoration: line-through; color: #7f8c8d;">${oldVal} tỷ${formatGiabq(oldVal, area)}</span> ➔ <span style="color: #27ae60; font-weight: 700;">${newVal} tỷ${formatGiabq(newVal, area)}</span>`;
+                } else if (item.type === 'status') {
+                  changeDesc = `Thay đổi trạng thái nguồn: <span style="color: #7f8c8d;">${item.old}</span> ➔ <span style="color: var(--blue); font-weight: 700;">${item.new}</span>`;
+                } else if (item.type === 'info' && item.field === 'description') {
+                  changeDesc = `<span style="color: #e67e22; font-weight: 600;">Cập nhật lại mô tả chi tiết từ đầu chủ</span>`;
+                } else {
+                  changeDesc = `Cập nhật thông tin khác (${item.field || ''})`;
+                }
+                
+                return `
+                  <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
+                    <span style="color: #95a5a6; font-weight: 600; min-width: 120px; font-family: monospace; white-space: nowrap;">📅 ${item.date || ''}</span>
+                    <span style="color: #2c3e50; font-weight: 500;">${changeDesc}</span>
+                  </div>
+                `;
+              }).join('');
+              
+              return `
+                <div class="admin-raw-title" style="margin-top:14px; display: flex; align-items: center; gap: 6px;">
+                  <span>⏳ Lịch sử thay đổi</span>
+                  <span style="background: var(--blue); color: white; border-radius: 50%; font-size: 10px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold;">${history.length}</span>
+                </div>
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-top: 6px; max-height: 200px; overflow-y: auto;">
+                  ${historyItems}
+                </div>
+              `;
+            })()}
           </div>
 
           <div class="admin-accordion">

@@ -147,7 +147,7 @@
     </style>
     <script>
         // Resize window to control panel size on startup
-        window.resizeTo(520, 860);
+        window.resizeTo(520, 940);
 
         function runScript(filename) {
             try {
@@ -209,15 +209,23 @@
 
     <!-- Group 4 -->
     <div class="section">
-        <div class="group-title">4. Quản trị tệp tin sao lưu</div>
-        <button class="btn btn-folder" onclick="openFolder('d:\\LHTBrain\\BDS_Backups')">
-            📂 Mở thư mục sao lưu CSDL (Backups)
+        <div class="group-title">4. Tiến trình quét tự động hàng ngày (Daily Worker)</div>
+        <button class="btn" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); border: 1px solid #06b6d4;" onclick="runScript('python scratch/check_daily_updates.py')">
+            🔄 Chạy quét và cập nhật thay đổi tự động (Daily Worker)
         </button>
     </div>
 
     <!-- Group 5 -->
     <div class="section">
-        <div class="group-title">5. Quản trị Git &amp; Xuất Bản</div>
+        <div class="group-title">5. Quản trị tệp tin sao lưu</div>
+        <button class="btn btn-folder" onclick="openFolder('d:\\LHTBrain\\BDS_Backups')">
+            📂 Mở thư mục sao lưu CSDL (Backups)
+        </button>
+    </div>
+
+    <!-- Group 6 -->
+    <div class="section">
+        <div class="group-title">6. Quản trị Git &amp; Xuất Bản</div>
         <button class="btn btn-deploy" onclick="runScript('UP_PRODUCTION.bat')">
             🚀 Xuất bản code lên Production (Deploy Live)
         </button>

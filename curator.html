@@ -978,6 +978,8 @@
 
                             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                                 <button class="btn btn-gold" id="btn-start-crawl" onclick="startCrawl()">👉 BẮT ĐẦU CÀO TIN</button>
+                                <button class="btn btn-green" id="btn-check-all-updates" onclick="triggerCheckAllUpdates()">🔄 QUÉT & CẬP NHẬT THAY ĐỔI</button>
+                                <button class="btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red);" onclick="stopCrawl()">🛑 DỪNG CÀO / QUÉT</button>
                                 <button class="btn btn-outline" onclick="openCookieModal()">🔑 Cập nhật Cookie</button>
                                 <button class="btn" style="background: linear-gradient(135deg, var(--accent-red) 0%, #b91c1c 100%); color: white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);" onclick="clearAllListings()">🧹 Xóa Sạch Dữ Liệu Cũ</button>
                             </div>
@@ -2270,7 +2272,15 @@
                             
                             // Tự động kích hoạt còi cảnh báo âm thanh bíp khi phát hiện cookie hết hạn cào tin
                             if (line.includes('hết hạn') || line.includes('security.html')) {
-                                triggerCookieExpiredAlert();
+                                if (!line.includes('[🔑]')) {
+                                    triggerCookieExpiredAlert();
+                                }
+                            }
+                            
+                            // Nếu thấy dòng log đồng bộ cookie thành công, tự động tắt cảnh báo và đóng modal
+                            if (line.includes('[🔑]')) {
+                                cookieExpiredAlerted = false;
+                                closeCookieModal();
                             }
                             
                             if (line.includes('lưu trang tiếp theo')) {
@@ -2329,6 +2339,47 @@
                 } else {
                     alert('Không khởi động được tiến trình: ' + data.message);
                 }
+            });
+        }
+
+        function triggerCheckAllUpdates() {
+            if (!confirm('Bạn có chắc chắn muốn kích hoạt tiến trình quét và cào lại các căn có thay đổi (Không thêm mới) không?')) {
+                return;
+            }
+            clearLogs();
+            fetch('/api/listings/check_all_updates', {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🔄 Tiến trình quét thay đổi hàng loạt đang chạy ngầm! Hãy theo dõi terminal bên dưới.', 'gold');
+                } else {
+                    alert('Lỗi kích hoạt: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối: ' + err.message);
+            });
+        }
+
+        function stopCrawl() {
+            if (!confirm('Bạn có chắc chắn muốn gửi yêu cầu dừng tiến trình cào/quét tin hiện tại?')) {
+                return;
+            }
+            fetch('/api/crawl/stop', {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showBannerNotification('🛑 Đã gửi lệnh dừng tiến trình cào/quét tin lên server.', 'gold');
+                } else {
+                    alert('Lỗi gửi lệnh dừng: ' + data.message);
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối: ' + err.message);
             });
         }
 

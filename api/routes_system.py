@@ -239,7 +239,7 @@ def save_cookie_endpoint():
         with manager.LOGS_LOCK:
             manager.LOGS_BUFFER.clear()
             
-        manager.add_log_message("[🔑] ĐÃ LƯU COOKIE THIÊN KHÔI MỚI VÀ DỌN SẠCH LOGS HẾT HẠN CŨ!")
+        manager.add_log_message("[🔑] ĐÃ CẬP NHẬT ĐỒNG BỘ COOKIE MỚI VÀ LÀM SẠCH NHẬT KÝ LỖI!")
         return jsonify({"status": "success", "message": "Đã lưu cookie thành công!"})
     except Exception as e:
         manager.add_log_message(f"[❌ LỖI] Không thể ghi file cookie: {str(e)}")

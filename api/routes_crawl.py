@@ -56,7 +56,7 @@ def trigger_crawl():
                 # Xóa sạch logs cũ tránh nhảy báo động hết hạn lặp lại ở UI
                 with manager.LOGS_LOCK:
                     manager.LOGS_BUFFER.clear()
-                manager.add_log_message("[🔑] ĐÃ LƯU COOKIE THIÊN KHÔI MỚI VÀ DỌN SẠCH LOGS HẾT HẠN CŨ!")
+                manager.add_log_message("[🔑] ĐÃ ĐỒNG BỘ COOKIE THIÊN KHÔI MỚI VÀ DỌN SẠCH LOGS CŨ!")
                 return jsonify({"status": "success", "message": "Đã lưu cookie và gửi lệnh dừng tiến trình cũ thành công!"})
             except Exception as e:
                 manager.add_log_message(f"[❌ LỖI] Không thể ghi file cookie: {str(e)}")
@@ -139,6 +139,15 @@ def stop_migration_endpoint():
     import manager
     manager.SHOULD_STOP_MIGRATION = True
     return jsonify({"status": "success", "message": "Đã gửi yêu cầu dừng di cư hình ảnh."})
+
+@routes_crawl.route('/api/crawl/stop', methods=['POST'])
+def stop_crawl_endpoint():
+    import fetcher
+    import manager
+    fetcher.STOP_REQUESTED = True
+    manager.add_log_message("[🛑] ĐÃ NHẬN YÊU CẦU DỪNG TIẾN TRÌNH CÀO / QUÉT THAY ĐỔI TỪ HỆ THỐNG.")
+    return jsonify({"status": "success", "message": "Đã gửi yêu cầu dừng tiến trình cào/quét thành công!"})
+
 
 @routes_crawl.route('/api/crawl/sessions', methods=['GET'])
 def get_crawl_sessions():

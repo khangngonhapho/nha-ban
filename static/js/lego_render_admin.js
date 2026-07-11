@@ -78,6 +78,37 @@ window.LegoRenderAdmin = {
     const displayListed = formatDate(jsonUi.createdAtSigned || '');
     const displayUpdated = formatDate(jsonUi.updatedAt || '');
 
+    let priceHistoryHtml = `<span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${p.gia} tỷ</span>`;
+    if (jsonUi.history && Array.isArray(jsonUi.history)) {
+      const priceChanges = jsonUi.history.filter(h => h.type === 'price');
+      if (priceChanges.length > 0) {
+        const lastChange = priceChanges[priceChanges.length - 1];
+        const oldPrice = parseFloat(lastChange.old);
+        const newPrice = parseFloat(lastChange.new);
+        const area = parseFloat(p.dt_tren_so_custom) || 0;
+        
+        const formatGiabq = (price, a) => {
+          if (!a || a <= 0) return '';
+          return ` (${((price * 1000) / a).toFixed(1)}tr)`;
+        };
+        
+        const oldGiabqStr = formatGiabq(oldPrice, area);
+        const newGiabqStr = formatGiabq(newPrice, area);
+        
+        priceHistoryHtml = `
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 11.5px;">
+            <span style="text-decoration: line-through; color: #7f8c8d; background: #f2f2f2; padding: 2px 6px; border-radius: 4px;">
+              ${oldPrice} tỷ${oldGiabqStr}
+            </span>
+            <span style="color: #27ae60; font-weight: 800;">➔</span>
+            <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-weight: 800;">
+              ${newPrice} tỷ${newGiabqStr}
+            </span>
+          </div>
+        `;
+      }
+    }
+
     c.innerHTML = `
       <div class="crow">
         <div class="ibox">
@@ -112,7 +143,7 @@ window.LegoRenderAdmin = {
           <div class="cfoot" style="margin-top: 6px;">
             ${activeCollectionName ? `<button class="remove-from-col-btn" onclick="removeFromCol('${p.id}', '${activeCollectionName}', event)">✕ Bỏ</button>` : ''}
             <div style="font-size: 12px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 6px;">
-              <span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${p.gia} tỷ</span>
+              ${priceHistoryHtml}
             </div>
           </div>
         </div>
