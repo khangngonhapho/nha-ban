@@ -438,6 +438,92 @@
       cursor: pointer;
     }
 
+    /* Grouped Customer Logs styling */
+    .customer-card {
+      border-left: 3px solid var(--gold);
+      padding: 12px !important;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .customer-card.warn-leak {
+      border-left-color: var(--red);
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .customer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 8px;
+    }
+
+    .customer-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .btn-block-action.mini {
+      margin-top: 0;
+      padding: 3px 6px;
+      font-size: 9px;
+    }
+
+    .customer-history {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .action-row {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .action-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .action-type {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-time {
+      font-size: 10px;
+      color: var(--sub);
+    }
+
+    .action-details {
+      font-size: 11.5px;
+      color: var(--sub);
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .badge-count {
+      background: rgba(255, 191, 36, 0.2);
+      border: 1px solid rgba(255, 191, 36, 0.4);
+      color: var(--gold);
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
     /* Tab Title controls */
     .section-title {
       font-size: 17px;
@@ -896,6 +982,60 @@
     }
 
     // Render Activity Logs
+    function groupLogsByCustomer(logs) {
+      const groups = {};
+      
+      logs.forEach(log => {
+        const name = log.name || 'Khách ẩn danh';
+        const phone = log.phone || 'SĐT ẩn';
+        const key = `${phone}_${name}`;
+        
+        if (!groups[key]) {
+          groups[key] = {
+            name: name,
+            phone: phone,
+            hasLeak: false,
+            actions: []
+          };
+        }
+        
+        if (log.action === 'Link bị chuyển tiếp') {
+          groups[key].hasLeak = true;
+        }
+        
+        // Group actions for this customer
+        const actionKey = `${log.action}_${log.details || ''}`;
+        let actionGroup = groups[key].actions.find(a => a.key === actionKey);
+        
+        if (!actionGroup) {
+          actionGroup = {
+            key: actionKey,
+            action: log.action,
+            details: log.details || '',
+            count: 0,
+            lastTimestamp: 0
+          };
+          groups[key].actions.push(actionGroup);
+        }
+        
+        actionGroup.count++;
+        const logTime = log.timestamp ? new Date(log.timestamp).getTime() : 0;
+        if (logTime > actionGroup.lastTimestamp) {
+          actionGroup.lastTimestamp = logTime;
+        }
+      });
+      
+      const groupsArray = Object.values(groups).map(g => {
+        g.lastActive = Math.max(...g.actions.map(a => a.lastTimestamp), 0);
+        g.actions.sort((a, b) => b.lastTimestamp - a.lastTimestamp);
+        return g;
+      });
+      
+      groupsArray.sort((a, b) => b.lastActive - a.lastActive);
+      return groupsArray;
+    }
+
+    // Render Activity Logs
     function renderLogs(logs) {
       const container = document.getElementById('logsList');
       const countBadge = document.getElementById('logCount');
@@ -913,29 +1053,40 @@
 
       countBadge.textContent = logs.length;
       
+      const customerGroups = groupLogsByCustomer(logs);
+      
       let html = '';
-      // Lấy 80 logs mới nhất
-      const displayLogs = logs.slice(0, 80);
-      displayLogs.forEach(log => {
-        const isLeak = log.action === 'Link bị chuyển tiếp';
-        const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : '';
-        
+      customerGroups.forEach(cust => {
         let blockAction = '';
-        if (log.phone && log.phone.trim()) {
-          blockAction = `<button class="btn-block-action" onclick="blockPhoneNumber('${log.phone}', 'Chặn từ nhật ký rò rỉ')">🚫 Block SĐT ${log.phone}</button>`;
+        if (cust.phone && cust.phone.trim() && cust.phone !== 'SĐT ẩn') {
+          blockAction = `<button class="btn-block-action mini" onclick="blockPhoneNumber('${cust.phone}', 'Chặn từ nhật ký')">🚫 Block SĐT</button>`;
         }
 
+        let actionsHtml = '';
+        cust.actions.forEach(act => {
+          const dateStr = act.lastTimestamp ? new Date(act.lastTimestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : '';
+          const countBadgeHtml = act.count > 1 ? `<span class="badge-count">x${act.count}</span>` : '';
+          
+          actionsHtml += `
+            <div class="action-row">
+              <div class="action-info">
+                <span class="action-type">${act.action} ${countBadgeHtml}</span>
+                <span class="action-time">${dateStr}</span>
+              </div>
+              <div class="action-details">${act.details}</div>
+            </div>
+          `;
+        });
+
         html += `
-          <div class="card log-item ${isLeak ? 'warn-leak' : ''}">
-            <div class="card-header">
-              <span class="log-title">${log.name || 'Khách ẩn danh'} (${log.phone || 'SĐT ẩn'})</span>
-              <span class="log-time">${dateStr}</span>
+          <div class="card customer-card ${cust.hasLeak ? 'warn-leak' : ''}">
+            <div class="customer-header">
+              <span class="customer-title">${cust.name} (${cust.phone})</span>
+              ${blockAction}
             </div>
-            <div class="log-desc">
-              <strong>Hành động:</strong> ${log.action} <br>
-              <strong>Chi tiết:</strong> ${log.details}
+            <div class="customer-history">
+              ${actionsHtml}
             </div>
-            ${blockAction}
           </div>
         `;
       });
