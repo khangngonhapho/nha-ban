@@ -656,23 +656,8 @@
     <!-- App Content (Hidden until authenticated) -->
     <section id="appContent" style="display: none;">
       
-      <!-- Tab 1: Links Registry -->
-      <div id="tabLinks" class="tab-content active">
-        <div class="section-title">
-          <span>Danh sách Link Chia sẻ</span>
-          <span class="section-badge" id="linkCount">0</span>
-        </div>
-        
-        <div id="linksList">
-          <div class="loader">
-            <div class="spinner"></div>
-            <span>Đang nạp danh sách liên kết...</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab 2: Activity Logs -->
-      <div id="tabLogs" class="tab-content">
+      <!-- Tab 1: Activity Logs (Nhật ký) -->
+      <div id="tabLogs" class="tab-content active">
         <div class="section-title">
           <span>Nhật ký Khách xem</span>
           <span class="section-badge" id="logCount">0</span>
@@ -686,7 +671,7 @@
         </div>
       </div>
 
-      <!-- Tab 3: Phone Blacklist -->
+      <!-- Tab 2: Phone Blacklist (Chặn SĐT) -->
       <div id="tabBlacklist" class="tab-content">
         <div class="section-title">
           <span>Danh sách Chặn SĐT</span>
@@ -701,23 +686,38 @@
         </div>
       </div>
 
+      <!-- Tab 3: Links Registry (Liên kết) -->
+      <div id="tabLinks" class="tab-content">
+        <div class="section-title">
+          <span>Danh sách Link Chia sẻ</span>
+          <span class="section-badge" id="linkCount">0</span>
+        </div>
+        
+        <div id="linksList">
+          <div class="loader">
+            <div class="spinner"></div>
+            <span>Đang nạp danh sách liên kết...</span>
+          </div>
+        </div>
+      </div>
+
     </section>
 
   </main>
 
   <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav" id="appNav" style="display: none;">
-    <div class="nav-item active" onclick="switchTab('tabLinks', this)">
-      <span class="icon">📋</span>
-      <span>Liên kết</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('tabLogs', this)">
+    <div class="nav-item active" onclick="switchTab('tabLogs', this)">
       <span class="icon">⏱️</span>
       <span>Nhật ký</span>
     </div>
     <div class="nav-item" onclick="switchTab('tabBlacklist', this)">
       <span class="icon">🚫</span>
       <span>Chặn SĐT</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tabLinks', this)">
+      <span class="icon">📋</span>
+      <span>Liên kết</span>
     </div>
   </nav>
 
