@@ -3114,7 +3114,7 @@
         };
 
         const fullPublicImages = window.getPublicImagesFromForm(p);
-        let cleanPublicImages = fullPublicImages.filter(Boolean);
+        cleanPublicImages = fullPublicImages.filter(Boolean);
 
         if (p.original_row_data) {
           while (p.original_row_data.length < 49) p.original_row_data.push("");
