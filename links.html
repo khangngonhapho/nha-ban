@@ -1186,7 +1186,7 @@
       const whitelistCountBadge = document.getElementById('whitelistCount');
       
       const activeBlocked = globalBlacklist.filter(b => b.status === 'Active');
-      const blockedPhones = activeBlocked.map(b => b.phone).filter(Boolean);
+      const blockedPhones = activeBlocked.map(b => b.raw_phone).filter(Boolean);
       
       // 1. Group all logs
       const customerGroups = groupLogsByCustomer(globalLogs);
@@ -1208,7 +1208,7 @@
       
       // 3. Add placeholders for blocked numbers that don't have log activities
       activeBlocked.forEach(blocked => {
-        const phone = blocked.phone;
+        const phone = blocked.raw_phone;
         const exists = blockedGroups.some(g => g.phone === phone);
         if (!exists && phone) {
           blockedGroups.push({
@@ -1283,7 +1283,7 @@
       } else {
         let blacklistHtml = '';
         blockedGroups.forEach(cust => {
-          const blockRecord = activeBlocked.find(b => b.phone === cust.phone);
+          const blockRecord = activeBlocked.find(b => b.raw_phone === cust.phone);
           const blockHash = blockRecord ? blockRecord.phone_hash : '';
           const blockedAtStr = blockRecord && blockRecord.blocked_at ? formatDateTime(blockRecord.blocked_at) : '';
           const blockedReason = blockRecord ? blockRecord.reason : '(Không rõ)';
@@ -1343,6 +1343,11 @@
       } else {
         let whitelistHtml = '';
         whitelistGroups.forEach(cust => {
+          let blockAction = '';
+          if (cust.phone && cust.phone.trim() && cust.phone !== 'SĐT ẩn') {
+            blockAction = `<button class="btn-block-action mini" onclick="blockPhoneNumber('${cust.phone}', 'Chặn từ nhật ký')">🚫 Block SĐT</button>`;
+          }
+
           let actionsHtml = '';
           cust.actions.forEach(act => {
             const dateStr = act.lastTimestamp ? formatDateTime(act.lastTimestamp) : '';
@@ -1362,7 +1367,10 @@
             <div class="card customer-card whitelisted">
               <div class="customer-header" onclick="if (!event.target.closest('button')) toggleCardHistory(this)">
                 <span class="customer-title" style="color: #3b82f6;">${cust.name} (${cust.phone}) <span class="toggle-icon">▼</span></span>
-                <span class="badge-count" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);">Admin Test</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span class="badge-count" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);">Admin Test</span>
+                  ${blockAction}
+                </div>
               </div>
               <div class="customer-history collapsed">
                 ${actionsHtml}
