@@ -39,20 +39,18 @@ window.LegoRenderClient = {
     const donGiaText = donGia > 0 ? ` (${donGia.toFixed(1)}tr)` : '';
 
     const st = window.getHouseStatus ? window.getHouseStatus(p) : 'Đang bán';
-    let statusBadgeHtml = '';
-    if (st !== 'Đang bán') {
-      let badgeColor = '#27ae60';
-      if (st === 'Đã cọc') badgeColor = '#e67e22';
-      else if (st === 'Đã bán') badgeColor = 'var(--red)';
-      else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
-      statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
-    }
+    let badgeColor = '#27ae60';
+    if (st === 'Đã cọc') badgeColor = '#e67e22';
+    else if (st === 'Đã bán') badgeColor = 'var(--red)';
+    else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
+    
+    const statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
 
     c.innerHTML = `
       <div class="crow">
         <div class="ibox" style="position: relative;">
           ${statusBadgeHtml}
-          ${p.isFromPoolOnly ? '<div class="pool-badge-tag" style="top: 8px; right: 8px; left: auto;">📦 Pool</div>' : ''}
+          ${p.isFromPoolOnly ? '<div class="pool-badge-tag" style="top: 8px; left: 8px !important; right: auto;">📦 Pool</div>' : ''}
           <img src="${thumb}" alt="${p.t}" loading="lazy" decoding="async" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
           <button class="heart ${isFav ? 'on' : ''}" onclick="th('${favId}', this, event)">${isFav ? '♥' : '♡'}</button>
         </div>
@@ -62,7 +60,9 @@ window.LegoRenderClient = {
             <div class="chips">
               <span class="chip">📐 ${p.dt}m²</span>
               <span class="chip">🏠 ${p.tang} tầng</span>${p.so_pn && p.so_pn !== '-' ? `
-              <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
+              <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}
+              <span class="chip" style="color: ${badgeColor}; font-weight: 800; border-color: ${badgeColor};">● ${st}</span>
+              ${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
             </div>
             <div class="pr-loc">
               <div class="pr"><span class="pv">${p.gia} tỷ${donGiaText}</span></div>

@@ -114,20 +114,18 @@ window.LegoRenderAdmin = {
     }
 
     const st = window.getHouseStatus ? window.getHouseStatus(p) : 'Đang bán';
-    let statusBadgeHtml = '';
-    if (st !== 'Đang bán') {
-      let badgeColor = '#27ae60';
-      if (st === 'Đã cọc') badgeColor = '#e67e22';
-      else if (st === 'Đã bán') badgeColor = 'var(--red)';
-      else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
-      statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
-    }
+    let badgeColor = '#27ae60';
+    if (st === 'Đã cọc') badgeColor = '#e67e22';
+    else if (st === 'Đã bán') badgeColor = 'var(--red)';
+    else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
+    
+    const statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
 
     c.innerHTML = `
       <div class="crow">
         <div class="ibox" style="position: relative;">
           ${statusBadgeHtml}
-          ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air" style="top: 8px; right: 8px; left: auto;">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw" style="top: 8px; right: 8px; left: auto;">⚪ Chưa lên sóng</div>') : ''}
+          ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air" style="top: 8px; left: 8px !important; right: auto;">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw" style="top: 8px; left: 8px !important; right: auto;">⚪ Chưa lên sóng</div>') : ''}
           <img src="${thumb}" alt="${p.t}" loading="lazy" decoding="async" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
           <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${isSelected ? 'checked' : ''}>
           <button class="heart ${isFav ? 'on' : ''}" onclick="th('${favId}', this, event)">${isFav ? '♥' : '♡'}</button>
@@ -139,6 +137,9 @@ window.LegoRenderAdmin = {
             </div>
             <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
               <span>📍</span> P.${p.phuong}, Q.${p.ql}
+            </div>
+            <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+              <span style="color: ${badgeColor};">●</span> <span style="font-weight: 500; color: #7f8c8d;">Trạng thái:</span> <span style="color: ${badgeColor}; font-weight: 800;">${st}</span>
             </div>
             <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               <span>👤</span> ${p.raw_ten_dau_chu || 'Chưa rõ đầu chủ'}
