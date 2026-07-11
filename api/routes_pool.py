@@ -711,3 +711,23 @@ def clear_diff():
     except Exception as e:
         manager.add_log_message(f"[❌ LỖI] Lỗi khi clear diff: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@routes_pool.route('/api/listings/existing_ids', methods=['GET'])
+def get_existing_listing_ids():
+    """Lấy danh sách tất cả tk_id đã cào thành công trong SQLite để đối chiếu lọc trùng"""
+    import manager
+    if not os.path.exists(manager.DB_FILE):
+        return jsonify({"existing_ids": []})
+        
+    try:
+        conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
+        cursor = conn.cursor()
+        # Chỉ lấy tk_id của các căn cào thành công (không có lỗi crawl_failed)
+        cursor.execute(f"SELECT tk_id FROM {manager.LISTINGS_TABLE} WHERE status IS NULL OR status = '' OR status NOT LIKE 'crawl_failed:%'")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        existing_ids = [r[0] for r in rows if r[0]]
+        return jsonify({"status": "success", "existing_ids": existing_ids})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
