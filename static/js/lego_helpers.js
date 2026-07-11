@@ -597,7 +597,7 @@ window.showError = function(msg) {
 window.saveState = function() {
   const shareBitmask = new URLSearchParams(window.location.search).get('b');
   const shareToken = new URLSearchParams(window.location.search).get('s');
-  if (!window.isAdmin || shareBitmask || shareToken) return;
+  if (shareBitmask || shareToken) return;
   
   const serializedDynamicFilters = {};
   if (window.activeDynamicFilters) {
@@ -611,12 +611,12 @@ window.saveState = function() {
   }
   
   const state = {
-    districts: [...selDistricts],
-    wards: [...selWards],
-    duongs: [...selDuongs],
-    huongs: [...selHuong],
-    gia: [...selGia],
-    danhGia: [...selDanhGia],
+    districts: window.selDistricts ? [...window.selDistricts] : [],
+    wards: window.selWards ? [...window.selWards] : [],
+    duongs: window.selDuongs ? [...window.selDuongs] : [],
+    huongs: window.selHuong ? [...window.selHuong] : [],
+    gia: window.selGia ? [...window.selGia] : [],
+    danhGia: window.selDanhGia ? [...window.selDanhGia] : [],
     trangThai: window.selTrangThai ? [...window.selTrangThai] : [],
     currentSortType: window.currentSortType || 'newest',
     currentSortDir: window.currentSortDir || 'desc',
@@ -652,21 +652,42 @@ window.saveState = function() {
 window.restoreState = function() {
   const shareBitmask = new URLSearchParams(window.location.search).get('b');
   const shareToken = new URLSearchParams(window.location.search).get('s');
-  if (!window.isAdmin || shareBitmask || shareToken) return;
+  if (shareBitmask || shareToken) return;
   try {
     const saved = localStorage.getItem('adminState');
     if (!saved) return;
     const state = JSON.parse(saved);
 
-    state.districts?.forEach(x => selDistricts.add(x));
-    state.wards?.forEach(x => selWards.add(x));
-    state.duongs?.forEach(x => selDuongs.add(x));
-    state.huongs?.forEach(x => selHuong.add(x));
-    state.gia?.forEach(x => selGia.add(x));
-    state.danhGia?.forEach(x => selDanhGia.add(x));
-    state.trangThai?.forEach(x => {
-      if (window.selTrangThai) window.selTrangThai.add(x);
-    });
+    if (state.districts) {
+      window.selDistricts.clear();
+      state.districts.forEach(x => window.selDistricts.add(x));
+    }
+    if (state.wards) {
+      window.selWards.clear();
+      state.wards.forEach(x => window.selWards.add(x));
+    }
+    if (state.duongs) {
+      window.selDuongs.clear();
+      state.duongs.forEach(x => window.selDuongs.add(x));
+    }
+    if (state.huongs) {
+      window.selHuong.clear();
+      state.huongs.forEach(x => window.selHuong.add(x));
+    }
+    if (state.gia) {
+      window.selGia.clear();
+      state.gia.forEach(x => window.selGia.add(x));
+    }
+    if (state.danhGia) {
+      window.selDanhGia.clear();
+      state.danhGia.forEach(x => window.selDanhGia.add(x));
+    }
+    if (state.trangThai) {
+      if (window.selTrangThai) {
+        window.selTrangThai.clear();
+        state.trangThai.forEach(x => window.selTrangThai.add(x));
+      }
+    }
     window.syncTabUI('trangThaiTabs', window.selTrangThai);
     state.selectedIds?.forEach(x => SELECTED_IDS.add(x));
 
@@ -1962,5 +1983,17 @@ window.getSourceColumnIndex = function(headerName, fallbackIdx = 48) {
     if (idx !== -1) return idx;
   }
   return fallbackIdx;
+};
+
+window.getHouseType = function(p) {
+  if (p.JSON_UI && p.JSON_UI.Criteria_Loai_BDS) {
+    return p.JSON_UI.Criteria_Loai_BDS;
+  }
+  if (p.loai_hinh) {
+    if (p.loai_hinh === 'Hẻm') return 'Nhà trong ngõ, ngách, hẻm';
+    if (p.loai_hinh === 'Mặt tiền') return 'Nhà mặt phố';
+    return p.loai_hinh;
+  }
+  return 'Nhà trong ngõ, ngách, hẻm';
 };
 

@@ -47,7 +47,10 @@
       "type": "multiselect",
       "options": [
         "Nhà mặt phố",
-        "Nhà trong ngõ, ngách, hẻm"
+        "Nhà trong ngõ, ngách, hẻm",
+        "Căn hộ chung cư",
+        "Biệt thự",
+        "Đất trống"
       ]
     }
   ],
