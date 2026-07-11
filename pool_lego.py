@@ -137,6 +137,10 @@ def extract_json_ui_data(raw_json_dict):
     for f in fields:
         if f.startswith("Criteria_"):
             result[f] = criteria_cols.get(f, "")
+        elif f == "latitude":
+            result[f] = str((raw_json_dict.get("coordinate") or {}).get("latitude") or raw_json_dict.get("latitude") or "")
+        elif f == "longitude":
+            result[f] = str((raw_json_dict.get("coordinate") or {}).get("longitude") or raw_json_dict.get("longitude") or "")
         else:
             result[f] = raw_json_dict.get(f, "")
             
@@ -195,7 +199,7 @@ CUSTOM_HEADERS = [
     "So_Tang", "Mat_Tien", "Chieu_dai", "Huong", "Criteria_Duong_truoc_nha",
     "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
     "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien",
-    "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"
+    "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto", "latitude", "longitude"
 ]
 
 # Danh sách cột cho File 3 Public (tab Public)
@@ -472,7 +476,9 @@ def init_db(db_file=None):
             Criteria_Khoang_cach_bai_do_xe TEXT,
             Criteria_Kinh_doanh_Dong_tien TEXT,
             Criteria_Huong_nha TEXT,
-            Criteria_Khoang_cach_duong_oto TEXT
+            Criteria_Khoang_cach_duong_oto TEXT,
+            latitude TEXT,
+            longitude TEXT
         )
         """)
         conn.commit()
@@ -528,7 +534,7 @@ def init_db(db_file=None):
                 "Gia_chao", "DT_Thuc_te", "DT_Tren_so", "So_Tang", "Mat_Tien", "Chieu_dai", "Huong",
                 "Criteria_Duong_truoc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo",
                 "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien", "Criteria_Huong_nha",
-                "Criteria_Khoang_cach_duong_oto"
+                "Criteria_Khoang_cach_duong_oto", "latitude", "longitude"
             ]
             for col in custom_cols:
                 if col not in custom_existing_cols:

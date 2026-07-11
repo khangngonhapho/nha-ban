@@ -214,7 +214,9 @@ def normalize_listing_for_client(row):
         "Ma_Hang": ["Ma_Hang", "M__H_ng"],
         "Tinh": ["Tinh", "T_nh"],
         "custom_dt_so": ["custom_dt_so"],
-        "custom_dt_thuc_te": ["custom_dt_thuc_te"]
+        "custom_dt_thuc_te": ["custom_dt_thuc_te"],
+        "latitude": ["latitude"],
+        "longitude": ["longitude"]
     }
     
     for client_key, db_keys in mapping.items():
@@ -255,6 +257,8 @@ def normalize_listing_for_client(row):
         if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
         if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
         if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+        if d.get("custom_latitude"): d["latitude"] = d["custom_latitude"]
+        if d.get("custom_longitude"): d["longitude"] = d["custom_longitude"]
         
         # Nhóm Tiêu chí
         if d.get("custom_Criteria_Duong_truoc_nha"): d["Criteria_Duong_truoc_nha"] = d["custom_Criteria_Duong_truoc_nha"]

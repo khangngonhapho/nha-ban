@@ -294,7 +294,9 @@ def handle_listing_detail(tk_id):
                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
-                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
+                   listings_custom_v2.latitude AS custom_latitude,
+                   listings_custom_v2.longitude AS custom_longitude
             FROM listings_v2 
             LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
             WHERE listings_v2.tk_id = ?
@@ -526,6 +528,31 @@ def handle_listing_detail(tk_id):
             update_vals.append(tk_id)
             update_sql = f"UPDATE {manager.LISTINGS_TABLE} SET {', '.join(update_cols)} WHERE tk_id = ?"
             cursor.execute(update_sql, update_vals)
+            
+        # Nếu đang ở chế độ Pool1, đồng bộ tọa độ vào trường JSON_UI
+        if manager.LISTINGS_TABLE == "listings" and ("latitude" in data or "longitude" in data):
+            try:
+                row_db = cursor.execute("SELECT json_ui FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+                if row_db:
+                    json_ui_str = row_db[0] or ""
+                    json_ui_dict = {}
+                    if json_ui_str:
+                        try:
+                            json_ui_dict = json.loads(json_ui_str)
+                        except Exception:
+                            pass
+                    
+                    if "latitude" in data:
+                        json_ui_dict["latitude"] = str(data.get("latitude") or "")
+                    if "longitude" in data:
+                        json_ui_dict["longitude"] = str(data.get("longitude") or "")
+                    
+                    cursor.execute(
+                        "UPDATE listings SET json_ui = ? WHERE tk_id = ?",
+                        (json.dumps(json_ui_dict, ensure_ascii=False), tk_id)
+                    )
+            except Exception as e_p1_coord:
+                manager.add_log_message(f"[⚠️ WARNING] Lỗi khi cập nhật tọa độ vào json_ui (Pool1): {str(e_p1_coord)}")
         
         # Nếu đang ở chế độ Pool2, đồng bộ cập nhật vào bảng listings_custom_v2
         if manager.LISTINGS_TABLE == "listings_v2":
@@ -535,10 +562,11 @@ def handle_listing_detail(tk_id):
                     d_v2 = dict(row_v2)
                     system_id = d_v2.get("System_ID")
                     if system_id:
-                        # Kiểm tra xem đã tồn tại System_ID trong listings_custom_v2 chưa
-                        custom_exists = cursor.execute(
-                            "SELECT 1 FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)
+                        # Kiểm tra xem đã tồn tại System_ID trong listings_custom_v2 chưa và lấy tọa độ cũ
+                        row_existing_custom = cursor.execute(
+                            "SELECT latitude, longitude FROM listings_custom_v2 WHERE System_ID = ?", (system_id,)
                         ).fetchone()
+                        custom_exists = bool(row_existing_custom)
                         
                         # Trích xuất danh sách ảnh an toàn từ curated_config
                         images_metadata = []
@@ -587,6 +615,8 @@ def handle_listing_detail(tk_id):
                             "Criteria_Kinh_doanh_Dong_tien": d_v2.get("Criteria_Kinh_doanh_Dong_tien") or "",
                             "Criteria_Huong_nha": d_v2.get("Criteria_Huong_nha") or "",
                             "Criteria_Khoang_cach_duong_oto": d_v2.get("Criteria_Khoang_cach_duong_oto") or "",
+                            "latitude": data.get("latitude") if "latitude" in data else ((row_existing_custom[0] if row_existing_custom else None) or ""),
+                            "longitude": data.get("longitude") if "longitude" in data else ((row_existing_custom[1] if row_existing_custom else None) or ""),
                         }
                         
                         # Lấy danh sách cột thực tế của listings_custom_v2 đề phòng lệch schema

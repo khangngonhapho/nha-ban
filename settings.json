@@ -20,7 +20,11 @@
     "Criteria_Duong_truoc_nha",
     "Criteria_Loai_BDS",
     "updatedAt",
-    "createdAtSigned"
+    "createdAtSigned",
+    "Last_Crawl",
+    "history",
+    "latitude",
+    "longitude"
   ],
   "json_ui_filters": [
     {

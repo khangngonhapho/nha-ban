@@ -505,6 +505,17 @@
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
+                      <label for="editLatitude">Vĩ độ (Latitude):</label>
+                      <input type="text" id="editLatitude" placeholder="Ví dụ: 10.762622">
+                    </div>
+                    <div class="admin-edit-group">
+                      <label for="editLongitude">Kinh độ (Longitude):</label>
+                      <input type="text" id="editLongitude" placeholder="Ví dụ: 106.660172">
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
                       <label for="editDanhGia">Đánh giá:</label>
                       <select id="editDanhGia">
                         <option value="">Bình thường</option>
@@ -608,10 +619,30 @@
           const editTinhTrang = document.getElementById('editTinhTrang');
           if (editTinhTrang) editTinhTrang.value = p.tinh_trang || 'Bình thường';
 
+          const editLatitude = document.getElementById('editLatitude');
+          if (editLatitude) {
+            editLatitude.value = p.latitude || (p.json_ui_parsed && p.json_ui_parsed.latitude) || '';
+          }
+
+          const editLongitude = document.getElementById('editLongitude');
+          if (editLongitude) {
+            editLongitude.value = p.longitude || (p.json_ui_parsed && p.json_ui_parsed.longitude) || '';
+          }
+
           const mapContainer = document.querySelector('.admin-map-container');
           if (mapContainer) {
-            const fullAddress = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
-            mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
+            let lat = p.latitude || (p.json_ui_parsed && p.json_ui_parsed.latitude) || '';
+            let lng = p.longitude || (p.json_ui_parsed && p.json_ui_parsed.longitude) || '';
+            if (typeof lat === 'string') lat = lat.trim();
+            if (typeof lng === 'string') lng = lng.trim();
+
+            let mapQuery = '';
+            if (lat && lng && lat !== '-' && lng !== '-') {
+              mapQuery = `${lat},${lng}`;
+            } else {
+              mapQuery = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
+            }
+            mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
           }
 
           let sImgs = [];
@@ -2950,6 +2981,15 @@
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
         const rongHem = document.getElementById('editRongHem').value.trim();
+        const latitude = document.getElementById('editLatitude') ? document.getElementById('editLatitude').value.trim() : '';
+        const longitude = document.getElementById('editLongitude') ? document.getElementById('editLongitude').value.trim() : '';
+
+        if (!p.json_ui_parsed) p.json_ui_parsed = {};
+        p.json_ui_parsed.latitude = latitude;
+        p.json_ui_parsed.longitude = longitude;
+        p.latitude = latitude;
+        p.longitude = longitude;
+
         const soPn = document.getElementById('editSoPn').value.trim();
         const soWc = document.getElementById('editSoWc').value.trim();
         const editDtThucTe = document.getElementById('editDtThucTe').value.trim();
