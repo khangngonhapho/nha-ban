@@ -7,6 +7,9 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-134 (Cào trực tiếp tin thô từ trang danh sách Thiên Khôi về SQLite cục bộ - Hybrid Model):** **[ACCEPTED - 2026-07-11]** Tích hợp thành công mô hình cào lai (Hybrid Scraper). Cho phép Chrome Extension gửi yêu cầu cào trực tiếp qua API `/api/listings/<tk_id>/recrawl` kèm cookie phiên làm việc của người dùng thay vì mở từng tab chi tiết, giúp tăng tốc độ cào và giải phóng tài nguyên. Đồng thời tích hợp API `/api/listings/existing_ids` phục vụ việc lọc trùng (deduplication) trực tiếp trên SQLite cục bộ.
+*   **US-132 (Phân giải Đánh số Thứ tự Ảnh và Hiển thị Đồng nhất trên Trang Chi tiết Khách hàng):** **[ACCEPTED - 2026-07-11]** Giải quyết triệt để lỗi mất số thứ tự sequence ID hiển thị trên slide ảnh lớn và thumbnail strip trong Curator Editor. Đồng bộ hóa logic của trang chi tiết và card khách hàng để ưu tiên đọc và sắp xếp ảnh từ whitelist `Images_Public_JSON`, bảo đảm đồng nhất 100% với giao diện biên tập và ngăn chặn rò rỉ hình ảnh riêng tư (Mặt tiền chứa số nhà).
+*   **US-131 (Khắc phục lệch ảnh khi cào lại và phân giải Images_Admin_JSON trên Web Vercel Admin):** **[ACCEPTED - 2026-07-11]** Khắc phục triệt để lỗi lệch/thiếu ảnh khi cào lại, tự động phân loại vai trò Mặt tiền và Sơ đồ ở backend, khôi phục ảnh cũ bị xóa nhầm, loại bỏ ảnh Mặt tiền chứa số nhà khỏi public, và phân giải hiển thị ảnh Mặt tiền làm thumbnail đại diện cho cả tin thô (Kho Pool) và tin khớp ở frontend.
 *   **US-126 (Nâng Cấp Trang Tải Ảnh Hàng Loạt Thành Ứng Dụng Cài Đặt (PWA) Cô Lập):** **[ACCEPTED - 2026-07-09]** Triển khai cấu hình PWA `manifest.json` và Service Worker `sw.js` độc lập, chỉ áp dụng cho trang tải ảnh hàng loạt `/view-images` (giữ nguyên trang chủ gốc không đổi). Tự động phục vụ các tệp tin cấu hình trên serverless Node.js và local Flask. Đã chạy unit test đạt 100% PASS và deploy lên live Production.
 *   **US-124 (Trình Xem Và Tải Ảnh Hàng Loạt Từ URL & Nâng Cấp Bộ Giải Mã JSON Siêu Bền Bỉ):** **[ACCEPTED - 2026-07-09]** Triển khai giao diện tải ảnh hàng loạt `/view-images` hỗ trợ nhận diện link, dán danh sách URL hoặc dán trực tiếp mảng JSON chứa ảnh (hỗ trợ cả JSON array dạng string và tự động strip dấu nháy kép bọc ngoài JSON). Hiển thị nhãn thông tin chi tiết (Role, Index, Origin, Hidden/Show) bằng các thẻ màu sắc bắt mắt. Tích hợp bộ giải mã JSON siêu bền bỉ và bộ quét regex dự phòng. Đã chạy unit test đạt 100% PASS và deploy lên live Production.
 *   **US-120A (Quản lý & Sắp xếp Hình ảnh Công khai dạng JSON):** **[ACCEPTED - 2026-07-09]** Quản lý và sắp xếp hình ảnh công khai dạng JSON trên trang Curation Admin và hiển thị carousel client. Hỗ trợ hiển thị đúng ảnh ẩn/hiện, phân loại vai trò và đồng bộ song song. Đã nghiệm thu E2E thành công.
@@ -62,20 +65,13 @@
 
 ---
 
-*   [manifest.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manifest.json) — Cấu hình PWA manifest.
-*   [sw.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/sw.js) — Cấu hình PWA Service Worker.
-*   [view-images.html](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/view-images.html) — Liên kết manifest, đăng ký Service Worker, cải tiến UI/UX tải ảnh và bộ giải mã JSON.
-*   [vercel.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/vercel.json) — Cấu hình Vercel routing.
-*   [api/index.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/index.js) — Phục vụ manifest.json và sw.js trên Vercel.
-*   [api/routes_curation.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/routes_curation.py) — Phục vụ manifest.json và sw.js trên Local Flask.
-*   [tests/test_api_contracts.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/tests/test_api_contracts.py) — Thêm kiểm thử hợp đồng dữ liệu.
-*   [docs/stories/_inbox/US-124_image_url_viewer_downloader.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-124_image_url_viewer_downloader.md) — Tài liệu đặc tả US-124.
-*   [docs/stories/_inbox/US-126_pwa_installable_app.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-126_pwa_installable_app.md) — Tài liệu đặc tả US-126.
-*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — Cập nhật đồng bộ ảnh curated và vai trò ẩn hiện.
-*   [docs/stories/_inbox/US-120A_public_image_curation_json_sync.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-120A_public_image_curation_json_sync.md) — Đặc tả US-120A.
+*   [api/routes_pool.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/routes_pool.py) — Thêm endpoint `/api/listings/existing_ids` lấy danh sách ID đã cào thành công để lọc trùng.
+*   [Chrome_Ext_Crawl_TK/content.js](file:///d:/LHTBrain/01_PROJECTS/Chrome_Ext_Crawl_TK/content.js) — Tích hợp gọi API cào trực tiếp ngầm thông qua background, bỏ cơ chế mở tab chi tiết cũ và sử dụng API lọc trùng cục bộ.
+*   [docs/stories/_inbox/US-134.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-134.md) — Đặc tả và kết quả nghiệm thu US-134.
+*   [.agents/truth_cards/DF-003_crawl_ingest.md](file:///d:/LHTBrain/.agents/truth_cards/DF-003_crawl_ingest.md) — Cập nhật tài liệu Truth Card luồng cào & nhập kho.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật stories index.
 *   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Nhật ký trạng thái hiện tại.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-09 (US-120A accepted & E2E verified).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-11 (US-134 accepted & E2E verified).*
 

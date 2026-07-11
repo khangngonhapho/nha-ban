@@ -3,18 +3,22 @@
 Last updated: 2026-07-09
 
 ## Stats
-- Total: 135
+- Total: 138
 - backlog: 3
 - draft: 3
 - in-progress: 0
-- done: 23
-- accepted: 101
+- done: 24
+- accepted: 104
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-134 | Cào trực tiếp tin thô từ trang danh sách Thiên Khôi về SQLite cục bộ | accepted | M | 2026-07-11 | `Chrome_Ext_Crawl_TK/content.js`, `api/routes_crawl.py`, `docs/stories/_inbox/US-134.md` |
+| US-133 | Tìm kiếm và Lọc theo Loại hình (Mặt tiền / Hẻm) | done | S | 2026-07-11 | `index.html`, `static/js/lego_filters.js`, `static/js/lego_helpers.js`, `docs/stories/_inbox/US-133.md` |
+| US-132 | Phân giải Đánh số Thứ tự Ảnh và Hiển thị Đồng nhất trên Trang Chi tiết Khách hàng | accepted | S | 2026-07-11 | `static/js/lego_core.js`, `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js`, `static/js/lego_render_client.js`, `docs/stories/_inbox/US-132.md` |
+| US-131 | Khắc phục lệch ảnh khi cào lại và phân giải Images_Admin_JSON trên Web Vercel Admin | accepted | M | 2026-07-10 | `manager.py`, `static/js/lego_core.js`, `static/js/lego_helpers.js`, `static/js/lego_render_admin.js`, `index.html`, `sw.js`, `docs/stories/_inbox/US-131_fix_recrawl_image_mismatch.md` |
 | US-126 | Nâng Cấp Trang Tải Ảnh Hàng Loạt Thành Ứng Dụng Cài Đặt (PWA) Cô Lập | accepted | M | 2026-07-09 | `manifest.json`, `sw.js`, `view-images.html`, `vercel.json`, `api/index.js`, `api/routes_curation.py`, `tests/test_api_contracts.py`, `static/img/icon-192.png`, `static/img/icon-512.png`, `docs/stories/_inbox/US-126_pwa_installable_app.md` |
-| US-125 | Tự động Login và Tự động Cuộn trên trang danh sách Thiên Khôi | draft | M | 2026-07-09 | `Chrome_Ext_Crawl_TK/manifest.json`, `Chrome_Ext_Crawl_TK/background.js`, `Chrome_Ext_Crawl_TK/content.js`, `docs/stories/_inbox/US-125_auto_login_and_auto_scroll_crawler.md` |
+| US-125 | Tự động Login và Tự động Cuộn trên trang danh sách Thiên Khôi | done | M | 2026-07-09 | `Chrome_Ext_Crawl_TK/manifest.json`, `Chrome_Ext_Crawl_TK/background.js`, `Chrome_Ext_Crawl_TK/content.js`, `docs/stories/_inbox/US-125_auto_login_and_auto_scroll_crawler.md` |
 | US-124 | Trình Xem Và Tải Ảnh Hàng Loạt Từ URL | accepted | S | 2026-07-09 | `view-images.html`, `vercel.json`, `api/index.js`, `api/routes_curation.py`, `tests/test_api_contracts.py`, `docs/stories/_inbox/US-124_image_url_viewer_downloader.md` |
 | US-123 | Thêm Sheet "Pool_Images" chuyên lưu hình ảnh làm Backup | draft | M | 2026-07-09 | `pool_lego.py`, `static/js/lego_detail_admin.js`, `restore_db_from_sheets.py`, `manager.py`, `fetcher.py`, `docs/stories/_inbox/US-123_pool_images_backup_tab.md` |
 | US-122 | Trang thông báo bảo trì khi bật maintenance_mode | accepted | S | 2026-07-09 | `api/index.js`, `tests/test_maintenance.py`, `docs/stories/_inbox/US-122_maintenance_mode_screen.md` |
@@ -154,6 +158,8 @@ Last updated: 2026-07-09
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-132|US-132]]: Phân giải Đánh số Thứ tự Ảnh và Hiển thị Đồng nhất trên Trang Chi tiết Khách hàng (accepted)
+- [[US-131_fix_recrawl_image_mismatch|US-131]]: Khắc phục lệch ảnh khi cào lại và phân giải Images_Admin_JSON trên Web Vercel Admin (accepted)
 - [[US-120A_public_image_curation_json_sync|US-120A]]: Quản lý & Sắp xếp Hình ảnh Công khai dạng JSON (accepted)
 - [[US-120_image_multi_source_and_long_term_sync|US-120]]: Quản lý Hình ảnh Đa Nguồn và Đồng bộ Dữ liệu Lâu dài (draft)
 - [[US-119_street_type_and_alley_width_curation|US-119]]: Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm trên Vercel Detail & local Python Backend (accepted)
@@ -250,6 +256,7 @@ Last updated: 2026-07-09
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-131_fix_recrawl_image_mismatch|US-131]]: Khắc phục lệch ảnh khi cào lại và phân giải Images_Admin_JSON trên Web Vercel Admin (accepted)
 - [[US-126_pwa_installable_app|US-126]]: Nâng Cấp Trang Tải Ảnh Hàng Loạt Thành Ứng Dụng Cài Đặt (PWA) Cô Lập (accepted)
 - [[US-124_image_url_viewer_downloader|US-124]]: Trình Xem Và Tải Ảnh Hàng Loạt Từ URL (accepted)
 - [[US-120_image_multi_source_and_long_term_sync|US-120]]: Quản lý Hình ảnh Đa Nguồn và Đồng bộ Dữ liệu Lâu dài (draft)
