@@ -112,17 +112,13 @@ window.LegoRenderAdmin = {
         });
         
         if (priceMocs.length > 1) {
-          const parts = priceMocs.map((pr, idx) => {
-            const isLast = idx === priceMocs.length - 1;
+          const oldMocs = priceMocs.slice(0, -1);
+          const parts = oldMocs.map(pr => {
             const formatted = formatPriceMoc(pr);
-            if (isLast) {
-              return `<span style="color: #27ae60; font-weight: 800; background: rgba(39, 174, 96, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">${formatted}</span>`;
-            } else {
-              return `<span style="text-decoration: line-through; color: #7f8c8d; font-weight: 500;">${formatted}</span>`;
-            }
+            return `<span style="text-decoration: line-through; color: #7f8c8d; font-weight: normal;">${formatted}</span>`;
           });
           
-          priceHistoryHtml = parts.join(' <span style="color: #7f8c8d; font-weight: 800; margin: 0 2px;">➔</span> ');
+          priceHistoryHtml = parts.join(' <span style="color: #7f8c8d; font-weight: normal; margin: 0 2px;">➔</span> ');
         }
       }
     }
