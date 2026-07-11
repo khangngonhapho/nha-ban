@@ -679,6 +679,32 @@ def init_db(db_file=None):
     )
     """)
     conn.commit()
+
+    # Bảng shared_links để quản lý liên kết gửi khách hàng (US-138)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS shared_links (
+        link_id TEXT PRIMARY KEY,
+        customer_name TEXT NOT NULL,
+        customer_note TEXT,
+        shared_house_ids TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        expires_at TEXT,
+        bound_phone_hash TEXT,
+        status TEXT NOT NULL DEFAULT 'Active'
+    )
+    """)
+    
+    # Bảng phone_blacklist để chặn số điện thoại khách hàng có vấn đề (US-138)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS phone_blacklist (
+        raw_phone TEXT,
+        phone_hash TEXT PRIMARY KEY,
+        blocked_at TEXT NOT NULL,
+        reason TEXT,
+        status TEXT NOT NULL DEFAULT 'Active'
+    )
+    """)
+    conn.commit()
     conn.close()
 
 

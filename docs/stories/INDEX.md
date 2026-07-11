@@ -3,16 +3,21 @@
 Last updated: 2026-07-09
 
 ## Stats
-- Total: 138
+- Total: 141
 - backlog: 3
 - draft: 3
 - in-progress: 0
-- done: 24
-- accepted: 104
+- done: 23
+- accepted: 108
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-139 | Nối tiếp Chuỗi Thay đổi Giá & Làm sạch Định dạng Đơn giá trên Card | accepted | S | 2026-07-12 | `index.html`, `static/js/lego_helpers.js`, `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `docs/stories/_inbox/US-139.md` |
+| US-138 | Theo dõi & Thu hồi quyền truy cập Link chia sẻ công khai cùng chặn SĐT | done | M | 2026-07-11 | `manager.py`, `curator.html`, `index.html`, `static/js/lego_helpers.js`, `static/js/lego_lead_capture.js`, `api/routes_links.py`, `tests/test_link_revocation.py`, `docs/stories/_inbox/US-138_link_tracking_and_revocation.md` |
+| US-137 | Nâng Cấp Bộ Lọc, Sắp Xếp, Đơn Giá và Sắp Xếp Hình Trực Quan | accepted | M | 2026-07-12 | `index.html`, `static/js/lego_filters.js`, `static/js/lego_helpers.js`, `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js`, `static/css/global.css`, `core/business_rules.py`, `pool_lego.py`, `api/routes_pool.py`, `tests/test_business_rules.py`, `docs/stories/_inbox/US-137.md` |
+| US-136 | Tích hợp hiển thị và biên tập Tọa độ bản đồ chi tiết | accepted | S | 2026-07-11 | `settings.json`, `pool_lego.py`, `api/routes_pool.py`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-136.md` |
+| US-135 | Tự động phát hiện thay đổi và lưu lịch sử giá cho Admin | accepted | M | 2026-07-11 | `pool_lego.py`, `api/routes_pool.py`, `api/routes_crawl.py`, `curator.html`, `BANG_DIEU_HANH.hta`, `Chrome_Ext_Crawl_TK/content.js`, `static/js/lego_render_admin.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-135.md` |
 | US-134 | Cào trực tiếp tin thô từ trang danh sách Thiên Khôi về SQLite cục bộ | accepted | M | 2026-07-11 | `Chrome_Ext_Crawl_TK/content.js`, `api/routes_crawl.py`, `docs/stories/_inbox/US-134.md` |
 | US-133 | Tìm kiếm và Lọc theo Loại hình (Mặt tiền / Hẻm) | done | S | 2026-07-11 | `index.html`, `static/js/lego_filters.js`, `static/js/lego_helpers.js`, `docs/stories/_inbox/US-133.md` |
 | US-132 | Phân giải Đánh số Thứ tự Ảnh và Hiển thị Đồng nhất trên Trang Chi tiết Khách hàng | accepted | S | 2026-07-11 | `static/js/lego_core.js`, `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js`, `static/js/lego_render_client.js`, `docs/stories/_inbox/US-132.md` |
@@ -256,6 +261,8 @@ Last updated: 2026-07-09
 - [[US-014_pool_sheet_schema|US-014]]: Tạo Pool Sheet Schema & validate column mapping (done)
 
 ### UI / Frontend
+- [[US-139|US-139]]: Nối tiếp Chuỗi Thay đổi Giá & Làm sạch Định dạng Đơn giá trên Card (accepted)
+- [[US-137|US-137]]: Nâng Cấp Bộ Lọc, Sắp Xếp, Đơn Giá và Sắp Xếp Hình Trực Quan (accepted)
 - [[US-131_fix_recrawl_image_mismatch|US-131]]: Khắc phục lệch ảnh khi cào lại và phân giải Images_Admin_JSON trên Web Vercel Admin (accepted)
 - [[US-126_pwa_installable_app|US-126]]: Nâng Cấp Trang Tải Ảnh Hàng Loạt Thành Ứng Dụng Cài Đặt (PWA) Cô Lập (accepted)
 - [[US-124_image_url_viewer_downloader|US-124]]: Trình Xem Và Tải Ảnh Hàng Loạt Từ URL (accepted)

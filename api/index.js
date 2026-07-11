@@ -129,7 +129,7 @@ async function getGoogleAccessToken(creds) {
 
   const payload = {
     iss: creds.client_email,
-    scope: 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets.readonly',
+    scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets',
     aud: tokenUri,
     exp: exp,
     iat: iat
@@ -348,6 +348,380 @@ function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAcc
 module.exports = async (req, res) => {
   const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = urlObj.pathname;
+
+  const TRACKING_SHEET_ID = '1zCAP0pUSZdVNxbEkVl94y_hJc1ShM4PqtB-fxpm_I5Y';
+
+  // Reusable helper to make requests to Google Sheets API using Service Account
+  async function callSheetsAPI(method, range, body = null, suffix = '') {
+    const creds = getCredentials();
+    if (!creds) throw new Error("Google credentials not configured.");
+    const accessToken = await getGoogleAccessToken(creds);
+    if (!accessToken) throw new Error("Failed to generate Google access token.");
+    
+    let url = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/${encodeURIComponent(range)}${suffix}`;
+    const options = {
+      method: method,
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+    const res = await fetch(url, options);
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Google Sheets API returned status ${res.status}: ${errorText}`);
+    }
+    return await res.json();
+  }
+
+  // Self-healing function to check/create sheet tabs in Tracking Log Spreadsheet
+  async function ensureSheetExists(title, headers = null, formula = null) {
+    const creds = getCredentials();
+    if (!creds) return;
+    const accessToken = await getGoogleAccessToken(creds);
+    if (!accessToken) return;
+    
+    const checkUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/${encodeURIComponent(title + '!A1:A1')}`;
+    const checkRes = await fetch(checkUrl, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (checkRes.ok) return; // Exists
+    
+    // Create it
+    const createUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}:batchUpdate`;
+    const createRes = await fetch(createUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        requests: [
+          {
+            addSheet: {
+              properties: {
+                title: title
+              }
+            }
+          }
+        ]
+      })
+    });
+    if (!createRes.ok) return;
+    
+    if (headers) {
+      const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/${encodeURIComponent(title + '!A1')}?valueInputOption=USER_ENTERED`;
+      await fetch(updateUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ values: [headers] })
+      });
+    } else if (formula) {
+      const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/${encodeURIComponent(title + '!A1')}?valueInputOption=USER_ENTERED`;
+      await fetch(updateUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ values: [[formula]] })
+      });
+    }
+  }
+
+  // Authentication helper for Admin endpoints
+  async function checkAdminAuth(req, res) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized: Missing token' });
+      return null;
+    }
+    const token = authHeader.split(' ')[1];
+    const infoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!infoRes.ok) {
+      res.status(401).json({ error: 'Unauthorized: Invalid token' });
+      return null;
+    }
+    const userInfo = await infoRes.json();
+    return userInfo;
+  }
+
+  // Route: GET /api/links/list
+  if (pathname === '/api/links/list') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      await ensureSheetExists('Link_Registry', ["Link_ID", "Customer_Name", "Customer_Note", "Shared_House_Ids", "Created_At", "Expires_At", "Bound_Phone_Hash", "Status"]);
+      await ensureSheetExists('Phone_Blacklist', ["Raw_Phone", "Phone_Hash", "Blocked_At", "Reason", "Status"]);
+      await ensureSheetExists('Public_Link_Status', null, '=QUERY(Link_Registry!A:H, "SELECT A, H, F, G", 1)');
+      await ensureSheetExists('Public_Phone_Blacklist', null, '=QUERY(Phone_Blacklist!A:E, "SELECT B WHERE E = \'Active\'", 1)');
+      
+      const linkData = await callSheetsAPI('GET', 'Link_Registry!A2:H');
+      const blacklistData = await callSheetsAPI('GET', 'Phone_Blacklist!A2:E');
+      
+      const links = (linkData.values || []).map(row => ({
+        link_id: row[0] || '',
+        customer_name: row[1] || '',
+        customer_note: row[2] || '',
+        shared_house_ids: row[3] || '',
+        created_at: row[4] || '',
+        expires_at: row[5] || '',
+        bound_phone_hash: row[6] || '',
+        status: row[7] || ''
+      }));
+      
+      const blacklist = (blacklistData.values || []).map(row => ({
+        raw_phone: row[0] || '',
+        phone_hash: row[1] || '',
+        blocked_at: row[2] || '',
+        reason: row[3] || '',
+        status: row[4] || ''
+      }));
+      
+      return res.status(200).json({ status: 'success', links, blacklist });
+    } catch (err) {
+      console.error('Error listing links from sheets:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/links/register
+  if (pathname === '/api/links/register') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      let body = req.body || {};
+      if (typeof body === 'string') body = JSON.parse(body);
+      const { customer_name, customer_note, shared_house_ids, expires_in_days = 30, raw_phone } = body;
+      
+      if (!customer_name || !shared_house_ids) {
+        return res.status(400).json({ error: 'Missing customer_name or shared_house_ids' });
+      }
+      
+      let houseIdsStr = shared_house_ids;
+      if (Array.isArray(shared_house_ids)) {
+        houseIdsStr = shared_house_ids.join(',');
+      }
+      
+      const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+      const rand = crypto.randomBytes(3).toString('hex').toUpperCase();
+      const link_id = `LNK-${timestamp}-${rand}`;
+      const created_at = new Date().toISOString();
+      const expires_at = new Date(Date.now() + expires_in_days * 24 * 3600 * 1000).toISOString();
+      
+      let bound_phone_hash = '';
+      if (raw_phone) {
+        const cleanPhone = raw_phone.replace(/[ \-.]/g, '');
+        if (cleanPhone) {
+          bound_phone_hash = crypto.createHash('sha256').update(cleanPhone).digest('hex');
+        }
+      }
+      
+      await ensureSheetExists('Link_Registry', ["Link_ID", "Customer_Name", "Customer_Note", "Shared_House_Ids", "Created_At", "Expires_At", "Bound_Phone_Hash", "Status"]);
+      
+      await callSheetsAPI('POST', 'Link_Registry!A:H', {
+        values: [[link_id, customer_name, customer_note || '', houseIdsStr, created_at, expires_at, bound_phone_hash, 'Active']]
+      }, ':append?valueInputOption=USER_ENTERED');
+      
+      return res.status(200).json({
+        status: 'success',
+        link_id,
+        bound_phone_hash,
+        created_at,
+        expires_at
+      });
+    } catch (err) {
+      console.error('Error registering link:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/links/bind
+  if (pathname === '/api/links/bind') {
+    try {
+      let body = req.body || {};
+      if (typeof body === 'string') body = JSON.parse(body);
+      const { link_id, phone_hash } = body;
+      
+      if (!link_id || !phone_hash) {
+        return res.status(400).json({ error: 'Missing link_id or phone_hash' });
+      }
+      
+      const sheetData = await callSheetsAPI('GET', 'Link_Registry!A:H');
+      const rows = sheetData.values || [];
+      const linkIds = rows.map(r => r[0]);
+      const idx = linkIds.indexOf(link_id);
+      if (idx === -1) {
+        return res.status(404).json({ error: 'Link ID not found' });
+      }
+      const rowIdx = idx + 1;
+      const row = rows[idx];
+      const existingHash = row[6] || '';
+      
+      if (existingHash && existingHash.trim()) {
+        if (existingHash.trim() === phone_hash.trim()) {
+          return res.status(200).json({ status: 'success', message: 'Already bound to this phone' });
+        }
+        return res.status(400).json({ error: 'Link is already bound to another phone' });
+      }
+      
+      await callSheetsAPI('PUT', `Link_Registry!G${rowIdx}`, {
+        values: [[phone_hash]]
+      }, '?valueInputOption=USER_ENTERED');
+      
+      return res.status(200).json({ status: 'success', message: 'Bound successfully' });
+    } catch (err) {
+      console.error('Error binding phone to link:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/links/revoke
+  if (pathname === '/api/links/revoke') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      let body = req.body || {};
+      if (typeof body === 'string') body = JSON.parse(body);
+      const { link_id, status = 'Revoked' } = body;
+      if (!link_id) {
+        return res.status(400).json({ error: 'Missing link_id' });
+      }
+      
+      const sheetData = await callSheetsAPI('GET', 'Link_Registry!A:A');
+      const linkIds = (sheetData.values || []).map(r => r[0]);
+      const idx = linkIds.indexOf(link_id);
+      if (idx === -1) {
+        return res.status(404).json({ error: 'Link ID not found' });
+      }
+      const rowIdx = idx + 1;
+      
+      await callSheetsAPI('PUT', `Link_Registry!H${rowIdx}`, {
+        values: [[status]]
+      }, '?valueInputOption=USER_ENTERED');
+      
+      return res.status(200).json({ status: 'success', message: `Link status updated to ${status}` });
+    } catch (err) {
+      console.error('Error revoking link:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/blacklist/add
+  if (pathname === '/api/blacklist/add') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      let body = req.body || {};
+      if (typeof body === 'string') body = JSON.parse(body);
+      const { phone, reason } = body;
+      if (!phone) {
+        return res.status(400).json({ error: 'Missing phone' });
+      }
+      
+      const cleanPhone = phone.replace(/[ \-.]/g, '');
+      const phone_hash = crypto.createHash('sha256').update(cleanPhone).digest('hex');
+      const blocked_at = new Date().toISOString();
+      
+      await ensureSheetExists('Phone_Blacklist', ["Raw_Phone", "Phone_Hash", "Blocked_At", "Reason", "Status"]);
+      
+      const sheetData = await callSheetsAPI('GET', 'Phone_Blacklist!B:B');
+      const hashes = (sheetData.values || []).map(r => r[0]);
+      const idx = hashes.indexOf(phone_hash);
+      
+      if (idx !== -1) {
+        const rowIdx = idx + 1;
+        await callSheetsAPI('PUT', `Phone_Blacklist!A${rowIdx}:E${rowIdx}`, {
+          values: [[cleanPhone, phone_hash, blocked_at, reason || '', 'Active']]
+        }, '?valueInputOption=USER_ENTERED');
+      } else {
+        await callSheetsAPI('POST', 'Phone_Blacklist!A:E', {
+          values: [[cleanPhone, phone_hash, blocked_at, reason || '', 'Active']]
+        }, ':append?valueInputOption=USER_ENTERED');
+      }
+      
+      return res.status(200).json({ status: 'success', phone_hash });
+    } catch (err) {
+      console.error('Error blacklisting phone:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/blacklist/remove
+  if (pathname === '/api/blacklist/remove') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      let body = req.body || {};
+      if (typeof body === 'string') body = JSON.parse(body);
+      const { phone_hash } = body;
+      if (!phone_hash) {
+        return res.status(400).json({ error: 'Missing phone_hash' });
+      }
+      
+      const sheetData = await callSheetsAPI('GET', 'Phone_Blacklist!B:B');
+      const hashes = (sheetData.values || []).map(r => r[0]);
+      const idx = hashes.indexOf(phone_hash);
+      if (idx === -1) {
+        return res.status(404).json({ error: 'Phone hash not found in blacklist' });
+      }
+      const rowIdx = idx + 1;
+      
+      await callSheetsAPI('PUT', `Phone_Blacklist!E${rowIdx}`, {
+        values: [['Inactive']]
+      }, '?valueInputOption=USER_ENTERED');
+      
+      return res.status(200).json({ status: 'success', message: 'Phone unblocked' });
+    } catch (err) {
+      console.error('Error removing phone from blacklist:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: GET /api/links/logs
+  if (pathname === '/api/links/logs') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      const creds = getCredentials();
+      const accessToken = await getGoogleAccessToken(creds);
+      
+      const metadataUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}`;
+      const metadataRes = await fetch(metadataUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (!metadataRes.ok) {
+        throw new Error(`Failed to fetch spreadsheet metadata: ${metadataRes.status}`);
+      }
+      const metadata = await metadataRes.json();
+      const firstSheetName = metadata.sheets[0].properties.title;
+      
+      const logsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/${encodeURIComponent(firstSheetName + '!A2:E')}`;
+      const logsRes = await fetch(logsUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (!logsRes.ok) {
+        throw new Error(`Failed to fetch logs: ${logsRes.status}`);
+      }
+      const logsData = await logsRes.json();
+      const logs = (logsData.values || []).map(row => ({
+        timestamp: row[0] || '',
+        name: row[1] || '',
+        phone: row[2] || '',
+        action: row[3] || '',
+        details: row[4] || ''
+      }));
+      
+      return res.status(200).json({ status: 'success', logs });
+    } catch (err) {
+      console.error('Error getting logs:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
 
   // Serve static files packaged in the function bundle (e.g. global.css)
   if (pathname.startsWith('/static/')) {
@@ -1025,6 +1399,28 @@ module.exports = async (req, res) => {
       console.error('Error fetching sanitized config:', err);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
+  }
+
+  // Serve links.html for mobile-first link management panel (US-138)
+  if (pathname === '/links' || pathname === '/links.html') {
+    let linksHtml = '';
+    const linksPaths = [
+      path.join(__dirname, '..', 'links.html'),
+      path.join(process.cwd(), 'links.html'),
+      path.join(__dirname, 'links.html')
+    ];
+    for (const p of linksPaths) {
+      try {
+        if (fs.existsSync(p)) {
+          linksHtml = fs.readFileSync(p, 'utf8');
+          break;
+        }
+      } catch (err) {}
+    }
+    if (!linksHtml) {
+      return res.status(404).send('links.html not found');
+    }
+    return res.status(200).setHeader('Content-Type', 'text/html; charset=utf-8').send(linksHtml);
   }
 
   // Serve canvas.html for visual details dashboard

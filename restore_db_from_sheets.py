@@ -179,6 +179,55 @@ def merge_temp_to_master(temp_db_path, master_db_path):
     
     print(f"  - [Hoàn tất hợp nhất] Đã cập nhật {updated_count} căn, thêm mới {inserted_count} căn vào CSDL Gốc.")
 
+def restore_links_and_blacklist(client):
+    print("\n🔄 Đang đồng bộ bảng Links và Blacklist SĐT từ Tracking Log...")
+    TRACKING_SHEET_ID = "1zCAP0pUSZdVNxbEkVl94y_hJc1ShM4PqtB-fxpm_I5Y"
+    try:
+        spreadsheet = client.open_by_key(TRACKING_SHEET_ID)
+        
+        # 1. Đồng bộ Link_Registry
+        try:
+            link_sheet = spreadsheet.worksheet("Link_Registry")
+            link_rows = link_sheet.get_all_values()
+            if len(link_rows) > 1:
+                conn = sqlite3.connect(DB_FILE, timeout=30.0)
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM shared_links")
+                for r in link_rows[1:]:
+                    if len(r) >= 8 and r[0]:
+                        cursor.execute("""
+                            INSERT OR REPLACE INTO shared_links (link_id, customer_name, customer_note, shared_house_ids, created_at, expires_at, bound_phone_hash, status)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
+                conn.commit()
+                conn.close()
+                print(f"  - [Link Registry] Đã đồng bộ ngược {len(link_rows)-1} liên kết về SQLite local.")
+        except Exception as e_link:
+            print(f"  - [⚠️ WARNING Link Registry] Không thể đồng bộ: {str(e_link)}")
+
+        # 2. Đồng bộ Phone_Blacklist
+        try:
+            blacklist_sheet = spreadsheet.worksheet("Phone_Blacklist")
+            bl_rows = blacklist_sheet.get_all_values()
+            if len(bl_rows) > 1:
+                conn = sqlite3.connect(DB_FILE, timeout=30.0)
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM phone_blacklist")
+                for r in bl_rows[1:]:
+                    if len(r) >= 5 and r[1]:
+                        cursor.execute("""
+                            INSERT OR REPLACE INTO phone_blacklist (raw_phone, phone_hash, blocked_at, reason, status)
+                            VALUES (?, ?, ?, ?, ?)
+                        """, (r[0], r[1], r[2], r[3], r[4]))
+                conn.commit()
+                conn.close()
+                print(f"  - [Phone Blacklist] Đã đồng bộ ngược {len(bl_rows)-1} số điện thoại chặn về SQLite local.")
+        except Exception as e_bl:
+            print(f"  - [⚠️ WARNING Phone Blacklist] Không thể đồng bộ: {str(e_bl)}")
+            
+    except Exception as e:
+        print(f"  - [⚠️ WARNING Links Sync] Lỗi kết nối hoặc mở spreadsheet: {str(e)}")
+
 def restore_database():
     print("======================================================================")
     print("🔄 BẮT ĐẦU KHÔI PHỤC DATABASE SQLITE CỤC BỘ TỪ GOOGLE SHEETS POOL")
@@ -880,6 +929,11 @@ def restore_database():
         print(f"  - [✅ Sheets Success] Đã đồng bộ chép đè an toàn thành công {synced_count} căn lên Google Sheets Pool!")
     else:
         print("\n[4/4] Tuyệt vời! Không phát hiện căn nào bị lẫn sơ đồ trong Ảnh 1.")
+
+    try:
+        restore_links_and_blacklist(client)
+    except Exception as e_lbl:
+        print(f"  - [⚠️ WARNING Links/Blacklist Sync] Lỗi: {str(e_lbl)}")
 
     print("======================================================================")
     print(f"🏁 KHÔI PHỤC DATABASE THÀNH CÔNG: Đã tái tạo {restored_count} căn, sửa sạch {len(repaired_sheets_items)} căn bị lỗi.")

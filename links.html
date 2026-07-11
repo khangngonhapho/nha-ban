@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🔑 Quản lý Link & Chặn SĐT - BDS Khang Ngô</title>
+  
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0d0d0f;
+      --card-bg: rgba(26, 26, 30, 0.7);
+      --card-border: rgba(255, 191, 36, 0.15);
+      --gold: #ffbf24;
+      --gold-dark: #d97706;
+      --text: #e4e4e7;
+      --sub: #a1a1aa;
+      --red: #ef4444;
+      --green: #22c55e;
+      --nav-bg: rgba(18, 18, 22, 0.85);
+      --active-tab: #ffbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-bottom: 84px; /* Space for Bottom Nav */
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 191, 36, 0.3);
+      border-radius: 4px;
+    }
+
+    /* Header styling */
+    header {
+      background: linear-gradient(to bottom, #16161a 0%, var(--bg) 100%);
+      padding: 20px 16px 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .logo-area h1 {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-area p {
+      font-size: 11px;
+      color: var(--sub);
+      margin-top: 1px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logout-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    /* Screen Wrapper */
+    main {
+      flex: 1;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      height: 72px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: env(safe-area-inset-bottom);
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--sub);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex: 1;
+      height: 100%;
+      justify-content: center;
+    }
+
+    .nav-item.active {
+      color: var(--active-tab);
+    }
+
+    .nav-item .icon {
+      font-size: 20px;
+      transition: transform 0.2s;
+    }
+
+    .nav-item.active .icon {
+      transform: scale(1.15);
+    }
+
+    /* Auth Screen styling */
+    #authScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      max-width: 420px;
+      margin: 80px auto 0 auto;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      backdrop-filter: blur(16px);
+      width: 100%;
+    }
+
+    .auth-card .icon-key {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .auth-card h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .auth-card p {
+      font-size: 13px;
+      color: var(--sub);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--sub);
+      margin-bottom: 6px;
+    }
+
+    .input-control {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .input-control:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(255, 191, 36, 0.25);
+    }
+
+    .btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: #000;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(255, 191, 36, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      box-shadow: none;
+      margin-top: 8px;
+    }
+
+    /* Card styling for Links */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .card:active {
+      border-color: rgba(255, 191, 36, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .customer-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .status-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .status-active {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .status-revoked {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .card-body {
+      font-size: 13px;
+      color: var(--sub);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-body span strong {
+      color: var(--text);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 10px;
+    }
+
+    .card-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-copy {
+      background: rgba(255, 191, 36, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(255, 191, 36, 0.25);
+    }
+
+    .btn-revoke {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-activate {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+    }
+
+    /* Logs view styling */
+    .log-item {
+      border-left: 3px solid var(--gold);
+      padding-left: 12px;
+    }
+
+    .log-item.warn-leak {
+      border-left-color: var(--red);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .log-time {
+      font-size: 11px;
+      color: var(--sub);
+      font-weight: 600;
+    }
+
+    .log-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .log-desc {
+      font-size: 12px;
+      color: var(--sub);
+      margin-top: 2px;
+    }
+
+    .btn-block-action {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--red);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+      align-self: flex-start;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    /* Tab Title controls */
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-badge {
+      font-size: 11px;
+      background: rgba(255, 191, 36, 0.15);
+      color: var(--gold);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    /* Loading indicator */
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 12px;
+      color: var(--sub);
+      font-size: 13px;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255, 191, 36, 0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--sub);
+      font-size: 13px;
+    }
+
+    .empty-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    /* Blacklist items */
+    .blacklist-card {
+      border-left: 3px solid var(--red);
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 84px;
+      left: 16px;
+      right: 16px;
+      background: rgba(20, 20, 25, 0.95);
+      border: 1px solid var(--card-border);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 200;
+      transform: translateY(120%);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header id="appHeader" style="display: none;">
+    <div class="header-container">
+      <div class="logo-area">
+        <h1>🔑 Khang Ngô Security</h1>
+        <p>Hệ thống Quản lý Link & Chặn SĐT</p>
+      </div>
+      <div class="user-profile">
+        <button class="logout-btn" onclick="handleLogout()">Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main>
+    
+    <!-- Auth Screen -->
+    <section id="authScreen">
+      <div class="auth-card">
+        <span class="icon-key">🔑</span>
+        <h2>Google OAuth Admin</h2>
+        <p>Xác minh quyền quản trị viên Khang Ngô để truy cập rổ hàng và điều khiển liên kết trực tuyến.</p>
+        
+        <div id="clientIdGroup" class="input-group" style="display: none;">
+          <label for="clientIdInput">Google Client ID:</label>
+          <input type="text" id="clientIdInput" class="input-control" placeholder="Nhập Google OAuth Client ID của bạn...">
+          <button class="btn btn-secondary" onclick="saveClientId()" style="margin-top: 8px; padding: 10px;">Lưu ID Client</button>
+        </div>
+        
+        <div id="loginBtnContainer">
+          <button class="btn" onclick="handleLoginClick()">
+            <span>⚡ ĐĂNG NHẬP GOOGLE ADMIN</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- App Content (Hidden until authenticated) -->
+    <section id="appContent" style="display: none;">
+      
+      <!-- Tab 1: Links Registry -->
+      <div id="tabLinks" class="tab-content active">
+        <div class="section-title">
+          <span>Danh sách Link Chia sẻ</span>
+          <span class="section-badge" id="linkCount">0</span>
+        </div>
+        
+        <div id="linksList">
+          <div class="loader">
+            <div class="spinner"></div>
+            <span>Đang nạp danh sách liên kết...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Activity Logs -->
+      <div id="tabLogs" class="tab-content">
+        <div class="section-title">
+          <span>Nhật ký Khách xem</span>
+          <span class="section-badge" id="logCount">0</span>
+        </div>
+        
+        <div id="logsList">
+          <div class="loader">
+            <div class="spinner"></div>
+            <span>Đang nạp nhật ký thời gian thực...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Phone Blacklist -->
+      <div id="tabBlacklist" class="tab-content">
+        <div class="section-title">
+          <span>Danh sách Chặn SĐT</span>
+          <span class="section-badge" id="blacklistCount">0</span>
+        </div>
+        
+        <div id="blacklistList">
+          <div class="loader">
+            <div class="spinner"></div>
+            <span>Đang nạp danh sách chặn...</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav" id="appNav" style="display: none;">
+    <div class="nav-item active" onclick="switchTab('tabLinks', this)">
+      <span class="icon">📋</span>
+      <span>Liên kết</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tabLogs', this)">
+      <span class="icon">⏱️</span>
+      <span>Nhật ký</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tabBlacklist', this)">
+      <span class="icon">🚫</span>
+      <span>Chặn SĐT</span>
+    </div>
+  </nav>
+
+  <!-- Toast Toast Notification -->
+  <div class="toast" id="toast">
+    <span id="toastIcon">💡</span>
+    <span id="toastMessage">Thông báo</span>
+  </div>
+
+  <!-- Google Identity Service Client -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    let gCodeClient = null;
+    let authRefreshTimer = null;
+
+    // Check auth status on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const gClientId = localStorage.getItem('gClientId');
+      if (!gClientId) {
+        document.getElementById('clientIdGroup').style.display = 'block';
+      }
+      
+      checkAuthentication();
+    });
+
+    function showToast(msg, icon = '💡') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    function saveClientId() {
+      const input = document.getElementById('clientIdInput').value.trim();
+      if (!input) {
+        showToast("Vui lòng nhập ID Client hợp lệ!", "⚠️");
+        return;
+      }
+      localStorage.setItem('gClientId', input);
+      document.getElementById('clientIdGroup').style.display = 'none';
+      showToast("Đã lưu ID Client. Hãy đăng nhập!", "✅");
+    }
+
+    function checkAuthentication() {
+      const token = localStorage.getItem('g_access_token');
+      const expiry = localStorage.getItem('g_token_expiry');
+      const now = Date.now();
+
+      if (token && expiry && parseInt(expiry, 10) > now) {
+        // Authenticated! Show app
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('appHeader').style.display = 'block';
+        document.getElementById('appContent').style.display = 'block';
+        document.getElementById('appNav').style.display = 'flex';
+        
+        // Auto-refresh token before expiry (e.g. 5 minutes before)
+        const msRemaining = parseInt(expiry, 10) - now;
+        const refreshBuffer = 5 * 60 * 1000;
+        if (msRemaining > refreshBuffer) {
+          if (authRefreshTimer) clearTimeout(authRefreshTimer);
+          authRefreshTimer = setTimeout(silentRefreshToken, msRemaining - refreshBuffer);
+        } else {
+          silentRefreshToken();
+        }
+        
+        // Load initial data
+        loadData();
+      } else {
+        // Show login screen
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('appHeader').style.display = 'none';
+        document.getElementById('appContent').style.display = 'none';
+        document.getElementById('appNav').style.display = 'none';
+      }
+    }
+
+    function handleLoginClick() {
+      const clientId = localStorage.getItem('gClientId');
+      if (!clientId) {
+        document.getElementById('clientIdGroup').style.display = 'block';
+        showToast("Hãy điền Google Client ID trước!", "⚠️");
+        return;
+      }
+
+      if (!gCodeClient) {
+        try {
+          gCodeClient = google.accounts.oauth2.initCodeClient({
+            client_id: clientId,
+            scope: 'email profile openid https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets',
+            ux_mode: 'popup',
+            callback: async (response) => {
+              if (response.code) {
+                // Exchange code for token
+                try {
+                  const res = await fetch('/api/auth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: response.code })
+                  });
+                  const data = await res.json();
+                  if (data.access_token) {
+                    const expiry = Date.now() + (parseInt(data.expires_in, 10) || 3600) * 1000;
+                    localStorage.setItem('g_access_token', data.access_token);
+                    localStorage.setItem('g_token_expiry', expiry);
+                    if (data.refresh_token) {
+                      localStorage.setItem('g_refresh_token', data.refresh_token);
+                    }
+                    localStorage.setItem('isAdminSession', 'true');
+                    showToast("Đăng nhập Google Admin thành công!", "✅");
+                    checkAuthentication();
+                  } else {
+                    showToast("Không nhận được access token từ server", "❌");
+                  }
+                } catch (err) {
+                  showToast("Lỗi trao đổi mã xác thực: " + err.message, "❌");
+                }
+              }
+            }
+          });
+        } catch (e) {
+          showToast("Lỗi khởi tạo Google Auth: " + e.message, "❌");
+          return;
+        }
+      }
+
+      if (gCodeClient) {
+        gCodeClient.requestCode();
+      }
+    }
+
+    async function silentRefreshToken() {
+      const refreshToken = localStorage.getItem('g_refresh_token');
+      if (!refreshToken) return;
+      try {
+        const res = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: refreshToken })
+        });
+        const data = await res.json();
+        if (data.access_token) {
+          const expiry = Date.now() + (parseInt(data.expires_in, 10) || 3600) * 1000;
+          localStorage.setItem('g_access_token', data.access_token);
+          localStorage.setItem('g_token_expiry', expiry);
+          checkAuthentication();
+        }
+      } catch (err) {
+        console.error("Gia hạn token ngầm thất bại:", err);
+      }
+    }
+
+    function handleLogout() {
+      if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi Admin?")) {
+        localStorage.removeItem('g_access_token');
+        localStorage.removeItem('g_token_expiry');
+        localStorage.removeItem('g_refresh_token');
+        localStorage.removeItem('isAdminSession');
+        if (authRefreshTimer) clearTimeout(authRefreshTimer);
+        checkAuthentication();
+      }
+    }
+
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // Load API data
+    async function loadData() {
+      const token = localStorage.getItem('g_access_token');
+      
+      // Load links list and blacklist
+      try {
+        const res = await fetch('/api/links/list', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          renderLinks(data.links);
+          renderBlacklist(data.blacklist);
+        } else {
+          showToast("Không thể tải danh sách từ server: " + data.error, "⚠️");
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối API danh sách: " + err.message, "❌");
+      }
+
+      // Load activity logs
+      try {
+        const res = await fetch('/api/links/logs', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          renderLogs(data.logs);
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối API nhật ký: " + err.message, "❌");
+      }
+    }
+
+    // Render Links Registry
+    function renderLinks(links) {
+      const container = document.getElementById('linksList');
+      const countBadge = document.getElementById('linkCount');
+      
+      if (!links || links.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📁</div>
+            <p>Chưa có link chia sẻ nào được tạo</p>
+          </div>
+        `;
+        countBadge.textContent = "0";
+        return;
+      }
+
+      countBadge.textContent = links.length;
+      
+      let html = '';
+      links.forEach(lnk => {
+        const isRevoked = lnk.status === 'Revoked';
+        const dateStr = lnk.created_at ? new Date(lnk.created_at).toLocaleDateString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : 'Không rõ';
+        const boundStatus = lnk.bound_phone_hash 
+          ? `<span style="color: var(--gold); font-weight:700;">🔒 Đã khóa SĐT (mã băm)</span>` 
+          : `<span style="color: var(--sub);">🔓 Chưa khóa (Đợi người xem mở đầu tiên)</span>`;
+          
+        const actionBtn = isRevoked
+          ? `<button class="card-btn btn-activate" onclick="updateLinkStatus('${lnk.link_id}', 'Active')">🟢 Kích hoạt lại</button>`
+          : `<button class="card-btn btn-revoke" onclick="updateLinkStatus('${lnk.link_id}', 'Revoked')">🔴 Thu hồi</button>`;
+
+        // Build URL
+        const shareUrl = `${window.location.origin}/?lnk=${lnk.link_id}&c=${btoa(encodeURIComponent(lnk.customer_name))}`;
+
+        html += `
+          <div class="card">
+            <div class="card-header">
+              <span class="customer-name">${lnk.customer_name}</span>
+              <span class="status-badge ${isRevoked ? 'status-revoked' : 'status-active'}">${isRevoked ? 'Đã thu hồi' : 'Đang chạy'}</span>
+            </div>
+            <div class="card-body">
+              <span>Ghi chú: <strong>${lnk.customer_note || '(Trống)'}</strong></span>
+              <span>Số căn chia sẻ: <strong>${lnk.shared_house_ids.split(',').length} căn</strong></span>
+              <span>Ngày tạo: <strong>${dateStr}</strong></span>
+              <span>Bảo mật: ${boundStatus}</span>
+            </div>
+            <div class="card-actions">
+              <button class="card-btn btn-copy" onclick="copyToClipboard('${shareUrl}')">📋 Copy Link</button>
+              ${actionBtn}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // Render Activity Logs
+    function renderLogs(logs) {
+      const container = document.getElementById('logsList');
+      const countBadge = document.getElementById('logCount');
+      
+      if (!logs || logs.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⏱️</div>
+            <p>Chưa có lịch sử hoạt động nào ghi nhận</p>
+          </div>
+        `;
+        countBadge.textContent = "0";
+        return;
+      }
+
+      countBadge.textContent = logs.length;
+      
+      let html = '';
+      // Lấy 80 logs mới nhất
+      const displayLogs = logs.slice(0, 80);
+      displayLogs.forEach(log => {
+        const isLeak = log.action === 'Link bị chuyển tiếp';
+        const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : '';
+        
+        let blockAction = '';
+        if (log.phone && log.phone.trim()) {
+          blockAction = `<button class="btn-block-action" onclick="blockPhoneNumber('${log.phone}', 'Chặn từ nhật ký rò rỉ')">🚫 Block SĐT ${log.phone}</button>`;
+        }
+
+        html += `
+          <div class="card log-item ${isLeak ? 'warn-leak' : ''}">
+            <div class="card-header">
+              <span class="log-title">${log.name || 'Khách ẩn danh'} (${log.phone || 'SĐT ẩn'})</span>
+              <span class="log-time">${dateStr}</span>
+            </div>
+            <div class="log-desc">
+              <strong>Hành động:</strong> ${log.action} <br>
+              <strong>Chi tiết:</strong> ${log.details}
+            </div>
+            ${blockAction}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // Render Phone Blacklist
+    function renderBlacklist(blacklist) {
+      const container = document.getElementById('blacklistList');
+      const countBadge = document.getElementById('blacklistCount');
+      
+      // Filter active block list only
+      const activeBlocked = blacklist.filter(b => b.status === 'Active');
+      
+      if (!activeBlocked || activeBlocked.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🟢</div>
+            <p>Danh sách chặn trống. Mọi khách đều sạch!</p>
+          </div>
+        `;
+        countBadge.textContent = "0";
+        return;
+      }
+
+      countBadge.textContent = activeBlocked.length;
+      
+      let html = '';
+      activeBlocked.forEach(item => {
+        const dateStr = item.blocked_at ? new Date(item.blocked_at).toLocaleDateString('vi-VN') : '';
+        html += `
+          <div class="card blacklist-card">
+            <div class="card-header">
+              <span class="customer-name" style="color: var(--red)">SĐT: ${item.raw_phone}</span>
+              <span class="log-time">Chặn ngày: ${dateStr}</span>
+            </div>
+            <div class="card-body">
+              <span>Lý do chặn: <strong>${item.reason || '(Không có)'}</strong></span>
+              <span style="font-size:10px; opacity:0.6;">SHA-256: ${item.phone_hash}</span>
+            </div>
+            <div class="card-actions">
+              <button class="card-btn btn-copy" style="background: rgba(34, 197, 94, 0.15); color: var(--green); border-color: rgba(34, 197, 94, 0.25);" onclick="unblockPhone('${item.phone_hash}')">🟢 Gỡ chặn SĐT</button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // Actions
+    async function updateLinkStatus(linkId, status) {
+      const actionName = status === 'Revoked' ? 'thu hồi' : 'kích hoạt lại';
+      if (!confirm(`Bạn có chắc muốn ${actionName} Link ID: ${linkId}?`)) return;
+      
+      const token = localStorage.getItem('g_access_token');
+      try {
+        const res = await fetch('/api/links/revoke', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ link_id: linkId, status })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          showToast(`Đã ${actionName} link thành công!`, "✅");
+          loadData(); // Reload
+        } else {
+          showToast("Lỗi: " + data.error, "⚠️");
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối API: " + err.message, "❌");
+      }
+    }
+
+    async function blockPhoneNumber(phone, defaultReason = 'Chặn thủ công') {
+      const reason = prompt(`Nhập lý do chặn số ${phone}:`, defaultReason);
+      if (reason === null) return; // Cancelled
+      
+      const token = localStorage.getItem('g_access_token');
+      try {
+        const res = await fetch('/api/blacklist/add', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone, reason })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          showToast(`Đã chặn SĐT ${phone} thành công!`, "🚫");
+          loadData(); // Reload
+        } else {
+          showToast("Lỗi: " + data.error, "⚠️");
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối API: " + err.message, "❌");
+      }
+    }
+
+    async function unblockPhone(phoneHash) {
+      if (!confirm(`Bạn có chắc muốn gỡ chặn cho số điện thoại này không?`)) return;
+      
+      const token = localStorage.getItem('g_access_token');
+      try {
+        const res = await fetch('/api/blacklist/remove', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone_hash: phoneHash })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          showToast(`Đã gỡ chặn thành công!`, "🟢");
+          loadData(); // Reload
+        } else {
+          showToast("Lỗi: " + data.error, "⚠️");
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối API: " + err.message, "❌");
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Đã copy liên kết vào bộ nhớ tạm!", "📋");
+      }).catch(err => {
+        showToast("Không thể copy: " + err, "⚠️");
+      });
+    }
+  </script>
+</body>
+</html>

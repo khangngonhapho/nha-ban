@@ -1841,7 +1841,7 @@ window.shareZaloFromAdminDetail = function(id) {
   promptGenerateLink();
 };
 
-window.executeGenerateLink = function() {
+window.executeGenerateLink = async function() {
   const cName = document.getElementById('linkCustName').value.trim();
   if (!cName) {
     alert("Vui lòng nhập Tên khách hàng!");
@@ -1865,6 +1865,12 @@ window.executeGenerateLink = function() {
     const baseUrl = window.location.origin + window.location.pathname;
     const count = SELECTED_IDS.size;
     let shareUrl = '';
+    
+    // Lấy danh sách System_ID của các căn được chọn để đăng ký bảo mật
+    const sharedHouseIds = [...SELECTED_IDS].map(id => {
+      const h = DATA.find(p => String(p.id) === String(id));
+      return h ? h.system_id : id;
+    }).join(',');
 
     if (count === 1) {
       const singleId = [...SELECTED_IDS][0];
@@ -1881,6 +1887,33 @@ window.executeGenerateLink = function() {
         encodedBitmask += B64[parseInt(bits.substr(i, 6), 2)];
       }
       shareUrl = `${baseUrl}?b=${encodedBitmask}&c=${encodeURIComponent(encodedName)}`;
+    }
+
+    // Đăng ký liên kết qua backend Vercel (US-138)
+    const token = localStorage.getItem('g_access_token');
+    if (token) {
+      try {
+        const regRes = await fetch('/api/links/register', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            customer_name: cName,
+            customer_note: cNote || cTitle || '',
+            shared_house_ids: sharedHouseIds,
+            expires_in_days: 30
+          })
+        });
+        const regData = await regRes.json();
+        if (regData.status === 'success' && regData.link_id) {
+          shareUrl += `&lnk=${regData.link_id}`;
+          console.log(`[🔗 SECURE LINK] Registered securely: ${regData.link_id}`);
+        }
+      } catch (err_reg) {
+        console.warn("[⚠️ LINK REGISTRATION FAILED] Fallback to normal share:", err_reg);
+      }
     }
 
     document.getElementById('linkModal').classList.remove('open');

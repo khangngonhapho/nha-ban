@@ -2156,6 +2156,7 @@ from api.routes_sync import routes_sync
 from api.routes_images import routes_images
 from api.routes_crawl import routes_crawl
 from api.routes_system import routes_system
+from api.routes_links import routes_links
 
 app.register_blueprint(routes_pool)
 app.register_blueprint(routes_curation)
@@ -2163,6 +2164,7 @@ app.register_blueprint(routes_sync)
 app.register_blueprint(routes_images)
 app.register_blueprint(routes_crawl)
 app.register_blueprint(routes_system)
+app.register_blueprint(routes_links)
 
 
 if __name__ == '__main__':

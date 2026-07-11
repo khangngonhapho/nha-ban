@@ -7,6 +7,10 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-139 (Nối tiếp Chuỗi Thay đổi Giá & Làm sạch Định dạng Đơn giá trên Card):** **[ACCEPTED - 2026-07-12]** Hiển thị chuỗi các mốc thay đổi giá cũ của Admin Card ở một dòng riêng biệt, canh lề trái dưới thông tin ngày tháng, cùng tone màu xám gạch ngang và font normal bình thường. Tự động ẩn mốc giá hiện tại để tránh lặp với phần hiển thị giá ở footer card. Làm sạch phần thập phân `.0` của đơn giá (ví dụ `300.0tr` ➔ `300tr`) cho cả Client Card và Admin Card.
+*   **US-137 (Nâng Cấp Bộ Lọc, Sắp Xếp, Đơn Giá và Sắp Xếp Hình Trực Quan):** **[ACCEPTED - 2026-07-12]** Tách biệt hiển thị đơn giá `95.5tr/m²` màu xám và tổng giá màu xanh lá lề phải, loại hình BĐS lề trái. Ẩn hoàn toàn thông tin trạng thái nhà ở giao diện khách hàng. Áp dụng quy chuẩn viết tắt Trạng thái (`Đ.Bán`, `Đ.Cọc`, `Đã bán`) và Loại hình (`M.Tiền`, `CC`) trên Admin Card. Tích hợp lọc khoảng ngày cập nhật/ký nhà, dropdown sắp xếp mới đồng bộ desktop/mobile, persistent bộ lọc/sắp xếp qua LocalStorage. Vá lỗi 15 ảnh công khai bằng `Images_Public_JSON`, swap ảnh và sort thứ tự ảnh trực quan trong Image Editor. Đồng thời thêm hàm nghiệp vụ `clean_sheet_formula_prefix` tự động trim tiền tố công thức Google Sheets (`+`, `-`, `=`) trước khi ghi SQLite.
+*   **US-136 (Tích hợp hiển thị và biên tập Tọa độ bản đồ chi tiết):** **[ACCEPTED - 2026-07-11]** Tích hợp hiển thị và biên tập tọa độ vĩ độ/kinh độ trong trang chi tiết Vercel Admin (được lưu tại JSON_UI ở Pool1 và listings_custom_v2 ở Pool2). Thay thế iframe bản đồ nhúng bằng liên kết ngoài click dẫn trực tiếp đến Google Maps (nút Xem định vị trên Google Maps ↗ nằm ở lề phải). Đồng thời vá lỗi hình ảnh dọc có kích thước tự nhiên quá dài làm kéo dãn card danh sách hiển thị bằng cơ chế CSS absolute positioning.
+*   **US-135 (Tự động phát hiện thay đổi và lưu lịch sử giá cho Admin):** **[ACCEPTED - 2026-07-11]** Triển khai cơ chế quét so sánh giá chào và ngày cập nhật (chuyển đổi ngày tương đối thành ngày thực tế) cho các căn đã có trong SQLite cục bộ qua endpoint `/api/listings/check_updates` và tiến trình quét hàng ngày `check_daily_updates.py`. Ghi vết tự động các thay đổi vào `JSON_UI.history`. Hiển thị giá cũ gạch ngang kèm đơn giá m² tính trên diện tích sổ (`p.dt_tren_so_custom`) trên card danh sách Admin và timeline lịch sử thay đổi trên trang chi tiết biên tập.
 *   **US-134 (Cào trực tiếp tin thô từ trang danh sách Thiên Khôi về SQLite cục bộ - Hybrid Model):** **[ACCEPTED - 2026-07-11]** Tích hợp thành công mô hình cào lai (Hybrid Scraper). Cho phép Chrome Extension gửi yêu cầu cào trực tiếp qua API `/api/listings/<tk_id>/recrawl` kèm cookie phiên làm việc của người dùng thay vì mở từng tab chi tiết, giúp tăng tốc độ cào và giải phóng tài nguyên. Đồng thời tích hợp API `/api/listings/existing_ids` phục vụ việc lọc trùng (deduplication) trực tiếp trên SQLite cục bộ.
 *   **US-132 (Phân giải Đánh số Thứ tự Ảnh và Hiển thị Đồng nhất trên Trang Chi tiết Khách hàng):** **[ACCEPTED - 2026-07-11]** Giải quyết triệt để lỗi mất số thứ tự sequence ID hiển thị trên slide ảnh lớn và thumbnail strip trong Curator Editor. Đồng bộ hóa logic của trang chi tiết và card khách hàng để ưu tiên đọc và sắp xếp ảnh từ whitelist `Images_Public_JSON`, bảo đảm đồng nhất 100% với giao diện biên tập và ngăn chặn rò rỉ hình ảnh riêng tư (Mặt tiền chứa số nhà).
 *   **US-131 (Khắc phục lệch ảnh khi cào lại và phân giải Images_Admin_JSON trên Web Vercel Admin):** **[ACCEPTED - 2026-07-11]** Khắc phục triệt để lỗi lệch/thiếu ảnh khi cào lại, tự động phân loại vai trò Mặt tiền và Sơ đồ ở backend, khôi phục ảnh cũ bị xóa nhầm, loại bỏ ảnh Mặt tiền chứa số nhà khỏi public, và phân giải hiển thị ảnh Mặt tiền làm thumbnail đại diện cho cả tin thô (Kho Pool) và tin khớp ở frontend.
@@ -65,13 +69,19 @@
 
 ---
 
-*   [api/routes_pool.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/routes_pool.py) — Thêm endpoint `/api/listings/existing_ids` lấy danh sách ID đã cào thành công để lọc trùng.
-*   [Chrome_Ext_Crawl_TK/content.js](file:///d:/LHTBrain/01_PROJECTS/Chrome_Ext_Crawl_TK/content.js) — Tích hợp gọi API cào trực tiếp ngầm thông qua background, bỏ cơ chế mở tab chi tiết cũ và sử dụng API lọc trùng cục bộ.
-*   [docs/stories/_inbox/US-134.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-134.md) — Đặc tả và kết quả nghiệm thu US-134.
-*   [.agents/truth_cards/DF-003_crawl_ingest.md](file:///d:/LHTBrain/.agents/truth_cards/DF-003_crawl_ingest.md) — Cập nhật tài liệu Truth Card luồng cào & nhập kho.
+## 3. Các file bị tác động trong phiên vừa qua
+
+*   [settings.json](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/settings.json) — Thêm trường `latitude`/`longitude` vào json_ui_fields.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Thêm tọa độ vào CUSTOM_HEADERS và cấu trúc listings_custom_v2.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Map trường tọa độ cho client.
+*   [api/routes_pool.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/routes_pool.py) — Cập nhật tọa độ an toàn trong SQLite.
+*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — Thêm input nhập tọa độ và đổi iframe thành link bản đồ lề phải.
+*   [static/css/global.css](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/css/global.css) — Định vị absolute ảnh card để tránh dãn card.
+*   [tests/test_coordinates.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/tests/test_coordinates.py) — Viết unit tests cho tính năng tọa độ.
+*   [docs/stories/_inbox/US-136.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-136.md) — Ghi nhận tài liệu câu chuyện người dùng.
 *   [docs/stories/INDEX.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/INDEX.md) — Cập nhật stories index.
 *   [docs/NEXT_SESSION.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/NEXT_SESSION.md) — Nhật ký trạng thái hiện tại.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-11 (US-134 accepted & E2E verified).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-12 (US-139 accepted & unit tests verified).*
 
