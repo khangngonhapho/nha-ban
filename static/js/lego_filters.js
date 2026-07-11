@@ -675,7 +675,8 @@
 
   // ── Build district tabs dynamically ──
   window.buildDistrictTabs = function() {
-    const districtsInPool = [...new Set(window.DATA.map(p => p.q).filter(Boolean))];
+    const allListings = window.isAdmin ? [...window.DATA, ...(typeof window.getMappedPoolData === 'function' ? window.getMappedPoolData() : [])] : window.DATA;
+    const districtsInPool = [...new Set(allListings.map(p => p.q).filter(Boolean))];
     const dNamesFull = {
       q1: 'Quận 1', q2: 'Quận 2', q3: 'Quận 3', q4: 'Quận 4', q5: 'Quận 5', q6: 'Quận 6',
       q7: 'Quận 7', q8: 'Quận 8', q9: 'Quận 9', q10: 'Quận 10', q11: 'Quận 11', q12: 'Quận 12',
@@ -787,15 +788,15 @@
   };
 
   window.buildWardTabs = function() {
-    if (!window.isAdmin) return;
     let wards = [];
+    const allListings = window.isAdmin ? [...window.DATA, ...(typeof window.getMappedPoolData === 'function' ? window.getMappedPoolData() : [])] : window.DATA;
     
     if (window.selDistricts.size === 0) {
       const staticWards = [];
       ['q3', 'pn', 'q10', 'bt', 'tb'].forEach(d => {
         if (STATIC_WARD_MAP[d]) staticWards.push(...STATIC_WARD_MAP[d]);
       });
-      const dataWards = [...new Set(window.DATA.map(p => p.phuong).filter(w => w && w !== '-' && w !== 'phuong'))];
+      const dataWards = [...new Set(allListings.map(p => p.phuong).filter(w => w && w !== '-' && w !== 'phuong'))];
       const combined = [...new Set([...staticWards, ...dataWards])];
       wards = sortWardsByPriority(combined);
     } else {
@@ -805,7 +806,7 @@
           staticWards.push(...STATIC_WARD_MAP[d]);
         }
       }
-      const pool = window.DATA.filter(p => window.selDistricts.has(p.q));
+      const pool = allListings.filter(p => window.selDistricts.has(p.q));
       const dataWards = [...new Set(pool.map(p => p.phuong).filter(w => w && w !== '-' && w !== 'phuong'))];
       const combined = [...new Set([...staticWards, ...dataWards])];
       wards = sortWardsByPriority(combined);
@@ -1167,16 +1168,28 @@
   };
 
   window.renderDynamicFilters = function() {
-    const container = document.getElementById('dynamicFiltersContainer');
-    if (!container) return;
-    container.innerHTML = '';
+    const mainContainer = document.getElementById('dynamicFiltersContainer');
+    if (mainContainer) mainContainer.innerHTML = '';
     
+    if (window.JSON_UI_CONFIG && window.JSON_UI_CONFIG.json_ui_filters) {
+      window.JSON_UI_CONFIG.json_ui_filters.forEach(filter => {
+        const customContainer = document.getElementById(`dynamic_${filter.field}`);
+        if (customContainer) customContainer.innerHTML = '';
+      });
+    }
+
     if (!window.JSON_UI_CONFIG || !window.JSON_UI_CONFIG.json_ui_filters) return;
     
     window.JSON_UI_CONFIG.json_ui_filters.forEach(filter => {
       const field = filter.field;
       const label = filter.label;
       const type = filter.type;
+      
+      let container = document.getElementById(`dynamic_${field}`);
+      if (!container) {
+        container = document.getElementById('dynamicFiltersContainer');
+      }
+      if (!container) return;
       
       const lbl = document.createElement('div');
       lbl.className = 'filter-section-lbl';

@@ -18,17 +18,17 @@
     rel="stylesheet">
   <!-- Google Identity Services (GSI) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link rel="stylesheet" href="/static/css/global.css?v=202607112256">
-  <script src="/static/js/lego_mock.js?v=202607112256"></script>
-  <script src="/static/js/lego_core.js?v=202607112256"></script>
-  <script src="/static/js/lego_helpers.js?v=202607112256"></script>
-  <script src="/static/js/lego_render_client.js?v=202607112256"></script>
-  <script src="/static/js/lego_render_admin.js?v=202607112256"></script>
-  <script src="/static/js/lego_filters.js?v=202607112256"></script>
-  <script src="/static/js/lego_collections.js?v=202607112256"></script>
-  <script src="/static/js/lego_lead_capture.js?v=202607112256"></script>
-  <script src="/static/js/lego_detail_client.js?v=202607112256"></script>
-  <script src="/static/js/lego_detail_admin.js?v=202607112256"></script>
+  <link rel="stylesheet" href="/static/css/global.css?v=202607112308">
+  <script src="/static/js/lego_mock.js?v=202607112308"></script>
+  <script src="/static/js/lego_core.js?v=202607112308"></script>
+  <script src="/static/js/lego_helpers.js?v=202607112308"></script>
+  <script src="/static/js/lego_render_client.js?v=202607112308"></script>
+  <script src="/static/js/lego_render_admin.js?v=202607112308"></script>
+  <script src="/static/js/lego_filters.js?v=202607112308"></script>
+  <script src="/static/js/lego_collections.js?v=202607112308"></script>
+  <script src="/static/js/lego_lead_capture.js?v=202607112308"></script>
+  <script src="/static/js/lego_detail_client.js?v=202607112308"></script>
+  <script src="/static/js/lego_detail_admin.js?v=202607112308"></script>
 </head>
 
 <body>
@@ -112,16 +112,7 @@
 
       <div class="filter-scroll-content">
 
-      <!-- TIÊU CHÍ BĐS Checklist (US-076.3) -->
-      <div class="criteria-section">
-        <div class="criteria-title">TIÊU CHÍ BĐS *</div>
-        <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
-        <div class="criteria-grid"></div>
-      </div>
-
-      <div class="filter-divider"></div>
-      <div id="dynamicFiltersContainer"></div>
-
+      <!-- 1. Quận / TP -->
       <div class="filter-section-lbl" id="districtLbl" style="margin-top:4px;">Quận / TP</div>
       <div class="multiselect-container" id="districtMulti">
         <div class="multiselect-trigger" onclick="toggleMultiselect('districtMulti')">
@@ -133,6 +124,7 @@
         <div class="multiselect-options" id="districtOptions"></div>
       </div>
 
+      <!-- 2. Phường -->
       <div class="filter-section-lbl" id="wardLbl" style="display:none">Phường</div>
       <div class="multiselect-container" id="wardMulti" style="display:none">
         <div class="multiselect-trigger" onclick="toggleMultiselect('wardMulti')">
@@ -144,25 +136,20 @@
         <div class="multiselect-options" id="wardOptions"></div>
       </div>
 
-      <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
-      <div class="multiselect-container" id="duongMulti" style="display:none">
-        <div class="multiselect-trigger" onclick="toggleMultiselect('duongMulti')">
-          <span class="multiselect-placeholder" id="duongPlaceholder">Tất cả</span>
-          <svg class="multiselect-arrow" viewBox="0 0 24 24">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-        <div class="multiselect-options" id="duongOptions"></div>
+      <!-- 3. Loại hình (Dynamic Container) -->
+      <div id="dynamic_Criteria_Loai_BDS"></div>
+
+      <!-- 4. Trạng thái nhà -->
+      <div class="filter-section-lbl">🟢 Trạng thái nhà</div>
+      <div class="tabs" id="trangThaiTabs" style="display: flex; flex-wrap: wrap; gap: 6px; margin: 5px 0 12px;">
+        <button class="tab on" data-val="all" onclick="tTrangThai('all')">Tất cả</button>
+        <button class="tab" data-val="Đang bán" onclick="tTrangThai('Đang bán')">🟢 Đang bán</button>
+        <button class="tab" data-val="Đã cọc" onclick="tTrangThai('Đã cọc')">🟠 Đã cọc</button>
+        <button class="tab" data-val="Đã bán" onclick="tTrangThai('Đã bán')">🔴 Đã bán</button>
+        <button class="tab" data-val="Ngừng bán" onclick="tTrangThai('Ngừng bán')">⚫ Ngừng bán</button>
       </div>
-      <div class="filter-section-lbl" id="giaLbl">Khoảng giá</div>
-      <div class="tabs" id="giaTabs">
-        <button class="tab on" data-val="all" onclick="tGia('all')">Tất cả</button>
-        <button class="tab" data-val="lt7" onclick="tGia('lt7')">Dưới 7 tỷ</button>
-        <button class="tab" data-val="7-10" onclick="tGia('7-10')">7–10 tỷ</button>
-        <button class="tab" data-val="10-15" onclick="tGia('10-15')">10–15 tỷ</button>
-        <button class="tab" data-val="15-20" onclick="tGia('15-20')">15–20 tỷ</button>
-        <button class="tab" data-val="gt20" onclick="tGia('gt20')">Trên 20 tỷ</button>
-      </div>
+
+      <!-- 5. Hướng nhà -->
       <div class="filter-section-lbl" id="huongLbl" style="display:none">Hướng nhà</div>
       <div class="multiselect-container" id="huongMulti" style="display:none">
         <div class="multiselect-trigger" onclick="toggleMultiselect('huongMulti')">
@@ -173,6 +160,46 @@
         </div>
         <div class="multiselect-options" id="huongOptions"></div>
       </div>
+
+      <!-- 6. Đường trước nhà (gốc) -->
+      <div class="filter-section-lbl" id="duongLbl" style="display:none">Đường trước nhà</div>
+      <div class="multiselect-container" id="duongMulti" style="display:none">
+        <div class="multiselect-trigger" onclick="toggleMultiselect('duongMulti')">
+          <span class="multiselect-placeholder" id="duongPlaceholder">Tất cả</span>
+          <svg class="multiselect-arrow" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="multiselect-options" id="duongOptions"></div>
+      </div>
+
+      <!-- 7. Đường trước nhà custom (Dynamic Container) -->
+      <div id="dynamic_Criteria_Duong_truoc_nha"></div>
+
+      <!-- Fallback container cho dynamic filters khác nếu có -->
+      <div id="dynamicFiltersContainer" style="display: none;"></div>
+
+      <!-- TIÊU CHÍ BĐS Checklist thô -->
+      <div class="criteria-section">
+        <div class="criteria-title">TIÊU CHÍ BĐS *</div>
+        <div class="criteria-subtitle">Đầu chủ chịu trách nhiệm về tính chính xác của thông tin</div>
+        <div class="criteria-grid"></div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <!-- 8. Khoảng giá -->
+      <div class="filter-section-lbl" id="giaLbl">Khoảng giá</div>
+      <div class="tabs" id="giaTabs">
+        <button class="tab on" data-val="all" onclick="tGia('all')">Tất cả</button>
+        <button class="tab" data-val="lt7" onclick="tGia('lt7')">Dưới 7 tỷ</button>
+        <button class="tab" data-val="7-10" onclick="tGia('7-10')">7–10 tỷ</button>
+        <button class="tab" data-val="10-15" onclick="tGia('10-15')">10–15 tỷ</button>
+        <button class="tab" data-val="15-20" onclick="tGia('15-20')">15–20 tỷ</button>
+        <button class="tab" data-val="gt20" onclick="tGia('gt20')">Trên 20 tỷ</button>
+      </div>
+
+      <!-- 9. Đánh giá -->
       <div class="filter-section-lbl" id="danhGiaLbl">Đánh giá</div>
       <div class="tabs" id="danhGiaTabs">
         <button class="tab on" data-val="all" onclick="tDanhGia('all')">Tất cả</button>
@@ -181,11 +208,13 @@
         <button class="tab" data-val="Hàng Lỗi" style="background:#7f8c8d;color:#fff" onclick="tDanhGia('Hàng Lỗi')">⚠️
           Lỗi</button>
       </div>
+
+      <!-- 10. Tìm kiếm mở rộng -->
       <div class="detailed-specs-title">Tìm kiếm mở rộng</div>
       <div class="detailed-specs-container">
         <div class="detailed-specs-card">
           <div class="detailed-specs-grid">
-            <!-- Khoảng giá -->
+            <!-- Khoảng giá chi tiết -->
             <div class="spec-item">
               <span class="spec-label">Giá chào:</span>
               <div class="spec-value-group">
@@ -221,7 +250,7 @@
               </div>
             </div>
 
-            <!-- Ngang (mặt tiền) -->
+            <!-- Mặt tiền -->
             <div class="spec-item">
               <span class="spec-label">Mặt tiền:</span>
               <div class="spec-value-group">
@@ -257,8 +286,6 @@
               </div>
             </div>
 
-
-
             <!-- Thời gian cập nhật -->
             <div class="spec-item">
               <span class="spec-label">Thời gian cập nhật:</span>
@@ -284,15 +311,7 @@
         </div>
       </div>
 
-      <div class="filter-section-lbl admin-only">🟢 Trạng thái nhà</div>
-      <div class="tabs admin-only" id="trangThaiTabs" style="display: flex; flex-wrap: wrap; gap: 6px; margin: 5px 0 12px;">
-        <button class="tab on" data-val="all" onclick="tTrangThai('all')">Tất cả</button>
-        <button class="tab" data-val="Đang bán" onclick="tTrangThai('Đang bán')">🟢 Đang bán</button>
-        <button class="tab" data-val="Đã cọc" onclick="tTrangThai('Đã cọc')">🟠 Đã cọc</button>
-        <button class="tab" data-val="Đã bán" onclick="tTrangThai('Đã bán')">🔴 Đã bán</button>
-        <button class="tab" data-val="Ngừng bán" onclick="tTrangThai('Ngừng bán')">⚫ Ngừng bán</button>
-      </div>
-
+      <!-- 11. Bộ sưu tập của bạn (Admin only) -->
       <div class="filter-section-lbl admin-only">📂 Bộ sưu tập của bạn</div>
       <div class="admin-only" id="collectionsManager" style="padding: 10px; background: rgba(0,0,0,0.03); border: 1.5px solid #e2ded6; border-radius: 12px; margin: 5px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; align-items: center;"></div>
 
