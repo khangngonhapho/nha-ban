@@ -712,7 +712,7 @@ def init_db(db_file=None):
         phone_hash TEXT PRIMARY KEY,
         name TEXT,
         note TEXT,
-        lifecycle_status TEXT DEFAULT 'Lạnh',
+        lifecycle_status TEXT DEFAULT 'LẠNH',
         updated_at TEXT
     )
     """)

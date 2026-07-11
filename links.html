@@ -1401,23 +1401,23 @@
           const custPhoneCompare = cleanPhoneForCompare(cust.phone);
           const profile = globalCustomerProfiles.find(p => cleanPhoneForCompare(p.raw_phone) === custPhoneCompare) || {};
           const noteVal = profile.note || '';
-          const currentStatus = profile.lifecycle_status || 'Lạnh';
+          const currentStatus = profile.lifecycle_status || 'LẠNH';
 
           const borderClass = {
-            'Lạnh': 'card-cold',
-            'Ấm': 'card-warm',
-            'Nóng': 'card-hot',
-            'Cọc': 'card-deposit',
-            'Done': 'card-done'
+            'LẠNH': 'card-cold',
+            'ẤM': 'card-warm',
+            'NÓNG': 'card-hot',
+            'CỌC': 'card-deposit',
+            'DONE': 'card-done'
           }[currentStatus] || 'card-cold';
 
           // Build status selection pills
           const statusOptions = [
-            { key: 'Lạnh', class: 'cold', label: 'Lạnh' },
-            { key: 'Ấm', class: 'warm', label: 'Ấm' },
-            { key: 'Nóng', class: 'hot', label: 'Nóng' },
-            { key: 'Cọc', class: 'deposit', label: 'Cọc' },
-            { key: 'Done', class: 'done', label: 'Done' }
+            { key: 'LẠNH', class: 'cold', label: 'LẠNH' },
+            { key: 'ẤM', class: 'warm', label: 'ẤM' },
+            { key: 'NÓNG', class: 'hot', label: 'NÓNG' },
+            { key: 'CỌC', class: 'deposit', label: 'CỌC' },
+            { key: 'DONE', class: 'done', label: 'DONE' }
           ];
 
           let pillsHtml = `<div class="lifecycle-container" onclick="event.stopPropagation();">`;
@@ -1691,7 +1691,7 @@
           if (profile) {
             profile.note = note;
           } else {
-            globalCustomerProfiles.push({ raw_phone: cleanPhone, phone_hash: phoneHash, name, note, lifecycle_status: 'Lạnh' });
+            globalCustomerProfiles.push({ raw_phone: cleanPhone, phone_hash: phoneHash, name, note, lifecycle_status: 'LẠNH' });
           }
         } else {
           showToast("Lỗi lưu ghi chú: " + data.error, "⚠️");
@@ -1709,11 +1709,11 @@
       if (card) {
         card.classList.remove('card-cold', 'card-warm', 'card-hot', 'card-deposit', 'card-done');
         const borderClass = {
-          'Lạnh': 'card-cold',
-          'Ấm': 'card-warm',
-          'Nóng': 'card-hot',
-          'Cọc': 'card-deposit',
-          'Done': 'card-done'
+          'LẠNH': 'card-cold',
+          'ẤM': 'card-warm',
+          'NÓNG': 'card-hot',
+          'CỌC': 'card-deposit',
+          'DONE': 'card-done'
         }[status] || 'card-cold';
         card.classList.add(borderClass);
       }

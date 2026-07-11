@@ -53,12 +53,12 @@ def test_crm_api_endpoints(mock_sheets, temp_db):
         assert data["status"] == "success"
         assert len(data["profiles"]) == 0
         
-        # 2. Tạo/Cập nhật profile mới (Ấm)
+        # 2. Tạo/Cập nhật profile mới (ẤM)
         payload = {
             "phone": "0987.654.321",
             "name": "Khách Test CRM",
             "note": "Nhu cầu biệt thự",
-            "lifecycle_status": "Ấm"
+            "lifecycle_status": "ẤM"
         }
         res = client.post('/api/customers/profile', json=payload)
         assert res.status_code == 200
@@ -78,12 +78,12 @@ def test_crm_api_endpoints(mock_sheets, temp_db):
         assert prof["phone_hash"] == expected_hash
         assert prof["name"] == "Khách Test CRM"
         assert prof["note"] == "Nhu cầu biệt thự"
-        assert prof["lifecycle_status"] == "Ấm"
+        assert prof["lifecycle_status"] == "ẤM"
         
-        # 4. Update status sang "Nóng"
+        # 4. Update status sang "NÓNG"
         payload_update = {
             "phone": "0987.654.321",
-            "lifecycle_status": "Nóng"
+            "lifecycle_status": "NÓNG"
         }
         res = client.post('/api/customers/profile', json=payload_update)
         assert res.status_code == 200
@@ -92,6 +92,6 @@ def test_crm_api_endpoints(mock_sheets, temp_db):
         res = client.get('/api/customers/profiles')
         data = res.get_json()
         prof = data["profiles"][0]
-        assert prof["lifecycle_status"] == "Nóng"
+        assert prof["lifecycle_status"] == "NÓNG"
         # Note cũ vẫn phải giữ nguyên
         assert prof["note"] == "Nhu cầu biệt thự"

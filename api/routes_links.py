@@ -396,7 +396,7 @@ def update_customer_profile():
         existing = cursor.fetchone()
         
         new_note = note if note is not None else (existing['note'] if existing else '')
-        new_status = lifecycle_status if lifecycle_status is not None else (existing['lifecycle_status'] if existing else 'Lạnh')
+        new_status = lifecycle_status if lifecycle_status is not None else (existing['lifecycle_status'] if existing else 'LẠNH')
         new_name = name if name else (existing['name'] if existing else '')
         
         cursor.execute("""

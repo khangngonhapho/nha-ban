@@ -187,7 +187,7 @@ def merge_temp_to_master(temp_db_path, master_db_path):
         phone_hash TEXT PRIMARY KEY,
         name TEXT,
         note TEXT,
-        lifecycle_status TEXT DEFAULT 'Lạnh',
+        lifecycle_status TEXT DEFAULT 'LẠNH',
         updated_at TEXT
     )
     """)
@@ -266,7 +266,7 @@ def restore_links_and_blacklist(client, db_path):
                     phone_hash TEXT PRIMARY KEY,
                     name TEXT,
                     note TEXT,
-                    lifecycle_status TEXT DEFAULT 'Lạnh',
+                    lifecycle_status TEXT DEFAULT 'LẠNH',
                     updated_at TEXT
                 )
                 """)

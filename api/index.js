@@ -769,7 +769,7 @@ module.exports = async (req, res) => {
         phone_hash: row[1] || '',
         name: row[2] || '',
         note: row[3] || '',
-        lifecycle_status: row[4] || 'Lạnh',
+        lifecycle_status: row[4] || 'LẠNH',
         updated_at: row[5] || ''
       }));
       
@@ -854,7 +854,7 @@ module.exports = async (req, res) => {
       } else {
         const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A:F:append?valueInputOption=USER_ENTERED`;
         const currentNote = note !== undefined ? note : '';
-        const currentStatus = lifecycle_status !== undefined ? lifecycle_status : 'Lạnh';
+        const currentStatus = lifecycle_status !== undefined ? lifecycle_status : 'LẠNH';
         const currentName = name || '';
         
         const postRes = await fetch(appendUrl, {
