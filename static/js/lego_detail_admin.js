@@ -305,9 +305,9 @@
               </div>
             </div>
 
-            <!-- Google Maps Embed -->
+            <!-- Google Maps Link -->
             <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
-            <div class="admin-map-container"></div>
+            <div class="admin-map-link-container" style="margin-bottom: 16px;"></div>
 
             <!-- Lịch sử thay đổi (Change History Timeline) -->
             ${(() => {
@@ -629,8 +629,8 @@
             editLongitude.value = p.longitude || (p.json_ui_parsed && p.json_ui_parsed.longitude) || '';
           }
 
-          const mapContainer = document.querySelector('.admin-map-container');
-          if (mapContainer) {
+          const mapLinkContainer = document.querySelector('.admin-map-link-container');
+          if (mapLinkContainer) {
             let lat = p.latitude || (p.json_ui_parsed && p.json_ui_parsed.latitude) || '';
             let lng = p.longitude || (p.json_ui_parsed && p.json_ui_parsed.longitude) || '';
             if (typeof lat === 'string') lat = lat.trim();
@@ -642,7 +642,12 @@
             } else {
               mapQuery = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
             }
-            mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=16&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>`;
+            const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}`;
+            mapLinkContainer.innerHTML = `
+              <a href="${mapUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; color: var(--blue); font-weight: 850; text-decoration: none; font-size: 11px; background: rgba(52, 152, 219, 0.08); padding: 7px 14px; border-radius: 16px; border: 1px solid var(--blue); transition: all 0.2s;" onmouseover="this.style.background='rgba(52,152,219,0.15)'" onmouseout="this.style.background='rgba(52,152,219,0.08)'">
+                📍 Xem định vị trên Google Maps ↗
+              </a>
+            `;
           }
 
           let sImgs = [];
