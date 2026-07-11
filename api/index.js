@@ -103,14 +103,21 @@ function findCredentialsJson() {
 function getCredentials() {
   if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
     try {
-      return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+      const creds = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+      if (creds) {
+        creds._source = 'env';
+        return creds;
+      }
     } catch (e) {
       console.error('Error parsing GOOGLE_SERVICE_ACCOUNT_JSON env var:', e);
     }
   }
 
   const fileCreds = findCredentialsJson();
-  if (fileCreds) return fileCreds;
+  if (fileCreds) {
+    fileCreds._source = 'file';
+    return fileCreds;
+  }
   
   return null;
 }
@@ -120,10 +127,10 @@ async function getGoogleAccessToken(creds) {
     throw new Error("Missing credentials: creds object is null or undefined.");
   }
   if (!creds.private_key) {
-    throw new Error("Missing private_key in credentials.");
+    throw new Error(`Missing private_key in credentials (source: ${creds._source || 'unknown'}).`);
   }
   if (!creds.client_email) {
-    throw new Error("Missing client_email in credentials.");
+    throw new Error(`Missing client_email in credentials (source: ${creds._source || 'unknown'}).`);
   }
 
   let privateKey = creds.private_key;
@@ -176,11 +183,11 @@ async function getGoogleAccessToken(creds) {
 
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(`Google token exchange failed for ${creds.client_email} (${creds.project_id || 'no-project'}): ${JSON.stringify(data)}`);
+      throw new Error(`Google token exchange failed for ${creds.client_email} (${creds.project_id || 'no-project'} via ${creds._source || 'unknown'}): ${JSON.stringify(data)}`);
     }
     return data.access_token;
   } catch (err) {
-    throw new Error(`Error generating Google access token for ${creds.client_email} (${creds.project_id || 'no-project'}): ${err.message}`);
+    throw new Error(`Error generating Google access token for ${creds.client_email} (${creds.project_id || 'no-project'} via ${creds._source || 'unknown'}): ${err.message}`);
   }
 }
 
