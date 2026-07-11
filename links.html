@@ -1365,6 +1365,35 @@
         `;
       }
 
+      // Helper to generate relative time strings (US-140 relative time addition)
+      function getRelativeTimeStr(timestamp) {
+        if (!timestamp) return 'Chưa có hoạt động';
+        const now = Date.now();
+        const diffMs = now - timestamp;
+        if (diffMs < 0) return 'vừa xong';
+        
+        const diffSecs = Math.floor(diffMs / 1000);
+        const diffMins = Math.floor(diffSecs / 60);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        const diffMonths = Math.floor(diffDays / 30);
+        const diffYears = Math.floor(diffDays / 365);
+        
+        if (diffSecs < 60) {
+          return 'vừa xong';
+        } else if (diffMins < 60) {
+          return `${diffMins} phút trước`;
+        } else if (diffHours < 24) {
+          return `${diffHours} giờ trước`;
+        } else if (diffDays < 30) {
+          return `${diffDays} ngày trước`;
+        } else if (diffMonths < 12) {
+          return `${diffMonths} tháng trước`;
+        } else {
+          return `${diffYears} năm trước`;
+        }
+      }
+
       // 4. Render Active Groups (Logs Tab - Mặc định EXtended)
       logCountBadge.textContent = activeGroups.length;
       if (activeGroups.length === 0) {
@@ -1435,8 +1464,18 @@
           logsHtml += `
             <div class="card customer-card ${borderClass} ${cust.hasLeak ? 'warn-leak' : ''}">
               <div class="customer-header" onclick="if (!event.target.closest('button') && !event.target.closest('.phone-link')) toggleCardHistory(this)">
-                <span class="customer-title">${cust.name} (${cust.phone}) ${getContactLinksHtml(cust.phone, cust.name)} <span class="toggle-icon">▲</span></span>
-                ${blockAction}
+                <div class="customer-info-col" style="display: flex; flex-direction: column; gap: 2px;">
+                  <span class="customer-title" style="font-weight: 600; font-size: 14px;">
+                    ${cust.name} (${cust.phone}) ${getContactLinksHtml(cust.phone, cust.name)}
+                  </span>
+                  <span class="customer-last-active" style="font-size: 11px; color: var(--sub);">
+                    ⚡ Hoạt động ${getRelativeTimeStr(cust.lastActive)}
+                  </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                  <span class="toggle-icon">▲</span>
+                  ${blockAction}
+                </div>
               </div>
               <div class="customer-history">
                 ${actionsHtml}
@@ -1501,8 +1540,18 @@
           blacklistHtml += `
             <div class="card customer-card warn-leak">
               <div class="customer-header" onclick="if (!event.target.closest('button')) toggleCardHistory(this)">
-                <span class="customer-title" style="color: var(--red);">${cust.name} (${cust.phone}) <span class="toggle-icon">▲</span></span>
-                ${unblockAction}
+                <div class="customer-info-col" style="display: flex; flex-direction: column; gap: 2px;">
+                  <span class="customer-title" style="color: var(--red); font-weight: 600; font-size: 14px;">
+                    ${cust.name} (${cust.phone})
+                  </span>
+                  <span class="customer-last-active" style="font-size: 11px; color: var(--sub);">
+                    ⚡ Hoạt động ${getRelativeTimeStr(cust.lastActive)}
+                  </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                  <span class="toggle-icon">▲</span>
+                  ${unblockAction}
+                </div>
               </div>
               <div class="customer-history">
                 ${actionsHtml}
@@ -1551,10 +1600,18 @@
 
           whitelistHtml += `
             <div class="card customer-card whitelisted">
-              <div class="customer-header" onclick="if (!event.target.closest('button')) toggleCardHistory(this)">
-                <span class="customer-title" style="color: #3b82f6;">${cust.name} (${cust.phone}) <span class="toggle-icon">▼</span></span>
-                <div style="display: flex; align-items: center; gap: 6px;">
+              <div class="customer-header" onclick="if (!event.target.closest('button') && !event.target.closest('.phone-link')) toggleCardHistory(this)">
+                <div class="customer-info-col" style="display: flex; flex-direction: column; gap: 2px;">
+                  <span class="customer-title" style="color: #3b82f6; font-weight: 600; font-size: 14px;">
+                    ${cust.name} (${cust.phone}) ${getContactLinksHtml(cust.phone, cust.name)}
+                  </span>
+                  <span class="customer-last-active" style="font-size: 11px; color: var(--sub);">
+                    ⚡ Hoạt động ${getRelativeTimeStr(cust.lastActive)}
+                  </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
                   <span class="badge-count" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);">Admin Test</span>
+                  <span class="toggle-icon">▼</span>
                   ${blockAction}
                 </div>
               </div>
