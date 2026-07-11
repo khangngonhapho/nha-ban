@@ -1097,7 +1097,23 @@
         return 9999;
       };
 
-      renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+      if (window.imageEditorSortMode === 'display') {
+        if (typeof window.sortSlidesByDisplayOrder === 'function') {
+          window.sortSlidesByDisplayOrder(renderedCards, p);
+        } else {
+          renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+        }
+      } else if (window.imageEditorSortMode === 'custom') {
+        const oldSlides = window.imageEditorSlides || [];
+        const oldUrls = oldSlides.map(s => normalizeImgUrl(s.url));
+        renderedCards.sort((a, b) => {
+          const idxA = oldUrls.indexOf(normalizeImgUrl(a.url));
+          const idxB = oldUrls.indexOf(normalizeImgUrl(b.url));
+          return (idxA !== -1 ? idxA : 9999) - (idxB !== -1 ? idxB : 9999);
+        });
+      } else {
+        renderedCards.sort((a, b) => getCardSortWeight(a) - getCardSortWeight(b));
+      }
 
       let newActiveIdx = 0;
       if (activeCardId) {
@@ -1203,8 +1219,11 @@
                 </button>
               </div>
               <div class="control-row" style="margin-top: 5px;">
+                <button type="button" class="control-btn" onclick="window.activeImageSortByDisplay()" style="background: rgba(39, 174, 96, 0.15); border-color: #27ae60; color: #27ae60; width: ${!p.isFromPoolOnly ? '50%' : '100%'};">
+                  🔀 Sắp xếp
+                </button>
                 ${!p.isFromPoolOnly ? `
-                <button type="button" class="control-btn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red); width: 100%;">
+                <button type="button" class="control-btn" onclick="window.uncheckAllCurationImages()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red); width: 50%;">
                   ✕ Bỏ hết
                 </button>
                 ` : ''}
@@ -1542,55 +1561,119 @@
 
     };
   // === activeImageMoveOrder ===
+  // === activeImageMoveOrder ===
     window.activeImageMoveOrder = function(direction) {
       const p = window.activeCurationListing;
       if (!p) return;
       const activeIdx = window.activeImageEditorIndex;
       const slides = window.imageEditorSlides || [];
       if (activeIdx < 0 || activeIdx >= slides.length) return;
-      const slide = slides[activeIdx];
       
-      if (slide.type === "interior") {
-        const input = document.getElementById('editPublicInteriorIndices');
-        if (!input) return;
-        let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
-        const pos = indices.indexOf(String(slide.index));
-        if (pos === -1) {
-          showToast("Hình này chưa được chọn hiển thị public để sắp xếp!", "warning");
-          return;
-        }
-        const newPos = pos + direction;
-        if (newPos >= 0 && newPos < indices.length) {
-          const temp = indices[pos];
-          indices[pos] = indices[newPos];
-          indices[newPos] = temp;
-          input.value = indices.join(',');
-          
-          window.reRenderCurationEditorInPlace();
-
-        }
-      } else if (slide.type === "alley") {
-        const input = document.getElementById('editPublicAlleyIndices');
-        if (!input) return;
-        let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
-        const pos = indices.indexOf(String(slide.index));
-        if (pos === -1) {
-          showToast("Hình này chưa được chọn hiển thị public để sắp xếp!", "warning");
-          return;
-        }
-        const newPos = pos + direction;
-        if (newPos >= 0 && newPos < indices.length) {
-          const temp = indices[pos];
-          indices[pos] = indices[newPos];
-          indices[newPos] = temp;
-          input.value = indices.join(',');
-          
-          window.reRenderCurationEditorInPlace();
-
-        }
-      } else {
-        showToast("Chỉ có thể sắp xếp thứ tự của hình Nội Thất hoặc Hẻm hiển thị public!", "warning");
+      const slide = slides[activeIdx];
+      // Kiểm tra xem ảnh hiện tại có hiển thị public không
+      const isPublicCover = (document.getElementById('editPublicCoverUrl')?.value || '') === slide.url;
+      const isPublicInt = slide.type === 'interior' && (document.getElementById('editPublicInteriorIndices')?.value || '').split(',').includes(String(slide.index));
+      const isPublicAlley = slide.type === 'alley' && (document.getElementById('editPublicAlleyIndices')?.value || '').split(',').includes(String(slide.index));
+      
+      if (!isPublicCover && !isPublicInt && !isPublicAlley) {
+        showToast("Hình này chưa được chọn hiển thị public để sắp xếp!", "warning");
+        return;
       }
+      
+      const newIdx = activeIdx + direction;
+      if (newIdx >= 0 && newIdx < slides.length) {
+        // Swap slides
+        const temp = slides[activeIdx];
+        slides[activeIdx] = slides[newIdx];
+        slides[newIdx] = temp;
+        
+        window.activeImageEditorIndex = newIdx;
+        
+        // Cập nhật lại các input ẩn
+        const interiorIndices = [];
+        const alleyIndices = [];
+        slides.forEach(s => {
+          const sodoUrls = [
+            (document.getElementById('editSodo1Url')?.value || '').trim(),
+            (document.getElementById('editSodo2Url')?.value || '').trim(),
+            (document.getElementById('editSodo3Url')?.value || '').trim(),
+            (document.getElementById('editSodo4Url')?.value || '').trim(),
+            (document.getElementById('editSodo5Url')?.value || '').trim()
+          ];
+          const normSodos = sodoUrls.map(url => normalizeImgUrl(url));
+          const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+          const normMatTien = normalizeImgUrl(targetMatTien);
+          const normUrl = normalizeImgUrl(s.url);
+          
+          const isSodo = normSodos.includes(normUrl);
+          const isFacade = normUrl !== '' && normUrl === normMatTien;
+          const isCover = (document.getElementById('editPublicCoverUrl')?.value || '') === s.url;
+          
+          if (!isSodo && !isFacade && !isCover) {
+            if (s.type === 'interior' && s.visible !== false) {
+              interiorIndices.push(s.index);
+            }
+            if (s.type === 'alley' && s.visible !== false) {
+              alleyIndices.push(s.index);
+            }
+          }
+        });
+        
+        const inputInt = document.getElementById('editPublicInteriorIndices');
+        const inputAlley = document.getElementById('editPublicAlleyIndices');
+        if (inputInt) inputInt.value = interiorIndices.join(',');
+        if (inputAlley) inputAlley.value = alleyIndices.join(',');
+        
+        window.imageEditorSortMode = 'custom';
+        window.reRenderCurationEditorInPlace();
+      }
+    };
+
+  // === sortSlidesByDisplayOrder ===
+    window.sortSlidesByDisplayOrder = function(slides, p) {
+      if (!p) return;
+      const publicCover = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
+      const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
+      
+      const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+      const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+      
+      const normPublicCover = normalizeImgUrl(publicCover);
+      const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
+      const normMatTien = normalizeImgUrl(targetMatTien);
+      
+      const getWeight = (c) => {
+        const normUrl = normalizeImgUrl(c.url);
+        if (normPublicCover && normUrl === normPublicCover) return 1;
+        
+        if (c.type === 'alley') {
+          const pos = hemIndices.indexOf(c.index);
+          if (pos !== -1) return 2 + pos;
+        }
+        if (c.type === 'interior') {
+          const pos = noithatIndices.indexOf(c.index);
+          if (pos !== -1) return 100 + pos;
+        }
+        if (c.type === 'facade' || normUrl === normMatTien) return 1000;
+        if (c.type === 'sodo') return 2000 + c.index;
+        
+        const cleanUrl = c.url.split('?')[0];
+        const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
+        const physicalWeight = match ? parseInt(match[1], 10) : 9999;
+        return 3000 + physicalWeight;
+      };
+      
+      slides.sort((a, b) => getWeight(a) - getWeight(b));
+    };
+
+  // === activeImageSortByDisplay ===
+    window.activeImageSortByDisplay = function() {
+      const p = window.activeCurationListing;
+      if (!p) return;
+      window.imageEditorSortMode = 'display';
+      window.reRenderCurationEditorInPlace();
+      showToast("Đã sắp xếp hình theo thứ tự hiển thị thực tế!", "success");
     };
   // === reRenderCurationEditorInPlace ===
     window.reRenderCurationEditorInPlace = function() {
@@ -2081,6 +2164,7 @@
     };
   // === openPoolS ===
     window.openPoolS = function(systemId) {
+      window.imageEditorSortMode = 'file';
       if (!POOL_ROWS || !POOL_ROWS.length) {
         showToast("Dữ liệu Pool chưa được nạp!", "error");
         return;
@@ -3029,84 +3113,29 @@
           return norm !== '' && norm === normMatTien;
         };
 
-        // Chỉ cập nhật lại mảng ảnh và cover nếu form có nạp hình ảnh
-        if (p.pool_row_data) {
-          const finalImages = window.getPublicImagesFromForm(p);
-          while (finalImages.length < 15) finalImages.push("");
-
-          // Pad original_row_data to 49 columns
-          while (p.original_row_data.length < 49) p.original_row_data.push("");
-
-          // Cập nhật lại 15 cột ảnh sạch trên Source Sheet (index 20-29 và index 41-45)
-          for (let i = 0; i < 10; i++) {
-            p.original_row_data[20 + i] = finalImages[i];
-          }
-          for (let i = 10; i < 15; i++) {
-            p.original_row_data[31 + i] = finalImages[i];
-          }
-          
-          p.imgs = finalImages.filter(Boolean);
-        }
+        const fullPublicImages = window.getPublicImagesFromForm(p);
+        let cleanPublicImages = fullPublicImages.filter(Boolean);
 
         if (p.original_row_data) {
           while (p.original_row_data.length < 49) p.original_row_data.push("");
           p.original_row_data[38] = customCoverUrl;
           p.img_mat_tien = customCoverUrl;
 
-          if (isSodoUrl(p.original_row_data[20]) || isFacadeUrl(p.original_row_data[20])) {
-            let newCover = '';
-            for (let i = 20; i <= 29; i++) {
-              if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
-                newCover = p.original_row_data[i];
-                break;
-              }
-            }
-            if (!newCover) {
-              for (let i = 41; i <= 45; i++) {
-                if (p.original_row_data[i] && !isSodoUrl(p.original_row_data[i]) && !isFacadeUrl(p.original_row_data[i])) {
-                  newCover = p.original_row_data[i];
-                  break;
-                }
-              }
-            }
-            p.original_row_data[20] = newCover;
-          }
-
-          cleanPublicImages = [];
-          for (let i = 20; i <= 29; i++) {
-            const url = p.original_row_data[i];
-            if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
-              cleanPublicImages.push(url);
-            }
-          }
-          for (let i = 41; i <= 45; i++) {
-            const url = p.original_row_data[i];
-            if (url && !isSodoUrl(url) && !isFacadeUrl(url) && !cleanPublicImages.includes(url)) {
-              cleanPublicImages.push(url);
-            }
-          }
-          
           if (publicCoverUrl && !isSodoUrl(publicCoverUrl) && !isFacadeUrl(publicCoverUrl)) {
-            if (!cleanPublicImages.includes(publicCoverUrl)) {
-              cleanPublicImages.unshift(publicCoverUrl);
-            } else {
-              const idx = cleanPublicImages.indexOf(publicCoverUrl);
-              if (idx !== -1) cleanPublicImages.splice(idx, 1);
-              cleanPublicImages.unshift(publicCoverUrl);
-            }
+            const idx = cleanPublicImages.indexOf(publicCoverUrl);
+            if (idx !== -1) cleanPublicImages.splice(idx, 1);
+            cleanPublicImages.unshift(publicCoverUrl);
           }
 
-          while (cleanPublicImages.length < 15) {
-            cleanPublicImages.push("");
-          }
-          
+          const flatImages = [...cleanPublicImages];
+          while (flatImages.length < 15) flatImages.push("");
           for (let i = 0; i < 10; i++) {
-            p.original_row_data[20 + i] = cleanPublicImages[i];
+            p.original_row_data[20 + i] = flatImages[i];
           }
           for (let i = 10; i < 15; i++) {
-            p.original_row_data[31 + i] = cleanPublicImages[i];
+            p.original_row_data[31 + i] = flatImages[i];
           }
-          p.imgs = cleanPublicImages.filter(Boolean);
+          p.imgs = cleanPublicImages;
         }
 
         p.original_row_data[2] = note;

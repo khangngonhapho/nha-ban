@@ -7,6 +7,7 @@
   window.selHuong = new Set();
   window.selGia = new Set();
   window.selDanhGia = new Set();
+  window.selTrangThai = new Set();
   window.filterOpen = false;
   window.showFavOnly = false;
   window.showOnAirOnly = false;
@@ -22,6 +23,21 @@
       const v = btn.getAttribute('data-val');
       btn.classList.toggle('on', v === 'all' ? set.size === 0 : set.has(v));
     });
+  };
+
+  window.tTrangThai = function(val) {
+    window.tSel(window.selTrangThai, val);
+    window.syncTabUI('trangThaiTabs', window.selTrangThai);
+    if (typeof onSearchInput === 'function') onSearchInput();
+  };
+
+  window.getHouseStatus = function(p) {
+    if (!p) return 'Đang bán';
+    const st = String(p.trang_thai || p.tinh_trang_nha || '').trim().toLowerCase();
+    if (st === 'sold' || st === 'đã bán' || st === 'da ban') return 'Đã bán';
+    if (st === 'deposited' || st === 'đã cọc' || st === 'da coc') return 'Đã cọc';
+    if (st === 'unqualified' || st === 'ngừng bán' || st === 'ngung ban') return 'Ngừng bán';
+    return 'Đang bán';
   };
 
   // ── Custom Multiselect Event Handlers ──
@@ -460,6 +476,53 @@
     a = window.applyGia(a);
     if (window.selDanhGia.size) a = a.filter(p => window.selDanhGia.has(p.danh_gia));
 
+    // Lọc theo Trạng thái nhà
+    if (window.selTrangThai && window.selTrangThai.size) {
+      a = a.filter(p => window.selTrangThai.has(window.getHouseStatus(p)));
+    }
+
+    // Lọc theo Khoảng ngày Cập nhật
+    const filterUpdatedMin = document.getElementById('filterUpdatedMin')?.value || '';
+    const filterUpdatedMax = document.getElementById('filterUpdatedMax')?.value || '';
+    if (filterUpdatedMin !== '' || filterUpdatedMax !== '') {
+      a = a.filter(p => {
+        const valStr = p.json_ui_parsed?.updatedAt || '';
+        if (!valStr || valStr === 'None') return false;
+        const valTime = new Date(valStr).getTime();
+        if (isNaN(valTime)) return false;
+        if (filterUpdatedMin) {
+          const minTime = new Date(filterUpdatedMin + "T00:00:00").getTime();
+          if (!isNaN(minTime) && valTime < minTime) return false;
+        }
+        if (filterUpdatedMax) {
+          const maxTime = new Date(filterUpdatedMax + "T23:59:59").getTime();
+          if (!isNaN(maxTime) && valTime > maxTime) return false;
+        }
+        return true;
+      });
+    }
+
+    // Lọc theo Khoảng ngày Ký
+    const filterSignedMin = document.getElementById('filterSignedMin')?.value || '';
+    const filterSignedMax = document.getElementById('filterSignedMax')?.value || '';
+    if (filterSignedMin !== '' || filterSignedMax !== '') {
+      a = a.filter(p => {
+        const valStr = p.json_ui_parsed?.createdAtSigned || '';
+        if (!valStr || valStr === 'None') return false;
+        const valTime = new Date(valStr).getTime();
+        if (isNaN(valTime)) return false;
+        if (filterSignedMin) {
+          const minTime = new Date(filterSignedMin + "T00:00:00").getTime();
+          if (!isNaN(minTime) && valTime < minTime) return false;
+        }
+        if (filterSignedMax) {
+          const maxTime = new Date(filterSignedMax + "T23:59:59").getTime();
+          if (!isNaN(maxTime) && valTime > maxTime) return false;
+        }
+        return true;
+      });
+    }
+
     // LỌC THEO BỘ SƯU TẬP HOẶC DANH SÁCH YÊU THÍCH CỦA ADMIN
     if (window.activeCollectionName) {
       if (window.activeCollectionName === 'favorites') {
@@ -890,6 +953,12 @@
       if (val instanceof Set) return val.size > 0;
       return !!val;
     });
+    const anyDateActive = !!(
+      document.getElementById('filterUpdatedMin')?.value ||
+      document.getElementById('filterUpdatedMax')?.value ||
+      document.getElementById('filterSignedMin')?.value ||
+      document.getElementById('filterSignedMax')?.value
+    );
     const anyActive = !!(
       window.selDistricts.size || 
       window.selWards.size || 
@@ -897,10 +966,12 @@
       window.selHuong.size || 
       window.selGia.size || 
       window.selDanhGia.size || 
+      (window.selTrangThai && window.selTrangThai.size) ||
       anyDynamicActive ||
       window.activeCollectionName ||
       activeCriteria.length ||
-      window.showFavOnly
+      window.showFavOnly ||
+      anyDateActive
     );
     document.getElementById('filterBtn').classList.toggle('active', anyActive || window.filterOpen);
     document.getElementById('resetBtn').style.display = anyActive ? 'inline-flex' : 'none';
@@ -916,9 +987,11 @@
 
   window.resetFilters = function() {
     window.selDistricts.clear(); window.selWards.clear(); window.selDuongs.clear(); window.selHuong.clear(); window.selGia.clear(); window.selDanhGia.clear();
+    if (window.selTrangThai) window.selTrangThai.clear();
     window.buildDistrictTabs();
     window.syncTabUI('giaTabs', window.selGia);
     window.syncTabUI('danhGiaTabs', window.selDanhGia);
+    window.syncTabUI('trangThaiTabs', window.selTrangThai);
 
     // Xóa bộ sưu tập và yêu thích ẩn
     window.activeCollectionName = null;
@@ -940,7 +1013,9 @@
       'filterDtThucTeMin', 'filterDtThucTeMax',
       'filterNgangMin', 'filterNgangMax',
       'filterHemMin', 'filterHemMax',
-      'filterPhongMin', 'filterPhongMax'
+      'filterPhongMin', 'filterPhongMax',
+      'filterUpdatedMin', 'filterUpdatedMax',
+      'filterSignedMin', 'filterSignedMax'
     ];
     advInputs.forEach(id => {
       const el = document.getElementById(id);

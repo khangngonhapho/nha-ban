@@ -33,10 +33,26 @@ window.LegoRenderClient = {
     const favId = p.system_id ? String(p.system_id) : String(p.id);
     const isFav = favs.has(favId);
 
+    const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || 0;
+    const price = parseFloat(p.gia) || 0;
+    const donGia = (area > 0 && price > 0) ? (price * 1000 / area) : 0;
+    const donGiaText = donGia > 0 ? ` (${donGia.toFixed(1)}tr)` : '';
+
+    const st = window.getHouseStatus ? window.getHouseStatus(p) : 'Đang bán';
+    let statusBadgeHtml = '';
+    if (st !== 'Đang bán') {
+      let badgeColor = '#27ae60';
+      if (st === 'Đã cọc') badgeColor = '#e67e22';
+      else if (st === 'Đã bán') badgeColor = 'var(--red)';
+      else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
+      statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
+    }
+
     c.innerHTML = `
       <div class="crow">
-        <div class="ibox">
-          ${p.isFromPoolOnly ? '<div class="pool-badge-tag">📦 Pool</div>' : ''}
+        <div class="ibox" style="position: relative;">
+          ${statusBadgeHtml}
+          ${p.isFromPoolOnly ? '<div class="pool-badge-tag" style="top: 8px; right: 8px; left: auto;">📦 Pool</div>' : ''}
           <img src="${thumb}" alt="${p.t}" loading="lazy" decoding="async" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
           <button class="heart ${isFav ? 'on' : ''}" onclick="th('${favId}', this, event)">${isFav ? '♥' : '♡'}</button>
         </div>
@@ -49,7 +65,7 @@ window.LegoRenderClient = {
               <span class="chip">🛏️ ${p.so_pn} PN</span>` : ''}${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
             </div>
             <div class="pr-loc">
-              <div class="pr"><span class="pv">${p.gia} tỷ</span></div>
+              <div class="pr"><span class="pv">${p.gia} tỷ${donGiaText}</span></div>
               <div class="loc">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
                 P.${p.phuong}, Q.${p.ql}

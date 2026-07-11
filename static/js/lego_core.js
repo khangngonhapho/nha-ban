@@ -826,9 +826,9 @@ const LegoState = {
               duong_truoc_nha: sr[window.getSourceColumnIndex("duong_truoc_nha", 13)] || '-',
               rong_hem: sr[window.getSourceColumnIndex("do_rong_hem", 14)] || '-',
               tinh_trang: sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '-',
+              trang_thai: sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '',
               danh_gia: sr[window.getSourceColumnIndex("danh_gia", 16)] || '',
               is_invisible: (sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '').toLowerCase().includes('ẩn') ||
-                            (sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '').toLowerCase().includes('đã bán') ||
                             (sr[window.getSourceColumnIndex("tinh_trang_nha", 15)] || '').toLowerCase().includes('invisible'),
               ngu_tang_tret: sr[window.getSourceColumnIndex("ngu_tang_tret", 17)] || '-',
               chdv: sr[window.getSourceColumnIndex("chdv", 18)] || '-',
@@ -1290,9 +1290,9 @@ const LegoState = {
               duong_truoc_nha: cv(r.c[colMap.duong_truoc_nha]) || '-',
               rong_hem: cv(r.c[colMap.do_rong_hem]) || '-',
               tinh_trang: cv(r.c[colMap.tinh_trang_nha]) || '-',
+              trang_thai: cv(r.c[colMap.tinh_trang_nha]) || '',
               danh_gia: cv(r.c[colMap.danh_gia]) || '',
               is_invisible: (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('ẩn') ||
-                (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('đã bán') ||
                 (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('invisible'),
               ngu_tang_tret: cv(r.c[colMap.ngu_tang_tret]) || '-',
               chdv: cv(r.c[colMap.chdv]) || '-',

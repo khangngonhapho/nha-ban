@@ -3671,3 +3671,17 @@
         margin-bottom: 12px !important;
       }
     }
+
+    .desktop-only {
+      display: inline-block !important;
+    }
+    @media (max-width: 767px) {
+      .desktop-only {
+        display: none !important;
+      }
+      .spec-value-group input.date-input {
+        width: 115px !important;
+        font-size: 11.5px;
+        padding: 4px 6px;
+      }
+    }

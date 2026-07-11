@@ -381,6 +381,12 @@
       });
       const sortedImgs = cleanImgs;
 
+      const st = window.getHouseStatus ? window.getHouseStatus(p) : 'Đang bán';
+      let statusColor = '#27ae60';
+      if (st === 'Đã cọc') statusColor = '#e67e22';
+      else if (st === 'Đã bán') statusColor = 'var(--red)';
+      else if (st === 'Ngừng bán') statusColor = '#7f8c8d';
+
       sbody.innerHTML = `
         <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
         <div id="carouselClientDetail" style="position: relative; margin-bottom: 12px;">
@@ -427,6 +433,10 @@
           <div class="admin-raw-cell">
             <span class="label">Kết cấu:</span>
             <span class="value dotted">${p.tang} tầng</span>
+          </div>
+          <div class="admin-raw-cell">
+            <span class="label">Trạng thái:</span>
+            <span class="value dotted" style="font-weight:800; color: ${statusColor};">${st}</span>
           </div>
         </div>
         <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>

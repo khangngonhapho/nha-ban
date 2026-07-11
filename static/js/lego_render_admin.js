@@ -78,14 +78,18 @@ window.LegoRenderAdmin = {
     const displayListed = formatDate(jsonUi.createdAtSigned || '');
     const displayUpdated = formatDate(jsonUi.updatedAt || '');
 
-    let priceHistoryHtml = `<span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${p.gia} tỷ</span>`;
+    const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || 0;
+    const price = parseFloat(p.gia) || 0;
+    const donGia = (area > 0 && price > 0) ? (price * 1000 / area) : 0;
+    const donGiaText = donGia > 0 ? ` (${donGia.toFixed(1)}tr)` : '';
+
+    let priceHistoryHtml = `<span style="background: rgba(39, 174, 96, 0.15); color: #27ae60; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 800;">${p.gia} tỷ${donGiaText}</span>`;
     if (jsonUi.history && Array.isArray(jsonUi.history)) {
       const priceChanges = jsonUi.history.filter(h => h.type === 'price');
       if (priceChanges.length > 0) {
         const lastChange = priceChanges[priceChanges.length - 1];
         const oldPrice = parseFloat(lastChange.old);
         const newPrice = parseFloat(lastChange.new);
-        const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || parseFloat(p.dt) || 0;
         
         const formatGiabq = (price, a) => {
           if (!a || a <= 0) return '';
@@ -109,10 +113,21 @@ window.LegoRenderAdmin = {
       }
     }
 
+    const st = window.getHouseStatus ? window.getHouseStatus(p) : 'Đang bán';
+    let statusBadgeHtml = '';
+    if (st !== 'Đang bán') {
+      let badgeColor = '#27ae60';
+      if (st === 'Đã cọc') badgeColor = '#e67e22';
+      else if (st === 'Đã bán') badgeColor = 'var(--red)';
+      else if (st === 'Ngừng bán') badgeColor = '#7f8c8d';
+      statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${st}</div>`;
+    }
+
     c.innerHTML = `
       <div class="crow">
-        <div class="ibox">
-          ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw">⚪ Chưa lên sóng</div>') : ''}
+        <div class="ibox" style="position: relative;">
+          ${statusBadgeHtml}
+          ${p.isFromPoolOnly ? (isOnAir ? '<div class="pool-badge-tag on-air" style="top: 8px; right: 8px; left: auto;">🟢 Đã lên sóng</div>' : '<div class="pool-badge-tag raw" style="top: 8px; right: 8px; left: auto;">⚪ Chưa lên sóng</div>') : ''}
           <img src="${thumb}" alt="${p.t}" loading="lazy" decoding="async" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
           <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${isSelected ? 'checked' : ''}>
           <button class="heart ${isFav ? 'on' : ''}" onclick="th('${favId}', this, event)">${isFav ? '♥' : '♡'}</button>

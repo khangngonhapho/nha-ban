@@ -345,6 +345,7 @@ window.getMappedPoolData = function() {
       pool_row_index: POOL_ROWS.indexOf(row) + 2,
       last_crawl: row[window.getPoolColumnIndex ? window.getPoolColumnIndex("Last_Crawl", 83) : 83] || '',
 
+      trang_thai: row[2] || '',
       isFromPoolOnly: true,
       pool_row_data: row
     };
@@ -450,8 +451,17 @@ window.finalizeData = function(fullList) {
     }).filter(Boolean);
   }
 
+  const isSoldHelper = (p) => {
+    if (!p) return false;
+    const st = String(p.trang_thai || p.tinh_trang || '').trim().toLowerCase();
+    return st === 'sold' || st === 'đã bán' || st === 'da ban' || st.includes('đã bán');
+  };
+
   if (window.sharedIds) {
     DATA = fullList.filter(p => window.sharedIds.map(String).includes(String(p.id)) && !p.is_invisible);
+    if (!window.isAdmin) {
+      DATA = DATA.filter(p => !isSoldHelper(p));
+    }
   } else if (!window.isAdmin) {
     DATA = [];
     window.showError('Vui lòng liên hệ <b>Khang Ngô Nhà Phố</b> để được cung cấp thông tin.');
@@ -607,6 +617,9 @@ window.saveState = function() {
     huongs: [...selHuong],
     gia: [...selGia],
     danhGia: [...selDanhGia],
+    trangThai: window.selTrangThai ? [...window.selTrangThai] : [],
+    currentSortType: window.currentSortType || 'newest',
+    currentSortDir: window.currentSortDir || 'desc',
     selectedIds: [...SELECTED_IDS],
     favOnly: showFavOnly,
     showOnAirOnly: showOnAirOnly,
@@ -623,7 +636,11 @@ window.saveState = function() {
       hemMin: document.getElementById('filterHemMin')?.value || '',
       hemMax: document.getElementById('filterHemMax')?.value || '',
       phongMin: document.getElementById('filterPhongMin')?.value || '',
-      phongMax: document.getElementById('filterPhongMax')?.value || ''
+      phongMax: document.getElementById('filterPhongMax')?.value || '',
+      updatedMin: document.getElementById('filterUpdatedMin')?.value || '',
+      updatedMax: document.getElementById('filterUpdatedMax')?.value || '',
+      signedMin: document.getElementById('filterSignedMin')?.value || '',
+      signedMax: document.getElementById('filterSignedMax')?.value || ''
     },
     criteria: Array.from(document.querySelectorAll('.filter-criterion:checked')).map(el => el.getAttribute('data-val')),
     dynamicFilters: serializedDynamicFilters
@@ -647,7 +664,14 @@ window.restoreState = function() {
     state.huongs?.forEach(x => selHuong.add(x));
     state.gia?.forEach(x => selGia.add(x));
     state.danhGia?.forEach(x => selDanhGia.add(x));
+    state.trangThai?.forEach(x => {
+      if (window.selTrangThai) window.selTrangThai.add(x);
+    });
+    window.syncTabUI('trangThaiTabs', window.selTrangThai);
     state.selectedIds?.forEach(x => SELECTED_IDS.add(x));
+
+    if (state.currentSortType) window.currentSortType = state.currentSortType;
+    if (state.currentSortDir) window.currentSortDir = state.currentSortDir;
 
     if (state.favOnly !== undefined) showFavOnly = state.favOnly;
     if (state.showOnAirOnly !== undefined) {
@@ -675,7 +699,11 @@ window.restoreState = function() {
         { id: 'filterHemMin', val: state.adv.hemMin },
         { id: 'filterHemMax', val: state.adv.hemMax },
         { id: 'filterPhongMin', val: state.adv.phongMin },
-        { id: 'filterPhongMax', val: state.adv.phongMax }
+        { id: 'filterPhongMax', val: state.adv.phongMax },
+        { id: 'filterUpdatedMin', val: state.adv.updatedMin },
+        { id: 'filterUpdatedMax', val: state.adv.updatedMax },
+        { id: 'filterSignedMin', val: state.adv.signedMin },
+        { id: 'filterSignedMax', val: state.adv.signedMax }
       ];
       advKeys.forEach(k => {
         const el = document.getElementById(k.id);
@@ -796,30 +824,48 @@ window.updateStats = function() {
 
 // Update sorting buttons UI
 window.updateSortButtonsUI = function() {
+  const val = `${window.currentSortType || 'newest'}_${window.currentSortDir || 'desc'}`;
+  const sDesktop = document.getElementById('sortSelect');
+  const sMobile = document.getElementById('sortSelectMobile');
+  if (sDesktop) sDesktop.value = val;
+  if (sMobile) sMobile.value = val;
+
   const btnNew = document.getElementById('sortNewBtn');
   const btnPrice = document.getElementById('sortPriceBtn');
-  if (!btnNew || !btnPrice) return;
-
-  if (window.currentSortType === 'newest') {
-    btnNew.classList.add('active');
-    btnNew.textContent = window.currentSortDir === 'desc' ? '⏱️⬇' : '⏱️⬆';
-    btnPrice.classList.remove('active');
-    btnPrice.textContent = '💰';
-  } else {
-    btnPrice.classList.add('active');
-    btnPrice.textContent = window.currentSortDir === 'desc' ? '💰⬇' : '💰⬆';
-    btnNew.classList.remove('active');
-    btnNew.textContent = '⏱️';
+  if (btnNew && btnPrice) {
+    if (window.currentSortType === 'newest') {
+      btnNew.classList.add('active');
+      btnNew.textContent = window.currentSortDir === 'desc' ? '⏱️⬇' : '⏱️⬆';
+      btnPrice.classList.remove('active');
+      btnPrice.textContent = '💰';
+    } else if (window.currentSortType === 'price') {
+      btnPrice.classList.add('active');
+      btnPrice.textContent = window.currentSortDir === 'desc' ? '💰⬇' : '💰⬆';
+      btnNew.classList.remove('active');
+      btnNew.textContent = '⏱️';
+    } else {
+      btnNew.classList.remove('active');
+      btnPrice.classList.remove('active');
+    }
   }
 };
 
-// Sort triggers
-window.toggleSortNew = function() {
-  if (window.currentSortType === 'newest') {
-    window.currentSortDir = window.currentSortDir === 'desc' ? 'asc' : 'desc';
-  } else {
-    window.currentSortType = 'newest';
-    window.currentSortDir = 'desc';
+window.changeSortType = function(val) {
+  const parts = val.split('_');
+  const sortDir = parts.pop();
+  const sortType = parts.join('_');
+  
+  window.currentSortType = sortType;
+  window.currentSortDir = sortDir;
+  
+  const sDesktop = document.getElementById('sortSelect');
+  const sMobile = document.getElementById('sortSelectMobile');
+  if (sDesktop) sDesktop.value = val;
+  if (sMobile) sMobile.value = val;
+  
+  window.saveState();
+  if (typeof render === 'function') render();
+};
   }
   window.updateSortButtonsUI();
   window.saveState();
@@ -1562,10 +1608,34 @@ window.render = function() {
         tb = parseInt(b.temp_id, 10) || 0;
       }
       return currentSortDir === 'asc' ? ta - tb : tb - ta;
-    } else {
+    } else if (currentSortType === 'price') {
       const ga = parseFloat(a.gia) || 0, gb = parseFloat(b.gia) || 0;
       return currentSortDir === 'asc' ? ga - gb : gb - ga;
+    } else if (currentSortType === 'unit_price') {
+      const getUnitPrice = (p) => {
+        const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || 0;
+        const price = parseFloat(p.gia) || 0;
+        return (area > 0 && price > 0) ? (price / area) : 999999;
+      };
+      const upa = getUnitPrice(a), upb = getUnitPrice(b);
+      return currentSortDir === 'asc' ? upa - upb : upb - upa;
+    } else if (currentSortType === 'updated_at') {
+      const getUpdatedTime = (p) => {
+        const dateStr = p.json_ui_parsed?.updatedAt || '';
+        if (!dateStr || dateStr === 'None') return 0;
+        const time = new Date(dateStr).getTime();
+        return isNaN(time) ? 0 : time;
+      };
+      const uta = getUpdatedTime(a), utb = getUpdatedTime(b);
+      return currentSortDir === 'asc' ? uta - utb : utb - uta;
+    } else if (currentSortType === 'dt_so') {
+      const getDtSo = (p) => {
+        return parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || 0;
+      };
+      const dsa = getDtSo(a), dsb = getDtSo(b);
+      return currentSortDir === 'asc' ? dsa - dsb : dsb - dsa;
     }
+    return 0;
   });
 
   if (!arr.length) {
