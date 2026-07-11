@@ -981,9 +981,80 @@
       container.innerHTML = html;
     }
 
+    function parseSheetDate(dateStr) {
+      if (!dateStr) return new Date(0);
+      
+      let d = new Date(dateStr);
+      if (!isNaN(d.getTime())) {
+        const parts = dateStr.split(/[\sT]/);
+        const dateParts = parts[0].split(/[\/\-]/);
+        if (dateParts.length === 3 && dateParts[2].length === 4) {
+          const day = parseInt(dateParts[0], 10);
+          const month = parseInt(dateParts[1], 10) - 1;
+          const year = parseInt(dateParts[2], 10);
+          
+          let hour = 0, min = 0, sec = 0;
+          if (parts[1]) {
+            const timeParts = parts[1].split(':');
+            hour = parseInt(timeParts[0], 10) || 0;
+            min = parseInt(timeParts[1], 10) || 0;
+            sec = parseInt(timeParts[2], 10) || 0;
+          }
+          const parsedDate = new Date(year, month, day, hour, min, sec);
+          if (!isNaN(parsedDate.getTime())) {
+            return parsedDate;
+          }
+        }
+        return d;
+      }
+      
+      try {
+        const parts = dateStr.split(/[\sT]/);
+        const dateParts = parts[0].split(/[\/\-]/);
+        if (dateParts.length === 3) {
+          let day, month, year;
+          if (dateParts[0].length === 4) {
+            year = parseInt(dateParts[0], 10);
+            month = parseInt(dateParts[1], 10) - 1;
+            day = parseInt(dateParts[2], 10);
+          } else {
+            day = parseInt(dateParts[0], 10);
+            month = parseInt(dateParts[1], 10) - 1;
+            year = parseInt(dateParts[2], 10);
+          }
+          
+          let hour = 0, min = 0, sec = 0;
+          if (parts[1]) {
+            const timeParts = parts[1].split(':');
+            hour = parseInt(timeParts[0], 10) || 0;
+            min = parseInt(timeParts[1], 10) || 0;
+            sec = parseInt(timeParts[2], 10) || 0;
+          }
+          
+          const parsedDate = new Date(year, month, day, hour, min, sec);
+          if (!isNaN(parsedDate.getTime())) {
+            return parsedDate;
+          }
+        }
+      } catch (e) {}
+      
+      return new Date(0);
+    }
+
+    function formatDateTime(timestamp) {
+      if (!timestamp) return '';
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime()) || date.getTime() === 0) return '';
+      const hh = String(date.getHours()).padStart(2, '0');
+      const min = String(date.getMinutes()).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${hh}:${min} ${dd}/${mm}/${yyyy}`;
+    }
+
     function parseCustomerInfo(nameStr) {
       if (!nameStr) return { name: 'Khách ẩn danh', phone: 'SĐT ẩn' };
-      // Tìm số điện thoại 9-11 chữ số ở cuối chuỗi
       const phoneMatch = nameStr.match(/(\d{9,11})$/);
       const phone = phoneMatch ? phoneMatch[1] : '';
       let cleanName = nameStr;
@@ -1000,7 +1071,6 @@
       logs.forEach(log => {
         const parsed = parseCustomerInfo(log.name);
         
-        // Loại bỏ SĐT của Admin Test "0908130555"
         if (parsed.phone === '0908130555') {
           return;
         }
@@ -1016,14 +1086,12 @@
           };
         }
         
-        // Cột phone trong Sheet chứa Action Type (Xem chi tiết, Mở danh sách nhà...)
         const actionType = log.phone || 'Hoạt động';
         
         if (actionType === 'Link bị chuyển tiếp') {
           groups[key].hasLeak = true;
         }
         
-        // Cột action trong Sheet chứa thông tin chi tiết của hành động (Tên căn nhà, số lượng căn...)
         const actionDetail = log.action + (log.details ? ` - ${log.details}` : '');
         const actionKey = `${actionType}_${actionDetail}`;
         
@@ -1041,7 +1109,7 @@
         }
         
         actionGroup.count++;
-        const logTime = log.timestamp ? new Date(log.timestamp).getTime() : 0;
+        const logTime = log.timestamp ? parseSheetDate(log.timestamp).getTime() : 0;
         if (logTime > actionGroup.lastTimestamp) {
           actionGroup.lastTimestamp = logTime;
         }
@@ -1049,12 +1117,10 @@
       
       const groupsArray = Object.values(groups).map(g => {
         g.lastActive = Math.max(...g.actions.map(a => a.lastTimestamp), 0);
-        // Sắp xếp lịch sử hành động của từng khách theo thời gian mới nhất lên đầu
         g.actions.sort((a, b) => b.lastTimestamp - a.lastTimestamp);
         return g;
       });
       
-      // Sắp xếp danh sách khách hàng theo hoạt động gần đây nhất lên đầu
       groupsArray.sort((a, b) => b.lastActive - a.lastActive);
       return groupsArray;
     }
@@ -1088,7 +1154,7 @@
 
         let actionsHtml = '';
         cust.actions.forEach(act => {
-          const dateStr = act.lastTimestamp ? new Date(act.lastTimestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : '';
+          const dateStr = act.lastTimestamp ? formatDateTime(act.lastTimestamp) : '';
           const countBadgeHtml = act.count > 1 ? `<span class="badge-count">x${act.count}</span>` : '';
           
           actionsHtml += `
