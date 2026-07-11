@@ -182,6 +182,7 @@ def normalize_listing_for_client(row):
     
     # Map linh hoạt và an toàn các key từ SQLite sang Client format (hỗ trợ cả 2 định dạng)
     mapping = {
+        "last_crawl": ["Last_Crawl", "last_crawl"],
         "Tieu_de_Public": ["Tieu_de_Public", "Ti_u____Public"],
         "Mo_ta_Public": ["Mo_ta_Public", "M__t__Public"],
         "Noi_dung_chinh": ["Noi_dung_chinh", "N_i_dung_ch_nh"],

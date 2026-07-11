@@ -814,8 +814,44 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
                 new_desc_str = cleaned_metadata.get("Mo_ta_chi_tiet", "")
                 new_status_str = cleaned_metadata.get("Trang_thai", "")
                 
+                # Trích xuất ngày cập nhật thực tế của căn từ JSON_UI mới cào
+                updated_at_raw = ""
+                new_json_ui_str = cleaned_metadata.get("JSON_UI", "")
+                if new_json_ui_str:
+                    try:
+                        new_json_ui_dict = json.loads(new_json_ui_str)
+                        updated_at_raw = new_json_ui_dict.get("updatedAt", "")
+                    except Exception:
+                        pass
+                
+                if not updated_at_raw and existing:
+                    try:
+                        if old_json_ui_str:
+                            old_json_ui_dict = json.loads(old_json_ui_str)
+                            updated_at_raw = old_json_ui_dict.get("updatedAt", "")
+                    except Exception:
+                        pass
+
+                def parse_proptech_date(iso_str):
+                    if not iso_str or iso_str == "None":
+                        return datetime.now().strftime("%d/%m/%Y")
+                    try:
+                        s = str(iso_str).replace("Z", "")
+                        if "." in s:
+                            s = s.split(".")[0]
+                        dt = datetime.strptime(s, "%Y-%m-%dT%H:%M:%S")
+                        return dt.strftime("%d/%m/%Y")
+                    except Exception:
+                        try:
+                            dt = datetime.fromisoformat(iso_str)
+                            return dt.strftime("%d/%m/%Y")
+                        except Exception:
+                            if re.match(r'^\d{2}/\d{2}/\d{4}', str(iso_str)):
+                                return str(iso_str).split(' ')[0]
+                            return datetime.now().strftime("%d/%m/%Y")
+
+                hist_date_str = parse_proptech_date(updated_at_raw)
                 new_history_entries = []
-                now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                 
                 # 1. Kiểm tra đổi giá
                 try:
@@ -833,7 +869,7 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
                             "field": "offeringPrice",
                             "old": str(p_old),
                             "new": str(p_new),
-                            "date": now_str
+                            "date": hist_date_str
                         })
                         print(f"[🔄 Lịch sử Giá] Căn {tk_id}: Giá thay đổi {p_old} tỷ -> {p_new} tỷ")
                 except Exception as e_price_comp:
@@ -846,7 +882,7 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
                         "field": "status",
                         "old": old_status_str.strip(),
                         "new": new_status_str.strip(),
-                        "date": now_str
+                        "date": hist_date_str
                     })
                 
                 # 3. Kiểm tra đổi mô tả (chỉ lưu dạng flag thông báo đổi để tránh tràn ô)
@@ -856,7 +892,7 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
                         "field": "description",
                         "old": "Mô tả cũ",
                         "new": "Mô tả mới",
-                        "date": now_str
+                        "date": hist_date_str
                     })
                 
                 # Nếu có thay đổi mới, trộn vào JSON_UI
