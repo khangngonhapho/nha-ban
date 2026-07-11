@@ -313,12 +313,54 @@
             ${(() => {
               const jsonUi = p.json_ui_parsed || {};
               const history = jsonUi.history || [];
-              if (!history || history.length === 0) return '';
+              
+              const formatDateOnly = (isoStr) => {
+                if (!isoStr || isoStr === 'None') return '';
+                try {
+                  const d = new Date(isoStr);
+                  if (isNaN(d.getTime())) return isoStr.split(' ')[0];
+                  const date = String(d.getDate()).padStart(2, '0');
+                  const month = String(d.getMonth() + 1).padStart(2, '0');
+                  const year = d.getFullYear();
+                  return `${date}/${month}/${year}`;
+                } catch (e) {
+                  return isoStr.split(' ')[0];
+                }
+              };
+
+              const historyLines = [];
+              
+              // 1. Ngày ký hợp đồng
+              if (jsonUi.createdAtSigned) {
+                const dateKy = formatDateOnly(jsonUi.createdAtSigned);
+                if (dateKy) {
+                  historyLines.push(`
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
+                      <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${dateKy}</span>
+                      <span style="color: #2c3e50; font-weight: 500;">Hợp đồng ký đầu chủ</span>
+                    </div>
+                  `);
+                }
+              }
+              
+              // 2. Ngày cập nhật Thiên Khôi
+              if (jsonUi.updatedAt) {
+                const dateUp = formatDateOnly(jsonUi.updatedAt);
+                if (dateUp) {
+                  historyLines.push(`
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
+                      <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${dateUp}</span>
+                      <span style="color: #2c3e50; font-weight: 500;">Cập nhật trên nguồn</span>
+                    </div>
+                  `);
+                }
+              }
               
               // Fallback area calculation to compute price per sqm
               const area = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || parseFloat(p.dt) || 0;
               
-              const historyItems = history.map(item => {
+              // 3. Các thay đổi cào quét
+              history.forEach(item => {
                 let changeDesc = '';
                 if (item.type === 'price') {
                   const oldVal = parseFloat(item.old);
@@ -337,28 +379,29 @@
                 }
                 
                 const dateOnly = (item.date || '').split(' ')[0];
-                return `
+                historyLines.push(`
                   <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
                     <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${dateOnly}</span>
                     <span style="color: #2c3e50; font-weight: 500;">${changeDesc}</span>
                   </div>
-                `;
-              }).join('');
+                `);
+              });
               
+              if (historyLines.length === 0) return '';
+              
+              const lastCrawlVal = p.last_crawl || (p.json_ui_parsed && p.json_ui_parsed.Last_Crawl) || '';
               return `
-                <div id="history-panel-wrapper" style="display: ${history.length > 0 ? 'block' : 'none'};">
-                  <div class="admin-raw-title" style="margin-top:14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                      <span>Lịch sử thay đổi</span>
-                      <span id="history-count" style="background: var(--blue); color: white; border-radius: 50%; font-size: 10px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold;">${history.length}</span>
-                    </div>
-                    <div id="history-last-crawl" style="font-size: 11px; color: #7f8c8d; font-weight: normal; font-family: monospace;">
-                      ${p.last_crawl ? `Cập nhật đến: ${p.last_crawl}` : ''}
-                    </div>
+                <div class="admin-raw-title" style="margin-top:14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span>Lịch sử thay đổi</span>
+                    <span style="background: var(--blue); color: white; border-radius: 50%; font-size: 10px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold;">${historyLines.length}</span>
                   </div>
-                  <div id="history-items-container" style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-top: 6px; max-height: 200px; overflow-y: auto;">
-                    ${historyItems}
+                  <div style="font-size: 11px; color: #7f8c8d; font-weight: normal; font-family: monospace;">
+                    Cập nhật đến: ${lastCrawlVal}
                   </div>
+                </div>
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-top: 6px; max-height: 200px; overflow-y: auto;">
+                  ${historyLines.join('')}
                 </div>
               `;
             })()}
@@ -679,68 +722,6 @@
             if (typeof window.gotoImageEditorSlide === 'function') {
               window.gotoImageEditorSlide(window.activeImageEditorIndex || 0);
             }
-          }
-
-          // Tự động tải thông tin crawl mới nhất từ SQLite backend (nếu có) để cập nhật Lịch sử thay đổi và Cập nhật đến
-          if (p.id) {
-            fetch(`/api/listings/${p.id}`)
-              .then(res => res.json())
-              .then(data => {
-                if (data.status === 'success' && data.listing) {
-                  const dbP = data.listing;
-                  const freshLastCrawl = dbP.last_crawl || '';
-                  const freshHistory = (dbP.json_ui_parsed && dbP.json_ui_parsed.history) || [];
-                  
-                  // Cập nhật Cập nhật đến trên UI
-                  const lastCrawlEl = document.getElementById('history-last-crawl');
-                  if (lastCrawlEl) {
-                    lastCrawlEl.textContent = freshLastCrawl ? `Cập nhật đến: ${freshLastCrawl}` : '';
-                  }
-                  
-                  // Cập nhật Lịch sử thay đổi items trên UI
-                  const countEl = document.getElementById('history-count');
-                  if (countEl) {
-                    countEl.textContent = freshHistory.length;
-                  }
-                  
-                  const containerEl = document.getElementById('history-items-container');
-                  if (containerEl && freshHistory.length > 0) {
-                    const areaVal = parseFloat(p.dt_tren_so_custom) || parseFloat(p.raw_dt_tren_so) || parseFloat(p.dt) || 0;
-                    const html = freshHistory.map(item => {
-                      let changeDesc = '';
-                      if (item.type === 'price') {
-                        const oldVal = parseFloat(item.old);
-                        const newVal = parseFloat(item.new);
-                        const formatGiabq = (price, a) => {
-                          if (!a || a <= 0) return '';
-                          return ` (${((price * 1000) / a).toFixed(1)}tr)`;
-                        };
-                        changeDesc = `Giá: <span style="text-decoration: line-through; color: #7f8c8d;">${oldVal} tỷ${formatGiabq(oldVal, areaVal)}</span> ➔ <span style="color: #27ae60; font-weight: 700;">${newVal} tỷ${formatGiabq(newVal, areaVal)}</span>`;
-                      } else if (item.type === 'status') {
-                        changeDesc = `Trạng thái: <span style="color: #7f8c8d;">${item.old}</span> ➔ <span style="color: var(--blue); font-weight: 700;">${item.new}</span>`;
-                      } else if (item.type === 'info' && item.field === 'description') {
-                        changeDesc = `<span style="color: #e67e22; font-weight: 600;">Cập nhật mô tả</span>`;
-                      } else {
-                        changeDesc = `Cập nhật khác (${item.field || ''})`;
-                      }
-                      
-                      const dateOnly = (item.date || '').split(' ')[0];
-                      return `
-                        <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 11.5px; align-items: flex-start; line-height: 1.4;">
-                          <span style="color: #95a5a6; font-weight: 600; min-width: 75px; font-family: monospace; white-space: nowrap;">${dateOnly}</span>
-                          <span style="color: #2c3e50; font-weight: 500;">${changeDesc}</span>
-                        </div>
-                      `;
-                    }).join('');
-                    
-                    containerEl.innerHTML = html;
-                    
-                    const wrapperEl = document.getElementById('history-panel-wrapper');
-                    if (wrapperEl) wrapperEl.style.display = 'block';
-                  }
-                }
-              })
-              .catch(e => console.warn("Lỗi khi fetch thông tin lịch sử từ SQLite:", e));
           }
         }, 50);
       }

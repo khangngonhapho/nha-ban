@@ -729,6 +729,17 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
         if safe_col in db_cols and safe_col not in ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "curated_config_json"]:
             cleaned_metadata[safe_col] = str(val) if val is not None else ""
 
+    # Đảm bảo Last_Crawl luôn nằm trong JSON_UI để đồng bộ lên Vercel
+    json_ui_str = cleaned_metadata.get("JSON_UI", "")
+    if json_ui_str:
+        try:
+            json_ui_obj = json.loads(json_ui_str)
+            if isinstance(json_ui_obj, dict):
+                json_ui_obj["Last_Crawl"] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                cleaned_metadata["JSON_UI"] = json.dumps(json_ui_obj, ensure_ascii=False)
+        except Exception:
+            pass
+
     # Lưu hoặc Cập nhật bảng
     existing = cursor.execute(f"SELECT tk_id FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
 
