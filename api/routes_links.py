@@ -415,10 +415,14 @@ def update_customer_profile():
             hashes = profile_sheet.col_values(2)
             if phone_hash in hashes:
                 row_idx = hashes.index(phone_hash) + 1
-                row_vals = profile_sheet.row_values(row_idx)
-                # Bảo toàn name nếu client gửi trống
-                final_name = new_name if new_name else (row_vals[2] if len(row_vals) > 2 else '')
-                profile_sheet.update(range_name=f"A{row_idx}:F{row_idx}", values=[[clean_phone, phone_hash, final_name, new_note, new_status, updated_at]])
+                # Ghi trực tiếp vào từng ô tương ứng nếu có thay đổi để tránh race condition và tối ưu tốc độ
+                if name:
+                    profile_sheet.update(range_name=f"C{row_idx}", values=[[new_name]])
+                if note is not None:
+                    profile_sheet.update(range_name=f"D{row_idx}", values=[[new_note]])
+                if lifecycle_status is not None:
+                    profile_sheet.update(range_name=f"E{row_idx}", values=[[new_status]])
+                profile_sheet.update(range_name=f"F{row_idx}", values=[[updated_at]])
             else:
                 row_data = [clean_phone, phone_hash, new_name, new_note, new_status, updated_at]
                 profile_sheet.append_row(row_data, value_input_option='USER_ENTERED')

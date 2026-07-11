@@ -817,34 +817,46 @@ module.exports = async (req, res) => {
       const hashes = (hashesData.values || []).map(row => row[0]);
       const idx = hashes.indexOf(phoneHash);
       
-      let currentNote = note !== undefined ? note : '';
-      let currentStatus = lifecycle_status !== undefined ? lifecycle_status : 'Lạnh';
-      let currentName = name || '';
-      
       if (idx !== -1) {
         const rowIdx = idx + 1;
-        // Fetch current row to preserve note/status/name if not provided
-        const rowUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A${rowIdx}:F${rowIdx}`;
-        const rowRes = await fetch(rowUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
-        const rowData = await rowRes.json();
-        const vals = rowData.values ? rowData.values[0] : [];
-        if (!currentName) currentName = vals[2] || '';
-        if (note === undefined) currentNote = vals[3] || '';
-        if (lifecycle_status === undefined) currentStatus = vals[4] || 'Lạnh';
-        
-        const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A${rowIdx}:F${rowIdx}?valueInputOption=USER_ENTERED`;
-        const putRes = await fetch(updateUrl, {
+        const promises = [];
+        if (name) {
+          promises.push(fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!C${rowIdx}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ values: [[name]] })
+          }));
+        }
+        if (note !== undefined) {
+          promises.push(fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!D${rowIdx}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ values: [[note]] })
+          }));
+        }
+        if (lifecycle_status !== undefined) {
+          promises.push(fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!E${rowIdx}?valueInputOption=USER_ENTERED`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ values: [[lifecycle_status]] })
+          }));
+        }
+        promises.push(fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!F${rowIdx}?valueInputOption=USER_ENTERED`, {
           method: 'PUT',
           headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            values: [[cleanPhone, phoneHash, currentName, currentNote, currentStatus, updatedAt]]
-          })
-        });
-        if (!putRes.ok) {
-          throw new Error(`Failed to update sheet row: ${putRes.status}`);
+          body: JSON.stringify({ values: [[updatedAt]] })
+        }));
+        
+        const results = await Promise.all(promises);
+        for (const r of results) {
+          if (!r.ok) throw new Error(`Failed to update sheet cell: ${r.status}`);
         }
       } else {
         const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/Customer_Profiles!A:F:append?valueInputOption=USER_ENTERED`;
+        const currentNote = note !== undefined ? note : '';
+        const currentStatus = lifecycle_status !== undefined ? lifecycle_status : 'Lạnh';
+        const currentName = name || '';
+        
         const postRes = await fetch(appendUrl, {
           method: 'POST',
           headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
