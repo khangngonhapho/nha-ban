@@ -307,7 +307,7 @@
 
             <!-- Google Maps Link -->
             <div class="admin-raw-title" style="margin-top:14px;">Bản đồ thực địa</div>
-            <div class="admin-map-link-container" style="margin-bottom: 16px;"></div>
+            <div class="admin-map-link-container" style="margin-bottom: 16px; display: flex; justify-content: flex-end;"></div>
 
             <!-- Lịch sử thay đổi (Change History Timeline) -->
             ${(() => {
