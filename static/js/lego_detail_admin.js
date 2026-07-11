@@ -641,7 +641,7 @@
               mapQuery = `${lat},${lng}`;
             } else {
               const cleanSoNha = (p.raw_so_nha || '').trim().replace(/\./g, '/');
-              mapQuery = `${cleanSoNha} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, ${p.ql || ''}, Hồ Chí Minh`.trim();
+              mapQuery = `${cleanSoNha} ${p.raw_ten_duong || ''}, Phường ${p.phuong || ''}, Hồ Chí Minh`.trim();
             }
             const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}`;
             mapLinkContainer.innerHTML = `
