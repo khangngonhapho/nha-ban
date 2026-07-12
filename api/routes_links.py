@@ -437,3 +437,115 @@ def update_customer_profile():
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@routes_links.route('/api/exclusions/list', methods=['GET'])
+def list_exclusions():
+    """Lấy danh sách các luật loại trừ Active từ SQLite local"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, field, operator, value, status, note FROM exclusion_filters WHERE status = 'Active'")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        exclusions = []
+        for r in rows:
+            exclusions.append({
+                "id": r[0],
+                "field": r[1],
+                "operator": r[2],
+                "value": r[3],
+                "status": r[4],
+                "note": r[5]
+            })
+        return jsonify({"status": "success", "exclusions": exclusions})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@routes_links.route('/api/exclusions/add', methods=['POST'])
+def add_exclusion():
+    """Thêm một luật loại trừ mới vào SQLite và Google Sheets"""
+    import manager
+    import time
+    try:
+        data = request.get_json(force=True) or {}
+        field = data.get("field", "").strip()
+        operator = data.get("operator", "").strip()
+        value = data.get("value", "").strip()
+        note = data.get("note", "").strip()
+        
+        if not field or not operator:
+            return jsonify({"status": "error", "message": "Thiếu thông tin field hoặc operator."}), 400
+            
+        id_val = f"crit_{int(time.time() * 1000)}"
+        
+        # 1. Ghi SQLite local
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO exclusion_filters (id, field, operator, value, status, note)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (id_val, field, operator, value, 'Active', note))
+        conn.commit()
+        conn.close()
+        
+        # 2. Ghi Google Sheets
+        try:
+            client = get_sheets_client()
+            spreadsheet = ensure_sheet_tabs_exists(client)
+            
+            try:
+                exclusions_sheet = spreadsheet.worksheet("Exclusion_Filters")
+            except Exception:
+                exclusions_sheet = spreadsheet.add_worksheet(title="Exclusion_Filters", rows=1000, cols=6)
+                headers = ["ID", "Field", "Operator", "Value", "Status", "Note"]
+                exclusions_sheet.update(range_name='A1:F1', values=[headers])
+                
+            row_data = [id_val, field, operator, value, 'Active', note]
+            exclusions_sheet.append_row(row_data, value_input_option='USER_ENTERED')
+            manager.add_log_message(f"[🛡️ EXCLUSION ADD] Đã thêm tiêu chí loại trừ {field} {operator} '{value}' lên Google Sheets.")
+        except Exception as e_sheet:
+            manager.add_log_message(f"[⚠️ WARNING EXCLUSION ADD] Lỗi đồng bộ lên Sheets: {str(e_sheet)}")
+            
+        return jsonify({"status": "success", "id": id_val})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@routes_links.route('/api/exclusions/remove', methods=['POST'])
+def remove_exclusion():
+    """Xóa (đổi status sang Inactive) một luật loại trừ trong SQLite và Google Sheets"""
+    import manager
+    try:
+        data = request.get_json(force=True) or {}
+        id_val = data.get("id", "").strip()
+        
+        if not id_val:
+            return jsonify({"status": "error", "message": "Thiếu ID tiêu chí cần xóa."}), 400
+            
+        # 1. SQLite local
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE exclusion_filters SET status = 'Inactive' WHERE id = ?", (id_val,))
+        conn.commit()
+        conn.close()
+        
+        # 2. Google Sheets
+        try:
+            client = get_sheets_client()
+            spreadsheet = ensure_sheet_tabs_exists(client)
+            exclusions_sheet = spreadsheet.worksheet("Exclusion_Filters")
+            
+            ids = exclusions_sheet.col_values(1)
+            if id_val in ids:
+                row_idx = ids.index(id_val) + 1
+                exclusions_sheet.update(range_name=f"E{row_idx}", values=[['Inactive']])
+                manager.add_log_message(f"[🛡️ EXCLUSION REMOVE] Đã xóa (Inactive) tiêu chí {id_val} trên Sheets.")
+        except Exception as e_sheet:
+            manager.add_log_message(f"[⚠️ WARNING EXCLUSION REMOVE] Lỗi cập nhật Sheets: {str(e_sheet)}")
+            
+        return jsonify({"status": "success", "message": "Đã xóa tiêu chí thành công."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500

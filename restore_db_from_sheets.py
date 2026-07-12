@@ -290,6 +290,43 @@ def restore_links_and_blacklist(client, db_path):
                 print("  - [Customer Profiles] Tab trống hoặc chỉ có tiêu đề. Không có dữ liệu khách hàng để nạp.")
         except Exception as e_cp:
             print(f"  - [⚠️ WARNING Customer Profiles] Không thể đồng bộ: {str(e_cp)}")
+
+        # 4. Đồng bộ Exclusion_Filters (US-143)
+        try:
+            try:
+                exclusions_sheet = spreadsheet.worksheet("Exclusion_Filters")
+            except Exception:
+                exclusions_sheet = spreadsheet.add_worksheet(title="Exclusion_Filters", rows=1000, cols=6)
+                headers = ["ID", "Field", "Operator", "Value", "Status", "Note"]
+                exclusions_sheet.update(range_name='A1:F1', values=[headers])
+            ex_rows = exclusions_sheet.get_all_values()
+            if len(ex_rows) > 1:
+                conn = sqlite3.connect(db_path, timeout=30.0)
+                cursor = conn.cursor()
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS exclusion_filters (
+                    id TEXT PRIMARY KEY,
+                    field TEXT NOT NULL,
+                    operator TEXT NOT NULL,
+                    value TEXT,
+                    status TEXT NOT NULL DEFAULT 'Active',
+                    note TEXT
+                )
+                """)
+                cursor.execute("DELETE FROM exclusion_filters")
+                for r in ex_rows[1:]:
+                    if len(r) >= 5 and r[0]:
+                        cursor.execute("""
+                            INSERT OR REPLACE INTO exclusion_filters (id, field, operator, value, status, note)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """, (r[0], r[1], r[2], r[3], r[4], r[5] if len(r) >= 6 else ''))
+                conn.commit()
+                conn.close()
+                print(f"  - [Exclusion Filters] Đã nạp {len(ex_rows)-1} tiêu chí loại trừ vào CSDL Tạm.")
+            else:
+                print("  - [Exclusion Filters] Tab trống hoặc chỉ có tiêu đề. Không có tiêu chí loại trừ để nạp.")
+        except Exception as e_ex:
+            print(f"  - [⚠️ WARNING Exclusion Filters] Không thể đồng bộ: {str(e_ex)}")
             
     except Exception as e:
         print(f"  - [⚠️ WARNING Links Sync] Lỗi kết nối hoặc mở spreadsheet: {str(e)}")

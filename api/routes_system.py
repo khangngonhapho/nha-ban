@@ -194,10 +194,29 @@ def handle_config():
         client_cfg["feature_flags"] = merged_flags
         client_cfg["maintenance_mode"] = merged_flags.get("maintenance_mode", False)
         
-        # Thêm thông tin môi trường và database
-        client_cfg["is_staging"] = is_staging
-        from core.db import get_db_file
-        client_cfg["db_file"] = get_db_file()
+        # Thêm danh sách exclusion rules đang active từ SQLite
+        exclusions = []
+        try:
+            import sqlite3
+            import manager
+            db_file = getattr(manager, "DB_FILE", "raw_archive.db")
+            conn = sqlite3.connect(db_file, timeout=30.0)
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, field, operator, value, status, note FROM exclusion_filters WHERE status = 'Active'")
+            rows = cursor.fetchall()
+            for r in rows:
+                exclusions.append({
+                    "id": r[0],
+                    "field": r[1],
+                    "operator": r[2],
+                    "value": r[3],
+                    "status": r[4],
+                    "note": r[5]
+                })
+            conn.close()
+        except Exception:
+            pass
+        client_cfg["exclusions"] = exclusions
         
         return jsonify({"status": "success", "config": client_cfg})
 

@@ -716,6 +716,18 @@ def init_db(db_file=None):
         updated_at TEXT
     )
     """)
+
+    # Bảng exclusion_filters để lưu các tiêu chí loại trừ động của Admin (US-143)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS exclusion_filters (
+        id TEXT PRIMARY KEY,
+        field TEXT NOT NULL,
+        operator TEXT NOT NULL,
+        value TEXT,
+        status TEXT NOT NULL DEFAULT 'Active',
+        note TEXT
+    )
+    """)
     conn.commit()
     conn.close()
 

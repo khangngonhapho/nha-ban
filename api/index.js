@@ -713,6 +713,93 @@ module.exports = async (req, res) => {
     }
   }
 
+  // Route: GET /api/exclusions/list
+  if (pathname === '/api/exclusions/list') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      await ensureSheetExists('Exclusion_Filters', ["ID", "Field", "Operator", "Value", "Status", "Note"]);
+      const sheetData = await callSheetsAPI('GET', 'Exclusion_Filters!A:F');
+      const rows = sheetData.values || [];
+      const list = [];
+      if (rows.length > 1) {
+        for (let i = 1; i < rows.length; i++) {
+          const r = rows[i];
+          if (r[0] && r[4] === 'Active') {
+            list.push({
+              id: r[0],
+              field: r[1] || '',
+              operator: r[2] || '',
+              value: r[3] || '',
+              status: r[4] || 'Active',
+              note: r[5] || ''
+            });
+          }
+        }
+      }
+      return res.status(200).json({ status: 'success', exclusions: list });
+    } catch (err) {
+      console.error('Error listing exclusions:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/exclusions/add
+  if (pathname === '/api/exclusions/add') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      let body = req.body || {};
+      if (typeof body === 'string') body = JSON.parse(body);
+      const { field, operator, value, note } = body;
+      if (!field || !operator) {
+        return res.status(400).json({ error: 'Missing field or operator' });
+      }
+      const id = 'crit_' + Date.now();
+      await ensureSheetExists('Exclusion_Filters', ["ID", "Field", "Operator", "Value", "Status", "Note"]);
+      
+      await callSheetsAPI('POST', 'Exclusion_Filters!A:F', {
+        values: [[id, field, operator, value || '', 'Active', note || '']]
+      }, ':append?valueInputOption=USER_ENTERED');
+      
+      return res.status(200).json({ status: 'success', id });
+    } catch (err) {
+      console.error('Error adding exclusion:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // Route: POST /api/exclusions/remove
+  if (pathname === '/api/exclusions/remove') {
+    const userInfo = await checkAdminAuth(req, res);
+    if (!userInfo) return;
+    try {
+      let body = req.body || {};
+      if (typeof body === 'string') body = JSON.parse(body);
+      const { id } = body;
+      if (!id) {
+        return res.status(400).json({ error: 'Missing id' });
+      }
+      
+      const sheetData = await callSheetsAPI('GET', 'Exclusion_Filters!A:A');
+      const ids = (sheetData.values || []).map(r => r[0]);
+      const idx = ids.indexOf(id);
+      if (idx === -1) {
+        return res.status(404).json({ error: 'Exclusion ID not found' });
+      }
+      const rowIdx = idx + 1;
+      
+      await callSheetsAPI('PUT', `Exclusion_Filters!E${rowIdx}`, {
+        values: [['Inactive']]
+      }, '?valueInputOption=USER_ENTERED');
+      
+      return res.status(200).json({ status: 'success', message: 'Exclusion rule removed' });
+    } catch (err) {
+      console.error('Error removing exclusion:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
   // Route: GET /api/links/logs
   if (pathname === '/api/links/logs') {
     const userInfo = await checkAdminAuth(req, res);
@@ -1532,6 +1619,47 @@ module.exports = async (req, res) => {
         console.error('Error fetching dynamic feature flags from sheets, falling back:', err);
       }
 
+      // Fetch dynamic exclusion rules from Google Sheets
+      let exclusions = [];
+      try {
+        const creds = getCredentials();
+        if (creds) {
+          const accessToken = await getGoogleAccessToken(creds);
+          if (accessToken) {
+            const range = 'Exclusion_Filters!A:F';
+            const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${TRACKING_SHEET_ID}/values/${encodeURIComponent(range)}`;
+            
+            const fetchPromise = fetch(sheetsUrl, {
+              headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Google Sheets exclusions fetch timeout')), 4000)
+            );
+            const sheetsRes = await Promise.race([fetchPromise, timeoutPromise]);
+            if (sheetsRes.ok) {
+              const dataEx = await sheetsRes.json();
+              if (dataEx && dataEx.values) {
+                for (let i = 1; i < dataEx.values.length; i++) {
+                  const r = dataEx.values[i];
+                  if (r[0] && r[4] === 'Active') {
+                    exclusions.push({
+                      id: r[0],
+                      field: r[1] || '',
+                      operator: r[2] || '',
+                      value: r[3] || '',
+                      status: r[4] || 'Active',
+                      note: r[5] || ''
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching exclusions for config:', err);
+      }
+
       // Merge: Sheets flags override settings.json local flags
       const mergedFlags = Object.assign({}, cfg.feature_flags || {}, dynamicFlags);
 
@@ -1544,7 +1672,8 @@ module.exports = async (req, res) => {
         json_ui_filters: cfg.json_ui_filters || [],
         json_ui_fields: cfg.json_ui_fields || [],
         db_file: isStaging ? 'raw_archive_staging.db' : 'raw_archive.db',
-        maintenance_mode: mergedFlags.maintenance_mode === true
+        maintenance_mode: mergedFlags.maintenance_mode === true,
+        exclusions: exclusions
       };
       return res.status(200).json({ status: 'success', config: safeConfig });
     } catch (err) {

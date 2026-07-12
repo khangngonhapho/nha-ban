@@ -1119,11 +1119,14 @@ const LegoState = {
           ...unmatchedList
         ];
 
+        const filteredFullList = typeof window.applyExclusions === 'function' ? window.applyExclusions(fullList) : fullList;
+        const filteredMergedList = typeof window.applyExclusions === 'function' ? window.applyExclusions(mergedList) : mergedList;
+
         this.isSecureLoaded = true;
-        this.DATA = fullList;
+        this.DATA = filteredFullList;
         this.isDataLoaded = true;
-        this.emit('rawDataLoaded', fullList);
-        this.emit('canvasDataLoaded', mergedList);
+        this.emit('rawDataLoaded', filteredFullList);
+        this.emit('canvasDataLoaded', filteredMergedList);
       } catch (err) {
         console.error("Error loading secure admin data, falling back to public:", err);
         this.loadPublicDataFallback();
@@ -1348,10 +1351,11 @@ const LegoState = {
             return p;
           });
 
-        this.DATA = fullList;
+        const filteredFullList = typeof window.applyExclusions === 'function' ? window.applyExclusions(fullList) : fullList;
+        this.DATA = filteredFullList;
         this.isDataLoaded = true;
-        this.emit('rawDataLoaded', fullList);
-        this.emit('canvasDataLoaded', fullList);
+        this.emit('rawDataLoaded', filteredFullList);
+        this.emit('canvasDataLoaded', filteredFullList);
         this.emit('publicDataLoaded');
       } catch (e) {
         this.emit('dataLoadError', 'Lỗi parse dữ liệu: ' + e.message);

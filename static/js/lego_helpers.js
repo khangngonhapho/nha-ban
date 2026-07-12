@@ -409,6 +409,7 @@ window.getMappedPoolData = function() {
     
     return p;
   });
+  window.MAPPED_POOL_DATA = typeof window.applyExclusions === 'function' ? window.applyExclusions(window.MAPPED_POOL_DATA) : window.MAPPED_POOL_DATA;
   return window.MAPPED_POOL_DATA;
 };
 

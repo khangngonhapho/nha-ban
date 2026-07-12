@@ -1,6 +1,92 @@
 // lego_filters.js
 (function() {
   // Expose global filter variables on window
+  window.removeAccents = function(str) {
+    if (str === null || str === undefined) return '';
+    const s = String(str);
+    if (!s) return '';
+    return s
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .toLowerCase()
+      .trim();
+  };
+
+  window.evaluateCriterion = function(p, crit) {
+    if (!crit || !crit.field || !crit.operator) return false;
+    
+    // 1. Lấy giá trị của thuộc tính p[field]
+    let fieldVal = p[crit.field];
+    if (fieldVal === undefined || fieldVal === null) {
+      // Fallback cho các thuộc tính đặc biệt trong json_ui_parsed
+      const criteriaKey = "Criteria_" + crit.field;
+      if (p.json_ui_parsed && p.json_ui_parsed[criteriaKey] !== undefined) {
+        fieldVal = p.json_ui_parsed[criteriaKey];
+      } else {
+        fieldVal = '';
+      }
+    }
+    
+    const op = crit.operator;
+    const ruleValRaw = crit.value || '';
+    
+    // 2. Chuyển đổi dữ liệu và so sánh tùy theo toán tử
+    // Toán tử so sánh số: gte, lte, gt, lt, eq, ne
+    if (['gte', 'lte', 'gt', 'lt', 'eq', 'ne'].includes(op)) {
+      const pNum = parseFloat(fieldVal);
+      const rNum = parseFloat(ruleValRaw);
+      
+      // Nếu cả hai là số hợp lệ thì so sánh số
+      if (!isNaN(pNum) && !isNaN(rNum)) {
+        if (op === 'gte') return pNum >= rNum;
+        if (op === 'lte') return pNum <= rNum;
+        if (op === 'gt') return pNum > rNum;
+        if (op === 'lt') return pNum < rNum;
+        if (op === 'eq') return pNum === rNum;
+        if (op === 'ne') return pNum !== rNum;
+      }
+    }
+    
+    // So sánh chuỗi (không dấu, chữ thường)
+    const pStr = window.removeAccents(fieldVal);
+    const rStr = window.removeAccents(ruleValRaw);
+    
+    if (op === 'eq') return pStr === rStr;
+    if (op === 'ne') return pStr !== rStr;
+    if (op === 'contains') return pStr.includes(rStr);
+    if (op === 'not_contains') return !pStr.includes(rStr);
+    
+    if (op === 'in') {
+      const parts = ruleValRaw.split(',').map(x => window.removeAccents(x.trim())).filter(Boolean);
+      return parts.includes(pStr);
+    }
+    if (op === 'not_in') {
+      const parts = ruleValRaw.split(',').map(x => window.removeAccents(x.trim())).filter(Boolean);
+      return !parts.includes(pStr);
+    }
+    
+    return false;
+  };
+
+  window.applyExclusions = function(list) {
+    if (!list || !Array.isArray(list)) return [];
+    
+    const exclusions = (window.LegoState && window.LegoState.config && window.LegoState.config.exclusions) || 
+                       (window.JSON_UI_CONFIG && window.JSON_UI_CONFIG.exclusions) || [];
+    if (!exclusions || exclusions.length === 0) return list;
+    
+    return list.filter(p => {
+      for (const crit of exclusions) {
+        if (window.evaluateCriterion && window.evaluateCriterion(p, crit)) {
+          return false; // Khớp bất kỳ luật nào -> loại trừ
+        }
+      }
+      return true; // Không khớp -> giữ lại
+    });
+  };
+
   window.selDistricts = new Set();
   window.selWards = new Set();
   window.selDuongs = new Set();

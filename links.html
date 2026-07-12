@@ -845,6 +845,74 @@
         </div>
       </div>
 
+      <!-- Tab 5: Advanced Exclusion Filters (Loại trừ) -->
+      <div id="tabExclusions" class="tab-content">
+        <div class="section-title">
+          <span>Tiêu chí loại trừ nâng cao</span>
+          <span class="section-badge" id="exclusionCount" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #ef4444;">0</span>
+        </div>
+        
+        <!-- Form to Add Exclusion -->
+        <div class="card" style="margin-bottom: 20px; padding: 15px;">
+          <h3 style="color: var(--gold); margin-top: 0; font-size: 15px; margin-bottom: 15px;">➕ Thêm tiêu chí loại trừ mới</h3>
+          
+          <div class="input-group">
+            <label for="exField">1. Thuộc tính loại trừ:</label>
+            <select id="exField" class="input-control" style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--card-border); border-radius: 6px; padding: 8px; font-family: inherit; width: 100%;">
+              <option value="gia">Giá bán (Tỷ)</option>
+              <option value="phuong">Phường</option>
+              <option value="q">Quận (viết tắt: q1, q3, pn, tb, bt, gv...)</option>
+              <option value="loai_hinh">Loại hình (Mặt tiền / Hẻm)</option>
+              <option value="rong_hem">Độ rộng hẻm (m)</option>
+              <option value="so_pn">Số phòng ngủ</option>
+              <option value="tang">Số tầng</option>
+              <option value="dt">Diện tích sử dụng (m2)</option>
+              <option value="t">Tiêu đề quảng cáo</option>
+              <option value="m">Mô tả chi tiết</option>
+              <option value="cu_phap">Cú pháp địa chỉ thô</option>
+            </select>
+          </div>
+          
+          <div class="input-group" style="margin-top: 12px;">
+            <label for="exOperator">2. Điều kiện so sánh:</label>
+            <select id="exOperator" class="input-control" style="background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--card-border); border-radius: 6px; padding: 8px; font-family: inherit; width: 100%;">
+              <option value="gte">&gt;= (Lớn hơn hoặc bằng)</option>
+              <option value="lte">&lt;= (Nhỏ hơn hoặc bằng)</option>
+              <option value="gt">&gt; (Lớn hơn)</option>
+              <option value="lt">&lt; (Nhỏ hơn)</option>
+              <option value="eq">= (Bằng chính xác)</option>
+              <option value="ne">!= (Khác)</option>
+              <option value="contains">Chứa từ khóa (không phân biệt dấu)</option>
+              <option value="not_contains">Không chứa từ khóa</option>
+              <option value="in">Nằm trong danh sách (dấu phẩy ngăn cách)</option>
+              <option value="not_in">Không nằm trong danh sách</option>
+            </select>
+          </div>
+          
+          <div class="input-group" style="margin-top: 12px;">
+            <label for="exValue">3. Giá trị so sánh:</label>
+            <input type="text" id="exValue" class="input-control" placeholder="Nhập giá trị (ví dụ: 25, Phường 15, gv...)">
+          </div>
+          
+          <div class="input-group" style="margin-top: 12px;">
+            <label for="exNote">4. Lý do loại trừ (Ghi chú):</label>
+            <input type="text" id="exNote" class="input-control" placeholder="Ghi chú (ví dụ: Nhà ngưng bán, phường ít hoạt động...)">
+          </div>
+          
+          <button class="btn" onclick="addExclusion()" style="margin-top: 15px; width: 100%;">
+            <span>⚡ THÊM TIÊU CHÍ LOẠI TRỪ</span>
+          </button>
+        </div>
+        
+        <!-- Active Exclusions List -->
+        <div id="exclusionsList">
+          <div class="loader">
+            <div class="spinner"></div>
+            <span>Đang nạp danh sách loại trừ...</span>
+          </div>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -867,6 +935,10 @@
       <span class="icon">📋</span>
       <span>Liên kết</span>
     </div>
+    <div class="nav-item" onclick="switchTab('tabExclusions', this)">
+      <span class="icon">🛡️</span>
+      <span>Loại trừ</span>
+    </div>
   </nav>
 
   <!-- Toast Toast Notification -->
@@ -884,6 +956,7 @@
     let globalBlacklist = [];
     let globalLogs = [];
     let globalCustomerProfiles = [];
+    let globalExclusions = [];
     const WHITELIST_PHONES = ['0908130555', '0901234567', '0931088939'];
 
     // Check auth status on load
@@ -1042,6 +1115,10 @@
       
       document.getElementById(tabId).classList.add('active');
       el.classList.add('active');
+      
+      if (tabId === 'tabExclusions') {
+        loadExclusions();
+      }
     }
 
     // Load API data
@@ -1092,6 +1169,9 @@
 
       // Render cả 2 tab Nhật ký & Chặn phối hợp
       renderLogsAndBlacklist();
+      
+      // Load exclusions
+      loadExclusions().catch(err => console.error("Error loading exclusions in loadData:", err));
     }
 
     // Render Links Registry
@@ -1807,6 +1887,162 @@
       } catch (err) {
         showToast("Lỗi kết nối lưu trạng thái: " + err.message, "❌");
       }
+    }
+
+    async function loadExclusions() {
+      const token = localStorage.getItem('g_access_token');
+      try {
+        const res = await fetch('/api/exclusions/list', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          globalExclusions = data.exclusions || [];
+          renderExclusionsList();
+        } else {
+          showToast("Không thể tải danh sách loại trừ: " + data.error, "⚠️");
+        }
+      } catch (err) {
+        console.error('Error loading exclusions:', err);
+        showToast("Lỗi kết nối tải loại trừ: " + err.message, "❌");
+      }
+    }
+
+    async function addExclusion() {
+      const token = localStorage.getItem('g_access_token');
+      const field = document.getElementById('exField').value;
+      const operator = document.getElementById('exOperator').value;
+      const value = document.getElementById('exValue').value.trim();
+      const note = document.getElementById('exNote').value.trim();
+      
+      if (!value) {
+        showToast('Vui lòng nhập giá trị so sánh!', '⚠️');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/exclusions/add', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ field, operator, value, note })
+        });
+        const data = await res.json();
+        if (res.ok && data.status === 'success') {
+          showToast('Đã thêm tiêu chí loại trừ!', '✅');
+          document.getElementById('exValue').value = '';
+          document.getElementById('exNote').value = '';
+          await loadExclusions();
+        } else {
+          showToast(data.error || 'Lỗi thêm loại trừ', '❌');
+        }
+      } catch (err) {
+        console.error('Error adding exclusion:', err);
+        showToast('Lỗi mạng kết nối', '❌');
+      }
+    }
+
+    async function removeExclusion(id) {
+      const token = localStorage.getItem('g_access_token');
+      if (!confirm('Bạn có chắc chắn muốn xóa tiêu chí loại trừ này?')) return;
+      try {
+        const res = await fetch('/api/exclusions/remove', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (res.ok && data.status === 'success') {
+          showToast('Đã xóa tiêu chí loại trừ!', '✅');
+          await loadExclusions();
+        } else {
+          showToast(data.error || 'Lỗi xóa loại trừ', '❌');
+        }
+      } catch (err) {
+        console.error('Error removing exclusion:', err);
+        showToast('Lỗi mạng kết nối', '❌');
+      }
+    }
+
+    function renderExclusionsList() {
+      const container = document.getElementById('exclusionsList');
+      if (!container) return;
+      
+      if (globalExclusions.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px 20px; color: var(--sub); font-size: 14px;">
+            💡 Chưa cấu hình tiêu chí loại trừ nào.
+          </div>
+        `;
+        document.getElementById('exclusionCount').textContent = '0';
+        return;
+      }
+      
+      document.getElementById('exclusionCount').textContent = globalExclusions.length;
+      
+      // Sắp xếp gom nhóm cùng thuộc tính (field)
+      const sortedExclusions = globalExclusions.slice().sort((a, b) => {
+        return a.field.localeCompare(b.field);
+      });
+      
+      const fieldLabels = {
+        gia: 'Giá bán (Tỷ)',
+        phuong: 'Phường',
+        q: 'Quận',
+        loai_hinh: 'Loại hình',
+        rong_hem: 'Độ rộng hẻm',
+        so_pn: 'Số phòng ngủ',
+        tang: 'Số tầng',
+        dt: 'Diện tích',
+        t: 'Tiêu đề',
+        m: 'Mô tả',
+        cu_phap: 'Cú pháp thô'
+      };
+      
+      const opLabels = {
+        gte: '>=',
+        lte: '<=',
+        gt: '>',
+        lt: '<',
+        eq: '=',
+        ne: '!=',
+        contains: 'chứa',
+        not_contains: 'không chứa',
+        in: 'trong danh sách',
+        not_in: 'không trong danh sách'
+      };
+      
+      let html = '';
+      sortedExclusions.forEach(crit => {
+        const fieldName = fieldLabels[crit.field] || crit.field;
+        const opName = opLabels[crit.operator] || crit.operator;
+        const noteText = crit.note ? `<div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:4px;">📝 Ghi chú: ${crit.note}</div>` : '';
+        
+        html += `
+          <div class="card" style="margin-bottom: 12px; border-left: 3px solid #ef4444; background: rgba(26, 26, 30, 0.7); padding: 12px;">
+            <div class="card-body" style="padding: 0; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+              <div>
+                <div style="font-weight: bold; font-size: 14px; color: #fff;">
+                  <span style="color: var(--gold);">${fieldName}</span> 
+                  <span style="color: #ef4444; font-family: monospace; margin: 0 4px;">${opName}</span> 
+                  <span style="color: #fff;">"${crit.value}"</span>
+                </div>
+                ${noteText}
+              </div>
+              <button class="btn btn-secondary" onclick="removeExclusion('${crit.id}')" style="padding: 6px 12px; font-size: 12px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); cursor: pointer; flex-shrink: 0;">
+                Xóa
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
     }
   </script>
 </body>
