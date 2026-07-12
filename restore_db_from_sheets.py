@@ -12,6 +12,12 @@ from manager import (
 )
 from pool_lego import init_db, POOL_HEADERS
 
+# Cho phép chỉ định database đích qua tham số dòng lệnh (vd: python restore_db_from_sheets.py --db=custom_test.db)
+for arg in sys.argv:
+    if arg.startswith("--db="):
+        DB_FILE = arg.split("=", 1)[1]
+        print(f"[ℹ] Chỉ định ghi đè CSDL đích: {DB_FILE}")
+
 def backup_master_database(master_db_path):
     """Sao lưu CSDL Gốc trước khi hợp nhất và xoay vòng lưu tối đa 10 ngày"""
     try:

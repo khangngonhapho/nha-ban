@@ -54,8 +54,33 @@ def upload_manual_image(tk_id):
     
     img_link = ""
     try:
+        # Lấy địa chỉ từ database để tính toán subfolder R2
+        r2_subfolder = None
         if use_r2:
-            img_link = manager.upload_image_to_r2(img_bytes, filename)
+            try:
+                conn_pre = sqlite3.connect(manager.DB_FILE, timeout=30.0)
+                cursor_pre = conn_pre.cursor()
+                cursor_pre.execute(f"PRAGMA table_info({manager.LISTINGS_TABLE})")
+                cols = {r[1] for r in cursor_pre.fetchall()}
+                so_nha_col = "Ngo_So_nha" if "Ngo_So_nha" in cols else ("Ng__S__nh_" if "Ng__S__nh_" in cols else None)
+                duong_col = "Duong" if "Duong" in cols else ("___ng" if "___ng" in cols else None)
+                
+                row_addr = None
+                if so_nha_col and duong_col:
+                    row_addr = cursor_pre.execute(f"SELECT `{so_nha_col}`, `{duong_col}` FROM {manager.LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
+                conn_pre.close()
+                
+                if row_addr:
+                    addr_dict = {
+                        "Ngo_So_nha": row_addr[0],
+                        "Duong": row_addr[1]
+                    }
+                    r2_subfolder = manager.get_r2_subfolder(tk_id, addr_dict)
+            except Exception as e_addr:
+                manager.add_log_message(f"[⚠️ WARNING] Không thể lấy địa chỉ cho upload-image {tk_id}: {str(e_addr)}")
+
+        if use_r2:
+            img_link = manager.upload_image_to_r2(img_bytes, filename, r2_subfolder=r2_subfolder)
         else:
             local_dir = os.path.join("static", "images", tk_id)
             os.makedirs(local_dir, exist_ok=True)
@@ -119,9 +144,12 @@ def upload_manual_image(tk_id):
                 else:
                     updated_curated = {"images": [new_img_obj]}
             
+            # Đồng bộ Images_Admin_JSON và images_public_json cho listings (Pool1)
+            admin_json_str, public_json_str = manager.rebuild_admin_public_images_json(updated_curated, manual_list)
+            
             cursor.execute(
-                "UPDATE listings SET curated_config_json = ?, manual_images_json = ? WHERE tk_id = ?",
-                (json.dumps(updated_curated, ensure_ascii=False), json.dumps(manual_list, ensure_ascii=False), tk_id)
+                "UPDATE listings SET curated_config_json = ?, manual_images_json = ?, images_admin_json = ?, images_public_json = ? WHERE tk_id = ?",
+                (json.dumps(updated_curated, ensure_ascii=False), json.dumps(manual_list, ensure_ascii=False), admin_json_str, public_json_str, tk_id)
             )
         else:
             max_seq = cursor.execute(
@@ -146,9 +174,14 @@ def upload_manual_image(tk_id):
                 curated_list.append({"url": url_to_use, "role": r_role or "interior"})
                 
             curated_config_json = json.dumps(curated_list, ensure_ascii=False)
+            
+            # Đồng bộ Images_Admin_JSON và images_public_json cho listings_v2 (Pool2)
+            curated_config_obj = {"images": curated_list}
+            admin_json_str, public_json_str = manager.rebuild_admin_public_images_json(curated_config_obj, [])
+            
             cursor.execute(
-                "UPDATE listings_v2 SET curated_config_json = ? WHERE tk_id = ?",
-                (curated_config_json, tk_id)
+                "UPDATE listings_v2 SET curated_config_json = ?, images_admin_json = ?, images_public_json = ? WHERE tk_id = ?",
+                (curated_config_json, admin_json_str, public_json_str, tk_id)
             )
             
             sys_row = cursor.execute("SELECT System_ID FROM listings_v2 WHERE tk_id = ?", (tk_id,)).fetchone()

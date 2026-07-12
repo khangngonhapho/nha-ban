@@ -977,7 +977,189 @@ def create_drive_folder(folder_name, parent_id, token):
         
     return r.json().get("id")
 
-def upload_image_to_r2(file_content, filename, content_type="image/jpeg"):
+def get_r2_subfolder(tk_id, row_dict):
+    """Tính toán tên thư mục con R2: {uuid} - {so_nha} {duong}"""
+    if not row_dict:
+        return tk_id
+        
+    so_nha = ""
+    so_nha_keys = ["Ngo_So_nha", "Ng__S__nh_", "custom_So_Nha"]
+    for k in so_nha_keys:
+        val = row_dict.get(k)
+        if val is not None:
+            so_nha = str(val).strip()
+            break
+            
+    # Áp dụng luật số nhà phức hợp (chỉ lấy phần trước dấu cộng +)
+    if "+" in so_nha:
+        so_nha = so_nha.split("+")[0].strip()
+        
+    duong = ""
+    duong_keys = ["Duong", "___ng"]
+    for k in duong_keys:
+        val = row_dict.get(k)
+        if val is not None:
+            duong = str(val).strip()
+            break
+            
+    # Nếu không có số nhà và đường, fallback về tk_id
+    if not so_nha and not duong:
+        return tk_id
+        
+    # Khử dấu tiếng Việt để có tên thư mục ASCII an toàn
+    import re
+    from core.business_rules import remove_accents
+    clean_so_nha = remove_accents(so_nha)
+    clean_duong = remove_accents(duong)
+    
+    folder_name = f"{tk_id} - {clean_so_nha} {clean_duong}".strip()
+    folder_name = re.sub(r'\s+', ' ', folder_name)
+    return folder_name
+
+def list_r2_objects(prefix):
+    """Liệt kê các tệp tin trong R2 với prefix cho trước sử dụng ListObjectsV2 và Signature V4"""
+    import hashlib
+    import hmac
+    import datetime
+    import urllib.parse
+    import xml.etree.ElementTree as ET
+    
+    cfg = load_config()
+    r2_access_key = cfg.get("r2_access_key_id")
+    r2_secret_key = cfg.get("r2_secret_access_key")
+    r2_bucket = cfg.get("r2_bucket_name")
+    account_id = cfg.get("cloudflare_account_id")
+    
+    if not (r2_access_key and r2_secret_key and r2_bucket and account_id):
+        return []
+        
+    host = f"{r2_bucket}.{account_id}.r2.cloudflarestorage.com"
+    params = {
+        "list-type": "2",
+        "prefix": prefix
+    }
+    
+    canonical_query_parts = []
+    for k in sorted(params.keys()):
+        v = params[k]
+        canonical_query_parts.append(f"{urllib.parse.quote(k, safe='')}={urllib.parse.quote(v, safe='')}")
+    canonical_query_string = "&".join(canonical_query_parts)
+    
+    canonical_uri = "/"
+    
+    t = datetime.datetime.now(datetime.UTC)
+    amz_date = t.strftime('%Y%m%dT%H%M%SZ')
+    date_stamp = t.strftime('%Y%m%d')
+    
+    hashed_payload = hashlib.sha256(b"").hexdigest()
+    
+    canonical_headers = f"host:{host}\nx-amz-content-sha256:{hashed_payload}\nx-amz-date:{amz_date}\n"
+    signed_headers = "host;x-amz-content-sha256;x-amz-date"
+    
+    canonical_request = f"GET\n{canonical_uri}\n{canonical_query_string}\n{canonical_headers}\n{signed_headers}\n{hashed_payload}"
+    hashed_canonical_request = hashlib.sha256(canonical_request.encode('utf-8')).hexdigest()
+    
+    algorithm = "AWS4-HMAC-SHA256"
+    region = "auto"
+    service = "s3"
+    credential_scope = f"{date_stamp}/{region}/{service}/aws4_request"
+    
+    string_to_sign = f"{algorithm}\n{amz_date}\n{credential_scope}\n{hashed_canonical_request}"
+    
+    def sign(key, msg):
+        return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
+        
+    def get_signature_key(key, date_stamp, region_name, service_name):
+        k_date = hmac.new(("AWS4" + key).encode('utf-8'), date_stamp.encode('utf-8'), hashlib.sha256).digest()
+        k_region = sign(k_date, region_name)
+        k_service = sign(k_region, service_name)
+        k_signing = sign(k_service, "aws4_request")
+        return k_signing
+        
+    signing_key = get_signature_key(r2_secret_key, date_stamp, region, service)
+    signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
+    
+    authorization_header = f"{algorithm} Credential={r2_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}"
+    
+    url = f"https://{host}{canonical_uri}?{canonical_query_string}"
+    headers = {
+        'Host': host,
+        'Authorization': authorization_header,
+        'x-amz-date': amz_date,
+        'x-amz-content-sha256': hashed_payload
+    }
+    
+    try:
+        r = requests.get(url, headers=headers, timeout=20)
+        if r.status_code != 200:
+            return []
+            
+        root = ET.fromstring(r.content)
+        keys = []
+        for elem in root.iter():
+            if elem.tag.endswith('Key'):
+                keys.append(elem.text)
+        return keys
+    except Exception:
+        return []
+
+def rebuild_admin_public_images_json(curated_config, manual_images):
+    """Từ curated_config (chứa vai trò tiếng Việt) và manual_images, dựng lại Images_Admin_JSON và images_public_json"""
+    import json
+    if not curated_config or not isinstance(curated_config, dict):
+        return "[]", "[]"
+        
+    images_list = curated_config.get("images", [])
+    role_map_vi_to_en = {
+        "Sơ đồ": "diagram", "Mặt tiền": "facade", "Bìa": "cover",
+        "Hẻm": "alley", "Nội thất": "interior", "Ẩn": "hidden",
+        "deleted": "deleted", "diagram": "diagram", "facade": "facade",
+        "cover": "cover", "alley": "alley", "interior": "interior",
+        "hidden": "hidden"
+    }
+    
+    migrated_images = []
+    for idx, img in enumerate(images_list):
+        if not isinstance(img, dict):
+            continue
+        url = img.get("url")
+        vi_role = img.get("role", "Nội thất")
+        resolved_role = role_map_vi_to_en.get(vi_role, "interior")
+        visible = img.get("visible", True)
+        
+        # Phân biệt origin: nếu url có SYS- hoặc trong manual_images thì là self
+        filename = url.split("/")[-1]
+        origin = "crawl"
+        if filename.startswith("SYS-") or url in manual_images:
+            origin = "self"
+            
+        is_hidden_val = 1 if (not visible or resolved_role in ["hidden", "deleted"]) else 0
+        migrated_images.append({
+            "image_url": url,
+            "r2_url": url,
+            "role": resolved_role,
+            "sequence_index": idx,
+            "origin": origin,
+            "is_hidden": is_hidden_val
+        })
+        
+    images_admin_json_str = json.dumps(migrated_images, ensure_ascii=False)
+    
+    cover_urls = []
+    other_urls = []
+    for img in migrated_images:
+        if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]:
+            url = img["r2_url"] if img["r2_url"] else img["image_url"]
+            if img["role"] == "cover":
+                cover_urls.append(url)
+            else:
+                other_urls.append(url)
+    public_urls = cover_urls + other_urls
+    images_public_json_str = json.dumps(public_urls, ensure_ascii=False)
+    
+    return images_admin_json_str, images_public_json_str
+
+def upload_image_to_r2(file_content, filename, content_type="image/jpeg", r2_subfolder=None):
     """Tải ảnh lên Cloudflare R2 sử dụng REST API với AWS Signature v4"""
     import hashlib
     import hmac
@@ -989,17 +1171,24 @@ def upload_image_to_r2(file_content, filename, content_type="image/jpeg"):
     r2_bucket = cfg.get("r2_bucket_name")
     account_id = cfg.get("cloudflare_account_id")
     r2_public_url = cfg.get("r2_public_url")
+    r2_migration_prefix = cfg.get("r2_migration_prefix", "BDS-KhangNgo") or "BDS-KhangNgo"
     
     if not (r2_access_key and r2_secret_key and r2_bucket and account_id):
         raise Exception("Thiếu cấu hình Cloudflare R2 trong settings.json")
         
     host = f"{r2_bucket}.{account_id}.r2.cloudflarestorage.com"
     endpoint = f"https://{host}"
-    key = f"BDS-KhangNgo/{filename}"
-    path = f"/{key}"
+    
+    import urllib.parse
+    if r2_subfolder:
+        key = f"{r2_migration_prefix}/{r2_subfolder}/{filename}"
+    else:
+        key = f"{r2_migration_prefix}/{filename}"
+    encoded_key = urllib.parse.quote(key, safe="/")
+    path = f"/{encoded_key}"
     
     # Date helper
-    t = datetime.datetime.utcnow()
+    t = datetime.datetime.now(datetime.UTC)
     amz_date = t.strftime('%Y%m%dT%H%M%SZ')
     date_stamp = t.strftime('%Y%m%d')
     
@@ -1046,7 +1235,155 @@ def upload_image_to_r2(file_content, filename, content_type="image/jpeg"):
     if r.status_code != 200:
         raise Exception(f"R2 API error {r.status_code}: {r.text}")
         
-    return f"{r2_public_url}/BDS-KhangNgo/{filename}"
+    return f"{r2_public_url}/{key}"
+
+def copy_r2_object(src_key, dest_key):
+    """Sao chép đối tượng nội bộ R2 bằng REST API CopyObject và Signature V4"""
+    import urllib.parse
+    import datetime
+    import hashlib
+    import hmac
+    
+    cfg = load_config()
+    r2_access_key = cfg.get("r2_access_key_id")
+    r2_secret_key = cfg.get("r2_secret_access_key")
+    r2_bucket = cfg.get("r2_bucket_name")
+    account_id = cfg.get("cloudflare_account_id")
+    
+    if not (r2_access_key and r2_secret_key and r2_bucket and account_id):
+        return False
+        
+    host = f"{r2_bucket}.{account_id}.r2.cloudflarestorage.com"
+    endpoint = f"https://{host}"
+    
+    src_source_val = f"/{r2_bucket}/{urllib.parse.quote(src_key)}"
+    
+    encoded_dest_key = urllib.parse.quote(dest_key, safe="/")
+    path = f"/{encoded_dest_key}"
+    
+    t = datetime.datetime.now(datetime.UTC)
+    amz_date = t.strftime('%Y%m%dT%H%M%SZ')
+    date_stamp = t.strftime('%Y%m%d')
+    
+    hashed_payload = hashlib.sha256(b"").hexdigest()
+    
+    canonical_headers = (
+        f"host:{host}\n"
+        f"x-amz-content-sha256:{hashed_payload}\n"
+        f"x-amz-copy-source:{src_source_val}\n"
+        f"x-amz-date:{amz_date}\n"
+    )
+    signed_headers = "host;x-amz-content-sha256;x-amz-copy-source;x-amz-date"
+    
+    canonical_request = f"PUT\n{path}\n\n{canonical_headers}\n{signed_headers}\n{hashed_payload}"
+    hashed_canonical_request = hashlib.sha256(canonical_request.encode('utf-8')).hexdigest()
+    
+    algorithm = "AWS4-HMAC-SHA256"
+    region = "auto"
+    service = "s3"
+    credential_scope = f"{date_stamp}/{region}/{service}/aws4_request"
+    
+    string_to_sign = f"{algorithm}\n{amz_date}\n{credential_scope}\n{hashed_canonical_request}"
+    
+    def sign(key, msg):
+        return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
+        
+    def get_signature_key(key, date_stamp, region_name, service_name):
+        k_date = hmac.new(("AWS4" + key).encode('utf-8'), date_stamp.encode('utf-8'), hashlib.sha256).digest()
+        k_region = sign(k_date, region_name)
+        k_service = sign(k_region, service_name)
+        k_signing = sign(k_service, "aws4_request")
+        return k_signing
+        
+    signing_key = get_signature_key(r2_secret_key, date_stamp, region, service)
+    signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
+    
+    authorization_header = f"{algorithm} Credential={r2_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}"
+    
+    url = f"{endpoint}{path}"
+    headers = {
+        'Host': host,
+        'Authorization': authorization_header,
+        'x-amz-date': amz_date,
+        'x-amz-content-sha256': hashed_payload,
+        'x-amz-copy-source': src_source_val
+    }
+    
+    try:
+        r = requests.put(url, headers=headers, timeout=20)
+        return r.status_code == 200
+    except Exception:
+        return False
+
+def delete_r2_object(key):
+    """Xóa đối tượng trên R2 bằng REST API DELETE và Signature V4"""
+    import urllib.parse
+    import datetime
+    import hashlib
+    import hmac
+    
+    cfg = load_config()
+    r2_access_key = cfg.get("r2_access_key_id")
+    r2_secret_key = cfg.get("r2_secret_access_key")
+    r2_bucket = cfg.get("r2_bucket_name")
+    account_id = cfg.get("cloudflare_account_id")
+    
+    if not (r2_access_key and r2_secret_key and r2_bucket and account_id):
+        return False
+        
+    host = f"{r2_bucket}.{account_id}.r2.cloudflarestorage.com"
+    endpoint = f"https://{host}"
+    
+    encoded_key = urllib.parse.quote(key, safe="/")
+    path = f"/{encoded_key}"
+    
+    t = datetime.datetime.now(datetime.UTC)
+    amz_date = t.strftime('%Y%m%dT%H%M%SZ')
+    date_stamp = t.strftime('%Y%m%d')
+    
+    hashed_payload = hashlib.sha256(b"").hexdigest()
+    
+    canonical_headers = f"host:{host}\nx-amz-content-sha256:{hashed_payload}\nx-amz-date:{amz_date}\n"
+    signed_headers = "host;x-amz-content-sha256;x-amz-date"
+    
+    canonical_request = f"DELETE\n{path}\n\n{canonical_headers}\n{signed_headers}\n{hashed_payload}"
+    hashed_canonical_request = hashlib.sha256(canonical_request.encode('utf-8')).hexdigest()
+    
+    algorithm = "AWS4-HMAC-SHA256"
+    region = "auto"
+    service = "s3"
+    credential_scope = f"{date_stamp}/{region}/{service}/aws4_request"
+    
+    string_to_sign = f"{algorithm}\n{amz_date}\n{credential_scope}\n{hashed_canonical_request}"
+    
+    def sign(key, msg):
+        return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
+        
+    def get_signature_key(key, date_stamp, region_name, service_name):
+        k_date = hmac.new(("AWS4" + key).encode('utf-8'), date_stamp.encode('utf-8'), hashlib.sha256).digest()
+        k_region = sign(k_date, region_name)
+        k_service = sign(k_region, service_name)
+        k_signing = sign(k_service, "aws4_request")
+        return k_signing
+        
+    signing_key = get_signature_key(r2_secret_key, date_stamp, region, service)
+    signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
+    
+    authorization_header = f"{algorithm} Credential={r2_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}"
+    
+    url = f"{endpoint}{path}"
+    headers = {
+        'Host': host,
+        'Authorization': authorization_header,
+        'x-amz-date': amz_date,
+        'x-amz-content-sha256': hashed_payload
+    }
+    
+    try:
+        r = requests.delete(url, headers=headers, timeout=20)
+        return r.status_code in [200, 204]
+    except Exception:
+        return False
 
 def create_drive_folder(folder_name, parent_id, token):
     """Tạo thư mục con trên Drive phục vụ gom ảnh theo mã căn"""
@@ -1287,6 +1624,104 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         except Exception:
             raw_sodo_tk = []
 
+        # R2 Subfolder và Precheck Logic (US-141)
+        r2_subfolder = None
+        if use_r2:
+            r2_migration_prefix = cfg.get("r2_migration_prefix", "BDS-KhangNgo-v2") or "BDS-KhangNgo-v2"
+            r2_subfolder = get_r2_subfolder(tk_id, dict(row))
+            prefix = f"{r2_migration_prefix}/{r2_subfolder}/"
+            
+            # Liệt kê danh sách file đã tồn tại trên R2 trong thư mục con này
+            r2_keys = list_r2_objects(prefix)
+            
+            # Nếu thư mục mới trống, tự động tìm và di chuyển ảnh từ thư mục cũ BDS-KhangNgo/ (US-141)
+            if not r2_keys:
+                old_prefixes = [
+                    f"BDS-KhangNgo/img_{tk_id}",
+                    f"BDS-KhangNgo/sodo",
+                    f"BDS-KhangNgo/SYS-{tk_id.upper()}",
+                    f"BDS-KhangNgo/SYS-{tk_id.lower()}",
+                    f"BDS-KhangNgo/SYS-{tk_id.replace('-', '').upper()}",
+                    f"BDS-KhangNgo/SYS-{tk_id.replace('-', '').lower()}"
+                ]
+                old_keys = []
+                for op in old_prefixes:
+                    res_keys = list_r2_objects(op)
+                    if res_keys:
+                        if op == "BDS-KhangNgo/sodo":
+                            res_keys = [k for k in res_keys if tk_id in k]
+                        old_keys.extend(res_keys)
+                old_keys = list(set(old_keys))
+                
+                if old_keys:
+                    add_log_message(f"  [🔄 Di chuyển] Phát hiện {len(old_keys)} ảnh trong thư mục cũ. Đang tự động di chuyển sang thư mục mới '{r2_subfolder}'...")
+                    for old_key in old_keys:
+                        filename = old_key.split("/")[-1]
+                        new_key = f"{r2_migration_prefix}/{r2_subfolder}/{filename}"
+                        if copy_r2_object(old_key, new_key):
+                            delete_r2_object(old_key)
+                            r2_keys.append(new_key)
+                    if r2_keys:
+                        add_log_message(f"  [✅ Di chuyển] Di chuyển thành công {len(r2_keys)} ảnh từ thư mục cũ sang thư mục mới.")
+            
+            if r2_keys:
+                add_log_message(f"  [⚡ Precheck] Phát hiện {len(r2_keys)} ảnh đã tồn tại trên R2 cho căn '{r2_subfolder}'. Đang khôi phục mapping...")
+                
+                col_sodo1_key = get_safe_col_name("Sơ đồ thửa đất 1")
+                col_sodo2_key = get_safe_col_name("Sơ đồ thửa đất 2")
+                col_sodo3_key = get_safe_col_name("Sơ đồ thửa đất 3")
+                col_sodo4_key = get_safe_col_name("Sơ đồ thửa đất 4")
+                col_sodo5_key = get_safe_col_name("Sơ đồ thửa đất 5")
+                original_sodo1 = d.get(col_sodo1_key)
+                original_sodo2 = d.get(col_sodo2_key)
+                original_sodo3 = d.get(col_sodo3_key)
+                original_sodo4 = d.get(col_sodo4_key)
+                original_sodo5 = d.get(col_sodo5_key)
+                
+                for key in r2_keys:
+                    filename = key.split("/")[-1]
+                    r2_url = f"{r2_public_url}/{key}"
+                    
+                    # 1. Ảnh thường: img_{tk_id}_{idx}.jpg
+                    if filename.startswith(f"img_{tk_id}_") and filename.endswith(".jpg"):
+                        try:
+                            idx_str = filename[len(f"img_{tk_id}_"):-4]
+                            idx = int(idx_str)
+                            if 1 <= idx <= len(raw_images_tk):
+                                img_url = raw_images_tk[idx - 1]
+                                images_mapping[img_url] = r2_url
+                                new_images_mapping[img_url] = r2_url
+                        except Exception:
+                            pass
+                    
+                    # 2. Sơ đồ: sodo{sodo_num}_{tk_id}.jpg
+                    elif filename.startswith("sodo") and filename.endswith(f"_{tk_id}.jpg"):
+                        try:
+                            sodo_num = filename[4:filename.find(f"_{tk_id}")]
+                            if sodo_num == "1" and original_sodo1:
+                                images_mapping[original_sodo1] = r2_url
+                                new_images_mapping[original_sodo1] = r2_url
+                            elif sodo_num == "2" and original_sodo2:
+                                images_mapping[original_sodo2] = r2_url
+                                new_images_mapping[original_sodo2] = r2_url
+                            elif sodo_num == "3" and original_sodo3:
+                                images_mapping[original_sodo3] = r2_url
+                                new_images_mapping[original_sodo3] = r2_url
+                            elif sodo_num == "4" and original_sodo4:
+                                images_mapping[original_sodo4] = r2_url
+                                new_images_mapping[original_sodo4] = r2_url
+                            elif sodo_num == "5" and original_sodo5:
+                                images_mapping[original_sodo5] = r2_url
+                                new_images_mapping[original_sodo5] = r2_url
+                        except Exception:
+                            pass
+                            
+                    # 3. Ảnh upload thủ công: SYS-{tk_id.upper()}_{role}_{timestamp}{ext}
+                    elif (filename.upper().startswith(f"SYS-{tk_id.upper()}_") or 
+                          filename.upper().startswith(f"SYS-{tk_id.replace('-', '').upper()}_")):
+                        if r2_url not in manual_images:
+                            manual_images.append(r2_url)
+
         # Tái sử dụng ảnh R2 cũ từ file backup (US-116)
         r2_by_tk_id_file = "d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/r2_images_by_tk_id.json"
         r2_by_tk_id = {}
@@ -1430,7 +1865,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 filename = f"img_{tk_id}_{idx+1}.jpg"
                 
                 if use_r2:
-                    img_link = upload_image_to_r2(img_data, filename)
+                    img_link = upload_image_to_r2(img_data, filename, r2_subfolder=r2_subfolder)
                     return idx, img_link, img_url
                 elif token:
                     drive_link = upload_image_to_drive(img_data, filename, house_folder_id, token)
@@ -1507,7 +1942,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                             filename = f"sodo{sodo_num}_{tk_id}.jpg"
                             migrated = ""
                             if use_r2:
-                                migrated = upload_image_to_r2(img_data, filename)
+                                migrated = upload_image_to_r2(img_data, filename, r2_subfolder=r2_subfolder)
                             elif token:
                                 migrated = upload_image_to_drive(img_data, filename, house_folder_id, token)
                             

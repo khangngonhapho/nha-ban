@@ -136,6 +136,22 @@
             border: 1px solid #3b82f6;
         }
 
+        .input-text {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background-color: #1e293b;
+            color: #f8fafc;
+            font-size: 14px;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+        .input-text:focus {
+            outline: none;
+            border-color: #818cf8;
+        }
+
         .footer {
             margin-top: 30px;
             padding-top: 15px;
@@ -147,7 +163,7 @@
     </style>
     <script>
         // Resize window to control panel size on startup
-        window.resizeTo(520, 940);
+        window.resizeTo(520, 1020);
 
         function runScript(filename) {
             try {
@@ -155,6 +171,20 @@
                 shell.Run("cmd.exe /c " + filename, 1, false);
             } catch(e) {
                 alert("Lỗi khởi chạy script: " + e.message);
+            }
+        }
+
+        function runRestoreWithCustomDb() {
+            try {
+                var dbName = document.getElementById("db_name_input").value.trim();
+                if (!dbName) {
+                    alert("Vui lòng nhập tên file database (ví dụ: raw_archive_staging.db)!");
+                    return;
+                }
+                var cmd = "python restore_db_from_sheets.py --db=\"" + dbName + "\"";
+                runScript(cmd);
+            } catch(e) {
+                alert("Lỗi xử lý: " + e.message);
             }
         }
 
@@ -194,6 +224,14 @@
         <button class="btn btn-db-stg" onclick="runScript('KHOI_PHUC_DB_STAGING.bat')">
             ⚙️ Đồng bộ / Khôi phục CSDL STAGING
         </button>
+        
+        <div style="margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px; font-weight: bold;">Tùy chọn: Nhập tên file DB giả lập (VD: raw_archive_staging.db)</div>
+            <input type="text" id="db_name_input" class="input-text" value="raw_archive_staging.db" />
+            <button class="btn btn-restore-dry" style="padding: 10px 14px; font-size: 13px;" onclick="runRestoreWithCustomDb()">
+                🔧 Khôi phục dữ liệu vào CSDL chỉ định trên
+            </button>
+        </div>
     </div>
 
     <!-- Group 3 -->

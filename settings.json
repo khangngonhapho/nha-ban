@@ -63,6 +63,7 @@
   "r2_bucket_name": "khangngonhapho-images",
   "cloudflare_account_id": "de4bfa7d64dcfd06e9acbf740b9ffa49",
   "r2_public_url": "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev",
+  "r2_migration_prefix": "BDS-KhangNgo-v2",
   "feature_flags": {
     "maintenance_mode": false,
     "enable_new_search_engine": false
