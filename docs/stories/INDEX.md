@@ -3,18 +3,21 @@
 Last updated: 2026-07-09
 
 ## Stats
-- Total: 141
+- Total: 144
 - backlog: 3
 - draft: 3
 - in-progress: 0
-- done: 23
-- accepted: 108
+- done: 22
+- accepted: 112
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-142 | Khôi phục dữ liệu listings từ raw_json_full trong SQLite Cục bộ | accepted | M    | 2026-07-13 | `pool_lego.py`, `core/business_rules.py`, `api/routes_pool.py`, `scratch/recover_raw_json.py`, `tests/test_recovery.py`, `docs/stories/_inbox/US-142_recovery_from_raw_json.md` |
+| US-141 | Tổ chức thư mục R2 theo mã căn & Cơ chế khôi phục liên kết hình ảnh | accepted | M | 2026-07-12 | `settings.json`, `manager.py`, `api/routes_images.py`, `scratch/rescue_r2_images.py`, `docs/stories/_inbox/US-141_r2_image_migration_subfolders_and_recovery.md` |
+| US-140 | Quản lý Quan hệ Khách hàng (CRM) tại trang links.html di động | accepted | M | 2026-07-12 | `pool_lego.py`, `restore_db_from_sheets.py`, `api/routes_links.py`, `api/index.js`, `links.html`, `docs/stories/_inbox/US-140_customer_relationship_management.md` |
 | US-139 | Nối tiếp Chuỗi Thay đổi Giá & Làm sạch Định dạng Đơn giá trên Card | accepted | S | 2026-07-12 | `index.html`, `static/js/lego_helpers.js`, `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `docs/stories/_inbox/US-139.md` |
-| US-138 | Theo dõi & Thu hồi quyền truy cập Link chia sẻ công khai cùng chặn SĐT | done | M | 2026-07-11 | `manager.py`, `curator.html`, `index.html`, `static/js/lego_helpers.js`, `static/js/lego_lead_capture.js`, `api/routes_links.py`, `tests/test_link_revocation.py`, `docs/stories/_inbox/US-138_link_tracking_and_revocation.md` |
+| US-138 | Theo dõi & Thu hồi quyền truy cập Link chia sẻ công khai cùng chặn SĐT | accepted | M | 2026-07-11 | `manager.py`, `curator.html`, `index.html`, `static/js/lego_helpers.js`, `static/js/lego_lead_capture.js`, `api/routes_links.py`, `tests/test_link_revocation.py`, `docs/stories/_inbox/US-138_link_tracking_and_revocation.md` |
 | US-137 | Nâng Cấp Bộ Lọc, Sắp Xếp, Đơn Giá và Sắp Xếp Hình Trực Quan | accepted | M | 2026-07-12 | `index.html`, `static/js/lego_filters.js`, `static/js/lego_helpers.js`, `static/js/lego_render_client.js`, `static/js/lego_render_admin.js`, `static/js/lego_detail_admin.js`, `static/js/lego_detail_client.js`, `static/css/global.css`, `core/business_rules.py`, `pool_lego.py`, `api/routes_pool.py`, `tests/test_business_rules.py`, `docs/stories/_inbox/US-137.md` |
 | US-136 | Tích hợp hiển thị và biên tập Tọa độ bản đồ chi tiết | accepted | S | 2026-07-11 | `settings.json`, `pool_lego.py`, `api/routes_pool.py`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-136.md` |
 | US-135 | Tự động phát hiện thay đổi và lưu lịch sử giá cho Admin | accepted | M | 2026-07-11 | `pool_lego.py`, `api/routes_pool.py`, `api/routes_crawl.py`, `curator.html`, `BANG_DIEU_HANH.hta`, `Chrome_Ext_Crawl_TK/content.js`, `static/js/lego_render_admin.js`, `static/js/lego_detail_admin.js`, `docs/stories/_inbox/US-135.md` |
@@ -163,6 +166,8 @@ Last updated: 2026-07-09
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-142_recovery_from_raw_json|US-142]]: Khôi phục dữ liệu listings từ raw_json_full trong SQLite Cục bộ (accepted)
+- [[US-141_r2_image_migration_subfolders_and_recovery|US-141]]: Tổ chức thư mục R2 theo mã căn & Cơ chế khôi phục liên kết hình ảnh (accepted)
 - [[US-132|US-132]]: Phân giải Đánh số Thứ tự Ảnh và Hiển thị Đồng nhất trên Trang Chi tiết Khách hàng (accepted)
 - [[US-131_fix_recrawl_image_mismatch|US-131]]: Khắc phục lệch ảnh khi cào lại và phân giải Images_Admin_JSON trên Web Vercel Admin (accepted)
 - [[US-120A_public_image_curation_json_sync|US-120A]]: Quản lý & Sắp xếp Hình ảnh Công khai dạng JSON (accepted)

@@ -1072,3 +1072,144 @@ def trigger_check_all_updates():
     t.daemon = True
     t.start()
     return jsonify({"status": "success", "message": "Đã kích hoạt tiến trình quét và cập nhật thay đổi hàng loạt chạy ngầm. Vui lòng theo dõi logs."})
+
+
+@routes_pool.route('/api/listings/recover-raw', methods=['POST'])
+def recover_raw_listings():
+    """
+    API khôi phục dữ liệu listings từ raw_json_full.
+    Hỗ trợ target_ids (danh sách ID phân tách bằng dấu phẩy) hoặc all_flag=True.
+    Hỗ trợ cập nhật từng phần bằng tham số update_type: "all", "json_ui", "images", "columns".
+    Hỗ trợ Fallback Crawl: cào mới từ API Thiên Khôi nếu raw_json_full rỗng.
+    """
+    import threading
+    import os
+    import requests
+    
+    data = request.json or {}
+    target_ids_str = data.get("target_ids") or ""
+    all_flag = data.get("all_flag", False)
+    update_type = data.get("update_type", "all")
+    
+    # Bắt đầu tiến trình chạy ngầm
+    def run_recovery_background():
+        import sqlite3
+        import time
+        import manager
+        from core.business_rules import recover_listing_from_raw_json
+        
+        manager.add_log_message("[🔄] KHỞI ĐỘNG TIẾN TRÌNH KHÔI PHỤC listings từ raw_json_full...")
+        
+        try:
+            conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
+            cursor = conn.cursor()
+            
+            # Phân giải danh sách ID thô thành các tk_id thực tế
+            target_ids = []
+            if target_ids_str:
+                raw_tokens = [t.strip() for t in target_ids_str.split(",") if t.strip()]
+                # Quét CSDL tìm tk_id khớp với tk_id, Mã Hàng (Ma_Hang) hoặc System_ID
+                for tok in raw_tokens:
+                    row = cursor.execute(
+                        "SELECT tk_id FROM listings WHERE tk_id = ? OR Ma_Hang = ? OR System_ID = ?",
+                        (tok, tok, tok)
+                    ).fetchone()
+                    if row:
+                        target_ids.append(row[0])
+                    else:
+                        # Nếu token giống tk_id của Thiên Khôi nhưng chưa có dòng nào,
+                        # thì ta vẫn đưa vào để có thể kích hoạt Fallback Crawl cào mới.
+                        if len(tok) >= 10:  # Định dạng tk_id hoặc System ID hợp lệ
+                            target_ids.append(tok)
+            elif all_flag:
+                # Quét toàn bộ CSDL
+                rows = cursor.execute("SELECT tk_id FROM listings").fetchall()
+                target_ids = [r[0] for r in rows if r[0]]
+                
+            if not target_ids:
+                manager.add_log_message("[⚠️] Kết thúc khôi phục: Không tìm thấy bất kỳ ID nào hợp lệ.")
+                conn.close()
+                return
+                
+            manager.add_log_message(f"[🔄] Bắt đầu khôi phục {len(target_ids)} tin...")
+            
+            success_count = 0
+            crawl_fallback_count = 0
+            
+            for idx, tk_id in enumerate(target_ids, 1):
+                # 1. Kiểm tra raw_json_full của tk_id trong CSDL
+                row = cursor.execute("SELECT raw_json_full FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+                
+                # Nếu không có dòng trong DB hoặc raw_json_full rỗng -> Gọi Fallback Crawl
+                if not row or not row[0]:
+                    manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Cảnh báo: raw_json_full trống. Bắt đầu gọi API cào cập nhật thô...")
+                    # Đọc cookie hiện hành
+                    cookie = ""
+                    if os.path.exists(manager.COOKIE_FILE):
+                        try:
+                            with open(manager.COOKIE_FILE, "r", encoding="utf-8") as f:
+                                cookie = f.read().strip()
+                        except Exception:
+                            pass
+                            
+                    if not cookie:
+                        manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Thất bại: Thiếu cookie Thiên Khôi để cào bù.")
+                        continue
+                        
+                    # Gọi API cào lại thô (tái sử dụng logic Flask recrawl)
+                    active_port = 5001
+                    try:
+                        from core.config import read_settings
+                        active_port = read_settings().get("port", 5001)
+                    except Exception:
+                        pass
+                        
+                    try:
+                        url = f"http://127.0.0.1:{active_port}/api/listings/{tk_id}/recrawl"
+                        r_crawl = requests.post(url, json={"cookie": cookie}, timeout=60)
+                        if r_crawl.status_code == 200:
+                            crawl_fallback_count += 1
+                            manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Cào bù thành công. Tiến hành khôi phục...")
+                        else:
+                            manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Thất bại: API cào bù trả về HTTP {r_crawl.status_code}.")
+                            continue
+                    except Exception as e_crawl:
+                        manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Thất bại: Lỗi kết nối khi cào bù: {str(e_crawl)}")
+                        continue
+                        
+                # 2. Tiến hành khôi phục
+                try:
+                    res = recover_listing_from_raw_json(conn, tk_id, active_table="listings", update_type=update_type)
+                    if res:
+                        success_count += 1
+                        manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Khôi phục thành công.")
+                        
+                        # Tự động đồng bộ lên Google Sheets sau khi khôi phục thành công
+                        try:
+                            sync_res = manager.execute_publish_listing(tk_id)
+                            if sync_res.get("status") == "success":
+                                manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Đồng bộ Google Sheets thành công.")
+                            else:
+                                manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Đồng bộ Google Sheets thất bại: {sync_res.get('message')}")
+                        except Exception as e_sync:
+                            manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Lỗi ngoại lệ khi đồng bộ Google Sheets: {str(e_sync)}")
+                    else:
+                        manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Khôi phục thất bại (Lỗi định dạng JSON).")
+                except Exception as e_rec:
+                    manager.add_log_message(f"  [{idx}/{len(target_ids)}] [{tk_id}] Thất bại: Gặp lỗi ngoại lệ khi khôi phục: {str(e_rec)}")
+                    
+            conn.close()
+            manager.add_log_message(f"[✅] ĐÃ HOÀN THÀNH KHÔI PHỤC: Khôi phục thành công {success_count}/{len(target_ids)} tin (Cào bù thành công {crawl_fallback_count} tin).")
+            
+        except Exception as e_main:
+            manager.add_log_message(f"[❌ LỖI] Gặp sự cố nghiêm trọng trong tiến trình khôi phục: {str(e_main)}")
+            
+    t = threading.Thread(target=run_recovery_background)
+    t.daemon = True
+    t.start()
+    
+    return jsonify({
+        "status": "success", 
+        "message": "Đã kích hoạt tiến trình khôi phục và cào bù dữ liệu listings chạy ngầm."
+    })
+

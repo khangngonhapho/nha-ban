@@ -377,3 +377,348 @@ def build_row_data(headers: list[str], data_dict: dict) -> list[str]:
             val = ""
         row.append(escape_sheets_value(str(val)))
     return row
+
+
+def recover_listing_from_raw_json(conn, tk_id, active_table="listings", update_type="all"):
+    """
+    Khôi phục thông tin chi tiết căn nhà từ cột raw_json_full trong SQLite.
+    Bảo toàn lịch sử thay đổi giá trong JSON_UI và ánh xạ ảnh đã có.
+    """
+    import json
+    cursor = conn.cursor()
+    
+    # Đọc cấu trúc các cột để tránh lỗi
+    cursor.execute(f"PRAGMA table_info({active_table})")
+    db_cols = {r[1] for r in cursor.fetchall()}
+    
+    select_cols = ["raw_json_full", "JSON_UI", "curated_config_json", "status", "System_ID", "Ma_Khang_Ngo_ID"]
+    has_mapping_col = "images_mapping_json" in db_cols
+    if has_mapping_col:
+        select_cols.append("images_mapping_json")
+        
+    cols_str = ", ".join([f"`{c}`" for c in select_cols])
+    row = cursor.execute(f"SELECT {cols_str} FROM {active_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+    
+    if not row or not row[0]:
+        return False
+        
+    raw_json_full = row[0]
+    old_json_ui_str = row[1]
+    old_curated_config_str = row[2]
+    status = row[3]
+    system_id = row[4]
+    ma_khang_ngo_id = row[5]
+    old_images_mapping_str = row[6] if has_mapping_col else None
+    
+    try:
+        detail_data = json.loads(raw_json_full)
+    except Exception:
+        return False
+        
+    # 1. Khôi phục JSON_UI (bảo toàn lịch sử giá)
+    if update_type in ("all", "json_ui"):
+        from pool_lego import extract_json_ui_data
+        new_json_ui = extract_json_ui_data(detail_data)
+        
+        old_json_ui = {}
+        if old_json_ui_str:
+            try:
+                old_json_ui = json.loads(old_json_ui_str)
+            except Exception:
+                pass
+                
+        # Bảo toàn lịch sử thay đổi giá
+        new_json_ui["history"] = old_json_ui.get("history") or []
+        new_json_ui_str = json.dumps(new_json_ui, ensure_ascii=False)
+        cursor.execute(f"UPDATE {active_table} SET JSON_UI = ? WHERE tk_id = ?", (new_json_ui_str, tk_id))
+
+    # 2. Khôi phục các cột phẳng (số phòng ngủ, số vệ sinh, và 19 cột tiêu chí)
+    if update_type in ("all", "columns"):
+        so_phong_ngu = str(detail_data.get("bedrooms") or "")
+        so_nha_ve_sinh = str(detail_data.get("restrooms") or "")
+        criteria_list = detail_data.get("criteria") or []
+        criteria_cols = parse_criteria_groups(criteria_list)
+        
+        cursor.execute(f"PRAGMA table_info({active_table})")
+        db_cols = {r[1] for r in cursor.fetchall()}
+        
+        update_vals = {}
+        if "So_phong_ngu" in db_cols:
+            update_vals["So_phong_ngu"] = so_phong_ngu
+        if "So_nha_ve_sinh" in db_cols:
+            update_vals["So_nha_ve_sinh"] = so_nha_ve_sinh
+            
+        for col, val in criteria_cols.items():
+            if col in db_cols:
+                update_vals[col] = val
+                
+        if update_vals:
+            set_clause = ", ".join([f"`{k}` = ?" for k in update_vals.keys()])
+            cursor.execute(
+                f"UPDATE {active_table} SET {set_clause} WHERE tk_id = ?",
+                list(update_vals.values()) + [tk_id]
+            )
+
+    # 3. Khôi phục danh sách hình ảnh (listings_images, curated_config_json)
+    if update_type in ("all", "images"):
+        media = detail_data.get("media") or []
+        property_images = []
+        sodo_images = []
+        for m in media:
+            m_type = m.get("type")
+            m_url = m.get("url")
+            if not m_url:
+                continue
+            if m_type in ["parcel_map", "certificate_image"]:
+                sodo_images.append(m_url)
+            else:
+                property_images.append(m_url)
+                
+        grouped_urls = property_images + sodo_images
+        raw_images_tk_json_val = json.dumps(grouped_urls, ensure_ascii=False)
+        raw_sodo_tk_json_val = json.dumps(sodo_images, ensure_ascii=False)
+        
+        images_mapping = {}
+        if old_images_mapping_str:
+            try:
+                images_mapping = json.loads(old_images_mapping_str)
+            except Exception:
+                pass
+
+        # NẾU images_mapping đang trống hoặc thiếu ánh xạ, ta sẽ dùng cơ chế R2 Precheck để khôi phục mapping (tham khảo US-141)
+        try:
+            from manager import load_config
+            cfg = load_config()
+            has_r2_creds = cfg.get("r2_access_key_id") and cfg.get("r2_secret_access_key") and cfg.get("r2_bucket_name") and cfg.get("cloudflare_account_id")
+        except Exception:
+            has_r2_creds = False
+
+        if not images_mapping and has_r2_creds:
+            try:
+                from manager import list_r2_objects, get_r2_subfolder
+                r2_public_url = cfg.get("r2_public_url")
+                r2_migration_prefix = cfg.get("r2_migration_prefix", "BDS-KhangNgo-v2") or "BDS-KhangNgo-v2"
+                
+                addr_cols = ["Ngo_So_nha", "Duong", "Quan", "Phuong"]
+                addr_valid = [c for c in addr_cols if c in db_cols]
+                if addr_valid:
+                    addr_clause = ", ".join([f"`{c}`" for c in addr_valid])
+                    addr_row = cursor.execute(f"SELECT {addr_clause} FROM {active_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+                    if addr_row:
+                        addr_dict = {addr_valid[i]: (addr_row[i] or "") for i in range(len(addr_valid))}
+                        r2_subfolder = get_r2_subfolder(tk_id, addr_dict)
+                        prefix = f"{r2_migration_prefix}/{r2_subfolder}/"
+                        r2_keys = list_r2_objects(prefix)
+                        
+                        if not r2_keys:
+                            old_prefixes = [
+                                f"BDS-KhangNgo/img_{tk_id}",
+                                f"BDS-KhangNgo/sodo",
+                                f"BDS-KhangNgo/SYS-{tk_id.upper()}",
+                                f"BDS-KhangNgo/SYS-{tk_id.lower()}",
+                                f"BDS-KhangNgo/SYS-{tk_id.replace('-', '').upper()}",
+                                f"BDS-KhangNgo/SYS-{tk_id.replace('-', '').lower()}"
+                            ]
+                            for op in old_prefixes:
+                                res_keys = list_r2_objects(op)
+                                if res_keys:
+                                    if op == "BDS-KhangNgo/sodo":
+                                        res_keys = [k for k in res_keys if tk_id in k]
+                                    r2_keys.extend(res_keys)
+                            r2_keys = list(set(r2_keys))
+                            
+                        if r2_keys and r2_public_url:
+                            for key in r2_keys:
+                                filename = key.split("/")[-1]
+                                r2_url = f"{r2_public_url}/{key}"
+                                
+                                # 1. Ảnh thường: img_{tk_id}_{idx}.jpg
+                                if filename.startswith(f"img_{tk_id}_") and filename.endswith(".jpg"):
+                                    try:
+                                        idx_str = filename[len(f"img_{tk_id}_"):-4]
+                                        idx = int(idx_str)
+                                        if 1 <= idx <= len(property_images):
+                                            img_url = property_images[idx - 1]
+                                            images_mapping[img_url] = r2_url
+                                    except Exception:
+                                        pass
+                                        
+                                # 2. Sơ đồ: sodo{sodo_num}_{tk_id}.jpg
+                                elif filename.startswith("sodo") and filename.endswith(f"_{tk_id}.jpg"):
+                                    try:
+                                        sodo_num = filename[4:filename.find(f"_{tk_id}")]
+                                        sodo_idx = int(sodo_num) - 1
+                                        if 0 <= sodo_idx < len(sodo_images):
+                                            img_url = sodo_images[sodo_idx]
+                                            images_mapping[img_url] = r2_url
+                                    except Exception:
+                                        pass
+            except Exception as e_precheck:
+                print(f"[⚠️ WARNING] R2 precheck recovery failed: {str(e_precheck)}")
+
+        old_curated_config = {}
+        if old_curated_config_str:
+            try:
+                old_curated_config = json.loads(old_curated_config_str)
+            except Exception:
+                pass
+                
+        old_images_map = {
+            img.get("image_url") or img.get("r2_url"): img 
+            for img in old_curated_config.get("images", [])
+        }
+        
+        images_list = []
+        # Nạp ảnh sơ đồ
+        for idx, url in enumerate(sodo_images):
+            img_item = old_images_map.get(url) or {}
+            r2_url = images_mapping.get(url) or img_item.get("r2_url") or ""
+            images_list.append({
+                "image_url": url,
+                "r2_url": r2_url,
+                "role": img_item.get("role") or "diagram",
+                "sequence_index": img_item.get("sequence_index") if img_item.get("sequence_index") is not None else (100 + idx),
+                "is_hidden": img_item.get("is_hidden") or 0,
+                "origin": img_item.get("origin") or "crawl",
+                "url": r2_url if r2_url else url
+            })
+            
+        # Nạp ảnh thường
+        for idx, url in enumerate(property_images):
+            img_item = old_images_map.get(url) or {}
+            r2_url = images_mapping.get(url) or img_item.get("r2_url") or ""
+            role = img_item.get("role")
+            if not role:
+                role = "facade" if idx == 0 else "interior"
+            images_list.append({
+                "image_url": url,
+                "r2_url": r2_url,
+                "role": role,
+                "sequence_index": img_item.get("sequence_index") if img_item.get("sequence_index") is not None else idx,
+                "is_hidden": img_item.get("is_hidden") or 0,
+                "origin": img_item.get("origin") or "crawl",
+                "url": r2_url if r2_url else url
+            })
+            
+        # Giữ lại các ảnh upload thủ công (SYS-...)
+        for img in old_curated_config.get("images", []):
+            img_url = img.get("image_url") or ""
+            if img_url.startswith("SYS-") or "SYS-" in img_url or img.get("origin") == "local":
+                if img_url not in [x.get("image_url") for x in images_list]:
+                    # Đảm bảo ảnh thủ công cũng có url
+                    if isinstance(img, dict) and not img.get("url"):
+                        img["url"] = img.get("r2_url") or img_url
+                    images_list.append(img)
+                    
+        new_curated_config = {
+            "images": images_list,
+            "Ma_Khang_Ngô__ID_": ma_khang_ngo_id or ""
+        }
+        new_curated_config_str = json.dumps(new_curated_config, ensure_ascii=False)
+        
+        # Tạo Images_Admin_JSON và images_public_json
+        cover_urls = []
+        other_urls = []
+        for img in images_list:
+            if img.get("is_hidden") == 0 and img.get("role") not in ["facade", "diagram", "deleted", "hidden"]:
+                url = img.get("r2_url") or img.get("image_url")
+                if img.get("role") == "cover":
+                    cover_urls.append(url)
+                else:
+                    other_urls.append(url)
+        public_urls = cover_urls + other_urls
+        images_public_json_val = json.dumps(public_urls, ensure_ascii=False)
+        
+        # Images_Admin_JSON phải là danh sách đối tượng ảnh đầy đủ
+        images_admin_json_val = json.dumps(images_list, ensure_ascii=False)
+        
+        # Dựng lại các cột phẳng hình ảnh trong database
+        flat_img_vals = {}
+        sodo_list = []
+        facade_list = []
+        alley_list = []
+        interior_list = []
+        
+        for img in images_list:
+            if img.get("is_hidden") == 1 or img.get("role") in ["deleted", "hidden"]:
+                continue
+            url = img.get("r2_url") or img.get("image_url")
+            if not url:
+                continue
+            role = img.get("role")
+            if role == "diagram":
+                sodo_list.append(url)
+            elif role == "facade":
+                facade_list.append(url)
+            elif role == "alley":
+                alley_list.append(url)
+            else:
+                interior_list.append(url)
+                
+        for i in range(5):
+            col_name = f"So_do_thua_dat_{i+1}"
+            if col_name in db_cols:
+                flat_img_vals[col_name] = sodo_list[i] if i < len(sodo_list) else ""
+                
+        if "Hinh_Mat_Tien" in db_cols:
+            flat_img_vals["Hinh_Mat_Tien"] = facade_list[0] if facade_list else ""
+            
+        for i in range(10):
+            col_name = f"Hinh_Hem_{i+1}"
+            if col_name in db_cols:
+                flat_img_vals[col_name] = alley_list[i] if i < len(alley_list) else ""
+                
+        for i in range(25):
+            col_name = f"Anh_{i+1}"
+            if col_name in db_cols:
+                flat_img_vals[col_name] = interior_list[i] if i < len(interior_list) else ""
+                
+        if flat_img_vals:
+            set_clause = ", ".join([f"`{k}` = ?" for k in flat_img_vals.keys()])
+            cursor.execute(
+                f"UPDATE {active_table} SET {set_clause} WHERE tk_id = ?",
+                list(flat_img_vals.values()) + [tk_id]
+            )
+
+        if has_mapping_col:
+            cursor.execute(
+                f"UPDATE {active_table} SET raw_images_tk_json = ?, raw_sodo_tk_json = ?, curated_config_json = ?, Images_Admin_JSON = ?, images_public_json = ?, images_mapping_json = ? WHERE tk_id = ?",
+                (raw_images_tk_json_val, raw_sodo_tk_json_val, new_curated_config_str, images_admin_json_val, images_public_json_val, json.dumps(images_mapping, ensure_ascii=False), tk_id)
+            )
+        else:
+            cursor.execute(
+                f"UPDATE {active_table} SET raw_images_tk_json = ?, raw_sodo_tk_json = ?, curated_config_json = ?, Images_Admin_JSON = ?, images_public_json = ? WHERE tk_id = ?",
+                (raw_images_tk_json_val, raw_sodo_tk_json_val, new_curated_config_str, images_admin_json_val, images_public_json_val, tk_id)
+            )
+        
+        # Đồng bộ bảng listings_images vật lý
+        cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (tk_id,))
+        for img in images_list:
+            cursor.execute("""
+                INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                tk_id,
+                system_id,
+                img.get("image_url"),
+                img.get("r2_url"),
+                img.get("role"),
+                img.get("sequence_index"),
+                "local" if (img.get("image_url") or "").startswith("SYS-") else "crawled",
+                img.get("is_hidden")
+            ))
+            
+        # Cập nhật trạng thái tin để kích hoạt di cư ngầm nếu thiếu ảnh R2
+        has_missing_r2 = any(
+            not img.get("r2_url") 
+            for img in images_list 
+            if img.get("role") not in ["deleted", "hidden"] and not (img.get("image_url") or "").startswith("SYS-")
+        )
+        if has_missing_r2 and status != "published":
+            cursor.execute(f"UPDATE {active_table} SET status = 'raw_text' WHERE tk_id = ?", (tk_id,))
+        elif not has_missing_r2 and status in ["raw_text", "crawl_failed"]:
+            cursor.execute(f"UPDATE {active_table} SET status = 'raw_complete' WHERE tk_id = ?", (tk_id,))
+
+    conn.commit()
+    return True
+

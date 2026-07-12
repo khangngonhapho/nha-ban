@@ -1833,7 +1833,25 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             for idx, header in enumerate(POOL_HEADERS):
                 # Bảo vệ cột nếu nằm trong danh sách PROTECTED_HEADERS hoặc tên cột chứa chữ "custom" (không phân biệt hoa thường)
                 if header in PROTECTED_HEADERS or "custom" in header.lower():
-                    val = existing_row[idx] if idx < len(existing_row) else ""
+                    is_image_col = (header in ["Hình Nhận Diện", "Hình Mặt Tiền"] or "Ảnh " in header or "Sơ đồ thửa đất " in header or "Hình Hẻm " in header)
+                    old_val = existing_row[idx] if idx < len(existing_row) else ""
+                    safe_col = get_safe_col_name(header)
+                    sqlite_val = d.get(safe_col, "")
+                    
+                    # Kiểm tra xem link cũ trên Sheets có phải là link R2 của căn khác hay không
+                    is_mismatched_r2 = False
+                    old_val_str = str(old_val).strip()
+                    if is_image_col and old_val_str and (".r2.dev" in old_val_str or "r2.cloudflarestorage.com" in old_val_str):
+                        # Nếu URL R2 cũ không chứa tk_id hiện tại của listing, đây là ảnh của căn khác
+                        if tk_id not in old_val_str:
+                            is_mismatched_r2 = True
+                            
+                    is_r2_url = (".r2.dev" in str(sqlite_val) or "r2.cloudflarestorage.com" in str(sqlite_val) or "cloudinary.com" in str(sqlite_val))
+                    if is_image_col and (not old_val_str or is_r2_url or is_mismatched_r2):
+                        val = sqlite_val
+                    else:
+                        val = old_val
+
                 else:
                     safe_col = get_safe_col_name(header)
                     val = d.get(safe_col, "")
