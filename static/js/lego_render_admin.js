@@ -75,6 +75,19 @@ window.LegoRenderAdmin = {
     };
 
     const jsonUi = p.json_ui_parsed || {};
+
+    const shortenOwnerName = (name) => {
+      if (!name || name === 'None') return 'Chưa rõ đầu chủ';
+      name = name.trim();
+      if (name.length <= 14) return name;
+      const words = name.split(/\s+/);
+      if (words.length >= 4) {
+        return `${words[0]} ... ${words.slice(-2).join(' ')}`;
+      } else if (words.length === 3) {
+        return `${words[0]} ... ${words[2]}`;
+      }
+      return name.substring(0, 10) + '...';
+    };
     const displayListed = formatDate(jsonUi.createdAtSigned || '');
     const displayUpdated = formatDate(jsonUi.updatedAt || '');
 
@@ -167,12 +180,17 @@ window.LegoRenderAdmin = {
               </div>
               <span style="color: ${badgeColor}; font-weight: 800; white-space: nowrap;">● ${stAbbr}</span>
             </div>
-            <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-              <span>👤</span> ${p.raw_ten_dau_chu || 'Chưa rõ đầu chủ'}
-            </div>
-            <div style="font-size: 12.5px; color: var(--red); font-weight: 700; display: flex; align-items: center; gap: 4px;">
-              <span>📞</span> 
-              ${p.raw_dt_dau_chu ? `<a href="tel:${window.formatPhone(p.raw_dt_dau_chu)}" onclick="event.stopPropagation();" style="color: var(--red); text-decoration: underline; font-weight: 800;">${window.formatPhone(p.raw_dt_dau_chu)}</a>` : 'Chưa có SĐT'}
+            <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 4px; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 4px; min-width: 0; flex: 1;">
+                <span>👤</span>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;">
+                  ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" onclick="event.stopPropagation();" style="color: var(--blue); text-decoration: underline; font-weight: 600;">${shortenOwnerName(p.raw_ten_dau_chu)}</a>` : shortenOwnerName(p.raw_ten_dau_chu)}
+                </span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0; text-align: right; justify-content: flex-end; color: var(--red); font-weight: 700; font-size: 12.5px;">
+                <span>📞</span>
+                ${p.raw_dt_dau_chu ? `<a href="tel:${window.formatPhone(p.raw_dt_dau_chu)}" onclick="event.stopPropagation();" style="color: var(--red); text-decoration: underline; font-weight: 800;">${window.formatPhone(p.raw_dt_dau_chu)}</a>` : 'Chưa có SĐT'}
+              </div>
             </div>
             ${(displayListed || displayUpdated) ? `
               <div style="font-size: 11px; margin-top: 4px; color: #7f8c8d; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.35; font-weight: 500;">
