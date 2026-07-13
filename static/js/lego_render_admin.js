@@ -137,7 +137,7 @@ window.LegoRenderAdmin = {
     let stAbbr = st;
     if (st === 'Đang bán') {
       badgeColor = '#27ae60';
-      stAbbr = 'Đ.Bán';
+      stAbbr = 'Đg. Bán';
     } else if (st === 'Đã cọc') {
       badgeColor = '#e67e22';
       stAbbr = 'Đ.Cọc';
