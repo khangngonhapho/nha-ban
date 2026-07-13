@@ -9,6 +9,7 @@ import json
 import sqlite3
 import time
 import threading
+import queue
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 import fetcher
@@ -17,6 +18,10 @@ routes_crawl = Blueprint('routes_crawl', __name__)
 
 ACTIVE_CRAWLER_THREAD = None
 ACTIVE_CRAWLER_LOCK = threading.Lock()
+
+# Hàng đợi bộ nhớ CRAWL_TASK_QUEUE và worker thread đã được chuyển hoàn toàn sang background_worker.py
+# để độc lập hóa Luồng 2 ra khỏi tiến trình Flask server, tránh sập/nghẽn luồng và xung đột ghi SQLite.
+
 
 def set_listing_crawl_failed(tk_id, reason):
     import manager
@@ -164,6 +169,7 @@ def get_crawl_sessions():
             }
         })
         
+    conn = None
     try:
         conn = sqlite3.connect(manager.DB_FILE, timeout=10.0)
         conn.row_factory = sqlite3.Row
@@ -172,7 +178,6 @@ def get_crawl_sessions():
         # Check if crawl_sessions exists
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='crawl_sessions'")
         if not cursor.fetchone():
-            conn.close()
             return jsonify({
                 "sessions": [],
                 "totals": {
@@ -193,11 +198,9 @@ def get_crawl_sessions():
             SELECT 
                 COUNT(*) as total_sessions,
                 SUM(crawled_count) as total_crawled,
-                SUM(duration_seconds) as total_duration
+                SUM(duration) as total_duration
             FROM crawl_sessions
         """).fetchone()
-        
-        conn.close()
         
         total_sessions = stats[0] or 0
         total_crawled = stats[1] or 0
@@ -218,6 +221,9 @@ def get_crawl_sessions():
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        if conn:
+            conn.close()
 
 @routes_crawl.route('/api/listings/<tk_id>/recrawl', methods=['POST'])
 def recrawl_single_listing(tk_id):
@@ -248,6 +254,7 @@ def recrawl_single_listing(tk_id):
         except Exception as e_cook:
             manager.add_log_message(f"[❌ LỖI] Không thể ghi file cookie từ extension: {str(e_cook)}")
             
+    conn = None
     try:
         conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
         conn.row_factory = sqlite3.Row
@@ -269,6 +276,7 @@ def recrawl_single_listing(tk_id):
                 detail_url = f"https://data.thienkhoi.com/Hang/Detail/{tk_id}"
                 
         conn.close()
+        conn = None
         
         # Lấy Cookie
         cookie = ""
@@ -508,16 +516,9 @@ def recrawl_single_listing(tk_id):
                 
             fetcher.save_raw_to_sqlite(tk_id, crawled_data, property_images)
             
-            # Call AI Curation helper
-            manager.run_ai_curation_for_crawled_listing(tk_id, data)
-            
-            manager.add_log_message(f"[✅] Đã cào thô thành công căn (Proptech): {tk_id}. Tiến hành di cư ảnh và xuất bản...")
-            
-            # Gọi di cư ảnh & xuất bản đồng bộ
-            try:
-                manager.run_image_migration_thread(limit=None, cookie=cookie, target_tk_id=tk_id)
-            except Exception as e_mig:
-                manager.add_log_message(f"[⚠️ WARNING] Gặp lỗi khi tự động di cư ảnh hoặc xuất bản căn {tk_id}: {str(e_mig)}")
+            # Lưu SQLite với status='raw_text' để background_worker.py quét xử lý ngầm
+            manager.add_log_message(f"[✅] Đã cào thô thành công căn (Proptech): {tk_id}. Hàng đợi SQLite sẽ tự động xử lý ngầm...")
+
                 
             # Trả về kết quả dòng đã cập nhật
             conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
@@ -574,7 +575,9 @@ def recrawl_single_listing(tk_id):
             d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
             
             status_text = d.get("status", "")
-            if status_text == "published":
+            if status_text == "raw_text":
+                msg = "Đã cào mới thành công về SQLite. Tiến trình di cư ảnh và AI đang chạy ngầm."
+            elif status_text == "published":
                 msg = "Đã cào mới, di cư ảnh và xuất bản thành công trực tiếp lên Google Sheets Pool!"
             elif status_text == "raw_complete":
                 msg = "Đã cào mới và di cư ảnh thành công (Gặp sự cố khi tự động đẩy lên Sheets Pool)."
@@ -784,16 +787,9 @@ def recrawl_single_listing(tk_id):
         
         fetcher.save_raw_to_sqlite(tk_id, crawled_data, combined_images)
         
-        # Call AI Curation helper
-        manager.run_ai_curation_for_crawled_listing(tk_id, data)
-        
-        manager.add_log_message(f"[✅] Đã cào thô thành công căn: {tk_id}. Tiến hành di cư ảnh và xuất bản...")
-        
-        # Gọi di cư ảnh & xuất bản đồng bộ
-        try:
-            manager.run_image_migration_thread(limit=None, cookie=cookie, target_tk_id=tk_id)
-        except Exception as e_mig:
-            manager.add_log_message(f"[⚠️ WARNING] Gặp lỗi khi tự động di cư ảnh hoặc xuất bản căn {tk_id}: {str(e_mig)}")
+        # Lưu SQLite với status='raw_text' để background_worker.py quét xử lý ngầm
+        manager.add_log_message(f"[✅] Đã cào thô thành công căn: {tk_id}. Hàng đợi SQLite sẽ tự động xử lý ngầm...")
+
             
         # Lấy lại dòng vừa cập nhật
         conn = sqlite3.connect(manager.DB_FILE, timeout=30.0)
@@ -843,6 +839,7 @@ def recrawl_single_listing(tk_id):
         else:
             updated_row = cursor.execute(f"SELECT * FROM {manager.LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
         conn.close()
+        conn = None
         
         d = dict(updated_row)
         d["raw_images_tk"] = json.loads(d["raw_images_tk_json"]) if d.get("raw_images_tk_json") else []
@@ -850,7 +847,9 @@ def recrawl_single_listing(tk_id):
         d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
         
         status_text = d.get("status", "")
-        if status_text == "published":
+        if status_text == "raw_text":
+            msg = "Đã cào mới thành công về SQLite. Tiến trình di cư ảnh và AI đang chạy ngầm."
+        elif status_text == "published":
             msg = "Đã cào mới, di cư ảnh và xuất bản thành công trực tiếp lên Google Sheets Pool!"
         elif status_text == "raw_complete":
             msg = "Đã cào mới và di cư ảnh thành công (Gặp sự cố khi tự động đẩy lên Sheets Pool)."
@@ -863,3 +862,9 @@ def recrawl_single_listing(tk_id):
         manager.add_log_message(f"[❌ LỖI] Lỗi cào lại căn {tk_id}: {str(e)}")
         set_listing_crawl_failed(tk_id, "exception")
         return jsonify({"status": "error", "message": f"Gặp sự cố khi cào lại: {str(e)}"}), 500
+    finally:
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass

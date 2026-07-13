@@ -125,3 +125,36 @@ def test_config_endpoint_includes_exclusions(mock_creds, temp_db):
         assert rule["field"] == "phuong"
         assert rule["operator"] == "contains"
         assert rule["value"] == "Phường 15"
+
+
+def test_restore_images_normalization_robustness():
+    """Kiểm tra hàm normalize_images_list xử lý chính xác và robust các định dạng ảnh khác nhau"""
+    from restore_db_from_sheets import normalize_images_list
+    
+    # 1. Định dạng chuẩn tiếng Việt (đầu ra mong muốn)
+    input_list = [
+        {"url": "http://example.com/1.jpg", "role": "Mặt tiền", "visible": True},
+        {"url": "http://example.com/2.jpg", "role": "Sơ đồ", "visible": False}
+    ]
+    res = normalize_images_list(input_list)
+    assert len(res) == 2
+    assert res[0]["url"] == "http://example.com/1.jpg"
+    assert res[0]["role"] == "Mặt tiền"
+    assert res[0]["visible"] is True
+    
+    # 2. Định dạng thô Admin JSON (chứa image_url/r2_url và vai trò tiếng Anh, cờ ẩn)
+    input_admin_json = [
+        {"image_url": "http://example.com/3.jpg", "r2_url": "http://example.com/3_r2.jpg", "role": "diagram", "is_hidden": 0},
+        {"image_url": "http://example.com/4.jpg", "r2_url": "", "role": "interior", "is_hidden": 1}
+    ]
+    res_admin = normalize_images_list(input_admin_json)
+    assert len(res_admin) == 2
+    # Ưu tiên r2_url nếu có
+    assert res_admin[0]["url"] == "http://example.com/3_r2.jpg"
+    assert res_admin[0]["role"] == "Sơ đồ"  # diagram -> Sơ đồ
+    assert res_admin[0]["visible"] is True  # is_hidden = 0 -> visible = True
+    
+    assert res_admin[1]["url"] == "http://example.com/4.jpg"
+    assert res_admin[1]["role"] == "Nội thất"  # interior -> Nội thất
+    assert res_admin[1]["visible"] is False  # is_hidden = 1 -> visible = False
+

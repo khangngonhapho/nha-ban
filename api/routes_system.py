@@ -217,6 +217,8 @@ def handle_config():
         except Exception:
             pass
         client_cfg["exclusions"] = exclusions
+        client_cfg["db_file"] = os.path.basename(manager.DB_FILE)
+        client_cfg["is_staging"] = is_staging
         
         return jsonify({"status": "success", "config": client_cfg})
 

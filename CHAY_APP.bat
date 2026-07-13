@@ -12,8 +12,10 @@ echo.
 :: Tu dong mo trinh duyet den website local
 start "" "http://localhost:5001"
 
+:: Tu dong khoi chay background worker xu ly AI & di cu anh trong cua so rieng
+start "Khang Ngo - Background Worker" python background_worker.py
+
 :: Khoi dong server Flask o terminal hien tai
 python manager.py
 
 pause
-

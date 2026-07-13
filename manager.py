@@ -111,7 +111,7 @@ def free_ports():
     except Exception:
         pass
 
-free_ports()
+# free_ports() đã được chuyển vào khối __main__ để tránh tự sát server khi import module
 
 
 from curator_html_data import CURATOR_HTML_CONTENT
@@ -279,6 +279,7 @@ def normalize_listing_for_client(row):
     d["curated_config"] = json.loads(d["curated_config_json"]) if d.get("curated_config_json") else None
     
     if LISTINGS_TABLE == "listings_v2":
+        conn_img = None
         try:
             # Query all images from listings_images since listings_v2 has no image columns
             conn_img = sqlite3.connect(DB_FILE, timeout=30.0)
@@ -287,7 +288,6 @@ def normalize_listing_for_client(row):
                 "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
                 (d.get("tk_id"),)
             ).fetchall()
-            conn_img.close()
             
             if img_rows:
                 raw_tk_all = []
@@ -309,6 +309,9 @@ def normalize_listing_for_client(row):
                     d[col_name] = diagrams_raw[idx] if idx < len(diagrams_raw) else ""
         except Exception as e_img:
             add_log_message(f"[⚠️ WARNING] Lỗi tải ảnh từ listings_images trong normalize: {str(e_img)}")
+        finally:
+            if conn_img:
+                conn_img.close()
             
     return d
 
@@ -317,7 +320,7 @@ LOGS_BUFFER = []
 LOGS_LOCK = threading.Lock()
 
 def add_log_message(msg):
-    """Ghi log vào bộ đệm và in ra terminal thực tế"""
+    """Ghi log vào bộ đệm, in ra terminal và lưu file app.log"""
     timestamp = datetime.now().strftime("%H:%M:%S")
     formatted_msg = f"[{timestamp}] {msg}"
     
@@ -327,6 +330,14 @@ def add_log_message(msg):
         ORIGINAL_STDOUT.flush()
     except Exception:
         # Fallback cực kỳ an toàn
+        pass
+        
+    # Ghi log bền vững vào file app.log trên đĩa cứng
+    try:
+        log_file_path = os.path.join(PROJECT_ROOT, "app.log")
+        with open(log_file_path, "a", encoding="utf-8") as f:
+            f.write(formatted_msg + "\n")
+    except Exception:
         pass
         
     with LOGS_LOCK:
@@ -1453,10 +1464,14 @@ def start_auto_migration_scheduler():
                 
                 # 2. Kiểm tra xem có database và có căn nào status = 'raw_text' không
                 if os.path.exists(DB_FILE):
-                    conn = sqlite3.connect(DB_FILE, timeout=30.0)
-                    cursor = conn.cursor()
-                    count = cursor.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = 'raw_text'").fetchone()[0]
-                    conn.close()
+                    conn = None
+                    try:
+                        conn = sqlite3.connect(DB_FILE, timeout=30.0)
+                        cursor = conn.cursor()
+                        count = cursor.execute(f"SELECT COUNT(*) FROM {LISTINGS_TABLE} WHERE status = 'raw_text'").fetchone()[0]
+                    finally:
+                        if conn:
+                            conn.close()
                     
                     if count > 0:
                         add_log_message(f"[⚡ AUTO-MIGRATION] Phát hiện {count} căn đang chờ di cư ảnh. Tự động kích hoạt luồng di cư...")
@@ -1517,14 +1532,18 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         add_log_message("[❌] Chưa có file Database SQLite raw_archive.db. Vui lòng cào tin trước.")
         return
         
-    conn = sqlite3.connect(DB_FILE, timeout=30.0)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    if target_tk_id:
-        rows = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (target_tk_id,)).fetchall()
-    else:
-        rows = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE status = 'raw_text'").fetchall()
-    conn.close()
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_FILE, timeout=30.0)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        if target_tk_id:
+            rows = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (target_tk_id,)).fetchall()
+        else:
+            rows = cursor.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE status = 'raw_text'").fetchall()
+    finally:
+        if conn:
+            conn.close()
     
     if not rows:
         if target_tk_id:
@@ -1892,6 +1911,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                         new_images_mapping[img_url] = img_link
 
         # Cập nhật SQLite, phân loại sơ đồ/ảnh thô và tự động đẩy Sheets Pool (US-040)
+        conn = None
         try:
             clean_sodo1 = ""
             clean_sodo2 = ""
@@ -2351,6 +2371,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             
             conn.commit()
             conn.close()
+            conn = None
             
             processed += 1
             add_log_message(f"[✅ SQLite] Đã cập nhật SQLite cục bộ cho {tk_id}: Sơ đồ thửa đất và nội dung AI biên tập. Trạng thái -> raw_complete")
@@ -2365,6 +2386,12 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 
         except Exception as e:
             add_log_message(f"[❌ LỖI] Gặp sự cố trong quy trình tự động hóa Curation & Xuất bản cho {tk_id}: {str(e)}")
+        finally:
+            if conn:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
             
         # Throttling tối ưu bảo vệ IP: Cloudflare R2 cực nhanh (0.5 - 1.5s), Google Drive API (1.5 - 3.0s)
         if use_r2:
@@ -2540,6 +2567,8 @@ def run_ai_curation_for_crawled_listing(tk_id, data):
     import pool_lego
     run_ai = data.get("run_ai", False)
     if run_ai:
+        conn_check = None
+        conn_update = None
         try:
             cfg = load_config()
             conn_check = sqlite3.connect(DB_FILE, timeout=30.0)
@@ -2547,6 +2576,7 @@ def run_ai_curation_for_crawled_listing(tk_id, data):
             cursor_check = conn_check.cursor()
             saved_row = cursor_check.execute(f"SELECT * FROM {LISTINGS_TABLE} WHERE tk_id = ?", (tk_id,)).fetchone()
             conn_check.close()
+            conn_check = None
 
             if saved_row:
                 d_norm = normalize_listing_for_client(saved_row)
@@ -2564,9 +2594,21 @@ def run_ai_curation_for_crawled_listing(tk_id, data):
                     )
                     conn_update.commit()
                     conn_update.close()
+                    conn_update = None
                     add_log_message(f"[⚡ AUTO-AI SUCCESS] Đã tự động tạo Tiêu đề Public và Mô tả bằng AI cho căn {tk_id}")
         except Exception as e_ai:
             add_log_message(f"[❌ AUTO-AI ERROR] Lỗi tự động tạo Curation AI cho căn {tk_id}: {str(e_ai)}")
+        finally:
+            if conn_check:
+                try:
+                    conn_check.close()
+                except Exception:
+                    pass
+            if conn_update:
+                try:
+                    conn_update.close()
+                except Exception:
+                    pass
 
 def execute_publish_listing(tk_id):
     """
@@ -2639,4 +2681,45 @@ if __name__ == '__main__':
             
     threading.Thread(target=auto_open_browser, daemon=True).start()
     
-    app.run(host='0.0.0.0', port=port, debug=False)
+    # Giải phóng port 5000/5001 nếu bị kẹt bởi phiên cũ (chỉ chạy trong __main__, không chạy khi import)
+    free_ports()
+    
+    # Bảo vệ Flask server: auto-restart khi crash + ghi traceback vào app.log
+    MAX_RESTART_ATTEMPTS = 3
+    for _restart_attempt in range(MAX_RESTART_ATTEMPTS):
+        try:
+            app.run(host='0.0.0.0', port=port, debug=False)
+            break  # Thoát bình thường (Ctrl+C)
+        except KeyboardInterrupt:
+            add_log_message("[🛑] Server dừng bởi người dùng (Ctrl+C).")
+            break
+        except SystemExit as e_exit:
+            add_log_message(f"[🔴 CRASH] Flask server bị SystemExit (code={e_exit.code}). Lần thử {_restart_attempt+1}/{MAX_RESTART_ATTEMPTS}...")
+            try:
+                import traceback
+                with open("app.log", "a", encoding="utf-8") as _crash_f:
+                    _crash_f.write(f"\n--- SERVER CRASH #{_restart_attempt+1} (SystemExit code={e_exit.code}) ---\n")
+                    _crash_f.write(traceback.format_exc())
+                    _crash_f.write("\n")
+            except Exception:
+                pass
+            if _restart_attempt < MAX_RESTART_ATTEMPTS - 1:
+                add_log_message(f"[🔄] Đang tự động khởi động lại server sau 2 giây...")
+                time.sleep(2)
+            else:
+                add_log_message(f"[🔴] Đã thử khởi động lại {MAX_RESTART_ATTEMPTS} lần mà vẫn thất bại. Server dừng hẳn.")
+        except Exception as e_crash:
+            add_log_message(f"[🔴 CRASH] Flask server crash: {str(e_crash)}. Lần thử {_restart_attempt+1}/{MAX_RESTART_ATTEMPTS}...")
+            try:
+                import traceback
+                with open("app.log", "a", encoding="utf-8") as _crash_f:
+                    _crash_f.write(f"\n--- SERVER CRASH #{_restart_attempt+1} ({type(e_crash).__name__}: {e_crash}) ---\n")
+                    _crash_f.write(traceback.format_exc())
+                    _crash_f.write("\n")
+            except Exception:
+                pass
+            if _restart_attempt < MAX_RESTART_ATTEMPTS - 1:
+                add_log_message(f"[🔄] Đang tự động khởi động lại server sau 2 giây...")
+                time.sleep(2)
+            else:
+                add_log_message(f"[🔴] Đã thử khởi động lại {MAX_RESTART_ATTEMPTS} lần mà vẫn thất bại. Server dừng hẳn.")

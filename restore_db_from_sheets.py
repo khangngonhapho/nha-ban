@@ -18,6 +18,61 @@ for arg in sys.argv:
         DB_FILE = arg.split("=", 1)[1]
         print(f"[ℹ] Chỉ định ghi đè CSDL đích: {DB_FILE}")
 
+LOCK_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.lock")
+
+class DBLock:
+    def __init__(self, lock_path=LOCK_FILE):
+        self.lock_path = lock_path
+        self.fd = None
+
+    def acquire(self, timeout=120):
+        start = time.time()
+        while True:
+            try:
+                self.fd = os.open(self.lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                return True
+            except FileExistsError:
+                try:
+                    mtime = os.path.getmtime(self.lock_path)
+                    if time.time() - mtime > 300:
+                        try:
+                            os.remove(self.lock_path)
+                            print("[🛡️ Guard] Phát hiện và giải phóng file lock bị kẹt của phiên cũ.")
+                        except Exception:
+                            pass
+                        continue
+                except Exception:
+                    pass
+                if time.time() - start > timeout:
+                    raise TimeoutError(f"Không thể lấy khóa ghi database sau {timeout} giây.")
+                time.sleep(0.5)
+
+    def release(self):
+        if self.fd is not None:
+            try:
+                os.close(self.fd)
+            except Exception:
+                pass
+            try:
+                os.remove(self.lock_path)
+            except Exception:
+                pass
+            self.fd = None
+
+def with_db_lock(func):
+    def wrapper(*args, **kwargs):
+        lock = DBLock()
+        try:
+            lock.acquire(timeout=120)
+        except Exception as e_lock:
+            print(f"[❌ LOCK ERROR] Không thể chạy {func.__name__} do trùng khóa DB: {str(e_lock)}")
+            return
+        try:
+            return func(*args, **kwargs)
+        finally:
+            lock.release()
+    return wrapper
+
 def backup_master_database(master_db_path):
     """Sao lưu CSDL Gốc trước khi hợp nhất và xoay vòng lưu tối đa 10 ngày"""
     try:
@@ -200,12 +255,26 @@ def merge_temp_to_master(temp_db_path, master_db_path):
     cursor.execute("DELETE FROM customer_profiles")
     cursor.execute("INSERT INTO customer_profiles SELECT * FROM temp_db.customer_profiles")
 
+    # Khởi tạo bảng exclusion_filters trên master db nếu chưa có (phòng thủ)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS exclusion_filters (
+        id TEXT PRIMARY KEY,
+        field TEXT NOT NULL,
+        operator TEXT NOT NULL,
+        value TEXT,
+        status TEXT NOT NULL DEFAULT 'Active',
+        note TEXT
+    )
+    """)
+    cursor.execute("DELETE FROM exclusion_filters")
+    cursor.execute("INSERT INTO exclusion_filters SELECT * FROM temp_db.exclusion_filters")
+
     conn.commit()
     # DETACH CSDL Tạm
     cursor.execute("DETACH DATABASE temp_db")
     conn.close()
     
-    print(f"  - [Hoàn tất hợp nhất] Đã hợp nhấtlistings, shared_links, phone_blacklist và customer_profiles vào CSDL Gốc.")
+    print(f"  - [Hoàn tất hợp nhất] Đã hợp nhất listings, shared_links, phone_blacklist, customer_profiles và exclusion_filters vào CSDL Gốc.")
 
 def restore_links_and_blacklist(client, db_path):
     print(f"\n🔄 Đang đồng bộ bảng Links, Blacklist và Customer Profiles từ Tracking Log vào tệp CSDL Tạm: {db_path}...")
@@ -331,6 +400,44 @@ def restore_links_and_blacklist(client, db_path):
     except Exception as e:
         print(f"  - [⚠️ WARNING Links Sync] Lỗi kết nối hoặc mở spreadsheet: {str(e)}")
 
+def normalize_images_list(images_list):
+    """Chuẩn hóa list ảnh để luôn có các key cần thiết (url, role, visible)
+    và ánh xạ chính xác vai trò tiếng Anh sang tiếng Việt, cờ ẩn/hiện.
+    """
+    normalized_images = []
+    if not images_list or not isinstance(images_list, list):
+        return normalized_images
+        
+    for img in images_list:
+        if not isinstance(img, dict):
+            continue
+        url = img.get("url") or img.get("r2_url") or img.get("image_url") or ""
+        if not url:
+            continue
+        role = img.get("role") or "Nội thất"
+        role_map_en_to_vi = {
+            "diagram": "Sơ đồ", "facade": "Mặt tiền", "cover": "Bìa",
+            "alley": "Hẻm", "interior": "Nội thất", "hidden": "Ẩn", "deleted": "deleted"
+        }
+        if role in role_map_en_to_vi:
+            role = role_map_en_to_vi[role]
+        
+        is_hidden = img.get("is_hidden")
+        visible = img.get("visible")
+        if visible is None:
+            if is_hidden is not None:
+                visible = (is_hidden == 0)
+            else:
+                visible = True
+        
+        normalized_images.append({
+            "url": url,
+            "role": role,
+            "visible": visible
+        })
+    return normalized_images
+
+@with_db_lock
 def restore_database():
     print("======================================================================")
     print("🔄 BẮT ĐẦU KHÔI PHỤC DATABASE SQLITE CỤC BỘ TỪ GOOGLE SHEETS POOL")
@@ -903,6 +1010,8 @@ def restore_database():
                 # Thiết lập trạng thái thành 'raw_text' để kích hoạt di cư lại tự động lên R2
                 status = "raw_text"
                 print(f"  - [🔄 Khôi phục Sheets] Phục hồi thành công {len(images_list)} ảnh thô từ Pool_Images cho căn {tk_id}. Đặt lại status -> 'raw_text'")
+
+        images_list = normalize_images_list(images_list)
 
         if images_list:
             reconstructed_drive_images = [img["url"] for img in images_list]

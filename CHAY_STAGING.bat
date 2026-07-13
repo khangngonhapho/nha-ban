@@ -14,6 +14,9 @@ echo.
 :: Tu dong mo trinh duyet den website local (STAGING)
 start "" "http://localhost:5001"
 
+:: Tu dong khoi chay background worker (Staging) trong cua so rieng
+start "Khang Ngo - Background Worker (Staging)" python background_worker.py
+
 :: Khoi dong server Flask o terminal hien tai voi STAGING=true
 python manager.py
 
