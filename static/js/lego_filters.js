@@ -19,7 +19,16 @@
     
     // 1. Lấy giá trị của thuộc tính p[field]
     let fieldVal = p[crit.field];
-    if (fieldVal === undefined || fieldVal === null) {
+    if (crit.field === 'loai_hinh') {
+      const types = [
+        p.loai_hinh,
+        p.raw_phan_loai,
+        p.json_ui_parsed ? p.json_ui_parsed.Criteria_Loai_BDS : '',
+        typeof window.getHouseType === 'function' ? window.getHouseType(p) : '',
+        typeof window.getHouseTypeDisplay === 'function' ? window.getHouseTypeDisplay(p) : ''
+      ].filter(Boolean).join(' | ');
+      fieldVal = types;
+    } else if (fieldVal === undefined || fieldVal === null) {
       // Fallback cho các thuộc tính đặc biệt trong json_ui_parsed
       const criteriaKey = "Criteria_" + crit.field;
       if (p.json_ui_parsed && p.json_ui_parsed[criteriaKey] !== undefined) {
