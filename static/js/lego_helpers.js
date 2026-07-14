@@ -635,6 +635,7 @@ window.saveState = function() {
     selectedIds: [...SELECTED_IDS],
     favOnly: showFavOnly,
     showOnAirOnly: showOnAirOnly,
+    showGiamChaoOnly: window.showGiamChaoOnly || false,
     search: document.getElementById('bdsSearchInput')?.value || '',
     adv: {
       giaMin: document.getElementById('filterGiaMin')?.value || '',
@@ -711,6 +712,23 @@ window.restoreState = function() {
       showOnAirOnly = state.showOnAirOnly;
       const toggle = document.getElementById('onAirToggle');
       if (toggle) toggle.checked = showOnAirOnly;
+    }
+    if (state.showGiamChaoOnly !== undefined) {
+      window.showGiamChaoOnly = state.showGiamChaoOnly;
+      const btn = document.getElementById('giamChaoFilterBtn');
+      if (btn) {
+        if (window.showGiamChaoOnly) {
+          btn.classList.add('on');
+          btn.style.background = '#e74c3c';
+          btn.style.borderColor = '#e74c3c';
+          btn.style.color = '#fff';
+        } else {
+          btn.classList.remove('on');
+          btn.style.background = '';
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }
+      }
     }
 
     const sInput = document.getElementById('bdsSearchInput');

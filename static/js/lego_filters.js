@@ -564,6 +564,9 @@
     }
 
     if (window.showFavOnly) a = a.filter(p => window.favs.has(p.system_id ? String(p.system_id) : String(p.id)));
+    if (window.showGiamChaoOnly) {
+      a = a.filter(p => p.json_ui_parsed && p.json_ui_parsed.tags && p.json_ui_parsed.tags.some(t => t.name === "Giảm chào"));
+    }
     if (window.selDistricts.size) a = a.filter(p => window.selDistricts.has(p.q));
     if (window.selWards.size) a = a.filter(p => window.selWards.has(p.phuong));
     if (window.selDuongs.size) a = a.filter(p => window.selDuongs.has(p.duong_truoc_nha));
@@ -1093,6 +1096,14 @@
     window.activeCollectionName = null;
     localStorage.removeItem('activeCollectionName');
     window.showFavOnly = false;
+    window.showGiamChaoOnly = false;
+    const giamChaoBtn = document.getElementById('giamChaoFilterBtn');
+    if (giamChaoBtn) {
+      giamChaoBtn.classList.remove('on');
+      giamChaoBtn.style.background = '';
+      giamChaoBtn.style.borderColor = '';
+      giamChaoBtn.style.color = '';
+    }
     if (typeof window.updateFavBtnUI === 'function') window.updateFavBtnUI();
     const activeColBar = document.getElementById('activeColBar');
     if (activeColBar) activeColBar.style.display = 'none';
@@ -1154,6 +1165,28 @@
     } else {
       if (typeof window.openColViewModal === 'function') window.openColViewModal();
     }
+  };
+
+  window.showGiamChaoOnly = false;
+  window.toggleGiamChaoFilter = function() {
+    window.showGiamChaoOnly = !window.showGiamChaoOnly;
+    const btn = document.getElementById('giamChaoFilterBtn');
+    if (btn) {
+      if (window.showGiamChaoOnly) {
+        btn.classList.add('on');
+        btn.style.background = '#e74c3c';
+        btn.style.borderColor = '#e74c3c';
+        btn.style.color = '#fff';
+      } else {
+        btn.classList.remove('on');
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }
+    }
+    if (typeof window.saveState === 'function') window.saveState();
+    if (typeof window.updateStats === 'function') window.updateStats(); 
+    window.applyFilter();
   };
 
   // Lọc bằng cách tạo lại DOM để giải quyết triệt để giới hạn hiển thị 200 căn trong Kho Pool

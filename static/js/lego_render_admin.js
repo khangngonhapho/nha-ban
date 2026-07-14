@@ -149,10 +149,8 @@ window.LegoRenderAdmin = {
       stAbbr = 'Ngừng bán';
     }
     
-    const statusBadgeHtml = `<div class="status-badge-tag" style="background: ${badgeColor}; color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">${stAbbr}</div>`;
-
     const hasGiamChao = p.json_ui_parsed && p.json_ui_parsed.tags && p.json_ui_parsed.tags.some(t => t.name === "Giảm chào");
-    const giamChaoBadgeHtml = hasGiamChao ? `<div class="giam-chao-badge" style="background: rgba(231, 76, 60, 0.95); backdrop-filter: blur(4px); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); display: inline-flex; align-items: center; justify-content: center; height: 18px; line-height: 1; font-family: inherit;">Giảm</div>` : '';
+    const topRightBadgeHtml = hasGiamChao ? `<div class="giam-chao-badge" style="background: rgba(231, 76, 60, 0.95); backdrop-filter: blur(4px); color: #fff; position: absolute; top: 8px; right: 8px; left: auto !important; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 5;">Giảm</div>` : '';
 
     let statusDotHtml = '';
     if (p.isFromPoolOnly) {
@@ -169,10 +167,9 @@ window.LegoRenderAdmin = {
     c.innerHTML = `
       <div class="crow">
         <div class="ibox" style="position: relative;">
-          ${statusBadgeHtml}
-          <div style="position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 4px; z-index: 5;">
+          ${topRightBadgeHtml}
+          <div style="position: absolute; top: 8px; left: 8px; display: flex; align-items: center; z-index: 5;">
             ${statusDotHtml}
-            ${giamChaoBadgeHtml}
           </div>
           <img src="${thumb}" alt="${p.t}" loading="lazy" decoding="async" onload="this.parentElement.classList.add('is-loaded'); this.classList.add('loaded');">
           <input type="checkbox" class="card-sel" onclick="event.stopPropagation()" onchange="toggleSelect('${p.id}', this)" ${isSelected ? 'checked' : ''}>

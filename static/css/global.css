@@ -65,6 +65,10 @@
       display: inline-flex !important;
     }
 
+    body.is-admin #giamChaoFilterBtn {
+      display: inline-flex !important;
+    }
+
     body.is-admin #modeSwitcherContainer {
       display: flex !important;
     }
