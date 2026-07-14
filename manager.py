@@ -2385,7 +2385,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             conn = None
             
             processed += 1
-            add_log_message(f"[✅ SQLite] Đã cập nhật SQLite cục bộ cho {tk_id}: Sơ đồ thửa đất và nội dung AI biên tập. Trạng thái -> raw_complete")
+            add_log_message(f"[✅ SQLite] Đã cập nhật SQLite cục bộ cho {tk_id}: Sơ đồ thửa đất và hình ảnh R2. Trạng thái -> raw_complete")
             
             # 5. Tự động xuất bản trực tiếp lên Google Sheets Pool
             add_log_message(f"[⚡ AUTO-SHEETS] Đang tự động đẩy dòng dữ liệu 79 cột lên tab Pool của Google Sheets...")
