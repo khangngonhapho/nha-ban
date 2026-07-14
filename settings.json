@@ -24,7 +24,8 @@
     "Last_Crawl",
     "history",
     "latitude",
-    "longitude"
+    "longitude",
+    "tags"
   ],
   "json_ui_filters": [
     {
