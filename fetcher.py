@@ -20,8 +20,20 @@ from datetime import datetime
 import argparse
 from urllib.parse import urlparse, parse_qs, urlunparse, urlencode
 import requests
-from bs4 import BeautifulSoup
 import hashlib
+
+def play_long_auth_alarm():
+    """Phát âm thanh cảnh báo lỗi xác thực dài và lớn (khoảng 8-10 giây) để cảnh báo cho người dùng."""
+    try:
+        import winsound
+        print("\a", end="")
+        print("[🔔 ALARM] PHÁT PHIÊN CẢNH BÁO LỖI XÁC THỰC LỚN...")
+        for _ in range(12):
+            winsound.Beep(1800, 500)
+            time.sleep(0.2)
+    except Exception:
+        pass
+
 
 # Ép terminal Windows/các hệ điều hành mã hóa UTF-8 để hiển thị ký tự Tiếng Việt không bị lỗi
 try:
@@ -520,13 +532,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                     if response.status_code in [401, 403]:
                         print("[*] Dừng chương trình do lỗi xác thực (HTTP 401/403). Vui lòng cập nhật Cookie mới.")
                         session_status = 'cookie_expired'
-                        try:
-                            import winsound
-                            winsound.Beep(1000, 250)
-                            winsound.Beep(1000, 250)
-                            winsound.Beep(800, 450)
-                        except Exception:
-                            pass
+                        play_long_auth_alarm()
                         sys.exit(1)
                     sleep_interruptible(10)
                     continue
@@ -536,13 +542,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                     print("\n[❌ LỖI BẢO MẬT] Cookie Thiên Khôi của anh đã hết hạn hoặc bị thu hồi!")
                     print("[*] Vui lòng xóa file 'thienkhoi_cookie.txt' và chạy lại để nhập Cookie mới.")
                     session_status = 'cookie_expired'
-                    try:
-                        import winsound
-                        winsound.Beep(1000, 250)
-                        winsound.Beep(1000, 250)
-                        winsound.Beep(800, 450)
-                    except Exception:
-                        pass
+                    play_long_auth_alarm()
                     sys.exit(1)
                     
                 soup = BeautifulSoup(response.text, "html.parser")
@@ -616,13 +616,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                         if response_detail.status_code in [401, 403]:
                             print("[*] Dừng chương trình do lỗi xác thực (HTTP 401/403). Vui lòng cập nhật Cookie mới.")
                             session_status = 'cookie_expired'
-                            try:
-                                import winsound
-                                winsound.Beep(1000, 250)
-                                winsound.Beep(1000, 250)
-                                winsound.Beep(800, 450)
-                            except Exception:
-                                pass
+                            play_long_auth_alarm()
                             sys.exit(1)
                         continue
                         
@@ -630,13 +624,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                         print("\n[❌ LỖI BẢO MẬT] Cookie Thiên Khôi đã hết hạn khi tải chi tiết căn nhà!")
                         print("[*] Dừng cào để đảm bảo an toàn. Vui lòng chạy lại và cập nhật Cookie mới.")
                         session_status = 'cookie_expired'
-                        try:
-                            import winsound
-                            winsound.Beep(1000, 250)
-                            winsound.Beep(1000, 250)
-                            winsound.Beep(800, 450)
-                        except Exception:
-                            pass
+                        play_long_auth_alarm()
                         sys.exit(1)
                         
                     soup_detail = BeautifulSoup(response_detail.text, "html.parser")
@@ -964,6 +952,7 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                     else:
                         print("[❌ LỖI] Không thể refresh token. Dừng cào. Vui lòng cập nhật Cookie mới.")
                         session_status = 'cookie_expired'
+                        play_long_auth_alarm()
                         sys.exit(1)
 
                 if r.status_code != 200:
@@ -1064,6 +1053,7 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                         else:
                             print("  [❌ LỖI] Không thể refresh token. Dừng cào.")
                             session_status = 'cookie_expired'
+                            play_long_auth_alarm()
                             sys.exit(1)
 
                     if r_detail.status_code != 200:
