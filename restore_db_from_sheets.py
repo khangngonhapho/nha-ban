@@ -789,8 +789,6 @@ def restore_database():
                         if isinstance(img, dict) and img.get("image_url"):
                             url = img.get("r2_url") or img.get("image_url")
                             en_role = img.get("role", "interior")
-                            if en_role == 'deleted' and 'BDS-KhangNgo-v2' not in (url or ''):
-                                continue
                             vi_role = role_map_en_to_vi.get(en_role, "Nội thất")
                             is_hidden = img.get("is_hidden", 0) == 1
                             images_list.append({

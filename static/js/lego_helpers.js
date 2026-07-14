@@ -377,14 +377,7 @@ window.getMappedPoolData = function() {
           "deleted": "deleted"
         };
         p.curated_config = {
-          images: parsedAdmin.filter(img => {
-            if (!img) return false;
-            const url = img.r2_url || img.image_url || img.url || '';
-            if (img.role === 'deleted' && !url.includes('BDS-KhangNgo-v2')) {
-              return false;
-            }
-            return true;
-          }).map(img => {
+          images: parsedAdmin.map(img => {
             const roleVi = roleMapEnToVi[img.role] || img.role || 'Nội thất';
             const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
             return {

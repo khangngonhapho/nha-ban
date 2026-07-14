@@ -841,6 +841,10 @@
             cards.push({ type: "alley", index: alleyCount, ...cardObj });
           } else if (role === 'deleted') {
             cards.push({ type: "deleted", index: 0, ...cardObj });
+            if (img.url && !img.url.includes('BDS-KhangNgo-v2')) {
+              window.brokenImageUrls = window.brokenImageUrls || new Set();
+              window.brokenImageUrls.add(normalizeImgUrl(img.url));
+            }
           } else {
             interiorCount++;
             cards.push({ type: "interior", index: interiorCount, ...cardObj });
@@ -1136,12 +1140,15 @@
 
       let slidesHtml = '';
       renderedCards.forEach((c, idx) => {
+        const normUrl = normalizeImgUrl(c.url);
+        const isBroken = window.brokenImageUrls && window.brokenImageUrls.has(normUrl);
         const isDeleted = c.type === 'deleted';
-        const slideStyle = isDeleted ? 'filter: grayscale(40%) opacity(0.65); border: 2px dashed var(--red, #ff4d4f); box-shadow: inset 0 0 10px rgba(255, 77, 79, 0.2);' : '';
+        const slideStyle = (isDeleted || isBroken) ? 'filter: grayscale(40%) opacity(0.65); border: 2px dashed var(--red, #ff4d4f); box-shadow: inset 0 0 10px rgba(255, 77, 79, 0.2);' : '';
         const badgeText = c.type === "facade" ? "Mặt Tiền" : (c.type === "sodo" ? `Sổ ${c.index}` : (c.type === "interior" ? `Nội Thất ${c.index}` : (c.type === "deleted" ? "Đã Xóa" : `Hẻm ${c.index}`)));
+        const imgSrc = isBroken ? "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='600' height='400' fill='%232c2c2e'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23ff4d4f' font-weight='bold'>⚠️ LỖI: HÌNH ẢNH KHÔNG TỒN TẠI (TK/R2)</text></svg>" : fixImgUrl(c.url, 'w600');
         slidesHtml += `
           <div class="carousel-slide-item" data-slide-index="${idx}" style="${slideStyle}">
-            <img src="${fixImgUrl(c.url, 'w600')}" alt="Slide ${idx + 1}" style="cursor: zoom-in;" onclick="window.openZoomOverlay('${c.url.replace(/'/g, "\\'")}')" onerror="window.handleImageLoadError(this, '${c.url.replace(/'/g, "\\'")}', '${c.type}', ${c.index}, ${idx})">
+            <img src="${imgSrc}" alt="Slide ${idx + 1}" style="cursor: zoom-in;" onclick="window.openZoomOverlay('${c.url.replace(/'/g, "\\'")}')" onerror="window.handleImageLoadError(this, '${c.url.replace(/'/g, "\\'")}', '${c.type}', ${c.index}, ${idx})">
             <div class="carousel-slide-badge">${badgeText}</div>
             <div class="carousel-order-indicator" id="carouselOrderIndicator-${idx}" style="display: none;">#1</div>
             <div class="carousel-role-indicator" id="carouselRoleIndicator-${idx}" style="display: none;"></div>
@@ -1191,8 +1198,10 @@
             <div class="thumbnail-strip-wrapper">
               <div class="thumbnail-strip-scroll" id="thumbnailStripScroll">
                 ${renderedCards.map((c, idx) => {
+                  const normUrl = normalizeImgUrl(c.url);
+                  const isBroken = window.brokenImageUrls && window.brokenImageUrls.has(normUrl);
                   const isDeleted = c.type === 'deleted';
-                  const thumbStyle = isDeleted ? 'filter: grayscale(40%) opacity(0.65); border: 1.5px dashed var(--red, #ff4d4f);' : '';
+                  const thumbStyle = (isDeleted || isBroken) ? 'filter: grayscale(40%) opacity(0.65); border: 1.5px dashed var(--red, #ff4d4f);' : '';
                   return `
                     <div class="thumbnail-item-card" id="thumbCard-${idx}" onclick="window.gotoImageEditorSlide(${idx}, true)" style="${thumbStyle}">
                       <img src="${fixImgUrl(c.url, 'w100')}" alt="Thumb ${idx + 1}" loading="lazy">
