@@ -96,31 +96,32 @@ def get_db_file() -> str:
     2. settings.json Pool2   → raw_archive_v2.db
     3. Default               → raw_archive.db
 
-    Args:
-        Không có.
-
-    Returns:
-        Tên file SQLite (string). Không bao gồm đường dẫn thư mục.
-
-    Examples:
-        >>> os.environ["STAGING"] = "true"
-        >>> get_db_file()
-        'raw_archive_staging.db'
-        >>> get_db_file()  # settings.json có Pool2
-        'raw_archive_v2.db'
-        >>> get_db_file()  # mặc định
-        'raw_archive.db'
+    Nếu có cấu hình database_dir trong settings.json và thư mục đó tồn tại trên đĩa,
+    sẽ trả về đường dẫn tuyệt đối đầy đủ của tệp tin SQLite nằm trong thư mục đó.
+    Nếu không, trả về tên tệp tin tương đối phục vụ tương thích ngược (fallback).
     """
+    filename = "raw_archive.db"
     if os.environ.get("STAGING") == "true":
-        return "raw_archive_staging.db"
+        filename = "raw_archive_staging.db"
+    else:
+        try:
+            from core.config import read_settings
+            cfg = read_settings()
+            if cfg.get("active_pool_system") == "Pool2":
+                filename = "raw_archive_v2.db"
+        except Exception:
+            pass
+
     try:
         from core.config import read_settings
         cfg = read_settings()
-        if cfg.get("active_pool_system") == "Pool2":
-            return "raw_archive_v2.db"
+        db_dir = cfg.get("database_dir")
+        if db_dir and os.path.exists(db_dir):
+            return os.path.abspath(os.path.join(db_dir, filename))
     except Exception:
         pass
-    return "raw_archive.db"
+
+    return filename
 
 
 # =============================================================================

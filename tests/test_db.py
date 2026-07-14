@@ -139,20 +139,20 @@ class TestGetDbFile:
         monkeypatch.delenv("STAGING", raising=False)
         monkeypatch.chdir(tmp_path)  # Không có settings.json
         result = get_db_file()
-        assert result == "raw_archive.db"
+        assert os.path.basename(result) == "raw_archive.db"
 
     def test_staging_env_returns_staging_db(self, monkeypatch):
         """STAGING=true → raw_archive_staging.db."""
         monkeypatch.setenv("STAGING", "true")
         result = get_db_file()
-        assert result == "raw_archive_staging.db"
+        assert os.path.basename(result) == "raw_archive_staging.db"
 
     def test_staging_env_false_uses_normal_logic(self, tmp_path, monkeypatch):
         """STAGING=false → không dùng staging db."""
         monkeypatch.setenv("STAGING", "false")
         monkeypatch.chdir(tmp_path)
         result = get_db_file()
-        assert result != "raw_archive_staging.db"
+        assert os.path.basename(result) != "raw_archive_staging.db"
 
     def test_pool2_active_returns_v2_db(self, tmp_path, monkeypatch):
         """settings.json có active_pool_system=Pool2 → raw_archive_v2.db."""
@@ -161,7 +161,7 @@ class TestGetDbFile:
         settings.write_text('{"active_pool_system": "Pool2"}', encoding="utf-8")
         monkeypatch.chdir(tmp_path)
         result = get_db_file()
-        assert result == "raw_archive_v2.db"
+        assert os.path.basename(result) == "raw_archive_v2.db"
 
     def test_pool1_active_returns_raw_archive(self, tmp_path, monkeypatch):
         """settings.json có active_pool_system=Pool1 → raw_archive.db."""
@@ -170,7 +170,7 @@ class TestGetDbFile:
         settings.write_text('{"active_pool_system": "Pool1"}', encoding="utf-8")
         monkeypatch.chdir(tmp_path)
         result = get_db_file()
-        assert result == "raw_archive.db"
+        assert os.path.basename(result) == "raw_archive.db"
 
     def test_invalid_settings_json_falls_back(self, tmp_path, monkeypatch):
         """settings.json bị lỗi JSON → fallback về raw_archive.db, không crash."""
@@ -179,7 +179,7 @@ class TestGetDbFile:
         settings.write_text("{ INVALID JSON }", encoding="utf-8")
         monkeypatch.chdir(tmp_path)
         result = get_db_file()
-        assert result == "raw_archive.db"
+        assert os.path.basename(result) == "raw_archive.db"
 
     def test_staging_takes_priority_over_pool2(self, tmp_path, monkeypatch):
         """STAGING=true có priority cao hơn Pool2 setting."""
@@ -188,7 +188,7 @@ class TestGetDbFile:
         settings.write_text('{"active_pool_system": "Pool2"}', encoding="utf-8")
         monkeypatch.chdir(tmp_path)
         result = get_db_file()
-        assert result == "raw_archive_staging.db"
+        assert os.path.basename(result) == "raw_archive_staging.db"
 
 
 # =============================================================================
