@@ -3,7 +3,7 @@
 // Hỗ trợ Tự động Mã hóa ID & Trigger Đẩy sang Public
 //
 // [Latest Update / User Story]
-// - US-119: Quản lý và Biên tập Đường trước nhà & Độ rộng hẻm (Cập nhật ngày 2026-07-01)
+// - US-147: Loại bỏ bước gọi AI tự động trong luồng background worker di cư ảnh (Cập nhật ngày 2026-07-14)
 // ==========================================
 
 const PUBLIC_FILE_ID = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"; // File BDS_KhangNgo_Source

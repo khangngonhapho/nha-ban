@@ -136,10 +136,10 @@ def process_raw_listings():
 
             item_dict = dict(item_row)
             
-            # 2. Chạy AI Curation (Bắt buộc chạy bằng cách set run_ai = True)
-            item_dict["run_ai"] = True
-            print(f"[🤖] Đang khởi chạy AI Curation để biên tập Tiêu đề & Mô tả...")
-            manager.run_ai_curation_for_crawled_listing(tk_id, item_dict)
+            # US-147: Loại bỏ bước tự động gọi AI Curation để người dùng tự review và biên tập trên giao diện
+            # item_dict["run_ai"] = True
+            # print(f"[🤖] Đang khởi chạy AI Curation để biên tập Tiêu đề & Mô tả...")
+            # manager.run_ai_curation_for_crawled_listing(tk_id, item_dict)
 
             # 3. Chạy di cư hình ảnh và xuất bản lên Sheets Pool
             print(f"[📸] Đang tải ảnh, tối ưu hóa R2 và xuất bản lên Sheets Pool...")
