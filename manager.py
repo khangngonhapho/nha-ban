@@ -1138,11 +1138,13 @@ def rebuild_admin_public_images_json(curated_config, manual_images):
         resolved_role = role_map_vi_to_en.get(vi_role, "interior")
         visible = img.get("visible", True)
         
-        # Phân biệt origin: nếu url có SYS- hoặc trong manual_images thì là self
+        # Phân biệt origin: giữ nguyên nếu đã là self/user, hoặc có SYS-, hoặc nằm trong manual_images
         filename = url.split("/")[-1]
-        origin = "crawl"
-        if filename.startswith("SYS-") or url in manual_images:
+        origin = img.get("origin", "crawl")
+        if origin in ["self", "user"] or filename.startswith("SYS-") or url in manual_images:
             origin = "self"
+        else:
+            origin = "crawl"
             
         is_hidden_val = 1 if (not visible or resolved_role in ["hidden", "deleted"]) else 0
         migrated_images.append({
@@ -2027,7 +2029,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     if not isinstance(img, dict):
                         continue
                     url = img.get("url")
-                    if url in manual_images:
+                    if url in manual_images or img.get("origin") in ["self", "user"]:
                         new_images_list.append(img)
                         added_urls.add(url)
                 
@@ -2037,6 +2039,10 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                         continue
                     url = img.get("url")
                     if url in manual_images or url in added_urls:
+                        continue
+                        
+                    # Lọc bỏ hoàn toàn ảnh bị deleted mà không nằm trong thư mục R2 mới (BDS-KhangNgo-v2) để dọn dẹp DB
+                    if img.get("role") == "deleted" and 'BDS-KhangNgo-v2' not in (url or ''):
                         continue
                         
                     # Nếu ảnh cũ có trong danh sách R2 URLs mới cào -> Giữ lại và khôi phục trạng thái nếu cần
@@ -2142,13 +2148,18 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                     vi_role = img.get("role", "Nội thất")
                     resolved_role = role_map_vi_to_en.get(vi_role, "interior")
                     visible = img.get("visible", True)
+                    origin = img.get("origin", "crawl")
+                    if origin in ["self", "user"]:
+                        origin = "self"
+                    else:
+                        origin = "crawl"
                     is_hidden_val = 1 if (not visible or resolved_role in ["hidden", "deleted"]) else 0
                     migrated_images.append({
                         "image_url": url,
                         "r2_url": url,
                         "role": resolved_role,
                         "sequence_index": idx,
-                        "origin": "crawl",
+                        "origin": origin,
                         "is_hidden": is_hidden_val
                     })
                 images_admin_json_str = json.dumps(migrated_images, ensure_ascii=False)

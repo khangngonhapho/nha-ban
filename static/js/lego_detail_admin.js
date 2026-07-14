@@ -839,6 +839,8 @@
           } else if (role === 'Hẻm' || role === 'alley') {
             alleyCount++;
             cards.push({ type: "alley", index: alleyCount, ...cardObj });
+          } else if (role === 'deleted') {
+            cards.push({ type: "deleted", index: 0, ...cardObj });
           } else {
             interiorCount++;
             cards.push({ type: "interior", index: interiorCount, ...cardObj });
@@ -1134,10 +1136,13 @@
 
       let slidesHtml = '';
       renderedCards.forEach((c, idx) => {
+        const isDeleted = c.type === 'deleted';
+        const slideStyle = isDeleted ? 'filter: grayscale(40%) opacity(0.65); border: 2px dashed var(--red, #ff4d4f); box-shadow: inset 0 0 10px rgba(255, 77, 79, 0.2);' : '';
+        const badgeText = c.type === "facade" ? "Mặt Tiền" : (c.type === "sodo" ? `Sổ ${c.index}` : (c.type === "interior" ? `Nội Thất ${c.index}` : (c.type === "deleted" ? "Đã Xóa" : `Hẻm ${c.index}`)));
         slidesHtml += `
-          <div class="carousel-slide-item" data-slide-index="${idx}">
-            <img src="${fixImgUrl(c.url, 'w600')}" alt="Slide ${idx + 1}" style="cursor: zoom-in;" onclick="window.openZoomOverlay('${c.url.replace(/'/g, "\\'")}')">
-            <div class="carousel-slide-badge">${c.type === "facade" ? "Mặt Tiền" : (c.type === "sodo" ? `Sổ ${c.index}` : (c.type === "interior" ? `Nội Thất ${c.index}` : `Hẻm ${c.index}`))}</div>
+          <div class="carousel-slide-item" data-slide-index="${idx}" style="${slideStyle}">
+            <img src="${fixImgUrl(c.url, 'w600')}" alt="Slide ${idx + 1}" style="cursor: zoom-in;" onclick="window.openZoomOverlay('${c.url.replace(/'/g, "\\'")}')" onerror="window.handleImageLoadError(this, '${c.url.replace(/'/g, "\\'")}', '${c.type}', ${c.index}, ${idx})">
+            <div class="carousel-slide-badge">${badgeText}</div>
             <div class="carousel-order-indicator" id="carouselOrderIndicator-${idx}" style="display: none;">#1</div>
             <div class="carousel-role-indicator" id="carouselRoleIndicator-${idx}" style="display: none;"></div>
           </div>
@@ -1185,13 +1190,17 @@
             <!-- THUMBNAIL STRIP -->
             <div class="thumbnail-strip-wrapper">
               <div class="thumbnail-strip-scroll" id="thumbnailStripScroll">
-                ${renderedCards.map((c, idx) => `
-                  <div class="thumbnail-item-card" id="thumbCard-${idx}" onclick="window.gotoImageEditorSlide(${idx}, true)">
-                    <img src="${fixImgUrl(c.url, 'w100')}" alt="Thumb ${idx + 1}" loading="lazy">
-                    <span class="thumb-mini-badge" id="thumbMiniBadge-${idx}"></span>
-                    <span class="thumb-mini-badge public-badge" id="thumbPublicBadge-${idx}"></span>
-                  </div>
-                `).join('')}
+                ${renderedCards.map((c, idx) => {
+                  const isDeleted = c.type === 'deleted';
+                  const thumbStyle = isDeleted ? 'filter: grayscale(40%) opacity(0.65); border: 1.5px dashed var(--red, #ff4d4f);' : '';
+                  return `
+                    <div class="thumbnail-item-card" id="thumbCard-${idx}" onclick="window.gotoImageEditorSlide(${idx}, true)" style="${thumbStyle}">
+                      <img src="${fixImgUrl(c.url, 'w100')}" alt="Thumb ${idx + 1}" loading="lazy">
+                      <span class="thumb-mini-badge" id="thumbMiniBadge-${idx}"></span>
+                      <span class="thumb-mini-badge public-badge" id="thumbPublicBadge-${idx}"></span>
+                    </div>
+                  `;
+                }).join('')}
               </div>
             </div>
 
@@ -1206,6 +1215,9 @@
                 </button>
                 <button type="button" id="ctrlSodoBtn" class="control-btn" onclick="window.activeImageToggleSodo()">
                   📜 Sổ đỏ
+                </button>
+                <button type="button" id="ctrlDeletePermBtn" class="control-btn" onclick="window.activeImageDeletePermanent()" style="background: rgba(192, 57, 43, 0.15); border-color: var(--red); color: var(--red); display: none;">
+                  🗑️ Xóa
                 </button>
               </div>
               <div class="control-row" style="margin-top: 5px;">
@@ -1317,7 +1329,7 @@
     };
   // === removeImageFromPublicLists ===
     window.removeImageFromPublicLists = function(url, type, index) {
-      if (type === "interior") {
+      if (type === "interior" || type === "deleted") {
         const input = document.getElementById('editPublicInteriorIndices');
         if (input) {
           let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
@@ -1524,7 +1536,7 @@
         return;
       }
       
-      if (slide.type === "interior") {
+      if (slide.type === "interior" || slide.type === "deleted") {
         const input = document.getElementById('editPublicInteriorIndices');
         if (!input) return;
         let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
@@ -1561,6 +1573,86 @@
       window.reRenderCurationEditorInPlace();
 
     };
+
+  // === handleImageLoadError ===
+    window.handleImageLoadError = function(imgEl, url, type, index, slideIdx) {
+      window.brokenImageUrls = window.brokenImageUrls || new Set();
+      const norm = normalizeImgUrl(url);
+      if (norm) {
+        window.brokenImageUrls.add(norm);
+      }
+      
+      imgEl.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='600' height='400' fill='%232c2c2e'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23ff4d4f' font-weight='bold'>⚠️ LỖI: HÌNH ẢNH KHÔNG TỒN TẠI (TK/R2)</text></svg>";
+      
+      if (window.activeImageEditorIndex === slideIdx) {
+        const deleteBtn = document.getElementById('ctrlDeletePermBtn');
+        if (deleteBtn) deleteBtn.style.display = 'inline-block';
+        
+        const roleInd = document.getElementById(`carouselRoleIndicator-${slideIdx}`);
+        if (roleInd) {
+          roleInd.style.display = 'block';
+          roleInd.style.color = 'var(--red, #ff4d4f)';
+          roleInd.innerHTML = '⚠️ Ảnh bị lỗi (Không tồn tại)';
+        }
+      }
+      
+      const thumbCard = document.getElementById(`thumbCard-${slideIdx}`);
+      if (thumbCard) {
+        thumbCard.style.filter = 'grayscale(100%) opacity(0.5)';
+        thumbCard.style.border = '2px dashed var(--red, #ff4d4f)';
+      }
+    };
+
+  // === activeImageDeletePermanent ===
+    window.activeImageDeletePermanent = function() {
+      const slides = window.imageEditorSlides || [];
+      const activeIdx = window.activeImageEditorIndex;
+      const slide = slides[activeIdx];
+      if (!slide) return;
+      
+      const slideUrl = slide.url.trim();
+      const normUrl = normalizeImgUrl(slideUrl);
+      
+      const isDeletedType = slide.type === 'deleted';
+      const isBroken = window.brokenImageUrls && window.brokenImageUrls.has(normUrl);
+      
+      if (!isDeletedType && !isBroken) {
+        showToast("Chỉ có thể xóa vĩnh viễn hình ảnh đã bị đối tác xóa hoặc bị lỗi link!", "warning");
+        return;
+      }
+      
+      if (!confirm("Bạn có chắc chắn muốn xóa vĩnh viễn ảnh này khỏi danh sách quản lý? Ảnh này sẽ không còn lưu trong CSDL sau khi bạn click 'Lưu'.")) {
+        return;
+      }
+      
+      window.removedImageUrls = window.removedImageUrls || new Set();
+      window.removedImageUrls.add(normUrl);
+      
+      window.removeImageFromPublicLists(slideUrl, slide.type, slide.index);
+      window.removeImageFromSodo(slideUrl);
+      
+      const coverInput = document.getElementById('editPublicCoverUrl');
+      if (coverInput && normalizeImgUrl(coverInput.value) === normUrl) {
+        coverInput.value = "";
+      }
+      const facadeInput = document.getElementById('editCoverImgUrl');
+      if (facadeInput && normalizeImgUrl(facadeInput.value) === normUrl) {
+        facadeInput.value = "";
+      }
+      
+      const p = window.activeCurationListing;
+      if (p && p.curated_config && Array.isArray(p.curated_config.images)) {
+        p.curated_config.images = p.curated_config.images.filter(img => normalizeImgUrl(img.url) !== normUrl);
+      }
+      
+      if (window.activeImageEditorIndex >= slides.length - 1 && window.activeImageEditorIndex > 0) {
+        window.activeImageEditorIndex--;
+      }
+      
+      window.reRenderCurationEditorInPlace();
+      showToast("Đã loại bỏ ảnh khỏi danh sách biên tập. Hãy click 'Lưu' để hoàn tất!", "success");
+    };
+
   // === activeImageMoveOrder ===
   // === activeImageMoveOrder ===
     window.activeImageMoveOrder = function(direction) {
@@ -1573,7 +1665,7 @@
       const slide = slides[activeIdx];
       // Kiểm tra xem ảnh hiện tại có hiển thị public không
       const isPublicCover = (document.getElementById('editPublicCoverUrl')?.value || '') === slide.url;
-      const isPublicInt = slide.type === 'interior' && (document.getElementById('editPublicInteriorIndices')?.value || '').split(',').includes(String(slide.index));
+      const isPublicInt = (slide.type === 'interior' || slide.type === 'deleted') && (document.getElementById('editPublicInteriorIndices')?.value || '').split(',').includes(String(slide.index));
       const isPublicAlley = slide.type === 'alley' && (document.getElementById('editPublicAlleyIndices')?.value || '').split(',').includes(String(slide.index));
       
       if (!isPublicCover && !isPublicInt && !isPublicAlley) {
@@ -1611,7 +1703,7 @@
           const isCover = (document.getElementById('editPublicCoverUrl')?.value || '') === s.url;
           
           if (!isSodo && !isFacade && !isCover) {
-            if (s.type === 'interior' && s.visible !== false) {
+            if ((s.type === 'interior' || s.type === 'deleted') && s.visible !== false) {
               interiorIndices.push(s.index);
             }
             if (s.type === 'alley' && s.visible !== false) {
@@ -1742,13 +1834,13 @@
         }
         
         let isPublic = false;
-        if (c.type === "interior") {
+        if (c.type === "interior" || c.type === "deleted") {
           isPublic = publicIntIndices.includes(String(c.index));
         } else if (c.type === "alley") {
           isPublic = publicAlleyIndices.includes(String(c.index));
         }
         
-        if (c.type === "interior" || c.type === "alley") {
+        if (c.type === "interior" || c.type === "alley" || c.type === "deleted") {
           c.visible = isPublic;
         } else if (c.type === "facade" || c.type === "cover") {
           c.visible = true;
@@ -1775,6 +1867,7 @@
         }
         
         if (roleInd) {
+          roleInd.style.color = '';
           if (isFacade) {
             roleInd.style.display = 'block';
             roleInd.innerHTML = '🔒 Mặt Tiền';
@@ -1787,6 +1880,18 @@
             roleInd.style.display = 'block';
             roleInd.innerHTML = '⭐ Ảnh Nền';
             roleInd.className = 'carousel-role-indicator role-cover';
+          } else if (window.brokenImageUrls && window.brokenImageUrls.has(normUrl)) {
+            roleInd.style.display = 'block';
+            roleInd.style.color = 'var(--red, #ff4d4f)';
+            roleInd.innerHTML = '⚠️ Ảnh bị lỗi (Không tồn tại)';
+          } else if (c.type === 'deleted') {
+            if (isPublic) {
+              roleInd.style.display = 'block';
+              roleInd.innerHTML = '✔️ Khôi phục (Nội thất)';
+            } else {
+              roleInd.style.display = 'block';
+              roleInd.innerHTML = '❌ Đã xóa trên TK';
+            }
           } else {
             roleInd.style.display = 'none';
           }
@@ -1853,7 +1958,7 @@
       const isActiveSodo = activeUrlNorm && normSodos.includes(activeUrlNorm);
       
       let isActivePublic = false;
-      if (activeSlide.type === "interior") {
+      if (activeSlide.type === "interior" || activeSlide.type === "deleted") {
         isActivePublic = publicIntIndices.includes(String(activeSlide.index));
       } else if (activeSlide.type === "alley") {
         isActivePublic = publicAlleyIndices.includes(String(activeSlide.index));
@@ -1910,6 +2015,17 @@
             btnPublic.style.background = '';
             btnPublic.style.color = '';
           }
+        }
+      }
+      
+      const deleteBtn = document.getElementById('ctrlDeletePermBtn');
+      if (deleteBtn) {
+        const isDeletedType = activeSlide.type === 'deleted';
+        const isBroken = window.brokenImageUrls && window.brokenImageUrls.has(activeUrlNorm);
+        if (isDeletedType || isBroken) {
+          deleteBtn.style.display = 'inline-block';
+        } else {
+          deleteBtn.style.display = 'none';
         }
       }
     };
@@ -3758,52 +3874,88 @@
     const curatedImages = [];
     if (!slides) return curatedImages;
 
+    const facadeUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+    const coverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+    const sodoUrls = [
+      (document.getElementById('editSodo1Url')?.value || '').trim(),
+      (document.getElementById('editSodo2Url')?.value || '').trim(),
+      (document.getElementById('editSodo3Url')?.value || '').trim(),
+      (document.getElementById('editSodo4Url')?.value || '').trim(),
+      (document.getElementById('editSodo5Url')?.value || '').trim()
+    ];
+    const normFacade = normalizeImgUrl(facadeUrl);
+    const normCover = normalizeImgUrl(coverUrl);
+    const normSodos = sodoUrls.map(url => normalizeImgUrl(url));
+
+    const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
+    const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
+    const publicIntIndices = publicIntStr.split(',').map(s => s.trim()).filter(Boolean);
+    const publicAlleyIndices = publicAlleyStr.split(',').map(s => s.trim()).filter(Boolean);
+
     const oldImages = (p && p.curated_config && Array.isArray(p.curated_config.images)) ? p.curated_config.images : [];
-    const oldUrls = oldImages.map(img => normalizeImgUrl(img.url)).filter(Boolean);
-
-    const slideMap = {};
-    slides.forEach((slide, idx) => {
-      const norm = normalizeImgUrl(slide.url);
+    const oldImageMap = {};
+    oldImages.forEach(img => {
+      const norm = normalizeImgUrl(img.url);
       if (norm) {
-        slideMap[norm] = { slide, idx };
+        oldImageMap[norm] = img;
       }
     });
 
-    oldImages.forEach((oldImg) => {
-      const norm = normalizeImgUrl(oldImg.url);
-      if (norm && slideMap[norm]) {
-        const { slide, idx } = slideMap[norm];
-        let slideOrigin = slide.origin || oldImg.origin || 'crawl';
-        if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
-        if (slideOrigin === 'user') slideOrigin = 'self';
-
-        curatedImages.push({
-          image_url: oldImg.url,
-          r2_url: oldImg.url.startsWith('https://pub-') ? oldImg.url : '',
-          role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-          sequence_index: idx + 1,
-          origin: slideOrigin,
-          is_hidden: slide.visible === false ? 1 : 0
-        });
-      }
-    });
+    const removedSet = window.removedImageUrls || new Set();
 
     slides.forEach((slide, idx) => {
       const norm = normalizeImgUrl(slide.url);
-      if (norm && !oldUrls.includes(norm)) {
-        let slideOrigin = slide.origin || 'crawl';
-        if (slideOrigin === 'thienkhoi') slideOrigin = 'crawl';
-        if (slideOrigin === 'user') slideOrigin = 'self';
+      if (!norm) return;
+      if (removedSet.has(norm)) return;
 
-        curatedImages.push({
-          image_url: slide.url,
-          r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
-          role: slide.type === 'facade' ? 'facade' : (slide.type === 'cover' ? 'cover' : (slide.type === 'sodo' ? 'diagram' : (slide.type === 'alley' ? 'alley' : 'interior'))),
-          sequence_index: idx + 1,
-          origin: slideOrigin,
-          is_hidden: slide.visible === false ? 1 : 0
-        });
+      const oldImg = oldImageMap[norm];
+
+      let role = 'interior';
+      let visible = false;
+      let originVal = slide.origin || (oldImg ? oldImg.origin : 'crawl');
+
+      if (originVal === 'thienkhoi') originVal = 'crawl';
+      if (originVal === 'user') originVal = 'self';
+
+      const isFacade = norm === normFacade;
+      const isCover = norm === normCover;
+      const isSodo = normSodos.includes(norm);
+
+      if (isFacade) {
+        role = 'facade';
+        visible = true;
+      } else if (isCover) {
+        role = 'cover';
+        visible = true;
+      } else if (isSodo) {
+        role = 'diagram';
+        visible = false;
+      } else if (slide.type === 'alley') {
+        role = 'alley';
+        visible = publicAlleyIndices.includes(String(slide.index));
+      } else if (slide.type === 'deleted') {
+        const isPublicInt = publicIntIndices.includes(String(slide.index));
+        if (isPublicInt) {
+          role = 'interior';
+          visible = true;
+          originVal = 'self';
+        } else {
+          role = 'deleted';
+          visible = false;
+        }
+      } else {
+        role = 'interior';
+        visible = publicIntIndices.includes(String(slide.index));
       }
+
+      curatedImages.push({
+        image_url: slide.url,
+        r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+        role: role,
+        sequence_index: idx + 1,
+        origin: originVal,
+        is_hidden: visible ? 0 : 1
+      });
     });
 
     return curatedImages;
