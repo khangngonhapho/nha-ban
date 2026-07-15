@@ -1251,18 +1251,37 @@ window.downloadAllListingImages = async function(id) {
   const p = window.activeCurationListing || DATA.find(x => String(x.id) === String(id) || String(x.system_id) === String(id));
   if (!p) { alert('Không tìm thấy thông tin căn nhà!'); return; }
 
+  // Các domain bị CORS-blocked, không thể fetch cross-origin
+  const BLOCKED_DOMAINS = ['facebook.com', 'fbcdn.net', 'fb.watch', 'fb.me', 'fb.com', 'scontent'];
+  const isCorsBlocked = (u) => BLOCKED_DOMAINS.some(d => u.includes(d));
+
   const urls = [];
-  const facadeUrl = (p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '').trim();
-  if (facadeUrl) urls.push(facadeUrl);
+  // Fix Rule 6: dùng getPoolColumnIndex thay vì hardcode [29]
+  const facadeColIdx = window.getPoolColumnIndex ? window.getPoolColumnIndex('Hình Mặt Tiền', 29) : 29;
+  const facadeUrl = (p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[facadeColIdx] : '') || '').trim();
+  if (facadeUrl && !isCorsBlocked(facadeUrl)) urls.push(facadeUrl);
+
   if (p.imgs && Array.isArray(p.imgs)) {
     p.imgs.forEach(url => {
       const u = (url || '').trim();
-      if (u && !urls.includes(u)) {
+      if (u && !urls.includes(u) && !isCorsBlocked(u)) {
         if (!window.isListingSodoUrl || !window.isListingSodoUrl(u, p)) urls.push(u);
       }
     });
   }
-  if (urls.length === 0) { alert('Căn nhà này không có hình ảnh nào để tải!'); return; }
+
+  // Fallback: images_public nếu imgs rỗng (Pool listing chưa có R2)
+  if (urls.length === 0 && p.images_public && Array.isArray(p.images_public)) {
+    p.images_public.forEach(img => {
+      const u = (typeof img === 'string' ? img : (img && img.url ? img.url : '')).trim();
+      if (u && !urls.includes(u) && !isCorsBlocked(u)) urls.push(u);
+    });
+  }
+
+  if (urls.length === 0) {
+    showToast('⚠️ Căn nhà chỉ có ảnh từ Facebook — không thể tải trực tiếp do hạn chế CORS. Vui lòng upload ảnh lên R2 trước.', 'warning');
+    return;
+  }
 
   const prefix = p.system_id || p.id || 'bds';
   const fileNames = urls.map((_, i) => `${prefix}-${i + 1}`);
@@ -1287,7 +1306,11 @@ window.downloadAllListingImages = async function(id) {
 
     window.clearDownloadProgress();
     window.trackAction("Tải trọn bộ ảnh v2", `#${prefix} - ${successCount}/${urls.length} ảnh - ${shared ? 'Share' : 'Sequential'}`);
-    showToast(`✅ Đã lưu ${successCount} ảnh${shared ? ' vào Gallery!' : ' thành công!'}`, 'success');
+    if (successCount === 0) {
+      showToast(`⚠️ Không tải được ảnh nào (${urls.length} ảnh bị lỗi mạng hoặc CORS). Thử lại hoặc upload ảnh lên R2.`, 'warning');
+    } else {
+      showToast(`✅ Đã lưu ${successCount}/${urls.length} ảnh${shared ? ' vào Gallery!' : ' thành công!'}`, 'success');
+    }
 
   } catch (error) {
     window.clearDownloadProgress();
