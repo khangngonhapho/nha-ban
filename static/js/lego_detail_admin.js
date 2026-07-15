@@ -2813,7 +2813,7 @@
           writeMethod = 'PUT';
         } else {
           // Thêm dòng mới - dùng append để sheet tự mở rộng grid
-          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
           writeMethod = 'POST';
         }
         const writeRes = await fetch(writeUrl, {
@@ -3724,7 +3724,7 @@
           writeMethod = 'PUT';
         } else {
           // Thêm dòng mới - dùng append để sheet tự mở rộng grid
-          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
           writeMethod = 'POST';
         }
         const writeRes = await fetch(writeUrl, {
