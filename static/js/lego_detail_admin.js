@@ -2812,8 +2812,8 @@
           writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
           writeMethod = 'PUT';
         } else {
-          // Thêm dòng mới - dùng append để sheet tự mở rộng grid
-          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          // Thêm dòng mới - dùng append với range A1 để tránh Google Sheets API align sai cột
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
           writeMethod = 'POST';
         }
         const writeRes = await fetch(writeUrl, {
@@ -3723,8 +3723,8 @@
           writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
           writeMethod = 'PUT';
         } else {
-          // Thêm dòng mới - dùng append để sheet tự mở rộng grid
-          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          // Thêm dòng mới - dùng append với range A1 để tránh Google Sheets API align sai cột
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
           writeMethod = 'POST';
         }
         const writeRes = await fetch(writeUrl, {
