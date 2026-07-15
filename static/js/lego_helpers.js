@@ -1141,6 +1141,21 @@ window.downloadSingleImage = async function(url, fileName) {
   }
 };
 
+// Helper: build fetch URL — route R2 domain qua proxy để bypass CORS
+function buildFetchUrl(url, fileName) {
+  const R2_DOMAINS = ['r2.dev', 'cloudflarestorage.com'];
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    if (R2_DOMAINS.some(d => host.endsWith(d))) {
+      return `/api/proxy-image?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName || 'image.jpg')}`;
+    }
+  } catch (_) {}
+  // Cloudinary: giữ nguyên URL gốc (CORS OK)
+  if (url.includes('res.cloudinary.com')) return url;
+  // Khác: thử fixImgUrl như cũ
+  return (typeof fixImgUrl === 'function') ? fixImgUrl(url, 'w2000') : url;
+}
+
 window.fetchAllBlobs = async function(urls, fileNames, onProgress) {
   const results = [];
   for (let i = 0; i < urls.length; i++) {
@@ -1148,29 +1163,17 @@ window.fetchAllBlobs = async function(urls, fileNames, onProgress) {
     const url = urls[i];
     const fileName = fileNames[i];
     try {
-      const cleanUrl = url.includes('res.cloudinary.com') ? url : (typeof fixImgUrl === 'function' ? fixImgUrl(url, 'w2000') : url);
+      const cleanUrl = buildFetchUrl(url, fileName);
       let response = await fetch(cleanUrl);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const blob = await response.blob();
       let ext = 'jpg';
-      const urlLower = cleanUrl.toLowerCase();
+      const urlLower = url.toLowerCase();
       if (urlLower.includes('.png')) ext = 'png';
       else if (urlLower.includes('.webp')) ext = 'webp';
       results.push({ ok: true, blob, name: `${fileName}.${ext}` });
     } catch (e) {
-      console.warn(`Failed downloading ${url}, trying fallback without resize`, e);
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const blob = await response.blob();
-          let ext = 'jpg';
-          const urlLower = url.toLowerCase();
-          if (urlLower.includes('.png')) ext = 'png';
-          else if (urlLower.includes('.webp')) ext = 'webp';
-          results.push({ ok: true, blob, name: `${fileName}.${ext}` });
-          continue;
-        }
-      } catch (err) { }
+      console.warn(`Failed downloading ${url}`, e);
       results.push({ ok: false, url, name: fileName });
     }
   }
