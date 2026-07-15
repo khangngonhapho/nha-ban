@@ -1256,30 +1256,38 @@ window.downloadAllListingImages = async function(id) {
   const isCorsBlocked = (u) => BLOCKED_DOMAINS.some(d => u.includes(d));
 
   const urls = [];
-  // Fix Rule 6: dùng getPoolColumnIndex thay vì hardcode [29]
-  const facadeColIdx = window.getPoolColumnIndex ? window.getPoolColumnIndex('Hình Mặt Tiền', 29) : 29;
-  const facadeUrl = (p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[facadeColIdx] : '') || '').trim();
-  if (facadeUrl && !isCorsBlocked(facadeUrl)) urls.push(facadeUrl);
 
-  if (p.imgs && Array.isArray(p.imgs)) {
-    p.imgs.forEach(url => {
-      const u = (url || '').trim();
-      if (u && !urls.includes(u) && !isCorsBlocked(u)) {
-        if (!window.isListingSodoUrl || !window.isListingSodoUrl(u, p)) urls.push(u);
-      }
-    });
+  // *** Ưu tiên 1: Lấy r2_url từ Images_Admin_JSON (chỉ R2, bỏ qua URL Facebook gốc) ***
+  // Admin download lấy TẤT CẢ ảnh kể cả sodo — không filter theo role
+  const adminJsonColIdx = window.getPoolColumnIndex ? window.getPoolColumnIndex('Images_Admin_JSON', 94) : 94;
+  const adminJsonStr = p.pool_row_data ? p.pool_row_data[adminJsonColIdx] : null;
+  if (adminJsonStr && String(adminJsonStr).trim().startsWith('[')) {
+    try {
+      const parsedAdmin = JSON.parse(adminJsonStr);
+      parsedAdmin.forEach(img => {
+        const r2Url = (img.r2_url || '').trim();
+        if (r2Url && !urls.includes(r2Url) && !isCorsBlocked(r2Url)) urls.push(r2Url);
+      });
+    } catch (e) {}
   }
 
-  // Fallback: images_public nếu imgs rỗng (Pool listing chưa có R2)
-  if (urls.length === 0 && p.images_public && Array.isArray(p.images_public)) {
-    p.images_public.forEach(img => {
-      const u = (typeof img === 'string' ? img : (img && img.url ? img.url : '')).trim();
-      if (u && !urls.includes(u) && !isCorsBlocked(u)) urls.push(u);
-    });
+  // *** Ưu tiên 2: Nếu không có r2_url nào từ Images_Admin_JSON,
+  //     fallback sang p.imgs (đã merged pool + source) nhưng filter Facebook ***
+  if (urls.length === 0) {
+    const facadeColIdx = window.getPoolColumnIndex ? window.getPoolColumnIndex('Hình Mặt Tiền', 29) : 29;
+    const facadeUrl = (p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[facadeColIdx] : '') || '').trim();
+    if (facadeUrl && !isCorsBlocked(facadeUrl)) urls.push(facadeUrl);
+
+    if (p.imgs && Array.isArray(p.imgs)) {
+      p.imgs.forEach(url => {
+        const u = (url || '').trim();
+        if (u && !urls.includes(u) && !isCorsBlocked(u)) urls.push(u);
+      });
+    }
   }
 
   if (urls.length === 0) {
-    showToast('⚠️ Căn nhà chỉ có ảnh từ Facebook — không thể tải trực tiếp do hạn chế CORS. Vui lòng upload ảnh lên R2 trước.', 'warning');
+    showToast('⚠️ Căn nhà chưa upload ảnh lên R2 — chỉ có ảnh Facebook không thể tải do CORS. Vui lòng upload ảnh lên R2 trước.', 'warning');
     return;
   }
 
