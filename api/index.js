@@ -1759,6 +1759,11 @@ module.exports = async (req, res) => {
     try {
       if (fs.existsSync(p)) {
         html = fs.readFileSync(p, 'utf8');
+        // Auto cache-bust: thay tat ca ?v=XXXXXXXX bang commit SHA hien tai
+        // Moi deploy Vercel moi = SHA moi = browser tu dong fetch lai tat ca static assets
+        const deployVersion = (process.env.VERCEL_GIT_COMMIT_SHA || '').substring(0, 8)
+          || String(Date.now());
+        html = html.replace(/\?v=[\w]+/g, `?v=${deployVersion}`);
         break;
       }
     } catch (err) {
