@@ -2803,10 +2803,21 @@
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
+        // Fix: Nếu căn đã tồn tại → PUT đè dòng cũ (row đã có sẵn trong grid)
+        //      Nếu căn mới → POST :append để sheet tự mở rộng grid (tránh lỗi 400 exceeds grid limits)
         const lastSourceCol = getSourceColumnLetter("Images_Public_JSON", "AW");
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        let writeUrl, writeMethod;
+        if (existIdx !== -1) {
+          // Cập nhật dòng đã tồn tại
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
+          writeMethod = 'PUT';
+        } else {
+          // Thêm dòng mới - dùng append để sheet tự mở rộng grid
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          writeMethod = 'POST';
+        }
         const writeRes = await fetch(writeUrl, {
-          method: 'PUT',
+          method: writeMethod,
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -3703,10 +3714,21 @@
         ];
         
         // Step 4: Ghi đè/Thêm mới vào Sheet Source
+        // Fix: Nếu căn đã tồn tại → PUT đè dòng cũ (row đã có sẵn trong grid)
+        //      Nếu căn mới → POST :append để sheet tự mở rộng grid (tránh lỗi 400 exceeds grid limits)
         const lastSourceCol = getSourceColumnLetter("Images_Public_JSON", "AW");
-        const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
+        let writeUrl, writeMethod;
+        if (existIdx !== -1) {
+          // Cập nhật dòng đã tồn tại
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
+          writeMethod = 'PUT';
+        } else {
+          // Thêm dòng mới - dùng append để sheet tự mở rộng grid
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:${lastSourceCol}?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          writeMethod = 'POST';
+        }
         const writeRes = await fetch(writeUrl, {
-          method: 'PUT',
+          method: writeMethod,
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
