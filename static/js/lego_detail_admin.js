@@ -584,7 +584,7 @@
               </div>
               <div class="accordion-content">
                 <div class="preview-webview-container" style="position: relative; width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                  <iframe src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" style="width: 100%; height: 100%; border: none;"></iframe>
+                  <iframe src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true&token=${encodeURIComponent(localStorage.getItem('g_access_token') || '')}" style="width: 100%; height: 100%; border: none;"></iframe>
                 </div>
               </div>
             </div>

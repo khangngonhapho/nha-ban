@@ -569,8 +569,10 @@ const LegoState = {
     const oldAdmin = document.getElementById('_gs_admin');
     if (oldAdmin) oldAdmin.remove();
 
-    let token = localStorage.getItem('g_access_token');
-    let expiry = localStorage.getItem('g_token_expiry');
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('token');
+    let token = urlToken || localStorage.getItem('g_access_token');
+    let expiry = urlToken ? String(Date.now() + 3600 * 1000) : localStorage.getItem('g_token_expiry');
     const now = Date.now();
     let isTokenValid = !!(token && expiry && parseInt(expiry, 10) > now);
 
@@ -1145,8 +1147,8 @@ const LegoState = {
   },
 
   loadPublicDataFallback() {
-    const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
-    const SHEET_ID = (isPreview && this.config && this.config.source_sheet_id) || (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    this.emit('dataLoading', 'public');
+    const SHEET_ID = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
 
     window.__gsCallback = (response) => {
       try {
