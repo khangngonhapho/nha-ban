@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-151 (Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ):** **[ACCEPTED - 2026-07-17]** Triển khai cơ chế tự động tìm dòng header chính thức và vị trí cột (`System ID`, `id`...) động tại runtime trên sheet Source trong cả Apps Script và Python. Khắc phục lỗi lệch dòng khi chèn mới, bảo vệ dòng 1 trống. Tích hợp cơ chế truyền Google OAuth token từ Admin dashboard vào iframe Preview Khách hàng để load dữ liệu realtime từ sheet Source dưới Secure Mode, bỏ qua lỗi và độ trễ của IMPORTRANGE trên sheet Public.
 *   **US-142 (Khôi phục dữ liệu listings từ raw_json_full trong SQLite Cục bộ):** **[ACCEPTED - 2026-07-13]** Triển khai cơ chế khôi phục CSDL master cục bộ từ trường gói thô `raw_json_full` của Thiên Khôi. Tái tạo `JSON_UI` (bảo toàn lịch sử giá), điền lại các cột tiêu chí phẳng và bảng `listings_images`. Nâng cấp logic `pool_lego.py` tự động phát hiện và dọn dẹp các link R2 cũ lệch `tk_id` của căn nhà khác trên Google Sheets. Tích hợp nút cứu hộ trực quan trên HTA và API endpoint `/api/listings/recover-raw`.
 *   **US-141 (Tổ chức thư mục R2 theo mã căn & Cơ chế khôi phục liên kết hình ảnh):** **[ACCEPTED - 2026-07-12]** Triển khai Prefix R2 động (`BDS-KhangNgo-v2`), gom ảnh theo cấu trúc subfolder `{uuid} - {so_nha} {duong}` không dấu an toàn, rút gọn số nhà trước dấu `+` và chuẩn hóa tên đường đặc biệt (Cách Mạng Tháng 8 ➔ TTMC, Ba Tháng Hai ➔ HTB, Đường số 7 ➔ 7SD). Hiện thực cơ chế precheck sử dụng Signature V4 REST API `ListObjectsV2` để khôi phục mapping tự động tránh tải lại. Bổ sung cơ chế auto-move di chuyển ảnh cũ dạng on-the-fly, hỗ trợ ghi đè file DB chỉ định và tích hợp HTA panel.
 *   **US-140 (Quản lý Quan hệ Khách hàng (CRM) tại trang links.html di động):** **[ACCEPTED - 2026-07-12]** Triển khai giao diện CRM khách hàng trực tiếp trên `/links.html` (tab Nhật ký) với ô ghi chú Note tự động lưu và 5 trạng thái vòng đời khách hàng (LẠNH, ẤM, NÓNG, CỌC, DONE) phối màu sắc viền card. Tích hợp phím liên hệ nhanh qua Zalo và Call, cùng hiển thị thời gian tương tác cuối tương đối (ví dụ "7 ngày trước"). Triển khai API serverless Node.js (Vercel) và API Flask local sử dụng phương pháp Cập nhật ô đơn lẻ (Targeted Cell Update) để loại bỏ race condition.
@@ -75,15 +76,13 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Khắc phục logic ghi đè link R2, tự động dọn dẹp link ảnh cũ lệch `tk_id` trên Google Sheets.
-*   [core/business_rules.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/core/business_rules.py) — Triển khai logic khôi phục dữ liệu listings và hình ảnh từ `raw_json_full`.
-*   [api/routes_pool.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/api/routes_pool.py) — Thêm Web API `/api/listings/recover-raw` khôi phục dữ liệu listings.
-*   [scratch/recover_raw_json.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/scratch/recover_raw_json.py) — Nâng cấp kịch bản nhạc trưởng điều phối phục hồi CSDL master cục bộ.
-*   [tests/test_recovery.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/tests/test_recovery.py) — Unit tests kiểm định tính ổn định cho logic phục hồi dữ liệu.
-*   [BANG_DIEU_HANH.hta](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/BANG_DIEU_HANH.hta) — Bổ sung nút bấm điều hành Cứu hộ / Khôi phục dữ liệu từ `raw_json_full`.
-*   [docs/stories/_inbox/US-142_recovery_from_raw_json.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-142_recovery_from_raw_json.md) — Tài liệu nghiệm thu US-142.
+*   [pool_backend_v3.gs](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_backend_v3.gs) — Dò tìm header và cột index động trên Source trong Apps Script.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Dò tìm header và cột index động trên Source trong Python.
+*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — Đọc token từ URL parameter và kích hoạt Secure Mode trong iframe.
+*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — Đổi range A2:append và truyền token vào iframe Preview.
+*   [docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md) — Tài liệu User Story US-151.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-13 (US-142 accepted & E2E tests verified).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-17 (US-151 accepted & E2E tests verified).*
 
 

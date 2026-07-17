@@ -7,13 +7,13 @@ Last updated: 2026-07-09
 - backlog: 3
 - draft: 6
 - in-progress: 0
-- done: 25
-- accepted: 114
+- done: 24
+- accepted: 115
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
-| US-151 | Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ | done | S | 2026-07-17 | `pool_backend_v3.gs`, `pool_lego.py`, `docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md` |
+| US-151 | Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ | accepted | S | 2026-07-17 | `pool_backend_v3.gs`, `pool_lego.py`, `docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md` |
 | US-150 | Di chuyển cơ sở dữ liệu SQLite sang thư mục an toàn và phục hồi raw_json_full | draft | M | 2026-07-14 | `settings.json`, `core/db.py`, `scratch/recover_and_migrate_db.py`, `docs/stories/_inbox/US-150.md` |
 | US-149 | Hiển thị tag "Giảm chào" trên Card Vercel Admin | done | S | 2026-07-14 | `settings.json`, `static/js/lego_render_admin.js`, `scratch/migrate_json_ui_tags.py`, `docs/stories/_inbox/US-149.md` |
 | US-148 | Bổ sung cảnh báo âm thanh lớn khi cào hàng loạt bị ngắt do lỗi xác thực | draft | S | 2026-07-14 | `fetcher.py`, `docs/stories/_inbox/US-148.md` |
