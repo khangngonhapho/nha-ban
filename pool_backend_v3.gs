@@ -605,7 +605,7 @@ function onAdminReview(e) {
         publicSheet.getRange(foundRow, dangBdsColIdx).insertCheckboxes();
       } catch (e) {}
       
-      statusCell.setValue("Đã đồng bộ");
+      statusCell.setValue("Đã đồng bộ US-151");
       
       // Update Last Sync on the Pool sheet
       if (lastSyncColIndex > 0) {
