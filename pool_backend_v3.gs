@@ -580,8 +580,13 @@ function onAdminReview(e) {
         }
       } else {
         // --- CHẾ ĐỘ ĐỒNG BỘ LẦN ĐẦU (FIRST SYNC) ---
-        publicSheet.appendRow(publicRowData);
-        foundRow = lastRowPublic + 1; // Xác định dòng để gán công thức hiển thị hình ảnh
+        var insertRow = lastRowPublic + 1;
+        var minDataRow = headerRowIdx + 1;
+        if (insertRow < minDataRow) {
+          insertRow = minDataRow;
+        }
+        publicSheet.getRange(insertRow, 1, 1, publicRowData.length).setValues([publicRowData]);
+        foundRow = insertRow;
       }
       
       var imgColIdx = publicHeaders.indexOf("Hình_mat_tien") + 1;

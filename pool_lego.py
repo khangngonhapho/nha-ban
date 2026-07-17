@@ -1396,7 +1396,9 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
                 col_letter = get_col_letter(len(raw_headers))
                 raw_sheet.update(range_name=f"A{found_raw_idx}:{col_letter}{found_raw_idx}", values=[raw_row_data], value_input_option='USER_ENTERED')
             else:
-                raw_sheet.append_row(raw_row_data, value_input_option='USER_ENTERED')
+                insert_idx = max(len(col_cleaned) + 1, 2)
+                col_letter = get_col_letter(len(raw_headers))
+                raw_sheet.update(range_name=f"A{insert_idx}:{col_letter}{insert_idx}", values=[raw_row_data], value_input_option='USER_ENTERED')
             
         except Exception as e_raw:
             add_log_message(f"[❌ LỖI] Lỗi đồng bộ File 1 Raw: {str(e_raw)}")
@@ -1440,7 +1442,9 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
                 col_letter = get_col_letter(len(custom_headers))
                 custom_sheet.update(range_name=f"A{found_cust_idx}:{col_letter}{found_cust_idx}", values=[custom_row_data], value_input_option='USER_ENTERED')
             else:
-                custom_sheet.append_row(custom_row_data, value_input_option='USER_ENTERED')
+                insert_idx = max(len(col_cleaned) + 1, 2)
+                col_letter = get_col_letter(len(custom_headers))
+                custom_sheet.update(range_name=f"A{insert_idx}:{col_letter}{insert_idx}", values=[custom_row_data], value_input_option='USER_ENTERED')
             
         except Exception as e_custom:
             add_log_message(f"[❌ LỖI] Lỗi đồng bộ File 2 Custom: {str(e_custom)}")
@@ -1520,7 +1524,9 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
                 col_letter = get_col_letter(len(public_headers))
                 public_sheet.update(range_name=f"A{found_pub_idx}:{col_letter}{found_pub_idx}", values=[public_row_data], value_input_option='USER_ENTERED')
             else:
-                public_sheet.append_row(public_row_data, value_input_option='USER_ENTERED')
+                insert_idx = max(len(col_cleaned) + 1, 2)
+                col_letter = get_col_letter(len(public_headers))
+                public_sheet.update(range_name=f"A{insert_idx}:{col_letter}{insert_idx}", values=[public_row_data], value_input_option='USER_ENTERED')
             
         except Exception as e_pub:
             add_log_message(f"[❌ LỖI] Lỗi đồng bộ File 3 Public: {str(e_pub)}")
