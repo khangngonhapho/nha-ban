@@ -511,6 +511,7 @@ function onAdminReview(e) {
         })()                         // 48: Images_Public_JSON (Cột AW)
       ];
       
+      var lastRowPublic = publicSheet.getLastRow();
       var publicHeaders = [];
       var headerRowIdx = 1; // mặc định dòng 1
       var maxSearchRows = Math.min(10, lastRowPublic);
