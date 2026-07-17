@@ -1145,8 +1145,8 @@ const LegoState = {
   },
 
   loadPublicDataFallback() {
-    this.emit('dataLoading', 'public');
-    const SHEET_ID = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+    const SHEET_ID = (isPreview && this.config && this.config.source_sheet_id) || (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
 
     window.__gsCallback = (response) => {
       try {
