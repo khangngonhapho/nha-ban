@@ -8,75 +8,9 @@ import os
 import json
 import sqlite3
 import time
-import urllib.request
-import urllib.parse
-from flask import Blueprint, jsonify, request, Response, stream_with_context
+from flask import Blueprint, jsonify, request
 
 routes_images = Blueprint('routes_images', __name__)
-
-# ---------------------------------------------------------------------------
-# Proxy endpoint: stream R2 images về client, bypass CORS của R2 bucket
-# ---------------------------------------------------------------------------
-@routes_images.route('/api/proxy-image', methods=['GET'])
-def proxy_image():
-    """
-    Stream ảnh từ Cloudflare R2 về client để bypass CORS restriction.
-    Chỉ cho phép domain R2 hợp lệ (SSRF guard).
-    Usage: /api/proxy-image?url=<encoded_r2_url>&name=<filename>
-    """
-    import core.config as _cfg_mod
-    
-    raw_url = request.args.get('url', '').strip()
-    if not raw_url:
-        return jsonify({"error": "Missing url parameter"}), 400
-
-    # SSRF guard: chỉ cho phép domain R2 của hệ thống
-    try:
-        parsed = urllib.parse.urlparse(raw_url)
-    except Exception:
-        return jsonify({"error": "Invalid URL"}), 400
-
-    cfg = _cfg_mod.load_config()
-    r2_public_url = cfg.get('r2_public_url', '')
-    allowed_host = urllib.parse.urlparse(r2_public_url).hostname if r2_public_url else None
-
-    allowed_patterns = ['r2.dev', 'cloudflarestorage.com']
-    if allowed_host:
-        allowed_patterns.append(allowed_host)
-
-    host = (parsed.hostname or '').lower()
-    if not any(host.endswith(pat) for pat in allowed_patterns):
-        return jsonify({"error": f"Domain not allowed: {host}"}), 403
-
-    try:
-        req = urllib.request.Request(
-            raw_url,
-            headers={
-                'User-Agent': 'BDS-KhangNgo-Proxy/1.0',
-                'Accept': 'image/*,*/*'
-            }
-        )
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            content_type = resp.headers.get('Content-Type', 'image/jpeg')
-            data = resp.read()
-
-        # Tên file gợi ý khi download
-        dl_name = request.args.get('name', 'image.jpg')
-        safe_name = urllib.parse.quote(dl_name)
-
-        response = Response(
-            data,
-            status=200,
-            content_type=content_type
-        )
-        response.headers['Content-Disposition'] = f'attachment; filename="{safe_name}"'
-        response.headers['Cache-Control'] = 'public, max-age=3600'
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
-
-    except Exception as e:
-        return jsonify({"error": f"Proxy fetch failed: {str(e)}"}), 502
-
 
 @routes_images.route('/api/listings/<tk_id>/upload-image', methods=['POST'])
 def upload_manual_image(tk_id):

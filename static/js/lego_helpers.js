@@ -1147,7 +1147,7 @@ function buildFetchUrl(url, fileName) {
   try {
     const host = new URL(url).hostname.toLowerCase();
     if (R2_DOMAINS.some(d => host.endsWith(d))) {
-      return `/api/proxy-image?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName || 'image.jpg')}`;
+      return `/api/proxy-download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(fileName || 'image.jpg')}`;
     }
   } catch (_) {}
   // Cloudinary: giữ nguyên URL gốc (CORS OK)
