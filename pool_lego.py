@@ -2009,18 +2009,49 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     source_values = source_sheet.get_all_values()
                 
                     system_id = d.get("System_ID", "")
-                    if system_id:
+                    if system_id and source_values:
+                        # 1. Tìm dòng header động trên sheet Source
+                        header_row_idx = -1
+                        for idx, row in enumerate(source_values):
+                            if "System_ID" in row or "id" in row or "Cu_phap" in row or "System ID" in row:
+                                header_row_idx = idx
+                                break
+                        
+                        if header_row_idx == -1:
+                            header_row_idx = 0 # Fallback dòng 1
+                        
+                        headers = source_values[header_row_idx]
+                        
+                        # 2. Tìm index các cột động
+                        sys_id_col_idx = -1
+                        if "System_ID" in headers:
+                            sys_id_col_idx = headers.index("System_ID")
+                        elif "System ID" in headers:
+                            sys_id_col_idx = headers.index("System ID")
+                            
+                        id_col_idx = -1
+                        if "id" in headers:
+                            id_col_idx = headers.index("id")
+                            
+                        if sys_id_col_idx == -1:
+                            sys_id_col_idx = 37 # Fallback cột AL (38)
+                        if id_col_idx == -1:
+                            id_col_idx = 3 # Fallback cột D (4)
+                            
+                        # 3. Quét tìm dòng trùng khớp bắt đầu từ dòng ngay sau header
                         found_source_row_idx = -1
-                        for s_idx, s_row in enumerate(source_values[1:], start=2):
-                            if len(s_row) > 37 and s_row[37].strip() == system_id:
-                                found_source_row_idx = s_idx
+                        start_data_idx = header_row_idx + 1
+                        for s_idx in range(start_data_idx, len(source_values)):
+                            s_row = source_values[s_idx]
+                            if len(s_row) > sys_id_col_idx and s_row[sys_id_col_idx].strip() == system_id:
+                                found_source_row_idx = s_idx + 1 # 1-indexed for Sheets
                                 break
                     
                         if found_source_row_idx > -1:
                             new_ma_kn = d.get("Ma_Khang_Ngo_ID", "")
                             if new_ma_kn:
                                 add_log_message(f"[⚡] Đồng bộ Mã Khang Ngô '{new_ma_kn}' sang cột id của sheet Source (dòng {found_source_row_idx})...")
-                                source_sheet.update_cell(found_source_row_idx, 4, new_ma_kn)
+                                source_sheet.update_cell(found_source_row_idx, id_col_idx + 1, new_ma_kn)
                 except Exception as e_source:
                     add_log_message(f"[⚠️ WARNING] Không thể tự động đồng bộ Mã Khang Ngô sang sheet Source: {str(e_source)}")
             

@@ -3,6 +3,7 @@
 // Hỗ trợ Tự động Mã hóa ID & Trigger Đẩy sang Public
 //
 // [Latest Update / User Story]
+// - US-151: Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ (Cập nhật ngày 2026-07-17)
 // - US-147: Loại bỏ bước gọi AI tự động trong luồng background worker di cư ảnh (Cập nhật ngày 2026-07-14)
 // ==========================================
 
@@ -510,16 +511,36 @@ function onAdminReview(e) {
         })()                         // 48: Images_Public_JSON (Cột AW)
       ];
       
+      var publicHeaders = [];
+      var headerRowIdx = 1; // mặc định dòng 1
+      var maxSearchRows = Math.min(10, lastRowPublic);
+      for (var r = 1; r <= maxSearchRows; r++) {
+        var rowVals = publicSheet.getRange(r, 1, 1, publicSheet.getLastColumn()).getValues()[0];
+        if (rowVals.indexOf("System ID") !== -1 || rowVals.indexOf("id") !== -1 || rowVals.indexOf("Cu_phap") !== -1) {
+          publicHeaders = rowVals;
+          headerRowIdx = r;
+          break;
+        }
+      }
+      
+      if (publicHeaders.length === 0 && lastRowPublic > 0) {
+        publicHeaders = publicSheet.getRange(1, 1, 1, publicSheet.getLastColumn()).getValues()[0];
+      }
+
+      var sysIdColIdx = publicHeaders.indexOf("System ID") + 1;
+      if (sysIdColIdx === 0) sysIdColIdx = 38; // Fallback cột AL
+      
+      var startDataRow = headerRowIdx + 1;
+      var numDataRows = lastRowPublic - headerRowIdx;
+      
       var systemId = getVal("System ID");
-      var lastRowPublic = publicSheet.getLastRow();
       var foundRow = -1;
       
-      if (systemId && systemId.toString().trim() !== "" && lastRowPublic >= 2) {
-        // Cột AL (System ID) là cột thứ 38
-        var systemIds = publicSheet.getRange(2, 38, lastRowPublic - 1, 1).getValues();
+      if (systemId && systemId.toString().trim() !== "" && numDataRows >= 1) {
+        var systemIds = publicSheet.getRange(startDataRow, sysIdColIdx, numDataRows, 1).getValues();
         for (var i = 0; i < systemIds.length; i++) {
-          if (systemIds[i][0] === systemId) {
-            foundRow = i + 2; // 0-indexed + 2 (vì dòng đầu là tiêu đề, dòng 2 là i=0)
+          if (systemIds[i][0] && systemIds[i][0].toString().trim() === systemId.toString().trim()) {
+            foundRow = i + startDataRow;
             break;
           }
         }
@@ -534,14 +555,9 @@ function onAdminReview(e) {
           publicSheet.getRange(foundRow, 1, 1, publicRowData.length).setValues([publicRowData]);
         } else {
           // --- CHẾ ĐỘ ĐỒNG BỘ MỘT PHẦN (SMART MERGE) ---
-          // Lấy dữ liệu cũ đang có ở Source
           var existingRowData = publicSheet.getRange(foundRow, 1, 1, publicRowData.length).getValues()[0];
           
           // Danh sách các cột được bảo vệ (index 0-indexed của publicRowData):
-          // 1: Cú pháp (Cột B), 2: Note (Cột C), 4: Tiêu đề Public (Cột E), 
-          // 12: Hướng nhà (Cột M), 13: Đường trước nhà (Cột N - phân loại hẻm/mặt tiền),
-          // 15: Tình trạng nhà (Cột P), 16: Đánh giá (Cột Q), 17: Ngủ trệt (Cột R), 18: CHDV (Cột S), 19: Mô tả Public (Cột T),
-          // 20-29: Ảnh 1 đến Ảnh 10 (Cột U đến AD), 39: Tiêu đề BDS (Cột AN), 40: Đăng BDS (Cột AO)
           var protectedIndices = [1, 2, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 39, 40, 47];
           
           var mergedRowData = [];
@@ -568,9 +584,20 @@ function onAdminReview(e) {
         foundRow = lastRowPublic + 1; // Xác định dòng để gán công thức hiển thị hình ảnh
       }
       
-      publicSheet.getRange(foundRow, 1).setFormula('=IMAGE(AM' + foundRow + ')');
+      var imgColIdx = publicHeaders.indexOf("Hình_mat_tien") + 1;
+      if (imgColIdx === 0) imgColIdx = 1;
+      
+      var origImgColIdx = publicHeaders.indexOf("Hình Mặt Tiền") + 1;
+      if (origImgColIdx === 0) origImgColIdx = 39;
+      
+      var origImgLetter = getColumnLetter(origImgColIdx);
+      publicSheet.getRange(foundRow, imgColIdx).setFormula('=IMAGE(' + origImgLetter + foundRow + ')');
+      
+      var dangBdsColIdx = publicHeaders.indexOf("Đăng BDS") + 1;
+      if (dangBdsColIdx === 0) dangBdsColIdx = 41;
+      
       try {
-        publicSheet.getRange(foundRow, 41).insertCheckboxes();
+        publicSheet.getRange(foundRow, dangBdsColIdx).insertCheckboxes();
       } catch (e) {}
       
       statusCell.setValue("Đã đồng bộ");
@@ -669,15 +696,36 @@ function syncSystemIdToSource() {
     }
   }
   
+  var lastRowPublic = sourceSheet.getLastRow();
+  
+  // Tìm header động trên Source
+  var sourceHeaders = [];
+  var headerRowIdx = 1;
+  var maxSearchRows = Math.min(10, lastRowPublic);
+  for (var r = 1; r <= maxSearchRows; r++) {
+    var rowVals = sourceSheet.getRange(r, 1, 1, sourceSheet.getLastColumn()).getValues()[0];
+    if (rowVals.indexOf("System ID") !== -1 || rowVals.indexOf("id") !== -1 || rowVals.indexOf("Cu_phap") !== -1) {
+      sourceHeaders = rowVals;
+      headerRowIdx = r;
+      break;
+    }
+  }
+  if (sourceHeaders.length === 0) {
+    sourceHeaders = sourceSheet.getRange(1, 1, 1, sourceSheet.getLastColumn()).getValues()[0];
+  }
+  
+  var idSourceColIdx = sourceHeaders.indexOf("id") + 1;
+  if (idSourceColIdx === 0) idSourceColIdx = 4; // Fallback cột D
+  
+  var sysIdSourceColIdx = sourceHeaders.indexOf("System ID") + 1;
+  if (sysIdSourceColIdx === 0) sysIdSourceColIdx = 38; // Fallback cột AL (38)
+  
   var sourceData = sourceSheet.getDataRange().getValues();
-  // 2. Map sang Source (Cột D là Mã Khang Ngô [index 3], Cột AL là System ID [index 37])
-  var idSourceCol = 3;
-  var sysIdSourceCol = 37; 
   var updateCount = 0;
   
-  for (var j = 1; j < sourceData.length; j++) {
-    var maKNSource = sourceData[j][idSourceCol];
-    var currentSysIdSource = sourceData[j][sysIdSourceCol];
+  for (var j = headerRowIdx; j < sourceData.length; j++) {
+    var maKNSource = sourceData[j][idSourceColIdx - 1];
+    var currentSysIdSource = sourceData[j][sysIdSourceColIdx - 1];
     
     if (maKNSource) {
       maKNSource = maKNSource.toString().trim();
@@ -685,13 +733,23 @@ function syncSystemIdToSource() {
       
       // Nếu tìm thấy map và ô System ID bên Source đang trống
       if (matchingSysId && (!currentSysIdSource || currentSysIdSource.toString().trim() === "")) {
-        sourceSheet.getRange(j + 1, sysIdSourceCol + 1).setValue(matchingSysId);
+        sourceSheet.getRange(j + 1, sysIdSourceColIdx).setValue(matchingSysId);
         updateCount++;
       }
     }
   }
   
   SpreadsheetApp.getUi().alert("✅ Đã quét và đồng bộ thành công " + updateCount + " System ID từ Pool sang Source!");
+}
+
+function getColumnLetter(columnNumber) {
+  var temp, letter = '';
+  while (columnNumber > 0) {
+    temp = (columnNumber - 1) % 26;
+    letter = String.fromCharCode(65 + temp) + letter;
+    columnNumber = (columnNumber - temp - 1) / 26;
+  }
+  return letter;
 }
 
 /**
@@ -737,10 +795,38 @@ function batchSyncTitleToSource() {
       return;
     }
     
+    // Tìm header động trên Source
+    var sourceHeaders = [];
+    var headerRowIdx = 1;
+    var maxSearchRows = Math.min(10, lastRowPublic);
+    for (var r = 1; r <= maxSearchRows; r++) {
+      var rowVals = sourceSheet.getRange(r, 1, 1, sourceSheet.getLastColumn()).getValues()[0];
+      if (rowVals.indexOf("System ID") !== -1 || rowVals.indexOf("id") !== -1 || rowVals.indexOf("Cu_phap") !== -1) {
+        sourceHeaders = rowVals;
+        headerRowIdx = r;
+        break;
+      }
+    }
+    if (sourceHeaders.length === 0) {
+      sourceHeaders = sourceSheet.getRange(1, 1, 1, sourceSheet.getLastColumn()).getValues()[0];
+    }
+    
+    var sysIdSourceColIdx = sourceHeaders.indexOf("System ID") + 1;
+    if (sysIdSourceColIdx === 0) sysIdSourceColIdx = 38;
+    
+    var tieuDeSourceColIdx = sourceHeaders.indexOf("tieu_de") + 1;
+    if (tieuDeSourceColIdx === 0) tieuDeSourceColIdx = 5;
+    
+    var startDataRow = headerRowIdx + 1;
+    var numDataRows = lastRowPublic - headerRowIdx;
+    
     // Đọc toàn bộ System ID bên Source để tối ưu hóa tốc độ
-    var sourceSysIds = sourceSheet.getRange(2, 38, lastRowPublic - 1, 1).getValues().map(function(r) {
-      return r[0].toString().trim();
-    });
+    var sourceSysIds = [];
+    if (numDataRows >= 1) {
+      sourceSysIds = sourceSheet.getRange(startDataRow, sysIdSourceColIdx, numDataRows, 1).getValues().map(function(r) {
+        return r[0] ? r[0].toString().trim() : "";
+      });
+    }
     
     var successCount = 0;
     var notFoundCount = 0;
@@ -754,9 +840,9 @@ function batchSyncTitleToSource() {
       
       var matchIdx = sourceSysIds.indexOf(sysId);
       if (matchIdx !== -1) {
-        var foundRow = matchIdx + 2;
-        // Ghi duy nhất cột E (Cột thứ 5 - tieu_de) bên Source
-        sourceSheet.getRange(foundRow, 5).setValue(tieuDeVal);
+        var foundRow = matchIdx + startDataRow;
+        // Ghi duy nhất cột tieu_de bên Source
+        sourceSheet.getRange(foundRow, tieuDeSourceColIdx).setValue(tieuDeVal);
         successCount++;
       } else {
         notFoundCount++;
