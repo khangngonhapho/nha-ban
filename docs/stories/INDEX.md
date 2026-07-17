@@ -3,16 +3,24 @@
 Last updated: 2026-07-09
 
 ## Stats
-- Total: 144
+- Total: 152
 - backlog: 3
-- draft: 3
+- draft: 6
 - in-progress: 0
-- done: 22
-- accepted: 112
+- done: 25
+- accepted: 114
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-151 | Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ | done | S | 2026-07-17 | `pool_backend_v3.gs`, `pool_lego.py`, `docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md` |
+| US-150 | Di chuyển cơ sở dữ liệu SQLite sang thư mục an toàn và phục hồi raw_json_full | draft | M | 2026-07-14 | `settings.json`, `core/db.py`, `scratch/recover_and_migrate_db.py`, `docs/stories/_inbox/US-150.md` |
+| US-149 | Hiển thị tag "Giảm chào" trên Card Vercel Admin | done | S | 2026-07-14 | `settings.json`, `static/js/lego_render_admin.js`, `scratch/migrate_json_ui_tags.py`, `docs/stories/_inbox/US-149.md` |
+| US-148 | Bổ sung cảnh báo âm thanh lớn khi cào hàng loạt bị ngắt do lỗi xác thực | draft | S | 2026-07-14 | `fetcher.py`, `docs/stories/_inbox/US-148.md` |
+| US-147 | Loại bỏ bước gọi AI tự động trong luồng background worker di cư ảnh | done | S | 2026-07-14 | `background_worker.py`, `manager.py`, `docs/stories/_inbox/US-147.md` |
+| US-146 | Biên tập và quản lý các ảnh có trạng thái role = 'deleted' | draft | M | 2026-07-14 | `static/js/lego_detail_admin.js`, `manager.py`, `docs/stories/_inbox/US-146.md` |
+| US-145 | Xử lý chạy ngầm tác vụ nặng cào để tránh mất kết nối server | accepted | M | 2026-07-13 | `background_worker.py`, `pool_lego.py`, `api/routes_crawl.py`, `docs/stories/_inbox/US-145.md` |
+| US-144 | Liên kết Facebook và sắp xếp thông tin đầu chủ trên Card Admin | accepted | S | 2026-07-13 | `static/js/lego_render_admin.js`, `docs/stories/_inbox/US-144.md` |
 | US-142 | Khôi phục dữ liệu listings từ raw_json_full trong SQLite Cục bộ | accepted | M    | 2026-07-13 | `pool_lego.py`, `core/business_rules.py`, `api/routes_pool.py`, `scratch/recover_raw_json.py`, `tests/test_recovery.py`, `docs/stories/_inbox/US-142_recovery_from_raw_json.md` |
 | US-141 | Tổ chức thư mục R2 theo mã căn & Cơ chế khôi phục liên kết hình ảnh | accepted | M | 2026-07-12 | `settings.json`, `manager.py`, `api/routes_images.py`, `scratch/rescue_r2_images.py`, `docs/stories/_inbox/US-141_r2_image_migration_subfolders_and_recovery.md` |
 | US-140 | Quản lý Quan hệ Khách hàng (CRM) tại trang links.html di động | accepted | M | 2026-07-12 | `pool_lego.py`, `restore_db_from_sheets.py`, `api/routes_links.py`, `api/index.js`, `links.html`, `docs/stories/_inbox/US-140_customer_relationship_management.md` |
