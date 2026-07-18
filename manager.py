@@ -359,102 +359,12 @@ def clean_prompt_content(content):
     return content.strip()
 
 def get_default_system_prompt():
-    """Tải default system prompt từ tệp tin cục bộ system_prompt.txt"""
-    import sys
-    if hasattr(sys, '_MEIPASS'):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.dirname(os.path.abspath(__file__))
-    
-    prompt_file = os.path.join(base_path, "system_prompt.txt")
-    if os.path.exists(prompt_file):
-        try:
-            with open(prompt_file, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-                if content:
-                    return clean_prompt_content(content)
-        except Exception as e:
-            print(f"[⚠️ WARNING] Không thể đọc system_prompt.txt: {str(e)}")
-            
-    # Fallback an toàn nếu không tìm thấy tệp cục bộ
+    """Trả về default system prompt tối giản làm placeholder"""
     return (
-        "Bạn hãy đóng vai là Đầu chủ Trà Mi - chuyên gia viết bài và định vị bất động sản nhà phố cao cấp tại TP.HCM. "
-        "Nhiệm vụ của bạn là tiếp nhận dữ liệu thô từ tôi (ảnh chụp màn hình tin nội bộ, thông số mã căn hoặc sơ đồ thửa đất do tôi cung cấp) "
-        "và xử lý nghiêm ngặt theo quy trình 4 bước sau đây để xuất ra bài đăng hoàn chỉnh.\n\n"
-        "BƯỚC 1: GIẢI MÃ CÚ PHÁP DỮ LIỆU THÔ (BẮT BUỘC)\n"
-        "- Quy tắc giải mã địa chỉ: Chuỗi số đứng trước tên đường, phân cách bằng dấu chấm \".\" tương ứng với dấu xẹt \"/\". Ví dụ: \"12.14 Đào Duy Anh\" -> \"12/14 Đào Duy Anh\". Phải ghi nhận chính xác số hẻm nội bộ ở bước này để tôi tiện quản lý nguồn hàng.\n"
-        "- Quy tắc diện tích (Lấy số lớn nhất): Nếu dữ liệu có dạng \"Số nhỏ/Số lớn\" (ví dụ: 55/60m2), luôn lấy số lớn nhất (60m2) làm diện tích sử dụng để đăng tin.\n"
-        "- Quy tắc kích thước (Lấy thông số lớn): Nếu chiều ngang hoặc chiều dài có 2 thông số (ví dụ: ngang 3.6/3.8m), luôn lấy số lớn (3.8m).\n"
-        "- Thứ tự suy luận dữ liệu mặc định: [Địa chỉ] - [Tên đường] - [Diện tích] - [Số tầng] - [Ngang] - [Dài] - [Giá].\n"
-        "- Ký hiệu kết cấu viết tắt cần hiểu: BTCT (Bê tông cốt thép), ST (Sân thượng), CHDV (Căn hộ dịch vụ), HXH (Hẻm xe hơi - mặc định áp dụng khi hẻm từ 4m trở lên).\n\n"
-        "BƯỚC 2: TRA CỨU ĐỊA GIỚI & ĐỊNH VỊ VIP (BẮT BUỘC)\n"
-        "- Quy tắc sáp nhập địa giới: Tự động tra cứu và cập nhật tên Phường mới nhất theo quy định sáp nhập địa giới hành chính hiện hành tại TP.HCM (Ví dụ: Các phường cũ của Quận 3 nay sáp nhập thành Phường Võ Thị Sáu).\n"
-        "- Chiến thuật định vị \"Hướng tâm & Ưu tiên cự ly thực tế\": Tự động đối chiếu địa giới hành chính để nhặt đúng các \"Location Hot\" trong danh sách VIP được cung cấp bên dưới. Sắp xếp theo thứ tự ưu tiên hướng về phía các quận trung tâm lõi như Quận 1, Quận 3 trước.\n"
-        "- Ưu tiên địa danh có độ Hot tương đương nhưng cự ly gần hơn: Đối với các căn nhà nằm ở khu vực giáp ranh hoặc hẻm thông, luôn ưu tiên chọn địa danh VIP có khoảng cách địa lý gần nhất và mang tính đồng bộ phân khu cao nhất (Ví dụ: Trục Tô Hiến Thành đoạn gần Thành Thái/KingDom thì ưu tiên \"Khu VIP Thành Thái\", \"Chung cư KingDom 101\" lên tiêu đề và đoạn đầu mô tả, các địa danh khác như Toà nhà Viettel, Hà Đô Centrosa nêu bổ sung ở vế sau).\n"
-        "- Kiểm soát khoảng cách thực tế & Bộ lọc từ ngữ cự ly an toàn (TUYỆT ĐỐI KHÔNG ĐỂ KHÁCH BẮT BẺ):\n"
-        "  + Không bao giờ dùng từ \"sát vách\" vì dễ bị khách vặn vẹo khi đi xem thực tế.\n"
-        "  + Dùng từ \"Sát cạnh\": Khi tài sản nằm kế bên, chung vách hoặc sát sạt địa danh đó (không có khoảng cách).\n"
-        "  + Dùng từ \"Sát khu\" hoặc \"Sát phân khu\": Khi tài sản liền kề một đại đô thị, khu phức hợp thương mại lớn (Ví dụ: sát khu đại đô thị Richmond City, sát phân khu KingDom 101).\n"
-        "  + Dùng từ \"Sát\": Khi khoảng cách rất gần nhưng có ranh giới nhỏ như con hẻm (bỏ hẳn chữ vách/cạnh).\n"
-        "  + Dùng từ \"Gần\" hoặc \"Kết nối nhanh\": Khi địa danh nằm khác phường hoặc cách vài trăm mét. Hạn chế nhắc đến chữ \"Chợ\" (Ví dụ: Thay \"Chợ Bà Chiểu\" bằng \"Lăng Ông Bà Chiểu\") để tránh tâm lý ngại ồn ào của khách VIP.\n"
-        "- Nếu nhà thuộc Mặt tiền kinh doanh thì nêu rõ là Mặt tiền. Nếu thuộc hẻm nhỏ, luôn dùng chiến thuật kéo góc nhìn của khách ra các trục đường lớn sầm uất kế bên.\n\n"
-        "DANH SÁCH ĐỊA DANH VIP (LOCATION HOT) ĐỂ ĐỐI CHIẾU:\n"
-        "1. Địa danh VIP quận 3: Vòng xoay Dân Chủ, Tòa nhà Viettel, Hà Đô Centrosa, Khu VIP Kỳ Đồng, Cầu Lê Văn Sỹ, Khu VIP Lê Văn Sỹ, Kinh đô thời trang Lê Văn Sỹ, Kinh đô thời trang Trần Huy Liệu, Khu VIP Nam Kỳ Khởi Nghĩa, Khu VIP Nguyễn Văn Trỗi, Khu VIP Trần Quốc Thảo, Nhà khách T78, Terra Royal - Lavela Saigon, Cầu Công Lý, Khu VIP Hoàng Sa, Khu VIP Trường Sa, Cầu Kiệu, Tân Định Q1, Công viên Lê Văn Tám, Khu VIP Phạm Ngọc Thạch, Cầu Bông, Nhà thờ Kỳ Đồng / Nhà thờ Chúa Cứu Thế, Phường Võ Thị Sáu, CV Lý Thái Tổ, Khu VIP Nguyễn Thị Minh Khai, BV Từ Dũ, CV Tao Đàn, NVH Lao Động.\n"
-        "2. Địa danh VIP quận Phú Nhuận: Khu VIP Trường Sa, Cầu Kiệu, Khu VIP Phan Xích Long, Khu VIP đường Hoa Phú Nhuận - Phan Xích Long, Ngã Tư Phú Nhuận, Phan Đình Phùng, Công viên Phú Nhuận. Nếu ở khu vực giáp ranh cầu, bắt buộc dùng cụm từ \"Qua cầu là Quận 1\" để thể hiện độ đắt giá.\n"
-        "3. Địa danh VIP quận 10: Khu VIP Thành Thái, Chung cư KingDom 101, Khu VIP Nguyễn Tri Phương, Cầu vượt 3/2, Vòng xoay Lý Thái Tổ, Công viên Lý Thái Tổ, Trục VIP Nguyễn Thị Minh Khai, CV Tao Đàn, BV Từ Dũ, Khu VIP Cao Thắng, Hà Đô Centrosa, Trục VIP 3/2, Tòa nhà Viettel, Vòng xoay Dân Chủ, Tuyến Metro số 2, Nhà ga Metro 2, CLB Lan Anh, Công viên Lê Thị Riêng.\n"
-        "4. Địa danh VIP quận Bình Thạnh: Cầu Bông, Đinh Tiên Hoàng, Lăng Ông Bà Chiểu (Tuyệt đối không dùng chữ \"Chợ Bà Chiểu\"), Ngã tư Hàng Xanh, Khu Tân Định, Khu VIP Phan Đăng Lưu, Khu VIP Trường Sa, Vòng xoay Điện Biên Phủ, Đại lộ Phạm Văn Đồng, Khu đại đô thị Richmond City.\n"
-        "5. Địa danh VIP quận Tân Bình: Khu VIP Nguyễn Văn Trỗi, Trục huyết mạch Nam Kỳ Khởi Nghĩa, Khu VIP Lê Văn Sỹ, CV Lê Thị Riêng, Khu VIP Trường Sa, Khu VIP Hoàng Sa, Khu Khách sạn Đệ Nhất, Vòng xoay Lăng Cha Cả, Khu VIP Đặng Văn Ngữ, Khu VIP Huỳnh Văn Bánh, Nhà thờ Ba Chuông, Nhà thờ Đa Minh.\n\n"
-        "BƯỚC 3: XUẤT BÀI ĐĂNG CHUẨN PHONG CÁCH TRÀ MI\n"
-        "(LƯU Ý QUAN TRỌNG: Tôi sẽ copy bài đăng quảng cáo từ bước này trở xuống để đăng tin. Do đó, từ bước này trở xuống tuyệt đối không được ghi số hẻm cụ thể, số nhà, mã căn nội bộ để tránh lộ nguồn hàng ra bên ngoài cho khách hoặc môi giới khác giật mối. Tuyệt đối không xuất hiện phiên bản ngắn hay phiên bản mini ở bước này).\n\n"
-        "Yêu cầu cốt lõi về văn phong: Ngắn gọn, súc tích, sắc bén. Tách câu ngắn gọn gàng, không viết lan man, không lặp từ đầu câu, tuyệt đối không dùng từ ngữ hợp mùa (như đón Tết, đón Xuân). Bỏ hoàn toàn các cụm từ trùng lặp kiểu \"Mặt tiền/Hẻm\", viết trực tiếp vào thẳng vấn đề.\n"
-        "- Quy tắc chọn từ ngữ đại chúng, thực chiến: Tuyệt đối không dùng các từ xa lạ mang tính văn chương như \"độc bản\". Thay thế hoàn toàn bằng hai cụm từ ưu tiên: \"lợi thế hiếm có\" hoặc \"vị trí hiếm nhà bán\".\n"
-        "- Tư duy môi giới thực chiến về giá: Tuyệt đối không bao giờ dùng các từ ngữ tiêu cực như \"ngộp\", \"ngộp bank\", \"vỡ nợ\", \"bán gấp\" (tránh bị ép giá). Luôn ghi ngắn gọn ở cuối dòng giá là: \"(Chủ thiện chí)\". Không viết dài dòng rườm rà.\n\n"
-        "Cấu trúc bài viết bắt buộc gồm đúng các phần sau:\n\n"
-        "1. TIÊU ĐỀ CHÍNH (QUY TẮC PHÂN BỔ KÝ TỰ NGHIÊM NGẶT - TỐI ĐA 95 KÝ TỰ - Không dùng chữ \"Bán nhà\"):\n"
-        "* Quy tắc \"Độ dài 70\": Tính từ chữ đầu tiên của tiêu đề cho đến hết chữ \"Tỷ\" (chốt chặn giá tiền) tuyệt đối KHÔNG ĐƯỢC VƯỢT QUÁ 70 KÝ TỰ để đảm bảo giá tiền không bị các ứng dụng tự động cắt bớt khi hiển thị.\n"
-        "* Quy tắc thứ tự ưu tiên từ khóa \"Mồi\" ở đầu tiêu đề:\n"
-        "  - Ưu tiên 1 (Nhà có yếu tố CHDV): Bắt buộc đưa chữ \"CHDV\" lên vị trí đầu tiên của tiêu đề.\n"
-        "  - Ưu tiên 2 (Nhà có HXH/Ô tô tránh nhưng KHÔNG có CHDV): Bắt buộc đưa chữ \"HXH\" lên vị trí đầu tiên của tiêu đề.\n"
-        "  - Trường hợp còn lại (Hẻm nhỏ/ba gác/xe máy): Bắt đầu thẳng bằng Tên đường.\n"
-        "* Chiến thuật \"Nhồi\" thông số đắt giá trước Giá: Tận dụng khoảng trống ký tự (nếu đoạn đầu chưa quá 70 ký tự) để nhồi các từ khóa mạnh như: \"Ô tô tránh\" hoặc \"Ô tô né\", \"Ngang lớn/Ngang khủng\" (chỉ ghi nếu ngang >= 3.8m), \"Số tầng\" (nếu từ 4 tầng trở lên) lên trước chữ \"Tỷ\". Để tiết kiệm ký tự, linh hoạt sử dụng dấu phẩy \",\" thay vì dấu gạch ngang \" - \" (Ví dụ: \", Ngang lớn, 4 tầng, Ô tô tránh - 24 Tỷ\").\n"
-        "* Quy tắc viết tắt và thẩm mỹ để ép ký tự:\n"
-        "  - Tên Quận bắt buộc viết gọn: Q.PN, Q.TB, Q.BT, Q3, Q10... (hoặc bỏ hẳn Quận ở đoạn đầu dời ra sau dấu sổ thẳng nếu bị quá tải ký tự).\n"
-        "  - Viết gọn: \"Lô góc 2 mặt thoáng\" -> \"Lô góc\", \"nội thất\" -> \"NT\".\n"
-        "  - Chữ \"Full\" bắt buộc viết hoa chữ F đầu: \"Full NT xịn\" (hoặc \"Full NT\" nếu tiêu đề sắp vượt quá 95 ký tự).\n"
-        "  - Viết tắt mặt tiền kinh doanh tùy thuộc vào độ dài ký tự còn dư theo 3 cấp độ: \"MTKD\" -> \"Mặt tiền KD\" -> \"Mặt tiền kinh doanh\".\n"
-        "  - Viết cụm từ dòng tiền và số tiền: Bắt buộc viết đủ chữ \"dòng tiền\", không viết cụm một chữ \"dòng\". Cách ghi số tiền linh hoạt theo độ dài ký tự: \"Xtr\" -> \"Xtr/th\" -> \"Xtr/tháng\".\n"
-        "* Chiến thuật viết vế Highlight mở rộng (sau dấu sổ thẳng \"|\"):\n"
-        "  - Đối với nhà nằm ở đường rộng từ 8m - 10m trở lên (đường ô tô tránh/thông bàn cờ cư xá): Nhất quán áp dụng chiến thuật đánh mạnh vào phân khu thương gia bằng cụm từ: \"Đường Xm kinh doanh mở VP Công ty\" ở vế highlight này.\n"
-        "  - Nếu tiêu đề đoạn đầu có chữ \"CHDV\" nhưng bị ẩn chữ HXH/Ô tô, bắt buộc phải nêu rõ \"Hẻm ô tô tránh\" hoặc \"Hẻm xe hơi\" ở vế này. Áp dụng triệt để \"Tư duy hướng tâm\" chọn địa danh VIP hướng về Quận 1, Quận 3.\n"
-        "  - Quy tắc kích thước: Nếu chiều ngang dưới 3.5m thì KHÔNG ghi kích thước (Ngang x Dài) và KHÔNG khen ngang lớn/khủng.\n"
-        "  - Tình trạng nhà: Chữ đầu viết hoa. Nếu nội thất cao cấp thì ghi \"Full NT xịn\"; nếu nội thất bình thường thì ghi \"Full NT đẹp\".\n\n"
-        "2. TIÊU ĐỀ PHỤ (Viết hoa toàn bộ + Biểu tượng 🏩):\n"
-        "- Cấu trúc giật tít định vị khu sầm uất/địa danh nổi tiếng + Ưu điểm nổi bật nhất của đường/hẻm/sổ (Đặc biệt: đối với đường lớn 8m - 10m thì ghi rõ công năng: VỪA Ở VỪA KINH DOANH MỞ VP CÔNG TY) + [BẮT BUỘC ĐƯA THÔNG TIN DIỆN TÍCH DẠNG XXM2] + Ghi rõ giá tiền dạng \"CHỈ X.X TỶ\".\n"
-        "- Tuyệt đối không lạm dụng các từ tâng bốc không hợp lý với thực tế (ví dụ: không dùng chữ \"SIÊU PHẨM\" cho nhà hẻm nhỏ/đường bé dưới 4m hoặc nhà cũ nát, thay vào đó hãy dùng đúng bản chất như \"KHUÔN ĐẤT LỚN\" hoặc \"HÀNG KHAN HIẾM\").\n\n"
-        "3. PHẦN MÔ TẢ CHI TIẾT (QUY TẮC ĐỊNH DẠNG KHÔNG ĐỔI FONT CHỮ):\n"
-        "- Ngay sau tiêu đề phụ, xuống dòng viết ngay chữ \"Mô tả:\", TUYỆT ĐỐI KHÔNG ĐỂ DÒNG TRỐNG để tránh lỗi hệ thống tự động nhảy font chữ trên các nền tảng đăng tin.\n"
-        "- Các dòng con bên dưới bắt đầu bằng dấu gạch bạt dài \"–\", theo sau là từ khóa in đậm có dấu hai chấm.\n"
-        "Mô tả cụ thể theo phom sau:\n"
-        "– **Vị trí:** Ngay [Mặt tiền / Hẻm] [Tên đường], [Phường mới], [Quận]. [Nêu tiện ích đặc sắc, kết nối trung tâm].\n"
-        "– **Mặt tiền:** [Nếu là mặt tiền: Nêu độ rộng đường nhựa, lề đường, tiềm năng kinh doanh ngắn gọn].\n"
-        "– **Hẻm:** [Nếu là hẻm: Nêu độ rộng hẻm thực tế, hẻm thông sạch sẽ, cách mặt tiền bao xa].\n"
-        "– **Kết cấu:** [Số tầng, BTCT kiên cố, công năng cụ thể số PN, WC, ban công... Ưu điểm đặc biệt như lô góc, không lỗi phong thủy, không lộ giới].\n"
-        "– **Thông số xây dựng:** [Chỉ áp dụng khi khuôn đất lớn từ 60m2 trở lên hoặc tin gốc có yếu tố xây dựng mới cao tầng. Ghi định dạng: Khu vực được phép xây cao tầng: Hầm, trệt, lửng, số lầu, sân thượng...].\n"
-        "– **Diện tích:** [Thông số m2 (Ngang x Dài), khen sổ vuông vức/nở hậu nếu có].\n"
-        "– **Pháp lý:** Sạch, hoàn công đủ, sổ hồng riêng cất két, công chứng ngay.\n"
-        "– **GIÁ:** [Số tiền] tỷ (TL) (Chủ thiện chí).\n\n"
-        "4. GÓC NHÌN ĐẦU TƯ & HIỆU SUẤT DÒNG TIỀN (BỘ LỌC ĐIỀU KIỆN NGHIÊM NGẶT):\n"
-        "* BỘ LỌC CHDV & NHÀ Ở KHÔNG HIỂN THỊ (QUY TẮC TỐI ƯU):\n"
-        "  - Dù nhà có diện tích lớn nhưng nếu kết cấu nhỏ hơn hoặc bằng 4 phòng ngủ (<= 4PN) VÀ thông tin gốc không đề cập đến CHDV/cho thuê dòng tiền chuyên nghiệp -> Mặc định là nhà ở gia đình thuần túy.\n"
-        "  - Dù nhà có từ 5PN trở lên, diện tích lớn, nhưng thông tin đầu chủ cung cấp hoàn toàn KHÔNG đề cập đến chữ CHDV, phòng khép kín hay cho thuê dòng tiền (chỉ là phom nhà ở gia đình đông người thuần túy) -> Mặc định xem là nhà ở, BỎ QUA HOÀN TOÀN phần này để kết thúc bài viết ở phần GIÁ.\n"
-        "* CÁC TRƯỜNG HỢP BẮT BUỘC HIỂN THỊ PHẦN NÀY:\n"
-        "  - Diện tích >= 60m2, nhà mới có kết cấu từ 5 phòng ngủ trở lên kèm yếu tố khép kín/CHDV/phòng cho thuê rõ ràng trong tin gốc.\n"
-        "  - Diện tích >= 60m2, hiện trạng nhà cũ nát/kiểu xác nhà cần sửa chữa cải tạo/đất trống tiện xây mới.\n"
-        "* Định dạng dòng tiêu đề: Viết hoa toàn bộ, phân cách với phần trên bằng dòng kẻ \"---\". Dòng tiêu đề không có dấu gạch ngang, không dùng bullet, không thụt đầu dòng.\n"
-        "* Định dạng các dòng con: Bắt buộc bắt đầu bằng dấu chấm tròn nhỏ của HTML là \"•\", tuyệt đối không dùng dấu \"+\" hoặc thụt lề để tránh lỗi hiển thị khi copy.\n\n"
-        "BƯỚC 4: RÀ SOÁT LỖI CHÍNH TẢ & ĐỒNG BỘ HIỂN THỊ (BẮT BUỘC)\n"
-        "- Sau khi hoàn thành toàn bộ nội dung bài đăng, bạn phải thực hiện thêm 1 bước quét tự động toàn bài để sửa triệt để tất cả lỗi chính tả, lỗi gõ dấu, dấu câu sát chữ (ví dụ: sửa ubnđ thành UBND, sửa Levela thành Lavela, sửa chửa thành chỉ, sửa công chức thành công chứng...). Đảm bảo bài viết xuất ra đạt độ chỉn chu, bảo mật và hoàn mỹ cao nhất trước khi giao cho tôi."
+        "Bạn hãy đóng vai là Đầu chủ Trà Mi - chuyên gia viết bài và định vị bất động sản. "
+        "Hệ thống đang chạy chế độ dự phòng. Vui lòng kết nối đồng bộ cấu hình từ Google Sheets/Google Doc để cập nhật đầy đủ chỉ thị nghiệp vụ."
     )
+
 
 # Cấu hình mặc định
 DEFAULT_CONFIG = {
@@ -567,24 +477,6 @@ def trim_tieu_de_bds(tieu_de):
         if len(usp_part) > 0:
             usp_part = usp_part[0].upper() + usp_part[1:]
         tieu_de = tech_part + " | " + usp_part
-        
-    # 2. Cắt tỉa nếu vượt quá 99 ký tự
-    if len(tieu_de) <= 99:
-        return tieu_de
-        
-    if idx_bar != -1:
-        tech_part = tieu_de[:idx_bar]
-        usp_part = tieu_de[idx_bar + 3:].strip()
-        if len(usp_part) > 0:
-            usp_part = usp_part[0].upper() + usp_part[1:]
-            
-        if len(tech_part) + 3 <= 65:
-            allowed_usp_len = 99 - (len(tech_part) + 3)
-            tieu_de = tech_part + " | " + usp_part[:allowed_usp_len].strip()
-        else:
-            tieu_de = tieu_de[:99].strip()
-    else:
-        tieu_de = tieu_de[:99].strip()
         
     return tieu_de
 
@@ -1184,7 +1076,9 @@ def upload_image_to_r2(file_content, filename, content_type="image/jpeg", r2_sub
     r2_bucket = cfg.get("r2_bucket_name")
     account_id = cfg.get("cloudflare_account_id")
     r2_public_url = cfg.get("r2_public_url")
-    r2_migration_prefix = cfg.get("r2_migration_prefix", "BDS-KhangNgo") or "BDS-KhangNgo"
+    r2_migration_prefix = cfg.get("r2_migration_prefix", "").strip()
+    if not r2_migration_prefix:
+        raise Exception("Thiếu cấu hình r2_migration_prefix trong settings.json")
     
     if not (r2_access_key and r2_secret_key and r2_bucket and account_id):
         raise Exception("Thiếu cấu hình Cloudflare R2 trong settings.json")
@@ -1519,7 +1413,7 @@ def start_periodic_backup_scheduler():
     t.daemon = True
     t.start()
 
-def run_image_migration_thread(limit, cookie, target_tk_id=None):
+def run_image_migration_thread(limit, cookie, target_tk_id=None, skip_sheets_publish=False):
     """Tải và di cư hình ảnh chạy ngầm hoặc đồng bộ căn cụ thể (Throttled Mode)"""
     global SHOULD_STOP_MIGRATION
     SHOULD_STOP_MIGRATION = False
@@ -1648,42 +1542,51 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
         # R2 Subfolder và Precheck Logic (US-141)
         r2_subfolder = None
         if use_r2:
-            r2_migration_prefix = cfg.get("r2_migration_prefix", "BDS-KhangNgo-v2") or "BDS-KhangNgo-v2"
+            r2_migration_prefix = cfg.get("r2_migration_prefix", "").strip()
+            if not r2_migration_prefix:
+                add_log_message("[❌ ERROR] Thiếu cấu hình r2_migration_prefix trong settings.json. Tiến trình di cư ảnh bị hủy.")
+                return
             r2_subfolder = get_r2_subfolder(tk_id, dict(row))
             prefix = f"{r2_migration_prefix}/{r2_subfolder}/"
             
             # Liệt kê danh sách file đã tồn tại trên R2 trong thư mục con này
             r2_keys = list_r2_objects(prefix)
             
-            # Nếu thư mục mới trống, tự động tìm và di chuyển ảnh từ thư mục cũ BDS-KhangNgo/ (US-141)
+            # [US-152] Chỉ bảo toàn ảnh tự up tay (SYS-), tắt auto-move ảnh thô cũ để tải mới 100%
             if not r2_keys:
-                old_prefixes = [
-                    f"BDS-KhangNgo/img_{tk_id}",
-                    f"BDS-KhangNgo/sodo",
-                    f"BDS-KhangNgo/SYS-{tk_id.upper()}",
-                    f"BDS-KhangNgo/SYS-{tk_id.lower()}",
-                    f"BDS-KhangNgo/SYS-{tk_id.replace('-', '').upper()}",
-                    f"BDS-KhangNgo/SYS-{tk_id.replace('-', '').lower()}"
-                ]
-                old_keys = []
-                for op in old_prefixes:
+                # Quét tìm các ảnh tự up tay (SYS-) từ các prefix lịch sử
+                historical_prefixes = ["BDS-KhangNgo", "BDS-KhangNgo-v2"]
+                if r2_migration_prefix in historical_prefixes:
+                    historical_prefixes.remove(r2_migration_prefix)
+                
+                sys_prefixes = []
+                for pref in historical_prefixes:
+                    sys_prefixes.extend([
+                        f"{pref}/{r2_subfolder}",
+                        f"{pref}/SYS-{tk_id.upper()}",
+                        f"{pref}/SYS-{tk_id.lower()}",
+                        f"{pref}/SYS-{tk_id.replace('-', '').upper()}",
+                        f"{pref}/SYS-{tk_id.replace('-', '').lower()}"
+                    ])
+                sys_keys = []
+                for op in sys_prefixes:
                     res_keys = list_r2_objects(op)
                     if res_keys:
-                        if op == "BDS-KhangNgo/sodo":
-                            res_keys = [k for k in res_keys if tk_id in k]
-                        old_keys.extend(res_keys)
-                old_keys = list(set(old_keys))
+                        for k in res_keys:
+                            filename = k.split("/")[-1].upper()
+                            # Chỉ lấy ảnh Admin up tay (tiền tố SYS-)
+                            if filename.startswith(f"SYS-{tk_id.upper()}_") or filename.startswith(f"SYS-{tk_id.replace('-', '').upper()}_"):
+                                sys_keys.append(k)
+                sys_keys = list(set(sys_keys))
                 
-                if old_keys:
-                    add_log_message(f"  [🔄 Di chuyển] Phát hiện {len(old_keys)} ảnh trong thư mục cũ. Đang tự động di chuyển sang thư mục mới '{r2_subfolder}'...")
-                    for old_key in old_keys:
-                        filename = old_key.split("/")[-1]
+                if sys_keys:
+                    add_log_message(f"  [🔄 Bảo toàn] Phát hiện {len(sys_keys)} ảnh tự up tay (SYS-). Đang copy sang thư mục mới v3 '{r2_subfolder}'...")
+                    for sys_key in sys_keys:
+                        filename = sys_key.split("/")[-1]
                         new_key = f"{r2_migration_prefix}/{r2_subfolder}/{filename}"
-                        if copy_r2_object(old_key, new_key):
-                            delete_r2_object(old_key)
+                        if copy_r2_object(sys_key, new_key):
+                            # Không gọi delete_r2_object để bảo toàn file v1/v2 của Production cũ
                             r2_keys.append(new_key)
-                    if r2_keys:
-                        add_log_message(f"  [✅ Di chuyển] Di chuyển thành công {len(r2_keys)} ảnh từ thư mục cũ sang thư mục mới.")
             
             if r2_keys:
                 add_log_message(f"  [⚡ Precheck] Phát hiện {len(r2_keys)} ảnh đã tồn tại trên R2 cho căn '{r2_subfolder}'. Đang khôi phục mapping...")
@@ -1980,7 +1883,8 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                         add_log_message(f"  [❌ LỖI] Di cư Sơ đồ {sodo_num} thất bại: {str(e)}")
 
             first_property_r2 = ""
-            # Smart Image Merge (Trộn ảnh thông minh) cho Pool1
+            first_property_r2 = ""
+            # [US-152]: Vô hiệu hóa Smart Image Merge chắp vá cũ. Dựng mảng ảnh mới sạch 100% từ cào.
             if LISTINGS_TABLE == "listings":
                 try:
                     curated_data = json.loads(curated_config_json_val) if curated_config_json_val else None
@@ -1993,22 +1897,25 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                 elif isinstance(curated_data, list):
                     old_images = curated_data
                 
-                # Trích xuất danh sách R2 URLs mới cào
-                new_r2_urls = list(new_images_mapping.values())
+                new_images_list = []
+                added_urls = set()
                 
-                # Tìm ảnh property_image đầu tiên hoặc ảnh Mặt tiền đã biên tập trước đó trong new_images_mapping làm ảnh đại diện Admin
-                first_property_r2 = ""
-                curated_facade_url = ""
+                # 1. BẢO TOÀN NGUYÊN VẸN ẢNH THỦ CÔNG (SYS- và origin == 'self') từ curated_config cũ
                 for img in old_images:
-                    if isinstance(img, dict) and img.get("role") in ["Mặt tiền", "facade"]:
-                        curated_facade_url = img.get("url")
-                        break
+                    if not isinstance(img, dict):
+                        continue
+                    url = img.get("url", "")
+                    origin = img.get("origin", "")
+                    # Nhận diện ảnh Admin up tay qua tiền tố SYS- hoặc origin
+                    if url.upper().startswith("SYS-") or "SYS-" in url.upper() or origin in ["local", "self", "user"]:
+                        new_images_list.append(img)
+                        added_urls.add(url)
                 
-                if curated_facade_url and curated_facade_url in new_r2_urls:
-                    first_property_r2 = curated_facade_url
-                else:
-                    stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
-                    for img_url in raw_images_tk:
+                # Tìm ảnh property_image đầu tiên (Mặt tiền) mới cào
+                stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
+                for img_url in raw_images_tk:
+                    if img_url in new_images_mapping:
+                        r2_url = new_images_mapping[img_url]
                         stripped_img = img_url.split('?')[0] if img_url else ""
                         is_diag = (stripped_img in stripped_sodo) or \
                                   (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
@@ -2017,81 +1924,10 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                                   (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
                                   (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
                         if not is_diag:
-                            if img_url in new_images_mapping:
-                                first_property_r2 = new_images_mapping[img_url]
-                                break
+                            first_property_r2 = r2_url
+                            break
 
-                new_images_list = []
-                added_urls = set()
-                
-                # 1. Bảo toàn các ảnh thủ công (manual images) từ curated_config cũ
-                for img in old_images:
-                    if not isinstance(img, dict):
-                        continue
-                    url = img.get("url")
-                    if url in manual_images or img.get("origin") in ["self", "user"]:
-                        new_images_list.append(img)
-                        added_urls.add(url)
-                
-                # 2. Xử lý các ảnh cũ (bao gồm cả ảnh cào cũ và ảnh bị xóa)
-                for img in old_images:
-                    if not isinstance(img, dict):
-                        continue
-                    url = img.get("url")
-                    if url in manual_images or url in added_urls:
-                        continue
-                        
-                    # Lọc bỏ hoàn toàn ảnh bị deleted mà không nằm trong thư mục R2 mới (BDS-KhangNgo-v2) để dọn dẹp DB
-                    if img.get("role") == "deleted" and 'BDS-KhangNgo-v2' not in (url or ''):
-                        continue
-                        
-                    # Nếu ảnh cũ có trong danh sách R2 URLs mới cào -> Giữ lại và khôi phục trạng thái nếu cần
-                    if url in new_r2_urls:
-                        img_copy = dict(img)
-                        # Nếu trước đây bị đánh dấu deleted, khôi phục lại vai trò chính xác
-                        if img_copy.get("role") == "deleted":
-                            orig_img_url = None
-                            for k, v in new_images_mapping.items():
-                                if v == url:
-                                    orig_img_url = k
-                                    break
-                            
-                            is_diag = False
-                            if orig_img_url:
-                                stripped_img = orig_img_url.split('?')[0]
-                                is_diag = (stripped_img in stripped_sodo) or \
-                                          (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
-                                          (original_sodo2 and stripped_img == original_sodo2.split('?')[0]) or \
-                                          (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
-                                          (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
-                                          (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
-                            
-                            if is_diag:
-                                img_copy["role"] = "Sơ đồ"
-                                img_copy["visible"] = False
-                            elif url == first_property_r2:
-                                img_copy["role"] = "Mặt tiền"
-                                img_copy["visible"] = True
-                            else:
-                                img_copy["role"] = "Nội thất"
-                                img_copy["visible"] = False
-                        
-                        # Đảm bảo ảnh mặt tiền đầu tiên luôn có role Mặt tiền nếu chưa có role đặc biệt nào khác
-                        if url == first_property_r2 and img_copy.get("role") not in ["Mặt tiền", "Bìa", "Sơ đồ"]:
-                            img_copy["role"] = "Mặt tiền"
-                            img_copy["visible"] = True
-
-                        new_images_list.append(img_copy)
-                        added_urls.add(url)
-                    else:
-                        # Ảnh cũ không còn trên Thiên Khôi nữa -> Đánh dấu deleted
-                        img_copy = dict(img)
-                        img_copy["visible"] = False
-                        img_copy["role"] = "deleted"
-                        new_images_list.append(img_copy)
-                        added_urls.add(url)
-                
-                # 3. Thêm các ảnh cào mới hoàn toàn (chưa có trong old_images)
+                # 2. NẠP MỚI 100% ẢNH CÀO TỪ THIÊN KHÔI (ẢNH CŨ BỊ XÓA CỨNG KHỎI DB)
                 for img_url in raw_images_tk:
                     if img_url in new_images_mapping:
                         r2_url = new_images_mapping[img_url]
@@ -2117,13 +1953,15 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
                             new_images_list.append({
                                 "url": r2_url,
                                 "role": role,
-                                "visible": visible
+                                "visible": visible,
+                                "origin": "crawl"
                             })
                             added_urls.add(r2_url)
                 
+                # [US-152] Refactor: Dùng System ID làm khóa định danh thay vì Mã Khang Ngô
                 new_curated_config = {
                     "images": new_images_list,
-                    "Mã_Khang_Ngô__ID_": d.get("Ma_Khang_Ngo_ID", "")
+                    "system_id": d.get("System_ID") or ""
                 }
                 
                 # Đóng gói dữ liệu Images_Admin_JSON và images_public_json cho bảng listings
@@ -2387,13 +2225,16 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None):
             processed += 1
             add_log_message(f"[✅ SQLite] Đã cập nhật SQLite cục bộ cho {tk_id}: Sơ đồ thửa đất và hình ảnh R2. Trạng thái -> raw_complete")
             
-            # 5. Tự động xuất bản trực tiếp lên Google Sheets Pool
-            add_log_message(f"[⚡ AUTO-SHEETS] Đang tự động đẩy dòng dữ liệu 79 cột lên tab Pool của Google Sheets...")
-            res_publish = execute_publish_listing(tk_id)
-            if res_publish.get("status") == "success":
-                add_log_message(f"[✅ AUTO-SHEETS SUCCESS] Tự động xuất bản thành công căn {tk_id} lên Google Sheets Pool! Trạng thái SQLite -> published")
+            # 5. Tự động xuất bản trực tiếp lên Google Sheets Pool (nếu không yêu cầu skip)
+            if not skip_sheets_publish:
+                add_log_message(f"[⚡ AUTO-SHEETS] Đang tự động đẩy dòng dữ liệu 79 cột lên tab Pool của Google Sheets...")
+                res_publish = execute_publish_listing(tk_id)
+                if res_publish.get("status") == "success":
+                    add_log_message(f"[✅ AUTO-SHEETS SUCCESS] Tự động xuất bản thành công căn {tk_id} lên Google Sheets Pool! Trạng thái SQLite -> published")
+                else:
+                    add_log_message(f"[⚠️ AUTO-SHEETS FAILED] Tự động đẩy Sheets thất bại: {res_publish.get('message')}. Giữ trạng thái SQLite -> raw_complete để đẩy thủ công sau.")
             else:
-                add_log_message(f"[⚠️ AUTO-SHEETS FAILED] Tự động đẩy Sheets thất bại: {res_publish.get('message')}. Giữ trạng thái SQLite -> raw_complete để đẩy thủ công sau.")
+                add_log_message(f"[ℹ] Đã bỏ qua xuất bản Sheets tự động cho căn {tk_id} để chuẩn bị ghi Batch.")
                 
         except Exception as e:
             add_log_message(f"[❌ LỖI] Gặp sự cố trong quy trình tự động hóa Curation & Xuất bản cho {tk_id}: {str(e)}")

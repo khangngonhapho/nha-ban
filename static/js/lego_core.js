@@ -658,7 +658,13 @@ const LegoState = {
         const poolRows = poolDataJson.values || [];
         this.SOURCE_HEADERS = sourceRows[0] || [];
         this.POOL_HEADERS = poolRows[0] || [];
-        const poolDataRows = poolRows.slice(1);
+        const poolDataRows = poolRows.slice(1).filter(r => {
+          if (!r || r.length === 0) return false;
+          const maHang = r[0] || '';
+          const systemId = r[72] || r[71] || '';
+          const duong = r[5] || '';
+          return maHang.trim() !== '' || systemId.trim() !== '' || duong.trim() !== '';
+        });
         this.POOL_ROWS = poolDataRows;
 
         const matchedPoolRowIndexes = new Set();
