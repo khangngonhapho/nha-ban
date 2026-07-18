@@ -18,9 +18,11 @@ def client():
         yield client
 
 class TestMaintenanceModeAPI:
-    @patch("manager.load_config")
-    def test_config_returns_maintenance_mode_false_by_default(self, mock_load_config, client):
+    @patch("manager.get_google_credentials")
+    @patch("api.routes_system.manager.load_config")
+    def test_config_returns_maintenance_mode_false_by_default(self, mock_load_config, mock_get_creds, client):
         """Mặc định khi không có cờ, /api/config trả về maintenance_mode = False."""
+        mock_get_creds.return_value = None
         mock_load_config.return_value = {
             "sheet_id": "test_sheet_id",
             "active_pool_system": "Pool1"
@@ -32,9 +34,11 @@ class TestMaintenanceModeAPI:
         assert data["status"] == "success"
         assert data["config"]["maintenance_mode"] is False
 
-    @patch("manager.load_config")
-    def test_config_returns_maintenance_mode_true(self, mock_load_config, client):
+    @patch("manager.get_google_credentials")
+    @patch("api.routes_system.manager.load_config")
+    def test_config_returns_maintenance_mode_true(self, mock_load_config, mock_get_creds, client):
         """Khi cờ maintenance_mode = True trong settings, /api/config trả về True."""
+        mock_get_creds.return_value = None
         mock_load_config.return_value = {
             "sheet_id": "test_sheet_id",
             "active_pool_system": "Pool1",
@@ -51,7 +55,7 @@ class TestMaintenanceModeAPI:
 
     @patch("gspread.authorize")
     @patch("manager.get_google_credentials")
-    @patch("manager.load_config")
+    @patch("api.routes_system.manager.load_config")
     def test_config_returns_maintenance_mode_from_google_sheets(self, mock_load_config, mock_get_creds, mock_authorize, client):
         """Khi có cờ maintenance_mode = True trên Google Sheets, /api/config trả về True."""
         mock_load_config.return_value = {
@@ -83,7 +87,7 @@ class TestMaintenanceModeAPI:
 
     @patch("gspread.authorize")
     @patch("manager.get_google_credentials")
-    @patch("manager.load_config")
+    @patch("api.routes_system.manager.load_config")
     def test_config_falls_back_on_google_sheets_error(self, mock_load_config, mock_get_creds, mock_authorize, client):
         """Khi kết nối Google Sheets lỗi, /api/config rơi về fallback cấu hình local settings.json."""
         mock_load_config.return_value = {

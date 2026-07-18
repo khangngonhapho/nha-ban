@@ -7,6 +7,7 @@ Handles dynamic schema alterations, system configs, logs, and cookie storage.
 import os
 import json
 import sqlite3
+import manager
 from flask import Blueprint, jsonify, request
 
 routes_system = Blueprint('routes_system', __name__)
