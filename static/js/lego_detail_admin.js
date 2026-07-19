@@ -679,13 +679,13 @@
           let nImgs = [];
           if (p.curated_config && Array.isArray(p.curated_config.images)) {
             nImgs = p.curated_config.images
-              .filter(img => img && img.url && img.role !== 'Sơ đồ' && img.role !== 'diagram' && img.role !== 'Mặt tiền' && img.role !== 'facade' && img.role !== 'Ẩn' && img.role !== 'hidden')
+              .filter(img => img && img.url && img.role !== 'Ẩn' && img.role !== 'hidden' && img.role !== 'deleted')
               .map(img => img.url);
           }
           if (nImgs.length === 0) {
             nImgs = (p.imgs || []).filter(url => {
               const norm = normalizeImgUrl(url);
-              return norm !== '' && !sodoUrls.includes(norm) && !isFacadeUrl(url);
+              return norm !== '';
             });
           }
 
