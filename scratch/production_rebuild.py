@@ -283,8 +283,18 @@ def batch_publish_to_sheets(tk_ids):
             val = d.get(safe_col, "")
             
             if header == "Mã Hàng":
-                parts = tk_id.split('-')
-                val = f"TK-{parts[-1].upper()}" if parts else tk_id
+                ma_hang_db = d.get("Ma_Clean_Source") or d.get("Ma_Hang") or d.get("M__H_ng")
+                if ma_hang_db:
+                    cursor.execute("SELECT COUNT(DISTINCT tk_id) FROM listings WHERE Ma_Hang = ?", (ma_hang_db,))
+                    collision_count = cursor.fetchone()[0]
+                    if collision_count > 1:
+                        parts = tk_id.split('-')
+                        val = f"TK-{parts[-1].upper()}" if parts else tk_id
+                    else:
+                        val = ma_hang_db
+                else:
+                    parts = tk_id.split('-')
+                    val = f"TK-{parts[-1].upper()}" if parts else tk_id
             elif header == "Hình Nhận Diện":
                 val = ""
             elif header == "Mã Khang Ngô (ID)" and not val:
