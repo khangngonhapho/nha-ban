@@ -327,10 +327,10 @@ function parseSheetFlags(rows) {
   return flags;
 }
 
-function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId) {
+function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId, r2Key = null) {
   const host = `${r2BucketName}.${cloudflareAccountId}.r2.cloudflarestorage.com`;
   const endpoint = `https://${host}`;
-  const key = `BDS-KhangNgo/${filename}`;
+  const key = r2Key || `BDS-KhangNgo/${filename}`;
   const path = `/${key}`;
   
   const date = new Date();
@@ -1155,7 +1155,15 @@ module.exports = async (req, res) => {
       const buffer = Buffer.from(file, 'base64');
       const contentType = filename.endsWith('.png') ? 'image/png' : 'image/jpeg';
       
-      const reqInfo = signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId);
+      const r2MigrationPrefix = process.env.R2_MIGRATION_PREFIX || 'BDS-KhangNgo-v3';
+      let r2Key = '';
+      if (body.r2Subfolder) {
+        r2Key = `${r2MigrationPrefix}/${body.r2Subfolder}/${filename}`;
+      } else {
+        r2Key = `${r2MigrationPrefix}/${filename}`;
+      }
+      
+      const reqInfo = signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId, r2Key);
       
       const response = await fetch(reqInfo.url, {
         method: 'PUT',
@@ -1169,7 +1177,7 @@ module.exports = async (req, res) => {
         return res.status(502).json({ error: 'Bad Gateway: Cloudflare R2 upload failed', details: errText });
       }
 
-      const publicUrl = `${r2PublicUrl}/BDS-KhangNgo/${filename}`;
+      const publicUrl = `${r2PublicUrl}/${r2Key}`;
       return res.status(200).json({ status: 'success', url: publicUrl });
     } catch (err) {
       console.error('Error in R2 upload endpoint:', err);

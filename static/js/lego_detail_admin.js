@@ -2093,7 +2093,7 @@
       });
     }
   // === uploadFileToR2 ===
-    async function uploadFileToR2(file, type = "interior", listingId = "") {
+    async function uploadFileToR2(file, type = "interior", listingId = "", r2Subfolder = "") {
       let sodoIndex = 1;
       if (type === "sodo") {
         for (let i = 1; i <= 5; i++) {
@@ -2125,7 +2125,8 @@
           file: base64Data,
           filename: filename,
           type: type,
-          listingId: listingId
+          listingId: listingId,
+          r2Subfolder: r2Subfolder
         })
       });
 
@@ -2185,7 +2186,24 @@
             }
           }
 
-          const uploadedUrl = await uploadFileToR2(file, uploadType, p.tk_id || p.id || p.system_id);
+          let r2Subfolder = "";
+          if (p.tk_id) {
+            let soNha = (p.raw_so_nha || "").toString().trim();
+            if (soNha.includes("+")) {
+              soNha = soNha.split("+")[0].trim();
+            }
+            let duong = (p.raw_ten_duong || "").toString().trim();
+            
+            if (soNha || duong) {
+              const cleanSoNha = typeof window.removeAccents === "function" ? window.removeAccents(soNha) : soNha;
+              const cleanDuong = typeof window.removeAccents === "function" ? window.removeAccents(duong) : duong;
+              r2Subfolder = `${p.tk_id} - ${cleanSoNha} ${cleanDuong}`.trim().replace(/\s+/g, " ");
+            } else {
+              r2Subfolder = p.tk_id;
+            }
+          }
+
+          const uploadedUrl = await uploadFileToR2(file, uploadType, p.tk_id || p.id || p.system_id, r2Subfolder);
           lastUploadedUrl = uploadedUrl;
           window.uploadedUrls = window.uploadedUrls || new Set();
           window.uploadedUrls.add(uploadedUrl);
@@ -3805,7 +3823,14 @@
             
             // Backup hình ảnh sang sheet Pool_Images dòng self
             try {
-              const addressStr = (((matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (matchedRow[getPoolColumnIndex("Đường", 5)] || ""))).trim();
+              const soNhaStr = (matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "").trim();
+              const duongStr = (matchedRow[getPoolColumnIndex("Đường", 5)] || "").trim();
+              const phuongStr = (matchedRow[getPoolColumnIndex("Phường", 4)] || "").trim();
+              const quanStr = (matchedRow[getPoolColumnIndex("Quận", 3)] || "").trim();
+              let addressStr = `${soNhaStr} ${duongStr}`.trim();
+              if (phuongStr) addressStr += `, ${phuongStr}`;
+              if (quanStr) addressStr += `, ${quanStr}`;
+              addressStr = addressStr.replace(/,\s*,/g, ",").replace(/,$/, "").trim();
               await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
             } catch (e_backup) {
               console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
