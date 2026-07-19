@@ -13,8 +13,27 @@ from manager import get_google_credentials, load_config
 
 def clear_sqlite_production():
     print("=== [1/4] RESETTING SQLITE PRODUCTION DATABASE ===")
-    prod_db = "raw_archive.db"
-    staging_db = "raw_archive_staging.db"
+    from core.db import get_db_file
+    
+    # Ensure STAGING env var is not set to resolve prod DB path
+    old_staging_env = os.environ.get("STAGING")
+    if "STAGING" in os.environ:
+        del os.environ["STAGING"]
+    prod_db = get_db_file()
+    
+    # Set STAGING to resolve staging DB path
+    os.environ["STAGING"] = "true"
+    staging_db = get_db_file()
+    
+    # Restore environment variable
+    if old_staging_env is not None:
+        os.environ["STAGING"] = old_staging_env
+    else:
+        if "STAGING" in os.environ:
+            del os.environ["STAGING"]
+            
+    print(f"  - Production DB: {prod_db}")
+    print(f"  - Staging DB: {staging_db}")
     
     if not os.path.exists(staging_db):
         print(f"[❌ ERROR] Staging database '{staging_db}' not found! Cannot copy structure.")
