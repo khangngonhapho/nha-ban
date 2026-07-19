@@ -349,7 +349,18 @@ def batch_publish_to_sheets(tk_ids):
                                     # Lấy link R2 của các ảnh gốc (origin='crawl')
                                     url = img.get("r2_url") or img.get("image_url") or ""
                                     if url.strip():
-                                        is_self = (img.get("origin") in ["self", "user"]) if img.get("origin") else ("r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url)
+                                        import re
+                                        origin = img.get("origin")
+                                        is_self = False
+                                        if origin:
+                                            is_self = origin in ["self", "user"]
+                                        else:
+                                            filename = url.split("/")[-1]
+                                            is_self = (
+                                                filename.startswith("SYS-") or
+                                                bool(re.search(r'_(interior|sodo|facade|alley|cover)_\d{13}', filename)) or
+                                                ("BDS-KhangNgo/" in url and not bool(re.search(r'img_[a-f0-9-]{36}_\d+', filename)))
+                                            )
                                         if not is_self:
                                             raw_imgs.append(url.strip())
                         except Exception:
@@ -375,7 +386,18 @@ def batch_publish_to_sheets(tk_ids):
                                 if isinstance(img, dict) and img.get("role") != "deleted":
                                     url = img.get("r2_url") or img.get("image_url") or ""
                                     if url.strip():
-                                        is_self = (img.get("origin") in ["self", "user"]) if img.get("origin") else ("r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url)
+                                        import re
+                                        origin = img.get("origin")
+                                        is_self = False
+                                        if origin:
+                                            is_self = origin in ["self", "user"]
+                                        else:
+                                            filename = url.split("/")[-1]
+                                            is_self = (
+                                                filename.startswith("SYS-") or
+                                                bool(re.search(r'_(interior|sodo|facade|alley|cover)_\d{13}', filename)) or
+                                                ("BDS-KhangNgo/" in url and not bool(re.search(r'img_[a-f0-9-]{36}_\d+', filename)))
+                                            )
                                         if is_self:
                                             self_imgs.append(url.strip())
                         except Exception:
