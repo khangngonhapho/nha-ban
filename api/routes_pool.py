@@ -455,8 +455,11 @@ def handle_listing_detail(tk_id):
                 current_manual = []
                 
             if current_manual:
-                curated_urls = {img.get("url") for img in curated_config.get("images", []) if isinstance(img, dict) and img.get("url")}
-                updated_manual = [url for url in current_manual if url in curated_urls]
+                def norm_url(u):
+                    if not u: return ""
+                    return u.split("?")[0].strip().lower()
+                curated_urls = {norm_url(img.get("url")) for img in curated_config.get("images", []) if isinstance(img, dict) and img.get("url")}
+                updated_manual = [url for url in current_manual if norm_url(url) in curated_urls]
                 cursor.execute(
                     "UPDATE listings SET manual_images_json = ? WHERE tk_id = ?",
                     (json.dumps(updated_manual, ensure_ascii=False), tk_id)

@@ -141,10 +141,21 @@ def merge_temp_to_master(temp_db_path, master_db_path):
         # ATTACH CSDL Tạm
         cursor.execute("ATTACH DATABASE ? AS temp_db", (temp_db_path,))
         
-        # 1. Lấy danh sách cột của bảng listings (loại bỏ cột 'id' tự tăng và các cột thô cục bộ để tránh ghi đè)
+        # 1. Định nghĩa Whitelist các cột được phép hợp nhất từ CSDL Tạm vào CSDL Gốc
+        whitelist_cols = [
+            "Quan", "Phuong", "Ma_Khang_Ngo_ID", "Tieu_de_Public", "Mo_ta_Public", "Gia_Public",
+            "Duong_truoc_nha_m", "Phan_loai_Hem", "Danh_gia_Admin", "Tinh_trang_nha",
+            "So_phong_ngu", "So_nha_ve_sinh", "Phuong_cu_AI", "Ngu_tret_Admin", "CHDV_Admin",
+            "Anh_Public_VD_1_3_5", "Anh_Hem_Public_VD_1_2",
+            "status", "custom_huong", "custom_dt_thuc_te", "custom_dt_so",
+            "curated_config_json", "Images_Admin_JSON", "images_public_json", "manual_images_json"
+        ]
+        
         cursor.execute("PRAGMA table_info(listings)")
-        raw_cols = ["raw_json_full", "raw_images_tk_json", "raw_drive_images_json", "raw_sodo_tk_json"]
-        cols = [r[1] for r in cursor.fetchall() if r[1] != 'id' and r[1] not in raw_cols]
+        db_cols = {r[1] for r in cursor.fetchall()}
+        
+        # Đảm bảo cols chứa các cột whitelist tồn tại trong DB, và luôn có tk_id ở đầu để làm khóa
+        cols = ["tk_id"] + [c for c in whitelist_cols if c in db_cols]
         
         # 2. Truy vấn dữ liệu từ temp_db.listings
         sql_select = f"SELECT {', '.join([f'`{c}`' for c in cols])} FROM temp_db.listings"
@@ -163,20 +174,14 @@ def merge_temp_to_master(temp_db_path, master_db_path):
             if not tk_id:
                 continue
                 
-            # Lấy thông tin bản ghi hiện có trong Master (Chỉ lấy các cột UI cần đối chiếu)
+            # Lấy thông tin bản ghi hiện có trong Master
             existing = cursor.execute(
-                "SELECT Images_Admin_JSON, images_public_json, curated_config_json FROM listings WHERE tk_id = ?",
+                "SELECT tk_id FROM listings WHERE tk_id = ?",
                 (tk_id,)
             ).fetchone()
             
             if existing:
                 # Bản ghi đã tồn tại -> CẬP NHẬT (UPDATE)
-                existing_dict = {
-                    "Images_Admin_JSON": existing[0],
-                    "images_public_json": existing[1],
-                    "curated_config_json": existing[2]
-                }
-                
                 update_parts = []
                 update_vals = []
                 
@@ -186,12 +191,9 @@ def merge_temp_to_master(temp_db_path, master_db_path):
                         
                     val = row[col_to_idx[col]]
                     
-                    # [US-152] BẢO VỆ CỘT UI: Bỏ qua cột UI rỗng, không dập đĩa ghi đè lên Master
-                    ui_cols = ["Images_Admin_JSON", "images_public_json", "curated_config_json"]
-                    if col in ui_cols:
-                        master_val = existing_dict.get(col) or ""
-                        if master_val and is_empty_config(val):
-                            continue
+                    # [US-152] Chặn ghi đè giá trị rỗng từ CSDL Tạm lên CSDL Gốc cho tất cả các cột Whitelist
+                    if val is None or str(val).strip() == "" or str(val).strip() == "[]" or is_empty_config(str(val)):
+                        continue
                             
                     update_parts.append(f"`{col}` = ?")
                     update_vals.append(val)
@@ -951,6 +953,14 @@ def restore_database():
         ]
         images_public_json_str_to_save = json.dumps(public_urls, ensure_ascii=False)
 
+        # Dựng manual_images_json động từ các ảnh có origin = "self"
+        manual_list = [
+            img["r2_url"] if img["r2_url"] else img["image_url"]
+            for img in migrated_images
+            if img.get("origin") == "self"
+        ]
+        manual_images_json_to_save = json.dumps(manual_list, ensure_ascii=False)
+
         # Write to listings_images
         try:
             cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (tk_id,))
@@ -974,9 +984,25 @@ def restore_database():
         # [US-152] Đơn giản hóa: Gán link thô mặc định cho DB Tạm, vì khi merge ta loại bỏ hoàn toàn các cột thô (không merge sang Master).
         raw_images_tk_json_to_save = json.dumps(reconstructed_drive_images)
 
+        # Trích xuất diện tích custom động từ Sheet Source
+        custom_dt_thuc_te_val = ""
+        custom_dt_so_val = ""
+        if pool_sys_id and pool_sys_id in source_dict:
+            s_row = source_dict[pool_sys_id]
+            dt_thuc_te_idx = source_headers_map.get("dien_tich") or source_headers_map.get("DT_Thuc_te")
+            if dt_thuc_te_idx is not None and len(s_row) > dt_thuc_te_idx:
+                custom_dt_thuc_te_val = s_row[dt_thuc_te_idx].strip()
+            dt_so_idx = source_headers_map.get("DT_tren_so") or source_headers_map.get("DT_Tren_so")
+            if dt_so_idx is not None and len(s_row) > dt_so_idx:
+                custom_dt_so_val = s_row[dt_so_idx].strip()
+
         # Chuẩn bị câu lệnh insert vào SQLite
-        columns = ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "custom_huong", "curated_config_json", "Images_Admin_JSON", "images_public_json"]
-        placeholders = ["?", "?", "?", "?", "?", "?", "?", "?"]
+        columns = [
+            "tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", 
+            "custom_huong", "curated_config_json", "Images_Admin_JSON", 
+            "images_public_json", "manual_images_json", "custom_dt_thuc_te", "custom_dt_so"
+        ]
+        placeholders = ["?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?"]
         insert_vals = [
             tk_id, 
             status, 
@@ -985,7 +1011,10 @@ def restore_database():
             custom_huong_val,
             curated_config_json_str,
             images_admin_json_str_to_save,
-            images_public_json_str_to_save
+            images_public_json_str_to_save,
+            manual_images_json_to_save,
+            custom_dt_thuc_te_val,
+            custom_dt_so_val
         ]
         
         for header in POOL_HEADERS:

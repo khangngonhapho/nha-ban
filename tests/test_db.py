@@ -314,9 +314,9 @@ class TestMergeTempToMaster:
         # - test-2 (sẽ bị xóa trên Sheets nên không có trong Temp DB)
         conn = sqlite3.connect(master_db)
         conn.execute("""
-            INSERT INTO listings (tk_id, status, raw_json_full, Images_Admin_JSON, Gia_chao)
-            VALUES (?, ?, ?, ?, ?)
-        """, ("test-1", "published", "{\"api\": \"data\"}", "[\"r2_url_1\"]", "10 tỷ"))
+            INSERT INTO listings (tk_id, status, raw_json_full, Images_Admin_JSON, Gia_chao, Gia_Public)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, ("test-1", "published", "{\"api\": \"data\"}", "[\"r2_url_1\"]", "10 tỷ", "10 tỷ"))
         conn.execute("""
             INSERT INTO listings (tk_id, status, Gia_chao)
             VALUES (?, ?, ?)
@@ -325,15 +325,15 @@ class TestMergeTempToMaster:
         conn.close()
 
         # Cài đặt Temp DB có:
-        # - test-1 (dữ liệu mới từ Sheets: Gia_chao='9 tỷ', nhưng Images_Admin_JSON và raw_json_full trống)
+        # - test-1 (dữ liệu mới từ Sheets: Gia_Public='9 tỷ', Gia_chao='9 tỷ', nhưng Images_Admin_JSON và raw_json_full trống)
         # - test-3 (căn mới)
         conn = sqlite3.connect(temp_db)
         conn.execute("""
-            INSERT INTO listings (tk_id, status, Images_Admin_JSON, raw_json_full, Gia_chao)
-            VALUES (?, ?, ?, ?, ?)
-        """, ("test-1", "raw_text", "[]", "", "9 tỷ"))
+            INSERT INTO listings (tk_id, status, Images_Admin_JSON, raw_json_full, Gia_chao, Gia_Public)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, ("test-1", "raw_text", "[]", "", "9 tỷ", "9 tỷ"))
         conn.execute("""
-            INSERT INTO listings (tk_id, status, Gia_chao)
+            INSERT INTO listings (tk_id, status, Gia_Public)
             VALUES (?, ?, ?)
         """, ("test-3", "raw_text", "8 tỷ"))
         conn.commit()
@@ -344,9 +344,10 @@ class TestMergeTempToMaster:
 
         conn = sqlite3.connect(master_db)
         
-        # 1. Kiểm tra test-1: Cập nhật Gia_chao, giữ nguyên raw_json_full & Images_Admin_JSON
-        t1 = conn.execute("SELECT status, raw_json_full, Images_Admin_JSON, Gia_chao FROM listings WHERE tk_id = 'test-1'").fetchone()
-        assert t1[3] == "9 tỷ"
+        # 1. Kiểm tra test-1: Cập nhật Gia_Public (whitelisted), giữ nguyên Gia_chao (non-whitelisted), raw_json_full & Images_Admin_JSON
+        t1 = conn.execute("SELECT status, raw_json_full, Images_Admin_JSON, Gia_chao, Gia_Public FROM listings WHERE tk_id = 'test-1'").fetchone()
+        assert t1[4] == "9 tỷ"  # Gia_Public được cập nhật vì nằm trong whitelist
+        assert t1[3] == "10 tỷ" # Gia_chao giữ nguyên vì KHÔNG nằm trong whitelist
         assert t1[1] == "{\"api\": \"data\"}"
         assert t1[2] == "[\"r2_url_1\"]"
 
@@ -356,7 +357,7 @@ class TestMergeTempToMaster:
         assert t2[1] == "5 tỷ"
 
         # 3. Kiểm tra test-3: Căn mới được thêm vào
-        t3 = conn.execute("SELECT status, Gia_chao FROM listings WHERE tk_id = 'test-3'").fetchone()
+        t3 = conn.execute("SELECT status, Gia_Public FROM listings WHERE tk_id = 'test-3'").fetchone()
         assert t3 is not None
         assert t3[1] == "8 tỷ"
 

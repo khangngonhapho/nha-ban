@@ -344,8 +344,10 @@ def upload_r2_vercel_bridge():
                 
                 new_img_obj = {
                     "url": img_link,
+                    "r2_url": img_link,
                     "role": vi_role,
-                    "visible": visible
+                    "visible": visible,
+                    "origin": "self"
                 }
                 
                 if not curated_json:

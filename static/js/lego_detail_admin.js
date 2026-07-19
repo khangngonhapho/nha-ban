@@ -2202,7 +2202,9 @@
             
             p.curated_config.images.push({
               url: uploadedUrl,
+              r2_url: uploadedUrl,
               role: viRole,
+              origin: "self",
               display_order: p.curated_config.images.length,
               sequence_index: p.curated_config.images.length,
               visible: (viRole !== "Sơ đồ" && viRole !== "Mặt tiền")
