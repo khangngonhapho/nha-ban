@@ -741,18 +741,7 @@ const LegoState = {
                     .map(img => img.r2_url || img.image_url || img.url)
                     .filter(Boolean);
                   rawImagesTk = parsedAdmin
-                    .filter(img => {
-                      const url = img.r2_url || img.image_url || img.url || '';
-                      const filename = url.split("/").pop();
-                      const isSelf = (
-                        img.origin === 'self' || 
-                        img.origin === 'user' ||
-                        filename.startsWith("SYS-") ||
-                        /_(interior|sodo|facade|alley|cover)_\d{13}/.test(filename) ||
-                        (url.includes("BDS-KhangNgo/") && !/img_[a-f0-9-]{36}_\d+/.test(filename))
-                      );
-                      return !isSelf;
-                    })
+                    .filter(img => img.origin === 'crawl' || img.origin === 'thienkhoi' || !img.origin)
                     .map(img => img.r2_url || img.image_url || img.url || '');
                 } catch (e) {
                   // fallback

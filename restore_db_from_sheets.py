@@ -929,16 +929,7 @@ def restore_database():
             resolved_role = role_map_vi_to_en.get(vi_role, "interior")
             is_visible = img.get("visible", True)
             origin = img.get("origin", "crawl")
-            url = img.get("url", "")
-            filename = url.split("/")[-1]
-            import re
-            is_self_uploaded = (
-                origin in ["self", "user"] or 
-                filename.startswith("SYS-") or 
-                re.search(r'_(interior|sodo|facade|alley|cover)_\d{13}', filename) or
-                ("BDS-KhangNgo/" in url and not re.search(r'img_[a-f0-9-]{36}_\d+', filename))
-            )
-            if is_self_uploaded:
+            if origin in ["self", "user"]:
                 origin = "self"
             else:
                 origin = "crawl"
