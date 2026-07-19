@@ -464,7 +464,7 @@
 
                   ${p.isFromPoolOnly ? `<div id="poolSaveNotice" style="margin-top: -6px; margin-bottom: 12px; font-size: 10px; color: #e74c3c; font-weight: 700; background: rgba(231,76,60,0.08); padding: 8px 12px; border-radius: 6px; border: 1px dashed rgba(231,76,60,0.3); line-height: 1.4; box-sizing: border-box; width: 100%;">⚠️ Nhập đầy đủ cả <b>Tiêu đề Public</b> và <b>Mô tả Public</b> (hoặc bấm Tự động điền) để kích hoạt nút Lên sóng ⚡</div>` : ''}
 
-                  ${renderImageEditorWidget(p)}
+                  ${renderImageEditorWidget(p, true)}
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
@@ -907,7 +907,7 @@
       // Priority duplicate filtering:
       const priorityList = [
         ...cards.filter(c => (c.type === 'interior' && c.index > 1) || c.type === 'alley'),
-        ...cards.filter(c => (c.type === 'interior' && c.index === 1) || c.type === 'sodo' || c.type === 'facade')
+        ...cards.filter(c => (c.type === 'interior' && c.index === 1) || c.type === 'sodo' || c.type === 'facade' || c.type === 'cover')
       ];
 
       const renderedUrls = new Set();
@@ -1148,7 +1148,7 @@
         const isBroken = window.brokenImageUrls && window.brokenImageUrls.has(normUrl);
         const isDeleted = c.type === 'deleted';
         const slideStyle = (isDeleted || isBroken) ? 'filter: grayscale(40%) opacity(0.65); border: 2px dashed var(--red, #ff4d4f); box-shadow: inset 0 0 10px rgba(255, 77, 79, 0.2);' : '';
-        const badgeText = c.type === "facade" ? "Mặt Tiền" : (c.type === "sodo" ? `Sổ ${c.index}` : (c.type === "interior" ? `Nội Thất ${c.index}` : (c.type === "deleted" ? "Đã Xóa" : `Hẻm ${c.index}`)));
+        const badgeText = c.type === "facade" ? "Mặt Tiền" : (c.type === "cover" ? "Ảnh Nền" : (c.type === "sodo" ? `Sổ ${c.index}` : (c.type === "interior" ? `Nội Thất ${c.index}` : (c.type === "deleted" ? "Đã Xóa" : `Hẻm ${c.index}`))));
         const imgSrc = isBroken ? "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='600' height='400' fill='%232c2c2e'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23ff4d4f' font-weight='bold'>⚠️ LỖI: HÌNH ẢNH KHÔNG TỒN TẠI (TK/R2)</text></svg>" : fixImgUrl(c.url, 'w600');
         slidesHtml += `
           <div class="carousel-slide-item" data-slide-index="${idx}" style="${slideStyle}">
@@ -1677,7 +1677,7 @@
       
       const slide = slides[activeIdx];
       // Kiểm tra xem ảnh hiện tại có hiển thị public không
-      const isPublicCover = (document.getElementById('editPublicCoverUrl')?.value || '') === slide.url;
+      const isPublicCover = normalizeImgUrl(document.getElementById('editPublicCoverUrl')?.value || '') === normalizeImgUrl(slide.url);
       const isPublicInt = (slide.type === 'interior' || slide.type === 'deleted') && (document.getElementById('editPublicInteriorIndices')?.value || '').split(',').includes(String(slide.index));
       const isPublicAlley = slide.type === 'alley' && (document.getElementById('editPublicAlleyIndices')?.value || '').split(',').includes(String(slide.index));
       
@@ -1713,7 +1713,7 @@
           
           const isSodo = normSodos.includes(normUrl);
           const isFacade = normUrl !== '' && normUrl === normMatTien;
-          const isCover = (document.getElementById('editPublicCoverUrl')?.value || '') === s.url;
+          const isCover = normalizeImgUrl(document.getElementById('editPublicCoverUrl')?.value || '') === normalizeImgUrl(s.url);
           
           if (!isSodo && !isFacade && !isCover) {
             if ((s.type === 'interior' || s.type === 'deleted') && s.visible !== false) {
@@ -1752,7 +1752,7 @@
       const getWeight = (c) => {
         const normUrl = normalizeImgUrl(c.url);
         if (c.type === 'facade' || normUrl === normMatTien) return 0;
-        if (normPublicCover && normUrl === normPublicCover) return 1;
+        if (c.type === 'cover' || (normPublicCover && normUrl === normPublicCover)) return 1;
         
         if (c.type === 'alley') {
           const pos = hemIndices.indexOf(c.index);
