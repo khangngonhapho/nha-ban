@@ -816,8 +816,24 @@ const LegoState = {
             const gia = parseGia(sr[window.getSourceColumnIndex("gia", 8)]);
             const giabq = (dt_so_val > 0 && gia > 0) ? Math.round((gia * 1000) / dt_so_val) : 0;
 
+            let tkId = '';
+            if (poolRow) {
+              const linkGoc = poolRow[window.getPoolColumnIndex("Link Gốc", 73)] || '';
+              const maHang = poolRow[window.getPoolColumnIndex("Mã Hàng", 0)] || '';
+              if (linkGoc) {
+                const parts = linkGoc.replace(/\/+$/, "").split("/");
+                if (parts.length > 0) {
+                  tkId = parts[parts.length - 1].trim();
+                }
+              }
+              if (!tkId && maHang) {
+                tkId = maHang.trim();
+              }
+            }
+
             const p = {
               temp_id: index + 1,
+              tk_id: tkId,
               id: sr[window.getSourceColumnIndex("id", 3)] || '',
               cu_phap: sr[window.getSourceColumnIndex("cu_phap", 1)] || '',
               t: sr[window.getSourceColumnIndex("tieu_de", 4)] || '',
@@ -1034,8 +1050,22 @@ const LegoState = {
           const giaVal = parseGia(poolRow[window.getPoolColumnIndex("Giá chào", 11)]) || parseGia(poolRow[window.getPoolColumnIndex("Giá chốt", 58)]) || 0;
           const giabqVal = (dtSo > 0 && giaVal > 0) ? Math.round((giaVal * 1000) / dtSo) : 0;
 
+          let tkId = '';
+          const linkGoc = poolRow[window.getPoolColumnIndex("Link Gốc", 73)] || '';
+          const maHang = poolRow[window.getPoolColumnIndex("Mã Hàng", 0)] || '';
+          if (linkGoc) {
+            const parts = linkGoc.replace(/\/+$/, "").split("/");
+            if (parts.length > 0) {
+              tkId = parts[parts.length - 1].trim();
+            }
+          }
+          if (!tkId && maHang) {
+            tkId = maHang.trim();
+          }
+
           const p = {
             temp_id: sourceRows.length + prIdx + 1,
+            tk_id: tkId,
             id: poolRow[window.getPoolColumnIndex("id", 55)] || '',
             cu_phap: poolRow[window.getPoolColumnIndex("cu_phap", 1)] || '',
             t: poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || poolRow[window.getPoolColumnIndex("id", 55)] || 'Chưa biên tập',
