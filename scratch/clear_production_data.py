@@ -150,9 +150,15 @@ def clear_sheets_production():
                         ws.batch_clear([range_str])
                         print(f"    [✅] Tab '{tab_name}' cleared successfully (Formula in A3 preserved).")
                     else:
-                        print(f"    * Resizing '{tab_name}' to {header_rows} rows...")
-                        ws.resize(rows=header_rows)
-                        print(f"    [✅] Tab '{tab_name}' cleared successfully to header rows.")
+                        target_rows = header_rows + 1
+                        print(f"    * Resizing '{tab_name}' to {target_rows} rows...")
+                        ws.resize(rows=target_rows)
+                        col_count = ws.col_count
+                        last_col_letter = rowcol_to_a1(target_rows, col_count).replace(str(target_rows), "")
+                        range_str = f"A{target_rows}:{last_col_letter}{target_rows}"
+                        print(f"    * Clearing cells in row {target_rows} (range: {range_str})...")
+                        ws.batch_clear([range_str])
+                        print(f"    [✅] Tab '{tab_name}' cleared successfully to header + 1 row.")
                         
                 except gspread.exceptions.WorksheetNotFound:
                     print(f"    - [⚠️ WARNING] Worksheet '{tab_name}' not found.")
