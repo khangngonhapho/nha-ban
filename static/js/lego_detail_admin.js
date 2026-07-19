@@ -2185,7 +2185,7 @@
             }
           }
 
-          const uploadedUrl = await uploadFileToR2(file, uploadType, p.id || p.system_id);
+          const uploadedUrl = await uploadFileToR2(file, uploadType, p.tk_id || p.id || p.system_id);
           lastUploadedUrl = uploadedUrl;
           window.uploadedUrls = window.uploadedUrls || new Set();
           window.uploadedUrls.add(uploadedUrl);

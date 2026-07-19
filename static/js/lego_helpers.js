@@ -301,8 +301,22 @@ window.getMappedPoolData = function() {
       if (row[c]) poolImgs.push(row[c]);
     }
 
+    const linkGoc = row[73] || '';
+    const maHang = row[0] || '';
+    let tkId = '';
+    if (linkGoc) {
+      const parts = linkGoc.replace(/\/+$/, "").split("/");
+      if (parts.length > 0) {
+        tkId = parts[parts.length - 1].trim();
+      }
+    }
+    if (!tkId && maHang) {
+      tkId = maHang.trim();
+    }
+
     const p = {
       temp_id: index + 1,
+      tk_id: tkId,
       id: row[55] || systemId || '',
       cu_phap: "",
       t: row[56] || row[55] || row[9] || 'Căn nhà thô từ Pool',
