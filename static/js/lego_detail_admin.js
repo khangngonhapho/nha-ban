@@ -11,6 +11,25 @@
   const getPoolColumnIndex = window.getPoolColumnIndex;
   const getSourceColumnIndex = window.getSourceColumnIndex;
 
+  window.removeAccentsPreserveCase = function(str) {
+    if (str === null || str === undefined) return '';
+    const s = String(str);
+    if (!s) return '';
+    const s1 = 'ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯưẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỊịỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹ';
+    const s0 = 'AAAAEEEIIOOOOUUYaaaaeeeiioooouuyAaDdIiUuOoUuAaAaAaAaAaAaAaAaAaAaAaAaEeEeEeEeEeEeEeEeIiOoOoOoOoOoOoOoOoOoOoOoOoUuUuUuUuUuUuUuYyYyYyYy';
+    let res = '';
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      const idx = s1.indexOf(c);
+      if (idx !== -1) {
+        res += s0[idx];
+      } else {
+        res += c;
+      }
+    }
+    return res.trim();
+  };
+
   async function getPoolImagesSelfRowIndex(token, poolSheetId, maHang) {
     try {
       const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!A2:C`, {
@@ -2195,8 +2214,8 @@
             let duong = (p.raw_ten_duong || "").toString().trim();
             
             if (soNha || duong) {
-              const cleanSoNha = typeof window.removeAccents === "function" ? window.removeAccents(soNha) : soNha;
-              const cleanDuong = typeof window.removeAccents === "function" ? window.removeAccents(duong) : duong;
+              const cleanSoNha = typeof window.removeAccentsPreserveCase === "function" ? window.removeAccentsPreserveCase(soNha) : soNha;
+              const cleanDuong = typeof window.removeAccentsPreserveCase === "function" ? window.removeAccentsPreserveCase(duong) : duong;
               r2Subfolder = `${p.tk_id} - ${cleanSoNha} ${cleanDuong}`.trim().replace(/\s+/g, " ");
             } else {
               r2Subfolder = p.tk_id;
