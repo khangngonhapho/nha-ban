@@ -623,14 +623,31 @@ def restore_database():
     data_rows = all_values[1:] # Dữ liệu bắt đầu từ dòng 2 (index 1)
     print(f"  - Đang phân tích {len(data_rows)} dòng dữ liệu từ Google Sheets Pool...")
 
+    # Build dynamic header index map for Source sheet to comply with Rule 6
+    source_headers_map = {}
+    if len(source_values) >= 2:
+        row1 = source_values[0]
+        row2 = source_values[1]
+        for idx, h in enumerate(row2):
+            h_clean = h.strip()
+            if h_clean:
+                source_headers_map[h_clean] = idx
+        for idx, h in enumerate(row1):
+            h_clean = h.strip()
+            if h_clean and (h_clean not in source_headers_map or not row2[idx].strip()):
+                source_headers_map[h_clean] = idx
+
+    sys_id_idx = source_headers_map.get("System ID")
+    huong_idx = source_headers_map.get("huong_nha")
+    images_pub_idx = source_headers_map.get("Images_Public_JSON")
+
     # Xây dựng dictionary từ sheet Source để merge
     source_dict = {}
-    if len(source_values) >= 3:
+    if len(source_values) >= 3 and sys_id_idx is not None:
         # Dữ liệu bắt đầu từ dòng 3 (index 2), dòng 2 (index 1) là header snake_case
         for s_row in source_values[2:]:
-            # Cột 38 (index 37) là System ID
-            if len(s_row) > 37:
-                sys_id = s_row[37].strip()
+            if len(s_row) > sys_id_idx:
+                sys_id = s_row[sys_id_idx].strip()
                 if sys_id:
                     source_dict[sys_id] = s_row
         print(f"  - Đang lập bản đồ map cho {len(source_dict)} căn đã biên tập từ Source...")
@@ -798,8 +815,8 @@ def restore_database():
         custom_huong_val = row_dict.get("Hướng", "").strip()
         if pool_sys_id and pool_sys_id in source_dict:
             s_row = source_dict[pool_sys_id]
-            if len(s_row) > 12:
-                s_val = s_row[12].strip()
+            if huong_idx is not None and len(s_row) > huong_idx:
+                s_val = s_row[huong_idx].strip()
                 if s_val and not (s_val.startswith("#") and s_val.endswith("!")):
                     custom_huong_val = s_val
                         
@@ -840,8 +857,8 @@ def restore_database():
         if pool_sys_id and pool_sys_id in source_dict:
             s_row = source_dict[pool_sys_id]
             source_public_urls = []
-            if len(s_row) > 48:
-                pub_str = s_row[48].strip()
+            if images_pub_idx is not None and len(s_row) > images_pub_idx:
+                pub_str = s_row[images_pub_idx].strip()
                 if pub_str.startswith("[") and pub_str.endswith("]"):
                     try:
                         source_public_urls = json.loads(pub_str)
@@ -880,174 +897,6 @@ def restore_database():
                         img["visible"] = False
                         aligned_images.append(img)
                 images_list = aligned_images
-
-        if not images_list:
-            # Fallback to reconstructing from flat columns
-            def parse_indices(val):
-                if not val:
-                    return []
-                res = []
-                for x in str(val).split(","):
-                    x_clean = x.strip()
-                    if x_clean.isdigit():
-                        res.append(int(x_clean))
-                return res
-
-            public_interior_indices = parse_indices(row_dict.get("Ảnh Public (VD: 1,3,5)", ""))
-            public_alley_indices = parse_indices(row_dict.get("Ảnh Hẻm Public (VD: 1,2)", ""))
-
-            # Extract public interior URLs from Source sheet if published
-            source_public_interiors = set()
-            if pool_sys_id and pool_sys_id in source_dict:
-                s_row = source_dict[pool_sys_id]
-                # Try to use Images_Public_JSON (index 48) first
-                has_pub_json = False
-                if len(s_row) > 48:
-                    pub_str = s_row[48].strip()
-                    if pub_str.startswith("[") and pub_str.endswith("]"):
-                        try:
-                            source_public_urls = json.loads(pub_str)
-                            for u in source_public_urls:
-                                if u.strip().startswith("http"):
-                                    source_public_interiors.add(u.strip())
-                            has_pub_json = True
-                        except Exception:
-                            pass
-                if not has_pub_json:
-                    # Cols 21 to 30 (indices 20 to 29) are Ảnh 1 to 10
-                    for url in s_row[20:30]:
-                        url_clean = url.strip()
-                        if url_clean.startswith("http"):
-                            source_public_interiors.add(url_clean)
-                    # Cols 42 to 46 (indices 41 to 45) are Ảnh 11 to 15
-                    if len(s_row) > 45:
-                        for url in s_row[41:46]:
-                            url_clean = url.strip()
-                            if url_clean.startswith("http"):
-                                source_public_interiors.add(url_clean)
-
-            # 1. Cover
-            cover_url = row_dict.get("Hình Nhận Diện", "").strip()
-            if cover_url and cover_url.startswith("http"):
-                images_list.append({
-                    "url": cover_url,
-                    "role": "Bìa",
-                    "visible": True
-                })
-
-            # 2. Facade
-            facade_url = row_dict.get("Hình Mặt Tiền", "").strip()
-            if facade_url and facade_url.startswith("http"):
-                if not any(img["url"] == facade_url for img in images_list):
-                    images_list.append({
-                        "url": facade_url,
-                        "role": "Mặt tiền",
-                        "visible": False
-                    })
-
-            # 3. Alleys
-            for i in range(1, 11):
-                url = row_dict.get(f"Hình Hẻm {i}", "").strip()
-                if url and url.startswith("http"):
-                    if not any(img["url"] == url for img in images_list):
-                        is_visible = i in public_alley_indices
-                        images_list.append({
-                            "url": url,
-                            "role": "Hẻm",
-                            "visible": is_visible
-                        })
-
-            # 4. Interiors
-            for i in range(1, 26):
-                url = row_dict.get(f"Ảnh {i}", "").strip()
-                if url and url.startswith("http"):
-                    if not any(img["url"] == url for img in images_list):
-                        if pool_sys_id and pool_sys_id in source_dict:
-                            is_visible = url in source_public_interiors
-                        else:
-                            is_visible = i in public_interior_indices
-                        images_list.append({
-                            "url": url,
-                            "role": "Nội thất",
-                            "visible": is_visible
-                        })
-
-            # 5. Diagrams
-            for i in range(1, 6):
-                url = row_dict.get(f"Sơ đồ thửa đất {i}", "").strip()
-                if url and url.startswith("http"):
-                    if not any(img["url"] == url for img in images_list):
-                        images_list.append({
-                            "url": url,
-                            "role": "Sơ đồ",
-                            "visible": False
-                        })
-
-        # US-055 & Pool_Images recovery guards
-        has_non_diag_images = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in images_list)
-        
-        # 1. Nếu trên Sheets bị trống/chỉ có sơ đồ, kiểm tra xem SQLite cũ (cache) có hình ảnh không
-        if (not has_non_diag_images) and tk_id in existing_images:
-            cache = existing_images[tk_id]
-            cached_curated_str = cache.get("curated_config_json")
-            cached_images = []
-            if cached_curated_str:
-                try:
-                    parsed_cache = json.loads(cached_curated_str)
-                    cached_images = parsed_cache.get("images", [])
-                except Exception:
-                    pass
-            
-            if not cached_images and cache.get("Images_Admin_JSON"):
-                try:
-                    parsed_admin = json.loads(cache.get("Images_Admin_JSON"))
-                    role_map_en_to_vi = {
-                        "diagram": "Sơ đồ", "facade": "Mặt tiền", "cover": "Bìa",
-                        "alley": "Hẻm", "interior": "Nội thất", "hidden": "Ẩn", "deleted": "deleted"
-                    }
-                    for img in parsed_admin:
-                        if isinstance(img, dict) and img.get("image_url"):
-                            cached_images.append({
-                                "url": img.get("r2_url") or img.get("image_url"),
-                                "role": role_map_en_to_vi.get(img.get("role", "interior"), "Nội thất"),
-                                "visible": img.get("is_hidden", 0) == 0
-                            })
-                except Exception:
-                    pass
-
-            if cached_images:
-                has_cached_non_diag = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in cached_images)
-                if has_cached_non_diag:
-                    images_list = cached_images
-                    has_non_diag_images = True
-                    print(f"  - [🛡️ Bảo vệ US-055] Phục hồi thành công {len(images_list)} ảnh từ bộ nhớ đệm CSDL cũ cho căn {tk_id}.")
-
-        # 2. Nếu vẫn trống/chỉ có sơ đồ, kiểm tra xem Pool_Images có backup hình ảnh không
-        if (not has_non_diag_images) and tk_id in pool_images_map:
-            raw_urls = pool_images_map[tk_id]
-            images_list = []
-            
-            # Giữ các ảnh sơ đồ từ sheets trước
-            diag_urls = [row_dict.get(f"Sơ đồ thửa đất {i}", "").strip() for i in range(1, 6)]
-            diag_urls = [u for u in diag_urls if u]
-            for d_url in diag_urls:
-                images_list.append({"url": d_url, "role": "Sơ đồ", "visible": False})
-                
-            # Thêm ảnh nội thất từ Pool_Images
-            for url in raw_urls:
-                is_diag = False
-                for d_url in diag_urls:
-                    if url.split("?")[0] == d_url.split("?")[0]:
-                        is_diag = True
-                        break
-                if not is_diag:
-                    images_list.append({"url": url, "role": "Nội thất", "visible": True})
-            
-            has_non_diag_images = any(img.get("role") not in ["Sơ đồ", "diagram"] for img in images_list)
-            if has_non_diag_images:
-                # Thiết lập trạng thái thành 'raw_text' để kích hoạt di cư lại tự động lên R2
-                status = "raw_text"
-                print(f"  - [🔄 Khôi phục Sheets] Phục hồi thành công {len(images_list)} ảnh thô từ Pool_Images cho căn {tk_id}. Đặt lại status -> 'raw_text'")
 
         images_list = normalize_images_list(images_list)
 
