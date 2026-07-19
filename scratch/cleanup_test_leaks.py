@@ -56,7 +56,7 @@ def delete_sheets_mock():
             # Quét tất cả các worksheet
             for wks in ss.worksheets():
                 title = wks.title
-                if title not in ["Pool", "Source"]:
+                if title not in ["Pool", "Source", "Pool_Images"]:
                     continue
                     
                 rows = wks.get_all_values()
