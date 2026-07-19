@@ -451,7 +451,7 @@
 
                   <div class="admin-edit-group">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                      <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public (dưới 85 ký tự):</label>
+                      <label for="editTieuDeBds" style="margin-bottom: 0;">Tiêu đề public:</label>
                       <button type="button" id="btnAutoFillCuration" onclick="autoFillCurationDetails()" style="background: rgba(255, 191, 36, 0.15); color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">⚡ Tự động điền</button>
                     </div>
                     <textarea id="editTieuDeBds" rows="2" placeholder="Nhập tiêu đề BĐS ngắn gọn..." style="font-size: 10px; font-weight: 700; line-height: 1.4; font-family: inherit; padding: 6px; resize: vertical;">${p.isFromPoolOnly ? '' : ((p.original_row_data && (p.original_row_data[4] || p.original_row_data[39])) || p.raw_tieu_de_public || '')}</textarea>
@@ -946,7 +946,11 @@
       if (domPublicCover) {
         currentPublicCover = domPublicCover.value;
       } else {
-        if (!p.isFromPoolOnly) {
+        if (p.curated_config && Array.isArray(p.curated_config.images)) {
+          const foundCover = p.curated_config.images.find(img => img.role === 'Bìa' || img.role === 'cover');
+          if (foundCover) currentPublicCover = foundCover.url;
+        }
+        if (!currentPublicCover && !p.isFromPoolOnly) {
           if (p.original_row_data && p.original_row_data[20]) {
             currentPublicCover = p.original_row_data[20];
           } else if (p.pool_row_data) {
@@ -1747,6 +1751,7 @@
       
       const getWeight = (c) => {
         const normUrl = normalizeImgUrl(c.url);
+        if (c.type === 'facade' || normUrl === normMatTien) return 0;
         if (normPublicCover && normUrl === normPublicCover) return 1;
         
         if (c.type === 'alley') {
@@ -1757,8 +1762,7 @@
           const pos = noithatIndices.indexOf(c.index);
           if (pos !== -1) return 100 + pos;
         }
-        if (c.type === 'facade' || normUrl === normMatTien) return 1000;
-        if (c.type === 'sodo') return 2000 + c.index;
+        if (c.type === 'sodo') return 4000 + c.index;
         
         const cleanUrl = c.url.split('?')[0];
         const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
@@ -2120,7 +2124,8 @@
         body: JSON.stringify({
           file: base64Data,
           filename: filename,
-          type: type
+          type: type,
+          listingId: listingId
         })
       });
 
@@ -2184,6 +2189,25 @@
           lastUploadedUrl = uploadedUrl;
           window.uploadedUrls = window.uploadedUrls || new Set();
           window.uploadedUrls.add(uploadedUrl);
+
+          if (!p.curated_config) p.curated_config = {};
+          if (!p.curated_config.images) p.curated_config.images = [];
+          const exists = p.curated_config.images.some(img => img.url === uploadedUrl);
+          if (!exists) {
+            let viRole = "Nội thất";
+            if (uploadType === "sodo" || uploadType === "diagram") viRole = "Sơ đồ";
+            else if (uploadType === "facade") viRole = "Mặt tiền";
+            else if (uploadType === "alley") viRole = "Hẻm";
+            else if (uploadType === "cover") viRole = "Bìa";
+            
+            p.curated_config.images.push({
+              url: uploadedUrl,
+              role: viRole,
+              display_order: p.curated_config.images.length,
+              sequence_index: p.curated_config.images.length,
+              visible: (viRole !== "Sơ đồ" && viRole !== "Mặt tiền")
+            });
+          }
 
           if (uploadType === "sodo") {
             const sodoInput = document.getElementById(`editSodo${sodoIndex}Url`);
