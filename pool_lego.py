@@ -1973,8 +1973,24 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     if len(row_data) > 6:
                         address_str = f"{row_data[6]} {row_data[5]}".strip()
                     
+                    # Trích xuất ảnh tự up (self)
+                    self_imgs = []
+                    admin_json_str = d.get("Images_Admin_JSON")
+                    if admin_json_str:
+                        try:
+                            admin_imgs = json.loads(admin_json_str)
+                            self_imgs = [
+                                img.get("r2_url") or img.get("image_url")
+                                for img in admin_imgs
+                                if img.get("origin") in ["self", "user"]
+                            ]
+                            self_imgs = [x for x in self_imgs if x]
+                        except Exception:
+                            pass
                     init_pool_images_rows(spreadsheet, tk_id, address_str, raw_imgs)
                     update_pool_images_crawl_row(spreadsheet, tk_id, address_str, raw_imgs)
+                    if self_imgs:
+                        update_pool_images_self_row(spreadsheet, tk_id, address_str, self_imgs)
                 except Exception as e_backup:
                     add_log_message(f"[⚠️ WARNING] Không thể xử lý backup trên Pool_Images: {str(e_backup)}")
 

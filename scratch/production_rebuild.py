@@ -366,8 +366,24 @@ def batch_publish_to_sheets(tk_ids):
                                 
                     address_str = f"{d_check.get('Ngo_So_nha', '')} {d_check.get('Duong', '')}, {d_check.get('Phuong', '')}, {d_check.get('Quan', '')}"
                     
+                    # Trích xuất ảnh tự up (self)
+                    self_imgs = []
+                    if admin_json:
+                        try:
+                            imgs = json.loads(admin_json)
+                            for img in imgs:
+                                if isinstance(img, dict) and img.get("role") != "deleted":
+                                    url = img.get("r2_url") or img.get("image_url") or ""
+                                    if url.strip():
+                                        is_self = (img.get("origin") in ["self", "user"]) if img.get("origin") else ("r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url)
+                                        if is_self:
+                                            self_imgs.append(url.strip())
+                        except Exception:
+                            pass
                     pool_lego.init_pool_images_rows(spreadsheet, tk_id, address_str, raw_imgs)
                     pool_lego.update_pool_images_crawl_row(spreadsheet, tk_id, address_str, raw_imgs)
+                    if self_imgs:
+                        pool_lego.update_pool_images_self_row(spreadsheet, tk_id, address_str, self_imgs)
             except Exception as e_img_backup:
                 print(f"    [⚠️ WARNING] Không thể backup ảnh lên Pool_Images cho {tk_id}: {str(e_img_backup)}")
         conn_check.close()

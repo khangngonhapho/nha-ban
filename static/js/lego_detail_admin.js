@@ -2205,8 +2205,9 @@
             }
           }
 
+          const folderId = p.tk_id || p.id || p.system_id;
           let r2Subfolder = "";
-          if (p.tk_id) {
+          if (folderId) {
             let soNha = (p.raw_so_nha || "").toString().trim();
             if (soNha.includes("+")) {
               soNha = soNha.split("+")[0].trim();
@@ -2216,9 +2217,9 @@
             if (soNha || duong) {
               const cleanSoNha = typeof window.removeAccentsPreserveCase === "function" ? window.removeAccentsPreserveCase(soNha) : soNha;
               const cleanDuong = typeof window.removeAccentsPreserveCase === "function" ? window.removeAccentsPreserveCase(duong) : duong;
-              r2Subfolder = `${p.tk_id} - ${cleanSoNha} ${cleanDuong}`.trim().replace(/\s+/g, " ");
+              r2Subfolder = `${folderId} - ${cleanSoNha} ${cleanDuong}`.trim().replace(/\s+/g, " ");
             } else {
-              r2Subfolder = p.tk_id;
+              r2Subfolder = folderId;
             }
           }
 
