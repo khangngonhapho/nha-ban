@@ -62,8 +62,8 @@ class TestRobustSqliteConnect:
         finally:
             os.unlink(db_path)
 
-    def test_synchronous_normal(self):
-        """PRAGMA synchronous=NORMAL được set."""
+    def test_synchronous_full(self):
+        """PRAGMA synchronous=FULL được set (chống malformed khi WAL + crash)."""
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
             db_path = f.name
         try:
@@ -71,8 +71,8 @@ class TestRobustSqliteConnect:
             cursor = conn.execute("PRAGMA synchronous;")
             val = cursor.fetchone()[0]
             conn.close()
-            # NORMAL = 1
-            assert val == 1, f"Expected synchronous=1 (NORMAL), got {val}"
+            # FULL = 2 (chống malformed khi crash/kill tiến trình với WAL mode)
+            assert val == 2, f"Expected synchronous=2 (FULL), got {val}"
         finally:
             os.unlink(db_path)
 

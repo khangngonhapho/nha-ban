@@ -107,6 +107,19 @@ def backup_master_database(master_db_path):
     except Exception as e:
         print(f"  - [⚠️ WARNING] Không thể sao lưu CSDL Gốc: {str(e)}")
 
+def is_empty_config(val_str):
+    if not val_str or val_str in ["[]", "{}"]:
+        return True
+    try:
+        parsed = json.loads(val_str)
+        if isinstance(parsed, dict) and "images" in parsed:
+            return len(parsed["images"]) == 0
+        if isinstance(parsed, list):
+            return len(parsed) == 0
+    except Exception:
+        pass
+    return False
+
 def merge_temp_to_master(temp_db_path, master_db_path):
     print("\n[+] Đang hợp nhất dữ liệu từ CSDL Tạm vào CSDL Gốc...")
     if not os.path.exists(temp_db_path):
@@ -124,157 +137,180 @@ def merge_temp_to_master(temp_db_path, master_db_path):
     conn = sqlite3.connect(master_db_path, timeout=60.0)
     cursor = conn.cursor()
     
-    # ATTACH CSDL Tạm
-    cursor.execute("ATTACH DATABASE ? AS temp_db", (temp_db_path,))
-    
-    # 1. Lấy danh sách cột của bảng listings (loại bỏ cột 'id' tự tăng để tránh xung đột UNIQUE)
-    cursor.execute("PRAGMA table_info(listings)")
-    cols = [r[1] for r in cursor.fetchall() if r[1] != 'id']
-    
-    # 2. Truy vấn dữ liệu từ temp_db.listings
-    sql_select = f"SELECT {', '.join([f'`{c}`' for c in cols])} FROM temp_db.listings"
-    temp_rows = cursor.execute(sql_select).fetchall()
-    print(f"  - Đang hợp nhất {len(temp_rows)} căn từ CSDL Tạm vào CSDL Gốc...")
-    
-    # Tạo map cột để dễ truy xuất
-    col_to_idx = {c: i for i, c in enumerate(cols)}
-    
-    inserted_count = 0
-    updated_count = 0
-    
-    for row in temp_rows:
-        tk_id = row[col_to_idx["tk_id"]]
-        if not tk_id:
-            continue
-            
-        # Lấy thông tin bản ghi hiện có trong Master
-        existing = cursor.execute(
-            "SELECT status, raw_images_tk_json, raw_drive_images_json, Images_Admin_JSON, images_public_json, curated_config_json, raw_json_full, raw_sodo_tk_json FROM listings WHERE tk_id = ?",
-            (tk_id,)
-        ).fetchone()
+    try:
+        # ATTACH CSDL Tạm
+        cursor.execute("ATTACH DATABASE ? AS temp_db", (temp_db_path,))
         
-        if existing:
-            # Bản ghi đã tồn tại -> CẬP NHẬT (UPDATE)
-            existing_dict = {
-                "status": existing[0],
-                "raw_images_tk_json": existing[1],
-                "raw_drive_images_json": existing[2],
-                "Images_Admin_JSON": existing[3],
-                "images_public_json": existing[4],
-                "curated_config_json": existing[5],
-                "raw_json_full": existing[6],
-                "raw_sodo_tk_json": existing[7]
-            }
-            
-            update_parts = []
-            update_vals = []
-            
-            for col in cols:
-                if col in ["id", "tk_id"]:
-                    continue
-                    
-                val = row[col_to_idx[col]]
+        # 1. Lấy danh sách cột của bảng listings (loại bỏ cột 'id' tự tăng và các cột thô cục bộ để tránh ghi đè)
+        cursor.execute("PRAGMA table_info(listings)")
+        raw_cols = ["raw_json_full", "raw_images_tk_json", "raw_drive_images_json", "raw_sodo_tk_json"]
+        cols = [r[1] for r in cursor.fetchall() if r[1] != 'id' and r[1] not in raw_cols]
+        
+        # 2. Truy vấn dữ liệu từ temp_db.listings
+        sql_select = f"SELECT {', '.join([f'`{c}`' for c in cols])} FROM temp_db.listings"
+        temp_rows = cursor.execute(sql_select).fetchall()
+        print(f"  - Đang hợp nhất {len(temp_rows)} căn từ CSDL Tạm vào CSDL Gốc...")
+        
+        # Tạo map cột để dễ truy xuất
+        col_to_idx = {c: i for i, c in enumerate(cols)}
+        
+        inserted_count = 0
+        updated_count = 0
+        BATCH_SIZE = 100  # Commit mỗi 100 căn để giảm rủi ro mất dữ liệu khi crash
+        
+        for i, row in enumerate(temp_rows):
+            tk_id = row[col_to_idx["tk_id"]]
+            if not tk_id:
+                continue
                 
-                # BẢO VỆ DỮ LIỆU CỤC BỘ: Nếu trường này ở CSDL Tạm trống, và CSDL Gốc có giá trị
-                if col in ["raw_json_full", "raw_images_tk_json", "raw_drive_images_json", "raw_sodo_tk_json", "Images_Admin_JSON", "images_admin_json", "images_public_json", "curated_config_json"]:
-                    master_key = col
-                    if col == "images_admin_json":
-                        master_key = "Images_Admin_JSON"
-                    master_val = existing_dict.get(master_key) or ""
-                    
-                    is_empty_temp = not val or val == "[]" or val == '{"images": [], "Mã_Khang_Ngô__ID_": ""}' or val == "{}"
-                    if master_val and is_empty_temp:
-                        val = master_val
+            # Lấy thông tin bản ghi hiện có trong Master (Chỉ lấy các cột UI cần đối chiếu)
+            existing = cursor.execute(
+                "SELECT Images_Admin_JSON, images_public_json, curated_config_json FROM listings WHERE tk_id = ?",
+                (tk_id,)
+            ).fetchone()
+            
+            if existing:
+                # Bản ghi đã tồn tại -> CẬP NHẬT (UPDATE)
+                existing_dict = {
+                    "Images_Admin_JSON": existing[0],
+                    "images_public_json": existing[1],
+                    "curated_config_json": existing[2]
+                }
+                
+                update_parts = []
+                update_vals = []
+                
+                for col in cols:
+                    if col in ["id", "tk_id"]:
+                        continue
                         
-                update_parts.append(f"`{col}` = ?")
-                update_vals.append(val)
+                    val = row[col_to_idx[col]]
+                    
+                    # [US-152] BẢO VỆ CỘT UI: Bỏ qua cột UI rỗng, không dập đĩa ghi đè lên Master
+                    ui_cols = ["Images_Admin_JSON", "images_public_json", "curated_config_json"]
+                    if col in ui_cols:
+                        master_val = existing_dict.get(col) or ""
+                        if master_val and is_empty_config(val):
+                            continue
+                            
+                    update_parts.append(f"`{col}` = ?")
+                    update_vals.append(val)
+                    
+                # Chỉ thực thi UPDATE lên SQLite nếu có ít nhất 1 cột thực sự cần thay đổi
+                if update_parts:
+                    update_vals.append(tk_id)
+                    update_sql = f"UPDATE listings SET {', '.join(update_parts)} WHERE tk_id = ?"
+                    cursor.execute(update_sql, update_vals)
+                    updated_count += 1
                 
-            update_vals.append(tk_id)
-            update_sql = f"UPDATE listings SET {', '.join(update_parts)} WHERE tk_id = ?"
-            cursor.execute(update_sql, update_vals)
-            updated_count += 1
-            
-            # Cập nhật listings_images cho căn này
-            temp_admin_val = row[col_to_idx.get("Images_Admin_JSON") or col_to_idx.get("images_admin_json") or 0]
-            is_temp_admin_empty = not temp_admin_val or temp_admin_val == "[]"
-            
-            if not is_temp_admin_empty:
-                cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (tk_id,))
+                # Cập nhật listings_images cho căn này
+                temp_admin_val = row[col_to_idx.get("Images_Admin_JSON") or col_to_idx.get("images_admin_json") or 0]
+                is_temp_admin_empty = not temp_admin_val or temp_admin_val == "[]"
+                
+                if not is_temp_admin_empty:
+                    cursor.execute("DELETE FROM listings_images WHERE tk_id = ?", (tk_id,))
+                    cursor.execute("""
+                        INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
+                        SELECT tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden
+                        FROM temp_db.listings_images WHERE tk_id = ?
+                    """, (tk_id,))
+            else:
+                # Bản ghi chưa tồn tại -> THÊM MỚI (INSERT)
+                placeholders = ", ".join(["?"] * len(cols))
+                insert_vals = [row[col_to_idx[col]] for col in cols]
+                insert_sql = f"INSERT INTO listings ({', '.join([f'`{c}`' for c in cols])}) VALUES ({placeholders})"
+                cursor.execute(insert_sql, insert_vals)
+                inserted_count += 1
+                
+                # Sao chép listings_images từ CSDL Tạm cho căn mới
                 cursor.execute("""
                     INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
                     SELECT tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden
                     FROM temp_db.listings_images WHERE tk_id = ?
                 """, (tk_id,))
-        else:
-            # Bản ghi chưa tồn tại -> THÊM MỚI (INSERT)
-            placeholders = ", ".join(["?"] * len(cols))
-            insert_vals = [row[col_to_idx[col]] for col in cols]
-            insert_sql = f"INSERT INTO listings ({', '.join([f'`{c}`' for c in cols])}) VALUES ({placeholders})"
-            cursor.execute(insert_sql, insert_vals)
-            inserted_count += 1
             
-            # Sao chép listings_images từ CSDL Tạm cho căn mới
-            cursor.execute("""
-                INSERT INTO listings_images (tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden)
-                SELECT tk_id, system_id, image_url, r2_url, role, sequence_index, origin, is_hidden
-                FROM temp_db.listings_images WHERE tk_id = ?
-            """, (tk_id,))
+            # [ANTI-MALFORMED] Batch commit mỗi BATCH_SIZE căn để giảm kích thước WAL
+            if (i + 1) % BATCH_SIZE == 0:
+                conn.commit()
+                print(f"  - [Batch Commit] Đã commit an toàn {i + 1}/{len(temp_rows)} căn...")
+        
+        # Commit phần còn lại của listings
+        conn.commit()
+                
+        # 3. Soft Delete: Đánh dấu status = 'sheet_deleted' cho các căn có trong Master nhưng KHÔNG có trong Temp
+        del_rows = cursor.execute("SELECT tk_id FROM listings WHERE tk_id NOT IN (SELECT tk_id FROM temp_db.listings)").fetchall()
+        soft_deleted_count = 0
+        for r in del_rows:
+            del_tk_id = r[0]
+            current_status_row = cursor.execute("SELECT status FROM listings WHERE tk_id = ?", (del_tk_id,)).fetchone()
             
-    # 3. Soft Delete: Đánh dấu status = 'sheet_deleted' cho các căn có trong Master nhưng KHÔNG có trong Temp
-    del_rows = cursor.execute("SELECT tk_id FROM listings WHERE tk_id NOT IN (SELECT tk_id FROM temp_db.listings)").fetchall()
-    soft_deleted_count = 0
-    for r in del_rows:
-        del_tk_id = r[0]
-        current_status_row = cursor.execute("SELECT status FROM listings WHERE tk_id = ?", (del_tk_id,)).fetchone()
-        if current_status_row and current_status_row[0] != "sheet_deleted":
-            cursor.execute("UPDATE listings SET status = 'sheet_deleted' WHERE tk_id = ?", (del_tk_id,))
-            soft_deleted_count += 1
-            
-    if soft_deleted_count > 0:
-        print(f"  - [Soft Delete] Đã chuyển trạng thái sang 'sheet_deleted' cho {soft_deleted_count} căn bị xóa trên Sheets.")
-    
-    # 4. Hợp nhất các bảng quản lý liên kết, blacklist và customer profiles từ CSDL Tạm sang CSDL Gốc
-    # Vì các bảng này không cần giữ vết lịch sử phức tạp như listings, ta chép trực tiếp từ temp_db sang
-    cursor.execute("DELETE FROM shared_links")
-    cursor.execute("INSERT INTO shared_links SELECT * FROM temp_db.shared_links")
-    
-    cursor.execute("DELETE FROM phone_blacklist")
-    cursor.execute("INSERT INTO phone_blacklist SELECT * FROM temp_db.phone_blacklist")
-    
-    # Khởi tạo bảng customer_profiles trên master db nếu chưa có (phòng thủ)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS customer_profiles (
-        raw_phone TEXT,
-        phone_hash TEXT PRIMARY KEY,
-        name TEXT,
-        note TEXT,
-        lifecycle_status TEXT DEFAULT 'LẠNH',
-        updated_at TEXT
-    )
-    """)
-    cursor.execute("DELETE FROM customer_profiles")
-    cursor.execute("INSERT INTO customer_profiles SELECT * FROM temp_db.customer_profiles")
+            # [US-152] WHITELIST AN TOÀN: Chỉ những căn "published" (đã xuất bản Sheets) bị biến mất mới đổi sang sheet_deleted.
+            # Tha bổng hoàn toàn các căn nháp mới cào (raw_text, raw_complete, processing...).
+            if current_status_row and current_status_row[0] == "published":
+                cursor.execute("UPDATE listings SET status = 'sheet_deleted' WHERE tk_id = ?", (del_tk_id,))
+                soft_deleted_count += 1
+                
+        if soft_deleted_count > 0:
+            print(f"  - [Soft Delete] Đã chuyển trạng thái sang 'sheet_deleted' cho {soft_deleted_count} căn bị xóa trên Sheets.")
+        
+        # 4. Hợp nhất các bảng quản lý liên kết, blacklist và customer profiles từ CSDL Tạm sang CSDL Gốc
+        # Vì các bảng này không cần giữ vết lịch sử phức tạp như listings, ta chép trực tiếp từ temp_db sang
+        cursor.execute("DELETE FROM shared_links")
+        cursor.execute("INSERT INTO shared_links SELECT * FROM temp_db.shared_links")
+        
+        cursor.execute("DELETE FROM phone_blacklist")
+        cursor.execute("INSERT INTO phone_blacklist SELECT * FROM temp_db.phone_blacklist")
+        
+        # Khởi tạo bảng customer_profiles trên master db nếu chưa có (phòng thủ)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS customer_profiles (
+            raw_phone TEXT,
+            phone_hash TEXT PRIMARY KEY,
+            name TEXT,
+            note TEXT,
+            lifecycle_status TEXT DEFAULT 'LẠNH',
+            updated_at TEXT
+        )
+        """)
+        cursor.execute("DELETE FROM customer_profiles")
+        cursor.execute("INSERT INTO customer_profiles SELECT * FROM temp_db.customer_profiles")
 
-    # Khởi tạo bảng exclusion_filters trên master db nếu chưa có (phòng thủ)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS exclusion_filters (
-        id TEXT PRIMARY KEY,
-        field TEXT NOT NULL,
-        operator TEXT NOT NULL,
-        value TEXT,
-        status TEXT NOT NULL DEFAULT 'Active',
-        note TEXT
-    )
-    """)
-    cursor.execute("DELETE FROM exclusion_filters")
-    cursor.execute("INSERT INTO exclusion_filters SELECT * FROM temp_db.exclusion_filters")
+        # Khởi tạo bảng exclusion_filters trên master db nếu chưa có (phòng thủ)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS exclusion_filters (
+            id TEXT PRIMARY KEY,
+            field TEXT NOT NULL,
+            operator TEXT NOT NULL,
+            value TEXT,
+            status TEXT NOT NULL DEFAULT 'Active',
+            note TEXT
+        )
+        """)
+        cursor.execute("DELETE FROM exclusion_filters")
+        cursor.execute("INSERT INTO exclusion_filters SELECT * FROM temp_db.exclusion_filters")
 
-    conn.commit()
-    # DETACH CSDL Tạm
-    cursor.execute("DETACH DATABASE temp_db")
-    conn.close()
-    
-    print(f"  - [Hoàn tất hợp nhất] Đã hợp nhất listings, shared_links, phone_blacklist, customer_profiles và exclusion_filters vào CSDL Gốc.")
+        conn.commit()
+        
+        # DETACH CSDL Tạm
+        cursor.execute("DETACH DATABASE temp_db")
+        
+        # [ANTI-MALFORMED] Ép WAL checkpoint: ghi toàn bộ WAL vào file DB chính và xóa sạch WAL file
+        cursor.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        
+        print(f"  - [Hoàn tất hợp nhất] Đã hợp nhất listings, shared_links, phone_blacklist, customer_profiles và exclusion_filters vào CSDL Gốc.")
+    except Exception as e_merge:
+        # Rollback để tránh dữ liệu dở dang gây malformed
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        print(f"  - [❌ LỖI NGHIÊM TRỌNG] Lỗi hợp nhất CSDL: {str(e_merge)}. Đã rollback an toàn.")
+        raise
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 def restore_links_and_blacklist(client, db_path):
     print(f"\n🔄 Đang đồng bộ bảng Links, Blacklist và Customer Profiles từ Tracking Log vào tệp CSDL Tạm: {db_path}...")
@@ -1018,10 +1054,11 @@ def restore_database():
         if images_list:
             reconstructed_drive_images = [img["url"] for img in images_list]
 
-        ma_khang_ngo_id = row_dict.get("Mã Khang Ngô (ID)", "").strip()
+        # [US-152] Refactor: Chuyển đổi Khóa ngoại sang System ID
+        pool_sys_id = row_dict.get("System ID", "").strip()
         curated_config = {
             "images": images_list,
-            "Mã_Khang_Ngô__ID_": ma_khang_ngo_id
+            "system_id": pool_sys_id
         }
         curated_config_json_str = json.dumps(curated_config, ensure_ascii=False)
 
@@ -1085,13 +1122,16 @@ def restore_database():
         except Exception as e_img_save:
             print(f"  - [⚠️ WARNING] Lỗi chèn listings_images cho {tk_id}: {str(e_img_save)}")
 
+        # [US-152] Đơn giản hóa: Gán link thô mặc định cho DB Tạm, vì khi merge ta loại bỏ hoàn toàn các cột thô (không merge sang Master).
+        raw_images_tk_json_to_save = json.dumps(reconstructed_drive_images)
+
         # Chuẩn bị câu lệnh insert vào SQLite
-        columns = ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "custom_huong", "curated_config_json", "images_admin_json", "images_public_json"]
+        columns = ["tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", "custom_huong", "curated_config_json", "Images_Admin_JSON", "images_public_json"]
         placeholders = ["?", "?", "?", "?", "?", "?", "?", "?"]
         insert_vals = [
             tk_id, 
             status, 
-            json.dumps(reconstructed_drive_images), 
+            raw_images_tk_json_to_save, 
             json.dumps(reconstructed_drive_images), 
             custom_huong_val,
             curated_config_json_str,

@@ -357,12 +357,20 @@ def system_status():
         else:
             safe_cfg[k] = v
             
+    # [ANTI-MALFORMED] Trả về kết quả kiểm tra toàn vẹn CSDL cho Admin UI
+    try:
+        from core.db import get_integrity_status
+        integrity = get_integrity_status()
+    except Exception:
+        integrity = {"checked": False, "healthy": True, "details": "", "db_file": "", "checked_at": ""}
+
     return jsonify({
         "status": "success",
         "active_mode": active_mode,
         "db_status": db_status,
         "backups": backups,
-        "config": safe_cfg
+        "config": safe_cfg,
+        "integrity": integrity
     })
 
 

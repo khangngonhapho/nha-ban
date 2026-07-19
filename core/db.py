@@ -76,7 +76,7 @@ def robust_sqlite_connect(database: str, timeout: float = 30.0, *args, **kwargs)
     conn = _sqlite3_connect_original(database, timeout=max(timeout, 30.0), *args, **kwargs)
     try:
         conn.execute("PRAGMA journal_mode=WAL;")
-        conn.execute("PRAGMA synchronous=NORMAL;")
+        conn.execute("PRAGMA synchronous=FULL;")
         conn.execute("PRAGMA busy_timeout=30000;")
     except Exception:
         pass
@@ -151,3 +151,91 @@ def get_listings_table_name(db_file: str) -> str:
     if "raw_archive_v2.db" in db_file:
         return "listings_v2"
     return "listings"
+
+
+# =============================================================================
+# 4. STARTUP INTEGRITY GUARD (Phương án C)
+# =============================================================================
+
+# Module-level state: kết quả kiểm tra toàn vẹn CSDL khi khởi động
+_integrity_status = {
+    "checked": False,
+    "healthy": True,
+    "details": "",
+    "db_file": "",
+    "checked_at": ""
+}
+
+
+def get_integrity_status() -> dict:
+    """
+    Trả về kết quả kiểm tra toàn vẹn CSDL gần nhất.
+    
+    Returns:
+        Dict chứa trạng thái kiểm tra: checked, healthy, details, db_file, checked_at.
+    
+    Examples:
+        >>> status = get_integrity_status()
+        >>> status["healthy"]
+        True
+    """
+    return _integrity_status.copy()
+
+
+def startup_integrity_check(db_file: str) -> bool:
+    """
+    Kiểm tra toàn vẹn CSDL SQLite MỘT LẦN DUY NHẤT khi Flask app khởi động.
+    
+    Chạy PRAGMA integrity_check để phát hiện corruption sớm.
+    Kết quả được lưu vào module-level `_integrity_status` để Admin UI 
+    hiển thị banner cảnh báo nếu CSDL bị hỏng.
+    
+    Chi phí: ~200-500ms cho DB 90MB, chỉ chạy 1 lần khi startup.
+    
+    Args:
+        db_file: Đường dẫn tuyệt đối tới file SQLite cần kiểm tra.
+    
+    Returns:
+        True nếu CSDL toàn vẹn, False nếu phát hiện lỗi.
+    
+    Examples:
+        >>> startup_integrity_check("raw_archive.db")
+        True
+    """
+    global _integrity_status
+    
+    from datetime import datetime
+    
+    _integrity_status["db_file"] = db_file
+    _integrity_status["checked_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    _integrity_status["checked"] = True
+    
+    if not os.path.exists(db_file):
+        _integrity_status["healthy"] = True
+        _integrity_status["details"] = "File CSDL chưa tồn tại (sẽ được tạo mới)."
+        return True
+    
+    conn = None
+    try:
+        conn = _sqlite3_connect_original(db_file, timeout=30.0)
+        result = conn.execute("PRAGMA integrity_check;").fetchone()
+        
+        if result and result[0] == "ok":
+            _integrity_status["healthy"] = True
+            _integrity_status["details"] = "ok"
+            return True
+        else:
+            error_detail = result[0] if result else "Không có phản hồi từ integrity_check"
+            _integrity_status["healthy"] = False
+            _integrity_status["details"] = error_detail
+            return False
+    except Exception as e:
+        _integrity_status["healthy"] = False
+        _integrity_status["details"] = f"Lỗi khi kiểm tra: {str(e)}"
+        return False
+    finally:
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass

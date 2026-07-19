@@ -2574,7 +2574,7 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
     # Check if listings_v2 table exists in the database
     conn_check = None
     try:
-        conn_check = sqlite3.connect(db_file)
+        conn_check = sqlite3.connect(db_file, timeout=30.0)
         cursor_check = conn_check.cursor()
         cursor_check.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='listings_v2'")
         has_v2 = cursor_check.fetchone()
@@ -2588,7 +2588,7 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
         
     conn = None
     try:
-        conn = sqlite3.connect(db_file)
+        conn = sqlite3.connect(db_file, timeout=30.0)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM listings_v2")
@@ -2874,7 +2874,7 @@ def recrawl_all_listings(db_file=None, add_log_message=None):
             
             conn_u = None
             try:
-                conn_u = sqlite3.connect(db_file)
+                conn_u = sqlite3.connect(db_file, timeout=30.0)
                 cursor_u = conn_u.cursor()
                 cursor_u.execute("UPDATE listings_v2 SET pending_diff_json = ? WHERE tk_id = ?", (pending_diff_json_val, tk_id))
                 conn_u.commit()

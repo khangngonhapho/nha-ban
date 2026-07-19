@@ -2502,6 +2502,20 @@ if __name__ == '__main__':
         fetcher.init_db()
     except Exception as e:
         add_log_message(f"[⚠️ WARNING] Không thể khởi tạo database: {str(e)}")
+    
+    # [ANTI-MALFORMED] Kiểm tra toàn vẹn CSDL 1 lần khi khởi động (Phương án C)
+    try:
+        from core.db import startup_integrity_check
+        db_healthy = startup_integrity_check(DB_FILE)
+        if db_healthy:
+            add_log_message(f"[🛡️ Integrity Guard] CSDL '{DB_FILE}' đã qua kiểm tra toàn vẹn ✅")
+        else:
+            from core.db import get_integrity_status
+            status = get_integrity_status()
+            add_log_message(f"[🚨🚨🚨 CẢNH BÁO NGHIÊM TRỌNG] CSDL '{DB_FILE}' BỊ HỎNG! Chi tiết: {status['details']}")
+            add_log_message(f"[🚨] Vui lòng khôi phục từ bản sao lưu gần nhất trước khi tiếp tục sử dụng!")
+    except Exception as e:
+        add_log_message(f"[⚠️ WARNING] Không thể kiểm tra toàn vẹn CSDL: {str(e)}")
         
     # Tự động khởi chạy tiến trình quét và di cư hình ảnh chạy ngầm nếu có căn chờ xử lý
     try:
