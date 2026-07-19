@@ -326,13 +326,36 @@ def batch_publish_to_sheets(tk_ids):
         cursor_check = conn_check.cursor()
         for tk_id in tk_ids:
             try:
-                row_check = cursor_check.execute("SELECT raw_images_tk_json, Ngo_So_nha, Duong, Phuong, Quan FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
+                row_check = cursor_check.execute("SELECT Images_Admin_JSON, raw_images_tk_json, Ngo_So_nha, Duong, Phuong, Quan FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
                 if row_check:
                     d_check = dict(row_check)
                     raw_imgs = []
-                    media_json = d_check.get("raw_images_tk_json")
-                    if media_json:
-                        raw_imgs = json.loads(media_json)
+                    
+                    # 1. Trích xuất ảnh R2 từ Images_Admin_JSON
+                    admin_json = d_check.get("Images_Admin_JSON")
+                    if admin_json:
+                        try:
+                            imgs = json.loads(admin_json)
+                            for img in imgs:
+                                if isinstance(img, dict) and img.get("role") != "deleted":
+                                    # Lấy link R2 của các ảnh gốc (origin='crawl')
+                                    url = img.get("r2_url") or img.get("image_url") or ""
+                                    if url.strip():
+                                        is_self = (img.get("origin") in ["self", "user"]) if img.get("origin") else ("r2.dev" in url or "r2.cloudflarestorage.com" in url or "pub-" in url)
+                                        if not is_self:
+                                            raw_imgs.append(url.strip())
+                        except Exception:
+                            pass
+                            
+                    # 2. Fallback sang raw_images_tk_json nếu chưa có ảnh R2
+                    if not raw_imgs:
+                        media_json = d_check.get("raw_images_tk_json")
+                        if media_json:
+                            try:
+                                raw_imgs = json.loads(media_json)
+                            except Exception:
+                                pass
+                                
                     address_str = f"{d_check.get('Ngo_So_nha', '')} {d_check.get('Duong', '')}, {d_check.get('Phuong', '')}, {d_check.get('Quan', '')}"
                     
                     pool_lego.init_pool_images_rows(spreadsheet, tk_id, address_str, raw_imgs)
