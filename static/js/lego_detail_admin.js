@@ -2498,6 +2498,7 @@
 
       const p = {
         temp_id: "pool_" + systemId,
+        tk_id: tkId,
         id: row[idCol] || systemId || '',
         cu_phap: "",
         t: row[tieuDeBdsCol] || row[idCol] || row[noiDungChinhCol] || 'Căn nhà thô từ Pool',
