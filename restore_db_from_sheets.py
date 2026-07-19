@@ -616,7 +616,7 @@ def restore_database():
         print(f"[❌ LỖI] Lỗi kết nối Google Sheets: {str(e)}")
         return
         
-    if len(all_values) < 3:
+    if len(all_values) < 2:
         print("[-] Không tìm thấy dữ liệu hoặc Sheets Pool rỗng!")
         return
         
