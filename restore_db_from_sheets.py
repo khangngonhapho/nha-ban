@@ -471,7 +471,8 @@ def normalize_images_list(images_list):
         normalized_images.append({
             "url": url,
             "role": role,
-            "visible": visible
+            "visible": visible,
+            "origin": img.get("origin")
         })
     return normalized_images
 
