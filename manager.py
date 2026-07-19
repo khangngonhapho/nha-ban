@@ -1033,7 +1033,15 @@ def rebuild_admin_public_images_json(curated_config, manual_images):
         # Phân biệt origin: giữ nguyên nếu đã là self/user, hoặc có SYS-, hoặc nằm trong manual_images
         filename = url.split("/")[-1]
         origin = img.get("origin", "crawl")
-        if origin in ["self", "user"] or filename.startswith("SYS-") or url in manual_images:
+        import re
+        is_self_uploaded = (
+            origin in ["self", "user"] or 
+            filename.startswith("SYS-") or 
+            url in manual_images or
+            re.search(r'_(interior|sodo|facade|alley|cover)_\d{13}', filename) or
+            ("BDS-KhangNgo/" in url and not re.search(r'img_[a-f0-9-]{36}_\d+', filename))
+        )
+        if is_self_uploaded:
             origin = "self"
         else:
             origin = "crawl"
