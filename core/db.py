@@ -52,11 +52,11 @@ def robust_sqlite_connect(database: str, timeout: float = 30.0, *args, **kwargs)
 
     Chống các lỗi phổ biến:
     - "database is locked" → WAL mode + busy_timeout
-    - "database disk image is malformed" → timeout cao hơn
+    - "database disk image is malformed" → synchronous=FULL + timeout cao
 
     PRAGMAs được set:
     - journal_mode=WAL:     Multi-reader, single-writer, không block
-    - synchronous=NORMAL:   Cân bằng giữa tốc độ và an toàn
+    - synchronous=FULL:     Đảm bảo tuyệt đối toàn vẹn dữ liệu khi crash (WAL mode)
     - busy_timeout=30000:   Chờ tối đa 30 giây nếu DB bị lock
 
     Args:

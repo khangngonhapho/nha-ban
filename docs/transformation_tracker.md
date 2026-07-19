@@ -3,7 +3,7 @@ project: BDS-KhangNgo Architecture Modernization
 started: 2026-07-09
 current_module: MOD-07
 overall_progress: 7/7 modules completed
-last_updated: 2026-07-09
+last_updated: 2026-07-19
 ---
 
 # Transformation Progress
@@ -66,6 +66,7 @@ last_updated: 2026-07-09
 | S5 | 2026-07-09 | MOD-05 | MOD-05.1–MOD-05.10 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Modularize HTML viewer templates into component files under templates/components/, 90 unit + 4 E2E pass |
 | S6 | 2026-07-09 | MOD-06 | MOD-06.1–MOD-06.12 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Split monolithic SOURCE_OF_TRUTH.md (187KB) into small modular documents under docs/business_rules/ and docs/architecture/ |
 | S7 | 2026-07-09 | MOD-07 | MOD-07.1–MOD-07.8 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Establish standard Agent Customizations directory at .agents/ with core AGENTS.md rules ledger and 5 specialized skills |
+| S8 | 2026-07-19 | MOD-02 | Anti-Malformed Fix | Hardening: synchronous=FULL, batch commit 100 căn, WAL checkpoint(TRUNCATE), startup integrity guard (Phương án C), 138 tests pass |
 
 
 
