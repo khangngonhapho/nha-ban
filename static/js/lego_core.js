@@ -710,6 +710,7 @@ const LegoState = {
 
             let poolImgs = [];
             let tempCuratedConfig = null;
+            let rawImagesTk = [];
             if (poolRow) {
               const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 94)];
               if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
@@ -739,6 +740,9 @@ const LegoState = {
                     .filter(img => window.isAdmin || (img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn'))
                     .map(img => img.r2_url || img.image_url || img.url)
                     .filter(Boolean);
+                  rawImagesTk = parsedAdmin
+                    .filter(img => img.origin === 'crawl' || img.origin === 'thienkhoi' || !img.origin)
+                    .map(img => img.r2_url || img.image_url || img.url || '');
                 } catch (e) {
                   // fallback
                 }
@@ -776,6 +780,10 @@ const LegoState = {
                   }
                 }
               }
+            }
+
+            if (poolRow && rawImagesTk.length === 0) {
+              rawImagesTk = [...poolImgs];
             }
 
             let sourcePublicImgs = [];
@@ -834,6 +842,8 @@ const LegoState = {
             const p = {
               temp_id: index + 1,
               tk_id: tkId,
+              raw_images_tk: rawImagesTk,
+              raw_drive_images: [],
               id: sr[window.getSourceColumnIndex("id", 3)] || '',
               cu_phap: sr[window.getSourceColumnIndex("cu_phap", 1)] || '',
               t: sr[window.getSourceColumnIndex("tieu_de", 4)] || '',
@@ -960,6 +970,7 @@ const LegoState = {
 
           let poolImgs = [];
           let tempCuratedConfig = null;
+          let rawImagesTk = [];
           const imagesAdminJsonStr = poolRow[window.getPoolColumnIndex("Images_Admin_JSON", 94)];
           if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
             try {
@@ -988,6 +999,9 @@ const LegoState = {
                 .filter(img => window.isAdmin || (img.visible !== false && img.is_hidden !== 1 && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn'))
                 .map(img => img.r2_url || img.image_url || img.url)
                 .filter(Boolean);
+              rawImagesTk = parsedAdmin
+                .filter(img => img.origin === 'crawl' || img.origin === 'thienkhoi' || !img.origin)
+                .map(img => img.r2_url || img.image_url || img.url || '');
             } catch (e) {
               // fallback
             }
@@ -1024,6 +1038,10 @@ const LegoState = {
                 if (poolRow[c]) poolImgs.push(poolRow[c]);
               }
             }
+          }
+
+          if (rawImagesTk.length === 0) {
+            rawImagesTk = [...poolImgs];
           }
 
           let rawQ = poolRow[window.getPoolColumnIndex("quan", 3)] || '';
@@ -1066,6 +1084,8 @@ const LegoState = {
           const p = {
             temp_id: sourceRows.length + prIdx + 1,
             tk_id: tkId,
+            raw_images_tk: rawImagesTk,
+            raw_drive_images: [],
             id: poolRow[window.getPoolColumnIndex("id", 55)] || '',
             cu_phap: poolRow[window.getPoolColumnIndex("cu_phap", 1)] || '',
             t: poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || poolRow[window.getPoolColumnIndex("id", 55)] || 'Chưa biên tập',
