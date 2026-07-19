@@ -251,7 +251,7 @@ class TestGetDbFileDuplicate:
 # 5. SAVE_RAW_TO_SQLITE IMAGE PROTECTION — US-129
 # =============================================================================
 class TestSaveRawToSqliteImageProtection:
-    """Verify: save_raw_to_sqlite() bảo vệ ảnh cũ khi cào mới có ít ảnh hơn."""
+    """Verify: save_raw_to_sqlite() cập nhật ảnh mới (không phòng vệ giữ ảnh cũ) theo US-152."""
 
     def test_preserves_images_when_fewer_new_images(self, tmp_path):
         from pool_lego import init_db, save_raw_to_sqlite
@@ -287,9 +287,9 @@ class TestSaveRawToSqliteImageProtection:
         row = conn.execute("SELECT status, raw_images_tk_json, Gia_chao FROM listings WHERE tk_id = ?", (tk_id,)).fetchone()
         conn.close()
 
-        # Kiểm tra: Ảnh cũ và status cũ được bảo toàn, nhưng metadata (Gia_chao) vẫn được cập nhật
-        assert row[0] == "raw_complete"
-        assert json.loads(row[1]) == images_old
+        # Kiểm tra: Ảnh mới được cập nhật, trạng thái reset về raw_text để chạy ngầm tối ưu
+        assert row[0] == "raw_text"
+        assert json.loads(row[1]) == images_new
         assert row[2] == "9 tỷ"
 
 

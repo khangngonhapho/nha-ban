@@ -514,7 +514,7 @@ def recrawl_single_listing(tk_id):
             except Exception as e_json_ui:
                 manager.add_log_message(f"[⚠️ WARNING] Lỗi trích xuất JSON_UI trong recrawl: {str(e_json_ui)}")
                 
-            fetcher.save_raw_to_sqlite(tk_id, crawled_data, property_images)
+            fetcher.save_raw_to_sqlite(tk_id, crawled_data, property_images, db_file=manager.DB_FILE)
             
             # Lưu SQLite với status='raw_text' để background_worker.py quét xử lý ngầm
             manager.add_log_message(f"[✅] Đã cào thô thành công căn (Proptech): {tk_id}. Hàng đợi SQLite sẽ tự động xử lý ngầm...")
@@ -785,7 +785,7 @@ def recrawl_single_listing(tk_id):
             manager.add_log_message(f"[⚠️ WARNING] Lỗi trích xuất JSON_UI (HTML recrawl): {str(e_json_ui)}")
         crawled_data["raw_json_full"] = ""
         
-        fetcher.save_raw_to_sqlite(tk_id, crawled_data, combined_images)
+        fetcher.save_raw_to_sqlite(tk_id, crawled_data, combined_images, db_file=manager.DB_FILE)
         
         # Lưu SQLite với status='raw_text' để background_worker.py quét xử lý ngầm
         manager.add_log_message(f"[✅] Đã cào thô thành công căn: {tk_id}. Hàng đợi SQLite sẽ tự động xử lý ngầm...")

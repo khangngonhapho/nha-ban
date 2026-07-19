@@ -1899,20 +1899,10 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None, skip_sheets_pub
                 
                 new_images_list = []
                 added_urls = set()
-                
-                # 1. BẢO TOÀN NGUYÊN VẸN ẢNH THỦ CÔNG (SYS- và origin == 'self') từ curated_config cũ
-                for img in old_images:
-                    if not isinstance(img, dict):
-                        continue
-                    url = img.get("url", "")
-                    origin = img.get("origin", "")
-                    # Nhận diện ảnh Admin up tay qua tiền tố SYS- hoặc origin
-                    if url.upper().startswith("SYS-") or "SYS-" in url.upper() or origin in ["local", "self", "user"]:
-                        new_images_list.append(img)
-                        added_urls.add(url)
+                new_r2_urls = set(new_images_mapping.values())
+                stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
                 
                 # Tìm ảnh property_image đầu tiên (Mặt tiền) mới cào
-                stripped_sodo = {url.split('?')[0] for url in raw_sodo_tk if url}
                 for img_url in raw_images_tk:
                     if img_url in new_images_mapping:
                         r2_url = new_images_mapping[img_url]
@@ -1927,7 +1917,57 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None, skip_sheets_pub
                             first_property_r2 = r2_url
                             break
 
-                # 2. NẠP MỚI 100% ẢNH CÀO TỪ THIÊN KHÔI (ẢNH CŨ BỊ XÓA CỨNG KHỎI DB)
+                # 1. DUYỆT QUA OLD IMAGES THEO THỨ TỰ VẬT LÝ GỐC ĐỂ BẢO TOÀN THỨ TỰ TƯƠNG ĐỐI
+                for img in old_images:
+                    if not isinstance(img, dict):
+                        continue
+                    url = img.get("url", "")
+                    origin = img.get("origin", "")
+                    
+                    # A. Ảnh tự upload: Bảo toàn nguyên vẹn
+                    if url.upper().startswith("SYS-") or "SYS-" in url.upper() or origin in ["local", "self", "user"]:
+                        new_images_list.append(img)
+                        added_urls.add(url)
+                    # B. Ảnh cào cũ: Chỉ giữ lại nếu vẫn còn tồn tại trên nguồn Thiên Khôi (có trong new_r2_urls)
+                    elif url in new_r2_urls:
+                        img_copy = dict(img)
+                        # Tìm URL gốc đối tác để kiểm tra xem có phải ảnh sơ đồ không
+                        orig_url = None
+                        for k, v in new_images_mapping.items():
+                            if v == url:
+                                orig_url = k
+                                break
+                        
+                        is_diag = False
+                        if orig_url:
+                            stripped_img = orig_url.split('?')[0]
+                            is_diag = (stripped_img in stripped_sodo) or \
+                                      (original_sodo1 and stripped_img == original_sodo1.split('?')[0]) or \
+                                      (original_sodo2 and stripped_img == original_sodo2.split('?')[0]) or \
+                                      (original_sodo3 and stripped_img == original_sodo3.split('?')[0]) or \
+                                      (original_sodo4 and stripped_img == original_sodo4.split('?')[0]) or \
+                                      (original_sodo5 and stripped_img == original_sodo5.split('?')[0])
+                        
+                        # Khôi phục vai trò/ẩn hiện chuẩn xác nếu trước đây bị đánh dấu deleted
+                        if img_copy.get("role") == "deleted":
+                            if is_diag:
+                                img_copy["role"] = "Sơ đồ"
+                                img_copy["visible"] = False
+                            elif url == first_property_r2:
+                                img_copy["role"] = "Mặt tiền"
+                                img_copy["visible"] = True
+                            else:
+                                img_copy["role"] = "Nội thất"
+                                img_copy["visible"] = False
+                        elif url == first_property_r2 and img_copy.get("role") not in ["Mặt tiền", "Bìa", "Sơ đồ"]:
+                            img_copy["role"] = "Mặt tiền"
+                            img_copy["visible"] = True
+                            
+                        img_copy["origin"] = "crawl"
+                        new_images_list.append(img_copy)
+                        added_urls.add(url)
+                
+                # 2. NẠP MỚI 100% ẢNH CÀO TỪ THIÊN KHÔI CHƯA TỒN TẠI TRONG OLD IMAGES (APPEND VÀO CUỐI)
                 for img_url in raw_images_tk:
                     if img_url in new_images_mapping:
                         r2_url = new_images_mapping[img_url]
@@ -1957,6 +1997,27 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None, skip_sheets_pub
                                 "origin": "crawl"
                             })
                             added_urls.add(r2_url)
+
+                # 3. XÓA VẬT LÝ CÁC FILE RẢC CỦA TIN CÀO TRÊN CLOUDFLARE R2
+                if use_r2 and r2_keys:
+                    active_r2_urls = {img.get("url") for img in new_images_list if img.get("url")}
+                    deleted_count = 0
+                    for key in r2_keys:
+                        r2_url = f"{r2_public_url}/{key}"
+                        filename = key.split("/")[-1]
+                        
+                        # 🛡️ CƠ CHẾ PHÒNG VỆ TUYỆT ĐỐI (Chống xóa nhầm ảnh tự upload)
+                        # Chỉ xóa ảnh nếu không nằm trong active_r2_urls và không có tiền tố SYS-
+                        if r2_url not in active_r2_urls:
+                            if not (filename.upper().startswith("SYS-") or "SYS-" in filename.upper()):
+                                add_log_message(f"  [🗑️ Cloud R2] Phát hiện file rác cào bị loại bỏ: {key}. Đang xóa vĩnh viễn trên R2...")
+                                if delete_r2_object(key):
+                                    add_log_message(f"  [🗑️ Cloud R2 SUCCESS] Đã xóa thành công: {key}")
+                                    deleted_count += 1
+                                else:
+                                    add_log_message(f"  [⚠️ Cloud R2 FAILED] Không thể xóa: {key}")
+                    if deleted_count > 0:
+                        add_log_message(f"[✅ Cloud R2 COMPLETE] Đã dọn dẹp xong {deleted_count} ảnh cào cũ bị xóa khỏi R2.")
                 
                 # [US-152] Refactor: Dùng System ID làm khóa định danh thay vì Mã Khang Ngô
                 new_curated_config = {

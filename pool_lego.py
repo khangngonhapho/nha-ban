@@ -994,33 +994,6 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
                 print(f"[⚠️ WARNING] Lỗi ghi nhận lịch sử thay đổi căn {tk_id}: {str(e_hist)}")
     
         if existing:
-            # PHÒNG VỆ MẤT ẢNH: Nếu có ảnh cũ trong CSDL và số lượng ảnh cào mới ít hơn
-            db_raw_images_str = ""
-            db_status = ""
-            row_existing = cursor.execute(f"SELECT status, raw_images_tk_json FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
-            if row_existing:
-                db_status = row_existing[0] or ""
-                db_raw_images_str = row_existing[1] or ""
-                
-            db_raw_images = []
-            if db_raw_images_str:
-                try:
-                    db_raw_images = json.loads(db_raw_images_str)
-                except Exception:
-                    pass
-                    
-            if db_raw_images and len(grouped_urls) < len(db_raw_images):
-                # Giữ nguyên ảnh cũ để tránh mất hình nội thất khi tin đã bán bị ẩn hình
-                raw_images_tk_json_val = db_raw_images_str
-                status_to_update = db_status if db_status else "raw_complete"
-                
-                # Cứ giữ nguyên raw_sodo_tk_json cũ
-                if "raw_sodo_tk_json" in db_cols:
-                    row_sodo = cursor.execute(f"SELECT raw_sodo_tk_json FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
-                    if row_sodo and row_sodo[0]:
-                        raw_sodo_tk_json_val = row_sodo[0]
-                
-                print(f"[🛡️ Bảo vệ ảnh] {tk_id}: Giữ nguyên {len(db_raw_images)} ảnh cũ (ảnh mới: {len(grouped_urls)}). Trạng thái giữ nguyên: {status_to_update}")
     
             update_parts = ["status = ?", "raw_images_tk_json = ?"]
             values = [status_to_update, raw_images_tk_json_val]
