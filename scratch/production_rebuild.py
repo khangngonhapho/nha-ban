@@ -233,6 +233,15 @@ def batch_publish_to_sheets(tk_ids):
             
         d = dict(row)
         
+        # Khử va chạm Mã Hàng: Nếu trùng lặp thì bỏ qua không đẩy lên Sheets
+        ma_hang_db = d.get("Ma_Clean_Source") or d.get("Ma_Hang") or d.get("M__H_ng")
+        if ma_hang_db:
+            cursor.execute("SELECT COUNT(DISTINCT tk_id) FROM listings WHERE Ma_Hang = ?", (ma_hang_db,))
+            collision_count = cursor.fetchone()[0]
+            if collision_count > 1:
+                print(f"  - [⚠️ Bỏ qua] Phát hiện Mã Hàng '{ma_hang_db}' bị trùng lặp trong SQLite. Bỏ qua không đẩy căn '{tk_id}' lên Google Sheets.")
+                continue
+        
         # Xử lý phân rã hình ảnh giống hệt logic pool_lego.publish_listing
         curated_json = d.get("curated_config_json")
         diagrams = []
@@ -283,18 +292,7 @@ def batch_publish_to_sheets(tk_ids):
             val = d.get(safe_col, "")
             
             if header == "Mã Hàng":
-                ma_hang_db = d.get("Ma_Clean_Source") or d.get("Ma_Hang") or d.get("M__H_ng")
-                if ma_hang_db:
-                    cursor.execute("SELECT COUNT(DISTINCT tk_id) FROM listings WHERE Ma_Hang = ?", (ma_hang_db,))
-                    collision_count = cursor.fetchone()[0]
-                    if collision_count > 1:
-                        parts = tk_id.split('-')
-                        val = f"TK-{parts[-1].upper()}" if parts else tk_id
-                    else:
-                        val = ma_hang_db
-                else:
-                    parts = tk_id.split('-')
-                    val = f"TK-{parts[-1].upper()}" if parts else tk_id
+                val = ma_hang_db if ma_hang_db else (f"TK-{parts[-1].upper()}" if parts else tk_id)
             elif header == "Hình Nhận Diện":
                 val = ""
             elif header == "Mã Khang Ngô (ID)" and not val:
