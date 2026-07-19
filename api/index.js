@@ -331,7 +331,8 @@ function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAcc
   const host = `${r2BucketName}.${cloudflareAccountId}.r2.cloudflarestorage.com`;
   const endpoint = `https://${host}`;
   const key = r2Key || `BDS-KhangNgo/${filename}`;
-  const path = `/${key}`;
+  const encodedKey = key.split('/').map(encodeURIComponent).join('/');
+  const path = `/${encodedKey}`;
   
   const date = new Date();
   const amzDate = date.toISOString().replace(/[:-]/g, '').split('.')[0] + 'Z';
