@@ -2213,10 +2213,10 @@
     .admin-mota-box {
       border: 1px solid #dfe4ea;
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 6px 10px;
       font-size: 12px;
-      line-height: 1.6;
-      margin-bottom: 10px;
+      line-height: 1.45;
+      margin-bottom: 8px;
       white-space: pre-wrap;
       word-break: break-word;
       background: #f8f9fa;
