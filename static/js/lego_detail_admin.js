@@ -2408,6 +2408,20 @@
       const tenDuongCol = window.getPoolColumnIndex("Tên đường", 5);
       const duongTruocNhaCol = window.getPoolColumnIndex("Đường trước nhà", 60);
       const quanCol = window.getPoolColumnIndex("quan", 3);
+      const linkGocCol = window.getPoolColumnIndex("Link Gốc", 73);
+      const maHangCol = window.getPoolColumnIndex("Mã Hàng", 0);
+      const linkGoc = row[linkGocCol] || '';
+      const maHang = row[maHangCol] || '';
+      let tkId = '';
+      if (linkGoc) {
+        const parts = linkGoc.replace(/\/+$/, "").split("/");
+        if (parts.length > 0) {
+          tkId = parts[parts.length - 1].trim();
+        }
+      }
+      if (!tkId && maHang) {
+        tkId = maHang.trim();
+      }
 
       // Map row to p structure
       const dt = parseFloat(row[dtTrenSoCol] || row[dtThucTeCol]) || 0;
