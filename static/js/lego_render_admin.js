@@ -188,7 +188,6 @@ window.LegoRenderAdmin = {
             </div>
             <div style="font-size: 11px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 2px; width: 100%;">
               <div style="display: flex; align-items: center; gap: 2px; min-width: 0; flex: 1;">
-                <span>👤</span>
                 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;">
                   ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" onclick="event.stopPropagation();" style="color: var(--blue); text-decoration: underline; font-weight: 600;">${p.raw_ten_dau_chu || 'Chưa rõ'}</a>` : (p.raw_ten_dau_chu || 'Chưa rõ')}
                 </span>
