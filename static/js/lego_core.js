@@ -908,7 +908,7 @@ const LegoState = {
               p.raw_tieu_de_public = poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || '';
               p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
               p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
-              p.last_crawl = poolRow[window.getPoolColumnIndex("Last_Crawl", 83)] || '';
+              p.last_crawl = poolRow[window.getPoolColumnIndex("Last Crawl", 77)] || '';
               p.pool_row_index = poolDataRows.indexOf(poolRow) + 2;
               p.pool_row_data = poolRow;
               
