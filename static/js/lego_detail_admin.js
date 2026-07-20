@@ -873,7 +873,7 @@
             return 'self';
           }
           const filename = url.split('/').pop();
-          if (/_(interior|sodo)_\d{10,13}/i.test(filename)) {
+          if (/_(interior|sodo)\d*_\d{10,13}/i.test(filename)) {
             return 'self';
           }
           if (url.includes('/scratch/') || url.includes('cloudinary.com')) {
@@ -2461,7 +2461,7 @@
               const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
               const imgUrl = img.r2_url || img.image_url || img.url || '';
               const filename = imgUrl.split('/').pop();
-              const isSelfPattern = /_(interior|sodo)_\d{10,13}/i.test(filename);
+              const isSelfPattern = /_(interior|sodo)\d*_\d{10,13}/i.test(filename);
               return {
                 url: imgUrl,
                 role: roleVi,
@@ -4025,7 +4025,7 @@
       let originVal = slide.origin || (oldImg ? oldImg.origin : 'crawl');
 
       const filename = slide.url.split('/').pop();
-      const isSelfPattern = /_(interior|sodo)_\d{10,13}/i.test(filename);
+      const isSelfPattern = /_(interior|sodo)\d*_\d{10,13}/i.test(filename);
 
       if (isSelfPattern) {
         originVal = 'self';
