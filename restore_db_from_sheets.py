@@ -477,7 +477,7 @@ def normalize_images_list(images_list):
     return normalized_images
 
 @with_db_lock
-def restore_database():
+def restore_database(repair_sheets=False):
     print("======================================================================")
     print("🔄 BẮT ĐẦU KHÔI PHỤC DATABASE SQLITE CỤC BỘ TỪ GOOGLE SHEETS POOL")
     print("👉 Hợp nhất dọn dẹp đôn ảnh nhà thật chuẩn US-055!")
@@ -1050,27 +1050,32 @@ def restore_database():
         except Exception as e_rm:
             print(f"  - [⚠️ WARNING] Không thể xóa file SQLite Tạm: {str(e_rm)}")
 
-    # 4. Đồng bộ ngược lên Google Sheets Pool các cột ảnh thường đã dọn dẹp
+    # 4. Đồng bộ ngược lên Google Sheets Pool các cột ảnh thường đã dọn dẹp (nếu được yêu cầu)
     if repaired_sheets_items:
-        print(f"\n[4/4] Phát hiện {len(repaired_sheets_items)} căn bị lẫn sơ đồ trong Ảnh 1. Bắt đầu đồng bộ hàng loạt lên Sheets...")
-        batch_size = 100
-        groups = [repaired_sheets_items[i:i + batch_size] for i in range(0, len(repaired_sheets_items), batch_size)]
-        
-        synced_count = 0
-        for g_idx, group in enumerate(groups, start=1):
-            print(f"  -> Đang đẩy Nhóm {g_idx}/{len(groups)} ({len(group)} dòng)...")
-            batch_data = []
-            for item in group:
-                # Ghi đè duy nhất dải ô AO{R}:BC{R} (15 cột ảnh thường từ Ảnh 1 đến Ảnh 15)
-                batch_data.append({
-                    'range': f"AO{item['row_idx']}:BC{item['row_idx']}",
-                    'values': [item['row_values']]
-                })
-            sheet.batch_update(batch_data, value_input_option='USER_ENTERED')
-            synced_count += len(group)
-            time.sleep(1.0)
+        if repair_sheets:
+            print(f"\n[4/4] Phát hiện {len(repaired_sheets_items)} căn bị lẫn sơ đồ trong Ảnh 1. Bắt đầu đồng bộ hàng loạt lên Sheets...")
+            batch_size = 100
+            groups = [repaired_sheets_items[i:i + batch_size] for i in range(0, len(repaired_sheets_items), batch_size)]
             
-        print(f"  - [✅ Sheets Success] Đã đồng bộ chép đè an toàn thành công {synced_count} căn lên Google Sheets Pool!")
+            synced_count = 0
+            for g_idx, group in enumerate(groups, start=1):
+                print(f"  -> Đang đẩy Nhóm {g_idx}/{len(groups)} ({len(group)} dòng)...")
+                batch_data = []
+                for item in group:
+                    # Ghi đè duy nhất dải ô AO{R}:BC{R} (15 cột ảnh thường từ Ảnh 1 đến Ảnh 15)
+                    batch_data.append({
+                        'range': f"AO{item['row_idx']}:BC{item['row_idx']}",
+                        'values': [item['row_values']]
+                    })
+                sheet.batch_update(batch_data, value_input_option='USER_ENTERED')
+                synced_count += len(group)
+                time.sleep(1.0)
+                
+            print(f"  - [✅ Sheets Success] Đã đồng bộ chép đè an toàn thành công {synced_count} căn lên Google Sheets Pool!")
+        else:
+            print(f"\n[4/4] Phát hiện {len(repaired_sheets_items)} căn bị lẫn sơ đồ trong Ảnh 1.")
+            print("  - [ℹ️ INFO] Bỏ qua việc tự động đồng bộ ngược lên Google Sheets theo cấu hình mặc định (Chỉ làm sạch ở DB SQLite cục bộ).")
+            print("  - [ℹ️ INFO] Để làm sạch trang tính gốc trên Google Sheets, vui lòng chạy kèm tham số: --repair-sheets")
     else:
         print("\n[4/4] Tuyệt vời! Không phát hiện căn nào bị lẫn sơ đồ trong Ảnh 1.")
 
@@ -1079,4 +1084,8 @@ def restore_database():
     print("======================================================================")
 
 if __name__ == "__main__":
-    restore_database()
+    import argparse
+    parser = argparse.ArgumentParser(description="Khôi phục SQLite database từ Google Sheets.")
+    parser.add_argument("--repair-sheets", action="store_true", help="Đồng bộ ngược dọn dẹp làm sạch các cột hình ảnh phẳng trên Google Sheets.")
+    args = parser.parse_args()
+    restore_database(repair_sheets=args.repair_sheets)
