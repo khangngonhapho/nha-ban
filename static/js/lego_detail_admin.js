@@ -873,13 +873,10 @@
             return 'self';
           }
           const filename = url.split('/').pop();
-          if (filename.startsWith('SYS-') || url.includes('SYS-') || url.includes('/scratch/') || url.includes('cloudinary.com')) {
+          if (/_(interior|sodo)_\d{10,13}/i.test(filename)) {
             return 'self';
           }
-          if (/_(interior|sodo|facade|alley|cover|diagram)_\d{10,13}/i.test(filename)) {
-            return 'self';
-          }
-          if (url.includes('BDS-KhangNgo/') && !/img_[a-f0-9-]{36}_\d+/i.test(filename)) {
+          if (url.includes('/scratch/') || url.includes('cloudinary.com')) {
             return 'self';
           }
           return 'crawl';
@@ -2464,12 +2461,7 @@
               const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
               const imgUrl = img.r2_url || img.image_url || img.url || '';
               const filename = imgUrl.split('/').pop();
-              const isSelfPattern = filename.startsWith('SYS-') || 
-                                    imgUrl.includes('SYS-') || 
-                                    imgUrl.includes('/scratch/') || 
-                                    imgUrl.includes('cloudinary.com') ||
-                                    /_(interior|sodo|facade|alley|cover|diagram)_\d{10,13}/i.test(filename) ||
-                                    (imgUrl.includes('BDS-KhangNgo/') && !/img_[a-f0-9-]{36}_\d+/i.test(filename));
+              const isSelfPattern = /_(interior|sodo)_\d{10,13}/i.test(filename);
               return {
                 url: imgUrl,
                 role: roleVi,
@@ -4033,12 +4025,7 @@
       let originVal = slide.origin || (oldImg ? oldImg.origin : 'crawl');
 
       const filename = slide.url.split('/').pop();
-      const isSelfPattern = filename.startsWith('SYS-') || 
-                            slide.url.includes('SYS-') || 
-                            slide.url.includes('/scratch/') || 
-                            slide.url.includes('cloudinary.com') ||
-                            /_(interior|sodo|facade|alley|cover|diagram)_\d{10,13}/i.test(filename) ||
-                            (slide.url.includes('BDS-KhangNgo/') && !/img_[a-f0-9-]{36}_\d+/i.test(filename));
+      const isSelfPattern = /_(interior|sodo)_\d{10,13}/i.test(filename);
 
       if (isSelfPattern) {
         originVal = 'self';
