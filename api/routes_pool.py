@@ -383,7 +383,10 @@ def handle_listing_detail(tk_id):
             # Phân loại origin
             filename = os.path.basename(url)
             origin = "crawl"
-            if filename.startswith("SYS-") or img.get("origin") == "self":
+            import re
+            is_timestamp_self = bool(re.search(r'_(interior|sodo|facade|alley|cover|diagram)_\d{13}', filename))
+            is_legacy_self = ("BDS-KhangNgo/" in url and not bool(re.search(r'img_[a-f0-9-]{36}_\d+', filename)))
+            if filename.startswith("SYS-") or img.get("origin") == "self" or is_timestamp_self or is_legacy_self:
                 origin = "self"
                 
             # Phân biệt r2_url vs image_url

@@ -375,7 +375,7 @@ def batch_publish_to_sheets(tk_ids):
                             except Exception:
                                 pass
                                 
-                    address_str = f"{d_check.get('Ngo_So_nha', '')} {d_check.get('Duong', '')}, {d_check.get('Phuong', '')}, {d_check.get('Quan', '')}"
+                    address_str = f"{d_check.get('Ngo_So_nha', '')} {d_check.get('Duong', '')}".strip()
                     
                     # Trích xuất ảnh tự up (self)
                     self_imgs = []

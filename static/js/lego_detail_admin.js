@@ -64,25 +64,15 @@
         return;
       }
       
-      const normalizeImgUrl = (url) => {
-        if (!url) return "";
-        return url.split('?')[0].trim().toLowerCase();
-      };
-      
-      // Lấy danh sách URL ảnh cào gốc để đối chiếu
-      const rawUrls = (p.raw_images_tk || []).concat(p.raw_drive_images || []).map(url => normalizeImgUrl(url));
-      
-      // 2. Lấy danh sách URL ảnh từ curatedImages (chỉ lấy ảnh tự upload/R2, lọc bỏ các ảnh crawl và ảnh bị xóa)
+      // 2. Lấy danh sách URL ảnh từ curatedImages (chỉ lọc các ảnh có origin là self và không bị xóa)
       const imageUrls = curatedImages
         .filter(img => {
           if (img.role === 'deleted') return false;
+          if (img.origin !== 'self') return false;
           const url = img.image_url || img.r2_url;
-          if (!url) return false;
-          const norm = normalizeImgUrl(url);
-          return !rawUrls.includes(norm);
+          return url && url.trim() !== "";
         })
-        .map(img => img.image_url || img.r2_url)
-        .filter(url => url && url.trim() !== "");
+        .map(img => img.image_url || img.r2_url);
         
       // 3. Đọc tiêu đề hiện tại để mở rộng cột tiêu đề nếu cần
       const currentHeadersRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!A1:ZZ1`, {
@@ -3860,12 +3850,7 @@
             try {
               const soNhaStr = (matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "").trim();
               const duongStr = (matchedRow[getPoolColumnIndex("Đường", 5)] || "").trim();
-              const phuongStr = (matchedRow[getPoolColumnIndex("Phường", 4)] || "").trim();
-              const quanStr = (matchedRow[getPoolColumnIndex("Quận", 3)] || "").trim();
-              let addressStr = `${soNhaStr} ${duongStr}`.trim();
-              if (phuongStr) addressStr += `, ${phuongStr}`;
-              if (quanStr) addressStr += `, ${quanStr}`;
-              addressStr = addressStr.replace(/,\s*,/g, ",").replace(/,$/, "").trim();
+              const addressStr = `${soNhaStr} ${duongStr}`.trim();
               await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
             } catch (e_backup) {
               console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
