@@ -303,7 +303,7 @@
               <div class="admin-raw-source">
                 <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
                   <span style="color:#57606f;">Tên đầu chủ:</span>
-                  <span style="font-weight:700;">${p.raw_ten_dau_chu || '-'}</span>
+                  <span style="font-weight:700;">${window.toTitleCase(p.raw_ten_dau_chu) || '-'}</span>
                 </div>
                 <div style="display:flex; justify-content:space-between;">
                   <span style="color:#57606f;">SĐT đầu chủ:</span>

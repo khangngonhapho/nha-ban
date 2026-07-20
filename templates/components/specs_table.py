@@ -52,10 +52,15 @@ def render_specs_table(listing):
     """
     return html
 
+def to_title_case(val):
+    if not val or str(val).strip() in ["", "None", "N/A"]:
+        return "N/A"
+    return str(val).strip().title()
+
 def render_contact_table(listing):
-    ten_chu = listing.get("Ten_Chu_Nha") or listing.get("Tn_Ch__Nh_") or "N/A"
+    ten_chu = to_title_case(listing.get("Ten_Chu_Nha") or listing.get("Tn_Ch__Nh_"))
     sdt_chu = listing.get("Dien_thoai_1") or listing.get("Đi?n_tho?i_1") or "N/A"
-    ten_dc = listing.get("Ten_Dau_Chu") or listing.get("Tn_Đ?u_Ch__H?p_đ?ng_") or "N/A"
+    ten_dc = to_title_case(listing.get("Ten_Dau_Chu") or listing.get("Tn_Đ?u_Ch__H?p_đ?ng_"))
     sdt_dc = listing.get("Dien_thoai_Dau_Chu") or listing.get("Đi?n_tho?i_Đ?u_Ch_") or "N/A"
     
     html = f"""

@@ -191,7 +191,7 @@ window.LegoRenderAdmin = {
             <div style="font-size: 11px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 2px; width: 100%;">
               <div style="display: flex; align-items: center; gap: 2px; min-width: 0; flex: 1;">
                 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;">
-                  ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" onclick="event.stopPropagation();" style="color: var(--blue); text-decoration: underline; font-weight: 600;">${p.raw_ten_dau_chu || 'Chưa rõ'}</a>` : (p.raw_ten_dau_chu || 'Chưa rõ')}
+                  ${p.raw_link_fb ? `<a href="${p.raw_link_fb}" target="_blank" onclick="event.stopPropagation();" style="color: var(--blue); text-decoration: underline; font-weight: 600;">${window.toTitleCase(p.raw_ten_dau_chu) || 'Chưa rõ'}</a>` : (window.toTitleCase(p.raw_ten_dau_chu) || 'Chưa rõ')}
                 </span>
               </div>
               <div style="display: flex; align-items: center; gap: 2px; flex-shrink: 0; text-align: right; justify-content: flex-end; color: var(--red); font-weight: 700; font-size: 11px;">

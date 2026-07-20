@@ -2573,7 +2573,7 @@
             document.getElementById('raw-so-nha-ve-sinh').innerText = house.So_nha_ve_sinh || 'Trống';
             document.getElementById('raw-huong').innerText = house.Huong || 'Trống';
             
-            document.getElementById('raw-ten-dau-chu').innerText = house.Ten_Dau_Chu_Hop_dong || 'Trống';
+            document.getElementById('raw-ten-dau-chu').innerText = window.toTitleCase(house.Ten_Dau_Chu_Hop_dong) || 'Trống';
             document.getElementById('raw-dt-dau-chu').innerText = house.Dien_thoai_Dau_Chu || 'Trống';
             
             // Link Facebook Đầu Chủ

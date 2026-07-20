@@ -26,6 +26,12 @@ window.formatPhone = function(phone) {
   return s;
 };
 
+// Title Case formatter for names
+window.toTitleCase = function(str) {
+  if (!str || str === 'None') return '';
+  return String(str).trim().toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
+};
+
 // Format unit price helper (removes trailing .0)
 window.formatDonGia = function(donGia) {
   if (!donGia || donGia <= 0) return '';
