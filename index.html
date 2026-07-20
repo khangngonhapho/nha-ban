@@ -44,10 +44,10 @@
           <option value="newest_asc">⏱️ Cũ nhất</option>
           <option value="price_asc">💰 Giá ↑</option>
           <option value="price_desc">💰 Giá ↓</option>
-          <option value="unit_price_asc">🏷️ Đơn giá ↓</option>
+          <option value="unit_price_asc">🏷️ Đơn giá ↑</option>
           <option value="updated_at_desc">🔄 Update</option>
-          <option value="dt_so_desc">📐 DT sổ ↑</option>
-          <option value="dt_so_asc">📐 DT sổ ↓</option>
+          <option value="dt_so_desc">📐 DT sổ ↓</option>
+          <option value="dt_so_asc">📐 DT sổ ↑</option>
         </select>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
@@ -70,7 +70,12 @@
           <button class="hdr-icon-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="Yêu thích">♡</button>
           <span class="fav-count-badge" id="favCount" style="display:none">0</span>
         </div>
-        <button class="hdr-icon-btn admin-only" id="giamChaoFilterBtn" onclick="toggleGiamChaoFilter()" title="Căn giảm chào" style="font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px; border: 1.5px solid var(--border); height: 28px; align-items: center; justify-content: center; background: none; color: var(--main); transition: all 0.2s;">Giảm</button>
+        <button class="hdr-icon-btn admin-only" id="giamChaoFilterBtn" onclick="toggleGiamChaoFilter()" title="Căn giảm chào">
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+            <polyline points="17 6 23 6 23 12" />
+          </svg>
+        </button>
         <button class="hdr-icon-btn active" id="searchToggleBtn" onclick="toggleSearchBar()" title="Tìm kiếm">
           <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2.5">
