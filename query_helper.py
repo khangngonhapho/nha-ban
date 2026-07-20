@@ -188,7 +188,8 @@ def search_db(db_file, table_name, search_term):
                 if d.get("custom_So_Tang"): d["So_Tang"] = d["custom_So_Tang"]
                 if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
                 if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
-                if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+                huong_val = d.get("custom_huong") or d.get("custom_Huong")
+                if huong_val: d["Huong"] = huong_val
                 
                 # Nhóm Tiêu chí
                 for ck in ["Criteria_Duong_truoc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo", "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien", "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"]:

@@ -1744,7 +1744,8 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             if d.get("custom_So_Tang"): d["So_Tang"] = d["custom_So_Tang"]
             if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
             if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
-            if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+            huong_val = d.get("custom_huong") or d.get("custom_Huong")
+            if huong_val: d["Huong"] = huong_val
     
         # Khử va chạm Mã Hàng
         ma_hang_db = d.get("M__H_ng", "") or d.get("Ma_Hang", "")

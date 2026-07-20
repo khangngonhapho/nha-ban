@@ -256,7 +256,8 @@ def normalize_listing_for_client(row):
         if d.get("custom_So_Tang"): d["So_Tang"] = d["custom_So_Tang"]
         if d.get("custom_Mat_Tien"): d["Mat_Tien"] = d["custom_Mat_Tien"]
         if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
-        if d.get("custom_Huong"): d["Huong"] = d["custom_Huong"]
+        huong_val = d.get("custom_huong") or d.get("custom_Huong")
+        if huong_val: d["Huong"] = huong_val
         if d.get("custom_latitude"): d["latitude"] = d["custom_latitude"]
         if d.get("custom_longitude"): d["longitude"] = d["custom_longitude"]
         
