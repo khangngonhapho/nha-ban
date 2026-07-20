@@ -373,6 +373,24 @@ window.getMappedPoolData = function() {
       isFromPoolOnly: true,
       pool_row_data: row
     };
+    
+    // Hợp nhất dữ liệu Phường/Quận custom từ curated listing nếu có
+    if (window.DATA && window.DATA.length > 0) {
+      const curated = window.DATA.find(x => 
+        (x.system_id && p.system_id && String(x.system_id).trim() === String(p.system_id).trim()) ||
+        (x.id && p.id && String(x.id).trim() === String(p.id).trim())
+      );
+      if (curated) {
+        if (curated.phuong && curated.phuong !== '-') {
+          p.phuong = curated.phuong;
+        }
+        if (curated.ql) {
+          p.ql = curated.ql;
+          p.q = (isNaN(curated.ql) || curated.ql === '') ? curated.ql.toLowerCase() : 'q' + curated.ql;
+        }
+      }
+    }
+
     p.dai_nha = window.getDaiNha(p);
     
     // Parse Images_Admin_JSON cho Kho Pool của Admin

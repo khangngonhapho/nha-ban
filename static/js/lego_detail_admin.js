@@ -3404,6 +3404,10 @@
         p.note = note;
         p.quan = quan;
         p.phuong = phuong;
+        let cleanQ = String(quan).replace(/^(Quận|Q)\.?\s*/i, '').trim();
+        if (cleanQ.endsWith('.0')) cleanQ = cleanQ.substring(0, cleanQ.length - 2);
+        p.ql = cleanQ.toUpperCase();
+        p.q = (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ;
         p.dt = editDtThucTe;
         p.dt_tren_so_custom = editDtTrenSo;
         p.huong = huong;
