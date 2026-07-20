@@ -155,8 +155,8 @@ window.LegoRenderAdmin = {
     let statusDotHtml = '';
     if (p.isFromPoolOnly) {
       statusDotHtml = isOnAir 
-        ? `<span title="Đã lên sóng" style="font-size: 14px; display: inline-block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2)); line-height: 1;">🟢</span>` 
-        : `<span title="Chưa lên sóng" style="font-size: 14px; display: inline-block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2)); line-height: 1;">⚪</span>`;
+        ? `<span title="Đã lên sóng" style="background:#16a34a; color:#fff; font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.35); white-space:nowrap; letter-spacing:0.3px;">● SÓNG</span>` 
+        : `<span title="Chưa lên sóng" style="background:#6b7280; color:#fff; font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.35); white-space:nowrap; letter-spacing:0.3px;">● CHƯA</span>`;
     }
 
     const houseType = window.getHouseTypeDisplay ? window.getHouseTypeDisplay(p) : '';
@@ -182,7 +182,7 @@ window.LegoRenderAdmin = {
             </div>
             <div style="font-size: 12px; margin-bottom: 4px; color: #2c3e50; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 4px;">
               <div style="display: flex; align-items: center; gap: 4px;">
-                <span>📍</span> P.${p.phuong}, Q.${p.ql}
+                P.${p.phuong}, Q.${p.ql}
               </div>
               <span style="color: ${badgeColor}; font-weight: 800; white-space: nowrap;">● ${stAbbr}</span>
             </div>
