@@ -503,6 +503,10 @@
                       <input type="text" id="editPhuong" list="phuongList" placeholder="Nhập Phường...">
                       <datalist id="phuongList"></datalist>
                     </div>
+                    <div class="admin-edit-group">
+                      <!-- Giữ khoảng trống cân đối -->
+                    </div>
+                  </div>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
