@@ -1018,7 +1018,7 @@ def rebuild_admin_public_images_json(curated_config, manual_images):
         "Hẻm": "alley", "Nội thất": "interior", "Ẩn": "hidden",
         "deleted": "deleted", "diagram": "diagram", "facade": "facade",
         "cover": "cover", "alley": "alley", "interior": "interior",
-        "hidden": "hidden"
+        "hidden": "hidden", "sodo": "diagram"
     }
     
     migrated_images = []

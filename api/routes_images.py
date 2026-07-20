@@ -382,10 +382,23 @@ def upload_r2_vercel_bridge():
                 ).fetchone()[0]
                 next_seq = (max_seq + 1) if (max_seq is not None) else 0
                 
+                # Standardize role for database insert
+                role_lower = role.lower()
+                if role_lower in ["sodo", "diagram"]:
+                    db_role = "diagram"
+                elif role_lower in ["facade"]:
+                    db_role = "facade"
+                elif role_lower in ["cover"]:
+                    db_role = "cover"
+                elif role_lower in ["alley"]:
+                    db_role = "alley"
+                else:
+                    db_role = "interior"
+
                 cursor.execute("""
                     INSERT INTO listings_images (tk_id, image_url, r2_url, role, sequence_index, edited_by, origin)
                     VALUES (?, ?, ?, ?, ?, 'Admin', 'self')
-                """, (tk_id, img_link, img_link, role, next_seq))
+                """, (tk_id, img_link, img_link, db_role, next_seq))
                 
                 all_imgs = cursor.execute(
                     "SELECT image_url, r2_url, role FROM listings_images WHERE tk_id = ? ORDER BY sequence_index ASC",
@@ -395,7 +408,18 @@ def upload_r2_vercel_bridge():
                 curated_list = []
                 for img_url, r2_url_val, r_role in all_imgs:
                     url_to_use = r2_url_val if r2_url_val else img_url
-                    curated_list.append({"url": url_to_use, "role": r_role or "interior"})
+                    role_map_en_to_vi = {
+                        "diagram": "Sơ đồ",
+                        "facade": "Mặt tiền",
+                        "cover": "Bìa",
+                        "alley": "Hẻm",
+                        "interior": "Nội thất",
+                        "hidden": "Ẩn",
+                        "deleted": "deleted",
+                        "sodo": "Sơ đồ"
+                    }
+                    mapped_role = role_map_en_to_vi.get(r_role, "Nội thất")
+                    curated_list.append({"url": url_to_use, "role": mapped_role})
                     
                 curated_config_json = json.dumps(curated_list, ensure_ascii=False)
                 
@@ -413,7 +437,7 @@ def upload_r2_vercel_bridge():
                 if role in ["interior", "alley", "cover"] and system_id:
                     safe_imgs = []
                     for img_url, r2_url_val, r_role in all_imgs:
-                        if r_role not in ["facade", "diagram", "deleted", "hidden"]:
+                        if r_role not in ["facade", "diagram", "sodo", "deleted", "hidden"]:
                             url_to_use = r2_url_val if r2_url_val else img_url
                             safe_imgs.append({"url": url_to_use, "role": r_role or "interior"})
                     

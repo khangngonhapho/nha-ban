@@ -663,7 +663,7 @@
           let sImgs = [];
           if (p.curated_config && Array.isArray(p.curated_config.images)) {
             sImgs = p.curated_config.images
-              .filter(img => img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram'))
+              .filter(img => img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo'))
               .map(img => img.url);
           }
           if (sImgs.length === 0) {
@@ -842,7 +842,7 @@
             cards.push({ type: "facade", index: 0, ...cardObj });
           } else if (role === 'Bìa' || role === 'cover') {
             cards.push({ type: "cover", index: 0, ...cardObj });
-          } else if (role === 'Sơ đồ' || role === 'diagram') {
+          } else if (role === 'Sơ đồ' || role === 'diagram' || role === 'sodo') {
             sodoCount++;
             cards.push({ type: "sodo", index: sodoCount, ...cardObj });
           } else if (role === 'Hẻm' || role === 'alley') {
@@ -3034,7 +3034,7 @@
             } else if (type === 'alley' && (role === 'Hẻm' || role === 'alley')) {
               alleyCount++;
               if (alleyCount === index) return img.url;
-            } else if (type === 'sodo' && (role === 'Sơ đồ' || role === 'diagram')) {
+            } else if (type === 'sodo' && (role === 'Sơ đồ' || role === 'diagram' || role === 'sodo')) {
               sodoCount++;
               if (sodoCount === index) return img.url;
             }

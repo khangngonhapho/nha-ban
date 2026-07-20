@@ -1063,17 +1063,16 @@ window.isListingSodoUrl = function(url, p) {
   const norm = normFn(url);
   if (norm === '') return false;
   
-  // 1. Nhận diện theo mẫu tên file Cloudinary được uploader tạo ra (cực kỳ tối ưu và nhanh)
+  // 1. Nhận diện theo tên file sơ đồ có chứa tiền tố/hậu tố sodo kèm số tăng dần (ví dụ: _sodo3_ hoặc /sodo1_)
   const urlLower = String(url).toLowerCase();
-  if (urlLower.includes('/sodo1_') || urlLower.includes('/sodo2_') || 
-      urlLower.includes('/sodo3_') || urlLower.includes('/sodo4_') || urlLower.includes('/sodo5_')) {
+  if (/[/_]sodo\d+_/i.test(urlLower)) {
     return true;
   }
 
   // 2. Nhận diện theo curated_config nếu có
   if (p && p.curated_config && Array.isArray(p.curated_config.images)) {
     const isSodoInConfig = p.curated_config.images.some(img => {
-      if (img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram')) {
+      if (img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo')) {
         return normFn(img.url) === norm;
       }
       return false;

@@ -455,7 +455,7 @@ def normalize_images_list(images_list):
         role = img.get("role") or "Nội thất"
         role_map_en_to_vi = {
             "diagram": "Sơ đồ", "facade": "Mặt tiền", "cover": "Bìa",
-            "alley": "Hẻm", "interior": "Nội thất", "hidden": "Ẩn", "deleted": "deleted"
+            "alley": "Hẻm", "interior": "Nội thất", "hidden": "Ẩn", "deleted": "deleted", "sodo": "Sơ đồ"
         }
         if role in role_map_en_to_vi:
             role = role_map_en_to_vi[role]
@@ -838,7 +838,8 @@ def restore_database(repair_sheets=False):
                     "alley": "Hẻm",
                     "interior": "Nội thất",
                     "hidden": "Ẩn",
-                    "deleted": "deleted"
+                    "deleted": "deleted",
+                    "sodo": "Sơ đồ"
                 }
                 if isinstance(parsed, list):
                     for img in parsed:
@@ -923,7 +924,8 @@ def restore_database(repair_sheets=False):
             "Hẻm": "alley",
             "Nội thất": "interior",
             "Ẩn": "hidden",
-            "deleted": "deleted"
+            "deleted": "deleted",
+            "sodo": "diagram"
         }
         for seq_idx, img in enumerate(images_list):
             vi_role = img.get("role", "Nội thất")

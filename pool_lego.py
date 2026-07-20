@@ -1698,7 +1698,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                     url = r2_url if r2_url else img_url
                     if not url:
                         continue
-                    if role == "diagram":
+                    if role in ["diagram", "sodo"]:
                         diagrams.append(url)
                     elif role in ["facade", "cover"]:
                         facades.append(url)
