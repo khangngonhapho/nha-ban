@@ -3378,8 +3378,8 @@
         }
 
         p.original_row_data[2] = note;
-        p.original_row_data[window.getPoolColumnIndex("quan", 3)] = quan || p.original_row_data[window.getPoolColumnIndex("quan", 3)];
-        p.original_row_data[window.getPoolColumnIndex("phuong", 4)] = phuong || p.original_row_data[window.getPoolColumnIndex("phuong", 4)];
+        p.original_row_data[window.getSourceColumnIndex("quan", 9)] = quan || p.original_row_data[window.getSourceColumnIndex("quan", 9)];
+        p.original_row_data[window.getSourceColumnIndex("phuong", 10)] = phuong || p.original_row_data[window.getSourceColumnIndex("phuong", 10)];
         p.original_row_data[5] = editDtThucTe; // DT Thực tế (Cột F)
         p.original_row_data[12] = huong;
         p.original_row_data[13] = duong;
