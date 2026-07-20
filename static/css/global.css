@@ -3730,4 +3730,9 @@
         max-width: 90px !important;
         border-radius: 14px !important;
       }
+      body.is-admin #giamChaoFilterBtn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
     }
