@@ -568,6 +568,8 @@ def init_db(db_file=None):
             "manual_images_json TEXT",
             "raw_sodo_tk_json TEXT",
             "custom_huong TEXT DEFAULT ''",
+            "custom_phuong TEXT DEFAULT ''",
+            "custom_quan TEXT DEFAULT ''",
             "custom_dt_so TEXT DEFAULT ''",
             "custom_dt_thuc_te TEXT DEFAULT ''"
         ]
@@ -627,6 +629,14 @@ def init_db(db_file=None):
                 
             if "custom_huong" not in existing_cols:
                 cursor.execute("ALTER TABLE listings ADD COLUMN custom_huong TEXT DEFAULT ''")
+                conn.commit()
+                
+            if "custom_phuong" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN custom_phuong TEXT DEFAULT ''")
+                conn.commit()
+                
+            if "custom_quan" not in existing_cols:
+                cursor.execute("ALTER TABLE listings ADD COLUMN custom_quan TEXT DEFAULT ''")
                 conn.commit()
                 
             if "custom_dt_so" not in existing_cols:
@@ -826,7 +836,25 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
                 
                 if is_new or not db_custom_huong:
                     cleaned_metadata["custom_huong"] = huong_raw
-        
+                    
+        # US-153: Tự động khởi tạo custom_phuong và custom_quan bằng Phường/Quận thô nếu chưa có
+        if "custom_phuong" in db_cols and "custom_quan" in db_cols:
+            phuong_raw = cleaned_metadata.get("Phuong") or ""
+            quan_raw = cleaned_metadata.get("Quan") or ""
+            is_new = not existing
+            db_custom_phuong = ""
+            db_custom_quan = ""
+            if existing:
+                row_cpq = cursor.execute(f"SELECT custom_phuong, custom_quan FROM {target_table} WHERE tk_id = ?", (tk_id,)).fetchone()
+                if row_cpq:
+                    if row_cpq[0]: db_custom_phuong = str(row_cpq[0]).strip()
+                    if row_cpq[1]: db_custom_quan = str(row_cpq[1]).strip()
+            
+            if phuong_raw and (is_new or not db_custom_phuong):
+                cleaned_metadata["custom_phuong"] = phuong_raw
+            if quan_raw and (is_new or not db_custom_quan):
+                cleaned_metadata["custom_quan"] = quan_raw
+
         # Dò tìm các ảnh sơ đồ (diagram) từ metadata trước để phục vụ phân loại và phân nhóm
         diagram_urls = []
         for idx in range(1, 6):
@@ -1746,6 +1774,10 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
             if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
             huong_val = d.get("custom_huong") or d.get("custom_Huong")
             if huong_val: d["Huong"] = huong_val
+            phuong_val = d.get("custom_phuong")
+            if phuong_val: d["Phuong"] = phuong_val
+            quan_val = d.get("custom_quan")
+            if quan_val: d["Quan"] = quan_val
     
         # Khử va chạm Mã Hàng
         ma_hang_db = d.get("M__H_ng", "") or d.get("Ma_Hang", "")

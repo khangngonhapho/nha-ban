@@ -190,6 +190,10 @@ def search_db(db_file, table_name, search_term):
                 if d.get("custom_Chieu_dai"): d["Chieu_dai"] = d["custom_Chieu_dai"]
                 huong_val = d.get("custom_huong") or d.get("custom_Huong")
                 if huong_val: d["Huong"] = huong_val
+                phuong_val = d.get("custom_phuong") or d.get("custom_Phuong")
+                if phuong_val: d["Phuong"] = phuong_val
+                quan_val = d.get("custom_quan") or d.get("custom_Quan")
+                if quan_val: d["Quan"] = quan_val
                 
                 # Nhóm Tiêu chí
                 for ck in ["Criteria_Duong_truoc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo", "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien", "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"]:

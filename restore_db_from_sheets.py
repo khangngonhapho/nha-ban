@@ -642,6 +642,8 @@ def restore_database(repair_sheets=False):
 
     sys_id_idx = source_headers_map.get("System ID")
     huong_idx = source_headers_map.get("huong_nha")
+    phuong_idx = source_headers_map.get("phuong")
+    quan_idx = source_headers_map.get("quan")
     images_pub_idx = source_headers_map.get("Images_Public_JSON")
 
     # Xây dựng dictionary từ sheet Source để merge
@@ -816,12 +818,23 @@ def restore_database(repair_sheets=False):
                         
         # US-110: Lấy giá trị Hướng biên tập từ Source sheet, mặc định bằng Hướng thô nếu chưa biên tập
         custom_huong_val = row_dict.get("Hướng", "").strip()
+        custom_phuong_val = row_dict.get("Phường", "").strip()
+        custom_quan_val = row_dict.get("Quận", "").strip()
+        
         if pool_sys_id and pool_sys_id in source_dict:
             s_row = source_dict[pool_sys_id]
             if huong_idx is not None and len(s_row) > huong_idx:
                 s_val = s_row[huong_idx].strip()
                 if s_val and not (s_val.startswith("#") and s_val.endswith("!")):
                     custom_huong_val = s_val
+            if phuong_idx is not None and len(s_row) > phuong_idx:
+                s_val = s_row[phuong_idx].strip()
+                if s_val and not (s_val.startswith("#") and s_val.endswith("!")):
+                    custom_phuong_val = s_val
+            if quan_idx is not None and len(s_row) > quan_idx:
+                s_val = s_row[quan_idx].strip()
+                if s_val and not (s_val.startswith("#") and s_val.endswith("!")):
+                    custom_quan_val = s_val
                         
         # Reconstruct curated images config & populate listings_images table
         images_list = []
@@ -1002,16 +1015,18 @@ def restore_database(repair_sheets=False):
         # Chuẩn bị câu lệnh insert vào SQLite
         columns = [
             "tk_id", "status", "raw_images_tk_json", "raw_drive_images_json", 
-            "custom_huong", "curated_config_json", "Images_Admin_JSON", 
+            "custom_huong", "custom_phuong", "custom_quan", "curated_config_json", "Images_Admin_JSON", 
             "images_public_json", "manual_images_json", "custom_dt_thuc_te", "custom_dt_so"
         ]
-        placeholders = ["?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?"]
+        placeholders = ["?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?"]
         insert_vals = [
             tk_id, 
             status, 
             raw_images_tk_json_to_save, 
             json.dumps(reconstructed_drive_images), 
             custom_huong_val,
+            custom_phuong_val,
+            custom_quan_val,
             curated_config_json_str,
             images_admin_json_str_to_save,
             images_public_json_str_to_save,

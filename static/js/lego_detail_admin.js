@@ -491,9 +491,18 @@
                       </select>
                     </div>
                     <div class="admin-edit-group">
-                      <!-- Giữ khoảng trống cân đối -->
+                      <label for="editQuan">Quận:</label>
+                      <input type="text" id="editQuan" list="quanList" placeholder="Nhập Quận...">
+                      <datalist id="quanList"></datalist>
                     </div>
                   </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="admin-edit-group">
+                      <label for="editPhuong">Phường:</label>
+                      <input type="text" id="editPhuong" list="phuongList" placeholder="Nhập Phường...">
+                      <datalist id="phuongList"></datalist>
+                    </div>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="admin-edit-group">
@@ -614,6 +623,16 @@
               }
             }
             editHuong.value = defaultVal;
+          }
+
+          const editQuan = document.getElementById('editQuan');
+          if (editQuan) {
+            editQuan.value = p.quan || (p.pool_row_data && p.pool_row_data[window.getPoolColumnIndex("quan", 3)]) || '';
+          }
+          
+          const editPhuong = document.getElementById('editPhuong');
+          if (editPhuong) {
+            editPhuong.value = p.phuong || (p.pool_row_data && p.pool_row_data[window.getPoolColumnIndex("phuong", 4)]) || '';
           }
 
           const editDuong = document.getElementById('editDuong');
@@ -3280,6 +3299,8 @@
         const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
         const moTaBds = document.getElementById('editMoTaBds').value.trim();
         const huong = document.getElementById('editHuong').value;
+        const quan = document.getElementById('editQuan') ? document.getElementById('editQuan').value.trim() : '';
+        const phuong = document.getElementById('editPhuong') ? document.getElementById('editPhuong').value.trim() : '';
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
@@ -3353,6 +3374,8 @@
         }
 
         p.original_row_data[2] = note;
+        p.original_row_data[window.getPoolColumnIndex("quan", 3)] = quan || p.original_row_data[window.getPoolColumnIndex("quan", 3)];
+        p.original_row_data[window.getPoolColumnIndex("phuong", 4)] = phuong || p.original_row_data[window.getPoolColumnIndex("phuong", 4)];
         p.original_row_data[5] = editDtThucTe; // DT Thực tế (Cột F)
         p.original_row_data[12] = huong;
         p.original_row_data[13] = duong;
@@ -3375,6 +3398,8 @@
         const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
 
         p.note = note;
+        p.quan = quan;
+        p.phuong = phuong;
         p.dt = editDtThucTe;
         p.dt_tren_so_custom = editDtTrenSo;
         p.huong = huong;
@@ -3642,6 +3667,8 @@
         const tieuDeBds = document.getElementById('editTieuDeBds').value.trim();
         const moTaBds = document.getElementById('editMoTaBds').value.trim();
         const huong = document.getElementById('editHuong').value;
+        const quan = document.getElementById('editQuan') ? document.getElementById('editQuan').value.trim() : '';
+        const phuong = document.getElementById('editPhuong') ? document.getElementById('editPhuong').value.trim() : '';
         const duong = document.getElementById('editDuong').value;
         const danhGia = document.getElementById('editDanhGia').value;
         const tinhTrang = document.getElementById('editTinhTrang').value;
@@ -3748,8 +3775,8 @@
           matchedRow[15],                // 6: so_tang (Cột G)
           matchedRow[16],                // 7: mat_tien (Cột H)
           formatGia(matchedRow[11] || matchedRow[58]),     // 8: gia (Cột I)
-          formatQuan(matchedRow[3]),     // 9: quan (Cột J)
-          matchedRow[4],                 // 10: phuong (Cột K)
+          quan || formatQuan(matchedRow[3]),     // 9: quan (Cột J)
+          phuong || matchedRow[4],                 // 10: phuong (Cột K)
           loaiHinh,                      // 11: loai_hinh (Cột L)
           huong,                         // 12: huong_nha (Cột M)
           duong,                         // 13: duong_truoc_nha (Cột N)
