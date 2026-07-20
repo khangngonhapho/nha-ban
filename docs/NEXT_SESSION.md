@@ -7,6 +7,7 @@
 ---
 
 ## 1. Trạng thái hiện tại của dự án (Current State)
+*   **US-152 (Đồng bộ ảnh crawl trực tiếp từ nguồn Thiên Khôi (Xóa hẳn thay vì đổi status thành deleted)):** **[ACCEPTED - 2026-07-19]** Loại bỏ logic phòng vệ lưu giữ ảnh cũ khi số ảnh cào mới ít hơn trong `pool_lego.py`. Sửa đổi Smart Merge trong `manager.py` duyệt qua ảnh cũ theo thứ tự vật lý gốc để bảo toàn thứ tự tương đối, đồng thời so khớp danh sách tệp R2 vật lý và gọi `delete_r2_object(key)` xóa vĩnh viễn tệp rác trên Cloud R2.
 *   **US-151 (Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ):** **[ACCEPTED - 2026-07-17]** Triển khai cơ chế tự động tìm dòng header chính thức và vị trí cột (`System ID`, `id`...) động tại runtime trên sheet Source trong cả Apps Script và Python. Khắc phục lỗi lệch dòng khi chèn mới, bảo vệ dòng 1 trống. Tích hợp cơ chế truyền Google OAuth token từ Admin dashboard vào iframe Preview Khách hàng để load dữ liệu realtime từ sheet Source dưới Secure Mode, bỏ qua lỗi và độ trễ của IMPORTRANGE trên sheet Public.
 *   **US-142 (Khôi phục dữ liệu listings từ raw_json_full trong SQLite Cục bộ):** **[ACCEPTED - 2026-07-13]** Triển khai cơ chế khôi phục CSDL master cục bộ từ trường gói thô `raw_json_full` của Thiên Khôi. Tái tạo `JSON_UI` (bảo toàn lịch sử giá), điền lại các cột tiêu chí phẳng và bảng `listings_images`. Nâng cấp logic `pool_lego.py` tự động phát hiện và dọn dẹp các link R2 cũ lệch `tk_id` của căn nhà khác trên Google Sheets. Tích hợp nút cứu hộ trực quan trên HTA và API endpoint `/api/listings/recover-raw`.
 *   **US-141 (Tổ chức thư mục R2 theo mã căn & Cơ chế khôi phục liên kết hình ảnh):** **[ACCEPTED - 2026-07-12]** Triển khai Prefix R2 động (`BDS-KhangNgo-v2`), gom ảnh theo cấu trúc subfolder `{uuid} - {so_nha} {duong}` không dấu an toàn, rút gọn số nhà trước dấu `+` và chuẩn hóa tên đường đặc biệt (Cách Mạng Tháng 8 ➔ TTMC, Ba Tháng Hai ➔ HTB, Đường số 7 ➔ 7SD). Hiện thực cơ chế precheck sử dụng Signature V4 REST API `ListObjectsV2` để khôi phục mapping tự động tránh tải lại. Bổ sung cơ chế auto-move di chuyển ảnh cũ dạng on-the-fly, hỗ trợ ghi đè file DB chỉ định và tích hợp HTA panel.
@@ -76,13 +77,18 @@
 
 ## 3. Các file bị tác động trong phiên vừa qua
 
-*   [pool_backend_v3.gs](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_backend_v3.gs) — Dò tìm header và cột index động trên Source trong Apps Script.
-*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Dò tìm header và cột index động trên Source trong Python.
-*   [static/js/lego_core.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_core.js) — Đọc token từ URL parameter và kích hoạt Secure Mode trong iframe.
-*   [static/js/lego_detail_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_detail_admin.js) — Đổi range A2:append và truyền token vào iframe Preview.
-*   [docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md) — Tài liệu User Story US-151.
+*   [pool_lego.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/pool_lego.py) — Loại bỏ phòng vệ ảnh thô Thiên Khôi; Sửa lỗi mapping chữ hoa/thường cho custom_huong.
+*   [manager.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/manager.py) — Sửa thuật toán Smart Merge bảo toàn thứ tự tương đối, tích hợp gọi delete_r2_object(key) dọn dẹp file R2; Sửa lỗi mapping chữ hoa/thường cho custom_huong.
+*   [query_helper.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/query_helper.py) — Sửa lỗi mapping chữ hoa/thường cho custom_huong.
+*   [static/js/lego_render_admin.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_render_admin.js) — Bỏ icon ghim vị trí, thay đổi nhãn hiển thị nút lên sóng từ SONG/CHƯA thành ON/OFF, ẩn Quận khi không có quận.
+*   [static/js/lego_render_client.js](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/static/js/lego_render_client.js) — Bỏ icon ghim vị trí, ẩn Quận khi không có quận.
+*   [tests/test_db.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/tests/test_db.py) — Cập nhật các test case ghi đè ảnh cào cũ.
+*   [tests/test_image_sync_us152.py](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/tests/test_image_sync_us152.py) — Chạy unit test kiểm thử smart merge và xóa R2.
+*   [DF-004_image_migration.md](file:///d:/LHTBrain/.agents/truth_cards/DF-004_image_migration.md) — Nâng cấp Truth Card lên v9.
+*   [docs/stories/_inbox/US-152.md](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/docs/stories/_inbox/US-152.md) — Tài liệu User Story US-152.
+*   [thienkhoi_cookie.txt](file:///d:/LHTBrain/01_PROJECTS/BDS-KhangNgo/thienkhoi_cookie.txt) — Cập nhật cookie mới.
 
 ---
-*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-17 (US-151 accepted & E2E tests verified).*
+*Kế hoạch được lập tự động bởi Antigravity AI Assistant. Cập nhật cuối: 2026-07-21 (US-152 accepted & custom_huong mapping fix deployed).*
 
 

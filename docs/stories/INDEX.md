@@ -1,18 +1,20 @@
 # Stories Index
 
-Last updated: 2026-07-09
+Last updated: 2026-07-21
 
 ## Stats
-- Total: 152
+- Total: 154
 - backlog: 3
-- draft: 6
+- draft: 7
 - in-progress: 0
 - done: 24
-- accepted: 115
+- accepted: 116
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-153 | Thêm trường custom_phuong và custom_quan trong SQLite và Google Sheets | draft    | M    | 2026-07-21 | `pool_lego.py`, `manager.py`, `static/js/lego_detail_admin.js`, `static/js/lego_core.js`, `docs/stories/_inbox/US-153.md` |
+| US-152 | Đồng bộ ảnh crawl trực tiếp từ nguồn Thiên Khôi (Xóa hẳn thay vì đổi status thành deleted) | accepted | S | 2026-07-19 | `pool_lego.py`, `manager.py`, `tests/test_db.py`, `tests/test_image_sync_us152.py`, `docs/stories/_inbox/US-152.md` |
 | US-151 | Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ | accepted | S | 2026-07-17 | `pool_backend_v3.gs`, `pool_lego.py`, `docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md` |
 | US-150 | Di chuyển cơ sở dữ liệu SQLite sang thư mục an toàn và phục hồi raw_json_full | draft | M | 2026-07-14 | `settings.json`, `core/db.py`, `scratch/recover_and_migrate_db.py`, `docs/stories/_inbox/US-150.md` |
 | US-149 | Hiển thị tag "Giảm chào" trên Card Vercel Admin | done | S | 2026-07-14 | `settings.json`, `static/js/lego_render_admin.js`, `scratch/migrate_json_ui_tags.py`, `docs/stories/_inbox/US-149.md` |
@@ -174,6 +176,7 @@ Last updated: 2026-07-09
 ## By Keyword
 
 ### Crawl / Sync Tracking
+- [[US-152|US-152]]: Đồng bộ ảnh crawl trực tiếp từ nguồn Thiên Khôi (accepted)
 - [[US-142_recovery_from_raw_json|US-142]]: Khôi phục dữ liệu listings từ raw_json_full trong SQLite Cục bộ (accepted)
 - [[US-141_r2_image_migration_subfolders_and_recovery|US-141]]: Tổ chức thư mục R2 theo mã căn & Cơ chế khôi phục liên kết hình ảnh (accepted)
 - [[US-132|US-132]]: Phân giải Đánh số Thứ tự Ảnh và Hiển thị Đồng nhất trên Trang Chi tiết Khách hàng (accepted)
