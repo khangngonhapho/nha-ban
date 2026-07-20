@@ -63,7 +63,7 @@ window.LegoRenderClient = {
               ${p.danh_gia === 'Hàng Ngon' ? '<span class="chip" style="color:#27ae60;font-size:14px;padding:2px 4px;">▶</span>' : p.danh_gia === 'Hàng Lỗi' ? '<span class="chip" style="color:var(--red);font-size:13px;padding:2px 4px;">⏸</span>' : ''}
             </div>
             <div class="loc" style="font-size: 11.5px; color: var(--sub); display: flex; align-items: center; gap: 4px; margin-top: 4px; margin-bottom: 6px;">
-              P.${p.phuong}, Q.${p.ql}
+              P.${p.phuong}${p.ql ? `, Q.${p.ql}` : ''}
             </div>
             <div class="pr-loc" style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: auto;">
               <div class="pr" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 4px;">
