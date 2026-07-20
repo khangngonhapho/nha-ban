@@ -872,7 +872,14 @@
           if (window.uploadedUrls && window.uploadedUrls.has(url)) {
             return 'self';
           }
-          if (url.includes('SYS-') || url.includes('/scratch/') || url.includes('cloudinary.com')) {
+          const filename = url.split('/').pop();
+          if (filename.startsWith('SYS-') || url.includes('SYS-') || url.includes('/scratch/') || url.includes('cloudinary.com')) {
+            return 'self';
+          }
+          if (/_(interior|sodo|facade|alley|cover|diagram)_\d{10,13}/i.test(filename)) {
+            return 'self';
+          }
+          if (url.includes('BDS-KhangNgo/') && !/img_[a-f0-9-]{36}_\d+/i.test(filename)) {
             return 'self';
           }
           return 'crawl';
@@ -2455,11 +2462,19 @@
             images: parsedAdmin.map(img => {
               const roleVi = roleMapEnToVi[img.role] || img.role || 'Nội thất';
               const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
+              const imgUrl = img.r2_url || img.image_url || img.url || '';
+              const filename = imgUrl.split('/').pop();
+              const isSelfPattern = filename.startsWith('SYS-') || 
+                                    imgUrl.includes('SYS-') || 
+                                    imgUrl.includes('/scratch/') || 
+                                    imgUrl.includes('cloudinary.com') ||
+                                    /_(interior|sodo|facade|alley|cover|diagram)_\d{10,13}/i.test(filename) ||
+                                    (imgUrl.includes('BDS-KhangNgo/') && !/img_[a-f0-9-]{36}_\d+/i.test(filename));
               return {
-                url: img.r2_url || img.image_url || img.url || '',
+                url: imgUrl,
                 role: roleVi,
                 visible: isVisible,
-                origin: img.origin || 'crawl'
+                origin: isSelfPattern ? 'self' : (img.origin || 'crawl')
               };
             })
           };
@@ -4016,6 +4031,18 @@
       let role = 'interior';
       let visible = false;
       let originVal = slide.origin || (oldImg ? oldImg.origin : 'crawl');
+
+      const filename = slide.url.split('/').pop();
+      const isSelfPattern = filename.startsWith('SYS-') || 
+                            slide.url.includes('SYS-') || 
+                            slide.url.includes('/scratch/') || 
+                            slide.url.includes('cloudinary.com') ||
+                            /_(interior|sodo|facade|alley|cover|diagram)_\d{10,13}/i.test(filename) ||
+                            (slide.url.includes('BDS-KhangNgo/') && !/img_[a-f0-9-]{36}_\d+/i.test(filename));
+
+      if (isSelfPattern) {
+        originVal = 'self';
+      }
 
       if (originVal === 'thienkhoi') originVal = 'crawl';
       if (originVal === 'user') originVal = 'self';
