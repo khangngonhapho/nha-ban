@@ -76,6 +76,7 @@ def get_listings():
     quan_col = next((c for c in db_cols if c in ["Quan", "Qu_n"]), "Quan")
     duong_col = next((c for c in db_cols if c in ["streetName", "Duong", "___ng"]), "Duong")
     so_nha_col = next((c for c in db_cols if c in ["Ngo_So_nha", "Ng__S__nh_"]), "Ngo_So_nha")
+    phuong_col = next((c for c in db_cols if c in ["Phuong", "Ph__ng"]), "Phuong")
     
     t_prefix = "listings_v2." if manager.LISTINGS_TABLE == "listings_v2" else ""
     if manager.LISTINGS_TABLE == "listings_v2":
@@ -113,12 +114,21 @@ def get_listings():
                    listings_custom_v2.Criteria_Khoang_cach_bai_do_xe AS custom_Criteria_Khoang_cach_bai_do_xe,
                    listings_custom_v2.Criteria_Kinh_doanh_Dong_tien AS custom_Criteria_Kinh_doanh_Dong_tien,
                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
-                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto
+                   listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
+                   listings_custom_v2.Phuong AS custom_Phuong,
+                   listings_custom_v2.Quan AS custom_Quan
             FROM listings_v2 
             LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
         """
     else:
         sql = f"SELECT * FROM {manager.LISTINGS_TABLE}"
+
+    if manager.LISTINGS_TABLE == "listings_v2":
+        quan_expr = f"COALESCE(NULLIF(listings_custom_v2.Quan, ''), {t_prefix}`{quan_col}`)"
+        phuong_expr = f"COALESCE(NULLIF(listings_custom_v2.Phuong, ''), {t_prefix}`{phuong_col}`)"
+    else:
+        quan_expr = f"COALESCE(NULLIF({t_prefix}custom_quan, ''), {t_prefix}`{quan_col}`)"
+        phuong_expr = f"COALESCE(NULLIF({t_prefix}custom_phuong, ''), {t_prefix}`{phuong_col}`)"
 
     conditions = []
     params = []
@@ -147,16 +157,16 @@ def get_listings():
             extracted_id = detail_match.group(1)
             
         if extracted_id:
-            conditions.append(f"({t_prefix}tk_id = ? OR {t_prefix}tk_id LIKE ? OR {t_prefix}Ma_Hang LIKE ? OR {t_prefix}`{quan_col}` LIKE ? OR {t_prefix}`{duong_col}` LIKE ? OR {t_prefix}`{so_nha_col}` LIKE ?)")
+            conditions.append(f"({t_prefix}tk_id = ? OR {t_prefix}tk_id LIKE ? OR {t_prefix}Ma_Hang LIKE ? OR {quan_expr} LIKE ? OR {phuong_expr} LIKE ? OR {t_prefix}`{duong_col}` LIKE ? OR {t_prefix}`{so_nha_col}` LIKE ?)")
             search_like = f"%{search_q}%"
-            params.extend([extracted_id, search_like, search_like, search_like, search_like, search_like])
+            params.extend([extracted_id, search_like, search_like, search_like, search_like, search_like, search_like])
         else:
-            conditions.append(f"({t_prefix}tk_id LIKE ? OR {t_prefix}Ma_Hang LIKE ? OR {t_prefix}`{quan_col}` LIKE ? OR {t_prefix}`{duong_col}` LIKE ? OR {t_prefix}`{so_nha_col}` LIKE ?)")
+            conditions.append(f"({t_prefix}tk_id LIKE ? OR {t_prefix}Ma_Hang LIKE ? OR {quan_expr} LIKE ? OR {phuong_expr} LIKE ? OR {t_prefix}`{duong_col}` LIKE ? OR {t_prefix}`{so_nha_col}` LIKE ?)")
             search_like = f"%{search_q}%"
-            params.extend([search_like, search_like, search_like, search_like, search_like])
+            params.extend([search_like, search_like, search_like, search_like, search_like, search_like])
         
     if quan_filter:
-        conditions.append(f"{t_prefix}`{quan_col}` LIKE ?")
+        conditions.append(f"{quan_expr} LIKE ?")
         params.append(f"%{quan_filter}%")
         
     if duong_filter:
@@ -296,7 +306,9 @@ def handle_listing_detail(tk_id):
                    listings_custom_v2.Criteria_Huong_nha AS custom_Criteria_Huong_nha,
                    listings_custom_v2.Criteria_Khoang_cach_duong_oto AS custom_Criteria_Khoang_cach_duong_oto,
                    listings_custom_v2.latitude AS custom_latitude,
-                   listings_custom_v2.longitude AS custom_longitude
+                   listings_custom_v2.longitude AS custom_longitude,
+                   listings_custom_v2.Phuong AS custom_Phuong,
+                   listings_custom_v2.Quan AS custom_Quan
             FROM listings_v2 
             LEFT JOIN listings_custom_v2 ON listings_v2.System_ID = listings_custom_v2.System_ID
             WHERE listings_v2.tk_id = ?

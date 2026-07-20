@@ -275,6 +275,27 @@ def normalize_listing_for_client(row):
         if d.get("custom_Criteria_Huong_nha"): d["Criteria_Huong_nha"] = d["custom_Criteria_Huong_nha"]
         if d.get("custom_Criteria_Khoang_cach_duong_oto"): d["Criteria_Khoang_cach_duong_oto"] = d["custom_Criteria_Khoang_cach_duong_oto"]
         
+    # US-153: Apply custom fields override for both Pool1 and Pool2
+    custom_huong_val = d.get("custom_huong") or d.get("custom_Huong")
+    if custom_huong_val:
+        d["Huong"] = custom_huong_val
+        
+    custom_phuong_val = d.get("custom_phuong") or d.get("custom_Phuong")
+    if custom_phuong_val:
+        d["Phuong"] = custom_phuong_val
+        
+    custom_quan_val = d.get("custom_quan") or d.get("custom_Quan")
+    if custom_quan_val:
+        d["Quan"] = custom_quan_val
+
+    custom_dt_thuc_te_val = d.get("custom_dt_thuc_te")
+    if custom_dt_thuc_te_val:
+        d["DT_Thuc_te"] = custom_dt_thuc_te_val
+
+    custom_dt_so_val = d.get("custom_dt_so")
+    if custom_dt_so_val:
+        d["DT_Tren_so"] = custom_dt_so_val
+
     # Đồng bộ key Phuong_cu_AI không gạch dưới đề phòng client khác đọc
     d["Phuong_cu_AI"] = d["Phuong_cu_AI_"]
             

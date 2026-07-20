@@ -147,7 +147,7 @@ def merge_temp_to_master(temp_db_path, master_db_path):
             "Duong_truoc_nha_m", "Phan_loai_Hem", "Danh_gia_Admin", "Tinh_trang_nha",
             "So_phong_ngu", "So_nha_ve_sinh", "Phuong_cu_AI", "Ngu_tret_Admin", "CHDV_Admin",
             "Anh_Public_VD_1_3_5", "Anh_Hem_Public_VD_1_2",
-            "status", "custom_huong", "custom_dt_thuc_te", "custom_dt_so",
+            "status", "custom_huong", "custom_phuong", "custom_quan", "custom_dt_thuc_te", "custom_dt_so",
             "curated_config_json", "Images_Admin_JSON", "images_public_json", "manual_images_json"
         ]
         
@@ -803,7 +803,7 @@ def restore_database(repair_sheets=False):
             
             # Hướng sẽ được xử lý riêng để lưu vào custom_huong
             for header, s_col_idx in SOURCE_TO_POOL_MAP.items():
-                if header == "Hướng":
+                if header in ["Hướng", "Quận", "Phường"]:
                     continue
                 if len(s_row) > s_col_idx:
                     s_val = s_row[s_col_idx].strip()

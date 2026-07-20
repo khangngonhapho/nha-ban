@@ -195,11 +195,33 @@ def search_db(db_file, table_name, search_term):
                 quan_val = d.get("custom_quan") or d.get("custom_Quan")
                 if quan_val: d["Quan"] = quan_val
                 
-                # Nhóm Tiêu chí
-                for ck in ["Criteria_Duong_truoc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo", "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien", "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"]:
-                    custom_ck = "custom_" + ck
-                    if d.get(custom_ck):
-                        d[ck] = d[custom_ck]
+            # US-153: Apply custom fields override for both Pool1 and Pool2
+            custom_huong_val = d.get("custom_huong") or d.get("custom_Huong")
+            if custom_huong_val:
+                d["Huong"] = custom_huong_val
+                
+            custom_phuong_val = d.get("custom_phuong") or d.get("custom_Phuong")
+            if custom_phuong_val:
+                d["Phuong"] = custom_phuong_val
+                
+            custom_quan_val = d.get("custom_quan") or d.get("custom_Quan")
+            if custom_quan_val:
+                d["Quan"] = custom_quan_val
+
+            custom_dt_thuc_te_val = d.get("custom_dt_thuc_te")
+            if custom_dt_thuc_te_val:
+                d["DT_Thuc_te"] = custom_dt_thuc_te_val
+
+            custom_dt_so_val = d.get("custom_dt_so")
+            if custom_dt_so_val:
+                d["DT_Tren_so"] = custom_dt_so_val
+
+            # Nhóm Tiêu chí
+            for ck in ["Criteria_Duong_truoc_nha", "Criteria_Noi_that", "Criteria_Thang_may", "Criteria_Loai_ngo", "Criteria_Khoang_cach_bai_do_xe", "Criteria_Kinh_doanh_Dong_tien", "Criteria_Huong_nha", "Criteria_Khoang_cach_duong_oto"]:
+                custom_ck = "custom_" + ck
+                if d.get(custom_ck):
+                    d[ck] = d[custom_ck]
+
             result.append(d)
         conn.close()
         return result
