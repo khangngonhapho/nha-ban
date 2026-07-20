@@ -2458,7 +2458,8 @@
               return {
                 url: img.r2_url || img.image_url || img.url || '',
                 role: roleVi,
-                visible: isVisible
+                visible: isVisible,
+                origin: img.origin || 'crawl'
               };
             })
           };
