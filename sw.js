@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bds-khangngo-pwa-v16';
+const CACHE_NAME = 'bds-khangngo-pwa-v17';
 const ASSETS = [
   '/view-images',
   '/static/img/icon-192.png',
@@ -33,9 +33,12 @@ self.addEventListener('fetch', (e) => {
   // Only intercept GET requests
   if (e.request.method !== 'GET') return;
   
-  // Bypass cache for dynamic API requests and remote images (R2, CloudFront, etc.)
+  // Bypass cache for dynamic API requests, preview iframe requests, navigation, and remote images
   if (
     url.pathname.startsWith('/api/') || 
+    url.searchParams.has('preview') ||
+    url.searchParams.has('s') ||
+    e.request.mode === 'navigate' ||
     url.hostname.includes('googleapis') || 
     url.hostname.includes('cloudinary') || 
     url.hostname.includes('r2.dev') ||
