@@ -3054,7 +3054,7 @@
 
     // Live preview timer & tracking helper functions
     window.startPreviewTimer = function() {
-      if (!window._previewStartTime) window._previewStartTime = performance.now();
+      window._previewStartTime = performance.now();
       if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
       window._previewTimerInterval = setInterval(() => {
         const elapsed = ((performance.now() - window._previewStartTime) / 1000).toFixed(1);
