@@ -1577,6 +1577,270 @@ module.exports = async (req, res) => {
     });
   }
 
+  // Endpoint rebuild R2 CDN shards cho Vercel Serverless
+  if (pathname === '/api/public/listings/rebuild') {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+    try {
+      const cfg = loadConfig();
+      const isStaging = process.env.STAGING === 'true';
+      const sourceSheetId = isStaging
+        ? (cfg.staging_source_sheet_id || '1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk')
+        : '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+
+      const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID || cfg.r2_access_key_id;
+      const r2SecretAccessKey = process.env.R2_SECRET_ACCESS_KEY || cfg.r2_secret_access_key;
+      const r2BucketName = process.env.R2_BUCKET_NAME || cfg.r2_bucket_name;
+      const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID || cfg.cloudflare_account_id;
+      const r2PublicUrl = process.env.R2_PUBLIC_URL || cfg.r2_public_url || 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev';
+      const r2MigrationPrefix = process.env.R2_MIGRATION_PREFIX || cfg.r2_migration_prefix || 'BDS-KhangNgo-v3';
+
+      if (!r2AccessKeyId || !r2SecretAccessKey || !r2BucketName || !cloudflareAccountId) {
+        return res.status(500).json({ status: 'error', message: 'Missing R2 environment variables' });
+      }
+
+      // Fetch Source worksheet data using Google Sheets API
+      const creds = getCredentials();
+      if (!creds) throw new Error("Google credentials not configured.");
+      const accessToken = await getGoogleAccessToken(creds);
+      if (!accessToken) throw new Error("Failed to generate Google access token.");
+
+      const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sourceSheetId}/values/Source!A1:ZZ`;
+      const sourceRes = await fetch(sourceUrl, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      if (!sourceRes.ok) {
+        throw new Error(`Failed to fetch Source sheet: ${sourceRes.statusText}`);
+      }
+      const sourceData = await sourceRes.json();
+      const sourceValues = sourceData.values || [];
+      if (sourceValues.length < 2) {
+        throw new Error("Sheet Source is empty or missing headers");
+      }
+
+      // Build header map dynamically (Rule 6 compliant)
+      const sourceHeadersMap = {};
+      const row1 = sourceValues[0] || [];
+      const row2 = sourceValues[1] || [];
+      row2.forEach((h, idx) => {
+        const clean = h.trim();
+        if (clean) sourceHeadersMap[clean] = idx;
+      });
+      row1.forEach((h, idx) => {
+        const clean = h.trim();
+        if (clean && (sourceHeadersMap[clean] === undefined || !(row2[idx] || '').trim())) {
+          sourceHeadersMap[clean] = idx;
+        }
+      });
+
+      const getVal = (row, headerName, fallback = '') => {
+        const colIdx = sourceHeadersMap[headerName];
+        if (colIdx !== undefined && colIdx < row.length) {
+          return (row[colIdx] || '').trim();
+        }
+        return fallback;
+      };
+
+      const safeFloat = (val) => {
+        if (!val) return 0.0;
+        try {
+          const clean = String(val).replace(/,/g, '.').replace(/[^\d.]/g, '');
+          return parseFloat(clean) || 0.0;
+        } catch (e) {
+          return 0.0;
+        }
+      };
+
+      const normalizeDistrict = (rawQ) => {
+        if (!rawQ) return ['', ''];
+        const cleanQ = rawQ.replace(/Quận|Q\.|Q/gi, '').trim();
+        const cleanQMatches = cleanQ.toLowerCase();
+        if (cleanQMatches.includes('phú nhuận') || cleanQMatches === 'pn') return ['pn', 'PN'];
+        if (cleanQMatches.includes('tân bình') || cleanQMatches === 'tb') return ['tb', 'TB'];
+        if (cleanQMatches.includes('bình thạnh') || cleanQMatches === 'bt') return ['bt', 'BT'];
+        if (cleanQMatches.includes('gò vấp') || cleanQMatches === 'gv') return ['gv', 'GV'];
+        if (cleanQMatches.includes('tân phú') || cleanQMatches === 'tp') return ['tp', 'TP'];
+        if (cleanQMatches.includes('bình tân') || cleanQMatches === 'btan') return ['btan', 'BTAN'];
+        if (cleanQMatches === '1' || cleanQMatches === 'q1') return ['q1', 'Q1'];
+        if (cleanQMatches === '3' || cleanQMatches === 'q3') return ['q3', 'Q3'];
+        if (cleanQMatches === '10' || cleanQMatches === 'q10') return ['q10', 'Q10'];
+        const qField = (!isNaN(cleanQ) && cleanQ !== '') ? 'q' + cleanQ : cleanQ.toLowerCase();
+        return [qField, cleanQ.toUpperCase()];
+      };
+
+      const NUM_SHARDS = 200;
+      const indexList = [];
+      const shards = {};
+      for (let i = 0; i < NUM_SHARDS; i++) {
+        const shardIdStr = String(i).padStart(3, '0');
+        shards[shardIdStr] = {};
+      }
+
+      const dataRows = sourceValues.slice(2);
+      dataRows.forEach(r => {
+        if (!r || r.length === 0) return;
+        const tkId = getVal(r, 'id');
+        const tieuDe = getVal(r, 'tieu_de');
+        const tinhTrang = getVal(r, 'tinh_trang_nha');
+        const trangThai = getVal(r, 'trang_thai');
+        const sysId = getVal(r, 'System ID');
+
+        if (tinhTrang.toLowerCase().includes('ẩn') || tinhTrang.toLowerCase().includes('invisible')) return;
+        if (trangThai.toLowerCase() === 'deleted') return;
+        if (!tieuDe || !tkId || !sysId) return;
+
+        // SHA-256 shard allocation
+        const sha256Hex = crypto.createHash('sha256').update(sysId, 'utf8').digest('hex');
+        const shardId = parseInt(sha256Hex.slice(0, 12), 16) % NUM_SHARDS;
+        const shardIdStr = String(shardId).padStart(3, '0');
+
+        let parsedImgs = [];
+        const imgsJson = getVal(r, 'Images_Public_JSON');
+        if (imgsJson && imgsJson.startsWith('[')) {
+          try { parsedImgs = JSON.parse(imgsJson); } catch (e) {}
+        }
+        if (!parsedImgs || parsedImgs.length === 0) {
+          for (let i = 1; i <= 15; i++) {
+            const imgVal = getVal(r, `anh_${i}`);
+            if (imgVal && imgVal.startsWith('http')) parsedImgs.push(imgVal);
+          }
+        }
+
+        let jsonUiParsed = {};
+        const jsonUiStr = getVal(r, 'JSON_UI');
+        if (jsonUiStr && jsonUiStr.startsWith('{')) {
+          try { jsonUiParsed = JSON.parse(jsonUiStr); } catch (e) {}
+        }
+
+        const [qField, cleanQUpper] = normalizeDistrict(getVal(r, 'quan'));
+        const dtSoVal = getVal(r, 'DT_tren_so');
+        const dtVal = getVal(r, 'dien_tich');
+        const dtSo = safeFloat(dtSoVal) || safeFloat(dtVal) || 0.0;
+        const giaVal = getVal(r, 'gia');
+        const gia = safeFloat(giaVal);
+        const giabq = (dtSo > 0 && gia > 0) ? Math.round((gia * 1000) / dtSo) : 0;
+
+        indexList.push({
+          id: tkId,
+          cu_phap: getVal(r, 'Cu_phap'),
+          t: tieuDe,
+          dt: dtVal,
+          tang: getVal(r, 'so_tang'),
+          mat: getVal(r, 'mat_tien'),
+          gia: giaVal,
+          q: qField,
+          ql: cleanQUpper,
+          phuong: getVal(r, 'phuong') || '-',
+          loai_hinh: getVal(r, 'loai_hinh') || 'Hẻm',
+          huong: getVal(r, 'huong_nha') || '-',
+          duong_truoc_nha: getVal(r, 'duong_truoc_nha') || '-',
+          rong_hem: getVal(r, 'do_rong_hem') || '-',
+          giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+          imgs: parsedImgs.slice(0, 1),
+          system_id: sysId,
+          shard: shardIdStr
+        });
+
+        shards[shardIdStr][sysId] = {
+          id: tkId,
+          cu_phap: getVal(r, 'Cu_phap'),
+          t: tieuDe,
+          dt: dtVal,
+          tang: getVal(r, 'so_tang'),
+          mat: getVal(r, 'mat_tien'),
+          gia: giaVal,
+          q: qField,
+          ql: cleanQUpper,
+          phuong: getVal(r, 'phuong') || '-',
+          loai_hinh: getVal(r, 'loai_hinh') || 'Hẻm',
+          huong: getVal(r, 'huong_nha') || '-',
+          duong_truoc_nha: getVal(r, 'duong_truoc_nha') || '-',
+          rong_hem: getVal(r, 'do_rong_hem') || '-',
+          tinh_trang: tinhTrang || '-',
+          giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
+          m: getVal(r, 'mo_ta'),
+          imgs: parsedImgs,
+          system_id: sysId,
+          so_pn: getVal(r, 'so_pn'),
+          img_mat_tien: getVal(r, 'Hinh_mat_tien'),
+          dt_tren_so_custom: dtSo,
+          json_ui_parsed: jsonUiParsed
+        };
+      });
+
+      indexList.sort((a, b) => a.id.localeCompare(b.id));
+
+      // Fetch current.json manifest from R2 CDN to check hashes
+      let currentManifest = {};
+      const currentManifestUrl = `${r2PublicUrl}/${r2MigrationPrefix}/public_data/current.json`;
+      try {
+        const currRes = await fetch(currentManifestUrl);
+        if (currRes.ok) currentManifest = await currRes.json();
+      } catch (e) {}
+
+      const oldShardsMap = currentManifest.shards || {};
+      const newShardsMap = {};
+      let uploadCount = 0;
+
+      const makeCanonicalJsonBuffer = (obj) => {
+        return Buffer.from(JSON.stringify(obj), 'utf-8');
+      };
+
+      for (let i = 0; i < NUM_SHARDS; i++) {
+        const sId = String(i).padStart(3, '0');
+        const shardData = shards[sId];
+        const sortedKeys = Object.keys(shardData).sort();
+        const sortedShardObj = {};
+        sortedKeys.forEach(k => sortedShardObj[k] = shardData[k]);
+
+        const shardBuf = makeCanonicalJsonBuffer(sortedShardObj);
+        const shardHash = crypto.createHash('sha256').update(shardBuf).digest('hex').slice(0, 8);
+        const newPath = `public_data/shards/shard-${sId}-${shardHash}.json`;
+        newShardsMap[sId] = newPath;
+
+        if (oldShardsMap[sId] !== newPath) {
+          const r2Key = `${r2MigrationPrefix}/${newPath}`;
+          const reqInfo = signR2Request(shardBuf, newPath, 'application/json', r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId, r2Key);
+          const upRes = await fetch(reqInfo.url, { method: 'PUT', headers: reqInfo.headers, body: shardBuf });
+          if (upRes.ok) uploadCount++;
+        }
+      }
+
+      const indexBuf = makeCanonicalJsonBuffer(indexList);
+      const indexHash = crypto.createHash('sha256').update(indexBuf).digest('hex').slice(0, 8);
+      const newIndexPath = `public_data/indexes/index-${indexHash}.json`;
+
+      if (currentManifest.index_url !== newIndexPath) {
+        const r2Key = `${r2MigrationPrefix}/${newIndexPath}`;
+        const reqInfo = signR2Request(indexBuf, newIndexPath, 'application/json', r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId, r2Key);
+        const upRes = await fetch(reqInfo.url, { method: 'PUT', headers: reqInfo.headers, body: indexBuf });
+        if (upRes.ok) uploadCount++;
+      }
+
+      const versionStr = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+      const newManifest = {
+        version: versionStr,
+        index_url: newIndexPath,
+        shards: newShardsMap
+      };
+      const manifestBuf = makeCanonicalJsonBuffer(newManifest);
+      const manifestKey = `${r2MigrationPrefix}/public_data/current.json`;
+      const manifestReq = signR2Request(manifestBuf, 'current.json', 'application/json', r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId, manifestKey);
+      await fetch(manifestReq.url, { method: 'PUT', headers: manifestReq.headers, body: manifestBuf });
+
+      return res.status(200).json({
+        status: 'success',
+        total_listings: dataRows.length,
+        uploaded_files: uploadCount,
+        version: versionStr
+      });
+    } catch (err) {
+      console.error('Error rebuilding R2 CDN in Serverless:', err);
+      return res.status(500).json({ status: 'error', message: err.message });
+    }
+  }
+
   // 4. Endpoint config an toàn cho client (US-100)
   if (pathname === '/api/config') {
     if (req.method !== 'GET') {
