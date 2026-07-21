@@ -1392,9 +1392,10 @@ const LegoState = {
       self.emit('dataLoading', 'public');
     }
 
-    // === UNIQUE JSONP CALLBACK — tránh race condition khi nhiều preview cùng lúc ===
-    const cbName   = `__gsCb_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const scriptId = `_gs_${cbName}`;
+    // === JSONP CALLBACK — dùng tên cố định (__gsCallback) đã được gviz test OK ===
+    // Lưu ý: race condition khi 2 iframe load đồng thời là edge case chấp nhận được
+    const cbName   = '__gsCallback';
+    const scriptId = '_gs';
     let settled = false;
 
     const _cleanup = () => {
