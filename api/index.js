@@ -1797,10 +1797,13 @@ module.exports = async (req, res) => {
   }
 
   const s = req.query.s;
-  if (s) {
+  if (s && !req.query.preview) {
     try {
       const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-      const response = await fetch(sheetUrl);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const response = await fetch(sheetUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
       const text = await response.text();
