@@ -1231,3 +1231,28 @@ def recover_raw_listings():
         "message": "Đã kích hoạt tiến trình khôi phục và cào bù dữ liệu listings chạy ngầm."
     })
 
+@routes_pool.route('/api/public/listings/rebuild', methods=['POST'])
+def rebuild_public_listings():
+    """API kích hoạt xây dựng phân mảnh và cập nhật CDN Cloudflare R2"""
+    import manager
+    try:
+        res = manager.generate_and_upload_public_shards()
+        return jsonify(res)
+    except Exception as e:
+        manager.add_log_message(f"[❌ Rebuild ERROR] Gặp sự cố khi rebuild R2: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "message": f"Không thể rebuild: {str(e)}"
+        }), 500
+
+@routes_pool.route('/api/public/config', methods=['GET'])
+def get_public_config():
+    """API trả về các cấu hình công khai phục vụ khách hàng"""
+    import manager
+    cfg = manager.load_config()
+    return jsonify({
+        "r2_public_url": cfg.get("r2_public_url", ""),
+        "r2_migration_prefix": cfg.get("r2_migration_prefix", "BDS-KhangNgo-v3").strip()
+    })
+
+
