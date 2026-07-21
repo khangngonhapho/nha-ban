@@ -547,7 +547,7 @@
       // Lazy-load chi tiết từ shard R2 nếu p chỉ chứa thông tin rút gọn từ index.json
       if (!p.original_row_data && !p.isFromPoolOnly && (!p.m || (p.imgs && p.imgs.length <= 1))) {
         const sysId = p.system_id || p.id;
-        if (window.LegoState && LegoState.shardsMap && LegoState.shardsMap[sysId]) {
+        if (window.LegoState && typeof LegoState.loadShard === 'function') {
           try {
             const shardData = await LegoState.loadShard(sysId);
             if (shardData && shardData[sysId]) {
