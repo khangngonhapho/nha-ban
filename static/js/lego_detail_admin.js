@@ -605,16 +605,20 @@
                 <span class="arrow">▶</span>
               </div>
               <div class="accordion-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <span style="font-size: 12px; color: #8e8e93;">⚡ Nạp trực tiếp tức thì từ bộ nhớ Client (0ms network)</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
+                  <span style="font-size: 12px; color: #8e8e93;">📱 Khung xem trực tiếp 100% giao diện Khách Hàng thực tế</span>
                   <a href="${window.location.origin}${window.location.pathname}?s=${p.system_id}" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.4); border-radius: 16px; color: #34c759; font-size: 12px; font-weight: 600; text-decoration: none;">
-                    🌐 Mở link Live CDN Khách Hàng ↗
+                    🌐 Mở tab mới Live CDN ↗
                   </a>
                 </div>
-                <div class="preview-webview-container" id="adminPreviewContainer" style="position: relative; width: 100%; min-height: 500px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: auto; background: #ffffff; padding: 12px; color: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                  <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 40px; color:#8e8e93;">
-                    <span>⚡ Bấm vào để nạp Preview tức thì...</span>
+                <!-- MOBILE DEVICE SIMULATION MOCKUP -->
+                <div class="preview-webview-container" style="position: relative; width: 375px; max-width: 100%; height: 667px; margin: 0 auto; border: 10px solid #2c2c2e; border-radius: 36px; overflow: hidden; background: #1c1c1e; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                  <div class="iframe-loader" id="previewIframeLoader" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1c1c1e; color: #8e8e93; z-index: 1;">
+                    <style>@keyframes previewSpin { to { transform: rotate(360deg); } }</style>
+                    <div style="width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #ff3b30; border-radius: 50%; animation: previewSpin 0.8s linear infinite; margin-bottom: 12px;"></div>
+                    <span style="font-size: 13px; font-weight: 500; color: #d1d1d6;">⚡ Đang nạp Preview Khách Hàng: <b id="previewTimerVal" style="color:#ff9500;">0.0s</b></span>
                   </div>
+                  <iframe id="previewIframe" src="about:blank" data-sysid="${p.system_id}" onload="if(this.src && this.src !== 'about:blank' && typeof window.onPreviewIframeLoaded === 'function') window.onPreviewIframeLoaded(this);" style="position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent;"></iframe>
                 </div>
               </div>
             </div>
@@ -3032,19 +3036,17 @@
         item.classList.add('expanded');
         if (arrow) arrow.textContent = '▼';
         
-        // Render direct client preview in-memory on expand (US-120A)
+        // Force preview iframe reload on expand (US-120A)
         if (item.id === 'accPreview') {
-          const container = item.querySelector('#adminPreviewContainer');
-          if (container && window.LegoDetailClient && window.CURRENT_EDITING_LISTING) {
-            const tStart = performance.now();
-            const pCurrent = window.CURRENT_EDITING_LISTING;
-            const pPreview = Object.assign({}, pCurrent);
-            if (typeof window.getPublicImagesFromForm === 'function') {
-              pPreview.imgs = window.getPublicImagesFromForm(pCurrent);
-            }
-            window.LegoDetailClient.render(pPreview, container);
-            const tTotal = (performance.now() - tStart).toFixed(1);
-            console.log(`[⚡ In-Memory Direct Client Preview] Rendered in ${tTotal}ms!`);
+          const iframe = item.querySelector('iframe');
+          if (iframe) {
+            const loader = item.querySelector('.iframe-loader');
+            if (loader) loader.style.display = 'flex';
+            window._previewStartTime = performance.now();
+            if (typeof window.startPreviewTimer === 'function') window.startPreviewTimer();
+            const sysId = iframe.getAttribute('data-sysid') || '';
+            const baseUrl = iframe.src.includes('?s=') ? iframe.src.split('&cb=')[0] : `${window.location.origin}${window.location.pathname}?s=${sysId}&preview=true`;
+            iframe.src = baseUrl + '&cb=' + Date.now();
           }
         }
       }
