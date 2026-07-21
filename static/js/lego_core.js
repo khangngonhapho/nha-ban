@@ -1240,12 +1240,146 @@ const LegoState = {
     }
   },
 
-  loadPublicDataFallback() {
-    this.emit('dataLoading', 'public');
-    const SHEET_ID = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+  // =========================================================
+  // PUBLIC DATA CACHE — localStorage, TTL-based
+  // =========================================================
+  // _PD_VER: bump khi thay đổi cache schema để tự invalidate
+  // _PD_TTL: 5 phút → fresh; sau đó stale (revalidate ngầm)
+  // _PD_MAX_AGE: 24h → xóa hẳn, không serve dù stale
+  // =========================================================
 
-    window.__gsCallback = (response) => {
+  loadPublicDataFallback() {
+    // === PUBLIC DATA CACHE CONSTANTS ===
+    const _PD_VER     = 2;
+    const _PD_TTL     = 5  * 60 * 1000;          // 5 phút → stale
+    const _PD_MAX_AGE = 24 * 60 * 60 * 1000;     // 24h   → xóa hẳn
+    const _pdKey = (sid) => `lht_pd_v${_PD_VER}:${sid}`;
+
+    // FNV-1a fingerprint — detect thay đổi giá, tiêu đề, trạng thái, địa chỉ, ảnh đại diện
+    const _pdFingerprint = (data) => {
+      let h = 2166136261;
+      for (const item of data) {
+        const s = [
+          item.system_id || item.id || '',
+          item.t  || '',
+          item.gia || '',
+          item.tinh_trang || '',
+          item.ten_duong || '',
+          item.dt || '',
+          (item.imgs && item.imgs[0]) || '',
+          item.updated_at || ''
+        ].join('|');
+        for (let i = 0; i < s.length; i++) {
+          h ^= s.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+      }
+      return `${data.length}:${h >>> 0}`;
+    };
+
+    const _pdRead = (sheetId) => {
+      const key = _pdKey(sheetId);
       try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const c = JSON.parse(raw);
+        if (!c || c.version !== _PD_VER || typeof c.savedAt !== 'number' || !Array.isArray(c.data)) {
+          localStorage.removeItem(key);
+          return null;
+        }
+        const age = Date.now() - c.savedAt;
+        if (age < 0 || age > _PD_MAX_AGE) {
+          localStorage.removeItem(key);
+          return null;
+        }
+        return { data: c.data, fingerprint: c.fingerprint || '', age, stale: age > _PD_TTL };
+      } catch(e) {
+        localStorage.removeItem(key);  // Xóa JSON hỏng ngay lập tức
+        console.warn('[Cache] Corrupted cache removed:', e);
+        return null;
+      }
+    };
+
+    const _pdWrite = (data, fingerprint, sheetId) => {
+      if (!Array.isArray(data)) return;
+      const key = _pdKey(sheetId);
+      try {
+        const payload = JSON.stringify({ version: _PD_VER, savedAt: Date.now(), fingerprint, data });
+        localStorage.setItem(key, payload);
+        // Đo kích thước UTF-8 chính xác (quan trọng với tiếng Việt)
+        const sizeKB = new Blob([payload]).size / 1024;
+        if (sizeKB > 2048) {
+          console.warn(`[Cache] CRITICAL: ${sizeKB.toFixed(0)} KB — cần xem lại data cache`);
+        } else if (sizeKB > 512) {
+          console.warn(`[Cache] Large: ${sizeKB.toFixed(0)} KB — cần theo dõi`);
+        } else if (window.LHT_DEBUG) {
+          console.log(`[Cache] Written: ${sizeKB.toFixed(1)} KB, ${data.length} items`);
+        }
+      } catch(e) {
+        console.warn('[Cache] Write failed (quota exceeded?):', e);
+        // App vẫn tiếp tục hoạt động bình thường, chỉ không cache lần này
+      }
+    };
+    // === END CACHE HELPERS ===
+
+    const sheetId = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+    const cached = _pdRead(sheetId);
+    const self = this;
+    const isBackground = Boolean(cached);
+
+    if (cached) {
+      console.log(`[Cache] ${cached.stale ? 'STALE' : 'FRESH'}, age: ${(cached.age/1000).toFixed(0)}s, items: ${cached.data.length}`);
+      self.DATA = cached.data;
+      self.isDataLoaded = true;
+      self.emit('rawDataLoaded', cached.data);
+      self.emit('canvasDataLoaded', cached.data);   // Public path: cùng array (đã xác minh L1453-1454)
+      self.emit('publicDataLoaded');
+      if (!cached.stale) return;                    // Fresh cache → không gọi gviz
+      self.emit('dataRefreshing', 'public');         // Stale → báo UI đang revalidate ngầm
+    } else {
+      self.emit('dataLoading', 'public');
+    }
+
+    // === UNIQUE JSONP CALLBACK — tránh race condition khi nhiều preview cùng lúc ===
+    const cbName   = `__gsCb_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const scriptId = `_gs_${cbName}`;
+    let settled = false;
+
+    const _cleanup = () => {
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      const node = document.getElementById(scriptId);
+      if (node) node.remove();
+    };
+
+    const _fail = (reason, err) => {
+      if (settled) return;
+      settled = true;
+      _cleanup();
+      const payload = { source: 'public', reason, error: err && err.message };
+      if (isBackground) {
+        self.emit('dataRefreshFailed', payload);
+      } else {
+        self.emit('dataLoadError', payload);
+      }
+    };
+
+    // Timeout 30s — xử lý trường hợp gviz không trả về (hung request)
+    const timeoutId = setTimeout(() => _fail('timeout'), 30000);
+
+    window[cbName] = (response) => {
+      if (settled) return;
+      settled = true;
+      _cleanup();
+
+      try {
+        // Kiểm tra response error trước khi parse bảng
+        if (!response || response.status === 'error') {
+          const msg = (response && response.errors && response.errors[0] &&
+            (response.errors[0].detailed_message || response.errors[0].reason)) || 'gviz response error';
+          throw new Error(msg);
+        }
+
         const cols = response.table.cols || [];
         const getColIdx = (headerKey, fallback) => {
           const lowerKey = headerKey.toLowerCase();
@@ -1447,22 +1581,54 @@ const LegoState = {
             return p;
           });
 
-        const filteredFullList = typeof window.applyExclusions === 'function' ? window.applyExclusions(fullList) : fullList;
-        this.DATA = filteredFullList;
-        this.isDataLoaded = true;
-        this.emit('rawDataLoaded', filteredFullList);
-        this.emit('canvasDataLoaded', filteredFullList);
-        this.emit('publicDataLoaded');
+        // applyExclusions: global config, không phụ thuộc listing (đã xác minh lego_filters.js:L85-86)
+        // Array.isArray check để phòng trường hợp hàm trả unexpected value
+        const exclusionResult = typeof window.applyExclusions === 'function'
+          ? window.applyExclusions(fullList)
+          : null;
+        const filteredFullList = Array.isArray(exclusionResult) ? exclusionResult : fullList;
+
+        // Ghi cache trước khi so sánh (cập nhật savedAt dù không có thay đổi)
+        const newFingerprint = _pdFingerprint(filteredFullList);
+        _pdWrite(filteredFullList, newFingerprint, sheetId);
+
+        if (isBackground) {
+          // Background revalidate: so sánh fingerprint với cache cũ (không hash lại)
+          if (cached.fingerprint === newFingerprint) {
+            console.log('[Cache] Background refresh: no change, cache refreshed.');
+            self.emit('dataRefreshCompleted', { changed: false });
+          } else {
+            console.log('[Cache] Background refresh: data changed, updating memory.');
+            self.DATA = filteredFullList;
+            self.isDataLoaded = true;
+            self.emit('publicDataRefreshed', filteredFullList);
+          }
+        } else {
+          // Cold load: emit full event chain
+          self.DATA = filteredFullList;
+          self.isDataLoaded = true;
+          self.emit('rawDataLoaded', filteredFullList);
+          self.emit('canvasDataLoaded', filteredFullList);
+          self.emit('publicDataLoaded');
+        }
       } catch (e) {
-        this.emit('dataLoadError', 'Lỗi parse dữ liệu: ' + e.message);
+        console.error('[PublicData] Callback parse error:', e);
+        if (isBackground) {
+          self.emit('dataRefreshFailed', { source: 'public', reason: 'parse_error', error: e.message });
+        } else {
+          self.emit('dataLoadError', { source: 'public', reason: 'parse_error', message: 'Không thể parse dữ liệu từ Google Sheets.', error: e.message });
+        }
       }
     };
 
-    const s = document.createElement('script');
-    s.id = '_gs';
-    s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:__gsCallback&t=${Date.now()}`;
-    s.onerror = () => this.emit('dataLoadError', 'Không kết nối được Google Sheets. Kiểm tra SHEET_ID và quyền truy cập.');
-    document.head.appendChild(s);
+    // Script tag với unique ID — không dùng lại '_gs' cũ
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.setAttribute('data-lht-gviz', 'true');
+    // Giữ nguyên URL format (tqx=out:json;responseHandler:...) chỉ thay tên callback
+    script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${cbName}&t=${Date.now()}`;
+    script.onerror = () => _fail('network_error');
+    document.head.appendChild(script);
   }
 };
 
