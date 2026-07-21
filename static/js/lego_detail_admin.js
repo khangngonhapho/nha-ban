@@ -820,6 +820,9 @@
             if (typeof window.gotoImageEditorSlide === 'function') {
               window.gotoImageEditorSlide(window.activeImageEditorIndex || 0);
             }
+            if (typeof window.reloadPreviewIframe === 'function') {
+              window.reloadPreviewIframe();
+            }
           }
         }, 50);
       }
@@ -3078,21 +3081,21 @@
         window._previewStartTime = performance.now();
         if (typeof window.startPreviewTimer === 'function') window.startPreviewTimer();
         
-        const sysId = iframe.getAttribute('data-sysid') || (window.CURRENT_EDITING_LISTING && window.CURRENT_EDITING_LISTING.system_id) || '';
+        const sysId = iframe.getAttribute('data-sysid') || (window.CURRENT_EDITING_LISTING && (window.CURRENT_EDITING_LISTING.system_id || window.CURRENT_EDITING_LISTING.id)) || '';
         const origin = window.location.origin;
         const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname.replace(/\/[^/]*$/, '/');
         const baseUrl = `${origin}${path}?s=${sysId}&preview=true`;
         iframe.src = baseUrl + '&cb=' + Date.now();
 
-        // Safe fallback timeout (8s) to automatically hide black overlay if iframe onload is delayed
+        // Safe fallback timeout (4s) to automatically hide black overlay if iframe onload is delayed
         if (window._previewTimeoutTimer) clearTimeout(window._previewTimeoutTimer);
         window._previewTimeoutTimer = setTimeout(() => {
           if (loader && loader.style.display !== 'none') {
             loader.style.display = 'none';
             if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
-            console.warn("[⚠️ Preview Timeout Fallback] Hide loader after 8s timeout");
+            console.warn("[⚠️ Preview Timeout Fallback] Hide loader after 4s timeout");
           }
-        }, 8000);
+        }, 4000);
       }
     };
   // === getPublicImagesFromForm ===
