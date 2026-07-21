@@ -11,6 +11,7 @@
   ],
   "routes": [
     { "src": "/avatarKhangNgo.jpg", "dest": "/avatarKhangNgo.jpg" },
+    { "src": "/static/(.*)", "dest": "/static/$1" },
     { "src": "/(.*)", "dest": "api/index.js" }
   ]
 }
