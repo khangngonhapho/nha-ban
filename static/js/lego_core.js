@@ -547,6 +547,37 @@ const LegoState = {
 
   // Sheets Loading Logic
   async loadData() {
+    // Nếu là chế độ Preview Khách hàng (iframe từ admin), nhận data qua postMessage thay vì fetch lại GSheets
+    const isPreviewMode = new URLSearchParams(window.location.search).get('preview') === 'true';
+    if (isPreviewMode) {
+      console.log('[Preview] Chờ nhận dữ liệu từ parent admin qua postMessage...');
+      this.emit('dataLoading', 'preview');
+      const self = this;
+      const onParentMessage = (event) => {
+        // Chấp nhận message từ cùng origin
+        if (event.origin !== window.location.origin) return;
+        const msg = event.data;
+        if (!msg || msg.type !== 'PREVIEW_DATA' || !msg.listing) return;
+        window.removeEventListener('message', onParentMessage);
+        const listing = msg.listing;
+        console.log('[Preview] Nhận dữ liệu từ parent:', listing.system_id || listing.id);
+        self.DATA = [listing];
+        self.isDataLoaded = true;
+        self.emit('rawDataLoaded', [listing]);
+        self.emit('canvasDataLoaded', [listing]);
+      };
+      window.addEventListener('message', onParentMessage);
+      // Timeout fallback: nếu sau 8s không nhận được gì thì thông báo lỗi
+      setTimeout(() => {
+        if (!self.isDataLoaded) {
+          window.removeEventListener('message', onParentMessage);
+          console.warn('[Preview] Timeout: Không nhận được dữ liệu từ parent sau 8 giây.');
+          self.emit('dataLoadError', 'Preview timeout: Không nhận được dữ liệu từ cửa sổ admin.');
+        }
+      }, 8000);
+      return;
+    }
+
     // Tải cấu hình Spreadsheet IDs từ API backend trước
     try {
       const res = await fetch('/api/config');

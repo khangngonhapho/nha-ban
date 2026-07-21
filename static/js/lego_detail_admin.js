@@ -606,12 +606,48 @@
               </div>
               <div class="accordion-content">
                 <div class="preview-webview-container" style="position: relative; width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                  <iframe src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true&token=${encodeURIComponent(localStorage.getItem('g_access_token') || '')}" style="width: 100%; height: 100%; border: none;"></iframe>
+                  <iframe id="previewIframe" src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" style="width: 100%; height: 100%; border: none;"></iframe>
                 </div>
               </div>
             </div>
             ` : ''}
           </div>`;
+
+    // === GỬI DỮ LIỆU XUỐNG IFRAME PREVIEW QUA postMessage ===
+    // Thay vì iframe tự fetch lại Google Sheets (mất 30-60s),
+    // parent admin gửi object listing trực tiếp xuống iframe.
+    if (p.id && !p.isFromPoolOnly) {
+      const _sendPreviewData = () => {
+        const iframeEl = document.getElementById('previewIframe');
+        if (!iframeEl) return;
+        // Loại bỏ raw array rows để giảm kích thước payload postMessage
+        const listingPayload = Object.assign({}, p);
+        delete listingPayload.original_row_data;
+        delete listingPayload.pool_row_data;
+        const sendMsg = () => {
+          try {
+            iframeEl.contentWindow.postMessage(
+              { type: 'PREVIEW_DATA', listing: listingPayload },
+              window.location.origin
+            );
+            console.log('[Admin] Đã gửi PREVIEW_DATA xuống iframe:', listingPayload.system_id || listingPayload.id);
+          } catch(e) {
+            console.warn('[Admin] postMessage tới iframe thất bại:', e);
+          }
+        };
+        if (iframeEl.contentWindow) {
+          // Gửi khi iframe load xong
+          iframeEl.addEventListener('load', sendMsg);
+          // Fallback: nếu iframe đã load rồi thì gửi ngay sau 500ms
+          setTimeout(() => {
+            if (iframeEl.contentDocument && iframeEl.contentDocument.readyState === 'complete') {
+              sendMsg();
+            }
+          }, 500);
+        }
+      };
+      setTimeout(_sendPreviewData, 100);
+    }
 
     // POST-RENDER INITIALIZATION
     if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
