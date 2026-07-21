@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bds-khangngo-pwa-v17';
+const CACHE_NAME = 'bds-khangngo-pwa-v18';
 const ASSETS = [
   '/view-images',
   '/static/img/icon-192.png',
@@ -44,6 +44,7 @@ self.addEventListener('fetch', (e) => {
     url.hostname.includes('r2.dev') ||
     url.hostname.includes('cloudfront.net')
   ) {
+    e.respondWith(fetch(e.request));
     return;
   }
 
