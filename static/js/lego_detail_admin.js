@@ -3626,13 +3626,24 @@
           }
         }
 
-        showToast("Đã lưu thay đổi lên Google Sheets thành công!", "success");
+        showToast("⏳ Đang lưu dữ liệu & đồng bộ R2 CDN Shards (vui lòng chờ)...", "info");
         try {
-          fetch('/api/public/listings/rebuild', { method: 'POST' });
+          const rebuildRes = await fetch('/api/public/listings/rebuild', { method: 'POST' });
+          if (rebuildRes.ok) {
+            showToast("✅ Đã lưu thay đổi & đồng bộ R2 CDN thành công!", "success");
+          } else {
+            showToast("Đã lưu Google Sheets! (Cảnh báo: R2 CDN rebuild phản hồi chậm)", "warning");
+          }
         } catch (e_rebuild) {
           console.error("Lỗi Rebuild R2:", e_rebuild);
+          showToast("Đã lưu Google Sheets! (Không thể kết nối Rebuild R2)", "warning");
         }
         
+        // Reload preview iframe to fetch fresh R2 CDN data
+        if (typeof window.reloadPreviewIframe === 'function') {
+          window.reloadPreviewIframe();
+        }
+
         // Re-render list cards in the background to reflect changes in-place
         if (typeof window.render === 'function') {
           window.render();
