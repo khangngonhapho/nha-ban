@@ -1296,7 +1296,11 @@ const LegoState = {
     }
 
     const sheetId = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
-    const cached = _pdRead(sheetId);
+    const isForcePreview = typeof window !== 'undefined' && window.location && new URLSearchParams(window.location.search).has('preview');
+    const cached = isForcePreview ? null : _pdRead(sheetId);
+    if (isForcePreview) {
+      this.shardCache = {};
+    }
     const self = this;
     const isBackground = forceBackground || Boolean(cached);
 
@@ -1396,7 +1400,12 @@ const LegoState = {
       return null;
     }
 
-    if (this.shardCache && this.shardCache[shardIdStr]) {
+    const isForcePreview = typeof window !== 'undefined' && window.location && new URLSearchParams(window.location.search).has('preview');
+    if (isForcePreview && this.shardCache) {
+      delete this.shardCache[shardIdStr];
+    }
+
+    if (!isForcePreview && this.shardCache && this.shardCache[shardIdStr]) {
       return this.shardCache[shardIdStr];
     }
     if (!this.shardsMap || !this.shardsMap[shardIdStr]) {
@@ -1426,7 +1435,7 @@ const LegoState = {
       console.warn('[LegoState] Cloudflare R2 public URL or prefix not configured.');
       return null;
     }
-    const url = `${r2Url}/${prefix}/${shardPath}`;
+    const url = isForcePreview ? `${r2Url}/${prefix}/${shardPath}?t=${Date.now()}` : `${r2Url}/${prefix}/${shardPath}`;
     try {
       console.log(`[LegoState] Lazy-loading detail shard ${shardIdStr} từ: ${url}`);
       const res = await fetch(url);
