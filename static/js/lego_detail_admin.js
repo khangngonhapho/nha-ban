@@ -3062,11 +3062,38 @@
 
     window.onPreviewIframeLoaded = function(iframe) {
       if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
+      if (window._previewTimeoutTimer) clearTimeout(window._previewTimeoutTimer);
       const startTime = window._previewStartTime || performance.now();
       const totalMs = Math.round(performance.now() - startTime);
       console.log(`[⚡ Preview Performance Log] Admin Preview Iframe rendered in ${totalMs}ms (${(totalMs/1000).toFixed(2)}s)`);
       const loader = iframe.previousElementSibling || document.getElementById('previewIframeLoader');
       if (loader) loader.style.display = 'none';
+    };
+
+    window.reloadPreviewIframe = function() {
+      const iframe = document.getElementById('previewIframe');
+      if (iframe) {
+        const loader = iframe.previousElementSibling || document.getElementById('previewIframeLoader');
+        if (loader) loader.style.display = 'flex';
+        window._previewStartTime = performance.now();
+        if (typeof window.startPreviewTimer === 'function') window.startPreviewTimer();
+        
+        const sysId = iframe.getAttribute('data-sysid') || (window.CURRENT_EDITING_LISTING && window.CURRENT_EDITING_LISTING.system_id) || '';
+        const origin = window.location.origin;
+        const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname.replace(/\/[^/]*$/, '/');
+        const baseUrl = `${origin}${path}?s=${sysId}&preview=true`;
+        iframe.src = baseUrl + '&cb=' + Date.now();
+
+        // Safe fallback timeout (8s) to automatically hide black overlay if iframe onload is delayed
+        if (window._previewTimeoutTimer) clearTimeout(window._previewTimeoutTimer);
+        window._previewTimeoutTimer = setTimeout(() => {
+          if (loader && loader.style.display !== 'none') {
+            loader.style.display = 'none';
+            if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
+            console.warn("[⚠️ Preview Timeout Fallback] Hide loader after 8s timeout");
+          }
+        }, 8000);
+      }
     };
   // === getPublicImagesFromForm ===
     window.getPublicImagesFromForm = function(p, customPoolRowData) {
@@ -3626,13 +3653,24 @@
           }
         }
 
-        showToast("Đã lưu thay đổi lên Google Sheets thành công!", "success");
+        showToast("⏳ Đang lưu dữ liệu & đồng bộ R2 CDN Shards (vui lòng chờ)...", "info");
         try {
-          fetch('/api/public/listings/rebuild', { method: 'POST' });
+          const rebuildRes = await fetch('/api/public/listings/rebuild', { method: 'POST' });
+          if (rebuildRes.ok) {
+            showToast("✅ Đã lưu thay đổi & đồng bộ R2 CDN thành công!", "success");
+          } else {
+            showToast("Đã lưu Google Sheets! (Cảnh báo: R2 CDN rebuild phản hồi chậm)", "warning");
+          }
         } catch (e_rebuild) {
           console.error("Lỗi Rebuild R2:", e_rebuild);
+          showToast("Đã lưu Google Sheets! (Không thể kết nối Rebuild R2)", "warning");
         }
         
+        // Reload preview iframe to fetch fresh R2 CDN data
+        if (typeof window.reloadPreviewIframe === 'function') {
+          window.reloadPreviewIframe();
+        }
+
         // Re-render list cards in the background to reflect changes in-place
         if (typeof window.render === 'function') {
           window.render();
@@ -4198,6 +4236,7 @@
   window.toggleMotaGocCollapse = toggleMotaGocCollapse;
   window.saveSourceChanges = saveSourceChanges;
   window.saveNewListingFromPool = saveNewListingFromPool;
+  window.reloadPreviewIframe = reloadPreviewIframe;
 
   console.log("LegoDetailAdmin module initialized.");
 })();
