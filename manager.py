@@ -2551,16 +2551,26 @@ def run_ai_curation_for_crawled_listing(tk_id, data):
 
 def execute_publish_listing(tk_id):
     """
-    Wrapper chuyển tiếp cuộc gọi xuất bản tin lên Google Sheets bằng cách gọi pool_lego.publish_listing.
+    Wrapper chuyển tiếp cuộc gọi xuất bản tin lên Google Sheets bằng cách gọi pool_lego.publish_listing
+    và tự động đồng bộ vi sai public shards lên Cloudflare R2 CDN.
     """
     import pool_lego
-    return pool_lego.publish_listing(
+    res = pool_lego.publish_listing(
         tk_id=tk_id,
         get_google_credentials=get_google_credentials,
         load_config=load_config,
         add_log_message=add_log_message,
         db_file=DB_FILE
     )
+    
+    # Tự động cập nhật R2 CDN Shards bất cứ khi nào xuất bản / sửa đổi tin / upload ảnh
+    try:
+        generate_and_upload_public_shards()
+        add_log_message(f"[⚡ R2 Auto-Sync] Đã tự động cập nhật Public CDN Shards cho căn {tk_id}")
+    except Exception as e_r2:
+        add_log_message(f"[⚠️ Warning] Tự động cập nhật R2 Public Shards thất bại: {str(e_r2)}")
+        
+    return res
 
 def upload_bytes_to_r2(file_content, r2_path, content_type="application/json"):
     """Tải dữ liệu bytes lên Cloudflare R2 sử dụng REST API với AWS Signature v4"""
