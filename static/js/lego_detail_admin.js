@@ -3203,11 +3203,11 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = getImageUrl('interior', imgIdx);
-          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
+          if (imgUrl && imgUrl !== publicCover && !finalImages.includes(imgUrl) && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }
         }
-        return finalImages.filter(Boolean);
+        return Array.from(new Set(finalImages.filter(Boolean)));
       } else {
         const finalImages = [];
         const publicCover = publicCoverUrl || (p.imgs && p.imgs[0]);
@@ -3421,7 +3421,7 @@
         };
 
         const fullPublicImages = window.getPublicImagesFromForm(p);
-        cleanPublicImages = fullPublicImages.filter(Boolean);
+        cleanPublicImages = Array.from(new Set(fullPublicImages.filter(Boolean)));
 
         if (p.original_row_data) {
           while (p.original_row_data.length < 49) p.original_row_data.push("");
