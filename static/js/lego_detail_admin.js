@@ -605,12 +605,6 @@
                 <span class="arrow">▶</span>
               </div>
               <div class="accordion-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
-                  <span style="font-size: 12px; color: #8e8e93;">📱 Khung xem trực tiếp 100% giao diện Khách Hàng thực tế</span>
-                  <a href="${window.location.origin}${window.location.pathname}?s=${p.system_id}" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.4); border-radius: 16px; color: #34c759; font-size: 12px; font-weight: 600; text-decoration: none;">
-                    🌐 Mở tab mới Live CDN ↗
-                  </a>
-                </div>
                 <!-- MOBILE DEVICE SIMULATION MOCKUP -->
                 <div class="preview-webview-container" style="position: relative; width: 375px; max-width: 100%; height: 667px; margin: 0 auto; border: 10px solid #2c2c2e; border-radius: 36px; overflow: hidden; background: #1c1c1e; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                   <div class="iframe-loader" id="previewIframeLoader" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1c1c1e; color: #8e8e93; z-index: 1;">
