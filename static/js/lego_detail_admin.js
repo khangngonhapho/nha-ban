@@ -3666,6 +3666,13 @@
           showToast("Đã lưu Google Sheets! (Không thể kết nối Rebuild R2)", "warning");
         }
         
+        // Clear LocalStorage public cache & shardCache so preview re-fetches fresh R2 CDN data
+        try {
+          const sheetId = '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+          localStorage.removeItem(`lht_pd_v2:${sheetId}`);
+          if (window.LegoState) window.LegoState.shardCache = {};
+        } catch(e_cache) {}
+
         // Reload preview iframe to fetch fresh R2 CDN data
         if (typeof window.reloadPreviewIframe === 'function') {
           window.reloadPreviewIframe();
