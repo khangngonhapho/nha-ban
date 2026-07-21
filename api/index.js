@@ -1510,7 +1510,14 @@ module.exports = async (req, res) => {
         throw new Error(`Failed to fetch remote image: status ${response.status}`);
       }
 
-      const contentType = response.headers.get('content-type') || 'application/octet-stream';
+      let contentType = response.headers.get('content-type') || '';
+      if (!contentType || contentType.includes('octet-stream')) {
+        const lowerName = String(filename).toLowerCase();
+        if (lowerName.endsWith('.png')) contentType = 'image/png';
+        else if (lowerName.endsWith('.webp')) contentType = 'image/webp';
+        else if (lowerName.endsWith('.gif')) contentType = 'image/gif';
+        else contentType = 'image/jpeg';
+      }
       const buffer = await response.arrayBuffer();
 
       res.setHeader('Content-Type', contentType);
