@@ -554,11 +554,54 @@ const LegoState = {
       try { return window.self !== window.top; } catch(e) { return true; }
     })();
     if (isPreviewMode && isInsideIframe) {
-      console.log('[Preview/Iframe] Chờ nhận dữ liệu từ parent admin qua postMessage...');
+      // === THỬ CACHE TRƯỚC — tránh chờ 8s không cần thiết ===
+      // Dùng cùng cache logic với loadPublicDataFallback
+      const _tryPreviewCache = () => {
+        try {
+          const cfgSheetId = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
+          const key = `lht_pd_v2:${cfgSheetId}`;
+          const raw = localStorage.getItem(key);
+          if (!raw) return false;
+          const c = JSON.parse(raw);
+          const _PD_MAX_AGE = 24 * 60 * 60 * 1000;
+          if (!c || c.version !== 2 || typeof c.savedAt !== 'number' || !Array.isArray(c.data)) return false;
+          const age = Date.now() - c.savedAt;
+          if (age < 0 || age > _PD_MAX_AGE) return false;
+          return { data: c.data, stale: age > 5 * 60 * 1000 };
+        } catch(e) { return false; }
+      };
+
+      const cachedPreview = _tryPreviewCache();
+      if (cachedPreview) {
+        // Cache hit → render ngay, không chờ postMessage
+        console.log(`[Preview/Cache] ${cachedPreview.stale ? 'STALE' : 'FRESH'} cache, render ngay.`);
+        this.DATA = cachedPreview.data;
+        this.isDataLoaded = true;
+        this.emit('rawDataLoaded', cachedPreview.data);
+        this.emit('canvasDataLoaded', cachedPreview.data);
+        this.emit('publicDataLoaded');
+        // postMessage vẫn có thể override data nếu đến trong 1s (ưu tiên listing cụ thể)
+        const self = this;
+        const onParentMsg = (event) => {
+          if (event.origin !== window.location.origin) return;
+          const msg = event.data;
+          if (!msg || msg.type !== 'PREVIEW_DATA' || !msg.listing) return;
+          window.removeEventListener('message', onParentMsg);
+          console.log('[Preview/Cache] postMessage override với listing:', msg.listing.system_id || msg.listing.id);
+          self.DATA = [msg.listing];
+          self.emit('rawDataLoaded', [msg.listing]);
+          self.emit('canvasDataLoaded', [msg.listing]);
+        };
+        window.addEventListener('message', onParentMsg);
+        setTimeout(() => window.removeEventListener('message', onParentMsg), 1000);
+        return;
+      }
+
+      // Cache miss → chờ postMessage (rút timeout xuống 2s để gviz + cache sớm hơn)
+      console.log('[Preview/Iframe] Cache miss, chờ postMessage từ admin (2s)...');
       this.emit('dataLoading', 'preview');
       const self = this;
       const onParentMessage = (event) => {
-        // Chấp nhận message từ cùng origin
         if (event.origin !== window.location.origin) return;
         const msg = event.data;
         if (!msg || msg.type !== 'PREVIEW_DATA' || !msg.listing) return;
@@ -571,16 +614,17 @@ const LegoState = {
         self.emit('canvasDataLoaded', [listing]);
       };
       window.addEventListener('message', onParentMessage);
-      // Timeout fallback: nếu sau 8s không nhận được gì thì load bình thường qua gviz
+      // Timeout 2s (rút từ 8s): fallback vào loadPublicDataFallback để ghi cache cho lần sau
       setTimeout(() => {
         if (!self.isDataLoaded) {
           window.removeEventListener('message', onParentMessage);
-          console.warn('[Preview/Iframe] Timeout 8s: fallback sang loadPublicDataFallback().');
+          console.warn('[Preview/Iframe] Timeout 2s: fallback sang loadPublicDataFallback().');
           self.loadPublicDataFallback();
         }
-      }, 8000);
+      }, 2000);
       return;
     }
+
     // Nếu mở trực tiếp (không phải iframe) dù có ?preview=true → load bình thường
 
     // Tải cấu hình Spreadsheet IDs từ API backend trước
