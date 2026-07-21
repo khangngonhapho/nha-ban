@@ -3035,6 +3035,7 @@
           if (iframe) {
             const loader = item.querySelector('.iframe-loader');
             if (loader) loader.style.display = 'flex';
+            window._previewStartTime = performance.now();
             if (typeof window.startPreviewTimer === 'function') window.startPreviewTimer();
             const originalSrc = iframe.src.split('&cb=')[0];
             iframe.src = originalSrc + '&cb=' + Date.now();
@@ -3045,7 +3046,7 @@
 
     // Live preview timer & tracking helper functions
     window.startPreviewTimer = function() {
-      window._previewStartTime = performance.now();
+      if (!window._previewStartTime) window._previewStartTime = performance.now();
       if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
       window._previewTimerInterval = setInterval(() => {
         const elapsed = ((performance.now() - window._previewStartTime) / 1000).toFixed(1);
@@ -3056,7 +3057,8 @@
 
     window.onPreviewIframeLoaded = function(iframe) {
       if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
-      const totalMs = Math.round(performance.now() - (window._previewStartTime || performance.now()));
+      const startTime = window._previewStartTime || performance.now();
+      const totalMs = Math.round(performance.now() - startTime);
       console.log(`[⚡ Preview Performance Log] Admin Preview Iframe rendered in ${totalMs}ms (${(totalMs/1000).toFixed(2)}s)`);
       const loader = iframe.previousElementSibling || document.getElementById('previewIframeLoader');
       if (loader) loader.style.display = 'none';
