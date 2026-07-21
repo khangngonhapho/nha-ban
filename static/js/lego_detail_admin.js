@@ -606,7 +606,12 @@
               </div>
               <div class="accordion-content">
                 <div class="preview-webview-container" style="position: relative; width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                  <iframe id="previewIframe" src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" style="width: 100%; height: 100%; border: none;"></iframe>
+                  <div class="iframe-loader" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1c1c1e; color: #8e8e93; z-index: 1;">
+                    <style>@keyframes previewSpin { to { transform: rotate(360deg); } }</style>
+                    <div style="width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #ff3b30; border-radius: 50%; animation: previewSpin 0.8s linear infinite; margin-bottom: 12px;"></div>
+                    <span style="font-size: 13px; font-weight: 500; color: #d1d1d6;">⚡ Đang nạp Preview Khách Hàng từ R2 CDN...</span>
+                  </div>
+                  <iframe id="previewIframe" src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" onload="if(this.previousElementSibling) this.previousElementSibling.style.display='none';" style="position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent;"></iframe>
                 </div>
               </div>
             </div>
@@ -3028,6 +3033,8 @@
         if (item.id === 'accPreview') {
           const iframe = item.querySelector('iframe');
           if (iframe) {
+            const loader = item.querySelector('.iframe-loader');
+            if (loader) loader.style.display = 'flex';
             const originalSrc = iframe.src.split('&cb=')[0];
             iframe.src = originalSrc + '&cb=' + Date.now();
           }
