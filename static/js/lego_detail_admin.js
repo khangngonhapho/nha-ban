@@ -606,12 +606,12 @@
               </div>
               <div class="accordion-content">
                 <div class="preview-webview-container" style="position: relative; width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #1c1c1e; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                  <div class="iframe-loader" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1c1c1e; color: #8e8e93; z-index: 1;">
+                  <div class="iframe-loader" id="previewIframeLoader" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1c1c1e; color: #8e8e93; z-index: 1;">
                     <style>@keyframes previewSpin { to { transform: rotate(360deg); } }</style>
                     <div style="width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #ff3b30; border-radius: 50%; animation: previewSpin 0.8s linear infinite; margin-bottom: 12px;"></div>
-                    <span style="font-size: 13px; font-weight: 500; color: #d1d1d6;">⚡ Đang nạp Preview Khách Hàng từ R2 CDN...</span>
+                    <span style="font-size: 13px; font-weight: 500; color: #d1d1d6;">⚡ Đang nạp Preview Khách Hàng từ R2 CDN: <b id="previewTimerVal" style="color:#ff9500;">0.0s</b></span>
                   </div>
-                  <iframe id="previewIframe" src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" onload="if(this.previousElementSibling) this.previousElementSibling.style.display='none';" style="position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent;"></iframe>
+                  <iframe id="previewIframe" src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" onload="if(typeof window.onPreviewIframeLoaded === 'function') window.onPreviewIframeLoaded(this);" style="position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent;"></iframe>
                 </div>
               </div>
             </div>
@@ -3035,11 +3035,31 @@
           if (iframe) {
             const loader = item.querySelector('.iframe-loader');
             if (loader) loader.style.display = 'flex';
+            if (typeof window.startPreviewTimer === 'function') window.startPreviewTimer();
             const originalSrc = iframe.src.split('&cb=')[0];
             iframe.src = originalSrc + '&cb=' + Date.now();
           }
         }
       }
+    };
+
+    // Live preview timer & tracking helper functions
+    window.startPreviewTimer = function() {
+      window._previewStartTime = performance.now();
+      if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
+      window._previewTimerInterval = setInterval(() => {
+        const elapsed = ((performance.now() - window._previewStartTime) / 1000).toFixed(1);
+        const timerElem = document.getElementById('previewTimerVal');
+        if (timerElem) timerElem.textContent = `${elapsed}s`;
+      }, 100);
+    };
+
+    window.onPreviewIframeLoaded = function(iframe) {
+      if (window._previewTimerInterval) clearInterval(window._previewTimerInterval);
+      const totalMs = Math.round(performance.now() - (window._previewStartTime || performance.now()));
+      console.log(`[⚡ Preview Performance Log] Admin Preview Iframe rendered in ${totalMs}ms (${(totalMs/1000).toFixed(2)}s)`);
+      const loader = iframe.previousElementSibling || document.getElementById('previewIframeLoader');
+      if (loader) loader.style.display = 'none';
     };
   // === getPublicImagesFromForm ===
     window.getPublicImagesFromForm = function(p, customPoolRowData) {
