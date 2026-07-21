@@ -2780,6 +2780,15 @@ def generate_and_upload_public_shards(db_file=None):
                 if img_val and img_val.startswith("http"):
                     parsed_imgs.append(img_val)
                     
+        # Deduplicate maintaining order
+        seen_imgs = set()
+        clean_parsed_imgs = []
+        for img_u in parsed_imgs:
+            if img_u and img_u not in seen_imgs:
+                seen_imgs.add(img_u)
+                clean_parsed_imgs.append(img_u)
+        parsed_imgs = clean_parsed_imgs
+                    
         # JSON_UI
         json_ui_str = get_val(r, "JSON_UI")
         json_ui_parsed = {}

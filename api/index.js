@@ -1706,6 +1706,7 @@ module.exports = async (req, res) => {
             if (imgVal && imgVal.startsWith('http')) parsedImgs.push(imgVal);
           }
         }
+        parsedImgs = Array.from(new Set(parsedImgs.filter(Boolean)));
 
         let jsonUiParsed = {};
         const jsonUiStr = getVal(r, 'JSON_UI');
