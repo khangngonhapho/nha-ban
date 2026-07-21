@@ -1194,11 +1194,10 @@ function buildFetchUrl(url, fileName) {
 }
 
 window.fetchAllBlobs = async function(urls, fileNames, onProgress) {
-  const results = [];
-  for (let i = 0; i < urls.length; i++) {
-    if (onProgress) onProgress(i + 1, urls.length);
-    const url = urls[i];
-    const fileName = fileNames[i];
+  let completed = 0;
+  if (onProgress) onProgress(0, urls.length);
+
+  const fetchSingle = async (url, fileName) => {
     try {
       const cleanUrl = buildFetchUrl(url, fileName);
       let response = await fetch(cleanUrl);
@@ -1208,13 +1207,18 @@ window.fetchAllBlobs = async function(urls, fileNames, onProgress) {
       const urlLower = url.toLowerCase();
       if (urlLower.includes('.png')) ext = 'png';
       else if (urlLower.includes('.webp')) ext = 'webp';
-      results.push({ ok: true, blob, name: `${fileName}.${ext}` });
+      completed++;
+      if (onProgress) onProgress(completed, urls.length);
+      return { ok: true, blob, name: `${fileName}.${ext}` };
     } catch (e) {
       console.warn(`Failed downloading ${url}`, e);
-      results.push({ ok: false, url, name: fileName });
+      completed++;
+      if (onProgress) onProgress(completed, urls.length);
+      return { ok: false, url, name: fileName };
     }
-  }
-  return results;
+  };
+
+  return await Promise.all(urls.map((url, i) => fetchSingle(url, fileNames[i])));
 };
 
 window.shareAllImagesToGallery = async function(blobResults) {
@@ -1223,7 +1227,7 @@ window.shareAllImagesToGallery = async function(blobResults) {
   if (successfulBlobs.length === 0) return false;
 
   try {
-    const files = successfulBlobs.map(r => new File([r.blob], r.name, { type: r.blob.type }));
+    const files = successfulBlobs.map(r => new File([r.blob], r.name, { type: r.blob.type || 'image/jpeg' }));
     if (navigator.canShare({ files })) {
       await navigator.share({
         files: files,
@@ -1233,12 +1237,21 @@ window.shareAllImagesToGallery = async function(blobResults) {
       return true;
     }
   } catch (e) {
+    if (e.name === 'AbortError') {
+      console.log("User canceled share dialog");
+      return true;
+    }
     console.warn("Navigator share failed, using fallback sequential download", e);
   }
   return false;
 };
 
 window.downloadSequential = async function(blobResults) {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile && navigator.canShare) {
+    console.warn("Skipping sequential download popups on mobile to avoid browser warning loops");
+    return;
+  }
   for (const r of blobResults) {
     if (!r.ok) continue;
     const blobUrl = URL.createObjectURL(r.blob);
