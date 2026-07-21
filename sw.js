@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bds-khangngo-pwa-v18';
+const CACHE_NAME = 'bds-khangngo-pwa-v19';
 const ASSETS = [
   '/view-images',
   '/static/img/icon-192.png',
@@ -15,15 +15,20 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
+    (async () => {
+      if (self.registration.navigationPreload) {
+        try { await self.registration.navigationPreload.enable(); } catch (err) {}
+      }
+      const keys = await caches.keys();
+      await Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
       );
-    }).then(() => self.clients.claim())
+      await self.clients.claim();
+    })()
   );
 });
 
@@ -32,19 +37,33 @@ self.addEventListener('fetch', (e) => {
   
   // Only intercept GET requests
   if (e.request.method !== 'GET') return;
+
+  // 1. Navigation and iframe preview requests: fetch string URL directly to eliminate 30s SW deadlock
+  if (e.request.mode === 'navigate' || url.searchParams.has('preview') || url.searchParams.has('s')) {
+    e.respondWith(
+      (async () => {
+        try {
+          if (e.preloadResponse) {
+            const preloaded = await e.preloadResponse;
+            if (preloaded) return preloaded;
+          }
+          return await fetch(e.request.url, { cache: 'no-cache' });
+        } catch (err) {
+          return await fetch(e.request.url);
+        }
+      })()
+    );
+    return;
+  }
   
-  // Bypass cache for dynamic API requests, preview iframe requests, navigation, and remote images
+  // 2. Bypass API and remote assets
   if (
     url.pathname.startsWith('/api/') || 
-    url.searchParams.has('preview') ||
-    url.searchParams.has('s') ||
-    e.request.mode === 'navigate' ||
     url.hostname.includes('googleapis') || 
     url.hostname.includes('cloudinary') || 
     url.hostname.includes('r2.dev') ||
     url.hostname.includes('cloudfront.net')
   ) {
-    e.respondWith(fetch(e.request));
     return;
   }
 
