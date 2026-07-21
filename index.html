@@ -2,6 +2,7 @@
 <html lang="vi">
 
 <head>
+  <script>window.__NAV_START_TIME = performance.now();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#c0392b">
@@ -540,19 +541,23 @@
   <script>
     // --- MAIN INITIALIZATION & ROUTING STATE ---
     async function openS(id, tempP = null, autoExpandPreview = false) {
+      const tOpenStart = performance.now();
       window.imageEditorSortMode = 'file';
       let p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
 
+      let shardTimeMs = 0;
       // Lazy-load chi tiết từ shard R2 nếu p chỉ chứa thông tin rút gọn từ index.json
       if (!p.original_row_data && !p.isFromPoolOnly && (!p.m || (p.imgs && p.imgs.length <= 1))) {
         const sysId = p.system_id || p.id;
         if (window.LegoState && typeof LegoState.loadShard === 'function') {
           try {
+            const tShardStart = performance.now();
             const shardData = await LegoState.loadShard(sysId);
+            shardTimeMs = Math.round(performance.now() - tShardStart);
             if (shardData && shardData[sysId]) {
               Object.assign(p, shardData[sysId]);
-              console.log(`[openS] Loaded detail shard for listing #${sysId}`);
+              console.log(`[⚡ Performance] Loaded R2 detail shard #${sysId} in ${shardTimeMs}ms`);
             }
           } catch (e) {
             console.error(`[openS] Failed to lazy-load detail shard for listing #${sysId}:`, e);
@@ -593,7 +598,8 @@
       const sbody = document.getElementById('sbody');
       const scta = document.querySelector('.scta');
  
-      if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
+      const isForcePreview = new URLSearchParams(window.location.search).has('preview');
+      if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly) && !isForcePreview) {
         if (scta) scta.style.display = 'none';
         if (window.LegoDetailAdmin) window.LegoDetailAdmin.render(p, sbody, autoExpandPreview);
       } else {
@@ -610,7 +616,11 @@
       document.getElementById('ov').classList.add('open');
       document.getElementById('sbody').scrollTop = 0;
       document.body.style.overflow = 'hidden';
- 
+
+      const totalRenderMs = Math.round(performance.now() - tOpenStart);
+      const totalNavMs = Math.round(performance.now() - (window.__NAV_START_TIME || performance.now()));
+      console.log(`[⚡ Performance Summary] Modal #${p.id} rendered in ${totalRenderMs}ms (Shard R2: ${shardTimeMs}ms) | Total from Page Load: ${totalNavMs}ms (${(totalNavMs/1000).toFixed(2)}s)`);
+
       if (!window.preventPushState) {
         history.pushState({ detailOpen: true }, "");
       }
