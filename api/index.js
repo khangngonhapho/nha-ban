@@ -1690,9 +1690,9 @@ module.exports = async (req, res) => {
         if (trangThai.toLowerCase() === 'deleted') return;
         if (!tieuDe || !tkId || !sysId) return;
 
-        // SHA-256 shard allocation
+        // SHA-256 shard allocation (BigInt 256-bit modulo matching Python int(sha256, 16) % 200)
         const sha256Hex = crypto.createHash('sha256').update(sysId, 'utf8').digest('hex');
-        const shardId = parseInt(sha256Hex.slice(0, 12), 16) % NUM_SHARDS;
+        const shardId = Number(BigInt('0x' + sha256Hex) % BigInt(NUM_SHARDS));
         const shardIdStr = String(shardId).padStart(3, '0');
 
         let parsedImgs = [];
