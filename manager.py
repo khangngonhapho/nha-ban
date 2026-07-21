@@ -2562,6 +2562,360 @@ def execute_publish_listing(tk_id):
         db_file=DB_FILE
     )
 
+def upload_bytes_to_r2(file_content, r2_path, content_type="application/json"):
+    """Tải dữ liệu bytes lên Cloudflare R2 sử dụng REST API với AWS Signature v4"""
+    import hashlib
+    import hmac
+    import datetime
+    import urllib.parse
+    import requests
+    
+    cfg = load_config()
+    r2_access_key = cfg.get("r2_access_key_id")
+    r2_secret_key = cfg.get("r2_secret_access_key")
+    r2_bucket = cfg.get("r2_bucket_name")
+    account_id = cfg.get("cloudflare_account_id")
+    r2_public_url = cfg.get("r2_public_url")
+    
+    if not (r2_access_key and r2_secret_key and r2_bucket and account_id):
+        raise Exception("Thiếu cấu hình Cloudflare R2 trong settings.json")
+        
+    host = f"{r2_bucket}.{account_id}.r2.cloudflarestorage.com"
+    endpoint = f"https://{host}"
+    
+    encoded_key = urllib.parse.quote(r2_path, safe="/")
+    path = f"/{encoded_key}"
+    
+    t = datetime.datetime.now(datetime.UTC)
+    amz_date = t.strftime('%Y%m%dT%H%M%SZ')
+    date_stamp = t.strftime('%Y%m%d')
+    
+    hashed_payload = hashlib.sha256(file_content).hexdigest()
+    
+    canonical_headers = f"host:{host}\nx-amz-content-sha256:{hashed_payload}\nx-amz-date:{amz_date}\n"
+    signed_headers = "host;x-amz-content-sha256;x-amz-date"
+    
+    canonical_request = f"PUT\n{path}\n\n{canonical_headers}\n{signed_headers}\n{hashed_payload}"
+    hashed_canonical_request = hashlib.sha256(canonical_request.encode('utf-8')).hexdigest()
+    
+    algorithm = "AWS4-HMAC-SHA256"
+    region = "auto"
+    service = "s3"
+    credential_scope = f"{date_stamp}/{region}/{service}/aws4_request"
+    
+    string_to_sign = f"{algorithm}\n{amz_date}\n{credential_scope}\n{hashed_canonical_request}"
+    
+    def sign(key, msg):
+        return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
+        
+    def get_signature_key(key, date_stamp, region_name, service_name):
+        k_date = hmac.new(("AWS4" + key).encode('utf-8'), date_stamp.encode('utf-8'), hashlib.sha256).digest()
+        k_region = sign(k_date, region_name)
+        k_service = sign(k_region, service_name)
+        k_signing = sign(k_service, "aws4_request")
+        return k_signing
+        
+    signing_key = get_signature_key(r2_secret_key, date_stamp, region, service)
+    signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
+    
+    authorization_header = f"{algorithm} Credential={r2_access_key}/{credential_scope}, SignedHeaders={signed_headers}, Signature={signature}"
+    
+    url = f"{endpoint}{path}"
+    headers = {
+        'Host': host,
+        'Authorization': authorization_header,
+        'x-amz-date': amz_date,
+        'x-amz-content-sha256': hashed_payload,
+        'Content-Type': content_type
+    }
+    
+    r = requests.put(url, data=file_content, headers=headers, timeout=30)
+    if r.status_code != 200:
+        raise Exception(f"R2 PUT error {r.status_code}: {r.text}")
+    return f"{r2_public_url}/{r2_path}"
+
+def generate_and_upload_public_shards(db_file=None):
+    """
+    Sinh 200 mảnh shard và 1 file index công khai từ Source sheet và đồng bộ vi sai lên Cloudflare R2
+    """
+    import hashlib
+    import json
+    import gspread
+    import requests
+    from datetime import datetime
+    
+    cfg = load_config()
+    creds = get_google_credentials()
+    if not creds:
+        raise Exception("Không thể lấy Google Credentials")
+        
+    r2_public_url = cfg.get("r2_public_url")
+    r2_migration_prefix = cfg.get("r2_migration_prefix", "BDS-KhangNgo-v3").strip()
+    
+    if os.environ.get("STAGING") == "true":
+        source_sheet_id = cfg.get("staging_source_sheet_id") or "1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk"
+    else:
+        source_sheet_id = "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
+        
+    add_log_message(f"[⚡] Khởi động Rebuild từ Google Sheets Source: {source_sheet_id}...")
+    
+    try:
+        client = gspread.authorize(creds)
+        source_spreadsheet = client.open_by_key(source_sheet_id)
+        source_sheet = source_spreadsheet.worksheet("Source")
+        source_values = source_sheet.get_all_values()
+    except Exception as e:
+        raise Exception(f"Không thể đọc dữ liệu từ sheet Source: {str(e)}")
+        
+    if len(source_values) < 2:
+        raise Exception("Sheet Source rỗng hoặc thiếu tiêu đề")
+        
+    # Xây dựng bản đồ mapping index cho tiêu đề cột động (Tuân thủ Rule 6)
+    source_headers_map = {}
+    row1 = source_values[0]
+    row2 = source_values[1]
+    for idx, h in enumerate(row2):
+        h_clean = h.strip()
+        if h_clean:
+            source_headers_map[h_clean] = idx
+    for idx, h in enumerate(row1):
+        h_clean = h.strip()
+        if h_clean and (h_clean not in source_headers_map or not row2[idx].strip()):
+            source_headers_map[h_clean] = idx
+            
+    def get_val(row, header_name, fallback=""):
+        col_idx = source_headers_map.get(header_name)
+        if col_idx is not None and col_idx < len(row):
+            return row[col_idx].strip()
+        return fallback
+
+    def safe_float(val):
+        if not val:
+            return 0.0
+        try:
+            val_clean = re.sub(r'[^\d\.]', '', val.replace(',', '.'))
+            return float(val_clean)
+        except Exception:
+            return 0.0
+
+    def normalize_district(raw_q):
+        if not raw_q:
+            return "", ""
+        clean_q = raw_q.replace("Quận", "").replace("Q.", "").replace("Q", "").strip()
+        clean_q_lower = clean_q.lower()
+        if "phú nhuận" in clean_q_lower or clean_q_lower == "pn":
+            return "pn", "PN"
+        elif "tân bình" in clean_q_lower or clean_q_lower == "tb":
+            return "tb", "TB"
+        elif "bình thạnh" in clean_q_lower or clean_q_lower == "bt":
+            return "bt", "BT"
+        elif "gò vấp" in clean_q_lower or clean_q_lower == "gv":
+            return "gv", "GV"
+        elif "tân phú" in clean_q_lower or clean_q_lower == "tp":
+            return "tp", "TP"
+        elif "bình tân" in clean_q_lower or clean_q_lower == "btan":
+            return "btan", "BTAN"
+        elif "1" == clean_q_lower or "q1" == clean_q_lower:
+            return "q1", "Q1"
+        elif "3" == clean_q_lower or "q3" == clean_q_lower:
+            return "q3", "Q3"
+        elif "10" == clean_q_lower or "q10" == clean_q_lower:
+            return "q10", "Q10"
+        q_field = clean_q.lower() if (not clean_q.isdigit() and clean_q != "") else ("q" + clean_q if clean_q else "")
+        return q_field, clean_q.upper()
+
+    NUM_SHARDS = 200
+    index_list = []
+    shards = {f"{i:03d}": {} for i in range(NUM_SHARDS)}
+    
+    # Duyệt qua các dòng dữ liệu (Dòng 3 trở đi)
+    data_rows = source_values[2:]
+    add_log_message(f"[⚡] Đang xử lý {len(data_rows)} dòng dữ liệu từ Source...")
+    
+    for row_idx, r in enumerate(data_rows):
+        if not r:
+            continue
+            
+        tk_id = get_val(r, "id")
+        tieu_de = get_val(r, "tieu_de")
+        tinh_trang = get_val(r, "tinh_trang_nha")
+        trang_thai = get_val(r, "trang_thai")
+        sys_id = get_val(r, "System ID")
+        
+        # Lọc bỏ tin bị ẩn, xóa hoặc không có tiêu đề public
+        if "ẩn" in tinh_trang.lower() or "invisible" in tinh_trang.lower():
+            continue
+        if trang_thai.strip().lower() == "deleted":
+            continue
+        if not tieu_de or not tk_id or not sys_id:
+            continue
+            
+        # Tính shard_id bằng hàm băm SHA-256 ổn định
+        shard_id = int(hashlib.sha256(sys_id.encode('utf-8')).hexdigest(), 16) % NUM_SHARDS
+        shard_id_str = f"{shard_id:03d}"
+        
+        # Trích xuất ảnh công khai
+        parsed_imgs = []
+        imgs_json = get_val(r, "Images_Public_JSON")
+        if imgs_json and imgs_json.startswith("["):
+            try:
+                parsed_imgs = json.loads(imgs_json)
+            except Exception:
+                pass
+        
+        # Fallback đọc các cột Ảnh 1-15 thô nếu Images_Public_JSON trống
+        if not parsed_imgs:
+            for i in range(1, 16):
+                img_val = get_val(r, f"anh_{i}")
+                if img_val and img_val.startswith("http"):
+                    parsed_imgs.append(img_val)
+                    
+        # JSON_UI
+        json_ui_str = get_val(r, "JSON_UI")
+        json_ui_parsed = {}
+        if json_ui_str and json_ui_str.startswith("{"):
+            try:
+                json_ui_parsed = json.loads(json_ui_str)
+            except Exception:
+                pass
+                
+        # Quận / Phường (Bảo đảm Rule 1: Chuẩn hóa tên đường đặc biệt và custom_phuong/custom_quan)
+        q_field, clean_q_upper = normalize_district(get_val(r, "quan"))
+        
+        # Đơn giá m2
+        dt_so_val = get_val(r, "DT_tren_so")
+        dt_val = get_val(r, "dien_tich")
+        dt_so = safe_float(dt_so_val) if dt_so_val else (safe_float(dt_val) if dt_val else 0.0)
+        gia_val = get_val(r, "gia")
+        gia = safe_float(gia_val)
+        giabq = round((gia * 1000) / dt_so) if (dt_so > 0 and gia > 0) else 0
+        
+        summary_item = {
+            "id": tk_id,
+            "cu_phap": get_val(r, "Cu_phap"),
+            "t": tieu_de,
+            "dt": dt_val,
+            "tang": get_val(r, "so_tang"),
+            "mat": get_val(r, "mat_tien"),
+            "gia": gia_val,
+            "q": q_field,
+            "ql": clean_q_upper,
+            "phuong": get_val(r, "phuong") or "-",
+            "loai_hinh": get_val(r, "loai_hinh") or "Hẻm",
+            "huong": get_val(r, "huong_nha") or "-",
+            "duong_truoc_nha": get_val(r, "duong_truoc_nha") or "-",
+            "rong_hem": get_val(r, "do_rong_hem") or "-",
+            "tinh_trang": tinh_trang or "-",
+            "giabq": f"{giabq} tr/m²" if giabq > 0 else "-",
+            "imgs": parsed_imgs[:1] if parsed_imgs else [],
+            "system_id": sys_id,
+            "shard": shard_id_str
+        }
+        index_list.append(summary_item)
+        
+        detail_item = {
+            "id": tk_id,
+            "cu_phap": get_val(r, "Cu_phap"),
+            "t": tieu_de,
+            "dt": dt_val,
+            "tang": get_val(r, "so_tang"),
+            "mat": get_val(r, "mat_tien"),
+            "gia": gia_val,
+            "q": q_field,
+            "ql": clean_q_upper,
+            "phuong": get_val(r, "phuong") or "-",
+            "loai_hinh": get_val(r, "loai_hinh") or "Hẻm",
+            "huong": get_val(r, "huong_nha") or "-",
+            "duong_truoc_nha": get_val(r, "duong_truoc_nha") or "-",
+            "rong_hem": get_val(r, "do_rong_hem") or "-",
+            "tinh_trang": tinh_trang or "-",
+            "giabq": f"{giabq} tr/m²" if giabq > 0 else "-",
+            "m": get_val(r, "mo_ta"),
+            "imgs": parsed_imgs,
+            "system_id": sys_id,
+            "so_pn": get_val(r, "so_pn"),
+            "img_mat_tien": get_val(r, "Hinh_mat_tien"),
+            "dt_tren_so_custom": dt_so_val,
+            "json_ui_parsed": json_ui_parsed
+        }
+        shards[shard_id_str][sys_id] = detail_item
+
+    # Sắp xếp index_list theo id tăng dần để bảo đảm tính canonical ổn định
+    index_list.sort(key=lambda x: x["id"])
+    
+    # Tải current.json hiện hành từ R2 để so khớp vi sai
+    current_manifest = {}
+    current_url = f"{r2_public_url}/{r2_migration_prefix}/public_data/current.json"
+    try:
+        r_curr = requests.get(current_url, timeout=10)
+        if r_curr.status_code == 200:
+            current_manifest = r_curr.json()
+            add_log_message("[⚡] Đã tải thành công current.json hiện hành để đối chiếu vi sai.")
+    except Exception as e_curr:
+        add_log_message(f"[⚠️ WARNING] Không thể tải current.json cũ ({str(e_curr)}), sẽ upload mới hoàn toàn.")
+        
+    old_shards_map = current_manifest.get("shards", {})
+    new_shards_map = {}
+    
+    upload_count = 0
+    
+    def make_canonical_json_bytes(data):
+        return json.dumps(data, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+        
+    # 1. Duyệt 200 shards và upload vi sai
+    for i in range(NUM_SHARDS):
+        s_id = f"{i:03d}"
+        shard_data = shards[s_id]
+        
+        # Sắp xếp các listing trong shard theo system_id để ổn định canonical
+        sorted_keys = sorted(shard_data.keys())
+        sorted_shard_data = {k: shard_data[k] for k in sorted_keys}
+        
+        shard_bytes = make_canonical_json_bytes(sorted_shard_data)
+        shard_hash = hashlib.sha256(shard_bytes).hexdigest()[:8]
+        
+        new_path = f"public_data/shards/shard-{s_id}-{shard_hash}.json"
+        new_shards_map[s_id] = new_path
+        
+        old_path = old_shards_map.get(s_id)
+        if old_path == new_path:
+            # Hash không đổi, giữ nguyên file trên CDN/R2
+            continue
+            
+        # Hash thay đổi hoặc file mới, tải lên R2
+        add_log_message(f"  [R2 Upload] Mảnh shard-{s_id} có biến động dữ liệu. Tiến hành tải lên...")
+        upload_bytes_to_r2(shard_bytes, f"{r2_migration_prefix}/{new_path}", content_type="application/json")
+        upload_count += 1
+        
+    # 2. Sinh và upload Index.json mới nếu có thay đổi
+    index_bytes = make_canonical_json_bytes(index_list)
+    index_hash = hashlib.sha256(index_bytes).hexdigest()[:8]
+    new_index_path = f"public_data/indexes/index-{index_hash}.json"
+    
+    old_index_path = current_manifest.get("index_url", "")
+    if old_index_path != new_index_path:
+        add_log_message("[R2 Upload] File index.json danh sách có thay đổi. Tiến hành tải lên...")
+        upload_bytes_to_r2(index_bytes, f"{r2_migration_prefix}/{new_index_path}", content_type="application/json")
+        upload_count += 1
+        
+    # 3. Tạo current.json manifest mới và kích hoạt nguyên tử (Atomic Switch)
+    new_manifest = {
+        "version": datetime.utcnow().strftime("%Y%m%d-%H%M%S"),
+        "index_url": new_index_path,
+        "shards": new_shards_map
+    }
+    manifest_bytes = make_canonical_json_bytes(new_manifest)
+    
+    add_log_message("[R2 Upload] Đang ghi đè file kiểm soát current.json để kích hoạt phiên bản mới...")
+    upload_bytes_to_r2(manifest_bytes, f"{r2_migration_prefix}/public_data/current.json", content_type="application/json")
+    
+    add_log_message(f"[✅ Rebuild SUCCESS] Hoàn tất đồng bộ {len(index_list)} căn nhà lên R2. Tổng số file mới đã upload: {upload_count}")
+    return {
+        "status": "success",
+        "total_listings": len(index_list),
+        "uploaded_files": upload_count,
+        "version": new_manifest["version"]
+    }
 
 # ==================================================
 # API ENDPOINTS (BLUEPRINTS REGISTRATION)

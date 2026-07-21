@@ -539,21 +539,38 @@
 
   <script>
     // --- MAIN INITIALIZATION & ROUTING STATE ---
-    function openS(id, tempP = null, autoExpandPreview = false) {
+    async function openS(id, tempP = null, autoExpandPreview = false) {
       window.imageEditorSortMode = 'file';
-      const p = tempP || DATA.find(x => String(x.id) === String(id));
+      let p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
-      window.activeCurationListing = p;
 
+      // Lazy-load chi tiết từ shard R2 nếu p chỉ chứa thông tin rút gọn từ index.json
+      if (!p.original_row_data && !p.isFromPoolOnly && (!p.m || (p.imgs && p.imgs.length <= 1))) {
+        const sysId = p.system_id || p.id;
+        if (window.LegoState && LegoState.shardsMap && LegoState.shardsMap[sysId]) {
+          try {
+            const shardData = await LegoState.loadShard(sysId);
+            if (shardData && shardData[sysId]) {
+              Object.assign(p, shardData[sysId]);
+              console.log(`[openS] Loaded detail shard for listing #${sysId}`);
+            }
+          } catch (e) {
+            console.error(`[openS] Failed to lazy-load detail shard for listing #${sysId}:`, e);
+          }
+        }
+      }
+
+      window.activeCurationListing = p;
+ 
       if (p.id && typeof trackAction === 'function') {
         trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
       }
-
+ 
       const mID = document.getElementById('mID');
       const cleanTitle = typeof cutTitleToDistrict === 'function' ? cutTitleToDistrict(p.t) : p.t;
       const cleanAddressTitle = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}`.trim() || cleanTitle;
       document.getElementById('mT').textContent = cleanAddressTitle;
-
+ 
       const floatActions = document.getElementById('adminDetailFloatActions');
       if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         if (mID) mID.style.display = 'none';
@@ -575,7 +592,7 @@
       
       const sbody = document.getElementById('sbody');
       const scta = document.querySelector('.scta');
-
+ 
       if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         if (scta) scta.style.display = 'none';
         if (window.LegoDetailAdmin) window.LegoDetailAdmin.render(p, sbody, autoExpandPreview);
@@ -583,17 +600,17 @@
         if (scta) scta.style.display = 'none';
         if (window.LegoDetailClient) window.LegoDetailClient.render(p, sbody);
       }
-
+ 
       const btnZalo = document.getElementById('mZalo');
       if (btnZalo) {
         btnZalo.textContent = `💬 Tư vấn ngay căn này`;
         btnZalo.onclick = () => { if (typeof askZalo === 'function') askZalo(p.id, p.t); };
       }
-
+ 
       document.getElementById('ov').classList.add('open');
       document.getElementById('sbody').scrollTop = 0;
       document.body.style.overflow = 'hidden';
-
+ 
       if (!window.preventPushState) {
         history.pushState({ detailOpen: true }, "");
       }

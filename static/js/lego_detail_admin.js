@@ -613,42 +613,6 @@
             ` : ''}
           </div>`;
 
-    // === GỬI DỮ LIỆU XUỐNG IFRAME PREVIEW QUA postMessage ===
-    // Thay vì iframe tự fetch lại Google Sheets (mất 30-60s),
-    // parent admin gửi object listing trực tiếp xuống iframe.
-    if (p.id && !p.isFromPoolOnly) {
-      const _sendPreviewData = () => {
-        const iframeEl = document.getElementById('previewIframe');
-        if (!iframeEl) return;
-        // Loại bỏ raw array rows để giảm kích thước payload postMessage
-        const listingPayload = Object.assign({}, p);
-        delete listingPayload.original_row_data;
-        delete listingPayload.pool_row_data;
-        const sendMsg = () => {
-          try {
-            iframeEl.contentWindow.postMessage(
-              { type: 'PREVIEW_DATA', listing: listingPayload },
-              window.location.origin
-            );
-            console.log('[Admin] Đã gửi PREVIEW_DATA xuống iframe:', listingPayload.system_id || listingPayload.id);
-          } catch(e) {
-            console.warn('[Admin] postMessage tới iframe thất bại:', e);
-          }
-        };
-        if (iframeEl.contentWindow) {
-          // Gửi khi iframe load xong
-          iframeEl.addEventListener('load', sendMsg);
-          // Fallback: nếu iframe đã load rồi thì gửi ngay sau 500ms
-          setTimeout(() => {
-            if (iframeEl.contentDocument && iframeEl.contentDocument.readyState === 'complete') {
-              sendMsg();
-            }
-          }, 500);
-        }
-      };
-      setTimeout(_sendPreviewData, 100);
-    }
-
     // POST-RENDER INITIALIZATION
     if (isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
         window.CURRENT_EDITING_LISTING = p;
@@ -3011,6 +2975,13 @@
           console.warn("Không thể ghi nhận Last Sync vào Pool:", e);
         }
         
+        // Trigger R2 rebuild
+        try {
+          await fetch('/api/public/listings/rebuild', { method: 'POST' });
+        } catch (e_rebuild) {
+          console.error("Lỗi Rebuild:", e_rebuild);
+        }
+        
         alert(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${matchedRow[55]} (${matchedRow[56]})!`);
         
         // Reset ô tìm kiếm Pool trong Bộ lọc
@@ -3622,6 +3593,11 @@
         }
 
         showToast("Đã lưu thay đổi lên Google Sheets thành công!", "success");
+        try {
+          fetch('/api/public/listings/rebuild', { method: 'POST' });
+        } catch (e_rebuild) {
+          console.error("Lỗi Rebuild R2:", e_rebuild);
+        }
         
         // Re-render list cards in the background to reflect changes in-place
         if (typeof window.render === 'function') {
@@ -4024,6 +4000,13 @@
           });
         } catch (e) {
           console.warn("Không thể ghi nhận thay đổi hình ảnh hoặc Last Sync vào Pool:", e);
+        }
+        
+        // Trigger R2 rebuild
+        try {
+          await fetch('/api/public/listings/rebuild', { method: 'POST' });
+        } catch (e_rebuild) {
+          console.error("Lỗi Rebuild R2:", e_rebuild);
         }
         
         showToast(`🎉 Đã đồng bộ lên sóng thành công căn nhà #${maKhangNgo}! Đang tải lại trang...`);
