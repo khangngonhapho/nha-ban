@@ -1226,8 +1226,20 @@ window.shareAllImagesToGallery = async function(blobResults) {
   const successfulBlobs = blobResults.filter(r => r.ok);
   if (successfulBlobs.length === 0) return false;
 
+  const getMimeType = (fileName) => {
+    const lower = (fileName || '').toLowerCase();
+    if (lower.endsWith('.png')) return 'image/png';
+    if (lower.endsWith('.webp')) return 'image/webp';
+    if (lower.endsWith('.gif')) return 'image/gif';
+    return 'image/jpeg';
+  };
+
   try {
-    const files = successfulBlobs.map(r => new File([r.blob], r.name, { type: r.blob.type || 'image/jpeg' }));
+    const files = successfulBlobs.map(r => {
+      const mime = getMimeType(r.name);
+      return new File([r.blob], r.name, { type: mime });
+    });
+
     if (navigator.canShare({ files })) {
       await navigator.share({
         files: files,
@@ -1241,7 +1253,7 @@ window.shareAllImagesToGallery = async function(blobResults) {
       console.log("User canceled share dialog");
       return true;
     }
-    console.warn("Navigator share failed, using fallback sequential download", e);
+    console.warn("Navigator share failed", e);
   }
   return false;
 };
