@@ -1568,6 +1568,15 @@ module.exports = async (req, res) => {
     return res.status(200).setHeader('Content-Type', 'application/javascript; charset=utf-8').send(swJs);
   }
 
+  // Endpoint public config cho R2 CDN
+  if (pathname === '/api/public/config') {
+    const cfg = loadConfig();
+    return res.status(200).json({
+      r2_public_url: process.env.R2_PUBLIC_URL || cfg.r2_public_url || 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev',
+      r2_migration_prefix: process.env.R2_MIGRATION_PREFIX || cfg.r2_migration_prefix || 'BDS-KhangNgo-v3'
+    });
+  }
+
   // 4. Endpoint config an toàn cho client (US-100)
   if (pathname === '/api/config') {
     if (req.method !== 'GET') {
@@ -1682,7 +1691,9 @@ module.exports = async (req, res) => {
         json_ui_fields: cfg.json_ui_fields || [],
         db_file: isStaging ? 'raw_archive_staging.db' : 'raw_archive.db',
         maintenance_mode: mergedFlags.maintenance_mode === true,
-        exclusions: exclusions
+        exclusions: exclusions,
+        r2_public_url: process.env.R2_PUBLIC_URL || cfg.r2_public_url || 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev',
+        r2_migration_prefix: process.env.R2_MIGRATION_PREFIX || cfg.r2_migration_prefix || 'BDS-KhangNgo-v3'
       };
       return res.status(200).json({ status: 'success', config: safeConfig });
     } catch (err) {
