@@ -1872,7 +1872,10 @@
       const publicIntIndices = publicIntStr.split(',').map(s => s.trim()).filter(Boolean);
       const publicAlleyIndices = publicAlleyStr.split(',').map(s => s.trim()).filter(Boolean);
       
-      const publicImages = window.getPublicImagesFromForm(p);
+      const publicImages = window.getPublicImagesFromForm(p).filter(url => {
+        const norm = normalizeImgUrl(url);
+        return norm && norm !== normFacade;
+      });
       const normPublicImages = publicImages.map(url => normalizeImgUrl(url));
 
       slides.forEach((c, idx) => {
