@@ -611,7 +611,7 @@
                     <div style="width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #ff3b30; border-radius: 50%; animation: previewSpin 0.8s linear infinite; margin-bottom: 12px;"></div>
                     <span style="font-size: 13px; font-weight: 500; color: #d1d1d6;">⚡ Đang nạp Preview Khách Hàng từ R2 CDN: <b id="previewTimerVal" style="color:#ff9500;">0.0s</b></span>
                   </div>
-                  <iframe id="previewIframe" src="${window.location.origin}${window.location.pathname}?s=${p.system_id}&preview=true" onload="if(typeof window.onPreviewIframeLoaded === 'function') window.onPreviewIframeLoaded(this);" style="position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent;"></iframe>
+                  <iframe id="previewIframe" src="about:blank" data-sysid="${p.system_id}" onload="if(this.src && this.src !== 'about:blank' && typeof window.onPreviewIframeLoaded === 'function') window.onPreviewIframeLoaded(this);" style="position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent;"></iframe>
                 </div>
               </div>
             </div>
@@ -3037,8 +3037,9 @@
             if (loader) loader.style.display = 'flex';
             window._previewStartTime = performance.now();
             if (typeof window.startPreviewTimer === 'function') window.startPreviewTimer();
-            const originalSrc = iframe.src.split('&cb=')[0];
-            iframe.src = originalSrc + '&cb=' + Date.now();
+            const sysId = iframe.getAttribute('data-sysid') || '';
+            const baseUrl = iframe.src.includes('?s=') ? iframe.src.split('&cb=')[0] : `${window.location.origin}${window.location.pathname}?s=${sysId}&preview=true`;
+            iframe.src = baseUrl + '&cb=' + Date.now();
           }
         }
       }
