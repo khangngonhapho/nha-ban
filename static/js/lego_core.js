@@ -547,10 +547,14 @@ const LegoState = {
 
   // Sheets Loading Logic
   async loadData() {
-    // Nếu là chế độ Preview Khách hàng (iframe từ admin), nhận data qua postMessage thay vì fetch lại GSheets
+    // Nếu là chế độ Preview Khách hàng VÀ đang trong iframe của admin,
+    // nhận data qua postMessage thay vì fetch lại GSheets (tránh 30-60s delay)
     const isPreviewMode = new URLSearchParams(window.location.search).get('preview') === 'true';
-    if (isPreviewMode) {
-      console.log('[Preview] Chờ nhận dữ liệu từ parent admin qua postMessage...');
+    const isInsideIframe = (function() {
+      try { return window.self !== window.top; } catch(e) { return true; }
+    })();
+    if (isPreviewMode && isInsideIframe) {
+      console.log('[Preview/Iframe] Chờ nhận dữ liệu từ parent admin qua postMessage...');
       this.emit('dataLoading', 'preview');
       const self = this;
       const onParentMessage = (event) => {
@@ -560,23 +564,24 @@ const LegoState = {
         if (!msg || msg.type !== 'PREVIEW_DATA' || !msg.listing) return;
         window.removeEventListener('message', onParentMessage);
         const listing = msg.listing;
-        console.log('[Preview] Nhận dữ liệu từ parent:', listing.system_id || listing.id);
+        console.log('[Preview/Iframe] Nhận dữ liệu từ parent:', listing.system_id || listing.id);
         self.DATA = [listing];
         self.isDataLoaded = true;
         self.emit('rawDataLoaded', [listing]);
         self.emit('canvasDataLoaded', [listing]);
       };
       window.addEventListener('message', onParentMessage);
-      // Timeout fallback: nếu sau 8s không nhận được gì thì thông báo lỗi
+      // Timeout fallback: nếu sau 8s không nhận được gì thì load bình thường qua gviz
       setTimeout(() => {
         if (!self.isDataLoaded) {
           window.removeEventListener('message', onParentMessage);
-          console.warn('[Preview] Timeout: Không nhận được dữ liệu từ parent sau 8 giây.');
-          self.emit('dataLoadError', 'Preview timeout: Không nhận được dữ liệu từ cửa sổ admin.');
+          console.warn('[Preview/Iframe] Timeout 8s: fallback sang loadPublicDataFallback().');
+          self.loadPublicDataFallback();
         }
       }, 8000);
       return;
     }
+    // Nếu mở trực tiếp (không phải iframe) dù có ?preview=true → load bình thường
 
     // Tải cấu hình Spreadsheet IDs từ API backend trước
     try {
