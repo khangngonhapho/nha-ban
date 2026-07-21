@@ -547,91 +547,6 @@ const LegoState = {
 
   // Sheets Loading Logic
   async loadData() {
-    // Nếu là chế độ Preview Khách hàng VÀ đang trong iframe của admin,
-    // nhận data qua postMessage thay vì fetch lại GSheets (tránh 30-60s delay)
-    const isPreviewMode = new URLSearchParams(window.location.search).get('preview') === 'true';
-    const isInsideIframe = (function() {
-      try { return window.self !== window.top; } catch(e) { return true; }
-    })();
-    if (isPreviewMode && isInsideIframe) {
-      // === THỬ CACHE TRƯỚC — tránh chờ 8s không cần thiết ===
-      // Dùng cùng cache logic với loadPublicDataFallback
-      const _tryPreviewCache = () => {
-        try {
-          const cfgSheetId = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
-          const key = `lht_pd_v2:${cfgSheetId}`;
-          const raw = localStorage.getItem(key);
-          if (!raw) return false;
-          const c = JSON.parse(raw);
-          const _PD_MAX_AGE = 24 * 60 * 60 * 1000;
-          if (!c || c.version !== 2 || typeof c.savedAt !== 'number' || !Array.isArray(c.data)) return false;
-          const age = Date.now() - c.savedAt;
-          if (age < 0 || age > _PD_MAX_AGE) return false;
-          return { data: c.data, stale: age > 5 * 60 * 1000 };
-        } catch(e) { return false; }
-      };
-
-      const cachedPreview = _tryPreviewCache();
-      if (cachedPreview) {
-        // Cache hit → render ngay, không chờ postMessage
-        console.log(`[Preview/Cache] ${cachedPreview.stale ? 'STALE' : 'FRESH'} cache, render ngay.`);
-        this.DATA = cachedPreview.data;
-        this.isDataLoaded = true;
-        this.emit('rawDataLoaded', cachedPreview.data);
-        this.emit('canvasDataLoaded', cachedPreview.data);
-        this.emit('publicDataLoaded');
-        // postMessage vẫn có thể override data nếu đến trong 1s (ưu tiên listing cụ thể)
-        const self = this;
-        const onParentMsg = (event) => {
-          if (event.origin !== window.location.origin) return;
-          const msg = event.data;
-          if (!msg || msg.type !== 'PREVIEW_DATA' || !msg.listing) return;
-          window.removeEventListener('message', onParentMsg);
-          console.log('[Preview/Cache] postMessage override với listing:', msg.listing.system_id || msg.listing.id);
-          self.DATA = [msg.listing];
-          self.emit('rawDataLoaded', [msg.listing]);
-          self.emit('canvasDataLoaded', [msg.listing]);
-        };
-        window.addEventListener('message', onParentMsg);
-        setTimeout(() => window.removeEventListener('message', onParentMsg), 1000);
-        return;
-      }
-
-      // Cache miss → chờ postMessage (rút timeout xuống 2s để gviz + cache sớm hơn)
-      console.log('[Preview/Iframe] Cache miss, chờ postMessage từ admin (2s)...');
-      this.emit('dataLoading', 'preview');
-      const self = this;
-      let dataFromMessage = false;   // track nếu postMessage đã đến
-      const onParentMessage = (event) => {
-        if (event.origin !== window.location.origin) return;
-        const msg = event.data;
-        if (!msg || msg.type !== 'PREVIEW_DATA' || !msg.listing) return;
-        window.removeEventListener('message', onParentMessage);
-        const listing = msg.listing;
-        console.log('[Preview/Iframe] Nhận dữ liệu từ parent:', listing.system_id || listing.id);
-        dataFromMessage = true;
-        self.DATA = [listing];
-        self.isDataLoaded = true;
-        self.emit('rawDataLoaded', [listing]);
-        self.emit('canvasDataLoaded', [listing]);
-        // ✅ Warm cache trong background — không re-render UI
-        // Cần cho postMessage render xong trước (100ms)
-        setTimeout(() => {
-          console.log('[Preview/Iframe] Warming cache for next open...');
-          self.loadPublicDataFallback(true); // forceBackground=true: chỉ ghi cache, không emit rawDataLoaded
-        }, 100);
-      };
-      window.addEventListener('message', onParentMessage);
-      // Timeout 2s: nếu không nhận postMessage → cold load để ghi cache cho lần sau
-      setTimeout(() => {
-        if (!dataFromMessage && !self.isDataLoaded) {
-          window.removeEventListener('message', onParentMessage);
-          console.warn('[Preview/Iframe] Timeout 2s: fallback sang loadPublicDataFallback().');
-          self.loadPublicDataFallback(false);
-        }
-      }, 2000);
-      return;
-    }
 
     // Nếu mở trực tiếp (không phải iframe) dù có ?preview=true → load bình thường
 
@@ -1300,14 +1215,13 @@ const LegoState = {
   // _PD_MAX_AGE: 24h → xóa hẳn, không serve dù stale
   // =========================================================
 
-  loadPublicDataFallback(forceBackground = false) {
+  async loadPublicDataFallback(forceBackground = false) {
     // === PUBLIC DATA CACHE CONSTANTS ===
     const _PD_VER     = 2;
     const _PD_TTL     = 5  * 60 * 1000;          // 5 phút → stale
     const _PD_MAX_AGE = 24 * 60 * 60 * 1000;     // 24h   → xóa hẳn
     const _pdKey = (sid) => `lht_pd_v${_PD_VER}:${sid}`;
 
-    // FNV-1a fingerprint — detect thay đổi giá, tiêu đề, trạng thái, địa chỉ, ảnh đại diện
     const _pdFingerprint = (data) => {
       let h = 2166136261;
       for (const item of data) {
@@ -1344,35 +1258,42 @@ const LegoState = {
           localStorage.removeItem(key);
           return null;
         }
+        // Khôi phục map phân mảnh từ bộ nhớ cache
+        if (c.shardsMap) {
+          this.shardsMap = c.shardsMap;
+        }
         return { data: c.data, fingerprint: c.fingerprint || '', age, stale: age > _PD_TTL };
       } catch(e) {
-        localStorage.removeItem(key);  // Xóa JSON hỏng ngay lập tức
-        console.warn('[Cache] Corrupted cache removed:', e);
+        localStorage.removeItem(key);
         return null;
       }
     };
 
-    const _pdWrite = (data, fingerprint, sheetId) => {
+    const _pdWrite = (data, fingerprint, sheetId, shardsMap) => {
       if (!Array.isArray(data)) return;
       const key = _pdKey(sheetId);
       try {
-        const payload = JSON.stringify({ version: _PD_VER, savedAt: Date.now(), fingerprint, data });
+        const payload = JSON.stringify({ version: _PD_VER, savedAt: Date.now(), fingerprint, data, shardsMap });
         localStorage.setItem(key, payload);
-        // Đo kích thước UTF-8 chính xác (quan trọng với tiếng Việt)
-        const sizeKB = new Blob([payload]).size / 1024;
-        if (sizeKB > 2048) {
-          console.warn(`[Cache] CRITICAL: ${sizeKB.toFixed(0)} KB — cần xem lại data cache`);
-        } else if (sizeKB > 512) {
-          console.warn(`[Cache] Large: ${sizeKB.toFixed(0)} KB — cần theo dõi`);
-        } else if (window.LHT_DEBUG) {
-          console.log(`[Cache] Written: ${sizeKB.toFixed(1)} KB, ${data.length} items`);
-        }
       } catch(e) {
-        console.warn('[Cache] Write failed (quota exceeded?):', e);
-        // App vẫn tiếp tục hoạt động bình thường, chỉ không cache lần này
+        console.warn('[Cache] Write failed:', e);
       }
     };
-    // === END CACHE HELPERS ===
+
+    // Tải config từ API backend nếu chưa có r2_public_url
+    if (!this.config || !this.config.r2_public_url) {
+      try {
+        const res = await fetch('/api/public/config');
+        if (res.ok) {
+          const conf = await res.json();
+          if (!this.config) this.config = {};
+          this.config.r2_public_url = conf.r2_public_url;
+          this.config.r2_migration_prefix = conf.r2_migration_prefix;
+        }
+      } catch (err_conf) {
+        console.warn('[LegoState] Failed to fetch public config:', err_conf);
+      }
+    }
 
     const sheetId = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
     const cached = _pdRead(sheetId);
@@ -1380,322 +1301,144 @@ const LegoState = {
     const isBackground = forceBackground || Boolean(cached);
 
     if (cached) {
-      console.log(`[Cache] ${cached.stale ? 'STALE' : 'FRESH'}, age: ${(cached.age/1000).toFixed(0)}s, items: ${cached.data.length}`);
+      console.log(`[Cache] ${cached.stale ? 'STALE' : 'FRESH'}, items: ${cached.data.length}`);
       self.DATA = cached.data;
       self.isDataLoaded = true;
       self.emit('rawDataLoaded', cached.data);
-      self.emit('canvasDataLoaded', cached.data);   // Public path: cùng array (đã xác minh L1453-1454)
+      self.emit('canvasDataLoaded', cached.data);
       self.emit('publicDataLoaded');
-      if (!cached.stale) return;                    // Fresh cache → không gọi gviz
-      self.emit('dataRefreshing', 'public');         // Stale → báo UI đang revalidate ngầm
+      if (!cached.stale) return;
+      self.emit('dataRefreshing', 'public');
     } else {
       self.emit('dataLoading', 'public');
     }
 
-    // === JSONP CALLBACK — dùng tên cố định (__gsCallback) đã được gviz test OK ===
-    // Lưu ý: race condition khi 2 iframe load đồng thời là edge case chấp nhận được
-    const cbName   = '__gsCallback';
-    const scriptId = '_gs';
-    let settled = false;
+    const r2Url = this.config && this.config.r2_public_url;
+    const prefix = this.config && this.config.r2_migration_prefix;
+    if (!r2Url || !prefix) {
+      console.error('[LegoState] Cloudflare R2 public URL or prefix not configured.');
+      self.emit('dataLoadError', 'Lỗi cấu hình R2. Vui lòng kiểm tra cài đặt.');
+      return;
+    }
 
-    const _cleanup = () => {
-      clearTimeout(timeoutId);
-      delete window[cbName];
-      const node = document.getElementById(scriptId);
-      if (node) node.remove();
-    };
+    try {
+      // 1. Tải current.json
+      const currentUrl = `${r2Url}/${prefix}/public_data/current.json?t=${Date.now()}`;
+      console.log(`[LegoState] Fetching manifest from: ${currentUrl}`);
+      const resManifest = await fetch(currentUrl);
+      if (!resManifest.ok) throw new Error(`Không thể tải manifest current.json (Mã HTTP: ${resManifest.status})`);
+      const manifest = await resManifest.json();
+      
+      const indexUrlPath = manifest.index_url;
+      this.shardsMap = manifest.shards || {};
 
-    const _fail = (reason, err) => {
-      if (settled) return;
-      settled = true;
-      _cleanup();
+      // 2. Tải index.json
+      const indexFullUrl = `${r2Url}/${prefix}/${indexUrlPath}`;
+      console.log(`[LegoState] Fetching index list from: ${indexFullUrl}`);
+      const resIndex = await fetch(indexFullUrl);
+      if (!resIndex.ok) throw new Error(`Không thể tải index list (Mã HTTP: ${resIndex.status})`);
+      const fullList = await resIndex.json();
+
+      // Áp dụng bộ lọc loại trừ
+      const exclusionResult = typeof window.applyExclusions === 'function'
+        ? window.applyExclusions(fullList)
+        : null;
+      const filteredFullList = Array.isArray(exclusionResult) ? exclusionResult : fullList;
+
+      // Lưu cache
+      const newFingerprint = _pdFingerprint(filteredFullList);
+      _pdWrite(filteredFullList, newFingerprint, sheetId, this.shardsMap);
+
       if (isBackground) {
-        self.emit('dataRefreshFailed', { source: 'public', reason, error: err && err.message });
-      } else {
-        // Emit STRING cho backward-compat với listener cũ (tránh [object Object])
-        let msg;
-        if (reason === 'network_error') {
-          msg = 'Không kết nối được Google Sheets. Kiểm tra mạng và SHEET_ID.';
-        } else if (reason === 'timeout') {
-          msg = 'Hết thời gian chờ Google Sheets (30s). Kiểm tra kết nối mạng.';
-        } else {
-          msg = `Lỗi tải dữ liệu: ${reason}${err ? ' - ' + err.message : ''}`;
-        }
-        self.emit('dataLoadError', msg);
-      }
-    };
-
-    // Timeout 30s — xử lý trường hợp gviz không trả về (hung request)
-    const timeoutId = setTimeout(() => _fail('timeout'), 30000);
-
-    window[cbName] = (response) => {
-      if (settled) return;
-      settled = true;
-      _cleanup();
-
-      try {
-        // Kiểm tra response error trước khi parse bảng
-        if (!response || response.status === 'error') {
-          const msg = (response && response.errors && response.errors[0] &&
-            (response.errors[0].detailed_message || response.errors[0].reason)) || 'gviz response error';
-          throw new Error(msg);
-        }
-
-        const cols = response.table.cols || [];
-        const getColIdx = (headerKey, fallback) => {
-          const lowerKey = headerKey.toLowerCase();
-          for (let i = 0; i < cols.length; i++) {
-            const label = (cols[i].label || "").toLowerCase();
-            if (label === lowerKey || label.split(/\s+/).includes(lowerKey)) {
-              return i;
-            }
-          }
-          for (let i = 0; i < cols.length; i++) {
-            const label = (cols[i].label || "").toLowerCase();
-            if (label.includes(lowerKey)) return i;
-          }
-          return fallback;
-        };
-
-        const colMap = {
-          id: getColIdx("id", 0),
-          tieu_de: getColIdx("tieu_de", 1),
-          dien_tich: getColIdx("dien_tich", 2),
-          so_tang: getColIdx("so_tang", 3),
-          mat_tien: getColIdx("mat_tien", 4),
-          gia: getColIdx("gia", 5),
-          quan: getColIdx("quan", 6),
-          phuong: getColIdx("phuong", 7),
-          loai_hinh: getColIdx("loai_hinh", 8),
-          huong_nha: getColIdx("huong_nha", 9),
-          duong_truoc_nha: getColIdx("duong_truoc_nha", 10),
-          do_rong_hem: getColIdx("do_rong_hem", 11),
-          tinh_trang_nha: getColIdx("tinh_trang_nha", 12),
-          danh_gia: getColIdx("danh_gia", 13),
-          ngu_tang_tret: getColIdx("ngu_tang_tret", 14),
-          chdv: getColIdx("chdv", 15),
-          mo_ta: getColIdx("mo_ta", 16),
-          system_id: getColIdx("System ID", 34),
-          hinh_mat_tien: getColIdx("hinh_mat_tien", 35),
-          so_pn: getColIdx("so_pn", 29),
-          so_wc: getColIdx("so_wc", 30),
-          ten_duong: getColIdx("ten_duong", 31),
-          gio_dang: getColIdx("gio_dang", 32),
-          trang_thai: getColIdx("trang_thai", 33),
-          dt_tren_so: getColIdx("dt_tren_so", 44),
-          images_public_json: getColIdx("images_public_json", 45),
-          json_ui: getColIdx("json_ui", 43)
-        };
-
-        const rows = response.table.rows;
-        const fullList = rows
-          .filter(r => r.c[colMap.id] && r.c[colMap.id].v)
-          .map((r, index) => {
-            const dtSoVal = parseFloat(cv(r.c[colMap.dt_tren_so])) || parseFloat(cv(r.c[colMap.dien_tich])) || 0;
-            const gia = parseFloat(cv(r.c[colMap.gia])) || 0;
-            const giabq = (dtSoVal > 0 && gia > 0) ? Math.round((gia * 1000) / dtSoVal) : 0;
-            let rawQ = cv(r.c[colMap.quan]);
-            if (!rawQ) {
-              const titleLower = String(cv(r.c[colMap.tieu_de])).toLowerCase();
-              const phuongLower = String(cv(r.c[colMap.phuong])).toLowerCase();
-              const descLower = String(cv(r.c[colMap.mo_ta])).toLowerCase();
-              const textToSearch = titleLower + " " + phuongLower + " " + descLower;
-              if (textToSearch.includes('phú nhuận') || /\bpn\b/i.test(textToSearch) || textToSearch.includes('cầu kiệu')) rawQ = 'PN';
-              else if (textToSearch.includes('tân bình') || /\btb\b/i.test(textToSearch) || textToSearch.includes('tân sơn nhất') || textToSearch.includes('tân hòa')) rawQ = 'TB';
-              else if (textToSearch.includes('bình thạnh') || /\bbt\b/i.test(textToSearch)) rawQ = 'BT';
-              else if (textToSearch.includes('gò vấp') || /\bgv\b/i.test(textToSearch)) rawQ = 'GV';
-              else if (textToSearch.includes('tân phú') || /\btp\b(?!\s*\.?\s*hcm)/i.test(textToSearch)) rawQ = 'TP';
-              else if (textToSearch.includes('bình tân') || /\bbtan\b/i.test(textToSearch)) rawQ = 'BTan';
-              else if (textToSearch.includes('thủ đức') || /\btd\b/i.test(textToSearch)) rawQ = 'TD';
-              else if (textToSearch.includes('hóc môn') || /\bhm\b/i.test(textToSearch)) rawQ = 'HM';
-              else if (textToSearch.includes('nhà bè') || /\bnb\b/i.test(textToSearch)) rawQ = 'NB';
-              else if (textToSearch.includes('bình chánh') || /\bbc\b/i.test(textToSearch)) rawQ = 'BC';
-              else if (textToSearch.includes('củ chi') || /\bcc\b/i.test(textToSearch)) rawQ = 'CC';
-              else if (textToSearch.includes('cần giờ') || /\bcg\b/i.test(textToSearch)) rawQ = 'CG';
-              else {
-                const numText = titleLower + " " + phuongLower;
-                let qNumMatch = numText.match(/(?:quận|q\.?)\s*(\d+)/);
-                if (!qNumMatch) {
-                  qNumMatch = descLower.match(/(?:quận|q\.?)\s*(\d+)/);
-                }
-                if (qNumMatch) {
-                  rawQ = qNumMatch[1];
-                }
-              }
-            }
-            let cleanQ = String(rawQ).replace(/^(Quận|Q)\.?\s*/i, '').trim();
-            if (cleanQ.endsWith('.0')) {
-              cleanQ = cleanQ.substring(0, cleanQ.length - 2);
-            }
-
-            const cleanQLower = cleanQ.toLowerCase();
-            if (cleanQLower.includes('phú nhuận') || cleanQLower === 'pn') cleanQ = 'pn';
-            else if (cleanQLower.includes('tân bình') || cleanQLower === 'tb') cleanQ = 'tb';
-            else if (cleanQLower.includes('bình thạnh') || cleanQLower === 'bt') cleanQ = 'bt';
-            else if (cleanQLower.includes('gò vấp') || cleanQLower === 'gv') cleanQ = 'gv';
-            else if (cleanQLower.includes('tân phú') || cleanQLower === 'tp') cleanQ = 'tp';
-            else if (cleanQLower.includes('bình tân') || cleanQLower === 'btan') cleanQ = 'btan';
-            else if (cleanQLower.includes('thủ đức') || cleanQLower === 'td') cleanQ = 'td';
-            else if (cleanQLower.includes('hóc môn') || cleanQLower === 'hm') cleanQ = 'hm';
-            else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
-            else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
-            else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
-            else if (cleanQLower.includes('cần giờ') || cleanQLower === 'cg') cleanQ = 'cg';
-            else if (cleanQLower === '1' || cleanQLower === 'q1') cleanQ = '1';
-            else if (cleanQLower === '2' || cleanQLower === 'q2') cleanQ = '2';
-            else if (cleanQLower === '3' || cleanQLower === 'q3') cleanQ = '3';
-            else if (cleanQLower === '4' || cleanQLower === 'q4') cleanQ = '4';
-            else if (cleanQLower === '5' || cleanQLower === 'q5') cleanQ = '5';
-            else if (cleanQLower === '6' || cleanQLower === 'q6') cleanQ = '6';
-            else if (cleanQLower === '7' || cleanQLower === 'q7') cleanQ = '7';
-            else if (cleanQLower === '8' || cleanQLower === 'q8') cleanQ = '8';
-            else if (cleanQLower === '9' || cleanQLower === 'q9') cleanQ = '9';
-            else if (cleanQLower === '10' || cleanQLower === 'q10') cleanQ = '10';
-            else if (cleanQLower === '11' || cleanQLower === 'q11') cleanQ = '11';
-            else if (cleanQLower === '12' || cleanQLower === 'q12') cleanQ = '12';
-            
-            let parsedPublicImgs = [];
-            const imagesPublicJsonStr = (r.c && r.c[colMap.images_public_json]) ? cv(r.c[colMap.images_public_json]) : "";
-            if (imagesPublicJsonStr && imagesPublicJsonStr.trim().startsWith('[')) {
-              try {
-                const parsed = JSON.parse(imagesPublicJsonStr);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                  parsedPublicImgs = parsed;
-                }
-              } catch (e) {
-                console.warn("Lỗi parse Images_Public_JSON:", e);
-              }
-            }
-
-            const p = {
-              temp_id: index + 1,
-              id: cv(r.c[colMap.id]),
-              cu_phap: '',
-              t: cv(r.c[colMap.tieu_de]),
-              dt: cv(r.c[colMap.dien_tich]),
-              tang: cv(r.c[colMap.so_tang]),
-              mat: cv(r.c[colMap.mat_tien]),
-              gia: cv(r.c[colMap.gia]),
-              q: (isNaN(cleanQ) || cleanQ === '') ? cleanQ.toLowerCase() : 'q' + cleanQ,
-              ql: cleanQ.toUpperCase(),
-              phuong: cv(r.c[colMap.phuong]) || '-',
-              loai_hinh: cv(r.c[colMap.loai_hinh]) || 'Hẻm',
-              huong: cv(r.c[colMap.huong_nha]) || '-',
-              duong_truoc_nha: cv(r.c[colMap.duong_truoc_nha]) || '-',
-              rong_hem: cv(r.c[colMap.do_rong_hem]) || '-',
-              tinh_trang: cv(r.c[colMap.tinh_trang_nha]) || '-',
-              trang_thai: cv(r.c[colMap.tinh_trang_nha]) || '',
-              danh_gia: cv(r.c[colMap.danh_gia]) || '',
-              is_invisible: (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('ẩn') ||
-                (cv(r.c[colMap.tinh_trang_nha]) || '').toLowerCase().includes('invisible'),
-              ngu_tang_tret: cv(r.c[colMap.ngu_tang_tret]) || '-',
-              chdv: cv(r.c[colMap.chdv]) || '-',
-              giabq: giabq > 0 ? `${giabq} tr/m²` : '-',
-              m: cv(r.c[colMap.mo_ta]),
-              imgs: parsedPublicImgs.length > 0 ? parsedPublicImgs : (() => {
-                const fallbackUrls = [];
-                for (let i = 1; i <= 15; i++) {
-                  const idx = getColIdx(`anh_${i}`, -1);
-                  if (idx !== -1 && r.c[idx]) {
-                    fallbackUrls.push(cv(r.c[idx]));
-                  }
-                }
-                if (fallbackUrls.length === 0) {
-                  const defaultIdxs = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 38, 39, 40, 41, 42];
-                  defaultIdxs.forEach(dIdx => {
-                    if (r.c[dIdx]) fallbackUrls.push(cv(r.c[dIdx]));
-                  });
-                }
-                return fallbackUrls.filter(Boolean);
-              })(),
-              images_public: parsedPublicImgs,
-              system_id: cv(r.c[colMap.system_id]) || (index + 1).toString(),
-              so_pn: cv(r.c[colMap.so_pn]) || '-',
-              img_mat_tien: cv(r.c[colMap.hinh_mat_tien]) || '',
-              dt_tren_so_custom: cv(r.c[colMap.dt_tren_so]) || '',
-              raw_dt_tren_so: cv(r.c[colMap.dt_tren_so]) || ''
-            };
-            
-            let jsonUiVal = '';
-            if (colMap.json_ui !== -1 && r.c[colMap.json_ui]) {
-              jsonUiVal = cv(r.c[colMap.json_ui]);
-            }
-            if (!jsonUiVal && r.c && r.c.length) {
-              for (let i = r.c.length - 1; i >= 0; i--) {
-                const val = cv(r.c[i]);
-                const valStr = val ? String(val).trim() : '';
-                if (valStr && valStr.startsWith('{') && valStr.endsWith('}')) {
-                  jsonUiVal = valStr;
-                  break;
-                }
-              }
-            }
-            p.json_ui_parsed = {};
-            if (jsonUiVal) {
-              try { p.json_ui_parsed = JSON.parse(jsonUiVal); } catch(e) {}
-            }
-            if (!p.json_ui_parsed.Criteria_Loai_BDS) {
-              p.json_ui_parsed.Criteria_Loai_BDS = p.loai_hinh === "Mặt tiền" ? "Nhà mặt phố" : "Nhà trong ngõ, ngách, hẻm";
-            }
-            
-            p.dai_nha = getDaiNha(p);
-            return p;
-          });
-
-        // applyExclusions: global config, không phụ thuộc listing (đã xác minh lego_filters.js:L85-86)
-        // Array.isArray check để phòng trường hợp hàm trả unexpected value
-        const exclusionResult = typeof window.applyExclusions === 'function'
-          ? window.applyExclusions(fullList)
-          : null;
-        const filteredFullList = Array.isArray(exclusionResult) ? exclusionResult : fullList;
-
-        // Ghi cache trước khi so sánh (cập nhật savedAt dù không có thay đổi)
-        const newFingerprint = _pdFingerprint(filteredFullList);
-        _pdWrite(filteredFullList, newFingerprint, sheetId);
-
-        if (isBackground) {
-          // Background revalidate hoặc cache warming (forceBackground=true)
-          // cached có thể là null khi forceBackground=true (lần đầu warm cache)
-          if (cached && cached.fingerprint === newFingerprint) {
-            console.log('[Cache] Background refresh: no change, cache refreshed.');
-            self.emit('dataRefreshCompleted', { changed: false });
-          } else if (cached) {
-            console.log('[Cache] Background refresh: data changed, updating memory.');
-            self.DATA = filteredFullList;
-            self.isDataLoaded = true;
-            self.emit('publicDataRefreshed', filteredFullList);
-          } else {
-            // forceBackground=true, không có cache cũ: chỉ ghi cache, không touch UI
-            console.log('[Cache] Cache warmed in background (' + filteredFullList.length + ' items).');
-            self.emit('dataRefreshCompleted', { changed: false, warmed: true });
-          }
-        } else {
-          // Cold load: emit full event chain
+        if (cached && cached.fingerprint === newFingerprint) {
+          console.log('[Cache] Background refresh: no change.');
+          self.emit('dataRefreshCompleted', { changed: false });
+        } else if (cached) {
+          console.log('[Cache] Background refresh: data changed, updating memory.');
           self.DATA = filteredFullList;
           self.isDataLoaded = true;
-          self.emit('rawDataLoaded', filteredFullList);
-          self.emit('canvasDataLoaded', filteredFullList);
-          self.emit('publicDataLoaded');
-        }
-      } catch (e) {
-        console.error('[PublicData] Callback parse error:', e);
-        if (isBackground) {
-          self.emit('dataRefreshFailed', { source: 'public', reason: 'parse_error', error: e.message });
+          self.emit('publicDataRefreshed', filteredFullList);
         } else {
-          // Emit STRING cho backward-compat với listener cũ
-          self.emit('dataLoadError', 'Lỗi parse dữ liệu từ Google Sheets: ' + e.message);
+          console.log('[Cache] Cache warmed in background.');
+          self.emit('dataRefreshCompleted', { changed: false, warmed: true });
         }
+      } else {
+        self.DATA = filteredFullList;
+        self.isDataLoaded = true;
+        self.emit('rawDataLoaded', filteredFullList);
+        self.emit('canvasDataLoaded', filteredFullList);
+        self.emit('publicDataLoaded');
       }
-    };
+    } catch (e) {
+      console.error('[PublicData] R2 loading failed:', e);
+      if (isBackground) {
+        self.emit('dataRefreshFailed', { source: 'public', reason: 'r2_error', error: e.message });
+      } else {
+        self.emit('dataLoadError', 'Lỗi tải dữ liệu từ Cloudflare CDN R2: ' + e.message);
+      }
+    }
+  },
 
-    // Script tag với unique ID — không dùng lại '_gs' cũ
-    const script = document.createElement('script');
-    script.id = scriptId;
-    script.setAttribute('data-lht-gviz', 'true');
-    // Giữ nguyên URL format (tqx=out:json;responseHandler:...) chỉ thay tên callback
-    script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${cbName}&t=${Date.now()}`;
-    script.onerror = () => _fail('network_error');
-    document.head.appendChild(script);
+  async loadShard(sysId) {
+    if (!sysId) return null;
+
+    let shardIdStr;
+    try {
+      const msgBuffer = new TextEncoder().encode(sysId);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      const bigIntVal = BigInt("0x" + hashHex);
+      const shardNum = Number(bigIntVal % 200n);
+      shardIdStr = String(shardNum).padStart(3, '0');
+    } catch (e_hash) {
+      console.error("[LegoState] Failed to calculate shard hash for " + sysId, e_hash);
+      return null;
+    }
+
+    if (this.shardCache && this.shardCache[shardIdStr]) {
+      return this.shardCache[shardIdStr];
+    }
+    if (!this.shardsMap || !this.shardsMap[shardIdStr]) {
+      console.warn(`[LegoState] Shard mapping not found for shard index ${shardIdStr} (sysId: ${sysId})`);
+      return null;
+    }
+    const shardPath = this.shardsMap[shardIdStr];
+    
+    // Tải config từ API backend nếu chưa có r2_public_url
+    if (!this.config || !this.config.r2_public_url) {
+      try {
+        const res = await fetch('/api/public/config');
+        if (res.ok) {
+          const conf = await res.json();
+          if (!this.config) this.config = {};
+          this.config.r2_public_url = conf.r2_public_url;
+          this.config.r2_migration_prefix = conf.r2_migration_prefix;
+        }
+      } catch (err_conf) {
+        console.warn('[LegoState] Failed to fetch public config inside loadShard:', err_conf);
+      }
+    }
+
+    const r2Url = this.config && this.config.r2_public_url;
+    const prefix = this.config && this.config.r2_migration_prefix;
+    if (!r2Url || !prefix) {
+      console.warn('[LegoState] Cloudflare R2 public URL or prefix not configured.');
+      return null;
+    }
+    const url = `${r2Url}/${prefix}/${shardPath}`;
+    try {
+      console.log(`[LegoState] Lazy-loading detail shard ${shardIdStr} từ: ${url}`);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!this.shardCache) this.shardCache = {};
+      this.shardCache[shardIdStr] = data;
+      return data;
+    } catch (e) {
+      console.error(`[LegoState] Failed to load shard ${shardIdStr}:`, e);
+      return null;
+    }
   }
 };
 

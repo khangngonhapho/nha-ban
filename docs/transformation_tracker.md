@@ -66,7 +66,7 @@ last_updated: 2026-07-19
 | S5 | 2026-07-09 | MOD-05 | MOD-05.1–MOD-05.10 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Modularize HTML viewer templates into component files under templates/components/, 90 unit + 4 E2E pass |
 | S6 | 2026-07-09 | MOD-06 | MOD-06.1–MOD-06.12 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Split monolithic SOURCE_OF_TRUTH.md (187KB) into small modular documents under docs/business_rules/ and docs/architecture/ |
 | S7 | 2026-07-09 | MOD-07 | MOD-07.1–MOD-07.8 | PREPARE+EXTRACT+WIRE+VERIFY+SEAL: Establish standard Agent Customizations directory at .agents/ with core AGENTS.md rules ledger and 5 specialized skills |
-| S8 | 2026-07-19 | MOD-02 | Anti-Malformed Fix | Hardening: synchronous=FULL, batch commit 100 căn, WAL checkpoint(TRUNCATE), startup integrity guard (Phương án C), 138 tests pass |
+| S9 | 2026-07-21 | US-153 Cache | 4 hotfixes | localStorage stale-while-revalidate cache cho gviz: 3 regressions trong 1 ngày. Root causes: (1) Dynamic callback name `__gsCb_{ts}_...` bị gviz reject silently → 30s timeout — không test live endpoint trước khi thay. (2) `dataLoadError` payload đổi string→object mà không check listener consumer → `[object Object]` trên customer page. (3) iframe `isPreviewMode&&isInsideIframe` path block `loadPublicDataFallback()` không được nhận dạng trước khi code. Đã fix và deploy. Rule 12 bổ sung vào AGENTS.md. |
 
 
 
