@@ -601,6 +601,7 @@ const LegoState = {
       console.log('[Preview/Iframe] Cache miss, chờ postMessage từ admin (2s)...');
       this.emit('dataLoading', 'preview');
       const self = this;
+      let dataFromMessage = false;   // track nếu postMessage đã đến
       const onParentMessage = (event) => {
         if (event.origin !== window.location.origin) return;
         const msg = event.data;
@@ -608,18 +609,25 @@ const LegoState = {
         window.removeEventListener('message', onParentMessage);
         const listing = msg.listing;
         console.log('[Preview/Iframe] Nhận dữ liệu từ parent:', listing.system_id || listing.id);
+        dataFromMessage = true;
         self.DATA = [listing];
         self.isDataLoaded = true;
         self.emit('rawDataLoaded', [listing]);
         self.emit('canvasDataLoaded', [listing]);
+        // ✅ Warm cache trong background — không re-render UI
+        // Cần cho postMessage render xong trước (100ms)
+        setTimeout(() => {
+          console.log('[Preview/Iframe] Warming cache for next open...');
+          self.loadPublicDataFallback(true); // forceBackground=true: chỉ ghi cache, không emit rawDataLoaded
+        }, 100);
       };
       window.addEventListener('message', onParentMessage);
-      // Timeout 2s (rút từ 8s): fallback vào loadPublicDataFallback để ghi cache cho lần sau
+      // Timeout 2s: nếu không nhận postMessage → cold load để ghi cache cho lần sau
       setTimeout(() => {
-        if (!self.isDataLoaded) {
+        if (!dataFromMessage && !self.isDataLoaded) {
           window.removeEventListener('message', onParentMessage);
           console.warn('[Preview/Iframe] Timeout 2s: fallback sang loadPublicDataFallback().');
-          self.loadPublicDataFallback();
+          self.loadPublicDataFallback(false);
         }
       }, 2000);
       return;
@@ -1292,7 +1300,7 @@ const LegoState = {
   // _PD_MAX_AGE: 24h → xóa hẳn, không serve dù stale
   // =========================================================
 
-  loadPublicDataFallback() {
+  loadPublicDataFallback(forceBackground = false) {
     // === PUBLIC DATA CACHE CONSTANTS ===
     const _PD_VER     = 2;
     const _PD_TTL     = 5  * 60 * 1000;          // 5 phút → stale
@@ -1369,7 +1377,7 @@ const LegoState = {
     const sheetId = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
     const cached = _pdRead(sheetId);
     const self = this;
-    const isBackground = Boolean(cached);
+    const isBackground = forceBackground || Boolean(cached);
 
     if (cached) {
       console.log(`[Cache] ${cached.stale ? 'STALE' : 'FRESH'}, age: ${(cached.age/1000).toFixed(0)}s, items: ${cached.data.length}`);
@@ -1400,11 +1408,19 @@ const LegoState = {
       if (settled) return;
       settled = true;
       _cleanup();
-      const payload = { source: 'public', reason, error: err && err.message };
       if (isBackground) {
-        self.emit('dataRefreshFailed', payload);
+        self.emit('dataRefreshFailed', { source: 'public', reason, error: err && err.message });
       } else {
-        self.emit('dataLoadError', payload);
+        // Emit STRING cho backward-compat với listener cũ (tránh [object Object])
+        let msg;
+        if (reason === 'network_error') {
+          msg = 'Không kết nối được Google Sheets. Kiểm tra mạng và SHEET_ID.';
+        } else if (reason === 'timeout') {
+          msg = 'Hết thời gian chờ Google Sheets (30s). Kiểm tra kết nối mạng.';
+        } else {
+          msg = `Lỗi tải dữ liệu: ${reason}${err ? ' - ' + err.message : ''}`;
+        }
+        self.emit('dataLoadError', msg);
       }
     };
 
@@ -1637,15 +1653,20 @@ const LegoState = {
         _pdWrite(filteredFullList, newFingerprint, sheetId);
 
         if (isBackground) {
-          // Background revalidate: so sánh fingerprint với cache cũ (không hash lại)
-          if (cached.fingerprint === newFingerprint) {
+          // Background revalidate hoặc cache warming (forceBackground=true)
+          // cached có thể là null khi forceBackground=true (lần đầu warm cache)
+          if (cached && cached.fingerprint === newFingerprint) {
             console.log('[Cache] Background refresh: no change, cache refreshed.');
             self.emit('dataRefreshCompleted', { changed: false });
-          } else {
+          } else if (cached) {
             console.log('[Cache] Background refresh: data changed, updating memory.');
             self.DATA = filteredFullList;
             self.isDataLoaded = true;
             self.emit('publicDataRefreshed', filteredFullList);
+          } else {
+            // forceBackground=true, không có cache cũ: chỉ ghi cache, không touch UI
+            console.log('[Cache] Cache warmed in background (' + filteredFullList.length + ' items).');
+            self.emit('dataRefreshCompleted', { changed: false, warmed: true });
           }
         } else {
           // Cold load: emit full event chain
@@ -1660,7 +1681,8 @@ const LegoState = {
         if (isBackground) {
           self.emit('dataRefreshFailed', { source: 'public', reason: 'parse_error', error: e.message });
         } else {
-          self.emit('dataLoadError', { source: 'public', reason: 'parse_error', message: 'Không thể parse dữ liệu từ Google Sheets.', error: e.message });
+          // Emit STRING cho backward-compat với listener cũ
+          self.emit('dataLoadError', 'Lỗi parse dữ liệu từ Google Sheets: ' + e.message);
         }
       }
     };
