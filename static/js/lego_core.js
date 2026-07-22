@@ -1296,26 +1296,24 @@ const LegoState = {
     }
 
     const sheetId = (this.config && this.config.sheet_id) || '1klR5iKt_gxempDi9dguJMS8PGEe2YjqRHrMREzwnXc0';
-    const isForcePreview = typeof window !== 'undefined' && window.location && new URLSearchParams(window.location.search).has('preview');
-    const cached = isForcePreview ? null : _pdRead(sheetId);
-    if (isForcePreview) {
-      this.shardCache = {};
-    }
-    const self = this;
-    const isBackground = forceBackground || Boolean(cached);
+    
+    // Tự động dọn dẹp cache LocalStorage cũ để bảo đảm luôn lấy dữ liệu mới nhất khi F5
+    try {
+      const pdKeyPrefix = 'lht_pd_v';
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(pdKeyPrefix)) {
+          localStorage.removeItem(k);
+        }
+      }
+    } catch (e_cls) {}
 
-    if (cached) {
-      console.log(`[Cache] ${cached.stale ? 'STALE' : 'FRESH'}, items: ${cached.data.length}`);
-      self.DATA = cached.data;
-      self.isDataLoaded = true;
-      self.emit('rawDataLoaded', cached.data);
-      self.emit('canvasDataLoaded', cached.data);
-      self.emit('publicDataLoaded');
-      if (!cached.stale) return;
-      self.emit('dataRefreshing', 'public');
-    } else {
-      self.emit('dataLoading', 'public');
-    }
+    const cached = null; // Always fetch fresh data on every page load/F5 per PO directive
+    this.shardCache = {};
+    const self = this;
+    const isBackground = false;
+
+    self.emit('dataLoading', 'public');
 
     const r2Url = this.config && this.config.r2_public_url;
     const prefix = this.config && this.config.r2_migration_prefix;
@@ -1337,7 +1335,7 @@ const LegoState = {
       this.shardsMap = manifest.shards || {};
 
       // 2. Tải index.json
-      const indexFullUrl = `${r2Url}/${prefix}/${indexUrlPath}`;
+      const indexFullUrl = `${r2Url}/${prefix}/${indexUrlPath}?t=${Date.now()}`;
       console.log(`[LegoState] Fetching index list from: ${indexFullUrl}`);
       const resIndex = await fetch(indexFullUrl);
       if (!resIndex.ok) throw new Error(`Không thể tải index list (Mã HTTP: ${resIndex.status})`);
@@ -1435,7 +1433,7 @@ const LegoState = {
       console.warn('[LegoState] Cloudflare R2 public URL or prefix not configured.');
       return null;
     }
-    const url = isForcePreview ? `${r2Url}/${prefix}/${shardPath}?t=${Date.now()}` : `${r2Url}/${prefix}/${shardPath}`;
+    const url = `${r2Url}/${prefix}/${shardPath}?t=${Date.now()}`;
     try {
       console.log(`[LegoState] Lazy-loading detail shard ${shardIdStr} từ: ${url}`);
       const res = await fetch(url);
