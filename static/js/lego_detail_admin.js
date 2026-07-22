@@ -1901,7 +1901,8 @@
         
         if (orderInd) {
           if (isPublic || isCover) {
-            const orderIdx = normPublicImages.indexOf(normUrl);
+            let orderIdx = normPublicImages.indexOf(normUrl);
+            if (orderIdx === -1 && isCover) orderIdx = 0;
             if (orderIdx !== -1) {
               orderInd.style.display = 'block';
               orderInd.innerHTML = `#${orderIdx + 1}`;
@@ -1982,7 +1983,8 @@
         
         if (publicBadge) {
           if (isPublic || isCover) {
-            const orderIdx = normPublicImages.indexOf(normUrl);
+            let orderIdx = normPublicImages.indexOf(normUrl);
+            if (orderIdx === -1 && isCover) orderIdx = 0;
             if (orderIdx !== -1) {
               publicBadge.style.display = 'flex';
               publicBadge.innerHTML = `#${orderIdx + 1}`;
@@ -2056,7 +2058,7 @@
         } else {
           btnPublic.disabled = false;
           btnPublic.style.opacity = '1';
-          const isSlidePublic = isActivePublic || isActiveCover || (isActiveFacade && normPublicImages.includes(activeUrlNorm));
+          const isSlidePublic = isActivePublic || isActiveCover || (isActiveFacade && (isActiveCover || normPublicImages.includes(activeUrlNorm)));
           if (isSlidePublic) {
             btnPublic.style.background = '#27ae60';
             btnPublic.style.color = '#fff';
