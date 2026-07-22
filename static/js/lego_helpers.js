@@ -1134,6 +1134,26 @@ window.isListingSodoUrl = function(url, p) {
   return false;
 };
 
+// === isOnlyFacadeUrl ===
+// Trả về true nếu URL này CHỈ LÀ MẶT TIỀN đơn thuần (không được chọn trong danh sách public)
+window.isOnlyFacadeUrl = function(url, p) {
+  if (!url) return false;
+  const normFn = window.normalizeImgUrl || ((u) => u || '');
+  const norm = normFn(url);
+  if (norm === '') return false;
+
+  const targetMatTien = p ? (p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '') : '';
+  const normMatTien = normFn(targetMatTien);
+  if (!normMatTien || norm !== normMatTien) return false;
+
+  // Nếu URL này NẰM TRONG p.images_public (được chọn làm public/ảnh bìa/nội thất) -> VAI TRÒ KÉP -> KHÔNG PHẢI chỉ mặt tiền!
+  if (p && p.images_public && Array.isArray(p.images_public) && p.images_public.length > 0) {
+    const isExplicitlyPublic = p.images_public.some(u => normFn(u) === norm);
+    if (isExplicitlyPublic) return false;
+  }
+  return true;
+};
+
 // Image downloads
 window.downloadSingleImage = async function(url, fileName) {
   try {

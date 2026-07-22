@@ -377,7 +377,7 @@
 
       const baseImgs = (p.images_public && p.images_public.length > 0) ? p.images_public : (p.imgs || []);
       const cleanImgs = baseImgs.filter(url => {
-        return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url);
+        return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && (!window.isOnlyFacadeUrl || !window.isOnlyFacadeUrl(url, p));
       });
       const sortedImgs = cleanImgs;
 

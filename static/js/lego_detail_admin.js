@@ -1088,18 +1088,18 @@
         const hemIndices = currentAlleyIndices.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
 
         let publicCover = currentPublicCover;
-        if (publicCover && ((window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) || isFacadeUrl(publicCover))) {
+        if (publicCover && window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) {
           publicCover = '';
         }
         if (!publicCover) {
           const candidates = [];
           const interior1Idx = window.getPoolInteriorColIdx(1);
-          if (poolRowData[interior1Idx] && (!window.isListingSodoUrl || !window.isListingSodoUrl(poolRowData[interior1Idx], p)) && !isFacadeUrl(poolRowData[interior1Idx])) {
+          if (poolRowData[interior1Idx] && (!window.isListingSodoUrl || !window.isListingSodoUrl(poolRowData[interior1Idx], p))) {
             candidates.push(poolRowData[interior1Idx]);
           }
           for (let i = 0; i < noithatIndices.length; i++) {
             const url = poolRowData[window.getPoolInteriorColIdx(noithatIndices[i])];
-            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p))) {
               candidates.push(url);
               break;
             }
@@ -1107,7 +1107,7 @@
           publicCover = candidates[0] || '';
         }
 
-        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p))) {
           finalImages.push(publicCover);
         }
         
@@ -1116,7 +1116,7 @@
         for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
           const hemIdx = hemIndices[i];
           const hemUrl = poolRowData[window.getPoolAlleyColIdx(hemIdx)];
-          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p)) && !isFacadeUrl(hemUrl)) {
+          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p))) {
             finalImages.push(hemUrl);
             addedHem++;
           }
@@ -1125,18 +1125,18 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = poolRowData[window.getPoolInteriorColIdx(imgIdx)];
-          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
+          if (imgUrl && imgUrl !== publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }
         }
       } else {
         const publicCover = currentPublicCover || (p.imgs && p.imgs[0]);
-        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p))) {
           finalImages.push(publicCover);
         }
         if (p.imgs) {
           p.imgs.forEach(url => {
-            if (url && url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+            if (url && url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p))) {
               finalImages.push(url);
             }
           });
@@ -1439,11 +1439,6 @@
         input.value = "";
       } else {
         input.value = slideUrl;
-        window.removeImageFromPublicLists(slideUrl, slide.type, slide.index);
-        const coverInput = document.getElementById('editPublicCoverUrl');
-        if (coverInput && normalizeImgUrl(coverInput.value) === normalizeImgUrl(slideUrl)) {
-          coverInput.value = "";
-        }
       }
       
       window.reRenderCurationEditorInPlace();
@@ -1466,11 +1461,6 @@
         input.value = "";
       } else {
         input.value = slideUrl;
-        
-        const facadeInput = document.getElementById('editCoverImgUrl');
-        if (facadeInput && normalizeImgUrl(facadeInput.value) === normalizeImgUrl(slideUrl)) {
-          facadeInput.value = "";
-        }
         
         window.removeImageFromSodo(slideUrl);
         
@@ -3169,18 +3159,18 @@
 
         const finalImages = [];
         let publicCover = publicCoverUrl;
-        if (publicCover && ((window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) || isFacadeUrl(publicCover))) {
+        if (publicCover && window.isListingSodoUrl && window.isListingSodoUrl(publicCover, p)) {
           publicCover = '';
         }
         if (!publicCover) {
           const candidates = [];
           const int1Url = getImageUrl('interior', 1);
-          if (int1Url && (!window.isListingSodoUrl || !window.isListingSodoUrl(int1Url, p)) && !isFacadeUrl(int1Url)) {
+          if (int1Url && (!window.isListingSodoUrl || !window.isListingSodoUrl(int1Url, p))) {
             candidates.push(int1Url);
           }
           for (let i = 0; i < noithatIndices.length; i++) {
             const url = getImageUrl('interior', noithatIndices[i]);
-            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+            if (url && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p))) {
               candidates.push(url);
               break;
             }
@@ -3188,7 +3178,7 @@
           publicCover = candidates[0] || '';
         }
 
-        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p))) {
           finalImages.push(publicCover);
         }
         
@@ -3197,7 +3187,7 @@
         for (let i = 0; i < hemIndices.length && addedHem < maxHem; i++) {
           const hemIdx = hemIndices[i];
           const hemUrl = getImageUrl('alley', hemIdx);
-          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p)) && !isFacadeUrl(hemUrl)) {
+          if (hemUrl && (!window.isListingSodoUrl || !window.isListingSodoUrl(hemUrl, p))) {
             finalImages.push(hemUrl);
             addedHem++;
           }
@@ -3206,7 +3196,7 @@
         for (let i = 0; i < noithatIndices.length; i++) {
           const imgIdx = noithatIndices[i];
           const imgUrl = getImageUrl('interior', imgIdx);
-          if (imgUrl && imgUrl !== publicCover && !finalImages.includes(imgUrl) && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && !isFacadeUrl(imgUrl) && finalImages.length < 25) {
+          if (imgUrl && imgUrl !== publicCover && !finalImages.includes(imgUrl) && (!window.isListingSodoUrl || !window.isListingSodoUrl(imgUrl, p)) && finalImages.length < 25) {
             finalImages.push(imgUrl);
           }
         }
@@ -3214,13 +3204,13 @@
       } else {
         const finalImages = [];
         const publicCover = publicCoverUrl || (p.imgs && p.imgs[0]);
-        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p)) && !isFacadeUrl(publicCover)) {
+        if (publicCover && (!window.isListingSodoUrl || !window.isListingSodoUrl(publicCover, p))) {
           finalImages.push(publicCover);
         }
         
         if (p.imgs) {
           p.imgs.forEach(url => {
-            if (url && url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && !isFacadeUrl(url)) {
+            if (url && url !== publicCover && !finalImages.includes(url) && (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p))) {
               finalImages.push(url);
             }
           });
@@ -3431,7 +3421,7 @@
           p.original_row_data[38] = customCoverUrl;
           p.img_mat_tien = customCoverUrl;
 
-          if (publicCoverUrl && !isSodoUrl(publicCoverUrl) && !isFacadeUrl(publicCoverUrl)) {
+          if (publicCoverUrl && !isSodoUrl(publicCoverUrl)) {
             const idx = cleanPublicImages.indexOf(publicCoverUrl);
             if (idx !== -1) cleanPublicImages.splice(idx, 1);
             cleanPublicImages.unshift(publicCoverUrl);
