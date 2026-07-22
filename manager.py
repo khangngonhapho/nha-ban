@@ -2093,7 +2093,7 @@ def run_image_migration_thread(limit, cookie, target_tk_id=None, skip_sheets_pub
                 cover_urls = []
                 other_urls = []
                 for img in migrated_images:
-                    if img["is_hidden"] == 0 and img["role"] not in ["facade", "diagram", "deleted", "hidden"]:
+                    if img["is_hidden"] == 0 and img["role"] not in ["diagram", "deleted", "hidden"]:
                         url = img["r2_url"] if img["r2_url"] else img["image_url"]
                         if img["role"] == "cover":
                             cover_urls.append(url)
