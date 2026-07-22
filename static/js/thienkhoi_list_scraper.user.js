@@ -750,8 +750,22 @@
     async function scanListings() {
         if (isChecking) return;
 
-        // Look for cards: div with class shadow-small
-        const cards = document.querySelectorAll('div.shadow-small');
+        // Look for cards: div with class shadow-small or card containers
+        let cards = Array.from(document.querySelectorAll('div.shadow-small, div.rounded-lg.border, div.bg-white.shadow, div[class*="Card_"]'));
+        if (cards.length === 0) {
+            // Fallback: search any div containing links with UUID
+            const uuidLinks = document.querySelectorAll('a[href*="-"]');
+            const foundCards = new Set();
+            uuidLinks.forEach(a => {
+                const href = a.getAttribute('href') || '';
+                if (/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i.test(href)) {
+                    let parent = a.closest('div.shadow-small') || a.closest('div.rounded-lg') || a.closest('div.border') || a.closest('article') || a.parentElement;
+                    if (parent) foundCards.add(parent);
+                }
+            });
+            cards = Array.from(foundCards);
+        }
+
         if (cards.length === 0) {
             detectedListings = [];
             updateFloatingPanel();
@@ -761,11 +775,10 @@
         // Collect detected IDs to batch check their existence
         const detectedIds = [];
         cards.forEach(card => {
-            const aTag = card.querySelector('a[href*="/sources/"], a[href*="/Detail/"]');
+            const aTag = card.querySelector('a[href*="-"]') || card.querySelector('a[href*="/sources/"], a[href*="/Detail/"]');
             if (!aTag) return;
-            const href = aTag.getAttribute('href');
-            if (!href) return;
-            const match = href.match(/\/(?:sources|Detail)\/([a-f0-9\-]{36}|\d+)/i);
+            const href = aTag.getAttribute('href') || '';
+            const match = href.match(/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i) || href.match(/\/(?:sources|Detail|detail|property|product|warehouse)\/([a-f0-9\-]{36}|\d+)/i);
             if (match) {
                 detectedIds.push(match[1].toLowerCase());
             }
@@ -783,18 +796,17 @@
 
         cards.forEach(card => {
             // Find detail link
-            const aTag = card.querySelector('a[href*="/sources/"], a[href*="/Detail/"]');
+            const aTag = card.querySelector('a[href*="-"]') || card.querySelector('a[href*="/sources/"], a[href*="/Detail/"]');
             if (!aTag) return;
 
-            const href = aTag.getAttribute('href');
-            if (!href) return;
-            const match = href.match(/\/(?:sources|Detail)\/([a-f0-9\-]{36}|\d+)/i);
+            const href = aTag.getAttribute('href') || '';
+            const match = href.match(/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i) || href.match(/\/(?:sources|Detail|detail|property|product|warehouse)\/([a-f0-9\-]{36}|\d+)/i);
             if (!match) return;
 
             const tkId = match[1].toLowerCase();
 
             // Extract title
-            const titleEl = card.querySelector('p.line-clamp-2') || card.querySelector('p');
+            const titleEl = card.querySelector('p.line-clamp-2') || card.querySelector('h3') || card.querySelector('p') || card.querySelector('span');
             const title = titleEl ? titleEl.textContent.trim() : 'Không rõ tiêu đề';
 
             // If button is already injected, update state and skip
