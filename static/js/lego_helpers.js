@@ -469,29 +469,39 @@ window.finalizeData = function(fullList) {
     const allIds = fullList.filter(p => !p.is_invisible).map(p => String(p.id));
     window.sharedIds = window.decodeBitmask(shareBitmask, allIds);
   } else if (shareToken) {
-    try {
-      // 1. Thử giải mã Base64URL safe danh sách ID phân cách bằng dấu phẩy
-      let normalizedToken = shareToken.replace(/-/g, '+').replace(/_/g, '/');
-      while (normalizedToken.length % 4) normalizedToken += '=';
-      const decoded = atob(normalizedToken);
-      if (decoded.includes(',') || decoded.startsWith('SYS-') || /^[a-zA-Z0-9,._-]+$/.test(decoded)) {
-        window.sharedIds = decoded.split(',').map(s => s.trim()).filter(Boolean);
-      } else {
-        // Thử parse JSON
-        const parsed = JSON.parse(decoded);
-        if (Array.isArray(parsed)) window.sharedIds = parsed;
+    const trimmedToken = shareToken.trim();
+    if (trimmedToken.startsWith('SYS-')) {
+      window.sharedIds = [trimmedToken];
+    } else {
+      try {
+        // 1. Thử giải mã Base64URL safe danh sách ID phân cách bằng dấu phẩy
+        let normalizedToken = trimmedToken.replace(/-/g, '+').replace(/_/g, '/');
+        while (normalizedToken.length % 4) normalizedToken += '=';
+        const decoded = atob(normalizedToken);
+        if (decoded.includes(',') || decoded.startsWith('SYS-') || /^[a-zA-Z0-9,._-]+$/.test(decoded)) {
+          window.sharedIds = decoded.split(',').map(s => s.trim()).filter(Boolean);
+        } else {
+          // Thử parse JSON
+          const parsed = JSON.parse(decoded);
+          if (Array.isArray(parsed)) window.sharedIds = parsed;
+        }
+      } catch (e) {
+        // 2. Fallback cho link cũ không mã hóa trực tiếp
+        window.sharedIds = trimmedToken.split(',').map(s => s.trim()).filter(Boolean);
       }
-    } catch (e) {
-      // 2. Fallback cho link cũ không mã hóa trực tiếp
-      window.sharedIds = shareToken.split(',').map(s => s.trim()).filter(Boolean);
     }
   }
   
   if (window.sharedIds) {
     window.sharedIds = window.sharedIds.map(tk => {
       if (tk.startsWith('SYS-')) {
-        const house = fullList.find(h => h.system_id === tk);
-        return house ? String(house.id) : null;
+        const house = fullList.find(h => 
+          (h.system_id && h.system_id.toLowerCase() === tk.toLowerCase()) ||
+          (h.System_ID && h.System_ID.toLowerCase() === tk.toLowerCase()) ||
+          (h.id && h.id.toLowerCase() === tk.toLowerCase()) ||
+          (h.tk_id && h.tk_id.toLowerCase() === tk.toLowerCase())
+        );
+        return house ? String(house.id) : tk;
       }
       if (/^\d+$/.test(tk)) {
         const idx = parseInt(tk, 10) - 1;
@@ -1643,6 +1653,13 @@ if (window.LegoState) {
 
   LegoState.on('rawDataLoaded', (fullList) => {
     window.finalizeData(fullList);
+  });
+
+  LegoState.on('publicDataRefreshed', (fullList) => {
+    window.finalizeData(fullList);
+    if (typeof window.reRenderCurationEditorInPlace === 'function') {
+      window.reRenderCurationEditorInPlace();
+    }
   });
 
   LegoState.on('publicDataLoaded', () => {
