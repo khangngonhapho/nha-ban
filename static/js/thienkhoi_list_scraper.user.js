@@ -463,10 +463,54 @@
         }
     }
 
+    function getFullCookieString() {
+        let cookieParts = [];
+        if (document.cookie) {
+            cookieParts.push(document.cookie);
+        }
+        
+        const lsAccess = localStorage.getItem('TKG_accessToken') || localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
+        const lsRefresh = localStorage.getItem('TKG_refreshToken') || localStorage.getItem('refreshToken') || localStorage.getItem('refresh_token');
+        
+        let currentStr = cookieParts.join('; ');
+        if (lsAccess && !currentStr.includes('TKG_accessToken=')) {
+            cookieParts.push(`TKG_accessToken=${lsAccess}`);
+        }
+        if (lsRefresh && !currentStr.includes('TKG_refreshToken=')) {
+            cookieParts.push(`TKG_refreshToken=${lsRefresh}`);
+        }
+        
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key) continue;
+                const val = localStorage.getItem(key);
+                if (val && (val.startsWith('{') || val.startsWith('['))) {
+                    if (val.includes('accessToken') || val.includes('access_token') || val.includes('TKG_accessToken')) {
+                        const parsed = JSON.parse(val);
+                        const acc = parsed.accessToken || parsed.access_token || parsed.TKG_accessToken || (parsed.tokens && parsed.tokens.accessToken);
+                        const ref = parsed.refreshToken || parsed.refresh_token || parsed.TKG_refreshToken || (parsed.tokens && parsed.tokens.refreshToken);
+                        
+                        const joined = cookieParts.join('; ');
+                        if (acc && !joined.includes('TKG_accessToken=')) {
+                            cookieParts.push(`TKG_accessToken=${acc}`);
+                        }
+                        if (ref && !joined.includes('TKG_refreshToken=')) {
+                            cookieParts.push(`TKG_refreshToken=${ref}`);
+                        }
+                    }
+                }
+            }
+        } catch(e) {}
+        
+        return cookieParts.join('; ');
+    }
+
     // AUTO-SYNC COOKIES ON LAUNCH
     function syncCookies() {
         return new Promise((resolve) => {
-            writeLog("Đang đồng bộ cookie với server...");
+            writeLog("Đang đồng bộ cookie & token mới nhất với server...");
+            const fullCookie = getFullCookieString();
             GM_xmlhttpRequest({
                 method: "POST",
                 url: `${getLocalUrl()}/api/crawl`,
@@ -475,11 +519,11 @@
                 },
                 data: JSON.stringify({
                     url: "MOCK_SAVE_ONLY",
-                    cookie: document.cookie
+                    cookie: fullCookie
                 }),
                 onload: function(response) {
                     if (response.status === 200) {
-                        writeLog("✅ Đồng bộ cookie thành công!");
+                        writeLog("✅ Đồng bộ cookie & token thành công!");
                         resolve(true);
                     } else {
                         writeLog(`❌ Lỗi đồng bộ cookie: HTTP ${response.status}`);
@@ -618,8 +662,40 @@
                                 }
                                 writeLog(`❌ [${i+1}/${checkboxes.length}] Thất bại: ${resData.message || "Lỗi chưa rõ"}`);
                                 if (response.status === 401 || response.status === 403 || (resData.message && (resData.message.includes("token") || resData.message.includes("Cookie") || resData.message.includes("hết hạn")))) {
-                                    writeLog(`🚨 [NGẮT TIẾN TRÌNH] Phát hiện lỗi xác thực (Token/Cookie hết hạn hoặc không hợp lệ). Ngừng cào hàng loạt!`);
-                                    isAuthError = true;
+                                    writeLog(`🔄 Trình duyệt phát hiện token hết hạn. Đang tự động trích xuất token mới từ LocalStorage & Cookie...`);
+                                    syncCookies().then(() => {
+                                        GM_xmlhttpRequest({
+                                            method: "POST",
+                                            url: `${getLocalUrl()}/api/listings/${tkId}/recrawl`,
+                                            headers: { "Content-Type": "application/json" },
+                                            data: JSON.stringify({ run_ai: runAi, title: title }),
+                                            timeout: 60000,
+                                            onload: function(retryResp) {
+                                                try {
+                                                    const retryData = JSON.parse(retryResp.responseText);
+                                                    if (retryResp.status === 200 && retryData.status === "success") {
+                                                        if (cardBtn) {
+                                                            cardBtn.className = "kn-scrape-btn success";
+                                                            cardBtn.innerHTML = `✅ Đã có`;
+                                                        }
+                                                        writeLog(`✅ Tự động khôi phục phiên & cào thành công: ${tkId.slice(0, 8)}`);
+                                                        localListingIds.add(tkId.toLowerCase());
+                                                    } else {
+                                                        writeLog(`🚨 [NGẮT TIẾN TRÌNH] Lỗi xác thực vẫn xảy ra sau khi làm mới token. Dừng cào hàng loạt!`);
+                                                        isAuthError = true;
+                                                    }
+                                                } catch(e_retry) {
+                                                    isAuthError = true;
+                                                }
+                                                resolve();
+                                            },
+                                            onerror: function() {
+                                                isAuthError = true;
+                                                resolve();
+                                            }
+                                        });
+                                    });
+                                    return;
                                 }
                             }
                         } catch(e) {
