@@ -1,14 +1,26 @@
 // ==UserScript==
 // @name         Khang Ngô BDS - Thiên Khôi List Scraper
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  Cào nhanh thông tin nhà phố từ danh sách Thiên Khôi về local server Khang Ngô
 // @author       Antigravity
 // @match        https://*.thienkhoi.com/*
 // @match        http://*.thienkhoi.com/*
+// @match        https://thienkhoi.com/*
+// @match        http://thienkhoi.com/*
+// @match        https://*.thienkhoi.vn/*
+// @match        http://*.thienkhoi.vn/*
+// @match        https://thienkhoi.vn/*
+// @match        https://*.nhaphothienkhoi.com/*
+// @match        http://*.nhaphothienkhoi.com/*
+// @match        https://nhaphothienkhoi.com/*
+// @include      *thienkhoi*
 // @grant        GM_xmlhttpRequest
 // @connect      localhost
 // @connect      127.0.0.1
+// @connect      backend.thienkhoi.com
+// @connect      proptech.thienkhoi.com
+// @connect      *
 // @run-at       document-end
 // ==/UserScript==
 
