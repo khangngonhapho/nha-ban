@@ -7,10 +7,13 @@ Handles dynamic schema alterations, system configs, logs, and cookie storage.
 import os
 import json
 import sqlite3
-import manager
+import sys
 from flask import Blueprint, jsonify, request
 
 routes_system = Blueprint('routes_system', __name__)
+
+# Safely reference manager module from sys.modules to prevent circular import during blueprint registration
+manager = sys.modules.get('manager')
 
 @routes_system.route('/api/schema/add-column', methods=['POST'])
 def add_schema_column():
