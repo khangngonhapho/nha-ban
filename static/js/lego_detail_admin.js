@@ -1557,19 +1557,13 @@
       const slide = slides[activeIdx];
       if (!slide) return;
       
-      if (slide.type === "facade" || slide.type === "sodo") {
-        showToast("Không thể chọn hiển thị public cho hình Mặt Tiền hoặc Sổ đỏ!", "warning");
+      if (slide.type === "sodo") {
+        showToast("Không thể chọn hiển thị public cho hình Sổ đỏ!", "warning");
         return;
       }
       
       const slideUrl = slide.url.trim();
       const normUrl = normalizeImgUrl(slideUrl);
-      
-      const facadeInput = document.getElementById('editCoverImgUrl');
-      if (facadeInput && normalizeImgUrl(facadeInput.value) === normUrl) {
-        showToast("Không thể chọn hiển thị public cho hình Mặt Tiền!", "warning");
-        return;
-      }
       
       const sodoInputs = [
         document.getElementById('editSodo1Url'),
@@ -1584,20 +1578,25 @@
         return;
       }
       
-      if (slide.type === "interior" || slide.type === "deleted") {
+      if (slide.type === "interior" || slide.type === "deleted" || slide.type === "facade" || slide.type === "cover") {
         const input = document.getElementById('editPublicInteriorIndices');
         if (!input) return;
         let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
-        const indexStr = String(slide.index);
+        const indexStr = String(slide.index || 1);
+        const coverInput = document.getElementById('editPublicCoverUrl');
+        const isCurrentlyCover = coverInput && normalizeImgUrl(coverInput.value) === normUrl;
         
-        if (indices.includes(indexStr)) {
+        if (indices.includes(indexStr) || isCurrentlyCover) {
           indices = indices.filter(i => i !== indexStr);
-          const coverInput = document.getElementById('editPublicCoverUrl');
-          if (coverInput && normalizeImgUrl(coverInput.value) === normUrl) {
+          if (isCurrentlyCover) {
             coverInput.value = "";
           }
         } else {
-          indices.push(indexStr);
+          if (slide.type === "facade" && coverInput && !coverInput.value) {
+            coverInput.value = slideUrl;
+          } else {
+            indices.push(indexStr);
+          }
         }
         input.value = indices.join(',');
       } else if (slide.type === "alley") {
@@ -1605,11 +1604,12 @@
         if (!input) return;
         let indices = input.value.split(',').map(s => s.trim()).filter(Boolean);
         const indexStr = String(slide.index);
+        const coverInput = document.getElementById('editPublicCoverUrl');
+        const isCurrentlyCover = coverInput && normalizeImgUrl(coverInput.value) === normUrl;
         
-        if (indices.includes(indexStr)) {
+        if (indices.includes(indexStr) || isCurrentlyCover) {
           indices = indices.filter(i => i !== indexStr);
-          const coverInput = document.getElementById('editPublicCoverUrl');
-          if (coverInput && normalizeImgUrl(coverInput.value) === normUrl) {
+          if (isCurrentlyCover) {
             coverInput.value = "";
           }
         } else {
@@ -1865,10 +1865,7 @@
       const publicIntIndices = publicIntStr.split(',').map(s => s.trim()).filter(Boolean);
       const publicAlleyIndices = publicAlleyStr.split(',').map(s => s.trim()).filter(Boolean);
       
-      const publicImages = window.getPublicImagesFromForm(p).filter(url => {
-        const norm = normalizeImgUrl(url);
-        return norm && norm !== normFacade;
-      });
+      const publicImages = window.getPublicImagesFromForm(p);
       const normPublicImages = publicImages.map(url => normalizeImgUrl(url));
 
       slides.forEach((c, idx) => {
@@ -2051,7 +2048,7 @@
       }
       
       if (btnPublic) {
-        if (activeSlide.type === "facade" || activeSlide.type === "sodo" || isActiveFacade || isActiveSodo) {
+        if (activeSlide.type === "sodo" || isActiveSodo) {
           btnPublic.disabled = true;
           btnPublic.style.opacity = '0.4';
           btnPublic.style.background = '';
@@ -2059,7 +2056,8 @@
         } else {
           btnPublic.disabled = false;
           btnPublic.style.opacity = '1';
-          if (isActivePublic) {
+          const isSlidePublic = isActivePublic || isActiveCover || (isActiveFacade && normPublicImages.includes(activeUrlNorm));
+          if (isSlidePublic) {
             btnPublic.style.background = '#27ae60';
             btnPublic.style.color = '#fff';
           } else {
