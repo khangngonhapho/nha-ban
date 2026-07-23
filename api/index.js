@@ -1974,6 +1974,281 @@ module.exports = async (req, res) => {
     }
   }
 
+  // 5. Endpoints cho Ứng dụng Đối chiếu & Xem/Tải Ảnh (US-157 Vercel Serverless Gateway)
+  if (pathname === '/api/databases') {
+    return res.status(200).json({
+      status: 'success',
+      databases: ['raw_archive.db', 'raw_archive_staging.db', 'raw_archive_v2.db']
+    });
+  }
+
+  if (pathname === '/api/proxy-download') {
+    const imageUrl = req.query.url;
+    const filename = req.query.filename || 'image.jpg';
+
+    if (!imageUrl) {
+      return res.status(400).json({ status: 'error', message: 'Missing url parameter' });
+    }
+
+    try {
+      let targetUrl = imageUrl;
+      if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+        targetUrl = 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/' + targetUrl.replace(/^\//, '');
+      }
+      
+      const imgRes = await fetch(encodeURI(decodeURI(targetUrl)));
+      if (!imgRes.ok) {
+        return res.status(imgRes.status).send(`Failed to fetch image: ${imgRes.statusText}`);
+      }
+
+      const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
+      const arrayBuffer = await imgRes.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.status(200).send(buffer);
+    } catch (err) {
+      console.error('Error in proxy-download serverless:', err);
+      return res.status(500).json({ status: 'error', message: err.message });
+    }
+  }
+
+  if (pathname === '/api/compare-images') {
+    const queryStr = (req.query.query || '').trim();
+    const dbFile = (req.query.db_file || 'raw_archive.db').trim();
+
+    if (!queryStr) {
+      return res.status(400).json({ status: 'error', message: 'Missing query parameter' });
+    }
+
+    try {
+      const cfg = loadConfig();
+      const isStaging = process.env.STAGING === 'true' || dbFile.includes('staging');
+
+      const poolSheetId = isStaging
+        ? (cfg.staging_pool_sheet_id || '1Nc8OwSHwacvuuS4blI8U9BrDOlVx6S6u9fU3AaKBYdY')
+        : (cfg.sheet_id || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw');
+
+      const sourceSheetId = isStaging
+        ? (cfg.staging_source_sheet_id || '1ljauQNEPA-8wM0vlJDRQkWjT2KQUwdR8tcq0r69dikk')
+        : '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
+
+      const creds = getCredentials();
+      if (!creds) {
+        return res.status(500).json({ status: 'error', message: 'Missing Google Service Account credentials' });
+      }
+      const accessToken = await getGoogleAccessToken(creds);
+
+      const normStreet = (s) => {
+        if (!s) return '';
+        let str = String(s).trim();
+        str = str.replace(/(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)/gi, 'TTMC');
+        str = str.replace(/(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)/gi, 'HTB');
+        str = str.replace(/đường\s*số\s*7/gi, '7SD');
+        return str;
+      };
+
+      const normHouseNo = (h) => {
+        if (!h) return '';
+        let str = String(h).trim();
+        if (str.includes('+')) str = str.split('+')[0].trim();
+        return str;
+      };
+
+      const extractFilenameLocal = (u) => {
+        if (!u) return 'image.jpg';
+        try {
+          const decoded = decodeURIComponent(u);
+          const cleanPath = decoded.split('?')[0].split('#')[0];
+          const lastPart = cleanPath.substring(cleanPath.lastIndexOf('/') + 1);
+          return lastPart ? lastPart : 'image.jpg';
+        } catch (e) {
+          const cleanPath = String(u).split('?')[0].split('#')[0];
+          const lastPart = cleanPath.substring(cleanPath.lastIndexOf('/') + 1);
+          return lastPart ? lastPart : 'image.jpg';
+        }
+      };
+
+      const sanitizeUrlJs = (u) => {
+        if (!u) return '';
+        let cleaned = String(u).trim().replace(/^["']|["']$/g, '');
+        if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+          if (cleaned.startsWith('BDS-KhangNgo') || cleaned.startsWith('static/')) {
+            cleaned = 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/' + cleaned;
+          } else {
+            return '';
+          }
+        }
+        try { return encodeURI(decodeURI(cleaned)); } catch (e) { return encodeURI(cleaned); }
+      };
+
+      const parseImageJson = (raw) => {
+        if (!raw) return [];
+        let items = [];
+        if (typeof raw === 'object') items = Array.isArray(raw) ? raw : (raw.images || []);
+        else {
+          try {
+            const p = JSON.parse(raw);
+            items = Array.isArray(p) ? p : (p.images || []);
+          } catch (e) {
+            const tokens = String(raw).split(/[\t\r\n]+|\s{2,}/).map(t => t.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
+            items = tokens.filter(t => t.startsWith('http://') || t.startsWith('https://') || t.startsWith('BDS-KhangNgo'));
+          }
+        }
+        return items.map((img, idx) => {
+          if (typeof img === 'string') {
+            const u = sanitizeUrlJs(img);
+            if (!u) return null;
+            return { id: `img-${idx}`, url: u, filename: extractFilenameLocal(u), role: '', sequence_index: idx, origin: '', is_hidden: 0 };
+          } else if (img && typeof img === 'object') {
+            const u = sanitizeUrlJs(img.r2_url || img.image_url || img.url);
+            if (!u) return null;
+            return {
+              id: `img-${idx}`,
+              url: u,
+              filename: extractFilenameLocal(u),
+              role: img.role || '',
+              sequence_index: img.sequence_index !== undefined ? img.sequence_index : idx,
+              origin: img.origin || '',
+              is_hidden: img.is_hidden !== undefined ? img.is_hidden : 0
+            };
+          }
+          return null;
+        }).filter(Boolean);
+      };
+
+      const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/${encodeURIComponent('Pool!A1:ZZ3000')}`;
+      const poolRes = await fetch(poolUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (!poolRes.ok) {
+        return res.status(500).json({ status: 'error', message: `Google Sheets Pool fetch failed (${poolRes.status})` });
+      }
+      const poolData = await poolRes.json();
+      const poolRows = poolData.values || [];
+      if (poolRows.length <= 1) {
+        return res.status(404).json({ status: 'error', message: `Không có dữ liệu trong Sheet Pool` });
+      }
+
+      const poolHeaders = poolRows[0];
+      const getIdx = (name) => poolHeaders.findIndex(h => String(h).trim().toLowerCase() === String(name).trim().toLowerCase());
+
+      const idxTkId = getIdx('tk_id');
+      const idxSysId = getIdx('System ID') !== -1 ? getIdx('System ID') : getIdx('System_ID');
+      const idxMaKn = getIdx('Mã Khang Ngô (ID)') !== -1 ? getIdx('Mã Khang Ngô (ID)') : getIdx('Mã Khang Ngô');
+      const idxSoNha = getIdx('Số nhà');
+      const idxDuong = getIdx('Đường');
+      const idxQuan = getIdx('Quận');
+      const idxImagesAdmin = getIdx('Images_Admin_JSON');
+
+      const normQ = normStreet(queryStr);
+      const qTokens = normQ.split(/\s+/).filter(Boolean);
+      const firstTok = qTokens[0] || '';
+      const firstClean = normHouseNo(firstTok);
+      const lastTok = qTokens[qTokens.length - 1] || '';
+
+      let matchedRow = null;
+      for (let i = 1; i < poolRows.length; i++) {
+        const r = poolRows[i];
+        const rTkId = idxTkId !== -1 ? (r[idxTkId] || '') : '';
+        const rSysId = idxSysId !== -1 ? (r[idxSysId] || '') : '';
+        const rMaKn = idxMaKn !== -1 ? (r[idxMaKn] || '') : '';
+        const rSoNha = idxSoNha !== -1 ? (r[idxSoNha] || '') : '';
+        const rDuong = idxDuong !== -1 ? (r[idxDuong] || '') : '';
+        const normRDuong = normStreet(rDuong);
+        const normRSoNha = normHouseNo(rSoNha);
+
+        if (queryStr === rTkId || queryStr === rSysId || queryStr === rMaKn) {
+          matchedRow = r;
+          break;
+        }
+
+        if (firstTok && lastTok) {
+          const soNhaMatch = rSoNha.includes(firstTok) || normRSoNha.includes(firstClean);
+          const duongMatch = rDuong.includes(lastTok) || normRDuong.includes(lastTok);
+          if (soNhaMatch && duongMatch) {
+            matchedRow = r;
+            break;
+          }
+        }
+
+        const fullAddr = `${rSoNha} ${rDuong}`.toLowerCase();
+        if (fullAddr.includes(queryStr.toLowerCase()) || fullAddr.includes(normQ.toLowerCase())) {
+          matchedRow = r;
+          break;
+        }
+      }
+
+      if (!matchedRow) {
+        return res.status(404).json({ status: 'error', message: `Không tìm thấy căn nhà phù hợp với từ khóa '${queryStr}'` });
+      }
+
+      const foundSysId = idxSysId !== -1 ? matchedRow[idxSysId] : '';
+      const foundMaKn = idxMaKn !== -1 ? matchedRow[idxMaKn] : '';
+      const foundTkId = idxTkId !== -1 ? matchedRow[idxTkId] : '';
+      const foundSoNha = idxSoNha !== -1 ? matchedRow[idxSoNha] : '';
+      const foundDuong = idxDuong !== -1 ? matchedRow[idxDuong] : '';
+      const foundQuan = idxQuan !== -1 ? matchedRow[idxQuan] : '';
+      const rawAdminJson = idxImagesAdmin !== -1 ? matchedRow[idxImagesAdmin] : '[]';
+
+      const poolAdminImages = parseImageJson(rawAdminJson);
+
+      let sourcePubImages = [];
+      try {
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sourceSheetId}/values/${encodeURIComponent('Source!A1:ZZ3000')}`;
+        const sourceRes = await fetch(sourceUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+        if (sourceRes.ok) {
+          const sourceData = await sourceRes.json();
+          const sourceRows = sourceData.values || [];
+          if (sourceRows.length > 1) {
+            const sHeaders = sourceRows[0];
+            const sGetIdx = (name) => sHeaders.findIndex(h => String(h).trim().toLowerCase() === String(name).trim().toLowerCase());
+            const sIdxSysId = sGetIdx('System_ID') !== -1 ? sGetIdx('System_ID') : sGetIdx('System ID');
+            const sIdxMaKn = sGetIdx('Mã Khang Ngô (ID)') !== -1 ? sGetIdx('Mã Khang Ngô (ID)') : sGetIdx('Mã Khang Ngô');
+            const sIdxPubJson = sGetIdx('Images_Public_JSON');
+
+            let sMatchedRow = null;
+            for (let j = 1; j < sourceRows.length; j++) {
+              const sr = sourceRows[j];
+              const srSysId = sIdxSysId !== -1 ? sr[sIdxSysId] : '';
+              const srMaKn = sIdxMaKn !== -1 ? sr[sIdxMaKn] : '';
+              if ((foundSysId && srSysId === foundSysId) || (foundMaKn && srMaKn === foundMaKn)) {
+                sMatchedRow = sr;
+                break;
+              }
+            }
+
+            if (sMatchedRow && sIdxPubJson !== -1) {
+              sourcePubImages = parseImageJson(sMatchedRow[sIdxPubJson]);
+            }
+          }
+        }
+      } catch (errSrc) {
+        console.warn('Source sheet fetch warning in Vercel compare-images:', errSrc.message);
+      }
+
+      return res.status(200).json({
+        status: 'success',
+        house_info: {
+          tk_id: foundTkId,
+          system_id: foundSysId,
+          ma_khang_ngo: foundMaKn,
+          so_nha: foundSoNha,
+          duong: foundDuong,
+          quan: foundQuan,
+          full_address: `${foundSoNha} ${foundDuong}, ${foundQuan}`.trim(),
+          db_file: dbFile
+        },
+        partition_1_sqlite: poolAdminImages,
+        partition_2_pool: { is_fallback: false, images: poolAdminImages },
+        partition_3_source: { is_fallback: false, images: sourcePubImages }
+      });
+    } catch (err) {
+      console.error('Error in compare-images Vercel endpoint:', err);
+      return res.status(500).json({ status: 'error', message: err.message });
+    }
+  }
+
   // Serve links.html for mobile-first link management panel (US-138)
   if (pathname === '/links' || pathname === '/links.html') {
     let linksHtml = '';
