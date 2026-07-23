@@ -2268,8 +2268,15 @@ module.exports = async (req, res) => {
 
       let poolImagesList = [];
       try {
-        const poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/${encodeURIComponent('Pool_Images!A1:ZZ3000')}`;
-        const poolImgRes = await fetch(poolImgUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+        const primaryPoolId = poolSheetId || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
+        let poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/${primaryPoolId}/values/${encodeURIComponent('Pool_Images!A1:ZZ3000')}`;
+        let poolImgRes = await fetch(poolImgUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+        
+        if (!poolImgRes.ok && primaryPoolId !== '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw') {
+          poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw/values/${encodeURIComponent('Pool_Images!A1:ZZ3000')}`;
+          poolImgRes = await fetch(poolImgUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+        }
+
         if (poolImgRes.ok) {
           const poolImgData = await poolImgRes.json();
           const pImgRows = poolImgData.values || [];
