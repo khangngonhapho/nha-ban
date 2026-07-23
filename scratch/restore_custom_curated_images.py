@@ -10,7 +10,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-DB_PATH = r"D:\02. CONG VIEC\khangngonhapho.com\raw_archive.db"
+DB_PATH = "raw_archive.db" if os.path.exists("raw_archive.db") else r"D:\02. CONG VIEC\khangngonhapho.com\raw_archive.db"
 POOL_SHEET_ID = '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw'
 SOURCE_SHEET_ID = '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE'
 
@@ -23,10 +23,10 @@ def norm_addr(so_nha, duong):
 
 def build_public_json_from_admin(admin_json_str):
     """
-    Sử dụng chuẩn 100% logic từ core/business_rules.py (L620-L630) & manager.py (L1080-L1091):
+    Sử dụng chuẩn 100% logic từ core/business_rules.py & manager.py, hỗ trợ vai trò kép:
     - Loại bỏ ảnh bị ẩn (is_hidden != 0)
-    - Loại bỏ các ảnh vai trò private/only_facade: ["facade", "diagram", "deleted", "hidden"]
-    - Đưa các ảnh có role "cover" (Bìa) lên vị trí đầu tiên
+    - Ảnh có role "cover" (Bìa) hoặc cờ is_cover -> VAI TRÒ KÉP -> Bắt buộc đưa lên Index 0 của public JSON
+    - Loại bỏ các ảnh vai trò private đơn thuần (only_facade, diagram, deleted, hidden)
     """
     try:
         items = json.loads(admin_json_str) if isinstance(admin_json_str, str) else admin_json_str
@@ -40,16 +40,18 @@ def build_public_json_from_admin(admin_json_str):
                 continue
             is_hidden = img.get("is_hidden", 0)
             role = str(img.get("role", "")).lower().strip()
+            is_cover_flag = img.get("is_cover") in [1, "1", True]
             
-            # Khớp 100% chuẩn core/business_rules.py & manager.py
-            if is_hidden == 0 and role not in ["facade", "diagram", "deleted", "hidden", "sodo", "mặt tiền", "ẩn"]:
+            if is_hidden == 0:
                 url = (img.get("r2_url") or img.get("image_url") or "").strip()
                 if not url:
                     continue
-                if role == "cover" or role == "bìa":
+                # Nếu ảnh có vai trò Cover (bìa/ảnh nền) -> VAI TRÒ KÉP -> Ưu tiên đẩy lên Index 0
+                if role in ["cover", "bìa"] or is_cover_flag:
                     if url not in cover_urls:
                         cover_urls.append(url)
-                else:
+                # Nếu không phải cover và thuộc nhóm private/only_facade -> Bỏ qua
+                elif role not in ["facade", "diagram", "deleted", "hidden", "sodo", "mặt tiền", "ẩn"]:
                     if url not in other_urls:
                         other_urls.append(url)
                         
