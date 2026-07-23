@@ -497,7 +497,7 @@ def recover_listing_from_raw_json(conn, tk_id, active_table="listings", update_t
             try:
                 from manager import list_r2_objects, get_r2_subfolder
                 r2_public_url = cfg.get("r2_public_url")
-                r2_migration_prefix = cfg.get("r2_migration_prefix", "BDS-KhangNgo-v3") or "BDS-KhangNgo-v3"
+                r2_migration_prefix = os.environ.get("R2_MIGRATION_PREFIX") or cfg.get("r2_migration_prefix")
                 
                 addr_cols = ["Ngo_So_nha", "Duong", "Quan", "Phuong"]
                 addr_valid = [c for c in addr_cols if c in db_cols]

@@ -330,8 +330,8 @@ function parseSheetFlags(rows) {
 function signR2Request(buffer, filename, contentType, r2AccessKeyId, r2SecretAccessKey, r2BucketName, cloudflareAccountId, r2Key = null) {
   const host = `${r2BucketName}.${cloudflareAccountId}.r2.cloudflarestorage.com`;
   const endpoint = `https://${host}`;
-  const r2Prefix = process.env.R2_MIGRATION_PREFIX || 'BDS-KhangNgo-v3';
-  const key = r2Key || `${r2Prefix}/${filename}`;
+  const r2Prefix = process.env.R2_MIGRATION_PREFIX;
+  const key = r2Key || (r2Prefix ? `${r2Prefix}/${filename}` : filename);
   const encodedKey = key.split('/').map(encodeURIComponent).join('/');
   const path = `/${encodedKey}`;
   

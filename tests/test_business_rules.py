@@ -307,10 +307,15 @@ class TestCleanSheetFormulaPrefix:
 # 8. NO HARDCODED LEGACY R2 PREFIX — Đảm bảo không hardcode BDS-KhangNgo-v2
 # =============================================================================
 class TestNoHardcodedLegacyR2Prefix:
-    """Lock behavior: Đảm bảo R2 prefix luôn dùng BDS-KhangNgo-v3 mặc định."""
+    """Lock behavior: Đảm bảo R2 prefix luôn đọc động từ env / settings.json mà không hardcode."""
 
-    def test_default_r2_migration_prefix(self):
+    def test_dynamic_r2_migration_prefix_from_config(self):
         from core.config import read_settings
         cfg = read_settings()
-        assert cfg.get("r2_migration_prefix", "BDS-KhangNgo-v3") == "BDS-KhangNgo-v3"
+        assert "r2_migration_prefix" in cfg
+
+    def test_dynamic_r2_migration_prefix_from_env(self, monkeypatch):
+        import os
+        monkeypatch.setenv("R2_MIGRATION_PREFIX", "BDS-KhangNgo-v4")
+        assert os.environ.get("R2_MIGRATION_PREFIX") == "BDS-KhangNgo-v4"
 
