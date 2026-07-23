@@ -2373,7 +2373,7 @@
     };
   // === openPoolS ===
     window.openPoolS = function(systemId) {
-      window.imageEditorSortMode = 'file';
+      window.imageEditorSortMode = 'display';
       if (!POOL_ROWS || !POOL_ROWS.length) {
         showToast("Dữ liệu Pool chưa được nạp!", "error");
         return;

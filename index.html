@@ -542,7 +542,7 @@
     // --- MAIN INITIALIZATION & ROUTING STATE ---
     async function openS(id, tempP = null, autoExpandPreview = false) {
       const tOpenStart = performance.now();
-      window.imageEditorSortMode = 'file';
+      window.imageEditorSortMode = 'display';
       let p = tempP || DATA.find(x => String(x.id) === String(id));
       if (!p) return;
 
