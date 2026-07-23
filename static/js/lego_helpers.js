@@ -1106,8 +1106,9 @@ window.isListingSodoUrl = function(url, p) {
   // 2. Nhận diện theo curated_config nếu có
   if (p && p.curated_config && Array.isArray(p.curated_config.images)) {
     const isSodoInConfig = p.curated_config.images.some(img => {
-      if (img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo')) {
-        return normFn(img.url) === norm;
+      const u = img && (img.r2_url || img.image_url || img.url);
+      if (u && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo')) {
+        return normFn(u) === norm;
       }
       return false;
     });
