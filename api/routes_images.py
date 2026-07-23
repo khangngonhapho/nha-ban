@@ -590,6 +590,58 @@ def parse_image_json_to_list(raw_json):
                 })
     return result
 
+def fetch_image_json_from_sheet_py(sheet_name, match_id, target_col_name):
+    if not match_id:
+        return []
+    try:
+        import manager
+        import gspread
+        cfg = manager.load_config()
+        creds = manager.get_google_credentials()
+        if not creds:
+            return []
+        client = gspread.authorize(creds)
+        if sheet_name == "Pool":
+            sheet_id = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
+        else:
+            sheet_id = cfg.get("staging_source_sheet_id") if os.environ.get("STAGING") == "true" else "1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE"
+        
+        ss = client.open_by_key(sheet_id)
+        ws = ss.worksheet(sheet_name)
+        rows = ws.get_all_values()
+        if len(rows) <= 1:
+            return []
+        headers = [str(h).strip() for h in rows[0]]
+        
+        def find_idx(cands):
+            for c in cands:
+                for i, h in enumerate(headers):
+                    h_clean = str(h).strip().lower()
+                    if c.lower() == h_clean or c.lower() in h_clean:
+                        return i
+            return -1
+
+        idx_sys = find_idx(["system_id", "system id"])
+        idx_ma_kn = find_idx(["mã khang ngô (id)", "ma_khang_ngo_id", "mã khang ngô"])
+        idx_tk = find_idx(["tk_id"])
+        idx_target = find_idx([target_col_name, target_col_name.lower()])
+
+        if idx_target == -1:
+            return []
+
+        for r in rows[1:]:
+            r_sys = r[idx_sys] if idx_sys != -1 and idx_sys < len(r) else ""
+            r_ma = r[idx_ma_kn] if idx_ma_kn != -1 and idx_ma_kn < len(r) else ""
+            r_tk = r[idx_tk] if idx_tk != -1 and idx_tk < len(r) else ""
+
+            if match_id and (match_id == r_sys or match_id == r_ma or match_id == r_tk):
+                target_val = r[idx_target] if idx_target < len(r) else ""
+                return parse_image_json_to_list(target_val)
+        return []
+    except Exception as e:
+        print(f"[⚠️ Warning] fetch_image_json_from_sheet_py error for {sheet_name}: {e}")
+        return []
+
 @routes_images.route('/api/databases', methods=['GET'])
 def get_databases():
     """Trả về danh sách các tệp SQLite .db trong thư mục dự án"""
@@ -701,7 +753,10 @@ def compare_images():
     partition_2_pool = []
     pool_is_fallback = False
     try:
-        partition_2_pool = fetch_image_json_from_sheet("Pool", system_id or tk_id, "Images_Admin_JSON")
+        partition_2_pool = fetch_image_json_from_sheet_py("Pool", system_id or tk_id or ma_khang_ngo, "Images_Admin_JSON")
+        if not partition_2_pool and partition_1_sqlite:
+            partition_2_pool = partition_1_sqlite
+            pool_is_fallback = True
     except Exception:
         partition_2_pool = partition_1_sqlite
         pool_is_fallback = True
@@ -710,10 +765,18 @@ def compare_images():
     partition_3_source = []
     source_is_fallback = False
     try:
-        partition_3_source = fetch_image_json_from_sheet("Source", ma_khang_ngo or system_id, "Images_Public_JSON")
+        partition_3_source = fetch_image_json_from_sheet_py("Source", ma_khang_ngo or system_id, "Images_Public_JSON")
+        if not partition_3_source:
+            pub_json_raw = row_dict.get("images_public_json") or row_dict.get("Images_Public_JSON") or ""
+            partition_3_source = parse_image_json_to_list(pub_json_raw)
+            if not partition_3_source and partition_2_pool:
+                partition_3_source = partition_2_pool
+            source_is_fallback = True
     except Exception:
         pub_json_raw = row_dict.get("images_public_json") or row_dict.get("Images_Public_JSON") or ""
         partition_3_source = parse_image_json_to_list(pub_json_raw)
+        if not partition_3_source and partition_2_pool:
+            partition_3_source = partition_2_pool
         source_is_fallback = True
 
     house_info = {
