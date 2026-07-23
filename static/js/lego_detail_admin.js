@@ -2588,7 +2588,7 @@
         raw_so_wc: row[soWcCol] || '',
         raw_tieu_de_public: row[tieuDeBdsCol] || '',
         raw_mo_ta_public: row[moTaBdsCol] || '',
-        pool_row_index: POOL_ROWS.indexOf(row) + 2,
+        pool_row_index: row.raw_sheet_row_index || (POOL_ROWS.indexOf(row) + 2),
 
         isFromPoolOnly: true,
         pool_row_data: row
@@ -2702,6 +2702,9 @@
         
         const poolData = await poolRes.json();
         const rows = poolData.values || [];
+        rows.forEach((r, idx) => {
+          if (r) r.raw_sheet_row_index = idx + 2;
+        });
         
         // Helper chuẩn hóa địa chỉ để so khớp thông minh
         const norm = (str) => {
@@ -2938,7 +2941,7 @@
         
         // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
         try {
-          const poolRowNumber = rows.indexOf(matchedRow) + 2;
+          const poolRowNumber = matchedRow.raw_sheet_row_index || (rows.indexOf(matchedRow) + 2);
           const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
           
           // Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
@@ -3732,7 +3735,8 @@
         
         const poolData = await poolRes.json();
         const rows = poolData.values || [];
-        rows.forEach(r => {
+        rows.forEach((r, idx) => {
+          if (r) r.raw_sheet_row_index = idx + 2;
           while (r.length < 93) r.push("");
         });
         
@@ -3742,15 +3746,12 @@
         }
 
         const p = window.activeCurationListing;
-        if (p && p.pool_row_data) {
-          matchedRow[27] = p.pool_row_data[27] || "";
-          matchedRow[28] = p.pool_row_data[28] || "";
-          matchedRow[80] = p.pool_row_data[80] || "";
-          matchedRow[81] = p.pool_row_data[81] || "";
-          matchedRow[82] = p.pool_row_data[82] || "";
-          for (let c = 30; c <= 39; c++) matchedRow[c] = p.pool_row_data[c] || "";
-          for (let c = 40; c <= 54; c++) matchedRow[c] = p.pool_row_data[c] || "";
-          for (let c = 83; c <= 92; c++) matchedRow[c] = p.pool_row_data[c] || "";
+        if (p && p.system_id && String(p.system_id).trim() === String(systemId).trim() && p.pool_row_data) {
+          matchedRow[27] = p.pool_row_data[27] || matchedRow[27] || "";
+          matchedRow[28] = p.pool_row_data[28] || matchedRow[28] || "";
+          matchedRow[80] = p.pool_row_data[80] || matchedRow[80] || "";
+          matchedRow[81] = p.pool_row_data[81] || matchedRow[81] || "";
+          matchedRow[82] = p.pool_row_data[82] || matchedRow[82] || "";
         }
 
         // Đọc dữ liệu từ form trong modal
@@ -3943,7 +3944,7 @@
         
         // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
         try {
-          const poolRowNumber = rows.indexOf(matchedRow) + 2;
+          const poolRowNumber = matchedRow.raw_sheet_row_index || (rows.indexOf(matchedRow) + 2);
           const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
           
           // 0. Cập nhật Sổ 1 & 2 (AB:AC)
@@ -3962,7 +3963,9 @@
 
           // 0a. Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
           try {
-            const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
+            const isSameListing = (p && p.system_id && String(p.system_id).trim() === String(systemId).trim());
+            const targetSlides = isSameListing ? window.imageEditorSlides : null;
+            const curatedImages = window.buildCuratedImages(p, targetSlides);
             const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
             await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${poolRowNumber}:${imagesAdminCol}${poolRowNumber}?valueInputOption=USER_ENTERED`, {
               method: 'PUT',

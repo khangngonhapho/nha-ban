@@ -3,16 +3,19 @@
 Last updated: 2026-07-21
 
 ## Stats
-- Total: 154
+- Total: 156
 - backlog: 3
 - draft: 7
 - in-progress: 0
-- done: 24
-- accepted: 116
+- done: 23
+- accepted: 119
 - superseded: 6
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-156 | Khắc phục Lỗi Lệch Chỉ Số Dòng Sheet Pool & Ngăn Chặn Chép Đè Hình Ảnh Khi Lên Sóng | accepted | M | 2026-07-23 | `static/js/lego_core.js`, `static/js/lego_detail_admin.js`, `index.html`, `docs/stories/_inbox/US-156.md` |
+| US-155 | Dynamic OpenGraph Link Preview từ Cloudflare R2 CDN                    | accepted | S    | 2026-07-23 | `api/index.js`, `scratch/test_us155_og_tags.py`, `docs/stories/_inbox/US-155.md` |
+| US-154 | Tối ưu hóa hiệu năng hiển thị Khách hàng & Admin Preview bằng kiến trúc JSON Sharding qua Cloudflare R2 | accepted | L | 2026-07-21 | `manager.py`, `api/index.js`, `static/js/lego_detail_admin.js`, `static/js/lego_core.js`, `index.html`, `docs/stories/_inbox/US-154.md` |
 | US-153 | Thêm trường custom_phuong và custom_quan trong SQLite và Google Sheets | draft    | M    | 2026-07-21 | `pool_lego.py`, `manager.py`, `static/js/lego_detail_admin.js`, `static/js/lego_core.js`, `docs/stories/_inbox/US-153.md` |
 | US-152 | Đồng bộ ảnh crawl trực tiếp từ nguồn Thiên Khôi (Xóa hẳn thay vì đổi status thành deleted) | accepted | S | 2026-07-19 | `pool_lego.py`, `manager.py`, `tests/test_db.py`, `tests/test_image_sync_us152.py`, `docs/stories/_inbox/US-152.md` |
 | US-151 | Tự động dò tìm dòng header và vị trí cột trên sheet Source khi đồng bộ | accepted | S | 2026-07-17 | `pool_backend_v3.gs`, `pool_lego.py`, `docs/stories/_inbox/US-151_dynamic_row_col_sync_source_sheet.md` |

@@ -630,6 +630,8 @@
     function closeS(fromPopState = false) { 
       document.getElementById('ov').classList.remove('open'); 
       document.body.style.overflow = ''; 
+      window.imageEditorSlides = [];
+      window.activeCurationListing = null;
       if (!fromPopState && window.history.state && window.history.state.detailOpen) {
         window.preventPushState = true;
         history.back();
