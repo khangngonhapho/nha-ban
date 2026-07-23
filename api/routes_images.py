@@ -622,9 +622,17 @@ def fetch_image_json_from_sheet_py(sheet_name, match_id, target_col_name):
             return -1
 
         idx_sys = find_idx(["system_id", "system id"])
+        if idx_sys == -1 and sheet_name == "Source":
+            idx_sys = 37
+
         idx_ma_kn = find_idx(["mã khang ngô (id)", "ma_khang_ngo_id", "mã khang ngô"])
+        if idx_ma_kn == -1 and sheet_name == "Source":
+            idx_ma_kn = 3
+
         idx_tk = find_idx(["tk_id"])
         idx_target = find_idx([target_col_name, target_col_name.lower()])
+        if idx_target == -1 and sheet_name == "Source" and "public" in target_col_name.lower():
+            idx_target = 48
 
         if idx_target == -1:
             return []

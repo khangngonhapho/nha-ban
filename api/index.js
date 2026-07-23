@@ -2237,22 +2237,27 @@ module.exports = async (req, res) => {
           const sourceRows = sourceData.values || [];
           if (sourceRows.length > 1) {
             const sHeaders = sourceRows[0];
-            const sIdxSysId = findColIdx(sHeaders, ['system_id', 'system id']);
-            const sIdxMaKn = findColIdx(sHeaders, ['mã khang ngô (id)', 'ma_khang_ngo_id', 'mã khang ngô']);
-            const sIdxPubJson = findColIdx(sHeaders, ['images_public_json']);
+            let sIdxSysId = findColIdx(sHeaders, ['system_id', 'system id']);
+            if (sIdxSysId === -1) sIdxSysId = 37;
+
+            let sIdxMaKn = findColIdx(sHeaders, ['mã khang ngô (id)', 'ma_khang_ngo_id', 'mã khang ngô']);
+            if (sIdxMaKn === -1) sIdxMaKn = 3;
+
+            let sIdxPubJson = findColIdx(sHeaders, ['images_public_json']);
+            if (sIdxPubJson === -1) sIdxPubJson = 48;
 
             let sMatchedRow = null;
             for (let j = 1; j < sourceRows.length; j++) {
               const sr = sourceRows[j];
-              const srSysId = sIdxSysId !== -1 ? sr[sIdxSysId] : '';
-              const srMaKn = sIdxMaKn !== -1 ? sr[sIdxMaKn] : '';
+              const srSysId = sIdxSysId < sr.length ? String(sr[sIdxSysId] || '').trim() : '';
+              const srMaKn = sIdxMaKn < sr.length ? String(sr[sIdxMaKn] || '').trim() : '';
               if ((foundSysId && srSysId === foundSysId) || (foundMaKn && srMaKn === foundMaKn)) {
                 sMatchedRow = sr;
                 break;
               }
             }
 
-            if (sMatchedRow && sIdxPubJson !== -1) {
+            if (sMatchedRow && sIdxPubJson < sMatchedRow.length) {
               sourcePubImages = parseImageJson(sMatchedRow[sIdxPubJson]);
             }
           }
