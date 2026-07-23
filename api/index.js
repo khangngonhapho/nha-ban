@@ -2267,19 +2267,21 @@ module.exports = async (req, res) => {
       }
 
       let poolImagesList = [];
+      let p4Debug = '';
       try {
         const primaryPoolId = poolSheetId || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
-        let poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/${primaryPoolId}/values/${encodeURIComponent('Pool_Images!A1:ZZ3000')}`;
+        let poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/${primaryPoolId}/values/Pool_Images!A1:ZZ3000`;
         let poolImgRes = await fetch(poolImgUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
         
         if (!poolImgRes.ok && primaryPoolId !== '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw') {
-          poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw/values/${encodeURIComponent('Pool_Images!A1:ZZ3000')}`;
+          poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw/values/Pool_Images!A1:ZZ3000`;
           poolImgRes = await fetch(poolImgUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
         }
 
         if (poolImgRes.ok) {
           const poolImgData = await poolImgRes.json();
           const pImgRows = poolImgData.values || [];
+          p4Debug = `Rows: ${pImgRows.length}`;
           if (pImgRows.length > 1) {
             for (let k = 1; k < pImgRows.length; k++) {
               const pir = pImgRows[k];
@@ -2312,8 +2314,11 @@ module.exports = async (req, res) => {
               }
             }
           }
+        } else {
+          p4Debug = `Res status: ${poolImgRes.status}`;
         }
       } catch (errP4) {
+        p4Debug = `Err: ${errP4.message}`;
         console.warn('Pool_Images sheet fetch warning in Vercel compare-images:', errP4.message);
       }
 
@@ -2332,7 +2337,7 @@ module.exports = async (req, res) => {
         partition_1_sqlite: poolAdminImages,
         partition_2_pool: { is_fallback: false, images: poolAdminImages },
         partition_3_source: { is_fallback: false, images: sourcePubImages },
-        partition_4_pool_images: { is_fallback: false, images: poolImagesList }
+        partition_4_pool_images: { is_fallback: false, images: poolImagesList, debug: p4Debug }
       });
     } catch (err) {
       console.error('Error in compare-images Vercel endpoint:', err);
