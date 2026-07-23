@@ -945,14 +945,34 @@
       }
     }
 
-    function extractFilename(url) {
+    function sanitizeUrl(rawUrl) {
+      if (!rawUrl) return '';
+      let cleaned = String(rawUrl).trim().replace(/^["']|["']$/g, '');
+      if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+        if (cleaned.startsWith('/')) {
+          cleaned = window.location.origin + cleaned;
+        } else if (cleaned.startsWith('BDS-KhangNgo') || cleaned.startsWith('static/')) {
+          cleaned = 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/' + cleaned;
+        }
+      }
       try {
-        const urlObj = new URL(url);
-        const pathname = urlObj.pathname;
-        const lastPart = pathname.substring(pathname.lastIndexOf('/') + 1);
-        return lastPart ? decodeURIComponent(lastPart) : 'image.jpg';
+        return encodeURI(decodeURI(cleaned));
       } catch (e) {
-        return 'image.jpg';
+        return encodeURI(cleaned);
+      }
+    }
+
+    function extractFilename(url) {
+      if (!url) return 'image.jpg';
+      try {
+        const decoded = decodeURIComponent(url);
+        const cleanPath = decoded.split('?')[0].split('#')[0];
+        const lastPart = cleanPath.substring(cleanPath.lastIndexOf('/') + 1);
+        return lastPart ? lastPart : 'image.jpg';
+      } catch (e) {
+        const cleanPath = String(url).split('?')[0].split('#')[0];
+        const lastPart = cleanPath.substring(cleanPath.lastIndexOf('/') + 1);
+        return lastPart ? lastPart : 'image.jpg';
       }
     }
 
@@ -1072,6 +1092,9 @@
           `;
         }
 
+        const safeUrl = sanitizeUrl(img.url);
+        const displayFilename = img.filename || extractFilename(safeUrl);
+
         card.innerHTML = `
           <div class="card-checkbox">
             <label class="checkbox-container" style="gap: 0;">
@@ -1082,14 +1105,14 @@
           <span class="img-index">#${index + 1}</span>
           
           <div class="img-preview-container">
-            <img class="img-preview" src="${img.url}" alt="Preview #${index + 1}" onerror="handleImageError(this)" loading="lazy">
+            <img class="img-preview" src="${safeUrl}" data-original-src="${img.url}" alt="Preview #${index + 1}" onerror="handleImageError(this)" loading="lazy">
           </div>
           
           <div class="img-info">
-            <div class="img-name" title="${img.filename}">${img.filename}</div>
+            <div class="img-name" title="${displayFilename}">${displayFilename}</div>
             ${metaHtml}
             <div class="img-actions">
-              <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;" onclick="downloadSingle('${img.url}', '${img.filename}')">
+              <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;" onclick="downloadSingle('${safeUrl}', '${displayFilename}')">
                 <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
                 </svg>
@@ -1190,25 +1213,25 @@
           .map((obj, idx) => {
             if (!obj) return null;
             if (typeof obj === 'string') {
-              if (obj.startsWith('http://') || obj.startsWith('https://')) {
+              const u = sanitizeUrl(obj);
+              if (u) {
                 return {
                   id: `img-t2-${idx}-${Date.now()}`,
-                  url: obj,
-                  filename: extractFilename(obj),
+                  url: u,
+                  filename: extractFilename(u),
                   selected: true
                 };
               }
               return null;
             }
             if (typeof obj !== 'object') return null;
-            const url = obj.r2_url || obj.image_url || obj.url;
-            if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
-              return null;
-            }
+            const rawU = obj.r2_url || obj.image_url || obj.url;
+            const u = sanitizeUrl(rawU);
+            if (!u) return null;
             return {
               id: `img-t2-${idx}-${Date.now()}`,
-              url: url,
-              filename: extractFilename(url),
+              url: u,
+              filename: extractFilename(u),
               selected: true,
               role: obj.role || '',
               sequence_index: obj.sequence_index !== undefined ? obj.sequence_index : '',
@@ -1218,15 +1241,30 @@
           })
           .filter(Boolean);
       } else {
-        const urlRegex = /(https?:\/\/[^\s"'`,{}()\[\]\\]+)/g;
-        const matches = input.match(urlRegex) || [];
+        const rawTokens = input.split(/[\t\r\n]+|\s{2,}/).map(s => s.trim()).filter(Boolean);
+        let validUrls = [];
         
-        tab2ImagesList = matches.map((url, idx) => ({
-          id: `img-t2-${idx}-${Date.now()}`,
-          url: url,
-          filename: extractFilename(url),
-          selected: true
-        }));
+        for (let tok of rawTokens) {
+          const cleanTok = tok.replace(/^["'\[\],]+|["'\[\],]+$/g, '').trim();
+          if (cleanTok.startsWith('http://') || cleanTok.startsWith('https://') || cleanTok.startsWith('BDS-KhangNgo')) {
+            validUrls.push(cleanTok);
+          }
+        }
+        
+        if (validUrls.length === 0) {
+          const urlRegex = /(https?:\/\/[^\s"'`,{}()\[\]\\]+)/g;
+          validUrls = input.match(urlRegex) || [];
+        }
+
+        tab2ImagesList = validUrls.map((url, idx) => {
+          const u = sanitizeUrl(url);
+          return {
+            id: `img-t2-${idx}-${Date.now()}`,
+            url: u,
+            filename: extractFilename(u),
+            selected: true
+          };
+        });
       }
 
       if (tab2ImagesList.length === 0) {
@@ -1266,6 +1304,9 @@
           `;
         }
 
+        const safeUrl = sanitizeUrl(img.url);
+        const displayFilename = img.filename || extractFilename(safeUrl);
+
         card.innerHTML = `
           <div class="card-checkbox">
             <label class="checkbox-container" style="gap: 0;">
@@ -1276,14 +1317,14 @@
           <span class="img-index">#${index + 1}</span>
           
           <div class="img-preview-container">
-            <img class="img-preview" src="${img.url}" alt="Preview #${index + 1}" onerror="handleImageError(this)" loading="lazy">
+            <img class="img-preview" src="${safeUrl}" data-original-src="${img.url}" alt="Preview #${index + 1}" onerror="handleImageError(this)" loading="lazy">
           </div>
           
           <div class="img-info">
-            <div class="img-name" title="${img.filename}">${img.filename}</div>
+            <div class="img-name" title="${displayFilename}">${displayFilename}</div>
             ${metaHtml}
             <div class="img-actions">
-              <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;" onclick="downloadSingle('${img.url}', '${img.filename}')">
+              <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;" onclick="downloadSingle('${safeUrl}', '${displayFilename}')">
                 <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
                 </svg>
@@ -1292,7 +1333,6 @@
             </div>
           </div>
         `;
-
         grid.appendChild(card);
       });
 
@@ -1355,6 +1395,12 @@
 
     // SHARED DOWNLOAD LOGIC (BYPASS CORS WITH PROXY)
     function handleImageError(imgElem) {
+      const originalSrc = imgElem.getAttribute('data-original-src') || imgElem.src;
+      if (originalSrc && !imgElem.getAttribute('data-tried-proxy') && !originalSrc.includes('/api/proxy-download')) {
+        imgElem.setAttribute('data-tried-proxy', 'true');
+        imgElem.src = `/api/proxy-download?url=${encodeURIComponent(originalSrc)}&filename=preview.jpg`;
+        return;
+      }
       imgElem.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23f43f5e" stroke-width="1.5"><rect width="20" height="20" x="2" y="2" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
       imgElem.style.opacity = '0.5';
     }

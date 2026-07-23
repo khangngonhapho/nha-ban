@@ -468,6 +468,26 @@ def upload_r2_vercel_bridge():
 # IMAGE COMPARISON & PROXY DOWNLOAD ENDPOINTS (US-157)
 # ==================================================
 
+def sanitize_url_py(raw_url):
+    if not raw_url:
+        return ""
+    u = str(raw_url).strip().strip('"').strip("'")
+    if not u.startswith("http://") and not u.startswith("https://"):
+        if u.startswith("BDS-KhangNgo") or u.startswith("static/"):
+            u = "https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev/" + u
+        else:
+            return ""
+    try:
+        from urllib.parse import urlparse, quote, unquote
+        parsed = urlparse(u)
+        encoded_path = quote(unquote(parsed.path))
+        encoded_query = quote(unquote(parsed.query), safe="=&")
+        scheme = parsed.scheme or "https"
+        netloc = parsed.netloc
+        return f"{scheme}://{netloc}{encoded_path}{'?' + encoded_query if encoded_query else ''}"
+    except Exception:
+        return u.replace(" ", "%20")
+
 def extract_filename_py(url):
     try:
         from urllib.parse import urlparse, unquote
@@ -507,16 +527,15 @@ def parse_image_json_to_list(raw_json):
         try:
             parsed = json.loads(raw_json)
         except Exception:
-            matches = re.findall(r'(https?://[^\s"\'`,{}()\[\]\\]+)', str(raw_json))
-            return [{
-                "id": f"img-{i}",
-                "url": u,
-                "filename": extract_filename_py(u),
-                "role": "",
-                "sequence_index": i,
-                "origin": "crawl",
-                "is_hidden": 0
-            } for i, u in enumerate(matches)]
+            raw_str = str(raw_json)
+            tokens = re.split(r'[\t\r\n]+|\s{2,}', raw_str)
+            parsed = []
+            for t in tokens:
+                t_clean = t.strip().strip('"').strip("'")
+                if t_clean.startswith("http://") or t_clean.startswith("https://") or t_clean.startswith("BDS-KhangNgo"):
+                    parsed.append(t_clean)
+            if not parsed:
+                parsed = re.findall(r'(https?://[^\s"\'`,{}()\[\]\\]+)', raw_str)
             
     if isinstance(parsed, dict) and "images" in parsed:
         parsed = parsed["images"]
@@ -529,23 +548,25 @@ def parse_image_json_to_list(raw_json):
         if not obj:
             continue
         if isinstance(obj, str):
-            if obj.startswith("http://") or obj.startswith("https://"):
+            url_str = sanitize_url_py(obj)
+            if url_str:
                 result.append({
                     "id": f"img-{idx}",
-                    "url": obj,
-                    "filename": extract_filename_py(obj),
+                    "url": url_str,
+                    "filename": extract_filename_py(url_str),
                     "role": "",
                     "sequence_index": idx,
                     "origin": "",
                     "is_hidden": 0
                 })
         elif isinstance(obj, dict):
-            url = obj.get("r2_url") or obj.get("image_url") or obj.get("url")
-            if url and (url.startswith("http://") or url.startswith("https://")):
+            raw_u = obj.get("r2_url") or obj.get("image_url") or obj.get("url")
+            url_str = sanitize_url_py(raw_u)
+            if url_str:
                 result.append({
                     "id": f"img-{idx}",
-                    "url": url,
-                    "filename": extract_filename_py(url),
+                    "url": url_str,
+                    "filename": extract_filename_py(url_str),
                     "role": obj.get("role", ""),
                     "sequence_index": obj.get("sequence_index") if obj.get("sequence_index") is not None else idx,
                     "origin": obj.get("origin", ""),
