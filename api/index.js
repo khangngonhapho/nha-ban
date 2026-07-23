@@ -2283,7 +2283,9 @@ module.exports = async (req, res) => {
               const isMatch = (foundTkId && pMa === foundTkId) || 
                               (foundSysId && pMa === foundSysId) || 
                               (foundMaKn && pMa === foundMaKn) || 
-                              (foundSoNha && pAddr.includes(foundSoNha));
+                              (foundSoNha && pAddr.includes(foundSoNha)) ||
+                              (pAddr && queryStr && pAddr.toLowerCase().includes(queryStr.toLowerCase())) ||
+                              (pAddr && firstTok && pAddr.includes(firstTok));
 
               if (isMatch) {
                 for (let c = 4; c < pir.length; c++) {
