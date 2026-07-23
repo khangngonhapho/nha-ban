@@ -840,7 +840,7 @@
             <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
             </svg>
-            Tải tất cả ảnh cả 3 phân vùng
+            Tải tất cả ảnh cả 4 phân vùng
           </button>
         </div>
       </div>
@@ -906,6 +906,26 @@
           </div>
           <div class="images-grid" id="p3Grid"></div>
         </div>
+
+        <!-- Partition 4: Sheet Pool_Images -->
+        <div class="partition-card">
+          <div class="partition-header">
+            <div class="partition-title">
+              <span>4. Phân vùng hình upload trong Sheet Pool_Images</span>
+              <span class="count-badge" id="p4Count">0 ảnh</span>
+              <span class="status-badge" id="p4Status">Google Sheet</span>
+            </div>
+            <div>
+              <button class="btn btn-secondary" onclick="downloadPartition('p4')">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Tải phân vùng 4
+              </button>
+            </div>
+          </div>
+          <div class="images-grid" id="p4Grid"></div>
+        </div>
       </div>
     </div>
 
@@ -969,7 +989,8 @@
     let partitionData = {
       p1: [],
       p2: [],
-      p3: []
+      p3: [],
+      p4: []
     };
     let tab2ImagesList = [];
 
@@ -1084,6 +1105,7 @@
       partitionData.p1 = (data.partition_1_sqlite || []).map((img, i) => ({ ...img, id: `p1-${i}`, selected: true }));
       partitionData.p2 = ((data.partition_2_pool && data.partition_2_pool.images) || []).map((img, i) => ({ ...img, id: `p2-${i}`, selected: true }));
       partitionData.p3 = ((data.partition_3_source && data.partition_3_source.images) || []).map((img, i) => ({ ...img, id: `p3-${i}`, selected: true }));
+      partitionData.p4 = ((data.partition_4_pool_images && data.partition_4_pool_images.images) || []).map((img, i) => ({ ...img, id: `p4-${i}`, selected: true }));
 
       // Status badges (Độc lập 100%, không fallback)
       const p2Badge = document.getElementById('p2Status');
@@ -1094,15 +1116,27 @@
       p3Badge.className = 'status-badge realtime';
       p3Badge.innerText = 'Google Sheet Source';
 
+      const p4Badge = document.getElementById('p4Status');
+      if (p4Badge) {
+        p4Badge.className = 'status-badge realtime';
+        p4Badge.innerText = 'Google Sheet Pool_Images';
+      }
+
       // Counts
       document.getElementById('p1Count').innerText = `${partitionData.p1.length} ảnh`;
       document.getElementById('p2Count').innerText = `${partitionData.p2.length} ảnh`;
       document.getElementById('p3Count').innerText = `${partitionData.p3.length} ảnh`;
+      if (document.getElementById('p4Count')) {
+        document.getElementById('p4Count').innerText = `${partitionData.p4.length} ảnh`;
+      }
 
       // Render grids
       renderPartitionGrid('p1Grid', partitionData.p1, 'p1');
       renderPartitionGrid('p2Grid', partitionData.p2, 'p2');
       renderPartitionGrid('p3Grid', partitionData.p3, 'p3');
+      if (document.getElementById('p4Grid')) {
+        renderPartitionGrid('p4Grid', partitionData.p4, 'p4');
+      }
 
       document.getElementById('partitionsContainer').style.display = 'block';
       document.getElementById('partitionsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1201,7 +1235,8 @@
       const allSelected = [
         ...partitionData.p1.filter(i => i.selected),
         ...partitionData.p2.filter(i => i.selected),
-        ...partitionData.p3.filter(i => i.selected)
+        ...partitionData.p3.filter(i => i.selected),
+        ...(partitionData.p4 || []).filter(i => i.selected)
       ];
       if (allSelected.length === 0) {
         alert('Chưa chọn ảnh nào để tải!');

@@ -2266,6 +2266,48 @@ module.exports = async (req, res) => {
         console.warn('Source sheet fetch warning in Vercel compare-images:', errSrc.message);
       }
 
+      let poolImagesList = [];
+      try {
+        const poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/${encodeURIComponent('Pool_Images!A1:ZZ3000')}`;
+        const poolImgRes = await fetch(poolImgUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+        if (poolImgRes.ok) {
+          const poolImgData = await poolImgRes.json();
+          const pImgRows = poolImgData.values || [];
+          if (pImgRows.length > 1) {
+            for (let k = 1; k < pImgRows.length; k++) {
+              const pir = pImgRows[k];
+              const pMa = pir[0] ? String(pir[0]).trim() : '';
+              const pAddr = pir[1] ? String(pir[1]).trim() : '';
+              const pLoai = pir[2] ? String(pir[2]).trim() : '';
+
+              const isMatch = (foundTkId && pMa === foundTkId) || 
+                              (foundSysId && pMa === foundSysId) || 
+                              (foundMaKn && pMa === foundMaKn) || 
+                              (foundSoNha && pAddr.includes(foundSoNha));
+
+              if (isMatch) {
+                for (let c = 4; c < pir.length; c++) {
+                  const urlStr = String(pir[c] || '').trim();
+                  if (urlStr && (urlStr.startsWith('http://') || urlStr.startsWith('https://') || urlStr.startsWith('BDS-KhangNgo'))) {
+                    poolImagesList.push({
+                      id: `p4-${poolImagesList.length}`,
+                      url: urlStr,
+                      filename: extractFilename(urlStr),
+                      role: pLoai || 'uploaded',
+                      origin: 'Pool_Images',
+                      sequence_index: poolImagesList.length,
+                      is_hidden: 0
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (errP4) {
+        console.warn('Pool_Images sheet fetch warning in Vercel compare-images:', errP4.message);
+      }
+
       return res.status(200).json({
         status: 'success',
         house_info: {
@@ -2280,7 +2322,8 @@ module.exports = async (req, res) => {
         },
         partition_1_sqlite: poolAdminImages,
         partition_2_pool: { is_fallback: false, images: poolAdminImages },
-        partition_3_source: { is_fallback: false, images: sourcePubImages }
+        partition_3_source: { is_fallback: false, images: sourcePubImages },
+        partition_4_pool_images: { is_fallback: false, images: poolImagesList }
       });
     } catch (err) {
       console.error('Error in compare-images Vercel endpoint:', err);

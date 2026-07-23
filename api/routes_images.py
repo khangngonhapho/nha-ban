@@ -653,6 +653,52 @@ def fetch_image_json_from_sheet_py(sheet_name, match_id, target_col_name):
         print(f"[⚠️ Warning] fetch_image_json_from_sheet_py error for {sheet_name}: {e}")
         return []
 
+def fetch_pool_images_from_sheet_py(match_id, match_address=""):
+    """Bóc tách phân vùng 4: Hình ảnh trong tab Pool_Images từ Google Sheets"""
+    try:
+        import manager
+        import gspread
+        cfg = manager.load_config()
+        creds = manager.get_google_credentials()
+        client = gspread.authorize(creds)
+        pool_id = cfg.get("sheet_id") or "1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw"
+        ss = client.open_by_key(pool_id)
+        ws = ss.worksheet("Pool_Images")
+        rows = ws.get_all_values()
+        if len(rows) <= 1:
+            return []
+
+        p4_images = []
+        for r in rows[1:]:
+            ma_val = r[0].strip() if len(r) > 0 else ""
+            addr_val = r[1].strip() if len(r) > 1 else ""
+            loai_val = r[2].strip() if len(r) > 2 else ""
+
+            is_match = False
+            if match_id and match_id == ma_val:
+                is_match = True
+            elif match_address and match_address in addr_val:
+                is_match = True
+
+            if is_match:
+                for col_idx in range(4, len(r)):
+                    url_str = r[col_idx].strip()
+                    if url_str and (url_str.startswith("http://") or url_str.startswith("https://") or url_str.startswith("BDS-KhangNgo")):
+                        filename = extract_filename_py(url_str)
+                        p4_images.append({
+                            "id": f"p4-{len(p4_images)}",
+                            "url": url_str,
+                            "filename": filename,
+                            "role": loai_val or "uploaded",
+                            "origin": "Pool_Images",
+                            "sequence_index": len(p4_images),
+                            "is_hidden": 0
+                        })
+        return p4_images
+    except Exception as e:
+        print(f"[⚠️ Warning] fetch_pool_images_from_sheet_py error: {e}")
+        return []
+
 @routes_images.route('/api/databases', methods=['GET'])
 def get_databases():
     """Trả về danh sách các tệp SQLite .db trong thư mục dự án"""
@@ -776,6 +822,14 @@ def compare_images():
         print(f"[⚠️ Warning] Lỗi đọc phân vùng Source Sheet: {e_p3}")
         partition_3_source = []
 
+    # Partition 4: Hình ảnh trong tab Pool_Images
+    partition_4_pool_images = []
+    try:
+        partition_4_pool_images = fetch_pool_images_from_sheet_py(tk_id or system_id or ma_khang_ngo, f"{so_nha_val} {duong_val}".strip())
+    except Exception as e_p4:
+        print(f"[⚠️ Warning] Lỗi đọc phân vùng Pool_Images Sheet: {e_p4}")
+        partition_4_pool_images = []
+
     house_info = {
         "tk_id": tk_id,
         "system_id": system_id,
@@ -797,6 +851,10 @@ def compare_images():
         },
         "partition_3_source": {
             "images": partition_3_source,
+            "is_fallback": False
+        },
+        "partition_4_pool_images": {
+            "images": partition_4_pool_images,
             "is_fallback": False
         }
     })
