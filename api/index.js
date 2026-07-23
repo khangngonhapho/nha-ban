@@ -2139,15 +2139,24 @@ module.exports = async (req, res) => {
       }
 
       const poolHeaders = poolRows[0];
-      const getIdx = (name) => poolHeaders.findIndex(h => String(h).trim().toLowerCase() === String(name).trim().toLowerCase());
+      const findColIdx = (headers, candidates) => {
+        for (const cand of candidates) {
+          const idx = headers.findIndex(h => {
+            const hStr = String(h).trim().toLowerCase();
+            return hStr === cand.toLowerCase() || hStr.includes(cand.toLowerCase());
+          });
+          if (idx !== -1) return idx;
+        }
+        return -1;
+      };
 
-      const idxTkId = getIdx('tk_id');
-      const idxSysId = getIdx('System ID') !== -1 ? getIdx('System ID') : getIdx('System_ID');
-      const idxMaKn = getIdx('Mã Khang Ngô (ID)') !== -1 ? getIdx('Mã Khang Ngô (ID)') : getIdx('Mã Khang Ngô');
-      const idxSoNha = getIdx('Số nhà');
-      const idxDuong = getIdx('Đường');
-      const idxQuan = getIdx('Quận');
-      const idxImagesAdmin = getIdx('Images_Admin_JSON');
+      const idxTkId = findColIdx(poolHeaders, ['tk_id']);
+      const idxSysId = findColIdx(poolHeaders, ['system id', 'system_id']);
+      const idxMaKn = findColIdx(poolHeaders, ['mã khang ngô (id)', 'ma_khang_ngo_id', 'mã khang ngô']);
+      const idxSoNha = findColIdx(poolHeaders, ['ngõ/số nhà', 'ngo_so_nha', 'số nhà', 'so_nha']);
+      const idxDuong = findColIdx(poolHeaders, ['đường', 'duong']);
+      const idxQuan = findColIdx(poolHeaders, ['quận', 'quan']);
+      const idxImagesAdmin = findColIdx(poolHeaders, ['images_admin_json']);
 
       const qClean = queryStr.replace('+', ' ');
       const qTokens = qClean.split(/\s+/).filter(Boolean);
@@ -2219,10 +2228,9 @@ module.exports = async (req, res) => {
           const sourceRows = sourceData.values || [];
           if (sourceRows.length > 1) {
             const sHeaders = sourceRows[0];
-            const sGetIdx = (name) => sHeaders.findIndex(h => String(h).trim().toLowerCase() === String(name).trim().toLowerCase());
-            const sIdxSysId = sGetIdx('System_ID') !== -1 ? sGetIdx('System_ID') : sGetIdx('System ID');
-            const sIdxMaKn = sGetIdx('Mã Khang Ngô (ID)') !== -1 ? sGetIdx('Mã Khang Ngô (ID)') : sGetIdx('Mã Khang Ngô');
-            const sIdxPubJson = sGetIdx('Images_Public_JSON');
+            const sIdxSysId = findColIdx(sHeaders, ['system_id', 'system id']);
+            const sIdxMaKn = findColIdx(sHeaders, ['mã khang ngô (id)', 'ma_khang_ngo_id', 'mã khang ngô']);
+            const sIdxPubJson = findColIdx(sHeaders, ['images_public_json']);
 
             let sMatchedRow = null;
             for (let j = 1; j < sourceRows.length; j++) {
