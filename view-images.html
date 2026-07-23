@@ -27,6 +27,8 @@
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --success: #10b981;
+      --warning: #f59e0b;
+      --purple: #a855f7;
     }
 
     * {
@@ -49,13 +51,13 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
     }
 
     header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
 
     header h1 {
@@ -63,7 +65,7 @@
       font-weight: 700;
       color: var(--text);
       letter-spacing: -0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       background: linear-gradient(135deg, #fff 0%, #cbd5e1 50%, var(--primary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -71,10 +73,58 @@
 
     header p {
       color: var(--text-muted);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 400;
     }
 
+    /* Tab Navigation */
+    .tabs-nav {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(14, 165, 233, 0.08));
+      color: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.15);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Card Box */
     .card {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -91,39 +141,72 @@
       border-color: rgba(255, 255, 255, 0.12);
     }
 
+    /* Form Controls */
     .input-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .input-label {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
-    textarea {
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    input[type="text"], select, textarea {
       width: 100%;
-      height: 140px;
       background: rgba(15, 23, 42, 0.6);
       border: 1px solid var(--border);
       border-radius: 12px;
       color: var(--text);
-      padding: 16px;
-      font-family: monospace;
+      padding: 12px 16px;
+      font-family: inherit;
       font-size: 14px;
-      resize: vertical;
       transition: all 0.3s ease;
       outline: none;
     }
 
-    textarea:focus {
+    textarea {
+      height: 130px;
+      font-family: monospace;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus, select:focus, textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
       background: rgba(15, 23, 42, 0.8);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2338bdf8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      padding-right: 36px;
+    }
+
+    select option {
+      background: #0f172a;
+      color: #fff;
     }
 
     .btn {
@@ -134,12 +217,13 @@
       background: var(--primary);
       color: #000;
       border: none;
-      padding: 12px 24px;
+      padding: 12px 20px;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .btn:hover {
@@ -161,6 +245,24 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
+    .btn-success {
+      background: var(--success);
+      color: #000;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-purple {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .btn-purple:hover {
+      background: #9333ea;
+    }
+
     .btn:disabled {
       background: rgba(255, 255, 255, 0.1) !important;
       color: var(--text-muted) !important;
@@ -168,90 +270,116 @@
       transform: none !important;
     }
 
-    /* Toolbar Section */
-    .toolbar {
+    /* House Info Banner */
+    .house-info-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 69, 0.9), rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--border-hover);
+      border-radius: 16px;
+      padding: 18px 24px;
+      margin-bottom: 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 16px;
-      padding: 16px;
-      background: rgba(15, 23, 42, 0.4);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      margin-bottom: 24px;
     }
 
-    .toolbar-actions {
+    .house-details {
       display: flex;
-      align-items: center;
-      gap: 12px;
       flex-wrap: wrap;
+      gap: 16px 32px;
     }
 
-    .toolbar-stats {
-      font-size: 15px;
-      font-weight: 500;
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .detail-label {
+      font-size: 11px;
+      text-transform: uppercase;
       color: var(--text-muted);
+      letter-spacing: 0.5px;
     }
 
-    .toolbar-stats span {
-      color: var(--primary);
+    .detail-value {
+      font-size: 15px;
       font-weight: 700;
-    }
-
-    /* Checkbox Styles */
-    .checkbox-container {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      user-select: none;
-      font-size: 14px;
-      font-weight: 500;
       color: var(--text);
     }
 
-    .custom-checkbox {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--border-hover);
-      border-radius: 6px;
+    .detail-value.highlight {
+      color: var(--primary);
+    }
+
+    /* Partition Section */
+    .partition-card {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 28px;
+    }
+
+    .partition-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .partition-title {
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      background: rgba(15, 23, 42, 0.6);
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
     }
 
-    .checkbox-container input {
-      display: none;
+    .partition-title span.count-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
     }
 
-    .checkbox-container input:checked + .custom-checkbox {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
-    .checkbox-container input:checked + .custom-checkbox::after {
-      content: '✓';
-      color: #000;
+    .partition-title span.status-badge {
       font-size: 12px;
-      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .status-badge.realtime {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge.fallback {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
     /* Grid Layout */
     .images-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
-      margin-top: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 12px;
     }
 
     .img-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 14px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -272,9 +400,9 @@
 
     .img-preview-container {
       width: 100%;
-      height: 200px;
+      height: 180px;
       position: relative;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -292,44 +420,82 @@
       transform: scale(1.05);
     }
 
-    /* Card Checkbox Overlay */
     .card-checkbox {
       position: absolute;
-      top: 12px;
-      left: 12px;
+      top: 10px;
+      left: 10px;
       z-index: 10;
-      background: rgba(11, 15, 25, 0.7);
+      background: rgba(11, 15, 25, 0.75);
       padding: 6px;
       border-radius: 8px;
       backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .checkbox-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-hover);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .checkbox-container input {
+      display: none;
+    }
+
+    .checkbox-container input:checked + .custom-checkbox {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-container input:checked + .custom-checkbox::after {
+      content: '✓';
+      color: #000;
+      font-size: 11px;
+      font-weight: 900;
     }
 
     .img-index {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(11, 15, 25, 0.7);
+      top: 10px;
+      right: 10px;
+      background: rgba(11, 15, 25, 0.75);
       color: var(--primary);
       font-size: 12px;
       font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 8px;
+      padding: 3px 8px;
+      border-radius: 6px;
       backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       z-index: 10;
     }
 
     .img-info {
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       flex-grow: 1;
     }
 
     .img-name {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
       font-family: monospace;
       white-space: nowrap;
@@ -342,14 +508,14 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 4px;
-      margin-bottom: 8px;
+      margin-top: 2px;
+      margin-bottom: 6px;
     }
 
     .meta-tag {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 6px;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 5px;
       font-weight: 600;
       letter-spacing: 0.02em;
       text-transform: uppercase;
@@ -358,28 +524,34 @@
       justify-content: center;
     }
 
-    .role-tag[data-role="diagram"] {
+    .role-tag[data-role="diagram"], .role-tag[data-role="Sơ đồ"] {
       background: rgba(234, 179, 8, 0.15);
       color: #facc15;
       border: 1px solid rgba(234, 179, 8, 0.3);
     }
 
-    .role-tag[data-role="facade"] {
+    .role-tag[data-role="facade"], .role-tag[data-role="Mặt tiền"] {
       background: rgba(56, 189, 248, 0.15);
       color: #38bdf8;
       border: 1px solid rgba(56, 189, 248, 0.3);
     }
 
-    .role-tag[data-role="alley"] {
+    .role-tag[data-role="alley"], .role-tag[data-role="Hẻm"] {
       background: rgba(20, 184, 166, 0.15);
       color: #2dd4bf;
       border: 1px solid rgba(20, 184, 166, 0.3);
     }
 
-    .role-tag[data-role="interior"] {
+    .role-tag[data-role="interior"], .role-tag[data-role="Nội thất"] {
       background: rgba(129, 140, 248, 0.15);
       color: #818cf8;
       border: 1px solid rgba(129, 140, 248, 0.3);
+    }
+
+    .role-tag[data-role="cover"], .role-tag[data-role="Bìa"] {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
     }
 
     .role-tag {
@@ -421,6 +593,38 @@
       margin-top: auto;
     }
 
+    /* Toolbar Section */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-stats {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .toolbar-stats span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
     /* Progress and Loading overlays */
     .download-status-bar {
       width: 100%;
@@ -442,8 +646,8 @@
 
     .spinner {
       border: 3px solid rgba(255, 255, 255, 0.1);
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       border-left-color: var(--primary);
       animation: spin 1s linear infinite;
@@ -455,7 +659,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Instructions / Guide Alert */
     .alert-guide {
       background: rgba(56, 189, 248, 0.08);
       border: 1px solid rgba(56, 189, 248, 0.2);
@@ -475,6 +678,13 @@
       flex-shrink: 0;
       color: var(--primary);
       margin-top: 2px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
     }
 
     @media (max-width: 640px) {
@@ -497,68 +707,242 @@
   <div class="container">
     <header>
       <h1>BDS Khang Ngô</h1>
-      <p>Trình xem & tải hình ảnh hàng loạt gốc chất lượng cao</p>
+      <p>Trình xem & đối chiếu hình ảnh dữ liệu bất động sản chất lượng cao</p>
     </header>
 
-    <!-- Paste area -->
-    <div class="card">
-      <div class="input-group">
-        <label class="input-label" for="urlInput">Dán danh sách URL hình ảnh vào đây:</label>
-        <textarea id="urlInput" placeholder="Ví dụ:&#10;https://pub-.../img_1.jpg   https://pub-.../img_2.jpg&#10;https://pub-.../img_3.jpg   https://pub-.../img_4.jpg"></textarea>
-        <div style="display: flex; gap: 12px; margin-top: 4px;">
-          <button class="btn" id="parseBtn" onclick="processUrls()">
-            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z"/>
-            </svg>
-            Hiển thị ảnh
-          </button>
-          <button class="btn btn-secondary" onclick="clearInput()">Xóa</button>
+    <!-- Navigation Tabs -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" id="tab1Btn" onclick="switchTab(1)">
+        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        1. Đối Chiếu Ảnh 3 Phân Vùng (SQLite - Pool - Source)
+      </button>
+      <button class="tab-btn" id="tab2Btn" onclick="switchTab(2)">
+        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        2. Xem & Tải Ảnh Từ Input (JSON / URLs)
+      </button>
+    </div>
+
+    <!-- TAB 1: ĐỐI CHIẾU 3 PHÂN VÙNG -->
+    <div class="tab-content active" id="tab1Content">
+      <div class="card">
+        <div class="input-group">
+          <label class="input-label">Nhập địa chỉ / Số nhà & Chọn CSDL SQLite:</label>
+          <div class="form-row">
+            <input type="text" id="tab1QueryInput" placeholder="Nhập Số nhà + Đường (Ví dụ: 1168/42 CMT8, 489/24/39B Huỳnh Văn Bánh) hoặc System ID / Mã Khang Ngô..." onkeydown="if(event.key==='Enter') fetchCompareData()">
+            <select id="dbSelect">
+              <option value="raw_archive.db">raw_archive.db (Default)</option>
+            </select>
+            <button class="btn" id="searchCompareBtn" onclick="fetchCompareData()">
+              <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z"/>
+              </svg>
+              Tra cứu & Đối chiếu
+            </button>
+          </div>
+        </div>
+
+        <div class="alert-guide" style="margin-top: 16px;">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-.04.022c-.29.176-.417.509-.35.833.042.203.09.419.121.627M12 9.75V9m0 12.75a9.75 9.75 0 110-19.5 9.75 9.75 0 010 19.5z" />
+          </svg>
+          <div>
+            <strong>Hướng dẫn đối chiếu:</strong> Hệ thống tự động áp dụng quy tắc chuẩn hóa tên đường đặc biệt (<i>CMT8 ➔ TTMC, 3/2 ➔ HTB, Đường số 7 ➔ 7SD</i>) và tách lấy số nhà trước dấu <i>+</i>. Dữ liệu ảnh sẽ được phân làm 3 phân vùng độc lập để kiểm tra tính đồng bộ.
+          </div>
         </div>
       </div>
-      
-      <div class="alert-guide">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-.04.022c-.29.176-.417.509-.35.833.042.203.09.419.121.627M12 9.75V9m0 12.75a9.75 9.75 0 110-19.5 9.75 9.75 0 010 19.5z" />
-        </svg>
+
+      <!-- House Info Banner (Hidden until fetched) -->
+      <div id="houseInfoBanner" class="house-info-banner" style="display: none;">
+        <div class="house-details">
+          <div class="detail-item">
+            <span class="detail-label">Mã Khang Ngô (ID)</span>
+            <span class="detail-value highlight" id="infoMaKhangNgo">-</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">System ID</span>
+            <span class="detail-value" id="infoSystemId">-</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Địa chỉ Căn nhà</span>
+            <span class="detail-value" id="infoAddress">-</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">CSDL SQLite Sử dụng</span>
+            <span class="detail-value" id="infoDbFile">-</span>
+          </div>
+        </div>
         <div>
-          <strong>Lưu ý:</strong> Hỗ trợ dán danh sách URL phân cách bằng phím Tab, khoảng trắng hoặc ngắt dòng. Hệ thống sẽ giữ nguyên thứ tự dán và không tự động loại bỏ các liên kết trùng lặp. Khi tải nhiều ảnh, vui lòng bấm <strong>"Cho phép"</strong> nếu trình duyệt yêu cầu quyền tải về nhiều tệp cùng lúc.
+          <button class="btn btn-purple" onclick="downloadAllTab1()">
+            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+            </svg>
+            Tải tất cả ảnh cả 3 phân vùng
+          </button>
+        </div>
+      </div>
+
+      <!-- Partitions Area (Hidden until loaded) -->
+      <div id="partitionsContainer" style="display: none;">
+        <!-- Partition 1: SQLite -->
+        <div class="partition-card">
+          <div class="partition-header">
+            <div class="partition-title">
+              <span>1. Phân vùng Images_Admin_JSON trong SQLite</span>
+              <span class="count-badge" id="p1Count">0 ảnh</span>
+              <span class="status-badge realtime">SQLite Local</span>
+            </div>
+            <div>
+              <button class="btn btn-secondary" onclick="downloadPartition('p1')">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Tải phân vùng 1
+              </button>
+            </div>
+          </div>
+          <div class="images-grid" id="p1Grid"></div>
+        </div>
+
+        <!-- Partition 2: Sheet Pool -->
+        <div class="partition-card">
+          <div class="partition-header">
+            <div class="partition-title">
+              <span>2. Phân vùng Images_Admin_JSON trong Sheet Pool</span>
+              <span class="count-badge" id="p2Count">0 ảnh</span>
+              <span class="status-badge" id="p2Status">Google Sheet</span>
+            </div>
+            <div>
+              <button class="btn btn-secondary" onclick="downloadPartition('p2')">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Tải phân vùng 2
+              </button>
+            </div>
+          </div>
+          <div class="images-grid" id="p2Grid"></div>
+        </div>
+
+        <!-- Partition 3: Sheet Source -->
+        <div class="partition-card">
+          <div class="partition-header">
+            <div class="partition-title">
+              <span>3. Phân vùng Images_Public_JSON trong Sheet Source</span>
+              <span class="count-badge" id="p3Count">0 ảnh</span>
+              <span class="status-badge" id="p3Status">Google Sheet</span>
+            </div>
+            <div>
+              <button class="btn btn-secondary" onclick="downloadPartition('p3')">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Tải phân vùng 3
+              </button>
+            </div>
+          </div>
+          <div class="images-grid" id="p3Grid"></div>
         </div>
       </div>
     </div>
 
-    <!-- Viewer & Toolbar (Hidden until loaded) -->
-    <div id="viewerContainer" style="display: none;">
-      <div class="toolbar">
-        <div class="toolbar-stats" id="statsText">
-          Đang hiển thị <span>0</span> ảnh. Đã chọn: <span id="checkedCount">0</span> / <span id="totalCount">0</span>
+    <!-- TAB 2: XEM & TẢI ẢNH TỪ INPUT TÙY BIẾN -->
+    <div class="tab-content" id="tab2Content">
+      <div class="card">
+        <div class="input-group">
+          <label class="input-label" for="urlInput">Dán danh sách URL hình ảnh hoặc chuỗi mã JSON vào đây:</label>
+          <textarea id="urlInput" placeholder="Hỗ trợ dán chuỗi mảng JSON Images_Admin_JSON hoặc các liên kết URL nối tiếp phân cách bằng phím Tab / ngắt dòng...&#10;&#10;Ví dụ:&#10;https://pub-.../img_1.jpg   https://pub-.../img_2.jpg   https://pub-.../img_3.jpg"></textarea>
+          <div style="display: flex; gap: 12px; margin-top: 4px;">
+            <button class="btn" id="parseBtn" onclick="processUrls()">
+              <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z"/>
+              </svg>
+              Hiển thị ảnh
+            </button>
+            <button class="btn btn-secondary" onclick="clearInput()">Xóa</button>
+          </div>
         </div>
         
-        <div class="toolbar-actions">
-          <label class="checkbox-container">
-            <input type="checkbox" id="checkAllToggle" checked onchange="toggleAll(this.checked)">
-            <span class="custom-checkbox"></span>
-            Chọn tất cả
-          </label>
-          
-          <button class="btn" id="downloadBtn" onclick="downloadSelected()">
-            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-            </svg>
-            Tải ảnh đã chọn
-          </button>
+        <div class="alert-guide">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-.04.022c-.29.176-.417.509-.35.833.042.203.09.419.121.627M12 9.75V9m0 12.75a9.75 9.75 0 110-19.5 9.75 9.75 0 010 19.5z" />
+          </svg>
+          <div>
+            <strong>Lưu ý:</strong> Hỗ trợ dán danh sách URL phân cách bằng phím Tab, khoảng trắng hoặc ngắt dòng. Hệ thống sẽ giữ nguyên thứ tự dán và không tự động loại bỏ các liên kết trùng lặp.
+          </div>
         </div>
       </div>
 
-      <!-- Grid of images -->
-      <div class="images-grid" id="imagesGrid"></div>
+      <!-- Tab 2 Viewer Container -->
+      <div id="viewerContainerTab2" style="display: none;">
+        <div class="toolbar">
+          <div class="toolbar-stats" id="statsTextTab2">
+            Đang hiển thị <span>0</span> ảnh. Đã chọn: <span id="checkedCountTab2">0</span> / <span id="totalCountTab2">0</span>
+          </div>
+          
+          <div class="toolbar-actions">
+            <label class="checkbox-container">
+              <input type="checkbox" id="checkAllToggleTab2" checked onchange="toggleAllTab2(this.checked)">
+              <span class="custom-checkbox"></span>
+              Chọn tất cả
+            </label>
+            
+            <button class="btn" id="downloadBtnTab2" onclick="downloadSelectedTab2()">
+              <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+              </svg>
+              Tải ảnh đã chọn
+            </button>
+          </div>
+        </div>
+
+        <div class="images-grid" id="imagesGridTab2"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    let imagesList = [];
+    // State Store
+    let partitionData = {
+      p1: [],
+      p2: [],
+      p3: []
+    };
+    let tab2ImagesList = [];
 
-    function clearInput() {
-      document.getElementById('urlInput').value = '';
+    // Initialize on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDatabasesList();
+    });
+
+    function switchTab(tabNum) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      document.getElementById(`tab${tabNum}Btn`).classList.add('active');
+      document.getElementById(`tab${tabNum}Content`).classList.add('active');
+    }
+
+    async function loadDatabasesList() {
+      try {
+        const resp = await fetch('/api/databases');
+        const data = await resp.json();
+        if (data.status === 'success' && Array.isArray(data.databases)) {
+          const select = document.getElementById('dbSelect');
+          select.innerHTML = '';
+          data.databases.forEach(db => {
+            const opt = document.createElement('option');
+            opt.value = db;
+            opt.textContent = db;
+            select.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.warn('Không thể nạp danh sách CSDL:', err);
+      }
     }
 
     function extractFilename(url) {
@@ -572,13 +956,196 @@
       }
     }
 
+    // TAB 1: COMPARE IMAGES LOGIC
+    async function fetchCompareData() {
+      const query = document.getElementById('tab1QueryInput').value.trim();
+      const dbFile = document.getElementById('dbSelect').value;
+
+      if (!query) {
+        alert('Vui lòng nhập số nhà, địa chỉ hoặc mã nhà!');
+        return;
+      }
+
+      const searchBtn = document.getElementById('searchCompareBtn');
+      const originalBtnText = searchBtn.innerHTML;
+      searchBtn.disabled = true;
+      searchBtn.innerHTML = `<span class="spinner"></span> Đang tra cứu...`;
+
+      try {
+        const url = `/api/compare-images?query=${encodeURIComponent(query)}&db_file=${encodeURIComponent(dbFile)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (data.status !== 'success') {
+          alert(`Lỗi: ${data.message || 'Không tìm thấy dữ liệu'}`);
+          return;
+        }
+
+        renderCompareResults(data);
+      } catch (err) {
+        alert(`Lỗi kết nối máy chủ: ${err.message}`);
+      } finally {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = originalBtnText;
+      }
+    }
+
+    function renderCompareResults(data) {
+      const house = data.house_info;
+
+      // Populate House Info
+      document.getElementById('infoMaKhangNgo').innerText = house.ma_khang_ngo || '-';
+      document.getElementById('infoSystemId').innerText = house.system_id || house.tk_id || '-';
+      document.getElementById('infoAddress').innerText = house.full_address || '-';
+      document.getElementById('infoDbFile').innerText = house.db_file || '-';
+      document.getElementById('houseInfoBanner').style.display = 'flex';
+
+      // Store partition lists
+      partitionData.p1 = (data.partition_1_sqlite || []).map((img, i) => ({ ...img, id: `p1-${i}`, selected: true }));
+      partitionData.p2 = ((data.partition_2_pool && data.partition_2_pool.images) || []).map((img, i) => ({ ...img, id: `p2-${i}`, selected: true }));
+      partitionData.p3 = ((data.partition_3_source && data.partition_3_source.images) || []).map((img, i) => ({ ...img, id: `p3-${i}`, selected: true }));
+
+      // Status badges
+      const p2Badge = document.getElementById('p2Status');
+      if (data.partition_2_pool && data.partition_2_pool.is_fallback) {
+        p2Badge.className = 'status-badge fallback';
+        p2Badge.innerText = 'Fallback SQLite';
+      } else {
+        p2Badge.className = 'status-badge realtime';
+        p2Badge.innerText = 'Google Sheet Pool';
+      }
+
+      const p3Badge = document.getElementById('p3Status');
+      if (data.partition_3_source && data.partition_3_source.is_fallback) {
+        p3Badge.className = 'status-badge fallback';
+        p3Badge.innerText = 'Fallback SQLite';
+      } else {
+        p3Badge.className = 'status-badge realtime';
+        p3Badge.innerText = 'Google Sheet Source';
+      }
+
+      // Counts
+      document.getElementById('p1Count').innerText = `${partitionData.p1.length} ảnh`;
+      document.getElementById('p2Count').innerText = `${partitionData.p2.length} ảnh`;
+      document.getElementById('p3Count').innerText = `${partitionData.p3.length} ảnh`;
+
+      // Render grids
+      renderPartitionGrid('p1Grid', partitionData.p1, 'p1');
+      renderPartitionGrid('p2Grid', partitionData.p2, 'p2');
+      renderPartitionGrid('p3Grid', partitionData.p3, 'p3');
+
+      document.getElementById('partitionsContainer').style.display = 'block';
+      document.getElementById('partitionsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderPartitionGrid(containerId, list, partitionKey) {
+      const grid = document.getElementById(containerId);
+      grid.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        grid.innerHTML = `<div class="empty-state">Không có hình ảnh nào trong phân vùng này.</div>`;
+        return;
+      }
+
+      list.forEach((img, index) => {
+        const card = document.createElement('div');
+        card.className = `img-card ${img.selected ? 'selected' : ''}`;
+        card.id = `card-${img.id}`;
+
+        const hasMeta = (img.role && img.role !== '') || 
+                        (img.sequence_index !== undefined && img.sequence_index !== '') || 
+                        (img.origin && img.origin !== '') || 
+                        (img.is_hidden !== undefined && img.is_hidden !== '');
+        let metaHtml = '';
+        if (hasMeta) {
+          metaHtml = `
+            <div class="img-meta-tags">
+              ${img.role ? `<span class="meta-tag role-tag" data-role="${img.role}">${img.role}</span>` : ''}
+              ${img.sequence_index !== undefined && img.sequence_index !== '' ? `<span class="meta-tag index-tag">Idx: ${img.sequence_index}</span>` : ''}
+              ${img.origin ? `<span class="meta-tag origin-tag">${img.origin}</span>` : ''}
+              ${img.is_hidden !== undefined && img.is_hidden !== '' ? `
+                <span class="meta-tag visibility-tag ${img.is_hidden === 1 ? 'hidden-tag' : 'visible-tag'}">
+                  ${img.is_hidden === 1 ? 'Ẩn' : 'Hiện'}
+                </span>
+              ` : ''}
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="card-checkbox">
+            <label class="checkbox-container" style="gap: 0;">
+              <input type="checkbox" id="check-${img.id}" ${img.selected ? 'checked' : ''} onchange="togglePartitionCard('${partitionKey}', '${img.id}', this.checked)">
+              <span class="custom-checkbox"></span>
+            </label>
+          </div>
+          <span class="img-index">#${index + 1}</span>
+          
+          <div class="img-preview-container">
+            <img class="img-preview" src="${img.url}" alt="Preview #${index + 1}" onerror="handleImageError(this)" loading="lazy">
+          </div>
+          
+          <div class="img-info">
+            <div class="img-name" title="${img.filename}">${img.filename}</div>
+            ${metaHtml}
+            <div class="img-actions">
+              <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;" onclick="downloadSingle('${img.url}', '${img.filename}')">
+                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Tải về
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function togglePartitionCard(partitionKey, id, checked) {
+      const list = partitionData[partitionKey];
+      const img = list.find(i => i.id === id);
+      if (img) {
+        img.selected = checked;
+        const card = document.getElementById(`card-${id}`);
+        if (card) {
+          if (checked) card.classList.add('selected');
+          else card.classList.remove('selected');
+        }
+      }
+    }
+
+    async function downloadPartition(partitionKey) {
+      const list = partitionData[partitionKey].filter(i => i.selected);
+      if (!list || list.length === 0) {
+        alert('Chưa có ảnh nào được chọn trong phân vùng này!');
+        return;
+      }
+      await runBatchDownload(list);
+    }
+
+    async function downloadAllTab1() {
+      const allSelected = [
+        ...partitionData.p1.filter(i => i.selected),
+        ...partitionData.p2.filter(i => i.selected),
+        ...partitionData.p3.filter(i => i.selected)
+      ];
+      if (allSelected.length === 0) {
+        alert('Chưa chọn ảnh nào để tải!');
+        return;
+      }
+      await runBatchDownload(allSelected);
+    }
+
+    // TAB 2: INPUT / JSON PARSER LOGIC
+    function clearInput() {
+      document.getElementById('urlInput').value = '';
+    }
+
     function sanitizeJsonString(str) {
       let cleaned = str.trim();
-      
-      // Strip markdown code block backticks if present
       cleaned = cleaned.replace(/^```(json)?/i, '').replace(/```$/, '').trim();
       
-      // Strip leading and trailing double quotes if they wrap a JSON array or object
       if (cleaned.startsWith('"')) {
         let temp = cleaned.substring(1);
         if (temp.endsWith('"')) {
@@ -595,7 +1162,6 @@
           return JSON.parse(cleaned);
         } catch (e) {
           try {
-            // Replace single quotes and curly quotes with double quotes
             let normalized = cleaned
               .replace(/'/g, '"')
               .replace(/“/g, '"')
@@ -616,18 +1182,17 @@
         return;
       }
 
-      // Check if it's JSON input
       const parsedJson = sanitizeJsonString(input);
 
       if (parsedJson) {
         const arr = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
-        imagesList = arr
+        tab2ImagesList = arr
           .map((obj, idx) => {
             if (!obj) return null;
             if (typeof obj === 'string') {
               if (obj.startsWith('http://') || obj.startsWith('https://')) {
                 return {
-                  id: `img-${idx}-${Date.now()}`,
+                  id: `img-t2-${idx}-${Date.now()}`,
                   url: obj,
                   filename: extractFilename(obj),
                   selected: true
@@ -641,7 +1206,7 @@
               return null;
             }
             return {
-              id: `img-${idx}-${Date.now()}`,
+              id: `img-t2-${idx}-${Date.now()}`,
               url: url,
               filename: extractFilename(url),
               selected: true,
@@ -653,36 +1218,34 @@
           })
           .filter(Boolean);
       } else {
-        // Fallback: Smart Regex URL Extractor
         const urlRegex = /(https?:\/\/[^\s"'`,{}()\[\]\\]+)/g;
         const matches = input.match(urlRegex) || [];
         
-        imagesList = matches.map((url, idx) => ({
-          id: `img-${idx}-${Date.now()}`,
+        tab2ImagesList = matches.map((url, idx) => ({
+          id: `img-t2-${idx}-${Date.now()}`,
           url: url,
           filename: extractFilename(url),
           selected: true
         }));
       }
 
-      if (imagesList.length === 0) {
+      if (tab2ImagesList.length === 0) {
         alert('Không tìm thấy URL hình ảnh hợp lệ nào!');
         return;
       }
 
-      renderGrid();
+      renderGridTab2();
     }
 
-    function renderGrid() {
-      const grid = document.getElementById('imagesGrid');
+    function renderGridTab2() {
+      const grid = document.getElementById('imagesGridTab2');
       grid.innerHTML = '';
 
-      imagesList.forEach((img, index) => {
+      tab2ImagesList.forEach((img, index) => {
         const card = document.createElement('div');
         card.className = `img-card ${img.selected ? 'selected' : ''}`;
         card.id = `card-${img.id}`;
 
-        // Construct metadata HTML if metadata exists
         const hasMeta = (img.role && img.role !== '') || 
                         (img.sequence_index !== undefined && img.sequence_index !== '') || 
                         (img.origin && img.origin !== '') || 
@@ -696,7 +1259,7 @@
               ${img.origin ? `<span class="meta-tag origin-tag">${img.origin}</span>` : ''}
               ${img.is_hidden !== undefined && img.is_hidden !== '' ? `
                 <span class="meta-tag visibility-tag ${img.is_hidden === 1 ? 'hidden-tag' : 'visible-tag'}">
-                  ${img.is_hidden === 1 ? 'Ẩn (Hidden)' : 'Hiện (Show)'}
+                  ${img.is_hidden === 1 ? 'Ẩn' : 'Hiện'}
                 </span>
               ` : ''}
             </div>
@@ -706,7 +1269,7 @@
         card.innerHTML = `
           <div class="card-checkbox">
             <label class="checkbox-container" style="gap: 0;">
-              <input type="checkbox" id="check-${img.id}" ${img.selected ? 'checked' : ''} onchange="toggleCard('${img.id}', this.checked)">
+              <input type="checkbox" id="check-${img.id}" ${img.selected ? 'checked' : ''} onchange="toggleCardTab2('${img.id}', this.checked)">
               <span class="custom-checkbox"></span>
             </label>
           </div>
@@ -733,41 +1296,31 @@
         grid.appendChild(card);
       });
 
-      // Show viewer container
-      document.getElementById('viewerContainer').style.display = 'block';
-      document.getElementById('checkAllToggle').checked = true;
-      updateStats();
+      document.getElementById('viewerContainerTab2').style.display = 'block';
+      document.getElementById('checkAllToggleTab2').checked = true;
+      updateStatsTab2();
 
-      // Scroll smoothly to viewer
-      document.getElementById('viewerContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('viewerContainerTab2').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function handleImageError(imgElem) {
-      imgElem.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23f43f5e" stroke-width="1.5"><rect width="20" height="20" x="2" y="2" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
-      imgElem.style.opacity = '0.5';
-    }
-
-    function toggleCard(id, checked) {
-      const img = imagesList.find(i => i.id === id);
+    function toggleCardTab2(id, checked) {
+      const img = tab2ImagesList.find(i => i.id === id);
       if (img) {
         img.selected = checked;
         const card = document.getElementById(`card-${id}`);
-        if (checked) {
-          card.classList.add('selected');
-        } else {
-          card.classList.remove('selected');
+        if (card) {
+          if (checked) card.classList.add('selected');
+          else card.classList.remove('selected');
         }
       }
       
-      // Update check all state
-      const allSelected = imagesList.every(i => i.selected);
-      document.getElementById('checkAllToggle').checked = allSelected;
-      
-      updateStats();
+      const allSelected = tab2ImagesList.every(i => i.selected);
+      document.getElementById('checkAllToggleTab2').checked = allSelected;
+      updateStatsTab2();
     }
 
-    function toggleAll(checked) {
-      imagesList.forEach(img => {
+    function toggleAllTab2(checked) {
+      tab2ImagesList.forEach(img => {
         img.selected = checked;
         const checkEl = document.getElementById(`check-${img.id}`);
         if (checkEl) checkEl.checked = checked;
@@ -778,28 +1331,36 @@
           else card.classList.remove('selected');
         }
       });
-      updateStats();
+      updateStatsTab2();
     }
 
-    function updateStats() {
-      const total = imagesList.length;
-      const checked = imagesList.filter(i => i.selected).length;
+    function updateStatsTab2() {
+      const total = tab2ImagesList.length;
+      const checked = tab2ImagesList.filter(i => i.selected).length;
       
-      document.getElementById('totalCount').innerText = total;
-      document.getElementById('checkedCount').innerText = checked;
+      document.getElementById('totalCountTab2').innerText = total;
+      document.getElementById('checkedCountTab2').innerText = checked;
       
-      const statsText = document.getElementById('statsText');
+      const statsText = document.getElementById('statsTextTab2');
       statsText.innerHTML = `Đang hiển thị <span>${total}</span> ảnh. Đã chọn: <span>${checked}</span> / <span>${total}</span>`;
       
-      // Disable download button if none selected
-      document.getElementById('downloadBtn').disabled = (checked === 0);
+      document.getElementById('downloadBtnTab2').disabled = (checked === 0);
+    }
+
+    async function downloadSelectedTab2() {
+      const selectedImages = tab2ImagesList.filter(i => i.selected);
+      if (selectedImages.length === 0) return;
+      await runBatchDownload(selectedImages);
+    }
+
+    // SHARED DOWNLOAD LOGIC (BYPASS CORS WITH PROXY)
+    function handleImageError(imgElem) {
+      imgElem.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23f43f5e" stroke-width="1.5"><rect width="20" height="20" x="2" y="2" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+      imgElem.style.opacity = '0.5';
     }
 
     function downloadSingle(url, filename) {
-      // Build the proxy download URL
       const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
-      
-      // Trigger download using iframe or a tag click
       const a = document.createElement('a');
       a.href = proxyUrl;
       a.download = filename;
@@ -808,57 +1369,33 @@
       document.body.removeChild(a);
     }
 
-    async function downloadSelected() {
-      const selectedImages = imagesList.filter(i => i.selected);
-      if (selectedImages.length === 0) return;
+    async function runBatchDownload(selectedImages) {
+      if (!selectedImages || selectedImages.length === 0) return;
 
-      const parseBtn = document.getElementById('parseBtn');
-      const downloadBtn = document.getElementById('downloadBtn');
-      const checkAllToggle = document.getElementById('checkAllToggle');
       const progressBarContainer = document.getElementById('progressBarContainer');
       const progressBar = document.getElementById('progressBar');
 
-      // Lock buttons
-      downloadBtn.disabled = true;
-      parseBtn.disabled = true;
-      checkAllToggle.disabled = true;
-      
       progressBarContainer.style.display = 'block';
       progressBar.style.width = '0%';
 
-      const originalBtnHtml = downloadBtn.innerHTML;
-      
       for (let i = 0; i < selectedImages.length; i++) {
         const img = selectedImages[i];
         
-        // Update UI status
-        downloadBtn.innerHTML = `<span class="spinner"></span> Đang tải ${i + 1}/${selectedImages.length}...`;
-        
-        // Progress bar calculation
         const percent = Math.round(((i + 1) / selectedImages.length) * 100);
         progressBar.style.width = `${percent}%`;
 
-        // Trigger download
-        downloadSingle(img.url, img.filename);
+        downloadSingle(img.url, img.filename || `image_${i+1}.jpg`);
 
-        // Sleep to avoid browser pop-up blocking
         if (i < selectedImages.length - 1) {
           await new Promise(resolve => setTimeout(resolve, 300));
         }
       }
 
-      // Finish state
-      downloadBtn.innerHTML = `✓ Hoàn thành!`;
       progressBar.style.width = '100%';
-      
       setTimeout(() => {
-        downloadBtn.innerHTML = originalBtnHtml;
-        downloadBtn.disabled = false;
-        parseBtn.disabled = false;
-        checkAllToggle.disabled = false;
         progressBarContainer.style.display = 'none';
         progressBar.style.width = '0%';
-      }, 2000);
+      }, 1500);
     }
   </script>
 
@@ -869,27 +1406,8 @@
         navigator.serviceWorker.register('/sw.js')
           .then(reg => {
             console.log('ServiceWorker registered:', reg.scope);
-            reg.onupdatefound = () => {
-              const installingWorker = reg.installing;
-              installingWorker.onstatechange = () => {
-                if (installingWorker.state === 'installed') {
-                  if (navigator.serviceWorker.controller) {
-                    console.log('New update installed. Reloading...');
-                    window.location.reload();
-                  }
-                }
-              };
-            };
           })
           .catch(err => console.log('ServiceWorker registration failed:', err));
-      });
-
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
       });
     }
   </script>

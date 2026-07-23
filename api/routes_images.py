@@ -5,6 +5,7 @@ Handles manual image uploads, Cloudflare R2 uploads, image metadata sync, and Go
 """
 
 import os
+import re
 import json
 import sqlite3
 import time
@@ -462,3 +463,366 @@ def upload_r2_vercel_bridge():
         "status": "success",
         "url": img_link
     })
+
+# ==================================================
+# IMAGE COMPARISON & PROXY DOWNLOAD ENDPOINTS (US-157)
+# ==================================================
+
+def extract_filename_py(url):
+    try:
+        from urllib.parse import urlparse, unquote
+        path = urlparse(url).path
+        name = os.path.basename(path)
+        return unquote(name) if name else "image.jpg"
+    except Exception:
+        return "image.jpg"
+
+def normalize_street_name(street_str):
+    if not street_str:
+        return ""
+    s = str(street_str).strip()
+    # Rule 1: CMT8 / Cách mạng tháng 8 -> TTMC, 3/2 / Ba tháng hai -> HTB, Đường số 7 -> 7SD
+    s_clean = re.sub(r'(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)', 'TTMC', s, flags=re.IGNORECASE)
+    s_clean = re.sub(r'(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)', 'HTB', s_clean, flags=re.IGNORECASE)
+    s_clean = re.sub(r'đường\s*số\s*7', '7SD', s_clean, flags=re.IGNORECASE)
+    return s_clean
+
+def normalize_house_number(house_str):
+    if not house_str:
+        return ""
+    h = str(house_str).strip()
+    # Rule 2: Số nhà chứa dấu +, chỉ lấy phần trước dấu +
+    if '+' in h:
+        h = h.split('+')[0].strip()
+    return h
+
+def parse_image_json_to_list(raw_json):
+    if not raw_json:
+        return []
+    if isinstance(raw_json, list):
+        parsed = raw_json
+    elif isinstance(raw_json, dict):
+        parsed = raw_json.get("images", raw_json)
+    else:
+        try:
+            parsed = json.loads(raw_json)
+        except Exception:
+            matches = re.findall(r'(https?://[^\s"\'`,{}()\[\]\\]+)', str(raw_json))
+            return [{
+                "id": f"img-{i}",
+                "url": u,
+                "filename": extract_filename_py(u),
+                "role": "",
+                "sequence_index": i,
+                "origin": "crawl",
+                "is_hidden": 0
+            } for i, u in enumerate(matches)]
+            
+    if isinstance(parsed, dict) and "images" in parsed:
+        parsed = parsed["images"]
+        
+    if not isinstance(parsed, list):
+        return []
+        
+    result = []
+    for idx, obj in enumerate(parsed):
+        if not obj:
+            continue
+        if isinstance(obj, str):
+            if obj.startswith("http://") or obj.startswith("https://"):
+                result.append({
+                    "id": f"img-{idx}",
+                    "url": obj,
+                    "filename": extract_filename_py(obj),
+                    "role": "",
+                    "sequence_index": idx,
+                    "origin": "",
+                    "is_hidden": 0
+                })
+        elif isinstance(obj, dict):
+            url = obj.get("r2_url") or obj.get("image_url") or obj.get("url")
+            if url and (url.startswith("http://") or url.startswith("https://")):
+                result.append({
+                    "id": f"img-{idx}",
+                    "url": url,
+                    "filename": extract_filename_py(url),
+                    "role": obj.get("role", ""),
+                    "sequence_index": obj.get("sequence_index") if obj.get("sequence_index") is not None else idx,
+                    "origin": obj.get("origin", ""),
+                    "is_hidden": obj.get("is_hidden", 0)
+                })
+    return result
+
+def fetch_image_json_from_sheet(sheet_type, search_id, header_name):
+    """
+    Truy vấn Google Sheets (Pool hoặc Source) để lấy giá trị JSON của cột chỉ định.
+    """
+    import manager
+    import gspread
+    cfg = manager.load_config()
+    creds = manager.get_google_credentials()
+    if not creds:
+        raise Exception("Không có Google Credentials")
+        
+    client = gspread.authorize(creds)
+    
+    sheet_id = ""
+    if sheet_type == "Pool":
+        sheet_id = cfg.get("pool2_raw_sheet_id") or cfg.get("sheet_id")
+    else: # Source
+        sheet_id = cfg.get("pool2_public_sheet_id") or cfg.get("sheet_id")
+        
+    if not sheet_id:
+        raise Exception(f"Không tìm thấy Sheet ID cho loại {sheet_type}")
+        
+    spreadsheet = client.open_by_key(sheet_id)
+    try:
+        worksheet = spreadsheet.worksheet(sheet_type)
+    except Exception:
+        worksheet = spreadsheet.sheet1
+        
+    rows = worksheet.get_all_values()
+    if not rows or len(rows) < 2:
+        return []
+        
+    headers = [str(h).strip() for h in rows[0]]
+    
+    target_col_idx = -1
+    for i, h in enumerate(headers):
+        if h.lower() == header_name.lower():
+            target_col_idx = i
+            break
+            
+    if target_col_idx == -1:
+        for i, h in enumerate(headers):
+            if "image" in h.lower() and ("admin" if "admin" in header_name.lower() else "public") in h.lower():
+                target_col_idx = i
+                break
+                
+    if target_col_idx == -1:
+        raise Exception(f"Không tìm thấy cột '{header_name}' trên Sheet {sheet_type}")
+        
+    search_id_str = str(search_id).strip().lower()
+    if not search_id_str:
+        return []
+        
+    matched_json_str = ""
+    for row_values in rows[1:]:
+        row_line = " ".join([str(v) for v in row_values]).lower()
+        if search_id_str in row_line:
+            if target_col_idx < len(row_values):
+                matched_json_str = row_values[target_col_idx]
+                break
+                
+    if not matched_json_str:
+        return []
+        
+    return parse_image_json_to_list(matched_json_str)
+
+@routes_images.route('/api/databases', methods=['GET'])
+def get_available_databases():
+    """Lấy danh sách tất cả các file CSDL SQLite (.db) trong thư mục gốc dự án"""
+    import manager
+    root = manager.PROJECT_ROOT
+    db_files = []
+    try:
+        for f in os.listdir(root):
+            if f.endswith('.db') and not f.startswith('.'):
+                db_files.append(f)
+        db_files.sort()
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+    if "raw_archive.db" in db_files:
+        db_files.remove("raw_archive.db")
+        db_files.insert(0, "raw_archive.db")
+        
+    return jsonify({"status": "success", "databases": db_files})
+
+@routes_images.route('/api/compare-images', methods=['GET'])
+def compare_images():
+    """
+    API trích xuất ảnh từ 3 phân vùng đối chiếu:
+    1. Images_Admin_JSON trong SQLite
+    2. Images_Admin_JSON trong Sheet Pool
+    3. Images_Public_JSON trong Sheet Source
+    """
+    import manager
+    query_str = request.args.get("query", "").strip()
+    db_filename = request.args.get("db_file", "raw_archive.db").strip()
+    
+    if not query_str:
+        return jsonify({"status": "error", "message": "Vui lòng nhập địa chỉ, số nhà hoặc mã nhà"}), 400
+        
+    db_filename = os.path.basename(db_filename)
+    if not db_filename.endswith('.db'):
+        db_filename += '.db'
+        
+    db_path = os.path.join(manager.PROJECT_ROOT, db_filename)
+    if not os.path.exists(db_path):
+        return jsonify({"status": "error", "message": f"Không tìm thấy tệp CSDL SQLite '{db_filename}'"}), 404
+        
+    try:
+        conn = sqlite3.connect(db_path, timeout=30.0)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('listings_v2', 'listings')")
+        tables = [r[0] for r in cursor.fetchall()]
+        table_name = "listings_v2" if "listings_v2" in tables else ("listings" if "listings" in tables else None)
+        
+        if not table_name:
+            conn.close()
+            return jsonify({"status": "error", "message": f"Không tìm thấy bảng listings trong CSDL '{db_filename}'"}), 400
+            
+        cursor.execute(f"PRAGMA table_info({table_name})")
+        cols = {r[1] for r in cursor.fetchall()}
+        
+        so_nha_col = "Ngo_So_nha" if "Ngo_So_nha" in cols else ("Ng__S__nh_" if "Ng__S__nh_" in cols else "So_Nha")
+        duong_col = "Duong" if "Duong" in cols else ("___ng" if "___ng" in cols else "Ten_Duong")
+        sys_id_col = "System_ID" if "System_ID" in cols else "system_id"
+        ma_kn_col = "Ma_Khang_Ngo_ID" if "Ma_Khang_Ngo_ID" in cols else ("M__Khang_Ng___ID_" if "M__Khang_Ng___ID_" in cols else "tk_id")
+        
+        norm_query = normalize_street_name(query_str)
+        norm_house_num = normalize_house_number(query_str)
+        
+        row = None
+        sql_direct = f"SELECT * FROM {table_name} WHERE tk_id = ? OR `{sys_id_col}` = ? OR `{ma_kn_col}` = ?"
+        row = cursor.execute(sql_direct, (query_str, query_str, query_str)).fetchone()
+        
+        if not row:
+            # Tách token từ chuỗi truy vấn đã chuẩn hóa
+            tokens = [t for t in norm_query.replace('+', ' ').split() if t]
+            if len(tokens) >= 2:
+                # Token đầu tiên hoặc phần đầu thường là số nhà, token cuối/cuối cụm là tên đường
+                first_tok = tokens[0]
+                first_clean = normalize_house_number(first_tok)
+                last_tok = tokens[-1]
+                
+                sql_token = f"""
+                    SELECT * FROM {table_name}
+                    WHERE (`{so_nha_col}` LIKE ? OR `{so_nha_col}` LIKE ?) 
+                      AND (`{duong_col}` LIKE ? OR `{duong_col}` LIKE ?)
+                    ORDER BY id DESC LIMIT 1
+                """
+                row = cursor.execute(sql_token, (f"%{first_tok}%", f"%{first_clean}%", f"%{last_tok}%", f"%{norm_query}%")).fetchone()
+
+            if not row:
+                sql_like = f"""
+                    SELECT * FROM {table_name} 
+                    WHERE `{so_nha_col}` LIKE ? OR `{duong_col}` LIKE ? OR (`{so_nha_col}` || ' ' || `{duong_col}`) LIKE ? OR (`{so_nha_col}` || '/' || `{duong_col}`) LIKE ?
+                    ORDER BY id DESC LIMIT 1
+                """
+                q_like = f"%{query_str}%"
+                q_norm_like = f"%{norm_query}%"
+                row = cursor.execute(sql_like, (q_like, q_like, q_like, q_like)).fetchone()
+                if not row and norm_query != query_str:
+                    row = cursor.execute(sql_like, (q_norm_like, q_norm_like, q_norm_like, q_norm_like)).fetchone()
+                
+        if not row:
+            conn.close()
+            return jsonify({"status": "error", "message": f"Không tìm thấy căn nhà phù hợp với từ khóa '{query_str}' trong CSDL '{db_filename}'"}), 404
+            
+        row_dict = dict(row)
+        tk_id = row_dict.get("tk_id", "")
+        system_id = row_dict.get("System_ID") or row_dict.get("system_id") or ""
+        ma_khang_ngo = row_dict.get(ma_kn_col) or row_dict.get("Ma_Khang_Ngo_ID") or ""
+        so_nha_val = row_dict.get(so_nha_col, "")
+        duong_val = row_dict.get(duong_col, "")
+        quan_val = row_dict.get("Quan") or row_dict.get("Qu_n") or ""
+        
+        # Partition 1: Images_Admin_JSON từ SQLite
+        admin_json_raw = row_dict.get("images_admin_json") or row_dict.get("Images_Admin_JSON") or row_dict.get("curated_config_json") or ""
+        partition_1_sqlite = parse_image_json_to_list(admin_json_raw)
+        
+        conn.close()
+    except Exception as e_db:
+        return jsonify({"status": "error", "message": f"Lỗi đọc CSDL SQLite: {str(e_db)}"}), 500
+
+    # Partition 2: Images_Admin_JSON từ Sheet Pool
+    partition_2_pool = []
+    pool_is_fallback = False
+    try:
+        partition_2_pool = fetch_image_json_from_sheet("Pool", system_id or tk_id, "Images_Admin_JSON")
+    except Exception:
+        partition_2_pool = partition_1_sqlite
+        pool_is_fallback = True
+
+    # Partition 3: Images_Public_JSON từ Sheet Source
+    partition_3_source = []
+    source_is_fallback = False
+    try:
+        partition_3_source = fetch_image_json_from_sheet("Source", ma_khang_ngo or system_id, "Images_Public_JSON")
+    except Exception:
+        pub_json_raw = row_dict.get("images_public_json") or row_dict.get("Images_Public_JSON") or ""
+        partition_3_source = parse_image_json_to_list(pub_json_raw)
+        source_is_fallback = True
+
+    house_info = {
+        "tk_id": tk_id,
+        "system_id": system_id,
+        "ma_khang_ngo": ma_khang_ngo,
+        "so_nha": so_nha_val,
+        "duong": duong_val,
+        "quan": quan_val,
+        "full_address": f"{so_nha_val} {duong_val}, {quan_val}".strip(" ,"),
+        "db_file": db_filename
+    }
+
+    return jsonify({
+        "status": "success",
+        "house_info": house_info,
+        "partition_1_sqlite": partition_1_sqlite,
+        "partition_2_pool": {
+            "images": partition_2_pool,
+            "is_fallback": pool_is_fallback
+        },
+        "partition_3_source": {
+            "images": partition_3_source,
+            "is_fallback": source_is_fallback
+        }
+    })
+
+@routes_images.route('/api/proxy-download', methods=['GET'])
+def proxy_download():
+    """
+    Proxy endpoint server-side hỗ trợ tải hình ảnh từ URL bất kỳ về máy khách.
+    Tránh rào cản CORS trên trình duyệt.
+    """
+    import requests
+    from flask import Response
+    
+    url = request.args.get("url", "").strip()
+    filename = request.args.get("filename", "").strip()
+    
+    if not url:
+        return jsonify({"status": "error", "message": "Thiếu tham số url"}), 400
+        
+    if not filename:
+        filename = extract_filename_py(url)
+        
+    clean_filename = re.sub(r'["\r\n\\]', '', filename)
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    
+    try:
+        resp = requests.get(url, headers=headers, timeout=30, stream=True)
+        if resp.status_code != 200:
+            return jsonify({"status": "error", "message": f"Remote server HTTP {resp.status_code}"}), 502
+            
+        content_type = resp.headers.get("Content-Type", "image/jpeg")
+        
+        response = Response(
+            resp.raw,
+            content_type=content_type,
+            headers={
+                "Content-Disposition": f'attachment; filename="{clean_filename}"',
+                "Access-Control-Allow-Origin": "*"
+            }
+        )
+        return response
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Proxy fetch failed: {str(e)}"}), 500
+
