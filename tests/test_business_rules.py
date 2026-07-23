@@ -301,3 +301,16 @@ class TestCleanSheetFormulaPrefix:
     def test_empty_and_none(self):
         assert clean_sheet_formula_prefix("") == ""
         assert clean_sheet_formula_prefix(None) == ""
+
+
+# =============================================================================
+# 8. NO HARDCODED LEGACY R2 PREFIX — Đảm bảo không hardcode BDS-KhangNgo-v2
+# =============================================================================
+class TestNoHardcodedLegacyR2Prefix:
+    """Lock behavior: Đảm bảo R2 prefix luôn dùng BDS-KhangNgo-v3 mặc định."""
+
+    def test_default_r2_migration_prefix(self):
+        from core.config import read_settings
+        cfg = read_settings()
+        assert cfg.get("r2_migration_prefix", "BDS-KhangNgo-v3") == "BDS-KhangNgo-v3"
+
