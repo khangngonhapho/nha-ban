@@ -882,7 +882,7 @@
             <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
             </svg>
-            Tải tất cả ảnh cả 4 phân vùng
+            Tải tất cả ảnh cả 5 phân vùng
           </button>
         </div>
       </div>
@@ -958,14 +958,14 @@
           <div class="images-grid" id="p3Grid"></div>
         </div>
 
-        <!-- Partition 4: Sheet Pool_Images -->
+        <!-- Partition 4: Sheet Pool_Images (Crawl) -->
         <div class="partition-card collapsed" id="p4Card">
           <div class="partition-header" onclick="togglePartitionCollapse('p4Card')" title="Click để Mở rộng / Thu gọn phân vùng này">
             <div class="partition-title">
               <svg class="chevron-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
-              <span>4. Phân vùng hình upload trong Sheet Pool_Images</span>
+              <span>4. Phân vùng hình cào trong Sheet Pool_Images (Crawl)</span>
               <span class="count-badge" id="p4Count">0 ảnh</span>
               <span class="status-badge" id="p4Status">Google Sheet</span>
             </div>
@@ -979,6 +979,29 @@
             </div>
           </div>
           <div class="images-grid" id="p4Grid"></div>
+        </div>
+
+        <!-- Partition 5: Sheet Pool_Images (Self) -->
+        <div class="partition-card collapsed" id="p5Card">
+          <div class="partition-header" onclick="togglePartitionCollapse('p5Card')" title="Click để Mở rộng / Thu gọn phân vùng này">
+            <div class="partition-title">
+              <svg class="chevron-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+              <span>5. Phân vùng hình upload trong Sheet Pool_Images (Self)</span>
+              <span class="count-badge" id="p5Count">0 ảnh</span>
+              <span class="status-badge" id="p5Status">Google Sheet</span>
+            </div>
+            <div onclick="event.stopPropagation()">
+              <button class="btn btn-secondary" onclick="downloadPartition('p5')">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Tải phân vùng 5
+              </button>
+            </div>
+          </div>
+          <div class="images-grid" id="p5Grid"></div>
         </div>
       </div>
     </div>
@@ -1044,7 +1067,8 @@
       p1: [],
       p2: [],
       p3: [],
-      p4: []
+      p4: [],
+      p5: []
     };
     let tab2ImagesList = [];
 
@@ -1159,22 +1183,21 @@
       partitionData.p1 = (data.partition_1_sqlite || []).map((img, i) => ({ ...img, id: `p1-${i}`, selected: true }));
       partitionData.p2 = ((data.partition_2_pool && data.partition_2_pool.images) || []).map((img, i) => ({ ...img, id: `p2-${i}`, selected: true }));
       partitionData.p3 = ((data.partition_3_source && data.partition_3_source.images) || []).map((img, i) => ({ ...img, id: `p3-${i}`, selected: true }));
-      partitionData.p4 = ((data.partition_4_pool_images && data.partition_4_pool_images.images) || []).map((img, i) => ({ ...img, id: `p4-${i}`, selected: true }));
+      partitionData.p4 = ((data.partition_4_pool_crawl && data.partition_4_pool_crawl.images) || (data.partition_4_pool_images && data.partition_4_pool_images.images) || []).map((img, i) => ({ ...img, id: `p4-${i}`, selected: true }));
+      partitionData.p5 = ((data.partition_5_pool_self && data.partition_5_pool_self.images) || []).map((img, i) => ({ ...img, id: `p5-${i}`, selected: true }));
 
       // Status badges (Độc lập 100%, không fallback)
       const p2Badge = document.getElementById('p2Status');
-      p2Badge.className = 'status-badge realtime';
-      p2Badge.innerText = 'Google Sheet Pool';
+      if (p2Badge) { p2Badge.className = 'status-badge realtime'; p2Badge.innerText = 'Google Sheet Pool'; }
 
       const p3Badge = document.getElementById('p3Status');
-      p3Badge.className = 'status-badge realtime';
-      p3Badge.innerText = 'Google Sheet Source';
+      if (p3Badge) { p3Badge.className = 'status-badge realtime'; p3Badge.innerText = 'Google Sheet Source'; }
 
       const p4Badge = document.getElementById('p4Status');
-      if (p4Badge) {
-        p4Badge.className = 'status-badge realtime';
-        p4Badge.innerText = 'Google Sheet Pool_Images';
-      }
+      if (p4Badge) { p4Badge.className = 'status-badge realtime'; p4Badge.innerText = 'Google Sheet Pool_Images (Crawl)'; }
+
+      const p5Badge = document.getElementById('p5Status');
+      if (p5Badge) { p5Badge.className = 'status-badge realtime'; p5Badge.innerText = 'Google Sheet Pool_Images (Self)'; }
 
       // Counts
       document.getElementById('p1Count').innerText = `${partitionData.p1.length} ảnh`;
@@ -1183,6 +1206,9 @@
       if (document.getElementById('p4Count')) {
         document.getElementById('p4Count').innerText = `${partitionData.p4.length} ảnh`;
       }
+      if (document.getElementById('p5Count')) {
+        document.getElementById('p5Count').innerText = `${partitionData.p5.length} ảnh`;
+      }
 
       // Render grids
       renderPartitionGrid('p1Grid', partitionData.p1, 'p1');
@@ -1190,6 +1216,9 @@
       renderPartitionGrid('p3Grid', partitionData.p3, 'p3');
       if (document.getElementById('p4Grid')) {
         renderPartitionGrid('p4Grid', partitionData.p4, 'p4');
+      }
+      if (document.getElementById('p5Grid')) {
+        renderPartitionGrid('p5Grid', partitionData.p5, 'p5');
       }
 
       document.getElementById('partitionsContainer').style.display = 'block';
@@ -1290,7 +1319,8 @@
         ...partitionData.p1.filter(i => i.selected),
         ...partitionData.p2.filter(i => i.selected),
         ...partitionData.p3.filter(i => i.selected),
-        ...(partitionData.p4 || []).filter(i => i.selected)
+        ...(partitionData.p4 || []).filter(i => i.selected),
+        ...(partitionData.p5 || []).filter(i => i.selected)
       ];
       if (allSelected.length === 0) {
         alert('Chưa chọn ảnh nào để tải!');

@@ -112,8 +112,10 @@ def test_compare_images_full_flow(tmp_path):
         assert data["house_info"]["system_id"] == "SYS-20260723-001"
         assert len(data["partition_1_sqlite"]) == 2
         assert data["partition_1_sqlite"][0]["role"] == "facade"
-        assert "partition_4_pool_images" in data
-        assert isinstance(data["partition_4_pool_images"]["images"], list)
+        assert "partition_4_pool_crawl" in data
+        assert "partition_5_pool_self" in data
+        assert isinstance(data["partition_4_pool_crawl"]["images"], list)
+        assert isinstance(data["partition_5_pool_self"]["images"], list)
     finally:
         if os.path.exists(db_file_path):
             try:

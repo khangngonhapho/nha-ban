@@ -2266,8 +2266,8 @@ module.exports = async (req, res) => {
         console.warn('Source sheet fetch warning in Vercel compare-images:', errSrc.message);
       }
 
-      let poolImagesList = [];
-      let p4Debug = '';
+      let poolCrawlList = [];
+      let poolSelfList = [];
       try {
         const primaryPoolId = poolSheetId || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
         let poolImgUrl = `https://sheets.googleapis.com/v4/spreadsheets/${primaryPoolId}/values/Pool_Images!A1:ZZ3000`;
@@ -2281,13 +2281,12 @@ module.exports = async (req, res) => {
         if (poolImgRes.ok) {
           const poolImgData = await poolImgRes.json();
           const pImgRows = poolImgData.values || [];
-          p4Debug = `Rows: ${pImgRows.length}`;
           if (pImgRows.length > 1) {
             for (let k = 1; k < pImgRows.length; k++) {
               const pir = pImgRows[k];
               const pMa = pir[0] ? String(pir[0]).trim() : '';
               const pAddr = pir[1] ? String(pir[1]).trim() : '';
-              const pLoai = pir[2] ? String(pir[2]).trim() : '';
+              const pLoai = pir[2] ? String(pir[2]).trim().toLowerCase() : '';
 
               const isMatch = (foundTkId && pMa === foundTkId) || 
                               (foundSysId && pMa === foundSysId) || 
@@ -2297,16 +2296,17 @@ module.exports = async (req, res) => {
                               (pAddr && firstTok && pAddr.includes(firstTok));
 
               if (isMatch) {
+                const targetList = (pLoai === 'self') ? poolSelfList : poolCrawlList;
                 for (let c = 4; c < pir.length; c++) {
                   const urlStr = String(pir[c] || '').trim();
                   if (urlStr && (urlStr.startsWith('http://') || urlStr.startsWith('https://') || urlStr.startsWith('BDS-KhangNgo'))) {
-                    poolImagesList.push({
-                      id: `p4-${poolImagesList.length}`,
+                    targetList.push({
+                      id: `p-${targetList.length}`,
                       url: urlStr,
                       filename: extractFilenameLocal(urlStr),
                       role: pLoai || 'uploaded',
                       origin: 'Pool_Images',
-                      sequence_index: poolImagesList.length,
+                      sequence_index: targetList.length,
                       is_hidden: 0
                     });
                   }
@@ -2314,11 +2314,8 @@ module.exports = async (req, res) => {
               }
             }
           }
-        } else {
-          p4Debug = `Res status: ${poolImgRes.status}`;
         }
       } catch (errP4) {
-        p4Debug = `Err: ${errP4.message}`;
         console.warn('Pool_Images sheet fetch warning in Vercel compare-images:', errP4.message);
       }
 
@@ -2337,7 +2334,9 @@ module.exports = async (req, res) => {
         partition_1_sqlite: poolAdminImages,
         partition_2_pool: { is_fallback: false, images: poolAdminImages },
         partition_3_source: { is_fallback: false, images: sourcePubImages },
-        partition_4_pool_images: { is_fallback: false, images: poolImagesList, debug: p4Debug }
+        partition_4_pool_crawl: { is_fallback: false, images: poolCrawlList },
+        partition_5_pool_self: { is_fallback: false, images: poolSelfList },
+        partition_4_pool_images: { is_fallback: false, images: poolCrawlList }
       });
     } catch (err) {
       console.error('Error in compare-images Vercel endpoint:', err);
