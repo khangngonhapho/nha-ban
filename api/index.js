@@ -2071,58 +2071,46 @@ module.exports = async (req, res) => {
   const s = req.query.s;
   if (s && !req.query.preview) {
     try {
-      const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
-      const response = await fetch(sheetUrl, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      
-      const text = await response.text();
-      const startIdx = text.indexOf('(') + 1;
-      const endIdx = text.lastIndexOf(')');
-      if (startIdx <= 0 || endIdx <= 0) throw new Error('Invalid JSONP format from Google Sheets');
-      
-      const jsonStr = text.substring(startIdx, endIdx);
-      const data = JSON.parse(jsonStr);
-      const rows = data.table.rows;
-      
-      const cv = (cell) => cell ? (cell.v ?? cell.f ?? '') : '';
-      const fullList = rows
-        .filter(r => r.c[0] && r.c[0].v)
-        .map((r, index) => {
-          return {
-            id: cv(r.c[0]),
-            t: cv(r.c[1]),
-            dt: cv(r.c[2]),
-            tang: cv(r.c[3]),
-            gia: cv(r.c[5]),
-            phuong: cv(r.c[7]),
-            duong_truoc_nha: cv(r.c[10]),
-            imgs: [
-              cv(r.c[17]), cv(r.c[18]), cv(r.c[19]), cv(r.c[20]), cv(r.c[21]), 
-              cv(r.c[22]), cv(r.c[23]), cv(r.c[24]), cv(r.c[25]), cv(r.c[26])
-            ].filter(Boolean),
-            system_id: cv(r.c[34]) || (index + 1).toString()
-          };
-        });
+      const cfg = loadConfig();
+      const r2PublicUrl = process.env.R2_PUBLIC_URL || cfg.r2_public_url || 'https://pub-e92603c36c8d4789917d05d1eba12a7e.r2.dev';
+      const r2MigrationPrefix = process.env.R2_MIGRATION_PREFIX || cfg.r2_migration_prefix || 'BDS-KhangNgo-v3';
 
-      // Support single share id
-      const tk = s.split(',')[0].trim(); // Get first id if multiple comma-separated
-      let house = null;
-      if (tk.startsWith('SYS-')) {
-        house = fullList.find(h => h.system_id === tk);
-      } else if (/^\d+$/.test(tk)) {
-        const idx = parseInt(tk, 10) - 1;
-        house = fullList[idx];
-      } else {
-        house = fullList.find(h => String(h.id).toLowerCase() === tk.toLowerCase());
-      }
+      const currentManifestUrl = `${r2PublicUrl}/${r2MigrationPrefix}/public_data/current.json`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      
+      const headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      };
+
+      const currRes = await fetch(currentManifestUrl, { headers, signal: controller.signal });
+      if (!currRes.ok) throw new Error(`HTTP error fetching R2 manifest! status: ${currRes.status}`);
+      
+      const manifest = await currRes.json();
+      const indexPath = manifest.index_url;
+      if (!indexPath) throw new Error('Missing index_url in R2 manifest');
+
+      const indexUrl = `${r2PublicUrl}/${r2MigrationPrefix}/${indexPath}`;
+      const indexRes = await fetch(indexUrl, { headers, signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!indexRes.ok) throw new Error(`HTTP error fetching R2 index! status: ${indexRes.status}`);
+
+      const fullList = await indexRes.json();
+      const sysIdTarget = s.split(',')[0].trim();
+
+      const house = fullList.find(h => h.system_id === sysIdTarget);
 
       if (house) {
         const cleanTitle = house.t || 'Khang Ngô Nhà Phố';
-        const cleanDesc = `#${house.id} · Diện tích: ${house.dt}m², ${house.tang} tầng, Đường ${house.duong_truoc_nha}, P.${house.phuong}. Giá bán: ${house.gia} tỷ VND. Liên hệ ngay!`;
-        let cleanImg = house.imgs[0] || 'https://khangngonhapho.github.io/nha-ban/avatarKhangNgo.jpg';
+        const cleanPhuong = (house.phuong || '-').replace(/^(Phường|P\.)\s*/i, '').trim();
+        const cleanDt = String(house.dt || '').replace(/m²$/i, '').trim();
+        const cleanTang = house.tang || '-';
+        const cleanGia = house.gia || '-';
+        const cleanId = house.id || '';
+        
+        const cleanDesc = `#${cleanId} - Diện tích: ${cleanDt}m², ${cleanTang} tầng, P.${cleanPhuong}. Giá bán: ${cleanGia} tỷ VNĐ. Liên hệ ngay!`;
+        
+        let cleanImg = (house.imgs && house.imgs.length > 0 ? house.imgs[0] : '') || 'https://khangngonhapho.github.io/nha-ban/avatarKhangNgo.jpg';
         
         if (cleanImg.includes('drive.google.com')) {
           const m1 = cleanImg.match(/drive\.google\.com\/file\/d\/([^/?\s]+)/);
@@ -2136,13 +2124,24 @@ module.exports = async (req, res) => {
           }
         }
 
+        // Replace Title & OpenGraph meta tags
         html = html.replace(/<title>[^<]*<\/title>/i, `<title>${cleanTitle}</title>`);
         html = html.replace(/<meta[^>]*property="og:title"[^>]*content="[^"]*"/i, `<meta property="og:title" content="${cleanTitle}"`);
         html = html.replace(/<meta[^>]*property="og:description"[^>]*content="[^"]*"/i, `<meta property="og:description" content="${cleanDesc}"`);
         html = html.replace(/<meta[^>]*property="og:image"[^>]*content="[^"]*"/i, `<meta property="og:image" content="${cleanImg}"`);
+
+        // Replace/Add Twitter meta tags if present
+        if (html.includes('name="twitter:title"')) {
+          html = html.replace(/<meta[^>]*name="twitter:title"[^>]*content="[^"]*"/i, `<meta name="twitter:title" content="${cleanTitle}"`);
+          html = html.replace(/<meta[^>]*name="twitter:description"[^>]*content="[^"]*"/i, `<meta name="twitter:description" content="${cleanDesc}"`);
+          html = html.replace(/<meta[^>]*name="twitter:image"[^>]*content="[^"]*"/i, `<meta name="twitter:image" content="${cleanImg}"`);
+        } else {
+          const twitterTags = `\n  <meta name="twitter:card" content="summary_large_image">\n  <meta name="twitter:title" content="${cleanTitle}">\n  <meta name="twitter:description" content="${cleanDesc}">\n  <meta name="twitter:image" content="${cleanImg}">`;
+          html = html.replace(/<\/head>/i, `${twitterTags}\n</head>`);
+        }
       }
     } catch (err) {
-      console.error('Error in serverless dynamic meta injection:', err);
+      console.error('Error in serverless dynamic meta injection from R2 CDN:', err);
       // Fallback gracefully to original html
     }
   }
