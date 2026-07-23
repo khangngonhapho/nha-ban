@@ -630,9 +630,12 @@ def fetch_image_json_from_sheet_py(sheet_name, match_id, target_col_name):
             return []
 
         for r in rows[1:]:
-            r_sys = r[idx_sys] if idx_sys != -1 and idx_sys < len(r) else ""
-            r_ma = r[idx_ma_kn] if idx_ma_kn != -1 and idx_ma_kn < len(r) else ""
-            r_tk = r[idx_tk] if idx_tk != -1 and idx_tk < len(r) else ""
+            r_sys = str(r[idx_sys]).strip() if idx_sys != -1 and idx_sys < len(r) else ""
+            r_ma = str(r[idx_ma_kn]).strip() if idx_ma_kn != -1 and idx_ma_kn < len(r) else ""
+            r_tk = str(r[idx_tk]).strip() if idx_tk != -1 and idx_tk < len(r) else ""
+
+            if not r_sys and not r_ma and not r_tk:
+                continue
 
             if match_id and (match_id == r_sys or match_id == r_ma or match_id == r_tk):
                 target_val = r[idx_target] if idx_target < len(r) else ""

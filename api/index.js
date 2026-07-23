@@ -2173,15 +2173,22 @@ module.exports = async (req, res) => {
         const rDuong = idxDuong !== -1 ? String(r[idxDuong] || '').trim() : '';
         const normRSoNha = normHouseNo(rSoNha);
 
+        // Bỏ qua các dòng trống hoàn toàn
+        if (!rTkId && !rSysId && !rMaKn && !rSoNha && !rDuong) {
+          continue;
+        }
+
         // 1. Khớp trực tiếp ID
-        if (queryStr === rTkId || queryStr === rSysId || queryStr === rMaKn) {
+        if (queryStr && (queryStr === rTkId || queryStr === rSysId || queryStr === rMaKn)) {
           matchedRow = r;
           break;
         }
 
         // 2. Khớp theo Số nhà + Tên đường
         if (firstTok) {
-          const soNhaMatch = rSoNha.includes(firstTok) || normRSoNha.includes(firstClean) || firstTok.includes(normRSoNha);
+          const soNhaMatch = Boolean(rSoNha && rSoNha.includes(firstTok)) || 
+                             Boolean(normRSoNha && normRSoNha.includes(firstClean)) || 
+                             Boolean(normRSoNha && firstTok.includes(normRSoNha));
           if (soNhaMatch) {
             if (qTokens.length === 1) {
               matchedRow = r;
@@ -2189,8 +2196,10 @@ module.exports = async (req, res) => {
             }
             const streetInput = qTokens.slice(1).join(' ');
             const streetAliases = expandStreetAliases(streetInput);
-            const duongMatch = streetAliases.some(st => rDuong.toLowerCase().includes(st.toLowerCase()) || st.toLowerCase().includes(rDuong.toLowerCase()));
-            if (duongMatch || rDuong.toLowerCase().includes(qTokens[qTokens.length - 1].toLowerCase())) {
+            const duongMatch = Boolean(rDuong) && streetAliases.some(st => 
+              rDuong.toLowerCase().includes(st.toLowerCase()) || st.toLowerCase().includes(rDuong.toLowerCase())
+            );
+            if (duongMatch || (rDuong && rDuong.toLowerCase().includes(qTokens[qTokens.length - 1].toLowerCase()))) {
               matchedRow = r;
               break;
             }
@@ -2198,8 +2207,8 @@ module.exports = async (req, res) => {
         }
 
         // 3. Khớp chuỗi địa chỉ
-        const fullAddr = `${rSoNha} ${rDuong}`.toLowerCase();
-        if (fullAddr.includes(queryStr.toLowerCase()) || fullAddr.includes(qClean.toLowerCase())) {
+        const fullAddr = `${rSoNha} ${rDuong}`.trim().toLowerCase();
+        if (fullAddr && (fullAddr.includes(queryStr.toLowerCase()) || fullAddr.includes(qClean.toLowerCase()))) {
           matchedRow = r;
           break;
         }
