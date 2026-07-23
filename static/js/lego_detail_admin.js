@@ -692,11 +692,8 @@
           let sImgs = [];
           if (p.curated_config && Array.isArray(p.curated_config.images)) {
             sImgs = p.curated_config.images
-              .filter(img => {
-                const u = img && (img.r2_url || img.image_url || img.url);
-                return u && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo');
-              })
-              .map(img => img.r2_url || img.image_url || img.url);
+              .filter(img => img && img.url && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo'))
+              .map(img => img.url);
           }
           if (sImgs.length === 0) {
             const sodoColIdx1 = window.getPoolSodoColIdx ? window.getPoolSodoColIdx(1) : 27;
@@ -720,11 +717,8 @@
           let nImgs = [];
           if (p.curated_config && Array.isArray(p.curated_config.images)) {
             nImgs = p.curated_config.images
-              .filter(img => {
-                const u = img && (img.r2_url || img.image_url || img.url);
-                return u && img.role !== 'Ẩn' && img.role !== 'hidden' && img.role !== 'deleted' && img.is_hidden !== 1;
-              })
-              .map(img => img.r2_url || img.image_url || img.url);
+              .filter(img => img && img.url && img.role !== 'Ẩn' && img.role !== 'hidden' && img.role !== 'deleted')
+              .map(img => img.url);
           }
           if (nImgs.length === 0) {
             nImgs = (p.imgs || []).filter(url => {
@@ -871,12 +865,11 @@
         let interiorCount = 0;
         let alleyCount = 0;
         p.curated_config.images.forEach(img => {
-          const urlVal = img ? (img.r2_url || img.image_url || img.url) : null;
-          if (!img || !urlVal) return;
+          if (!img || !img.url) return;
           const role = img.role || 'Nội thất';
           const originVal = img.origin === 'thienkhoi' ? 'crawl' : (img.origin === 'user' ? 'self' : (img.origin || 'crawl'));
           const isImgVisible = img.visible !== false && img.is_hidden !== 1;
-          const cardObj = { url: urlVal, origin: originVal, visible: isImgVisible };
+          const cardObj = { url: img.url, origin: originVal, visible: isImgVisible };
           if (role === 'Mặt tiền' || role === 'facade') {
             cards.push({ type: "facade", index: 0, ...cardObj });
           } else if (role === 'Bìa' || role === 'cover') {
@@ -889,9 +882,9 @@
             cards.push({ type: "alley", index: alleyCount, ...cardObj });
           } else if (role === 'deleted') {
             cards.push({ type: "deleted", index: 0, ...cardObj });
-            if (urlVal && !urlVal.includes('BDS-KhangNgo-v2')) {
+            if (img.url && !img.url.includes('BDS-KhangNgo-v2')) {
               window.brokenImageUrls = window.brokenImageUrls || new Set();
-              window.brokenImageUrls.add(normalizeImgUrl(urlVal));
+              window.brokenImageUrls.add(normalizeImgUrl(img.url));
             }
           } else {
             interiorCount++;
@@ -3118,20 +3111,19 @@
           let alleyCount = 0;
           let sodoCount = 0;
           for (let img of p.curated_config.images) {
-            const urlVal = img ? (img.r2_url || img.image_url || img.url) : null;
-            if (!img || !urlVal) continue;
+            if (!img || !img.url) continue;
             const role = img.role || 'Nội thất';
-            if (type === 'facade' && (role === 'Mặt tiền' || role === 'facade')) return urlVal;
-            if (type === 'cover' && (role === 'Bìa' || role === 'cover')) return urlVal;
+            if (type === 'facade' && (role === 'Mặt tiền' || role === 'facade')) return img.url;
+            if (type === 'cover' && (role === 'Bìa' || role === 'cover')) return img.url;
             if (type === 'interior' && (role === 'Nội thất' || role === 'interior')) {
               interiorCount++;
-              if (interiorCount === index) return urlVal;
+              if (interiorCount === index) return img.url;
             } else if (type === 'alley' && (role === 'Hẻm' || role === 'alley')) {
               alleyCount++;
-              if (alleyCount === index) return urlVal;
+              if (alleyCount === index) return img.url;
             } else if (type === 'sodo' && (role === 'Sơ đồ' || role === 'diagram' || role === 'sodo')) {
               sodoCount++;
-              if (sodoCount === index) return urlVal;
+              if (sodoCount === index) return img.url;
             }
           }
         }
