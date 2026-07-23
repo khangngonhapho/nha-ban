@@ -488,6 +488,32 @@ def sanitize_url_py(raw_url):
     except Exception:
         return u.replace(" ", "%20")
 
+def expand_street_aliases(street_str):
+    if not street_str:
+        return []
+    s = str(street_str).strip()
+    aliases = [s]
+    if re.search(r'(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)', s, re.IGNORECASE):
+        aliases.append(re.sub(r'(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)', 'Cách Mạng Tháng 8', s, flags=re.IGNORECASE))
+        aliases.append(re.sub(r'(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)', 'CMT8', s, flags=re.IGNORECASE))
+    elif re.search(r'(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)', s, re.IGNORECASE):
+        aliases.append(re.sub(r'(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)', '3 Tháng 2', s, flags=re.IGNORECASE))
+        aliases.append(re.sub(r'(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)', '3/2', s, flags=re.IGNORECASE))
+    elif re.search(r'đường\s*số\s*7', s, re.IGNORECASE):
+        aliases.append(re.sub(r'đường\s*số\s*7', 'Đường số 7', s, flags=re.IGNORECASE))
+        aliases.append(re.sub(r'đường\s*số\s*7', 'Đường 7', s, flags=re.IGNORECASE))
+    return list(dict.fromkeys(aliases))
+
+def normalize_street_name(street_str):
+    if not street_str:
+        return ""
+    s = str(street_str).strip()
+    # Quy tắc gen Mã Khang Ngô (ID): CMT8 -> TTMC, 3/2 -> HTB, Đường số 7 -> 7SD
+    s_clean = re.sub(r'(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)', 'TTMC', s, flags=re.IGNORECASE)
+    s_clean = re.sub(r'(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)', 'HTB', s_clean, flags=re.IGNORECASE)
+    s_clean = re.sub(r'đường\s*số\s*7', '7SD', s_clean, flags=re.IGNORECASE)
+    return s_clean
+
 def extract_filename_py(url):
     try:
         from urllib.parse import urlparse, unquote
@@ -496,16 +522,6 @@ def extract_filename_py(url):
         return unquote(name) if name else "image.jpg"
     except Exception:
         return "image.jpg"
-
-def normalize_street_name(street_str):
-    if not street_str:
-        return ""
-    s = str(street_str).strip()
-    # Rule 1: CMT8 / Cách mạng tháng 8 -> TTMC, 3/2 / Ba tháng hai -> HTB, Đường số 7 -> 7SD
-    s_clean = re.sub(r'(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)', 'TTMC', s, flags=re.IGNORECASE)
-    s_clean = re.sub(r'(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)', 'HTB', s_clean, flags=re.IGNORECASE)
-    s_clean = re.sub(r'đường\s*số\s*7', '7SD', s_clean, flags=re.IGNORECASE)
-    return s_clean
 
 def normalize_house_number(house_str):
     if not house_str:
@@ -574,159 +590,83 @@ def parse_image_json_to_list(raw_json):
                 })
     return result
 
-def fetch_image_json_from_sheet(sheet_type, search_id, header_name):
-    """
-    Truy vấn Google Sheets (Pool hoặc Source) để lấy giá trị JSON của cột chỉ định.
-    """
-    import manager
-    import gspread
-    cfg = manager.load_config()
-    creds = manager.get_google_credentials()
-    if not creds:
-        raise Exception("Không có Google Credentials")
-        
-    client = gspread.authorize(creds)
-    
-    sheet_id = ""
-    if sheet_type == "Pool":
-        sheet_id = cfg.get("pool2_raw_sheet_id") or cfg.get("sheet_id")
-    else: # Source
-        sheet_id = cfg.get("pool2_public_sheet_id") or cfg.get("sheet_id")
-        
-    if not sheet_id:
-        raise Exception(f"Không tìm thấy Sheet ID cho loại {sheet_type}")
-        
-    spreadsheet = client.open_by_key(sheet_id)
-    try:
-        worksheet = spreadsheet.worksheet(sheet_type)
-    except Exception:
-        worksheet = spreadsheet.sheet1
-        
-    rows = worksheet.get_all_values()
-    if not rows or len(rows) < 2:
-        return []
-        
-    headers = [str(h).strip() for h in rows[0]]
-    
-    target_col_idx = -1
-    for i, h in enumerate(headers):
-        if h.lower() == header_name.lower():
-            target_col_idx = i
-            break
-            
-    if target_col_idx == -1:
-        for i, h in enumerate(headers):
-            if "image" in h.lower() and ("admin" if "admin" in header_name.lower() else "public") in h.lower():
-                target_col_idx = i
-                break
-                
-    if target_col_idx == -1:
-        raise Exception(f"Không tìm thấy cột '{header_name}' trên Sheet {sheet_type}")
-        
-    search_id_str = str(search_id).strip().lower()
-    if not search_id_str:
-        return []
-        
-    matched_json_str = ""
-    for row_values in rows[1:]:
-        row_line = " ".join([str(v) for v in row_values]).lower()
-        if search_id_str in row_line:
-            if target_col_idx < len(row_values):
-                matched_json_str = row_values[target_col_idx]
-                break
-                
-    if not matched_json_str:
-        return []
-        
-    return parse_image_json_to_list(matched_json_str)
-
 @routes_images.route('/api/databases', methods=['GET'])
-def get_available_databases():
-    """Lấy danh sách tất cả các file CSDL SQLite (.db) trong thư mục gốc dự án"""
-    import manager
-    root = manager.PROJECT_ROOT
-    db_files = []
+def get_databases():
+    """Trả về danh sách các tệp SQLite .db trong thư mục dự án"""
     try:
-        for f in os.listdir(root):
-            if f.endswith('.db') and not f.startswith('.'):
-                db_files.append(f)
-        db_files.sort()
+        project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        db_files = [f for f in os.listdir(project_dir) if f.endswith(".db")]
+        # Đưa raw_archive.db lên đầu danh sách nếu có
+        if "raw_archive.db" in db_files:
+            db_files.remove("raw_archive.db")
+            db_files.insert(0, "raw_archive.db")
+        return jsonify({"status": "success", "databases": db_files})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
-    
-    if "raw_archive.db" in db_files:
-        db_files.remove("raw_archive.db")
-        db_files.insert(0, "raw_archive.db")
-        
-    return jsonify({"status": "success", "databases": db_files})
 
 @routes_images.route('/api/compare-images', methods=['GET'])
 def compare_images():
-    """
-    API trích xuất ảnh từ 3 phân vùng đối chiếu:
-    1. Images_Admin_JSON trong SQLite
-    2. Images_Admin_JSON trong Sheet Pool
-    3. Images_Public_JSON trong Sheet Source
-    """
-    import manager
+    """Tra cứu căn nhà và trích xuất dữ liệu ảnh 3 phân vùng (SQLite, Pool Sheet, Source Sheet)"""
     query_str = request.args.get("query", "").strip()
     db_filename = request.args.get("db_file", "raw_archive.db").strip()
     
     if not query_str:
-        return jsonify({"status": "error", "message": "Vui lòng nhập địa chỉ, số nhà hoặc mã nhà"}), 400
+        return jsonify({"status": "error", "message": "Thiếu tham số query"}), 400
         
-    db_filename = os.path.basename(db_filename)
-    if not db_filename.endswith('.db'):
-        db_filename += '.db'
-        
-    db_path = os.path.join(manager.PROJECT_ROOT, db_filename)
+    project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    db_path = os.path.join(project_dir, db_filename)
+    
     if not os.path.exists(db_path):
-        return jsonify({"status": "error", "message": f"Không tìm thấy tệp CSDL SQLite '{db_filename}'"}), 404
+        return jsonify({"status": "error", "message": f"Không tìm thấy CSDL SQLite: {db_filename}"}), 404
         
     try:
-        conn = sqlite3.connect(db_path, timeout=30.0)
+        conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('listings_v2', 'listings')")
+        # Xác định bảng chứa listings
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('listings_v2', 'listings');")
         tables = [r[0] for r in cursor.fetchall()]
         table_name = "listings_v2" if "listings_v2" in tables else ("listings" if "listings" in tables else None)
         
         if not table_name:
             conn.close()
-            return jsonify({"status": "error", "message": f"Không tìm thấy bảng listings trong CSDL '{db_filename}'"}), 400
-            
-        cursor.execute(f"PRAGMA table_info({table_name})")
-        cols = {r[1] for r in cursor.fetchall()}
+            return jsonify({"status": "error", "message": "Không tìm thấy bảng dữ liệu listings trong SQLite"}), 500
+
+        # Kiểm tra danh sách cột
+        cursor.execute(f"PRAGMA table_info({table_name});")
+        cols = [r[1] for r in cursor.fetchall()]
         
-        so_nha_col = "Ngo_So_nha" if "Ngo_So_nha" in cols else ("Ng__S__nh_" if "Ng__S__nh_" in cols else "So_Nha")
-        duong_col = "Duong" if "Duong" in cols else ("___ng" if "___ng" in cols else "Ten_Duong")
-        sys_id_col = "System_ID" if "System_ID" in cols else "system_id"
-        ma_kn_col = "Ma_Khang_Ngo_ID" if "Ma_Khang_Ngo_ID" in cols else ("M__Khang_Ng___ID_" if "M__Khang_Ng___ID_" in cols else "tk_id")
-        
-        norm_query = normalize_street_name(query_str)
-        norm_house_num = normalize_house_number(query_str)
-        
+        so_nha_col = "Ngo_So_nha" if "Ngo_So_nha" in cols else "So_nha"
+        duong_col = "Duong" if "Duong" in cols else "duong"
+        sys_id_col = "System_ID" if "System_ID" in cols else "System ID"
+        ma_kn_col = "Ma_Khang_Ngo_ID" if "Ma_Khang_Ngo_ID" in cols else "Mã Khang Ngô (ID)"
+
         row = None
+        # 1. Khớp trực tiếp theo Mã nhà / System ID / tk_id
         sql_direct = f"SELECT * FROM {table_name} WHERE tk_id = ? OR `{sys_id_col}` = ? OR `{ma_kn_col}` = ?"
         row = cursor.execute(sql_direct, (query_str, query_str, query_str)).fetchone()
         
         if not row:
-            # Tách token từ chuỗi truy vấn đã chuẩn hóa
-            tokens = [t for t in norm_query.replace('+', ' ').split() if t]
-            if len(tokens) >= 2:
-                # Token đầu tiên hoặc phần đầu thường là số nhà, token cuối/cuối cụm là tên đường
+            # 2. Khớp theo Số nhà và Tên đường thực tế
+            clean_q = query_str.replace('+', ' ')
+            tokens = [t for t in clean_q.split() if t]
+            if len(tokens) >= 1:
                 first_tok = tokens[0]
                 first_clean = normalize_house_number(first_tok)
-                last_tok = tokens[-1]
+                street_input = " ".join(tokens[1:]) if len(tokens) > 1 else query_str
+                street_aliases = expand_street_aliases(street_input)
                 
-                sql_token = f"""
-                    SELECT * FROM {table_name}
-                    WHERE (`{so_nha_col}` LIKE ? OR `{so_nha_col}` LIKE ?) 
-                      AND (`{duong_col}` LIKE ? OR `{duong_col}` LIKE ?)
-                    ORDER BY id DESC LIMIT 1
-                """
-                row = cursor.execute(sql_token, (f"%{first_tok}%", f"%{first_clean}%", f"%{last_tok}%", f"%{norm_query}%")).fetchone()
+                for st in street_aliases:
+                    sql_token = f"""
+                        SELECT * FROM {table_name}
+                        WHERE (`{so_nha_col}` LIKE ? OR `{so_nha_col}` LIKE ?) 
+                          AND (`{duong_col}` LIKE ? OR `{duong_col}` LIKE ? OR ? LIKE '%' || `{duong_col}` || '%')
+                        ORDER BY id DESC LIMIT 1
+                    """
+                    row = cursor.execute(sql_token, (f"%{first_tok}%", f"%{first_clean}%", f"%{st}%", f"%{query_str}%", st)).fetchone()
+                    if row:
+                        break
 
             if not row:
                 sql_like = f"""
@@ -735,10 +675,7 @@ def compare_images():
                     ORDER BY id DESC LIMIT 1
                 """
                 q_like = f"%{query_str}%"
-                q_norm_like = f"%{norm_query}%"
                 row = cursor.execute(sql_like, (q_like, q_like, q_like, q_like)).fetchone()
-                if not row and norm_query != query_str:
-                    row = cursor.execute(sql_like, (q_norm_like, q_norm_like, q_norm_like, q_norm_like)).fetchone()
                 
         if not row:
             conn.close()

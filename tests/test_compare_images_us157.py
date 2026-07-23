@@ -97,13 +97,13 @@ def test_compare_images_full_flow(tmp_path):
 
     cursor.execute("""
         INSERT INTO listings_v2 (tk_id, System_ID, Ma_Khang_Ngo_ID, Ngo_So_nha, Duong, Quan, images_admin_json, images_public_json)
-        VALUES ('c70a9eef', 'SYS-20260723-001', 'HWZOITITTN', '1168.42+44', 'TTMC', 'Quận Tân Bình', ?, ?)
+        VALUES ('c70a9eef', 'SYS-20260723-001', 'HWZOITITTN', '1168.42+44', 'Cách Mạng Tháng 8', 'Quận Tân Bình', ?, ?)
     """, (admin_imgs, pub_imgs))
     conn.commit()
     conn.close()
 
     try:
-        # Search by address using CMT8 -> TTMC normalization and house number split
+        # Search by address using real street name & CMT8 alias
         url = f"/api/compare-images?query=1168.42+44 CMT8&db_file={db_file_name}"
         resp = client.get(url)
         assert resp.status_code == 200

@@ -2041,13 +2041,21 @@ module.exports = async (req, res) => {
       }
       const accessToken = await getGoogleAccessToken(creds);
 
-      const normStreet = (s) => {
-        if (!s) return '';
+      const expandStreetAliases = (s) => {
+        if (!s) return [];
         let str = String(s).trim();
-        str = str.replace(/(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)/gi, 'TTMC');
-        str = str.replace(/(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)/gi, 'HTB');
-        str = str.replace(/đường\s*số\s*7/gi, '7SD');
-        return str;
+        let aliases = [str];
+        if (/(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)/gi.test(str)) {
+          aliases.push(str.replace(/(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)/gi, 'Cách Mạng Tháng 8'));
+          aliases.push(str.replace(/(cách\s*mạng\s*tháng\s*(8|tám)|cmt8)/gi, 'CMT8'));
+        } else if (/(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)/gi.test(str)) {
+          aliases.push(str.replace(/(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)/gi, '3 Tháng 2'));
+          aliases.push(str.replace(/(3\s*tháng\s*2|3\/2|ba\s*tháng\s*hai)/gi, '3/2'));
+        } else if (/đường\s*số\s*7/gi.test(str)) {
+          aliases.push(str.replace(/đường\s*số\s*7/gi, 'Đường số 7'));
+          aliases.push(str.replace(/đường\s*số\s*7/gi, 'Đường 7'));
+        }
+        return Array.from(new Set(aliases));
       };
 
       const normHouseNo = (h) => {
@@ -2141,39 +2149,48 @@ module.exports = async (req, res) => {
       const idxQuan = getIdx('Quận');
       const idxImagesAdmin = getIdx('Images_Admin_JSON');
 
-      const normQ = normStreet(queryStr);
-      const qTokens = normQ.split(/\s+/).filter(Boolean);
+      const qClean = queryStr.replace('+', ' ');
+      const qTokens = qClean.split(/\s+/).filter(Boolean);
       const firstTok = qTokens[0] || '';
       const firstClean = normHouseNo(firstTok);
-      const lastTok = qTokens[qTokens.length - 1] || '';
 
       let matchedRow = null;
       for (let i = 1; i < poolRows.length; i++) {
         const r = poolRows[i];
-        const rTkId = idxTkId !== -1 ? (r[idxTkId] || '') : '';
-        const rSysId = idxSysId !== -1 ? (r[idxSysId] || '') : '';
-        const rMaKn = idxMaKn !== -1 ? (r[idxMaKn] || '') : '';
-        const rSoNha = idxSoNha !== -1 ? (r[idxSoNha] || '') : '';
-        const rDuong = idxDuong !== -1 ? (r[idxDuong] || '') : '';
-        const normRDuong = normStreet(rDuong);
+        const rTkId = idxTkId !== -1 ? String(r[idxTkId] || '').trim() : '';
+        const rSysId = idxSysId !== -1 ? String(r[idxSysId] || '').trim() : '';
+        const rMaKn = idxMaKn !== -1 ? String(r[idxMaKn] || '').trim() : '';
+        const rSoNha = idxSoNha !== -1 ? String(r[idxSoNha] || '').trim() : '';
+        const rDuong = idxDuong !== -1 ? String(r[idxDuong] || '').trim() : '';
         const normRSoNha = normHouseNo(rSoNha);
 
+        // 1. Khớp trực tiếp ID
         if (queryStr === rTkId || queryStr === rSysId || queryStr === rMaKn) {
           matchedRow = r;
           break;
         }
 
-        if (firstTok && lastTok) {
-          const soNhaMatch = rSoNha.includes(firstTok) || normRSoNha.includes(firstClean);
-          const duongMatch = rDuong.includes(lastTok) || normRDuong.includes(lastTok);
-          if (soNhaMatch && duongMatch) {
-            matchedRow = r;
-            break;
+        // 2. Khớp theo Số nhà + Tên đường
+        if (firstTok) {
+          const soNhaMatch = rSoNha.includes(firstTok) || normRSoNha.includes(firstClean) || firstTok.includes(normRSoNha);
+          if (soNhaMatch) {
+            if (qTokens.length === 1) {
+              matchedRow = r;
+              break;
+            }
+            const streetInput = qTokens.slice(1).join(' ');
+            const streetAliases = expandStreetAliases(streetInput);
+            const duongMatch = streetAliases.some(st => rDuong.toLowerCase().includes(st.toLowerCase()) || st.toLowerCase().includes(rDuong.toLowerCase()));
+            if (duongMatch || rDuong.toLowerCase().includes(qTokens[qTokens.length - 1].toLowerCase())) {
+              matchedRow = r;
+              break;
+            }
           }
         }
 
+        // 3. Khớp chuỗi địa chỉ
         const fullAddr = `${rSoNha} ${rDuong}`.toLowerCase();
-        if (fullAddr.includes(queryStr.toLowerCase()) || fullAddr.includes(normQ.toLowerCase())) {
+        if (fullAddr.includes(queryStr.toLowerCase()) || fullAddr.includes(qClean.toLowerCase())) {
           matchedRow = r;
           break;
         }
