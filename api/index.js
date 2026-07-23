@@ -2303,7 +2303,7 @@ module.exports = async (req, res) => {
                     poolImagesList.push({
                       id: `p4-${poolImagesList.length}`,
                       url: urlStr,
-                      filename: extractFilename(urlStr),
+                      filename: extractFilenameLocal(urlStr),
                       role: pLoai || 'uploaded',
                       origin: 'Pool_Images',
                       sequence_index: poolImagesList.length,
