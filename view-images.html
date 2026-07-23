@@ -1085,24 +1085,14 @@
       partitionData.p2 = ((data.partition_2_pool && data.partition_2_pool.images) || []).map((img, i) => ({ ...img, id: `p2-${i}`, selected: true }));
       partitionData.p3 = ((data.partition_3_source && data.partition_3_source.images) || []).map((img, i) => ({ ...img, id: `p3-${i}`, selected: true }));
 
-      // Status badges
+      // Status badges (Độc lập 100%, không fallback)
       const p2Badge = document.getElementById('p2Status');
-      if (data.partition_2_pool && data.partition_2_pool.is_fallback) {
-        p2Badge.className = 'status-badge fallback';
-        p2Badge.innerText = 'Fallback SQLite';
-      } else {
-        p2Badge.className = 'status-badge realtime';
-        p2Badge.innerText = 'Google Sheet Pool';
-      }
+      p2Badge.className = 'status-badge realtime';
+      p2Badge.innerText = 'Google Sheet Pool';
 
       const p3Badge = document.getElementById('p3Status');
-      if (data.partition_3_source && data.partition_3_source.is_fallback) {
-        p3Badge.className = 'status-badge fallback';
-        p3Badge.innerText = 'Fallback SQLite';
-      } else {
-        p3Badge.className = 'status-badge realtime';
-        p3Badge.innerText = 'Google Sheet Source';
-      }
+      p3Badge.className = 'status-badge realtime';
+      p3Badge.innerText = 'Google Sheet Source';
 
       // Counts
       document.getElementById('p1Count').innerText = `${partitionData.p1.length} ảnh`;

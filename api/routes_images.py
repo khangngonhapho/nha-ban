@@ -749,35 +749,21 @@ def compare_images():
     except Exception as e_db:
         return jsonify({"status": "error", "message": f"Lỗi đọc CSDL SQLite: {str(e_db)}"}), 500
 
-    # Partition 2: Images_Admin_JSON từ Sheet Pool
+    # Partition 2: Images_Admin_JSON từ Sheet Pool (Độc lập 100%, không fallback)
     partition_2_pool = []
-    pool_is_fallback = False
     try:
         partition_2_pool = fetch_image_json_from_sheet_py("Pool", system_id or tk_id or ma_khang_ngo, "Images_Admin_JSON")
-        if not partition_2_pool and partition_1_sqlite:
-            partition_2_pool = partition_1_sqlite
-            pool_is_fallback = True
-    except Exception:
-        partition_2_pool = partition_1_sqlite
-        pool_is_fallback = True
+    except Exception as e_p2:
+        print(f"[⚠️ Warning] Lỗi đọc phân vùng Pool Sheet: {e_p2}")
+        partition_2_pool = []
 
-    # Partition 3: Images_Public_JSON từ Sheet Source
+    # Partition 3: Images_Public_JSON từ Sheet Source (Độc lập 100%, không fallback)
     partition_3_source = []
-    source_is_fallback = False
     try:
-        partition_3_source = fetch_image_json_from_sheet_py("Source", ma_khang_ngo or system_id, "Images_Public_JSON")
-        if not partition_3_source:
-            pub_json_raw = row_dict.get("images_public_json") or row_dict.get("Images_Public_JSON") or ""
-            partition_3_source = parse_image_json_to_list(pub_json_raw)
-            if not partition_3_source and partition_2_pool:
-                partition_3_source = partition_2_pool
-            source_is_fallback = True
-    except Exception:
-        pub_json_raw = row_dict.get("images_public_json") or row_dict.get("Images_Public_JSON") or ""
-        partition_3_source = parse_image_json_to_list(pub_json_raw)
-        if not partition_3_source and partition_2_pool:
-            partition_3_source = partition_2_pool
-        source_is_fallback = True
+        partition_3_source = fetch_image_json_from_sheet_py("Source", ma_khang_ngo or system_id or tk_id, "Images_Public_JSON")
+    except Exception as e_p3:
+        print(f"[⚠️ Warning] Lỗi đọc phân vùng Source Sheet: {e_p3}")
+        partition_3_source = []
 
     house_info = {
         "tk_id": tk_id,
@@ -796,11 +782,11 @@ def compare_images():
         "partition_1_sqlite": partition_1_sqlite,
         "partition_2_pool": {
             "images": partition_2_pool,
-            "is_fallback": pool_is_fallback
+            "is_fallback": False
         },
         "partition_3_source": {
             "images": partition_3_source,
-            "is_fallback": source_is_fallback
+            "is_fallback": False
         }
     })
 
