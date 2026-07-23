@@ -2220,7 +2220,7 @@ module.exports = async (req, res) => {
 
       const foundSysId = idxSysId !== -1 ? matchedRow[idxSysId] : '';
       const foundMaKn = idxMaKn !== -1 ? matchedRow[idxMaKn] : '';
-      const foundTkId = idxTkId !== -1 ? matchedRow[idxTkId] : '';
+      const foundTkId = (idxTkId !== -1 ? matchedRow[idxTkId] : matchedRow[0]) || '';
       const foundSoNha = idxSoNha !== -1 ? matchedRow[idxSoNha] : '';
       const foundDuong = idxDuong !== -1 ? matchedRow[idxDuong] : '';
       const foundQuan = idxQuan !== -1 ? matchedRow[idxQuan] : '';
