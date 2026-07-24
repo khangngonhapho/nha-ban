@@ -22,8 +22,9 @@ def test_rule1_naming_conventions():
     id_ds7 = gen_id_khang_ngo_python("789", "Đường số 7", "Quận 6")
     assert "7SD" in id_ds7
 
+@patch("fetcher.save_raw_to_sqlite")
 @patch("requests.get")
-def test_scrape_district_proptech_ward_filter(mock_get):
+def test_scrape_district_proptech_ward_filter(mock_get, mock_save_raw):
     """Kiểm tra scrape_district_proptech nhận filter_ward và thêm param ward/ward_name vào api_params"""
     list_res = MagicMock()
     list_res.status_code = 200
