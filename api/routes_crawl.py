@@ -51,11 +51,14 @@ def trigger_crawl():
         
     # XỬ LÝ LƯU COOKIE TỪ FRONTEND
     if url == 'MOCK_SAVE_ONLY':
-        cookie_payload = data.get("cookie")
+        cookie_payload = data.get("cookie") or data.get("cookie_payload") or data.get("session_cookie")
         if cookie_payload:
             try:
                 # Dừng luồng cũ ngay lập tức do cookie đã thay đổi
                 fetcher.STOP_REQUESTED = True
+                cookie_dir = os.path.dirname(os.path.abspath(manager.COOKIE_FILE))
+                if cookie_dir:
+                    os.makedirs(cookie_dir, exist_ok=True)
                 with open(manager.COOKIE_FILE, "w", encoding="utf-8") as f:
                     f.write(cookie_payload.strip())
                 # Xóa sạch logs cũ tránh nhảy báo động hết hạn lặp lại ở UI

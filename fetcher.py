@@ -72,7 +72,7 @@ def sleep_interruptible(seconds):
 
 # File Database cục bộ (Tích hợp sẵn trong Python, không cần cài đặt)
 import pool_lego
-from pool_lego import POOL_HEADERS, remove_accents, get_safe_col_name, init_db, save_raw_to_sqlite, get_db_file, parse_criteria_groups, extract_json_ui_data
+from pool_lego import POOL_HEADERS, remove_accents, get_safe_col_name, init_db, save_raw_to_sqlite, get_db_file, parse_criteria_groups, extract_json_ui_data, gen_id_khang_ngo_python
 
 DB_FILE = get_db_file()
 LISTINGS_TABLE = "listings_v2" if DB_FILE == "raw_archive_v2.db" else "listings"
@@ -400,9 +400,9 @@ def update_config_start_page(next_page):
 # ==========================================
 # LUỒNG 1: CÀO TEXT THÔ VÀ LINK ẢNH DÙNG DOM SELECTOR THẬT
 # ==========================================
-def scrape_district(base_list_url, session_cookie, limit=None, filter_district=None, start_page=None):
+def scrape_district(base_list_url, session_cookie, limit=None, filter_district=None, start_page=None, filter_ward=None, ward_name=None):
     if "proptech.thienkhoi.com" in base_list_url or "backend.thienkhoi.com" in base_list_url:
-        return scrape_district_proptech(base_list_url, session_cookie, limit, filter_district, start_page)
+        return scrape_district_proptech(base_list_url, session_cookie, limit, filter_district, start_page, filter_ward=filter_ward, ward_name=ward_name)
 
     global DELAY_HOUSE_MIN, DELAY_HOUSE_MAX, DELAY_PAGE_MIN, DELAY_PAGE_MAX
     init_db()
@@ -815,7 +815,21 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
     finally:
         print_report()
 
-def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_district=None, start_page=None):
+def scrape_keyword(keyword, session_cookie, limit=None, filter_district=None, start_page=None, filter_ward=None, ward_name=None):
+    """Cào danh sách theo từ khóa hoặc địa chỉ thông qua API backend Proptech"""
+    from urllib.parse import quote
+    base_list_url = f"https://proptech.thienkhoi.com/warehouse/sources?keyword={quote(str(keyword))}&searchBy=address"
+    return scrape_district_proptech(
+        base_list_url,
+        session_cookie,
+        limit=limit,
+        filter_district=filter_district,
+        start_page=start_page,
+        filter_ward=filter_ward,
+        ward_name=ward_name
+    )
+
+def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_district=None, start_page=None, filter_ward=None, ward_name=None):
     global DELAY_HOUSE_MIN, DELAY_HOUSE_MAX, DELAY_PAGE_MIN, DELAY_PAGE_MAX
     init_db()
     try:
@@ -874,6 +888,12 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
     api_params = {k: v[0] for k, v in query_params.items()}
     api_params["limit"] = api_params.get("limit", "20")
     api_params["searchBy"] = api_params.get("searchBy", "address")
+
+    target_ward = filter_ward or ward_name or api_params.get("filter_ward") or api_params.get("ward") or api_params.get("ward_name")
+    if target_ward:
+        api_params["ward"] = target_ward
+        api_params["ward_name"] = target_ward
+        print(f"[*] Chế độ lọc Phường được kích hoạt: Chỉ cào các căn thuộc '{target_ward}'")
 
     crawled_count = 0
     session_start_time = time.time()
@@ -1085,6 +1105,15 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                             print(f"  [-] Căn {ma_hang} thuộc quận {quan_name}, không phải '{filter_district}'. Bỏ qua.")
                             continue
 
+                    if target_ward:
+                        phuong_chi_tiet = phuong_name.lower().strip()
+                        w_target = target_ward.lower().strip()
+                        w_target_short = w_target.replace("phường", "p").replace(" ", "")
+                        w_target_dot = w_target.replace("phường", "p.").replace(" ", "")
+                        if (w_target not in phuong_chi_tiet) and (w_target_short not in phuong_chi_tiet) and (w_target_dot not in phuong_chi_tiet):
+                            print(f"  [-] Căn {ma_hang} thuộc phường {phuong_name}, không phải '{target_ward}'. Bỏ qua.")
+                            continue
+
                     dt_so = str(detail_data.get("area") or "").strip()
                     dt_thuc = str(detail_data.get("actualArea") or "").strip()
                     if dt_so and dt_thuc and dt_so != dt_thuc:
@@ -1194,6 +1223,7 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                         "Điểm Facebook": link_fb,
                         "Link Gốc": f"https://proptech.thienkhoi.com/warehouse/sources/{tk_id_crawling}",
                         "System ID": f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}",
+                        "Mã Khang Ngô (ID)": gen_id_khang_ngo_python(ngo_so_nha, duong_name, quan_name),
                         "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                         
                         # English compatibility mapping

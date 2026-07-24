@@ -387,6 +387,10 @@
     try {
         runAi = localStorage.getItem('kn_run_ai') === 'true';
     } catch (e) {}
+    let filterWard = '';
+    try {
+        filterWard = localStorage.getItem('kn_filter_ward') || '';
+    } catch (e) {}
 
     // FETCH ACTIVE SERVER DATABASE MODE
     function fetchServerMode() {
@@ -907,11 +911,15 @@
                     </div>
                 </div>
                 
+                <!-- Manual Cookie/Token Input -->
+                <textarea id="kn-cookie-input" class="kn-config-input" style="height: 50px; font-size: 11px; font-family: monospace; width: 100%; margin-top: 6px; resize: vertical;" placeholder="Dán Cookie hoặc TKG_accessToken tươi vào đây..."></textarea>
+
                 <!-- Actions -->
                 <div class="kn-actions-grid">
                     <button class="kn-btn-primary" id="kn-btn-bulk-scrape">Cào các căn đã chọn</button>
                     <button class="kn-btn-secondary" id="kn-btn-sync-cookie">🔑 Đồng bộ Cookie</button>
-                    <button class="kn-btn-secondary" id="kn-btn-open-dashboard">🖥️ Dashboard</button>
+                    <button class="kn-btn-secondary" id="kn-btn-save-cookie">💾 Lưu Cookie Tươi</button>
+                    <button class="kn-btn-secondary" id="kn-btn-open-dashboard" style="grid-column: span 2;">🖥️ Dashboard</button>
                 </div>
                 
                 <!-- Config -->
@@ -919,6 +927,10 @@
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <span class="kn-config-label">Tự động tạo Curation AI:</span>
                         <input type="checkbox" id="kn-run-ai-toggle" style="accent-color: #E31A22; cursor: pointer;" />
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span class="kn-config-label">Lọc Phường/Xã:</span>
+                        <input type="text" class="kn-config-input" id="kn-ward-input" placeholder="Phường/Xã (VD: Đức Nhuận...)" style="width: 140px; text-align: left;" />
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <span class="kn-config-label">Cổng Local Server:</span>
@@ -964,6 +976,43 @@
             showToast("Đã đồng bộ cookie và quét lại danh sách!");
         });
 
+        // Save Cookie click
+        const saveCookieBtn = document.getElementById('kn-btn-save-cookie');
+        if (saveCookieBtn) {
+            saveCookieBtn.addEventListener('click', () => {
+                const cookieVal = (document.getElementById('kn-cookie-input')?.value || '').trim();
+                if (!cookieVal) {
+                    showToast("Vui lòng dán chuỗi cookie/token tươi");
+                    return;
+                }
+                writeLog("Đang lưu cookie tươi thủ công...");
+                GM_xmlhttpRequest({
+                    method: "POST",
+                    url: `${getLocalUrl()}/api/crawl`,
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify({
+                        url: "MOCK_SAVE_ONLY",
+                        cookie: cookieVal
+                    }),
+                    onload: function(response) {
+                        if (response.status === 200) {
+                            writeLog("✅ Đã lưu cookie tươi thành công!");
+                            showToast("Đã lưu cookie tươi thành công!");
+                        } else {
+                            writeLog(`❌ Lỗi lưu cookie: HTTP ${response.status}`);
+                            showToast(`Lỗi lưu cookie: HTTP ${response.status}`);
+                        }
+                    },
+                    onerror: function(err) {
+                        writeLog("❌ Không thể kết nối tới server local!");
+                        showToast("Lỗi kết nối server local!");
+                    }
+                });
+            });
+        }
+
         // Open Dashboard click
         document.getElementById('kn-btn-open-dashboard').addEventListener('click', () => {
             window.open(getLocalUrl(), '_blank');
@@ -984,6 +1033,19 @@
                     localStorage.setItem('kn_run_ai', runAi);
                 } catch (err) {}
                 writeLog(`Đã ${runAi ? 'BẬT' : 'TẮT'} tự động tạo Curation AI.`);
+            });
+        }
+
+        // Ward filter input event
+        const wardInput = document.getElementById('kn-ward-input');
+        if (wardInput) {
+            wardInput.value = filterWard;
+            wardInput.addEventListener('input', (e) => {
+                filterWard = e.target.value.trim();
+                try {
+                    localStorage.setItem('kn_filter_ward', filterWard);
+                } catch (err) {}
+                updateFloatingPanel();
             });
         }
 
@@ -1011,8 +1073,13 @@
         const checklist = document.getElementById('kn-listings-checklist');
         
         // Filter out already crawled listings
-        const uncrawledListings = detectedListings.filter(item => !localListingIds.has(item.id));
+        let uncrawledListings = detectedListings.filter(item => !localListingIds.has(item.id));
         
+        if (filterWard) {
+            const wardLower = filterWard.toLowerCase();
+            uncrawledListings = uncrawledListings.filter(item => item.title.toLowerCase().includes(wardLower));
+        }
+
         if (countSpan) {
             countSpan.textContent = uncrawledListings.length;
         }
@@ -1045,7 +1112,7 @@
             } else {
                 checklist.innerHTML = `
                     <div style="padding: 10px; text-align: center; color: rgba(255,255,255,0.4); font-size: 11px;">
-                        Không phát hiện căn mới nào...
+                        ${filterWard ? 'Không có căn nào khớp bộ lọc Phường...' : 'Không phát hiện căn mới nào...'}
                     </div>
                 `;
             }
