@@ -2323,7 +2323,17 @@ module.exports = async (req, res) => {
       let sqliteAdminImages = [];
       try {
         const projectDir = path.resolve(__dirname, '..');
-        const dbPath = path.join(projectDir, dbFile);
+        let dbPath = path.join(projectDir, dbFile);
+        try {
+          const settingsPath = path.join(projectDir, 'settings.json');
+          if (fs.existsSync(settingsPath)) {
+            const cfg = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+            if (cfg.database_dir && fs.existsSync(path.join(cfg.database_dir, dbFile))) {
+              dbPath = path.join(cfg.database_dir, dbFile);
+            }
+          }
+        } catch (eCfg) {}
+
         if (fs.existsSync(dbPath)) {
           const sqlite3 = require('sqlite3').verbose();
           const db = new sqlite3.Database(dbPath);

@@ -732,6 +732,14 @@ def compare_images():
         
     project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     db_path = os.path.join(project_dir, db_filename)
+    try:
+        from core.config import read_settings
+        cfg = read_settings()
+        db_dir = cfg.get("database_dir")
+        if db_dir and os.path.exists(os.path.join(db_dir, db_filename)):
+            db_path = os.path.abspath(os.path.join(db_dir, db_filename))
+    except Exception:
+        pass
     
     if not os.path.exists(db_path):
         return jsonify({"status": "error", "message": f"Không tìm thấy CSDL SQLite: {db_filename}"}), 404
