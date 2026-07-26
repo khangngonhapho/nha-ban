@@ -876,10 +876,6 @@ def compare_images():
         "partition_5_pool_self": {
             "images": partition_5_pool_self,
             "is_fallback": False
-        },
-        "partition_4_pool_images": {
-            "images": partition_4_pool_crawl,
-            "is_fallback": False
         }
     })
 

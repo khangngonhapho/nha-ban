@@ -1183,7 +1183,7 @@
       partitionData.p1 = (data.partition_1_sqlite || []).map((img, i) => ({ ...img, id: `p1-${i}`, selected: true }));
       partitionData.p2 = ((data.partition_2_pool && data.partition_2_pool.images) || []).map((img, i) => ({ ...img, id: `p2-${i}`, selected: true }));
       partitionData.p3 = ((data.partition_3_source && data.partition_3_source.images) || []).map((img, i) => ({ ...img, id: `p3-${i}`, selected: true }));
-      partitionData.p4 = ((data.partition_4_pool_crawl && data.partition_4_pool_crawl.images) || (data.partition_4_pool_images && data.partition_4_pool_images.images) || []).map((img, i) => ({ ...img, id: `p4-${i}`, selected: true }));
+      partitionData.p4 = ((data.partition_4_pool_crawl && data.partition_4_pool_crawl.images) || []).map((img, i) => ({ ...img, id: `p4-${i}`, selected: true }));
       partitionData.p5 = ((data.partition_5_pool_self && data.partition_5_pool_self.images) || []).map((img, i) => ({ ...img, id: `p5-${i}`, selected: true }));
 
       // Status badges (Độc lập 100%, không fallback)

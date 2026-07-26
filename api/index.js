@@ -2317,7 +2317,30 @@ module.exports = async (req, res) => {
           }
         }
       } catch (errP4) {
-        console.warn('Pool_Images sheet fetch warning in Vercel compare-images:', errP4.message);
+      let sqliteAdminImages = [];
+      try {
+        const projectDir = path.resolve(__dirname, '..');
+        const dbPath = path.join(projectDir, dbFile);
+        if (fs.existsSync(dbPath)) {
+          const sqlite3 = require('sqlite3').verbose();
+          const db = new sqlite3.Database(dbPath);
+          await new Promise((resolve) => {
+            db.get(
+              `SELECT Images_Admin_JSON, images_admin_json, curated_config_json FROM listings WHERE tk_id = ? OR System_ID = ? LIMIT 1`,
+              [foundTkId, foundSysId],
+              (err, row) => {
+                if (!err && row) {
+                  const raw = row.Images_Admin_JSON || row.images_admin_json || row.curated_config_json || '';
+                  sqliteAdminImages = parseImageJson(raw);
+                }
+                db.close();
+                resolve();
+              }
+            );
+          });
+        }
+      } catch (errSqlite) {
+        sqliteAdminImages = [];
       }
 
       return res.status(200).json({
@@ -2332,12 +2355,11 @@ module.exports = async (req, res) => {
           full_address: `${foundSoNha} ${foundDuong}, ${foundQuan}`.trim(),
           db_file: dbFile
         },
-        partition_1_sqlite: poolAdminImages,
+        partition_1_sqlite: sqliteAdminImages,
         partition_2_pool: { is_fallback: false, images: poolAdminImages },
         partition_3_source: { is_fallback: false, images: sourcePubImages },
         partition_4_pool_crawl: { is_fallback: false, images: poolCrawlList },
-        partition_5_pool_self: { is_fallback: false, images: poolSelfList },
-        partition_4_pool_images: { is_fallback: false, images: poolCrawlList }
+        partition_5_pool_self: { is_fallback: false, images: poolSelfList }
       });
     } catch (err) {
       console.error('Error in compare-images Vercel endpoint:', err);
