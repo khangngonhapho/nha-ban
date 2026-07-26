@@ -2317,6 +2317,9 @@ module.exports = async (req, res) => {
           }
         }
       } catch (errP4) {
+        console.warn('Pool_Images sheet fetch warning in Vercel compare-images:', errP4.message);
+      }
+
       let sqliteAdminImages = [];
       try {
         const projectDir = path.resolve(__dirname, '..');
