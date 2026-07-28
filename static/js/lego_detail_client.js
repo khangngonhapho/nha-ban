@@ -388,76 +388,84 @@
       else if (st === 'Ngừng bán') statusColor = '#7f8c8d';
 
       sbody.innerHTML = `
-        <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; margin-bottom:8px; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
-        <div id="carouselClientDetail" style="position: relative; margin-bottom: 12px;">
-          <div class="admin-scroll-carousel"></div>
-          <div class="admin-carousel-dots"></div>
+        <div class="client-detail-col-left" style="display:flex; flex-direction:column; gap:12px; grid-column: 1;">
+          <div id="carouselClientDetail" style="position: relative;">
+            <div class="admin-scroll-carousel"></div>
+            <div class="admin-carousel-dots"></div>
+          </div>
+          ${(() => {
+            const rawT = p.t || p.raw_tieu_de_public || p.cu_phap || 'Bất động sản';
+            const safeT = String(rawT).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            return `
+            <div class="client-feedback-box">
+              <h4>🏡 Căn nhà này thế nào với anh/chị?</h4>
+              <div class="client-feedback-btns">
+                <button onclick="scheduleViewing('${p.id || p.system_id}', '${safeT}')" class="client-feedback-btn primary">
+                  📅 Hẹn đi xem nhà
+                </button>
+                <button onclick="showRequirementForm('${p.id || p.system_id}')" class="client-feedback-btn secondary">
+                  ✏️ Cần tìm căn khác, gửi lại nhu cầu
+                </button>
+              </div>
+              
+              <!-- Form ghi nhu cầu khác -->
+              <div id="clientReqForm_${p.id || p.system_id}" class="client-req-form" style="display: none;">
+                <p>Hãy chia sẻ mong muốn tìm nhà của anh/chị (Khu vực, tài chính, số phòng ngủ, hướng nhà...):</p>
+                <textarea id="clientReqText_${p.id || p.system_id}" class="client-req-textarea" placeholder="Ví dụ: Cần tìm nhà Quận 3 hoặc Phú Nhuận, hẻm xe hơi, giá tầm 10 tỷ..."></textarea>
+                <button onclick="submitClientRequirement('${p.id || p.system_id}', '${safeT}')" class="client-req-submit-btn">
+                  🚀 Gửi nhu cầu cho Khang Ngô
+                </button>
+              </div>
+            </div>
+            `;
+          })()}
         </div>
-        <div class="admin-raw-grid" style="margin-bottom: 12px;">
-          <div class="admin-raw-cell">
-            <span class="label">Giá bán:</span>
-            <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">DT Trên sổ:</span>
-            <span class="value dotted">${p.dt_tren_so_custom || p.raw_dt_tren_so || '-'} m²</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">DT Thực tế:</span>
-            <span class="value dotted">${p.dt || p.raw_dt_thuc_te || '-'} m²</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">Đơn giá:</span>
-            <span class="value dotted" style="color:var(--gold); font-weight:800;">${p.giabq}</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">Quận/TP:</span>
-            <span class="value dotted">${p.ql}</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">Phường:</span>
-            <span class="value dotted">${p.phuong}</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">Hướng:</span>
-            <span class="value dotted">${p.huong || '-'}</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">Loại:</span>
-            <span class="value dotted">${p.loai_hinh}</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">Đường trước:</span>
-            <span class="value dotted">${p.duong_truoc_nha}</span>
-          </div>
-          <div class="admin-raw-cell">
-            <span class="label">Kết cấu:</span>
-            <span class="value dotted">${p.tang} tầng</span>
-          </div>
 
-        </div>
-        <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
-        
-        <!-- KHUNG TƯƠNG TÁC PHẢN HỒI (US-059) -->
-        <div class="client-feedback-box">
-          <h4>🏡 Căn nhà này thế nào với anh/chị?</h4>
-          <div class="client-feedback-btns">
-            <button onclick="scheduleViewing('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-feedback-btn primary">
-              📅 Hẹn đi xem nhà
-            </button>
-            <button onclick="showRequirementForm('${p.id}')" class="client-feedback-btn secondary">
-              ✏️ Cần tìm căn khác, gửi lại nhu cầu
-            </button>
+        <div class="client-detail-col-right" style="display:flex; flex-direction:column; gap:12px; grid-column: 2;">
+          <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
+          <div class="admin-raw-grid">
+            <div class="admin-raw-cell">
+              <span class="label">Giá bán:</span>
+              <span class="value dotted" style="color:var(--red); font-weight:800;">${p.gia} tỷ</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">DT Trên sổ:</span>
+              <span class="value dotted">${p.dt_tren_so_custom || p.raw_dt_tren_so || '-'} m²</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">DT Thực tế:</span>
+              <span class="value dotted">${p.dt || p.raw_dt_thuc_te || '-'} m²</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Đơn giá:</span>
+              <span class="value dotted" style="color:var(--gold); font-weight:800;">${p.giabq}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Quận/TP:</span>
+              <span class="value dotted">${p.ql}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Phường:</span>
+              <span class="value dotted">${p.phuong}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Hướng:</span>
+              <span class="value dotted">${p.huong || '-'}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Loại:</span>
+              <span class="value dotted">${p.loai_hinh}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Đường trước:</span>
+              <span class="value dotted">${p.duong_truoc_nha}</span>
+            </div>
+            <div class="admin-raw-cell">
+              <span class="label">Kết cấu:</span>
+              <span class="value dotted">${p.tang} tầng</span>
+            </div>
           </div>
-          
-          <!-- Form ghi nhu cầu khác -->
-          <div id="clientReqForm_${p.id}" class="client-req-form" style="display: none;">
-            <p>Hãy chia sẻ mong muốn tìm nhà của anh/chị (Khu vực, tài chính, số phòng ngủ, hướng nhà...):</p>
-            <textarea id="clientReqText_${p.id}" class="client-req-textarea" placeholder="Ví dụ: Cần tìm nhà Quận 3 hoặc Phú Nhuận, hẻm xe hơi, giá tầm 10 tỷ..."></textarea>
-            <button onclick="submitClientRequirement('${p.id}', '${p.t.replace(/'/g, "\\'")}')" class="client-req-submit-btn">
-              🚀 Gửi nhu cầu cho Khang Ngô
-            </button>
-          </div>
+          <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
         </div>
       `;
       setupScrollCarousel('carouselClientDetail', sortedImgs, false);

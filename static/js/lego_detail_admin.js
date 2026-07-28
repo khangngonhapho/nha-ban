@@ -4,6 +4,20 @@
 (function() {
   'use strict';
 
+  // Safe global helper aliases from lego_helpers.js to prevent ReferenceErrors in 'use strict'
+  const formatPhone = (phone) => (window.formatPhone ? window.formatPhone(phone) : (phone || '-'));
+  const toTitleCase = (str) => (window.toTitleCase ? window.toTitleCase(str) : (str || ''));
+  const normalizeImgUrl = (url) => (window.normalizeImgUrl ? window.normalizeImgUrl(url) : (url || ''));
+  const generateMaKhangNgo = (soNha, duong) => (window.generateMaKhangNgo ? window.generateMaKhangNgo(soNha, duong) : '');
+  const getDaiNha = (p) => (window.getDaiNha ? window.getDaiNha(p) : '-');
+  const formatRawDescription = (text) => (window.formatRawDescription ? window.formatRawDescription(text) : (text || ''));
+  const extractCommission = (p) => (window.extractCommission ? window.extractCommission(p) : '-');
+  const cutTitleToDistrict = (title) => (window.cutTitleToDistrict ? window.cutTitleToDistrict(title) : (title || ''));
+  const parseGia = (val) => (window.parseGia ? window.parseGia(val) : 0);
+  const showToast = (msg, type) => (window.showToast ? window.showToast(msg, type) : console.log(msg));
+  const isPoolRowOnAir = (row) => (window.isPoolRowOnAir ? window.isPoolRowOnAir(row) : false);
+  const searchPoolRows = (query) => (window.searchPoolRows ? window.searchPoolRows(query) : []);
+
   // Use global dynamic helper functions from lego_helpers.js (US-120A & Rule 6)
   const getColumnLetter = window.getColumnLetter;
   const getPoolColumnLetter = window.getPoolColumnLetter;
@@ -2411,7 +2425,8 @@
         return;
       }
       
-      const row = POOL_ROWS.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());
+      const sysIdCol = window.getPoolColumnIndex ? window.getPoolColumnIndex("System ID", 72) : 72;
+      const row = POOL_ROWS.find(r => String(r[sysIdCol] || r[72] || r[71] || '').trim() === String(systemId).trim());
       if (!row) {
         showToast("Không tìm thấy căn nhà này trong Pool thô!", "error");
         return;

@@ -1153,7 +1153,7 @@ const LegoState = {
           p.raw_tieu_de_public = poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || '';
           p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
           p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
-          p.pool_row_index = prIdx + (window.GLOBAL_SHEET_CONFIG ? window.GLOBAL_SHEET_CONFIG.DATA_START_ROW : 3);
+          p.pool_row_index = poolRow.raw_sheet_row_index || (prIdx + (window.GLOBAL_SHEET_CONFIG ? window.GLOBAL_SHEET_CONFIG.DATA_START_ROW : 3));
           p.pool_row_data = poolRow;
           if (tempCuratedConfig) {
             p.curated_config = tempCuratedConfig;

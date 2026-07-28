@@ -599,7 +599,7 @@
       const scta = document.querySelector('.scta');
  
       const isForcePreview = new URLSearchParams(window.location.search).has('preview');
-      if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly) && !isForcePreview) {
+      if (window.isAdmin && !isForcePreview) {
         if (scta) scta.style.display = 'none';
         if (window.LegoDetailAdmin) window.LegoDetailAdmin.render(p, sbody, autoExpandPreview);
       } else {
