@@ -372,7 +372,7 @@ window.getMappedPoolData = function() {
       raw_so_wc: row[65] || '',
       raw_tieu_de_public: row[56] || '',
       raw_mo_ta_public: row[57] || '',
-      pool_row_index: POOL_ROWS.indexOf(row) + 2,
+      pool_row_index: POOL_ROWS.indexOf(row) + (window.GLOBAL_SHEET_CONFIG ? window.GLOBAL_SHEET_CONFIG.DATA_START_ROW : 3),
       last_crawl: row[window.getPoolColumnIndex ? window.getPoolColumnIndex("Last Crawl", 77) : 77] || '',
 
       trang_thai: row[2] || '',

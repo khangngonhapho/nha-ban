@@ -2173,9 +2173,9 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                         if id_col_idx == -1:
                             id_col_idx = 3 # Fallback cột D (4)
                             
-                        # 3. Quét tìm dòng trùng khớp bắt đầu từ dòng ngay sau header
+                        # 3. Quét tìm dòng trùng khớp bắt đầu từ dòng dữ liệu thực tế (Dòng 3+)
                         found_source_row_idx = -1
-                        start_data_idx = header_row_idx + 1
+                        start_data_idx = GLOBAL_SHEET_CONFIG["Source"]["data_start_row"] - 1
                         for s_idx in range(start_data_idx, len(source_values)):
                             s_row = source_values[s_idx]
                             if len(s_row) > sys_id_col_idx and s_row[sys_id_col_idx].strip() == system_id:

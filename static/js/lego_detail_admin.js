@@ -2728,7 +2728,7 @@
         const poolData = await poolRes.json();
         const rows = poolData.values || [];
         rows.forEach((r, idx) => {
-          if (r) r.raw_sheet_row_index = idx + 2;
+          if (r) r.raw_sheet_row_index = idx + 1;
         });
         
         // Helper chuẩn hóa địa chỉ để so khớp thông minh
@@ -2762,8 +2762,8 @@
           throw new Error(`Căn nhà này chưa được cào về kho Pool hoặc không khớp địa chỉ.`);
         }
         
-        // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp
-        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AO`;
+        // Step 2: Đọc dữ liệu Sheet Source bắt đầu từ A1 để khớp chỉ số 1-indexed của Google Sheets
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A1:AW`;
         const sourceRes = await fetch(sourceUrl, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -2781,7 +2781,7 @@
         }
         
         const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
-        const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+        const targetRowNumber = existIdx !== -1 ? (existIdx + 1) : Math.max(sourceRows.length + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
         
         // Step 3: Map dữ liệu 78 cột từ Pool -> 41 cột sang Source
         const finalImages = [];
@@ -3806,8 +3806,8 @@
           throw new Error("Vui lòng điền Mã Khang Ngô!");
         }
         
-        // Step 2: Đọc dữ liệu Sheet Source để tránh trùng lặp và xác định vị trí ghi
-        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:AT`;
+        // Step 2: Đọc dữ liệu Sheet Source bắt đầu từ A1 để khớp chỉ số 1-indexed của Google Sheets
+        const sourceUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A1:AW`;
         const sourceRes = await fetch(sourceUrl, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -3825,7 +3825,7 @@
         }
         
         const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
-        const targetRowNumber = existIdx !== -1 ? (existIdx + 2) : (sourceRows.length + 2);
+        const targetRowNumber = existIdx !== -1 ? (existIdx + 1) : Math.max(sourceRows.length + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
         
         // Map 15 ảnh nội thất sạch và ảnh hẻm từ biên tập viên hình ảnh trực quan
         const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
@@ -3976,7 +3976,7 @@
         
         // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
         try {
-          const poolRowNumber = matchedRow.raw_sheet_row_index || (rows.indexOf(matchedRow) + 2);
+          const poolRowNumber = matchedRow.raw_sheet_row_index || (rows.indexOf(matchedRow) + 1);
           const syncDateStr = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
           
           // 0. Cập nhật Sổ 1 & 2 (AB:AC)

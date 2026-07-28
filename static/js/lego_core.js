@@ -661,8 +661,9 @@ const LegoState = {
         const poolRows = poolDataJson.values || [];
         this.SOURCE_HEADERS = sourceRows[0] || [];
         this.POOL_HEADERS = poolRows[0] || [];
-        const poolDataRows = poolRows.slice(1).map((r, idx) => {
-          if (r) r.raw_sheet_row_index = idx + 2;
+        const startDataIdx = GLOBAL_SHEET_CONFIG.DATA_START_ROW - 1;
+        const poolDataRows = poolRows.slice(startDataIdx).map((r, idx) => {
+          if (r) r.raw_sheet_row_index = idx + GLOBAL_SHEET_CONFIG.DATA_START_ROW;
           return r;
         }).filter(r => {
           if (!r || r.length === 0) return false;
@@ -677,10 +678,10 @@ const LegoState = {
 
         const fullList = sourceRows
           .map((sr, index) => {
-            if (index === 0) return null; // Bỏ qua hàng tiêu đề
+            if (index < startDataIdx) return null; // Bỏ qua Header và Blank Row
             if (!sr[window.getSourceColumnIndex("id", 3)] && !sr[window.getSourceColumnIndex("tieu_de", 4)]) return null;
             
-            const targetRowNumber = index + 2;
+            const targetRowNumber = index + 1; // 1-based index khi đọc từ A1
             // Sẽ tính gia và giabq sau khi đã khớp và lấy được dt_tren_so_custom từ poolRow hoặc sr[47]
             
             let rawQ = sr[window.getSourceColumnIndex("quan", 9)] || '';
@@ -916,7 +917,7 @@ const LegoState = {
               p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
               p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
               p.last_crawl = poolRow[window.getPoolColumnIndex("Last Crawl", 77)] || '';
-              p.pool_row_index = poolDataRows.indexOf(poolRow) + 2;
+              p.pool_row_index = poolDataRows.indexOf(poolRow) + GLOBAL_SHEET_CONFIG.DATA_START_ROW;
               p.pool_row_data = poolRow;
               
               let jsonUiVal = poolRow[window.getPoolColumnIndex("JSON_UI", 93)] || '';
@@ -1152,7 +1153,7 @@ const LegoState = {
           p.raw_tieu_de_public = poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || '';
           p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
           p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
-          p.pool_row_index = prIdx + 2;
+          p.pool_row_index = prIdx + GLOBAL_SHEET_CONFIG.DATA_START_ROW;
           p.pool_row_data = poolRow;
           if (tempCuratedConfig) {
             p.curated_config = tempCuratedConfig;
