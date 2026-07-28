@@ -17,6 +17,10 @@
   const showToast = (msg, type) => (window.showToast ? window.showToast(msg, type) : console.log(msg));
   const isPoolRowOnAir = (row) => (window.isPoolRowOnAir ? window.isPoolRowOnAir(row) : false);
   const searchPoolRows = (query) => (window.searchPoolRows ? window.searchPoolRows(query) : []);
+  const parseGia = (val) => (window.parseGia ? window.parseGia(val) : 0);
+  const showToast = (msg, type) => (window.showToast ? window.showToast(msg, type) : console.log(msg));
+  const isPoolRowOnAir = (row) => (window.isPoolRowOnAir ? window.isPoolRowOnAir(row) : false);
+  const searchPoolRows = (query) => (window.searchPoolRows ? window.searchPoolRows(query) : []);
 
   // Use global dynamic helper functions from lego_helpers.js (US-120A & Rule 6)
   const getColumnLetter = window.getColumnLetter;
@@ -2425,8 +2429,17 @@
         return;
       }
       
-      const sysIdCol = window.getPoolColumnIndex ? window.getPoolColumnIndex("System ID", 72) : 72;
-      const row = POOL_ROWS.find(r => String(r[sysIdCol] || r[72] || r[71] || '').trim() === String(systemId).trim());
+      const sysIdCol = window.getPoolColumnIndex ? window.getPoolColumnIndex("System ID") : -1;
+      const idCol = window.getPoolColumnIndex ? window.getPoolColumnIndex("id") : -1;
+      const maHangCol = window.getPoolColumnIndex ? window.getPoolColumnIndex("Mã Hàng") : -1;
+      const target = String(systemId).trim();
+
+      const row = POOL_ROWS.find(r => {
+        const sysId = sysIdCol !== -1 ? String(r[sysIdCol] || '').trim() : String(r[72] || r[71] || '').trim();
+        const idVal = idCol !== -1 ? String(r[idCol] || '').trim() : String(r[55] || '').trim();
+        const maHang = maHangCol !== -1 ? String(r[maHangCol] || '').trim() : String(r[0] || '').trim();
+        return sysId === target || idVal === target || maHang === target;
+      });
       if (!row) {
         showToast("Không tìm thấy căn nhà này trong Pool thô!", "error");
         return;

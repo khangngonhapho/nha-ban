@@ -630,12 +630,15 @@ const LegoState = {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
 
+        const sourceTab = (window.HEADER_CONFIG && window.HEADER_CONFIG.SOURCE_SHEET_NAME) || 'Source';
+        const poolTab = (window.HEADER_CONFIG && window.HEADER_CONFIG.POOL_SHEET_NAME) || 'Pool';
+
         const [sourceRes, poolRes] = await Promise.all([
-          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:ZZ`, {
+          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/${sourceTab}`, {
             headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           }),
-          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A1:ZZ`, {
+          fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/${poolTab}`, {
             headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           })
@@ -660,6 +663,7 @@ const LegoState = {
         const sourceRows = sourceDataJson.values || [];
         const poolRows = poolDataJson.values || [];
         this.SOURCE_HEADERS = sourceRows[0] || [];
+        this.POOL_HEADERS = poolRows[0] || [];
         const CONFIG = window.GLOBAL_SHEET_CONFIG || { HEADER_ROW: 1, BLANK_ROW: 2, DATA_START_ROW: 3 };
         const startDataIdx = CONFIG.DATA_START_ROW - 1;
         const poolDataRows = poolRows.slice(startDataIdx).map((r, idx) => {
@@ -667,12 +671,10 @@ const LegoState = {
           return r;
         }).filter(r => {
           if (!r || r.length === 0) return false;
-          const maHang = r[0] || '';
-          const systemId = r[72] || r[71] || '';
-          const duong = r[5] || '';
-          return maHang.trim() !== '' || systemId.trim() !== '' || duong.trim() !== '';
+          return r.some(cell => cell && String(cell).trim() !== '');
         });
         this.POOL_ROWS = poolDataRows;
+        window.POOL_ROWS = poolDataRows;
 
         const matchedPoolRowIndexes = new Set();
 
@@ -700,15 +702,20 @@ const LegoState = {
             else if (cleanQLower.includes('nhà bè') || cleanQLower === 'nb') cleanQ = 'nb';
             else if (cleanQLower.includes('bình chánh') || cleanQLower === 'bc') cleanQ = 'bc';
             else if (cleanQLower.includes('củ chi') || cleanQLower === 'cc') cleanQ = 'cc';
-            const srSystemId = sr[window.getSourceColumnIndex("System ID", 37)] || '';
-            const srId = sr[window.getSourceColumnIndex("id", 3)] || '';
+            const sysIdColSrc = window.getSourceColumnIndex ? window.getSourceColumnIndex("System ID", 37) : 37;
+            const sysIdColPool = window.getPoolColumnIndex ? window.getPoolColumnIndex("System ID", 72) : 72;
+            const idColSrc = window.getSourceColumnIndex ? window.getSourceColumnIndex("id", 3) : 3;
+            const idColPool = window.getPoolColumnIndex ? window.getPoolColumnIndex("id", 55) : 55;
 
             const poolRow = poolDataRows.find((pr, prIdx) => {
-              const prSystemId = pr[window.getPoolColumnIndex("System_ID", 72)] || pr[window.getPoolColumnIndex("System ID", 71)] || '';
-              const prId = pr[window.getPoolColumnIndex("id", 55)] || '';
-              const isMatch = (srSystemId && prSystemId === srSystemId) || 
-                              (srId && prId === srId) ||
-                              (srSystemId && prId === srSystemId);
+              const srSysId = (sysIdColSrc !== -1 && sr[sysIdColSrc]) ? String(sr[sysIdColSrc]).trim() : (sr[37] || sr[38] || '').trim();
+              const prSysId = (sysIdColPool !== -1 && pr[sysIdColPool]) ? String(pr[sysIdColPool]).trim() : (pr[72] || pr[71] || '').trim();
+              const srId = (idColSrc !== -1 && sr[idColSrc]) ? String(sr[idColSrc]).trim() : (sr[3] || '').trim();
+              const prId = (idColPool !== -1 && pr[idColPool]) ? String(pr[idColPool]).trim() : (pr[55] || '').trim();
+
+              const isMatch = (srSysId && prSysId && srSysId === prSysId) ||
+                              (srId && prId && srId === prId) ||
+                              (srSysId && prId && srSysId === prId);
               if (isMatch) {
                 matchedPoolRowIndexes.add(prIdx);
               }

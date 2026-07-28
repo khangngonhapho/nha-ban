@@ -2179,10 +2179,35 @@ window.getPoolColumnIndex = function(headerName, fallbackIdx = 94) {
   return fallbackIdx;
 };
 
-window.getSourceColumnIndex = function(headerName, fallbackIdx = 48) {
-  if (window.LegoState && window.LegoState.SOURCE_HEADERS) {
-    const idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
+window.HEADER_CONFIG = {
+  SOURCE_SHEET_NAME: "Source",
+  POOL_SHEET_NAME: "Pool",
+  SYS_ID_HEADER: "System ID",
+  SYS_ID_ALT_HEADER: "System_ID",
+  ID_HEADER: "id",
+  MA_HANG_HEADER: "Mã Hàng"
+};
+
+window.getSourceColumnIndex = function(headerName, fallbackIdx = -1) {
+  if (window.LegoState && window.LegoState.SOURCE_HEADERS && window.LegoState.SOURCE_HEADERS.length > 0) {
+    let idx = window.LegoState.SOURCE_HEADERS.indexOf(headerName);
     if (idx !== -1) return idx;
+    if (headerName === window.HEADER_CONFIG.SYS_ID_HEADER) {
+      idx = window.LegoState.SOURCE_HEADERS.indexOf(window.HEADER_CONFIG.SYS_ID_ALT_HEADER);
+      if (idx !== -1) return idx;
+    }
+  }
+  return fallbackIdx;
+};
+
+window.getPoolColumnIndex = function(headerName, fallbackIdx = -1) {
+  if (window.LegoState && window.LegoState.POOL_HEADERS && window.LegoState.POOL_HEADERS.length > 0) {
+    let idx = window.LegoState.POOL_HEADERS.indexOf(headerName);
+    if (idx !== -1) return idx;
+    if (headerName === window.HEADER_CONFIG.SYS_ID_HEADER) {
+      idx = window.LegoState.POOL_HEADERS.indexOf(window.HEADER_CONFIG.SYS_ID_ALT_HEADER);
+      if (idx !== -1) return idx;
+    }
   }
   return fallbackIdx;
 };
