@@ -54,15 +54,19 @@
   async function appendAuditLogFrontend(token, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
     if (!token || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
     try {
-      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}`, {
+      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:A`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      let currentLogRows = 0;
+      let trueLastRowIndex = 0;
       if (getRes.ok) {
         const getJson = await getRes.json();
-        currentLogRows = (getJson.values && getJson.values.length) ? getJson.values.length : 0;
+        const rows = getJson.values || [];
+        const lastDataIdx = rows.findLastIndex(r => r && r[0] && String(r[0]).trim() !== '');
+        if (lastDataIdx !== -1) {
+          trueLastRowIndex = lastDataIdx + 1;
+        }
       }
-      const nextLogRow = Math.max(currentLogRows + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
+      const nextLogRow = Math.max(trueLastRowIndex + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
 
       const logRow = Array.from(rowValues);
       logRow.push(logEvent);
@@ -70,7 +74,7 @@
       const lastColLetter = window.getColumnLetter ? window.getColumnLetter(logRow.length - 1) : 'CR';
       const logUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${nextLogRow}:${lastColLetter}${nextLogRow}?valueInputOption=USER_ENTERED`;
 
-      let writeRes = await fetch(logUrl, {
+      const writeRes = await fetch(logUrl, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,19 +82,6 @@
         },
         body: JSON.stringify({ values: [logRow] })
       });
-
-      // Nếu PUT thất bại 400 do vượt quá giới hạn dòng vật lý (Max rows reached), tự động fallback sang POST :append để Sheets API tự nới rộng grid
-      if (!writeRes.ok && writeRes.status === 400) {
-        const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}:append?valueInputOption=USER_ENTERED`;
-        writeRes = await fetch(appendUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ values: [logRow] })
-        });
-      }
 
       if (!writeRes.ok) {
         const errTxt = await writeRes.text();
