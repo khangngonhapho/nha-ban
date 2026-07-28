@@ -3561,6 +3561,13 @@
           throw new Error(`Google Sheets API returned status ${writeRes.status}${detail}`);
         }
 
+        // US-157: Ghi audit log lịch sử cập nhật thông tin BĐS sang tab Source_Log
+        try {
+          await appendAuditLogFrontend(token, SOURCE_SHEET_ID, "Source_Log", p.original_row_data, "Update");
+        } catch (e_log) {
+          console.warn("Không thể ghi log sang Source_Log:", e_log);
+        }
+
         // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
         if (p.pool_row_index && p.pool_row_data) {
           const POOL_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
