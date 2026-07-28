@@ -1547,13 +1547,48 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
             add_log_message(f"[⚠️ WARNING] Lỗi cập nhật SQLite: {str(e_db)}")
         
         add_log_message(f"[✅] ĐÃ ĐỒNG BỘ THÀNH CÔNG CAN {tk_id} SANG 3 FILE GOOGLE SHEETS!")
-        row_data_escaped = [escape_tsv_field(str(x)) for x in public_row_data]
-        return {
-            "status": "success",
-            "published_to_cloud": True,
-            "message": "Đã xuất bản thành công trực tiếp lên 3 file Google Sheets Pool2!",
-            "row_data": row_data_escaped
-        }
+def append_audit_log_py(spreadsheet, log_sheet_name, row_values, log_event="Update"):
+    """
+    US-157: Tự động ghi chép (append) một dòng dữ liệu thô sang sheet log (Pool_Log hoặc Source_Log).
+    Phân giải vị trí cột 'Log event' động theo tên Header tại runtime (Rule 6).
+    """
+    if not spreadsheet or not log_sheet_name or not row_values:
+        return
+    try:
+        try:
+            log_sheet = spreadsheet.worksheet(log_sheet_name)
+        except Exception:
+            # Nếu chưa có tab log, tự động khởi tạo tab mới
+            log_sheet = spreadsheet.add_worksheet(title=log_sheet_name, rows="1000", cols="100")
+            
+        header_vals = []
+        try:
+            header_vals = log_sheet.row_values(1)
+        except Exception:
+            pass
+            
+        # Tìm chỉ số cột "Log event" động (Rule 6)
+        log_event_idx = -1
+        for idx, h in enumerate(header_vals):
+            if str(h).strip().lower() == "log event":
+                log_event_idx = idx
+                break
+                
+        if log_event_idx == -1:
+            log_event_idx = len(header_vals) if header_vals else len(row_values)
+            try:
+                log_sheet.update_cell(1, log_event_idx + 1, "Log event")
+            except Exception:
+                pass
+            
+        log_row = list(row_values)
+        while len(log_row) <= log_event_idx:
+            log_row.append("")
+        log_row[log_event_idx] = log_event
+        
+        log_sheet.append_row(log_row, value_input_option='USER_ENTERED')
+    except Exception as e:
+        print(f"[⚠️ WARNING] Không thể ghi audit log sang tab {log_sheet_name}: {str(e)}")
 
 def publish_listing(tk_id, get_google_credentials, load_config, add_log_message, db_file=None):
     """
@@ -1970,9 +2005,17 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                 if existing_row_index:
                     add_log_message(f"[⚡] Đang chép đè dòng dữ liệu lên Sheet '{sheet.title}' (dòng {existing_row_index})...")
                     sheet.update(range_name=f"A{existing_row_index}:DZ{existing_row_index}", values=[row_data], value_input_option='USER_ENTERED')
+                    try:
+                        append_audit_log_py(spreadsheet, "Pool_Log", row_data, log_event="Update")
+                    except Exception as e_plog:
+                        add_log_message(f"[⚠️ WARNING] Không thể ghi Pool_Log: {str(e_plog)}")
                 else:
                     add_log_message(f"[⚡] Đang chèn chốt dòng mới lên Sheet '{sheet.title}' (dòng {next_row} - chèn để thừa hưởng định dạng bảng)...")
                     sheet.insert_row(row_data, index=next_row, value_input_option='USER_ENTERED', inherit_from_before=True)
+                    try:
+                        append_audit_log_py(spreadsheet, "Pool_Log", row_data, log_event="New")
+                    except Exception as e_plog:
+                        add_log_message(f"[⚠️ WARNING] Không thể ghi Pool_Log: {str(e_plog)}")
             
                 try:
                     raw_imgs = []
@@ -2091,6 +2134,12 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                             if new_ma_kn:
                                 add_log_message(f"[⚡] Đồng bộ Mã Khang Ngô '{new_ma_kn}' sang cột id của sheet Source (dòng {found_source_row_idx})...")
                                 source_sheet.update_cell(found_source_row_idx, id_col_idx + 1, new_ma_kn)
+                                try:
+                                    # Lấy dòng đã cập nhật và ghi log
+                                    s_row_updated = source_sheet.row_values(found_source_row_idx)
+                                    append_audit_log_py(source_spreadsheet, "Source_Log", s_row_updated, log_event="Update")
+                                except Exception as e_slog:
+                                    add_log_message(f"[⚠️ WARNING] Không thể ghi Source_Log: {str(e_slog)}")
                 except Exception as e_source:
                     add_log_message(f"[⚠️ WARNING] Không thể tự động đồng bộ Mã Khang Ngô sang sheet Source: {str(e_source)}")
             

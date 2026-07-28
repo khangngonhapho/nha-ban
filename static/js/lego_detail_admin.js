@@ -30,6 +30,54 @@
     return res.trim();
   };
 
+  async function appendAuditLogFrontend(token, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
+    if (!token || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
+    try {
+      const headerUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!1:1`;
+      let headers = [];
+      try {
+        const hRes = await fetch(headerUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (hRes.ok) {
+          const hData = await hRes.json();
+          if (hData.values && hData.values.length > 0) {
+            headers = hData.values[0];
+          }
+        }
+      } catch (e) {}
+
+      let logEventIdx = -1;
+      for (let i = 0; i < headers.length; i++) {
+        if (String(headers[i]).trim().toLowerCase() === 'log event') {
+          logEventIdx = i;
+          break;
+        }
+      }
+      if (logEventIdx === -1) {
+        logEventIdx = headers.length > 0 ? headers.length : rowValues.length;
+      }
+
+      const logRow = Array.from(rowValues);
+      while (logRow.length <= logEventIdx) {
+        logRow.push('');
+      }
+      logRow[logEventIdx] = logEvent;
+
+      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+      await fetch(appendUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ values: [logRow] })
+      });
+    } catch (err) {
+      console.warn(`[⚠️ WARNING] Không thể ghi audit log sang tab ${logSheetName}:`, err);
+    }
+  }
+
   async function getPoolImagesSelfRowIndex(token, poolSheetId, maHang) {
     try {
       const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${poolSheetId}/values/Pool_Images!A2:C`, {
@@ -2939,6 +2987,9 @@
           throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
         }
         
+        // US-157: Ghi audit log sang Source_Log
+        appendAuditLogFrontend(token, SOURCE_SHEET_ID, "Source_Log", publicRowData, existIdx !== -1 ? "Update" : "New");
+        
         // Cập nhật lại trường Last Sync của dòng đó bên Sheet Pool
         try {
           const poolRowNumber = matchedRow.raw_sheet_row_index || (rows.indexOf(matchedRow) + 2);
@@ -3941,6 +3992,9 @@
           } catch (e) {}
           throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
         }
+        
+        // US-157: Ghi audit log sang Source_Log
+        appendAuditLogFrontend(token, SOURCE_SHEET_ID, "Source_Log", publicRowData, existIdx !== -1 ? "Update" : "New");
         
         // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
         try {

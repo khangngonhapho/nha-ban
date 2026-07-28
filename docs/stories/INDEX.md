@@ -13,6 +13,7 @@ Last updated: 2026-07-21
 
 | ID     | Title                                                                  | Status   | Size | Date       | Files                                                             |
 | ------ | ---------------------------------------------------------------------- | -------- | ---- | ---------- | ----------------------------------------------------------------- |
+| US-157 | Tự Động Ghi Nhật Ký Lịch Sử (Audit Log) Thay Đổi Dữ Liệu Trên Sheets Pool_Log Và Source_Log | done | M | 2026-07-28 | `pool_lego.py`, `static/js/lego_detail_admin.js`, `api/index.js`, `docs/stories/_inbox/US-157.md` |
 | US-156 | Khắc phục Lỗi Lệch Chỉ Số Dòng Sheet Pool & Ngăn Chặn Chép Đè Hình Ảnh Khi Lên Sóng | accepted | M | 2026-07-23 | `static/js/lego_core.js`, `static/js/lego_detail_admin.js`, `index.html`, `docs/stories/_inbox/US-156.md` |
 | US-155 | Dynamic OpenGraph Link Preview từ Cloudflare R2 CDN                    | accepted | S    | 2026-07-23 | `api/index.js`, `scratch/test_us155_og_tags.py`, `docs/stories/_inbox/US-155.md` |
 | US-154 | Tối ưu hóa hiệu năng hiển thị Khách hàng & Admin Preview bằng kiến trúc JSON Sharding qua Cloudflare R2 | accepted | L | 2026-07-21 | `manager.py`, `api/index.js`, `static/js/lego_detail_admin.js`, `static/js/lego_core.js`, `index.html`, `docs/stories/_inbox/US-154.md` |
