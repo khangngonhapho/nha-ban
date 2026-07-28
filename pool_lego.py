@@ -74,6 +74,7 @@ HEADER_ROW_INDEX = 1
 BLANK_ROW_INDEX = 2
 DATA_START_ROW = 3
 LOG_EVENT_COL_NAME = "Log event"
+LOG_TIME_COL_NAME = "Log Time"
 
 SOURCE_HEADERS = [
     "Hinh_mat_tien", "Cu_phap", "Note", "id", "tieu_de", "dien_tich", "so_tang", "mat_tien", "gia", "quan", "phuong",
@@ -83,8 +84,8 @@ SOURCE_HEADERS = [
     "Tiêu đề BDS", "Đăng BDS", "anh_11", "anh_12", "anh_13", "anh_14", "anh_15", "JSON_UI", "DT Trên sổ", "Images_Public_JSON"
 ]
 
-POOL_LOG_HEADERS = list(POOL_HEADERS) + [LOG_EVENT_COL_NAME]
-SOURCE_LOG_HEADERS = list(SOURCE_HEADERS) + [LOG_EVENT_COL_NAME]
+POOL_LOG_HEADERS = list(POOL_HEADERS) + [LOG_EVENT_COL_NAME, LOG_TIME_COL_NAME]
+SOURCE_LOG_HEADERS = list(SOURCE_HEADERS) + [LOG_EVENT_COL_NAME, LOG_TIME_COL_NAME]
 
 GLOBAL_SHEET_CONFIG = {
     "Pool": {
@@ -1629,6 +1630,8 @@ def append_audit_log_py(spreadsheet, log_sheet_name, row_values, log_event="Upda
             log_row.append("")
         log_row = log_row[:raw_len]
         log_row.append(log_event)
+        from datetime import datetime
+        log_row.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         
         # 3. Phân giải chỉ số dòng tiếp theo BẰNG BIẾN data_start_row
         all_vals = log_sheet.get_all_values()

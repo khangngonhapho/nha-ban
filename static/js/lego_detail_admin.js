@@ -68,10 +68,12 @@
       }
       const nextLogRow = Math.max(trueLastRowIndex + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
 
+      const nowTimeStr = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace('T', ' ');
       const logRow = Array.from(rowValues);
       logRow.push(logEvent);
+      logRow.push(nowTimeStr);
 
-      const lastColLetter = window.getColumnLetter ? window.getColumnLetter(logRow.length - 1) : 'CR';
+      const lastColLetter = window.getColumnLetter ? window.getColumnLetter(logRow.length - 1) : 'CS';
       const logUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${nextLogRow}:${lastColLetter}${nextLogRow}?valueInputOption=USER_ENTERED`;
 
       const writeRes = await fetch(logUrl, {
@@ -86,6 +88,8 @@
       if (!writeRes.ok) {
         const errTxt = await writeRes.text();
         console.warn(`[⚠️ WARNING] Ghi audit log sang ${logSheetName} phản hồi status ${writeRes.status}:`, errTxt);
+      } else {
+        console.log(`[✅ AuditLog] Đã ghi thành công 1 dòng log mới vào tab ${logSheetName} (DÒNG ${nextLogRow}) lúc ${nowTimeStr}:`, logRow[4] || logRow[3] || '');
       }
     } catch (err) {
       console.warn(`[⚠️ WARNING] Không thể ghi audit log sang tab ${logSheetName}:`, err);
@@ -3530,9 +3534,10 @@
         p.original_row_data[30] = new Date().toISOString();
         p.original_row_data[32] = soPn || '-';
         p.original_row_data[33] = soWc || '-';
-        p.original_row_data[4] = tieuDeBds;
+        const tieuDeColSrc = getSourceColumnIndex("tieu_de", 4);
+        p.original_row_data[tieuDeColSrc] = tieuDeBds;
         p.t = tieuDeBds;
-        p.original_row_data[39] = "";
+        p.raw_tieu_de_public = tieuDeBds;
         p.original_row_data[getSourceColumnIndex("JSON_UI", 46)] = JSON.stringify(p.json_ui_parsed);
         p.original_row_data[getSourceColumnIndex("DT Trên sổ", 47)] = editDtTrenSo; // DT Trên sổ (Cột AV)
         p.original_row_data[getSourceColumnIndex("Images_Public_JSON", 48)] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AW)
@@ -3585,6 +3590,27 @@
           await appendAuditLogFrontend(token, SOURCE_SHEET_ID, "Source_Log", p.original_row_data, "Update");
         } catch (e_log) {
           console.warn("Không thể ghi log sang Source_Log:", e_log);
+        }
+
+        // Tự động tra cứu pool_row_index / pool_row_data nếu bị null
+        if ((!p.pool_row_index || !p.pool_row_data) && window.LegoState && window.LegoState.POOL_ROWS) {
+          const poolRows = window.LegoState.POOL_ROWS;
+          const sysIdColPool = getPoolColumnIndex("System ID", 72);
+          const idColPool = getPoolColumnIndex("id", 3);
+          const maHangColPool = getPoolColumnIndex("Mã Hàng", 0);
+          
+          const targetId = p.system_id || p.id || p.tk_id;
+          const foundIdx = poolRows.findIndex(pr => {
+            if (!pr) return false;
+            const sysId = sysIdColPool !== -1 ? (pr[sysIdColPool] || '').trim() : '';
+            const pid = idColPool !== -1 ? (pr[idColPool] || '').trim() : '';
+            const maHang = maHangColPool !== -1 ? (pr[maHangColPool] || '').trim() : '';
+            return (sysId && sysId === targetId) || (pid && pid === targetId) || (maHang && maHang === targetId);
+          });
+          if (foundIdx !== -1) {
+            p.pool_row_index = foundIdx + GLOBAL_SHEET_CONFIG.DATA_START_ROW;
+            p.pool_row_data = poolRows[foundIdx];
+          }
         }
 
         // Cập nhật lại các trường ảnh đã biên tập sang tab Pool (nếu có smart match)
