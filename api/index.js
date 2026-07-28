@@ -2606,5 +2606,10 @@ module.exports = async (req, res) => {
     }
   }
 
-  res.status(200).setHeader('Content-Type', 'text/html; charset=utf-8').send(html);
+  res.status(200)
+    .setHeader('Content-Type', 'text/html; charset=utf-8')
+    .setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+    .setHeader('Pragma', 'no-cache')
+    .setHeader('Expires', '0')
+    .send(html);
 };
