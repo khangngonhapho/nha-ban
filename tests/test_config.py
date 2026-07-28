@@ -157,3 +157,36 @@ class TestCoreConfigReadSettings:
         fields = result.get("json_ui_fields") or []
         assert "createdAtSigned" in fields
         assert "updatedAt" in fields
+
+
+class TestCacheBustingRule14:
+    """Validate Rule 14: Ensure index.html and vercel.json enforce cache-busting."""
+
+    def test_index_html_contains_version_parameters(self):
+        """Tất cả các tệp static script và css trong index.html phải có ?v="""
+        project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        index_path = os.path.join(project_dir, "index.html")
+        with open(index_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        import re
+        script_sources = re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', content)
+        for src in script_sources:
+            if src.startswith("/static/js/"):
+                assert "?v=" in src, f"Script tag missing ?v= parameter: {src}"
+
+    def test_vercel_json_contains_cache_control_headers(self):
+        """Tệp vercel.json bắt buộc duy trì headers Cache-Control no-cache."""
+        project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        vercel_path = os.path.join(project_dir, "vercel.json")
+        with open(vercel_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        headers_list = data.get("headers") or []
+        found_cache_control = False
+        for item in headers_list:
+            hdr_rules = item.get("headers") or []
+            for rule in hdr_rules:
+                if rule.get("key") == "Cache-Control" and "no-cache" in rule.get("value", ""):
+                    found_cache_control = True
+                    break
+        assert found_cache_control, "vercel.json missing strict Cache-Control: no-cache headers!"
+
