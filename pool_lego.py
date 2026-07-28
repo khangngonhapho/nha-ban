@@ -67,6 +67,52 @@ POOL_HEADERS = [
     "JSON_UI", "Images_Admin_JSON"
 ]
 
+# ==================================================
+# HẰNG SỐ TOÀN CỤC CHUẨN HÓA SHEET SYSTEM (RULE 13)
+# ==================================================
+HEADER_ROW_INDEX = 1
+BLANK_ROW_INDEX = 2
+DATA_START_ROW = 3
+LOG_EVENT_COL_NAME = "Log event"
+
+SOURCE_HEADERS = [
+    "Hinh_mat_tien", "Cu_phap", "Note", "id", "tieu_de", "dien_tich", "so_tang", "mat_tien", "gia", "quan", "phuong",
+    "loai_hinh", "huong_nha", "duong_truoc_nha", "do_rong_hem", "tinh_trang_nha", "danh_gia", "ngu_tang_tret", "chdv", "mo_ta",
+    "anh_1", "anh_2", "anh_3", "anh_4", "anh_5", "anh_6", "anh_7", "anh_8", "anh_9", "anh_10",
+    "Last updated", "phuong_cu", "so_pn", "so_wc", "ten_duong", "gio_dang", "trang_thai", "System ID", "Link mặt tiền",
+    "Tiêu đề BDS", "Đăng BDS", "anh_11", "anh_12", "anh_13", "anh_14", "anh_15", "JSON_UI", "DT Trên sổ", "Images_Public_JSON"
+]
+
+POOL_LOG_HEADERS = list(POOL_HEADERS) + [LOG_EVENT_COL_NAME]
+SOURCE_LOG_HEADERS = list(SOURCE_HEADERS) + [LOG_EVENT_COL_NAME]
+
+GLOBAL_SHEET_CONFIG = {
+    "Pool": {
+        "header_row": HEADER_ROW_INDEX,
+        "blank_row": BLANK_ROW_INDEX,
+        "data_start_row": DATA_START_ROW,
+        "headers": POOL_HEADERS
+    },
+    "Pool_Log": {
+        "header_row": HEADER_ROW_INDEX,
+        "blank_row": BLANK_ROW_INDEX,
+        "data_start_row": DATA_START_ROW,
+        "headers": POOL_LOG_HEADERS
+    },
+    "Source": {
+        "header_row": HEADER_ROW_INDEX,
+        "blank_row": BLANK_ROW_INDEX,
+        "data_start_row": DATA_START_ROW,
+        "headers": SOURCE_HEADERS
+    },
+    "Source_Log": {
+        "header_row": HEADER_ROW_INDEX,
+        "blank_row": BLANK_ROW_INDEX,
+        "data_start_row": DATA_START_ROW,
+        "headers": SOURCE_LOG_HEADERS
+    }
+}
+
 LISTINGS_V2_COLS = [
     # Định danh & Trạng thái
     "System_ID", "Ma_Hang", "isSigned", "status_nguon", "commissionAgent",
@@ -1549,44 +1595,51 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
         add_log_message(f"[✅] ĐÃ ĐỒNG BỘ THÀNH CÔNG CAN {tk_id} SANG 3 FILE GOOGLE SHEETS!")
 def append_audit_log_py(spreadsheet, log_sheet_name, row_values, log_event="Update"):
     """
-    US-157: Tự động ghi chép (append) một dòng dữ liệu thô sang sheet log (Pool_Log hoặc Source_Log).
-    Phân giải vị trí cột 'Log event' động theo tên Header tại runtime (Rule 6).
+    US-157: Tự động ghi chép (append) một dòng dữ liệu thô sang sheet log tuân thủ Rule 13.
+    Dùng biến cấu hình config["data_start_row"], KHÔNG hardcode số 3.
     """
     if not spreadsheet or not log_sheet_name or not row_values:
         return
     try:
+        config = GLOBAL_SHEET_CONFIG.get(log_sheet_name, {
+            "headers": [],
+            "data_start_row": DATA_START_ROW
+        })
+        
+        full_headers = config["headers"]
+        data_start_row = config["data_start_row"]
+        raw_len = len(full_headers) - 1 if full_headers else len(row_values)
+
         try:
             log_sheet = spreadsheet.worksheet(log_sheet_name)
         except Exception:
-            # Nếu chưa có tab log, tự động khởi tạo tab mới
-            log_sheet = spreadsheet.add_worksheet(title=log_sheet_name, rows="1000", cols="100")
+            log_sheet = spreadsheet.add_worksheet(title=log_sheet_name, rows="1000", cols=str(len(full_headers) or 100))
             
-        header_vals = []
+        # 1. Đồng bộ Dòng 1 Header bằng range 1:1 (Không hardcode DZ1)
         try:
-            header_vals = log_sheet.row_values(1)
+            row1 = log_sheet.row_values(HEADER_ROW_INDEX)
+            if not row1 or (full_headers and (len(row1) < len(full_headers) or row1[0] != full_headers[0])):
+                log_sheet.update(range_name="1:1", values=[full_headers], value_input_option="USER_ENTERED")
         except Exception:
             pass
             
-        # Tìm chỉ số cột "Log event" động (Rule 6)
-        log_event_idx = -1
-        for idx, h in enumerate(header_vals):
-            if str(h).strip().lower() == "log event":
-                log_event_idx = idx
-                break
-                
-        if log_event_idx == -1:
-            log_event_idx = len(header_vals) if header_vals else len(row_values)
-            try:
-                log_sheet.update_cell(1, log_event_idx + 1, "Log event")
-            except Exception:
-                pass
-            
+        # 2. Padding mảng dữ liệu theo raw_len chuẩn + Log event ở cuối
         log_row = list(row_values)
-        while len(log_row) <= log_event_idx:
+        while len(log_row) < raw_len:
             log_row.append("")
-        log_row[log_event_idx] = log_event
+        log_row = log_row[:raw_len]
+        log_row.append(log_event)
         
-        log_sheet.append_row(log_row, value_input_option='USER_ENTERED')
+        # 3. Phân giải chỉ số dòng tiếp theo BẰNG BIẾN data_start_row
+        all_vals = log_sheet.get_all_values()
+        next_row = max(len(all_vals) + 1, data_start_row)
+        
+        # Mở rộng số dòng vật lý nếu bảng đã đầy
+        if next_row > log_sheet.row_count:
+            log_sheet.add_rows(next_row - log_sheet.row_count + 100)
+            
+        # 4. Ghi trực tiếp từ Cột A tại dòng next_row đã tính toán
+        log_sheet.update(range_name=f"A{next_row}", values=[log_row], value_input_option="USER_ENTERED")
     except Exception as e:
         print(f"[⚠️ WARNING] Không thể ghi audit log sang tab {log_sheet_name}: {str(e)}")
 
@@ -1881,10 +1934,10 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                         add_log_message(f"[ℹ] Phát hiện Table chính thức kết thúc ở dòng {table_end_row}. Thực hiện chèn tại dòng {next_row} (cuối bảng) để thêm dòng mới vào cuối.")
                     else:
                         try:
-                            next_row = len(sheet.get_all_values()) + 1
+                            next_row = max(len(sheet.get_all_values()) + 1, GLOBAL_SHEET_CONFIG["Pool"]["data_start_row"])
                         except Exception as e:
                             add_log_message(f"[⚠️ WARNING] Không lấy được số dòng hiện tại của Sheet, fallback về mặc định: {str(e)}")
-                            next_row = 3
+                            next_row = GLOBAL_SHEET_CONFIG["Pool"]["data_start_row"]
             except Exception as e:
                 add_log_message(f"[❌ LỖI] Lỗi kết nối API Google Sheets: {str(e)}")
             

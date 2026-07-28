@@ -2738,8 +2738,10 @@ def generate_and_upload_public_shards(db_file=None):
     index_list = []
     shards = {f"{i:03d}": {} for i in range(NUM_SHARDS)}
     
+    from pool_lego import GLOBAL_SHEET_CONFIG
+    source_data_start_idx = GLOBAL_SHEET_CONFIG["Source"]["data_start_row"] - 1
     # Duyệt qua các dòng dữ liệu (Dòng 3 trở đi)
-    data_rows = source_values[2:]
+    data_rows = source_values[source_data_start_idx:]
     add_log_message(f"[⚡] Đang xử lý {len(data_rows)} dòng dữ liệu từ Source...")
     
     for row_idx, r in enumerate(data_rows):

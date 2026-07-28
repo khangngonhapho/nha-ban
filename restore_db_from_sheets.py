@@ -619,25 +619,27 @@ def restore_database(repair_sheets=False):
         print(f"[❌ LỖI] Lỗi kết nối Google Sheets: {str(e)}")
         return
         
-    if len(all_values) < 2:
+    from pool_lego import GLOBAL_SHEET_CONFIG
+    pool_data_start_idx = GLOBAL_SHEET_CONFIG["Pool"]["data_start_row"] - 1
+    if len(all_values) < GLOBAL_SHEET_CONFIG["Pool"]["data_start_row"]:
         print("[-] Không tìm thấy dữ liệu hoặc Sheets Pool rỗng!")
         return
         
-    data_rows = all_values[1:] # Dữ liệu bắt đầu từ dòng 2 (index 1)
+    data_rows = all_values[pool_data_start_idx:] # Dữ liệu bắt đầu từ Dòng 3 (index 2) theo quy định DATA_START_ROW = 3
     print(f"  - Đang phân tích {len(data_rows)} dòng dữ liệu từ Google Sheets Pool...")
 
     # Build dynamic header index map for Source sheet to comply with Rule 6
     source_headers_map = {}
-    if len(source_values) >= 2:
+    if len(source_values) >= 1:
         row1 = source_values[0]
-        row2 = source_values[1]
+        row2 = source_values[1] if len(source_values) > 1 else []
         for idx, h in enumerate(row2):
             h_clean = h.strip()
             if h_clean:
                 source_headers_map[h_clean] = idx
         for idx, h in enumerate(row1):
             h_clean = h.strip()
-            if h_clean and (h_clean not in source_headers_map or not row2[idx].strip()):
+            if h_clean and (h_clean not in source_headers_map or not (row2 and row2[idx].strip())):
                 source_headers_map[h_clean] = idx
 
     sys_id_idx = source_headers_map.get("System ID")
@@ -648,9 +650,10 @@ def restore_database(repair_sheets=False):
 
     # Xây dựng dictionary từ sheet Source để merge
     source_dict = {}
-    if len(source_values) >= 3 and sys_id_idx is not None:
-        # Dữ liệu bắt đầu từ dòng 3 (index 2), dòng 2 (index 1) là header snake_case
-        for s_row in source_values[2:]:
+    source_data_start_idx = GLOBAL_SHEET_CONFIG["Source"]["data_start_row"] - 1
+    if len(source_values) >= GLOBAL_SHEET_CONFIG["Source"]["data_start_row"] and sys_id_idx is not None:
+        # Dữ liệu bắt đầu từ Dòng 3 (index 2) theo quy định DATA_START_ROW = 3
+        for s_row in source_values[source_data_start_idx:]:
             if len(s_row) > sys_id_idx:
                 sys_id = s_row[sys_id_idx].strip()
                 if sys_id:

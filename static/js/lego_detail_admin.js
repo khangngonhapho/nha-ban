@@ -27,44 +27,21 @@
         res += c;
       }
     }
-    return res.trim();
+  const GLOBAL_SHEET_CONFIG = {
+    HEADER_ROW: 1,
+    BLANK_ROW: 2,
+    DATA_START_ROW: 3
   };
 
   async function appendAuditLogFrontend(token, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
     if (!token || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
     try {
-      const headerUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!1:1`;
-      let headers = [];
-      try {
-        const hRes = await fetch(headerUrl, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (hRes.ok) {
-          const hData = await hRes.json();
-          if (hData.values && hData.values.length > 0) {
-            headers = hData.values[0];
-          }
-        }
-      } catch (e) {}
-
-      let logEventIdx = -1;
-      for (let i = 0; i < headers.length; i++) {
-        if (String(headers[i]).trim().toLowerCase() === 'log event') {
-          logEventIdx = i;
-          break;
-        }
-      }
-      if (logEventIdx === -1) {
-        logEventIdx = headers.length > 0 ? headers.length : rowValues.length;
-      }
-
+      const startRow = GLOBAL_SHEET_CONFIG.DATA_START_ROW;
+      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${startRow}:append?valueInputOption=USER_ENTERED`;
+      
       const logRow = Array.from(rowValues);
-      while (logRow.length <= logEventIdx) {
-        logRow.push('');
-      }
-      logRow[logEventIdx] = logEvent;
+      logRow.push(logEvent);
 
-      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
       await fetch(appendUrl, {
         method: 'POST',
         headers: {
@@ -2965,8 +2942,9 @@
           writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
           writeMethod = 'PUT';
         } else {
-          // Thêm dòng mới - dùng append với range A2 để tránh Google Sheets API align sai cột (bỏ qua dòng 1 trống)
-          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          // Thêm dòng mới - dùng append với range A${startRow} dùng biến cấu hình toàn cục (không dùng INSERT_ROWS)
+          const startRow = GLOBAL_SHEET_CONFIG.DATA_START_ROW;
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${startRow}:append?valueInputOption=USER_ENTERED`;
           writeMethod = 'POST';
         }
         const writeRes = await fetch(writeUrl, {

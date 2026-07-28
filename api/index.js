@@ -200,41 +200,20 @@ async function getGoogleAccessToken(creds) {
   }
 }
 
+const GLOBAL_SHEET_CONFIG_NODE = {
+  HEADER_ROW: 1,
+  BLANK_ROW: 2,
+  DATA_START_ROW: 3
+};
+
 async function appendAuditLogNode(accessToken, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
   if (!accessToken || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
   try {
-    const headerUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!1:1`;
-    let headers = [];
-    try {
-      const hRes = await fetch(headerUrl, {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
-      });
-      if (hRes.ok) {
-        const hData = await hRes.json();
-        if (hData.values && hData.values.length > 0) {
-          headers = hData.values[0];
-        }
-      }
-    } catch (e) {}
-
-    let logEventIdx = -1;
-    for (let i = 0; i < headers.length; i++) {
-      if (String(headers[i]).trim().toLowerCase() === 'log event') {
-        logEventIdx = i;
-        break;
-      }
-    }
-    if (logEventIdx === -1) {
-      logEventIdx = headers.length > 0 ? headers.length : rowValues.length;
-    }
-
+    const startRow = GLOBAL_SHEET_CONFIG_NODE.DATA_START_ROW;
+    const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${startRow}:append?valueInputOption=USER_ENTERED`;
     const logRow = Array.from(rowValues);
-    while (logRow.length <= logEventIdx) {
-      logRow.push('');
-    }
-    logRow[logEventIdx] = logEvent;
+    logRow.push(logEvent);
 
-    const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
     await fetch(appendUrl, {
       method: 'POST',
       headers: {
