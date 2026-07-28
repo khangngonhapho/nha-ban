@@ -54,14 +54,14 @@
   async function appendAuditLogFrontend(token, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
     if (!token || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
     try {
-      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:A`, {
+      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:E`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       let trueLastRowIndex = 0;
       if (getRes.ok) {
         const getJson = await getRes.json();
         const rows = getJson.values || [];
-        const lastDataIdx = rows.findLastIndex(r => r && r[0] && String(r[0]).trim() !== '');
+        const lastDataIdx = rows.findLastIndex(r => r && r.some(cell => cell && String(cell).trim() !== ''));
         if (lastDataIdx !== -1) {
           trueLastRowIndex = lastDataIdx + 1;
         }
