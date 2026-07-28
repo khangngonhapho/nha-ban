@@ -1547,46 +1547,60 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
             add_log_message(f"[⚠️ WARNING] Lỗi cập nhật SQLite: {str(e_db)}")
         
         add_log_message(f"[✅] ĐÃ ĐỒNG BỘ THÀNH CÔNG CAN {tk_id} SANG 3 FILE GOOGLE SHEETS!")
+SOURCE_HEADERS = [
+    "Hinh_mat_tien", "Cu_phap", "Note", "id", "tieu_de", "dien_tich", "so_tang", "mat_tien", "gia", "quan", "phuong",
+    "loai_hinh", "huong_nha", "duong_truoc_nha", "do_rong_hem", "tinh_trang_nha", "danh_gia", "ngu_tang_tret", "chdv", "mo_ta",
+    "anh_1", "anh_2", "anh_3", "anh_4", "anh_5", "anh_6", "anh_7", "anh_8", "anh_9", "anh_10",
+    "Last updated", "phuong_cu", "so_pn", "so_wc", "ten_duong", "gio_dang", "trang_thai", "System ID", "Link mặt tiền",
+    "Tiêu đề BDS", "Đăng BDS", "anh_11", "anh_12", "anh_13", "anh_14", "anh_15", "JSON_UI", "DT Trên sổ", "Images_Public_JSON"
+]
+
 def append_audit_log_py(spreadsheet, log_sheet_name, row_values, log_event="Update"):
     """
     US-157: Tự động ghi chép (append) một dòng dữ liệu thô sang sheet log (Pool_Log hoặc Source_Log).
-    Phân giải vị trí cột 'Log event' động theo tên Header tại runtime (Rule 6).
+    Cố định vị trí cột 'Log event' ở cột cuối cùng và tự động căn chỉnh bắt đầu từ Cột A (Rule 6).
     """
     if not spreadsheet or not log_sheet_name or not row_values:
         return
     try:
+        if "pool" in log_sheet_name.lower():
+            headers = POOL_HEADERS
+        elif "source" in log_sheet_name.lower():
+            headers = SOURCE_HEADERS
+        else:
+            headers = []
+            
+        full_headers = list(headers) + ["Log event"] if headers else []
+            
         try:
             log_sheet = spreadsheet.worksheet(log_sheet_name)
         except Exception:
-            # Nếu chưa có tab log, tự động khởi tạo tab mới
-            log_sheet = spreadsheet.add_worksheet(title=log_sheet_name, rows="1000", cols="100")
+            log_sheet = spreadsheet.add_worksheet(title=log_sheet_name, rows="1000", cols=str(len(full_headers) or 100))
             
-        header_vals = []
+        # Kiểm tra và đồng bộ dòng Header 1 nếu rỗng hoặc chưa đúng tiêu đề chuẩn
         try:
-            header_vals = log_sheet.row_values(1)
+            row1 = log_sheet.row_values(1)
+            if not row1 or (full_headers and (len(row1) < len(full_headers) or row1[0] != full_headers[0])):
+                log_sheet.update(range_name="A1:DZ1", values=[full_headers], value_input_option="USER_ENTERED")
         except Exception:
             pass
             
-        # Tìm chỉ số cột "Log event" động (Rule 6)
-        log_event_idx = -1
-        for idx, h in enumerate(header_vals):
-            if str(h).strip().lower() == "log event":
-                log_event_idx = idx
-                break
-                
-        if log_event_idx == -1:
-            log_event_idx = len(header_vals) if header_vals else len(row_values)
-            try:
-                log_sheet.update_cell(1, log_event_idx + 1, "Log event")
-            except Exception:
-                pass
-            
+        # Chuẩn bị log_row có độ dài cố định khớp với headers + 1 (Log event)
         log_row = list(row_values)
-        while len(log_row) <= log_event_idx:
+        target_len = len(headers) if headers else len(log_row)
+        while len(log_row) < target_len:
             log_row.append("")
-        log_row[log_event_idx] = log_event
+        log_row = log_row[:target_len]
+        log_row.append(log_event)
         
-        log_sheet.append_row(log_row, value_input_option='USER_ENTERED')
+        # Ghi vào dòng trống tiếp theo bắt đầu từ Cột A để không bao giờ bị trôi cột
+        all_vals = log_sheet.get_all_values()
+        next_row = max(len(all_vals) + 1, 2)
+        
+        if next_row > log_sheet.row_count:
+            log_sheet.add_rows(max(100, next_row - log_sheet.row_count + 10))
+            
+        log_sheet.update(range_name=f"A{next_row}", values=[log_row], value_input_option="USER_ENTERED")
     except Exception as e:
         print(f"[⚠️ WARNING] Không thể ghi audit log sang tab {log_sheet_name}: {str(e)}")
 
