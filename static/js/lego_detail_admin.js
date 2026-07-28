@@ -70,7 +70,7 @@
       const lastColLetter = window.getColumnLetter ? window.getColumnLetter(logRow.length - 1) : 'CR';
       const logUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${nextLogRow}:${lastColLetter}${nextLogRow}?valueInputOption=USER_ENTERED`;
 
-      const writeRes = await fetch(logUrl, {
+      let writeRes = await fetch(logUrl, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,6 +78,19 @@
         },
         body: JSON.stringify({ values: [logRow] })
       });
+
+      // Nếu PUT thất bại 400 do vượt quá giới hạn dòng vật lý (Max rows reached), tự động fallback sang POST :append để Sheets API tự nới rộng grid
+      if (!writeRes.ok && writeRes.status === 400) {
+        const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}:append?valueInputOption=USER_ENTERED`;
+        writeRes = await fetch(appendUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [logRow] })
+        });
+      }
 
       if (!writeRes.ok) {
         const errTxt = await writeRes.text();
