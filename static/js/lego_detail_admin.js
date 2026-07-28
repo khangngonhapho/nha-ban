@@ -64,11 +64,13 @@
       }
       const nextLogRow = Math.max(currentLogRows + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
 
-      const logUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${nextLogRow}?valueInputOption=USER_ENTERED`;
       const logRow = Array.from(rowValues);
       logRow.push(logEvent);
 
-      await fetch(logUrl, {
+      const lastColLetter = window.getColumnLetter ? window.getColumnLetter(logRow.length - 1) : 'CR';
+      const logUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${nextLogRow}:${lastColLetter}${nextLogRow}?valueInputOption=USER_ENTERED`;
+
+      const writeRes = await fetch(logUrl, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -76,6 +78,11 @@
         },
         body: JSON.stringify({ values: [logRow] })
       });
+
+      if (!writeRes.ok) {
+        const errTxt = await writeRes.text();
+        console.warn(`[⚠️ WARNING] Ghi audit log sang ${logSheetName} phản hồi status ${writeRes.status}:`, errTxt);
+      }
     } catch (err) {
       console.warn(`[⚠️ WARNING] Không thể ghi audit log sang tab ${logSheetName}:`, err);
     }
