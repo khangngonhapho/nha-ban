@@ -54,14 +54,22 @@
   async function appendAuditLogFrontend(token, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
     if (!token || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
     try {
-      const startRow = GLOBAL_SHEET_CONFIG.DATA_START_ROW;
-      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${startRow}:append?valueInputOption=USER_ENTERED`;
-      
+      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:A`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      let currentLogRows = 0;
+      if (getRes.ok) {
+        const getJson = await getRes.json();
+        currentLogRows = (getJson.values && getJson.values.length) ? getJson.values.length : 0;
+      }
+      const nextLogRow = Math.max(currentLogRows + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
+
+      const logUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${nextLogRow}?valueInputOption=USER_ENTERED`;
       const logRow = Array.from(rowValues);
       logRow.push(logEvent);
 
-      await fetch(appendUrl, {
-        method: 'POST',
+      await fetch(logUrl, {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
