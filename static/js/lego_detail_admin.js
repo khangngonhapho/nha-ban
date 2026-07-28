@@ -2442,7 +2442,6 @@
       }
 
       // Dynamic column mapping for pool listing (US-131 check headers dynamically)
-      const idCol = window.getPoolColumnIndex("id", 55);
       const tieuDeBdsCol = window.getPoolColumnIndex("Tiêu đề BDS", 56);
       const noiDungChinhCol = window.getPoolColumnIndex("Nội dung chính", 9);
       const moTaChiTietCol = window.getPoolColumnIndex("Mô tả chi tiết", 10);
@@ -2477,7 +2476,6 @@
       const duongTruocNhaCol = window.getPoolColumnIndex("Đường trước nhà", 60);
       const quanCol = window.getPoolColumnIndex("quan", 3);
       const linkGocCol = window.getPoolColumnIndex("Link Gốc", 73);
-      const maHangCol = window.getPoolColumnIndex("Mã Hàng", 0);
       const linkGoc = row[linkGocCol] || '';
       const maHang = row[maHangCol] || '';
       let tkId = '';
