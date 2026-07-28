@@ -17,10 +17,6 @@
   const showToast = (msg, type) => (window.showToast ? window.showToast(msg, type) : console.log(msg));
   const isPoolRowOnAir = (row) => (window.isPoolRowOnAir ? window.isPoolRowOnAir(row) : false);
   const searchPoolRows = (query) => (window.searchPoolRows ? window.searchPoolRows(query) : []);
-  const parseGia = (val) => (window.parseGia ? window.parseGia(val) : 0);
-  const showToast = (msg, type) => (window.showToast ? window.showToast(msg, type) : console.log(msg));
-  const isPoolRowOnAir = (row) => (window.isPoolRowOnAir ? window.isPoolRowOnAir(row) : false);
-  const searchPoolRows = (query) => (window.searchPoolRows ? window.searchPoolRows(query) : []);
 
   // Use global dynamic helper functions from lego_helpers.js (US-120A & Rule 6)
   const getColumnLetter = window.getColumnLetter;
