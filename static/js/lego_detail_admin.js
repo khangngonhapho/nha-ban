@@ -33,11 +33,38 @@
   async function appendAuditLogFrontend(token, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
     if (!token || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
     try {
-      // US-157 Fix: Ghi log dùng :append với range A2 bỏ qua dòng header 1, không truyền INSERT_ROWS để tránh chèn ở Dòng 1 làm đẩy Header xuống
-      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A2:append?valueInputOption=USER_ENTERED`;
-      const logRow = Array.from(rowValues);
-      logRow.push(logEvent);
+      const headerUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!1:1`;
+      let headers = [];
+      try {
+        const hRes = await fetch(headerUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (hRes.ok) {
+          const hData = await hRes.json();
+          if (hData.values && hData.values.length > 0) {
+            headers = hData.values[0];
+          }
+        }
+      } catch (e) {}
 
+      let logEventIdx = -1;
+      for (let i = 0; i < headers.length; i++) {
+        if (String(headers[i]).trim().toLowerCase() === 'log event') {
+          logEventIdx = i;
+          break;
+        }
+      }
+      if (logEventIdx === -1) {
+        logEventIdx = headers.length > 0 ? headers.length : rowValues.length;
+      }
+
+      const logRow = Array.from(rowValues);
+      while (logRow.length <= logEventIdx) {
+        logRow.push('');
+      }
+      logRow[logEventIdx] = logEvent;
+
+      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
       await fetch(appendUrl, {
         method: 'POST',
         headers: {
