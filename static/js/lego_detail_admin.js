@@ -3601,6 +3601,13 @@
             }
             const imagesAdminPoolIdx = getPoolColumnIndex("Images_Admin_JSON", 94);
             p.pool_row_data[imagesAdminPoolIdx] = JSON.stringify(curatedImages);
+
+            // US-157: Ghi audit log lịch sử biên tập ảnh Images_Admin_JSON sang tab Pool_Log
+            try {
+              await appendAuditLogFrontend(token, POOL_SHEET_ID, "Pool_Log", p.pool_row_data, "Update");
+            } catch (e_plog) {
+              console.warn("Không thể ghi log sang Pool_Log:", e_plog);
+            }
           } catch (e) {
             console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool:", e);
           }
