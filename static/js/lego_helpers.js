@@ -16,6 +16,12 @@ window.currentSortType = 'newest'; // 'newest' or 'price'
 window.currentSortDir = 'desc'; // 'desc' = high/newest first, 'asc' = low/oldest first
 window.hasErrorState = false;
 
+window.GLOBAL_SHEET_CONFIG = {
+  HEADER_ROW: 1,
+  BLANK_ROW: 2,
+  DATA_START_ROW: 3
+};
+
 // Fallback formatPhone helper
 window.formatPhone = function(phone) {
   if (!phone) return '';

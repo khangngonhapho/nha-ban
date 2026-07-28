@@ -27,7 +27,7 @@
         res += c;
       }
     }
-  const GLOBAL_SHEET_CONFIG = {
+  const GLOBAL_SHEET_CONFIG = window.GLOBAL_SHEET_CONFIG || {
     HEADER_ROW: 1,
     BLANK_ROW: 2,
     DATA_START_ROW: 3

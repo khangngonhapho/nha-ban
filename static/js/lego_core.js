@@ -660,10 +660,10 @@ const LegoState = {
         const sourceRows = sourceDataJson.values || [];
         const poolRows = poolDataJson.values || [];
         this.SOURCE_HEADERS = sourceRows[0] || [];
-        this.POOL_HEADERS = poolRows[0] || [];
-        const startDataIdx = GLOBAL_SHEET_CONFIG.DATA_START_ROW - 1;
+        const CONFIG = window.GLOBAL_SHEET_CONFIG || { HEADER_ROW: 1, BLANK_ROW: 2, DATA_START_ROW: 3 };
+        const startDataIdx = CONFIG.DATA_START_ROW - 1;
         const poolDataRows = poolRows.slice(startDataIdx).map((r, idx) => {
-          if (r) r.raw_sheet_row_index = idx + GLOBAL_SHEET_CONFIG.DATA_START_ROW;
+          if (r) r.raw_sheet_row_index = idx + CONFIG.DATA_START_ROW;
           return r;
         }).filter(r => {
           if (!r || r.length === 0) return false;
@@ -917,7 +917,7 @@ const LegoState = {
               p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
               p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
               p.last_crawl = poolRow[window.getPoolColumnIndex("Last Crawl", 77)] || '';
-              p.pool_row_index = poolDataRows.indexOf(poolRow) + GLOBAL_SHEET_CONFIG.DATA_START_ROW;
+              p.pool_row_index = poolDataRows.indexOf(poolRow) + (window.GLOBAL_SHEET_CONFIG ? window.GLOBAL_SHEET_CONFIG.DATA_START_ROW : 3);
               p.pool_row_data = poolRow;
               
               let jsonUiVal = poolRow[window.getPoolColumnIndex("JSON_UI", 93)] || '';
@@ -1153,7 +1153,7 @@ const LegoState = {
           p.raw_tieu_de_public = poolRow[window.getPoolColumnIndex("Tiêu đề BDS", 56)] || '';
           p.raw_mo_ta_public = poolRow[window.getPoolColumnIndex("Mô tả BDS", 57)] || '';
           p.raw_phan_loai = poolRow[window.getPoolColumnIndex("Phân Loại", 7)] || '';
-          p.pool_row_index = prIdx + GLOBAL_SHEET_CONFIG.DATA_START_ROW;
+          p.pool_row_index = prIdx + (window.GLOBAL_SHEET_CONFIG ? window.GLOBAL_SHEET_CONFIG.DATA_START_ROW : 3);
           p.pool_row_data = poolRow;
           if (tempCuratedConfig) {
             p.curated_config = tempCuratedConfig;
