@@ -17,6 +17,7 @@
   const showToast = (msg, type) => (window.showToast ? window.showToast(msg, type) : console.log(msg));
   const isPoolRowOnAir = (row) => (window.isPoolRowOnAir ? window.isPoolRowOnAir(row) : false);
   const searchPoolRows = (query) => (window.searchPoolRows ? window.searchPoolRows(query) : []);
+  const escQ = (str) => String(str || '').replace(/'/g, "\\'");
 
   // Use global dynamic helper functions from lego_helpers.js (US-120A & Rule 6)
   const getColumnLetter = window.getColumnLetter;
@@ -41,6 +42,9 @@
         res += c;
       }
     }
+    return res;
+  };
+
   const GLOBAL_SHEET_CONFIG = window.GLOBAL_SHEET_CONFIG || {
     HEADER_ROW: 1,
     BLANK_ROW: 2,
@@ -1236,7 +1240,7 @@
         const imgSrc = isBroken ? "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='600' height='400' fill='%232c2c2e'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23ff4d4f' font-weight='bold'>⚠️ LỖI: HÌNH ẢNH KHÔNG TỒN TẠI (TK/R2)</text></svg>" : fixImgUrl(c.url, 'w600');
         slidesHtml += `
           <div class="carousel-slide-item" data-slide-index="${idx}" style="${slideStyle}">
-            <img src="${imgSrc}" alt="Slide ${idx + 1}" style="cursor: zoom-in;" onclick="window.openZoomOverlay('${c.url.replace(/'/g, "\\'")}')" onerror="window.handleImageLoadError(this, '${c.url.replace(/'/g, "\\'")}', '${c.type}', ${c.index}, ${idx})">
+            <img src="${imgSrc}" alt="Slide ${idx + 1}" style="cursor: zoom-in;" onclick="window.openZoomOverlay('${escQ(c.url)}')" onerror="window.handleImageLoadError(this, '${escQ(c.url)}', '${c.type}', ${c.index}, ${idx})">
             <div class="carousel-slide-badge">${badgeText}</div>
             <div class="carousel-order-indicator" id="carouselOrderIndicator-${idx}" style="display: none;">#1</div>
             <div class="carousel-role-indicator" id="carouselRoleIndicator-${idx}" style="display: none;"></div>
@@ -2697,7 +2701,7 @@
             ${isAlready ? `
               <span style="font-size: 10.5px; font-weight: 700; color: #2ecc71; background: rgba(46, 204, 113, 0.15); padding: 4px 8px; border-radius: 6px; white-space: nowrap;">✅ Đã lên sóng</span>
             ` : `
-              <button onclick="pullListingFromPoolRow(event, '${systemId}', '${id}', '${soNha.replace(/'/g, "\\'")}', '${duong.replace(/'/g, "\\'")}')" 
+              <button onclick="pullListingFromPoolRow(event, '${systemId}', '${id}', '${escQ(soNha)}', '${escQ(duong)}')" 
                 style="background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; font-family: inherit;">
                 ⚡ Lên sóng
               </button>
