@@ -1943,32 +1943,13 @@
 
   // === sortSlidesByDisplayOrder ===
     window.sortSlidesByDisplayOrder = function(slides, p) {
-      if (!p) return;
-      const publicCover = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
-      const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
-      const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
-      
-      const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-      const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-      
-      const normPublicCover = normalizeImgUrl(publicCover);
-      const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
-      const normMatTien = normalizeImgUrl(targetMatTien);
-      
+      if (!p || !Array.isArray(slides)) return;
       const getWeight = (c) => {
-        const normUrl = normalizeImgUrl(c.url);
-        if (c.type === 'facade' || normUrl === normMatTien) return 0;
-        if (c.type === 'cover' || (normPublicCover && normUrl === normPublicCover)) return 1;
-        
-        if (c.type === 'alley') {
-          const pos = hemIndices.indexOf(c.index);
-          if (pos !== -1) return 2 + pos;
-        }
-        if (c.type === 'interior') {
-          const pos = noithatIndices.indexOf(c.index);
-          if (pos !== -1) return 100 + pos;
-        }
-        if (c.type === 'sodo') return 4000 + c.index;
+        if (!c || !c.url) return 9999;
+        if (c.type === 'facade') return 0;
+        if (c.type === 'cover') return 1;
+        if (c.type === 'sodo') return 4000 + (c.index || 0);
+        if (c.visible === true) return 2;
         
         const cleanUrl = c.url.split('?')[0];
         const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
