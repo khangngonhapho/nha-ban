@@ -82,8 +82,8 @@
         return;
       }
 
-      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow) - Bỏ qua dòng ma có ô FALSE/TRUE đơn lẻ
-      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:E`, {
+      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow) - Đọc riêng Cột A (!A:A) để triệt tiêu 100% dòng ma
+      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:A`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       let trueLastRowIndex = 0;
@@ -91,13 +91,10 @@
         const getJson = await getRes.json();
         const rows = getJson.values || [];
         const lastDataIdx = rows.findLastIndex(r => {
-          if (!r || !r.length) return false;
-          return r.some(cell => {
-            if (!cell) return false;
-            const str = String(cell).trim().toUpperCase();
-            if (str === '' || str === 'FALSE' || str === 'TRUE') return false;
-            return true;
-          });
+          if (!r || !r.length || !r[0]) return false;
+          const val = String(r[0]).trim().toUpperCase();
+          if (val === '' || val === 'MÃ HÀNG' || val === 'HINH_MAT_TIEN' || val === 'FALSE' || val === 'TRUE') return false;
+          return true;
         });
         if (lastDataIdx !== -1) {
           trueLastRowIndex = lastDataIdx + 1;
