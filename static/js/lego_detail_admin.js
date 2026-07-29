@@ -4064,11 +4064,34 @@
         
         if (!writeRes.ok) {
           let detail = "";
+          let isGridLimitError = false;
           try {
             const errJson = await writeRes.json();
             detail = ": " + (errJson.error?.message || JSON.stringify(errJson));
+            if (String(detail).includes("exceeds grid limits") || writeRes.status === 400) {
+              isGridLimitError = true;
+            }
           } catch (e) {}
-          throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
+
+          if (isGridLimitError && writeMethod === 'PUT') {
+            // Fallback sang POST :append để Google Sheets API tự động nới rộng grid dòng (expand grid rows)
+            const fallbackUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${GLOBAL_SHEET_CONFIG.DATA_START_ROW}:append?valueInputOption=USER_ENTERED`;
+            const fallbackRes = await fetch(fallbackUrl, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ values: [publicRowData] })
+            });
+            if (!fallbackRes.ok) {
+              let fbDetail = "";
+              try { const fbErr = await fallbackRes.json(); fbDetail = ": " + (fbErr.error?.message || JSON.stringify(fbErr)); } catch (e_fb) {}
+              throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${fallbackRes.status}${fbDetail}).`);
+            }
+          } else {
+            throw new Error(`Không thể ghi dữ liệu sang Sheet Source (Mã: ${writeRes.status}${detail}).`);
+          }
         }
         
         // US-157: Ghi audit log sang Source_Log
