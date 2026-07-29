@@ -82,24 +82,50 @@
         return;
       }
 
-      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow) - Đọc dải ô !A:E để tìm dòng cuối thực tế trong tab log
-      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:E`, {
+      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow) - Phân giải riêng theo đặc thụ từng tab log (Source_Log vs Pool_Log) theo chỉ đạo PO
+      let trueLastRowIndex = 0;
+      const scanRange = "A:Z";
+      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!${scanRange}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      let trueLastRowIndex = 0;
+
       if (getRes.ok) {
         const getJson = await getRes.json();
         const rows = getJson.values || [];
-        const lastDataIdx = rows.findLastIndex(r => {
+        const lastDataIdx = rows.findLastIndex((r, idx) => {
+          if (idx === 0) return false; // Dòng Header (Row 1)
           if (!r || !r.length) return false;
-          return r.some(cell => {
-            if (!cell) return false;
-            const val = String(cell).trim().toLowerCase();
-            return val !== '' && val !== 'hinh_mat_tien' && val !== 'mã hàng' && val !== 'cu_phap';
-          });
+
+          if (logSheetName === "Source_Log") {
+            // Đối với Source_Log: Cột A chứa =IMAGE(AM...), kiểm tra Cột B (Cu_phap), Cột D (id) hoặc Cột Log Time
+            const cuPhap = r[1] ? String(r[1]).trim() : '';
+            const idVal = r[3] ? String(r[3]).trim() : '';
+            const logTimeVal = (logTimeIdx !== -1 && r[logTimeIdx]) ? String(r[logTimeIdx]).trim() : '';
+            if (cuPhap && cuPhap.toLowerCase() !== 'cu_phap') return true;
+            if (idVal && idVal.toLowerCase() !== 'id') return true;
+            if (logTimeVal && logTimeVal.toLowerCase() !== 'log time') return true;
+            return false;
+          } else if (logSheetName === "Pool_Log") {
+            // Đối với Pool_Log: Kiểm tra Cột A (Mã Hàng), Cột G (Số nhà), Cột J (Nội dung chính) hoặc Cột Log Time
+            const maHang = r[0] ? String(r[0]).trim() : '';
+            const soNha = r[6] ? String(r[6]).trim() : '';
+            const logTimeVal = (logTimeIdx !== -1 && r[logTimeIdx]) ? String(r[logTimeIdx]).trim() : '';
+            if (maHang && maHang.toLowerCase() !== 'mã hàng') return true;
+            if (soNha && soNha.toLowerCase() !== 'số nhà') return true;
+            if (logTimeVal && logTimeVal.toLowerCase() !== 'log time') return true;
+            return false;
+          } else {
+            // Fallback cho các tab log khác: Kiểm tra Cột Log Time / Log event
+            const logTimeVal = (logTimeIdx !== -1 && r[logTimeIdx]) ? String(r[logTimeIdx]).trim() : '';
+            const logEventVal = (logEventIdx !== -1 && r[logEventIdx]) ? String(r[logEventIdx]).trim() : '';
+            if (logTimeVal && logTimeVal.toLowerCase() !== 'log time') return true;
+            if (logEventVal && logEventVal.toLowerCase() !== 'log event') return true;
+            return r.some(cell => cell && String(cell).trim() !== '');
+          }
         });
+
         if (lastDataIdx !== -1) {
-          trueLastRowIndex = lastDataIdx + 1;
+          trueLastRowIndex = lastDataIdx + 1; // Chỉ số dòng 1-indexed trong Google Sheets
         }
       }
       const nextLogRow = Math.max(trueLastRowIndex + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
