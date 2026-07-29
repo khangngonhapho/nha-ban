@@ -4034,9 +4034,24 @@
           writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${targetRowNumber}:${lastSourceCol}${targetRowNumber}?valueInputOption=USER_ENTERED`;
           writeMethod = 'PUT';
         } else {
-          // Thêm dòng mới - dùng append với range A2 để tránh Google Sheets API align sai cột (bỏ qua dòng 1 trống)
-          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A2:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
-          writeMethod = 'POST';
+          // Thêm dòng mới - Quét dải ô Source!A:E để tìm trueLastRowIndex và ghi nối vào Dòng Cuối (Dòng 3+)
+          let trueLastRowIndex = 0;
+          try {
+            const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A:E`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (getRes.ok) {
+              const getJson = await getRes.json();
+              const sRows = getJson.values || [];
+              const lastDataIdx = sRows.findLastIndex(r => r && r.some(cell => cell && String(cell).trim() !== ''));
+              if (lastDataIdx !== -1) {
+                trueLastRowIndex = lastDataIdx + 1;
+              }
+            }
+          } catch (e_scan) {}
+          const newSourceRow = Math.max(trueLastRowIndex + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
+          writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SOURCE_SHEET_ID}/values/Source!A${newSourceRow}:${lastSourceCol}${newSourceRow}?valueInputOption=USER_ENTERED`;
+          writeMethod = 'PUT';
         }
         const writeRes = await fetch(writeUrl, {
           method: writeMethod,
