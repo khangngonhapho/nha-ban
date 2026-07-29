@@ -1010,6 +1010,8 @@
         window.initCuratedConfigFromRaw(p);
       }
 
+      const cards = [];
+
       if (p.curated_config && Array.isArray(p.curated_config.images)) {
         let sodoCount = 0;
         let interiorCount = 0;
