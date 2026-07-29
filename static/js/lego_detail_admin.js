@@ -54,6 +54,35 @@
   async function appendAuditLogFrontend(token, spreadsheetId, logSheetName, rowValues, logEvent = 'Update') {
     if (!token || !spreadsheetId || !logSheetName || !rowValues || !rowValues.length) return;
     try {
+      // 1. Phân giải chỉ số cột động từ Dòng Header (Dòng 1) tại Runtime (Tuân thủ Rule 6 & Rule 13)
+      const headerRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!1:1`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!headerRes.ok) {
+        console.warn(`[⚠️ WARNING] Không thể đọc header của tab ${logSheetName}`);
+        return;
+      }
+
+      const headerJson = await headerRes.json();
+      const headers = (headerJson.values && headerJson.values[0]) ? headerJson.values[0] : [];
+      if (!headers.length) {
+        console.warn(`[⚠️ WARNING] Tab ${logSheetName} chưa có dòng header`);
+        return;
+      }
+
+      // 2. Tra cứu vị trí cột "Log event" và "Log Time" từ mảng headers tại Runtime dựa trên window.HEADER_CONFIG
+      const logEvtHeader = (window.HEADER_CONFIG && window.HEADER_CONFIG.LOG_EVENT_HEADER) ? window.HEADER_CONFIG.LOG_EVENT_HEADER : "Log event";
+      const logTmHeader = (window.HEADER_CONFIG && window.HEADER_CONFIG.LOG_TIME_HEADER) ? window.HEADER_CONFIG.LOG_TIME_HEADER : "Log Time";
+      
+      const logEventIdx = headers.findIndex(h => String(h).trim().toLowerCase() === logEvtHeader.toLowerCase());
+      const logTimeIdx = headers.findIndex(h => String(h).trim().toLowerCase() === logTmHeader.toLowerCase());
+
+      if (logEventIdx === -1 || logTimeIdx === -1) {
+        console.warn(`[⚠️ WARNING] Tab ${logSheetName} thiếu cột Log event hoặc Log Time trong header`);
+        return;
+      }
+
+      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow)
       const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:E`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -67,13 +96,20 @@
         }
       }
       const nextLogRow = Math.max(trueLastRowIndex + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
-
       const nowTimeStr = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace('T', ' ');
-      const logRow = Array.from(rowValues);
-      logRow.push(logEvent);
-      logRow.push(nowTimeStr);
 
-      const lastColLetter = window.getColumnLetter ? window.getColumnLetter(logRow.length - 1) : 'CS';
+      // 4. Khởi tạo mảng logRow và đệm rỗng bằng đúng độ dài mảng headers của tab log đó tại Runtime
+      const logRow = Array.from(rowValues);
+      while (logRow.length < headers.length) {
+        logRow.push("");
+      }
+
+      // 5. Gán dữ liệu chính xác vào 2 chỉ số cột đã phân giải động
+      logRow[logEventIdx] = logEvent;
+      logRow[logTimeIdx] = nowTimeStr;
+
+      // 6. Tính chữ cái cột cuối động bằng getColumnLetter (100% No Hardcode)
+      const lastColLetter = window.getColumnLetter(logRow.length - 1);
       const logUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A${nextLogRow}:${lastColLetter}${nextLogRow}?valueInputOption=USER_ENTERED`;
 
       const writeRes = await fetch(logUrl, {
@@ -3837,8 +3873,9 @@
       const SOURCE_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.source_sheet_id) || '1to1i48iaoKlu8ZizUqe9axZ-Mj-zswpQwdCECTOdTzE';
       
       try {
-        // Step 1: Đọc Sheet Pool để lấy dòng gốc
-        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:CO`;
+        // Step 1: Đọc Sheet Pool để lấy dòng gốc (Phân giải cột cuối động theo POOL_LAST_HEADER Images_Admin_JSON)
+        const lastPoolCol = window.getPoolLastColumnLetter ? window.getPoolLastColumnLetter() : "CQ";
+        const poolUrl = `https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!A2:${lastPoolCol}`;
         const poolRes = await fetch(poolUrl, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -3849,9 +3886,11 @@
         
         const poolData = await poolRes.json();
         const rows = poolData.values || [];
+        const poolLastH = (window.HEADER_CONFIG && window.HEADER_CONFIG.POOL_LAST_HEADER) ? window.HEADER_CONFIG.POOL_LAST_HEADER : "Images_Admin_JSON";
+        const maxPoolColIdx = (window.LegoState && window.LegoState.POOL_HEADERS) ? window.LegoState.POOL_HEADERS.indexOf(poolLastH) : 94;
         rows.forEach((r, idx) => {
           if (r) r.raw_sheet_row_index = idx + 2;
-          while (r.length < 93) r.push("");
+          while (r.length <= (maxPoolColIdx !== -1 ? maxPoolColIdx : 94)) r.push("");
         });
         
         const matchedRow = rows.find(r => String(r[72] || r[71] || '').trim() === String(systemId).trim());

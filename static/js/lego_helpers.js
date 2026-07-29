@@ -2185,7 +2185,27 @@ window.HEADER_CONFIG = {
   SYS_ID_HEADER: "System ID",
   SYS_ID_ALT_HEADER: "System_ID",
   ID_HEADER: "id",
-  MA_HANG_HEADER: "Mã Hàng"
+  MA_HANG_HEADER: "Mã Hàng",
+  POOL_LAST_HEADER: "Images_Admin_JSON",
+  SOURCE_LAST_HEADER: "Images_Public_JSON",
+  LOG_EVENT_HEADER: "Log event",
+  LOG_TIME_HEADER: "Log Time"
+};
+
+window.getPoolLastColumnLetter = function() {
+  if (window.LegoState && window.LegoState.POOL_HEADERS && window.LegoState.POOL_HEADERS.length > 0) {
+    const idx = window.LegoState.POOL_HEADERS.indexOf(window.HEADER_CONFIG.POOL_LAST_HEADER);
+    if (idx !== -1) return window.getColumnLetter(idx);
+  }
+  return window.getPoolColumnLetter(window.HEADER_CONFIG.POOL_LAST_HEADER, 'CQ');
+};
+
+window.getSourceLastColumnLetter = function() {
+  if (window.LegoState && window.LegoState.SOURCE_HEADERS && window.LegoState.SOURCE_HEADERS.length > 0) {
+    const idx = window.LegoState.SOURCE_HEADERS.indexOf(window.HEADER_CONFIG.SOURCE_LAST_HEADER);
+    if (idx !== -1) return window.getColumnLetter(idx);
+  }
+  return window.getSourceColumnLetter(window.HEADER_CONFIG.SOURCE_LAST_HEADER, 'AW');
 };
 
 window.getSourceColumnIndex = function(headerName, fallbackIdx = -1) {
