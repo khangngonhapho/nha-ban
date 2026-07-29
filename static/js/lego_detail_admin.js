@@ -82,8 +82,8 @@
         return;
       }
 
-      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow) - Đọc riêng Cột A (!A:A) để triệt tiêu 100% dòng ma
-      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:A`, {
+      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow) - Đọc dải ô !A:E để tìm dòng cuối thực tế trong tab log
+      const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:E`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       let trueLastRowIndex = 0;
@@ -91,10 +91,12 @@
         const getJson = await getRes.json();
         const rows = getJson.values || [];
         const lastDataIdx = rows.findLastIndex(r => {
-          if (!r || !r.length || !r[0]) return false;
-          const val = String(r[0]).trim().toUpperCase();
-          if (val === '' || val === 'MÃ HÀNG' || val === 'HINH_MAT_TIEN' || val === 'FALSE' || val === 'TRUE') return false;
-          return true;
+          if (!r || !r.length) return false;
+          return r.some(cell => {
+            if (!cell) return false;
+            const val = String(cell).trim().toLowerCase();
+            return val !== '' && val !== 'hinh_mat_tien' && val !== 'mã hàng' && val !== 'cu_phap';
+          });
         });
         if (lastDataIdx !== -1) {
           trueLastRowIndex = lastDataIdx + 1;
