@@ -4094,8 +4094,9 @@
           }
         }
         
-        // US-157: Ghi audit log sang Source_Log
+        // US-157: Ghi audit log sang Source_Log và Pool_Log song song
         appendAuditLogFrontend(token, SOURCE_SHEET_ID, "Source_Log", publicRowData, existIdx !== -1 ? "Update" : "New");
+        appendAuditLogFrontend(token, POOL_SHEET_ID, "Pool_Log", matchedRow, "Publish");
         
         // Cập nhật lại các trường ảnh đã biên tập và trường Last Sync của dòng đó bên Sheet Pool
         try {
