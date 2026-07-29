@@ -1944,10 +1944,16 @@
   // === sortSlidesByDisplayOrder ===
     window.sortSlidesByDisplayOrder = function(slides, p) {
       if (!p || !Array.isArray(slides)) return;
+      const coverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const normCover = normalizeImgUrl(coverUrl);
+      const facadeUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+      const normFacade = normalizeImgUrl(facadeUrl);
+
       const getWeight = (c) => {
         if (!c || !c.url) return 9999;
-        if (c.type === 'facade') return 0;
-        if (c.type === 'cover') return 1;
+        const norm = normalizeImgUrl(c.url);
+        if (c.type === 'facade' || (normFacade && norm === normFacade)) return 0;
+        if (c.type === 'cover' || (normCover && norm === normCover)) return 1;
         if (c.type === 'sodo') return 4000 + (c.index || 0);
         if (c.visible === true) return 2;
         
