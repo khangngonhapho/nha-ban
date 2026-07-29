@@ -82,7 +82,7 @@
         return;
       }
 
-      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow)
+      // 3. Đọc chỉ số dòng tiếp theo (nextLogRow) - Bỏ qua dòng ma có ô FALSE/TRUE đơn lẻ
       const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(logSheetName)}!A:E`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -90,7 +90,15 @@
       if (getRes.ok) {
         const getJson = await getRes.json();
         const rows = getJson.values || [];
-        const lastDataIdx = rows.findLastIndex(r => r && r.some(cell => cell && String(cell).trim() !== ''));
+        const lastDataIdx = rows.findLastIndex(r => {
+          if (!r || !r.length) return false;
+          return r.some(cell => {
+            if (!cell) return false;
+            const str = String(cell).trim().toUpperCase();
+            if (str === '' || str === 'FALSE' || str === 'TRUE') return false;
+            return true;
+          });
+        });
         if (lastDataIdx !== -1) {
           trueLastRowIndex = lastDataIdx + 1;
         }
