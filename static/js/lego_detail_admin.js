@@ -3274,9 +3274,45 @@
   // === getPublicImagesFromForm ===
     window.getPublicImagesFromForm = function(p, customPoolRowData) {
       if (!p) return [];
-      const poolRowData = customPoolRowData || p.pool_row_data;
-      const customCoverUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+
       const publicCoverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const normPublicCover = normalizeImgUrl(publicCoverUrl);
+      const customFacadeUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
+
+      if (p.curated_config && Array.isArray(p.curated_config.images) && p.curated_config.images.length > 0) {
+        const finalImages = [];
+        const normSodos = p.curated_config.images
+          .filter(img => img && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo'))
+          .map(img => normalizeImgUrl(img.url));
+
+        // 1. Cover image first
+        const coverObj = p.curated_config.images.find(img => img && (img.role === 'Bìa' || img.role === 'cover' || (normPublicCover && normalizeImgUrl(img.url) === normPublicCover)));
+        if (coverObj && coverObj.url && !normSodos.includes(normalizeImgUrl(coverObj.url))) {
+          finalImages.push(coverObj.url);
+        }
+
+        // 2. All visible public images
+        p.curated_config.images.forEach(img => {
+          if (!img || !img.url) return;
+          const norm = normalizeImgUrl(img.url);
+          if (normSodos.includes(norm)) return;
+          if (img.role === 'deleted' || img.role === 'hidden' || img.role === 'Ẩn') return;
+
+          const isCover = normPublicCover ? (norm === normPublicCover) : (img.role === 'Bìa' || img.role === 'cover');
+          const isFacade = img.role === 'Mặt tiền' || img.role === 'facade';
+          const isPublic = isFacade ? isCover : (isCover ? true : img.visible === true);
+
+          if (isPublic && !finalImages.includes(img.url)) {
+            finalImages.push(img.url);
+          }
+        });
+
+        if (finalImages.length > 0) {
+          return Array.from(new Set(finalImages.filter(Boolean)));
+        }
+      }
+
+      const poolRowData = customPoolRowData || p.pool_row_data;
       const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
       const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
 
@@ -3316,29 +3352,12 @@
         return '';
       };
 
-      const targetMatTien = customCoverUrl || p.img_mat_tien || getImageUrl('facade', 0) || '';
+      const targetMatTien = customFacadeUrl || p.img_mat_tien || getImageUrl('facade', 0) || '';
       const normMatTien = normalizeImgUrl(targetMatTien);
-      const isFacadeUrl = (url) => {
-        if (!url) return false;
-        const norm = normalizeImgUrl(url);
-        return norm !== '' && norm === normMatTien;
-      };
 
       if (poolRowData) {
         const noithatIndices = publicIntStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
         const hemIndices = publicAlleyStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
-
-        const sodo1Url = (document.getElementById('editSodo1Url')?.value || getImageUrl('sodo', 1) || p.raw_sodo1 || '').trim();
-        const sodo2Url = (document.getElementById('editSodo2Url')?.value || getImageUrl('sodo', 2) || p.raw_sodo2 || '').trim();
-        const sodo3Url = (document.getElementById('editSodo3Url')?.value || getImageUrl('sodo', 3) || p.raw_sodo3 || '').trim();
-        const sodo4Url = (document.getElementById('editSodo4Url')?.value || getImageUrl('sodo', 4) || p.raw_sodo4 || '').trim();
-        const sodo5Url = (document.getElementById('editSodo5Url')?.value || getImageUrl('sodo', 5) || p.raw_sodo5 || '').trim();
-        const normSodos = [sodo1Url, sodo2Url, sodo3Url, sodo4Url, sodo5Url].map(url => normalizeImgUrl(url));
-        const isSodoUrl = (url) => {
-          if (!url) return false;
-          const norm = normalizeImgUrl(url);
-          return norm !== '' && normSodos.includes(norm);
-        };
 
         const finalImages = [];
         let publicCover = publicCoverUrl;
