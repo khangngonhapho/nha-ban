@@ -393,32 +393,6 @@
             <div class="admin-scroll-carousel"></div>
             <div class="admin-carousel-dots"></div>
           </div>
-          ${(() => {
-            const rawT = p.t || p.raw_tieu_de_public || p.cu_phap || 'Bất động sản';
-            const safeT = String(rawT).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            return `
-            <div class="client-feedback-box">
-              <h4>🏡 Căn nhà này thế nào với anh/chị?</h4>
-              <div class="client-feedback-btns">
-                <button onclick="scheduleViewing('${p.id || p.system_id}', '${safeT}')" class="client-feedback-btn primary">
-                  📅 Hẹn đi xem nhà
-                </button>
-                <button onclick="showRequirementForm('${p.id || p.system_id}')" class="client-feedback-btn secondary">
-                  ✏️ Cần tìm căn khác, gửi lại nhu cầu
-                </button>
-              </div>
-              
-              <!-- Form ghi nhu cầu khác -->
-              <div id="clientReqForm_${p.id || p.system_id}" class="client-req-form" style="display: none;">
-                <p>Hãy chia sẻ mong muốn tìm nhà của anh/chị (Khu vực, tài chính, số phòng ngủ, hướng nhà...):</p>
-                <textarea id="clientReqText_${p.id || p.system_id}" class="client-req-textarea" placeholder="Ví dụ: Cần tìm nhà Quận 3 hoặc Phú Nhuận, hẻm xe hơi, giá tầm 10 tỷ..."></textarea>
-                <button onclick="submitClientRequirement('${p.id || p.system_id}', '${safeT}')" class="client-req-submit-btn">
-                  🚀 Gửi nhu cầu cho Khang Ngô
-                </button>
-              </div>
-            </div>
-            `;
-          })()}
         </div>
 
         <div class="client-detail-col-right" style="display:flex; flex-direction:column; gap:12px; grid-column: 2;">
@@ -466,6 +440,32 @@
             </div>
           </div>
           <div class="desc" style="white-space:pre-wrap; line-height:1.6; font-size:12px; color:#2c3e50; background:#f8f9fa; padding:12px; border-radius:8px; border:1px solid #dfe4ea;">${p.m || p.raw_mo_ta_public || 'Chưa có mô tả public.'}</div>
+          ${(() => {
+            const rawT = p.t || p.raw_tieu_de_public || p.cu_phap || 'Bất động sản';
+            const safeT = String(rawT).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            return `
+            <div class="client-feedback-box">
+              <h4>🏡 Căn nhà này thế nào với anh/chị?</h4>
+              <div class="client-feedback-btns">
+                <button onclick="scheduleViewing('${p.id || p.system_id}', '${safeT}')" class="client-feedback-btn primary">
+                  📅 Hẹn đi xem nhà
+                </button>
+                <button onclick="showRequirementForm('${p.id || p.system_id}')" class="client-feedback-btn secondary">
+                  ✏️ Cần tìm căn khác, gửi lại nhu cầu
+                </button>
+              </div>
+              
+              <!-- Form ghi nhu cầu khác -->
+              <div id="clientReqForm_${p.id || p.system_id}" class="client-req-form" style="display: none;">
+                <p>Hãy chia sẻ mong muốn tìm nhà của anh/chị (Khu vực, tài chính, số phòng ngủ, hướng nhà...):</p>
+                <textarea id="clientReqText_${p.id || p.system_id}" class="client-req-textarea" placeholder="Ví dụ: Cần tìm nhà Quận 3 hoặc Phú Nhuận, hẻm xe hơi, giá tầm 10 tỷ..."></textarea>
+                <button onclick="submitClientRequirement('${p.id || p.system_id}', '${safeT}')" class="client-req-submit-btn">
+                  🚀 Gửi nhu cầu cho Khang Ngô
+                </button>
+              </div>
+            </div>
+            `;
+          })()}
         </div>
       `;
       setupScrollCarousel('carouselClientDetail', sortedImgs, false);
