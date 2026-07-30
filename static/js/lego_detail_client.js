@@ -406,7 +406,6 @@
         </div>
 
         <div class="client-detail-col-right" style="display:flex; flex-direction:column; gap:12px; grid-column: 2;">
-          <div style="font-size:13.5px; font-weight:700; color:#1c1c1e; line-height:1.4;">${p.t || p.raw_tieu_de_public || 'Chưa có tiêu đề public.'}</div>
           <div class="admin-raw-grid">
             <div class="admin-raw-cell">
               <span class="label">Giá bán:</span>

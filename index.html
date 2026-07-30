@@ -571,10 +571,20 @@
         trackAction("Xem chi tiết", `#${p.id} - ${p.t}`);
       }
  
+      const isForcePreview = new URLSearchParams(window.location.search).has('preview');
+      const isClientView = !window.isAdmin || isForcePreview;
+
       const mID = document.getElementById('mID');
-      const cleanTitle = typeof cutTitleToDistrict === 'function' ? cutTitleToDistrict(p.t) : p.t;
-      const cleanAddressTitle = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}`.trim() || cleanTitle;
-      document.getElementById('mT').textContent = cleanAddressTitle;
+      if (isClientView) {
+        // View Customer: Show 100% full public title on header modal #mT
+        const publicTitle = p.t || p.raw_tieu_de_public || '';
+        document.getElementById('mT').textContent = publicTitle;
+      } else {
+        // View Admin: Show exact house address / internal title
+        const cleanTitle = typeof cutTitleToDistrict === 'function' ? cutTitleToDistrict(p.t) : p.t;
+        const cleanAddressTitle = `${p.raw_so_nha || ''} ${p.raw_ten_duong || ''}`.trim() || cleanTitle;
+        document.getElementById('mT').textContent = cleanAddressTitle;
+      }
  
       const floatActions = document.getElementById('adminDetailFloatActions');
       if (window.isAdmin && (p.original_row_data || p.isFromPoolOnly)) {
