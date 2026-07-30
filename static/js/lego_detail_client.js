@@ -375,7 +375,17 @@
         return norm !== '' && norm === normMatTien;
       };
 
-      const baseImgs = (p.images_public && p.images_public.length > 0) ? p.images_public : (p.imgs || []);
+      let baseImgs = [];
+      if (p.curated_config && Array.isArray(p.curated_config.images) && p.curated_config.images.length > 0) {
+        const sortedCurated = [...p.curated_config.images].sort((a, b) => (a.sequence_index || 0) - (b.sequence_index || 0));
+        baseImgs = sortedCurated
+          .filter(img => img && (img.is_hidden === 0 || img.visible === true) && img.role !== 'deleted' && img.role !== 'diagram' && img.role !== 'Sơ đồ')
+          .map(img => img.r2_url || img.image_url || img.url)
+          .filter(Boolean);
+      }
+      if (!baseImgs || baseImgs.length === 0) {
+        baseImgs = (p.images_public && p.images_public.length > 0) ? p.images_public : (p.imgs || []);
+      }
       const cleanImgs = baseImgs.filter(url => {
         return (!window.isListingSodoUrl || !window.isListingSodoUrl(url, p)) && (!window.isOnlyFacadeUrl || !window.isOnlyFacadeUrl(url, p));
       });

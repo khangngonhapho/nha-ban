@@ -1303,7 +1303,25 @@
       };
 
       const finalImages = [];
-      if (poolRowData) {
+      if (window.imageEditorSlides && window.imageEditorSlides.length > 0) {
+        window.imageEditorSlides.forEach(slide => {
+          if (slide && slide.url && slide.visible !== false && slide.type !== 'deleted' && slide.type !== 'sodo') {
+            if (!finalImages.includes(slide.url)) {
+              finalImages.push(slide.url);
+            }
+          }
+        });
+      } else if (p.curated_config && Array.isArray(p.curated_config.images) && p.curated_config.images.length > 0) {
+        const sortedAdminImgs = [...p.curated_config.images].sort((a, b) => (a.sequence_index || 0) - (b.sequence_index || 0));
+        sortedAdminImgs.forEach(img => {
+          if (img && (img.is_hidden === 0 || img.visible === true) && img.role !== 'deleted' && img.role !== 'diagram' && img.role !== 'Sơ đồ') {
+            const url = img.r2_url || img.image_url || img.url;
+            if (url && !finalImages.includes(url)) {
+              finalImages.push(url);
+            }
+          }
+        });
+      } else if (poolRowData) {
         const noithatIndices = currentInteriorIndices.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 25);
         const hemIndices = currentAlleyIndices.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
 
@@ -1365,12 +1383,7 @@
       const normFinalImages = finalImages.filter(Boolean).map(url => normalizeImgUrl(url));
 
       const getCardSortWeight = (c) => {
-        const cleanUrl = c.url.split('?')[0];
-        const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
-        if (match) {
-          return parseInt(match[1], 10);
-        }
-        return 9999;
+        return c.sequence_index || (c.index !== undefined ? c.index : 9999);
       };
 
       if (window.imageEditorSortMode === 'display') {
@@ -2023,12 +2036,9 @@
         if (c.type === 'facade' || (normFacade && norm === normFacade)) return 0;
         if (c.type === 'cover' || (normCover && norm === normCover)) return 1;
         if (c.type === 'sodo') return 4000 + (c.index || 0);
-        if (c.visible === true) return 2;
         
-        const cleanUrl = c.url.split('?')[0];
-        const match = cleanUrl.match(/_(\d+)\.[a-zA-Z0-9]+$/);
-        const physicalWeight = match ? parseInt(match[1], 10) : 9999;
-        return 3000 + physicalWeight;
+        const seqIndex = c.sequence_index || (c.index !== undefined ? c.index : 999);
+        return 100 + seqIndex;
       };
       
       slides.sort((a, b) => getWeight(a) - getWeight(b));
