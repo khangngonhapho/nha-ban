@@ -1001,26 +1001,66 @@
           if (listing.curated_config && Array.isArray(listing.curated_config.images) && listing.curated_config.images.length > 0) {
             return listing.curated_config.images;
           }
+          const rowData = listing.pool_row_data || listing.original_row_data;
+          const imgAdminColIdx = window.getPoolColumnIndex ? window.getPoolColumnIndex("Images_Admin_JSON") : -1;
+          const imagesAdminJsonStr = (imgAdminColIdx !== -1 && rowData) ? rowData[imgAdminColIdx] : (listing.images_admin_json || listing.Images_Admin_JSON || '');
+
+          if (imagesAdminJsonStr && imagesAdminJsonStr.trim().startsWith('[')) {
+            try {
+              const parsedAdmin = JSON.parse(imagesAdminJsonStr);
+              const roleMapEnToVi = {
+                "diagram": "Sơ đồ",
+                "facade": "Mặt tiền",
+                "cover": "Bìa",
+                "alley": "Hẻm",
+                "interior": "Nội thất",
+                "hidden": "Ẩn",
+                "deleted": "deleted"
+              };
+              const adminImgs = parsedAdmin
+                .filter(img => img && img.role !== 'deleted')
+                .map(img => {
+                  const roleVi = roleMapEnToVi[img.role] || img.role || 'Nội thất';
+                  const isVisible = img.is_hidden !== 1 && img.visible !== false && img.role !== 'deleted' && img.role !== 'hidden' && img.role !== 'Ẩn';
+                  const imgUrl = img.r2_url || img.image_url || img.url || '';
+                  const filename = imgUrl.split('/').pop();
+                  const isSelfPattern = /_(interior|sodo)\d*_\d{10,13}/i.test(filename);
+                  return {
+                    url: imgUrl,
+                    role: roleVi,
+                    visible: isVisible,
+                    origin: isSelfPattern ? 'self' : (img.origin || 'crawl')
+                  };
+                });
+              if (adminImgs.length > 0) {
+                listing.curated_config = { images: adminImgs };
+                return listing.curated_config.images;
+              }
+            } catch (e) {
+              console.warn("Failed to parse Images_Admin_JSON in initCuratedConfigFromRaw:", e);
+            }
+          }
+
           const rawImgs = [];
-          const facadeUrl = listing.img_mat_tien || (listing.pool_row_data ? listing.pool_row_data[window.getPoolColumnIndex ? window.getPoolColumnIndex("Hình Mặt Tiền", 29) : 29] : '');
+          const facadeUrl = listing.img_mat_tien || (rowData ? rowData[window.getPoolColumnIndex ? window.getPoolColumnIndex("Hình Mặt Tiền", 29) : 29] : '');
           if (facadeUrl) {
             rawImgs.push({ url: facadeUrl, role: 'Mặt tiền', visible: false, origin: 'crawl' });
           }
-          if (listing.pool_row_data) {
+          if (rowData) {
             for (let i = 1; i <= 25; i++) {
-              const u = listing.pool_row_data[window.getPoolInteriorColIdx ? window.getPoolInteriorColIdx(i) : (29 + i)];
+              const u = rowData[window.getPoolInteriorColIdx ? window.getPoolInteriorColIdx(i) : (29 + i)];
               if (u && !rawImgs.some(img => normalizeImgUrl(img.url) === normalizeImgUrl(u))) {
                 rawImgs.push({ url: u, role: 'Nội thất', visible: false, origin: 'crawl' });
               }
             }
             for (let i = 1; i <= 10; i++) {
-              const u = listing.pool_row_data[window.getPoolAlleyColIdx ? window.getPoolAlleyColIdx(i) : (54 + i)];
+              const u = rowData[window.getPoolAlleyColIdx ? window.getPoolAlleyColIdx(i) : (54 + i)];
               if (u && !rawImgs.some(img => normalizeImgUrl(img.url) === normalizeImgUrl(u))) {
                 rawImgs.push({ url: u, role: 'Hẻm', visible: false, origin: 'crawl' });
               }
             }
             for (let i = 1; i <= 5; i++) {
-              const u = listing.pool_row_data[window.getPoolSodoColIdx ? window.getPoolSodoColIdx(i) : (24 + i)];
+              const u = rowData[window.getPoolSodoColIdx ? window.getPoolSodoColIdx(i) : (24 + i)];
               if (u && !rawImgs.some(img => normalizeImgUrl(img.url) === normalizeImgUrl(u))) {
                 rawImgs.push({ url: u, role: 'Sơ đồ', visible: false, origin: 'crawl' });
               }
