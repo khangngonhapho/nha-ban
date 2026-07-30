@@ -3013,6 +3013,11 @@
         const targetRowNumber = existIdx !== -1 ? (existIdx + 1) : Math.max(sourceRows.length + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
         
         // Step 3: Map dữ liệu 78 cột từ Pool -> 41 cột sang Source
+        if (window.imageEditorSlides && window.imageEditorSlides.length > 0) {
+          const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
+          if (!p.curated_config) p.curated_config = {};
+          p.curated_config.images = curatedImages;
+        }
         const finalImages = [];
         const anhDuocChon = (matchedRow[61] || "").toString().replace(/\s/g, '');
         const anhHemDuocChon = (matchedRow[62] || "").toString().replace(/\s/g, '');
@@ -3359,18 +3364,20 @@
 
       if (p.curated_config && Array.isArray(p.curated_config.images) && p.curated_config.images.length > 0) {
         const finalImages = [];
-        const normSodos = p.curated_config.images
+        const sortedCurated = [...p.curated_config.images].sort((a, b) => (a.sequence_index || 0) - (b.sequence_index || 0));
+
+        const normSodos = sortedCurated
           .filter(img => img && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo'))
           .map(img => normalizeImgUrl(img.url));
 
         // 1. Cover image first
-        const coverObj = p.curated_config.images.find(img => img && (img.role === 'Bìa' || img.role === 'cover' || (normPublicCover && normalizeImgUrl(img.url) === normPublicCover)));
+        const coverObj = sortedCurated.find(img => img && (img.role === 'Bìa' || img.role === 'cover' || (normPublicCover && normalizeImgUrl(img.url) === normPublicCover)));
         if (coverObj && coverObj.url && !normSodos.includes(normalizeImgUrl(coverObj.url))) {
           finalImages.push(coverObj.url);
         }
 
-        // 2. All visible public images
-        p.curated_config.images.forEach(img => {
+        // 2. All visible public images in exact sequence_index order
+        sortedCurated.forEach(img => {
           if (!img || !img.url) return;
           const norm = normalizeImgUrl(img.url);
           if (normSodos.includes(norm)) return;
@@ -3378,7 +3385,7 @@
 
           const isCover = normPublicCover ? (norm === normPublicCover) : (img.role === 'Bìa' || img.role === 'cover');
           const isFacade = img.role === 'Mặt tiền' || img.role === 'facade';
-          const isPublic = isFacade ? isCover : (isCover ? true : img.visible === true);
+          const isPublic = isFacade ? isCover : (isCover ? true : (img.is_hidden === 0 || img.visible === true));
 
           if (isPublic && !finalImages.includes(img.url)) {
             finalImages.push(img.url);
@@ -3693,6 +3700,11 @@
           return norm !== '' && norm === normMatTien;
         };
 
+        // Update curated_config.images FIRST from window.imageEditorSlides so getPublicImagesFromForm gets the latest sequence_index
+        const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
+        if (!p.curated_config) p.curated_config = {};
+        p.curated_config.images = curatedImages;
+
         const fullPublicImages = window.getPublicImagesFromForm(p);
         cleanPublicImages = Array.from(new Set(fullPublicImages.filter(Boolean)));
 
@@ -3740,8 +3752,6 @@
         p.original_row_data[getSourceColumnIndex("JSON_UI", 46)] = JSON.stringify(p.json_ui_parsed);
         p.original_row_data[getSourceColumnIndex("DT Trên sổ", 47)] = editDtTrenSo; // DT Trên sổ (Cột AV)
         p.original_row_data[getSourceColumnIndex("Images_Public_JSON", 48)] = JSON.stringify(cleanPublicImages.filter(Boolean)); // Images_Public_JSON (Cột AW)
-
-        const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
 
         p.note = note;
         p.quan = quan;
