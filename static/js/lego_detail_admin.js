@@ -1856,13 +1856,22 @@
       const p = window.activeCurationListing;
       if (p) window.initCuratedConfigFromRaw(p);
 
-      // Toggle slide visibility
+      // Toggle slide visibility & assign sequence_index based on click order
       slide.visible = !(slide.visible === true);
+
+      if (slide.visible === true) {
+        const activePublicSlides = slides.filter(s => s && s.visible === true && s.sequence_index !== undefined && s.sequence_index !== null);
+        const maxSeq = activePublicSlides.length > 0 ? Math.max(...activePublicSlides.map(s => s.sequence_index || 0)) : 0;
+        slide.sequence_index = maxSeq + 1;
+      } else {
+        slide.sequence_index = undefined;
+      }
 
       if (p && p.curated_config && Array.isArray(p.curated_config.images)) {
         const found = p.curated_config.images.find(img => normalizeImgUrl(img.url) === normUrl);
         if (found) {
           found.visible = slide.visible;
+          found.sequence_index = slide.sequence_index;
         }
       }
 
@@ -1964,18 +1973,23 @@
       
       const slide = slides[activeIdx];
       // Kiểm tra xem ảnh hiện tại có hiển thị public không
+      const isVisible = slide.visible === true;
       const isPublicCover = normalizeImgUrl(document.getElementById('editPublicCoverUrl')?.value || '') === normalizeImgUrl(slide.url);
       const isPublicInt = (slide.type === 'interior' || slide.type === 'deleted') && (document.getElementById('editPublicInteriorIndices')?.value || '').split(',').includes(String(slide.index));
       const isPublicAlley = slide.type === 'alley' && (document.getElementById('editPublicAlleyIndices')?.value || '').split(',').includes(String(slide.index));
       
-      if (!isPublicCover && !isPublicInt && !isPublicAlley) {
+      if (!isVisible && !isPublicCover && !isPublicInt && !isPublicAlley) {
         showToast("Hình này chưa được chọn hiển thị public để sắp xếp!", "warning");
         return;
       }
       
       const newIdx = activeIdx + direction;
       if (newIdx >= 0 && newIdx < slides.length) {
-        // Swap slides
+        // Swap slides & their sequence_indices
+        const tempSeq = slides[activeIdx].sequence_index;
+        slides[activeIdx].sequence_index = slides[newIdx].sequence_index;
+        slides[newIdx].sequence_index = tempSeq;
+
         const temp = slides[activeIdx];
         slides[activeIdx] = slides[newIdx];
         slides[newIdx] = temp;
@@ -2105,15 +2119,21 @@
       if (normCover) {
         normPublicImages.push(normCover);
       }
-      slides.forEach(s => {
-        if (!s || !s.url) return;
+
+      const visibleSlides = slides.filter(s => {
+        if (!s || !s.url) return false;
         const norm = normalizeImgUrl(s.url);
-        if (!norm || normSodos.includes(norm)) return;
-        if (norm === normCover) return;
-        if (s.visible === true) {
-          if (!normPublicImages.includes(norm)) {
-            normPublicImages.push(norm);
-          }
+        if (!norm || normSodos.includes(norm)) return false;
+        if (norm === normCover) return false;
+        return s.visible === true;
+      });
+
+      visibleSlides.sort((a, b) => (a.sequence_index || 9999) - (b.sequence_index || 9999));
+
+      visibleSlides.forEach(s => {
+        const norm = normalizeImgUrl(s.url);
+        if (norm && !normPublicImages.includes(norm)) {
+          normPublicImages.push(norm);
         }
       });
 
