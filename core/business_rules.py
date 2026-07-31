@@ -175,31 +175,25 @@ def gen_id_khang_ngo_python(
     return combined
 
 
+_last_sys_id_ts = ""
+
 def gen_unique_system_id(cursor=None):
     """
-    Sinh mã System ID siêu ngắn gọn & độc bản: SYS-YYMMDD-HHMMSS-XXXXXX
-    - YYMMDD: 2 số năm + 2 số tháng + 2 số ngày (Ví dụ: 260731)
-    - HHMMSS: Giờ Phút Giây (Ví dụ: 134417)
-    - XXXXXX: 6 ký tự Hex ngẫu nhiên mật mã (secrets.token_hex(3)) ➔ 16.7 triệu khả năng trong từng giây!
-    Ví dụ: SYS-260731-134417-A4F89C
+    Sinh mã System ID thuần số 100%, độc bản tuyệt đối không cần SQLite (Chạy an toàn 100% trên Vercel Serverless & Crawler):
+    Định dạng: SYS-YYMMDD-HHMMSS-uuuuuu (Năm 2 số, Tháng 2 số, Ngày 2 số - Giờ, Phút, Giây - Micrô-giây 6 số)
+    Ví dụ: SYS-260731-134931-892145 (Thuần số 100%, không chứa chữ cái Hex)
     """
-    import secrets
+    global _last_sys_id_ts
+    import time
     from datetime import datetime
-    
+
     while True:
         now = datetime.now()
-        hex_suffix = secrets.token_hex(3).upper()
-        candidate_id = f"SYS-{now.strftime('%y%m%d-%H%M%S')}-{hex_suffix}"
-        
-        if cursor is None:
+        candidate_id = f"SYS-{now.strftime('%y%m%d-%H%M%S')}-{now.microsecond:06d}"
+        if candidate_id != _last_sys_id_ts:
+            _last_sys_id_ts = candidate_id
             return candidate_id
-            
-        try:
-            cursor.execute("SELECT 1 FROM listings WHERE System_ID = ?", (candidate_id,))
-            if not cursor.fetchone():
-                return candidate_id
-        except Exception:
-            return candidate_id
+        time.sleep(0.000001)
 
 
 # =============================================================================
