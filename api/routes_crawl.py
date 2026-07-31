@@ -13,7 +13,7 @@ import queue
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 import fetcher
-from core.business_rules import gen_unique_system_id
+from core.business_rules import gen_unique_system_id, ensure_system_id
 
 routes_crawl = Blueprint('routes_crawl', __name__)
 
@@ -457,7 +457,7 @@ def recrawl_single_listing(tk_id):
                 "Ten_Dau_Chu": ten_dau_chu,
                 "Điểm Facebook": link_fb,
                 "Link Gốc": detail_url,
-                "System ID": d_row.get("System_ID") or gen_unique_system_id(),
+                "System ID": ensure_system_id(d_row.get("System_ID")),
                 "Mã Khang Ngô (ID)": d_row.get("Ma_Khang_Ngo_ID") or gen_id_khang_ngo_python(ngo_so_nha, duong_name, quan_name),
                 "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                 
@@ -704,7 +704,7 @@ def recrawl_single_listing(tk_id):
             "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
             "Điểm Facebook": link_fb,
             "Link Gốc": detail_url,
-            "System ID": d_row.get("System_ID") or gen_unique_system_id(),
+            "System ID": ensure_system_id(d_row.get("System_ID")),
             "Mã Khang Ngô (ID)": d_row.get("Ma_Khang_Ngo_ID") or gen_id_khang_ngo_python(so_nha, duong_name, quan_name),
             "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
 

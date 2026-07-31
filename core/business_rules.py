@@ -180,8 +180,8 @@ _last_sys_id_ts = ""
 def gen_unique_system_id(cursor=None):
     """
     Sinh mã System ID thuần số 100%, độc bản tuyệt đối không cần SQLite (Chạy an toàn 100% trên Vercel Serverless & Crawler):
-    Định dạng: SYS-YYMMDD-HHMMSS-uuuuuu (Năm 2 số, Tháng 2 số, Ngày 2 số - Giờ, Phút, Giây - Micrô-giây 6 số)
-    Ví dụ: SYS-260731-134931-892145 (Thuần số 100%, không chứa chữ cái Hex)
+    Định dạng: SYS-YYMMDD-HHMMSS-fff (Năm 2 số, Tháng 2 số, Ngày 2 số - Giờ, Phút, Giây - Miligiây 3 số)
+    Ví dụ: SYS-260731-135015-892 (Thuần số 100%, đúng 3 chữ số miligiây)
     """
     global _last_sys_id_ts
     import time
@@ -189,11 +189,24 @@ def gen_unique_system_id(cursor=None):
 
     while True:
         now = datetime.now()
-        candidate_id = f"SYS-{now.strftime('%y%m%d-%H%M%S')}-{now.microsecond:06d}"
+        ms = now.microsecond // 1000
+        candidate_id = f"SYS-{now.strftime('%y%m%d-%H%M%S')}-{ms:03d}"
         if candidate_id != _last_sys_id_ts:
             _last_sys_id_ts = candidate_id
             return candidate_id
-        time.sleep(0.000001)
+        time.sleep(0.001)
+
+
+def ensure_system_id(val=None):
+    """
+    Hàm dùng chung 100% toàn hệ thống theo Rule 11 (Non-fragmentation Rule).
+    Nếu val đã có và hợp lệ (bắt đầu bằng 'SYS-') thì giữ nguyên, ngược lại sinh mã mới qua gen_unique_system_id().
+    """
+    if val and isinstance(val, str):
+        v = val.strip()
+        if v and v.upper().startswith("SYS-"):
+            return v
+    return gen_unique_system_id()
 
 
 # =============================================================================

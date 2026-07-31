@@ -21,7 +21,7 @@ import argparse
 from urllib.parse import urlparse, parse_qs, urlunparse, urlencode
 import requests
 import hashlib
-from core.business_rules import gen_unique_system_id
+from core.business_rules import gen_unique_system_id, ensure_system_id
 
 def play_long_auth_alarm():
     """Phát âm thanh cảnh báo lỗi xác thực dài và lớn (khoảng 8-10 giây) để cảnh báo cho người dùng."""
@@ -720,7 +720,7 @@ def scrape_district(base_list_url, session_cookie, limit=None, filter_district=N
                         "Tên Đầu Chủ (Hợp đồng)": ten_dau_chu,
                         "Điểm Facebook": link_fb,
                         "Link Gốc": detail_url,
-                        "System ID": gen_unique_system_id(),
+                        "System ID": ensure_system_id(),
                         "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                         
                         # English compatibility mapping
@@ -1223,7 +1223,7 @@ def scrape_district_proptech(base_list_url, session_cookie, limit=None, filter_d
                         "Ten_Dau_Chu": ten_dau_chu,
                         "Điểm Facebook": link_fb,
                         "Link Gốc": f"https://proptech.thienkhoi.com/warehouse/sources/{tk_id_crawling}",
-                        "System ID": gen_unique_system_id(),
+                        "System ID": ensure_system_id(),
                         "Mã Khang Ngô (ID)": gen_id_khang_ngo_python(ngo_so_nha, duong_name, quan_name),
                         "Last Crawl": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                         
