@@ -175,6 +175,33 @@ def gen_id_khang_ngo_python(
     return combined
 
 
+def gen_unique_system_id(cursor=None):
+    """
+    Sinh mã System ID siêu ngắn gọn & độc bản: SYS-YYMMDD-HHMMSS-XXXXXX
+    - YYMMDD: 2 số năm + 2 số tháng + 2 số ngày (Ví dụ: 260731)
+    - HHMMSS: Giờ Phút Giây (Ví dụ: 134417)
+    - XXXXXX: 6 ký tự Hex ngẫu nhiên mật mã (secrets.token_hex(3)) ➔ 16.7 triệu khả năng trong từng giây!
+    Ví dụ: SYS-260731-134417-A4F89C
+    """
+    import secrets
+    from datetime import datetime
+    
+    while True:
+        now = datetime.now()
+        hex_suffix = secrets.token_hex(3).upper()
+        candidate_id = f"SYS-{now.strftime('%y%m%d-%H%M%S')}-{hex_suffix}"
+        
+        if cursor is None:
+            return candidate_id
+            
+        try:
+            cursor.execute("SELECT 1 FROM listings WHERE System_ID = ?", (candidate_id,))
+            if not cursor.fetchone():
+                return candidate_id
+        except Exception:
+            return candidate_id
+
+
 # =============================================================================
 # 3. ADDRESS NORMALIZATION
 # =============================================================================

@@ -23,6 +23,8 @@ def robust_sqlite_connect(database, timeout=30.0, *args, **kwargs):
     """
     from core.db import robust_sqlite_connect as _robust_connect
     return _robust_connect(database, timeout, *args, **kwargs)
+
+from core.business_rules import gen_unique_system_id
 sqlite3.connect = robust_sqlite_connect
 
 import time
@@ -844,7 +846,7 @@ def save_raw_to_sqlite(tk_id, metadata, images_tk_list, db_file=None):
         # Tự động sinh System ID và Mã Hàng nếu chưa có trong metadata
         if is_pool2:
             if "System ID" not in metadata and "system_id" not in metadata and "System_ID" not in metadata:
-                metadata["System ID"] = f"SYS-{datetime.now().strftime('%Y%m%d').upper()}-{random.randint(100, 999)}"
+                metadata["System ID"] = gen_unique_system_id()
             if "Mã Hàng" not in metadata and "ma_hang" not in metadata and "Ma_Hang" not in metadata:
                 parts = tk_id.split('-')
                 suffix = parts[-1].upper() if parts else ""
@@ -1297,7 +1299,7 @@ def publish_listing_pool2(tk_id, get_google_credentials, load_config, add_log_me
             d_v2 = dict(raw_row)
             system_id = d_v2.get("System_ID")
             if not system_id:
-                system_id = f"SYS-{datetime.now().strftime('%Y%m%d').upper()}-{random.randint(100, 999)}"
+                system_id = gen_unique_system_id()
                 cursor.execute("UPDATE listings_v2 SET System_ID = ? WHERE tk_id = ?", (system_id, tk_id))
                 conn.commit()
                 d_v2["System_ID"] = system_id
@@ -2040,7 +2042,7 @@ def publish_listing(tk_id, get_google_credentials, load_config, add_log_message,
                 elif header == "Tên đầu chủ (BX)":
                     val = d.get("Ten_Dau_Chu_Hop_dong", "")
                 elif header == "System ID" and not val:
-                    val = f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}"
+                    val = gen_unique_system_id()
                     d["System_ID"] = val
                     try:
                         conn_db = sqlite3.connect(db_file, timeout=30.0)
@@ -2535,7 +2537,7 @@ def sync_p1_to_p2(src_db, tgt_db, input_so_nha, input_duong, add_log_message):
         p1_dict = dict(p1_row)
         old_tk_id = p1_dict.get('tk_id', '')
         new_tk_id = f"LEGACY-{old_tk_id}"
-        system_id = p1_dict.get('System_ID') or f"SYS-{datetime.now().strftime('%Y%M%d').upper()}-{random.randint(100, 999)}"
+        system_id = p1_dict.get('System_ID') or gen_unique_system_id()
         ma_khang_ngo = p1_dict.get('Ma_Khang_Ngo_ID') or target_ma_kn
         
         add_log_message(f"[ℹ] Tìm thấy căn khớp: {old_tk_id} (System ID: {system_id}). Thực hiện di trú sang mã mới: {new_tk_id}")
