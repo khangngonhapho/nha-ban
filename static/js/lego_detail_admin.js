@@ -3374,6 +3374,13 @@
         }, 4000);
       }
     };
+  // === getImgObjUrl ===
+    window.getImgObjUrl = function(img) {
+      if (!img) return '';
+      if (typeof img === 'string') return img.trim();
+      return (img.r2_url || img.image_url || img.url || '').trim();
+    };
+
   // === getPublicImagesFromForm ===
     window.getPublicImagesFromForm = function(p, customPoolRowData) {
       if (!p) return [];
@@ -3388,18 +3395,27 @@
 
         const normSodos = sortedCurated
           .filter(img => img && (img.role === 'Sơ đồ' || img.role === 'diagram' || img.role === 'sodo'))
-          .map(img => normalizeImgUrl(img.url));
+          .map(img => normalizeImgUrl(window.getImgObjUrl(img)));
 
         // 1. Cover image first
-        const coverObj = sortedCurated.find(img => img && (img.role === 'Bìa' || img.role === 'cover' || (normPublicCover && normalizeImgUrl(img.url) === normPublicCover)));
-        if (coverObj && coverObj.url && !normSodos.includes(normalizeImgUrl(coverObj.url))) {
-          finalImages.push(coverObj.url);
+        const coverObj = sortedCurated.find(img => {
+          if (!img) return false;
+          const u = window.getImgObjUrl(img);
+          return img.role === 'Bìa' || img.role === 'cover' || (normPublicCover && normalizeImgUrl(u) === normPublicCover);
+        });
+        if (coverObj) {
+          const cUrl = window.getImgObjUrl(coverObj);
+          if (cUrl && !normSodos.includes(normalizeImgUrl(cUrl))) {
+            finalImages.push(cUrl);
+          }
         }
 
         // 2. All visible public images in exact sequence_index order
         sortedCurated.forEach(img => {
-          if (!img || !img.url) return;
-          const norm = normalizeImgUrl(img.url);
+          if (!img) return;
+          const imgUrl = window.getImgObjUrl(img);
+          if (!imgUrl) return;
+          const norm = normalizeImgUrl(imgUrl);
           if (normSodos.includes(norm)) return;
           if (img.role === 'deleted' || img.role === 'hidden' || img.role === 'Ẩn') return;
 
@@ -3407,8 +3423,8 @@
           const isFacade = img.role === 'Mặt tiền' || img.role === 'facade';
           const isPublic = isFacade ? isCover : (isCover ? true : (img.is_hidden === 0 || img.visible === true));
 
-          if (isPublic && !finalImages.includes(img.url)) {
-            finalImages.push(img.url);
+          if (isPublic && !finalImages.includes(imgUrl)) {
+            finalImages.push(imgUrl);
           }
         });
 
@@ -4144,6 +4160,13 @@
         const existIdx = sourceRows.findIndex(sr => sr[37] === sysIdMatched);
         const targetRowNumber = existIdx !== -1 ? (existIdx + 1) : Math.max(sourceRows.length + 1, GLOBAL_SHEET_CONFIG.DATA_START_ROW);
         
+        // Đóng gói mảng slide ảnh từ Carousel UI vào p.curated_config.images trước khi bóc tách getPublicImagesFromForm
+        if (window.imageEditorSlides && window.imageEditorSlides.length > 0) {
+          const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
+          if (!p.curated_config) p.curated_config = {};
+          p.curated_config.images = curatedImages;
+        }
+
         // Map 15 ảnh nội thất sạch và ảnh hẻm từ biên tập viên hình ảnh trực quan
         const customCoverUrl = document.getElementById('editCoverImgUrl').value.trim();
         const publicCoverUrl = document.getElementById('editPublicCoverUrl').value.trim();
@@ -4514,15 +4537,10 @@
     const normCover = normalizeImgUrl(coverUrl);
     const normSodos = sodoUrls.map(url => normalizeImgUrl(url));
 
-    const publicIntStr = (document.getElementById('editPublicInteriorIndices')?.value || '').trim();
-    const publicAlleyStr = (document.getElementById('editPublicAlleyIndices')?.value || '').trim();
-    const publicIntIndices = publicIntStr.split(',').map(s => s.trim()).filter(Boolean);
-    const publicAlleyIndices = publicAlleyStr.split(',').map(s => s.trim()).filter(Boolean);
-
     const oldImages = (p && p.curated_config && Array.isArray(p.curated_config.images)) ? p.curated_config.images : [];
     const oldImageMap = {};
     oldImages.forEach(img => {
-      const norm = normalizeImgUrl(img.url);
+      const norm = normalizeImgUrl(window.getImgObjUrl(img));
       if (norm) {
         oldImageMap[norm] = img;
       }
@@ -4531,7 +4549,8 @@
     const removedSet = window.removedImageUrls || new Set();
 
     slides.forEach((slide, idx) => {
-      const norm = normalizeImgUrl(slide.url);
+      const sUrl = window.getImgObjUrl(slide);
+      const norm = normalizeImgUrl(sUrl);
       if (!norm) return;
       if (removedSet.has(norm)) return;
 
@@ -4541,7 +4560,7 @@
       let visible = false;
       let originVal = slide.origin || (oldImg ? oldImg.origin : 'crawl');
 
-      const filename = slide.url.split('/').pop();
+      const filename = sUrl.split('/').pop();
       const isSelfPattern = /_(interior|sodo)\d*_\d{10,13}/i.test(filename);
 
       if (isSelfPattern) {
@@ -4555,21 +4574,21 @@
       const isCover = norm === normCover;
       const isSodo = normSodos.includes(norm);
 
-      if (isFacade) {
+      if (isSodo) {
+        role = 'diagram';
+        visible = false;
+      } else if (isFacade) {
         role = 'facade';
-        visible = true;
+        // Mặc định Facade là visible = false; Nếu kiêm Cover (hoặc Admin chọn "Hiện") thì visible = true
+        visible = isCover ? true : (slide.visible === true);
       } else if (isCover) {
         role = 'cover';
         visible = true;
-      } else if (isSodo) {
-        role = 'diagram';
-        visible = false;
       } else if (slide.type === 'alley') {
         role = 'alley';
-        visible = publicAlleyIndices.includes(String(slide.index));
+        visible = slide.visible === true;
       } else if (slide.type === 'deleted') {
-        const isPublicInt = publicIntIndices.includes(String(slide.index));
-        if (isPublicInt) {
+        if (slide.visible === true) {
           role = 'interior';
           visible = true;
           originVal = 'self';
@@ -4579,14 +4598,14 @@
         }
       } else {
         role = 'interior';
-        visible = publicIntIndices.includes(String(slide.index));
+        visible = slide.visible === true;
       }
 
       curatedImages.push({
-        image_url: slide.url,
-        r2_url: slide.url.startsWith('https://pub-') ? slide.url : '',
+        image_url: sUrl,
+        r2_url: sUrl.startsWith('https://pub-') ? sUrl : '',
         role: role,
-        sequence_index: idx + 1,
+        sequence_index: slide.sequence_index !== undefined ? slide.sequence_index : (idx + 1),
         origin: originVal,
         is_hidden: visible ? 0 : 1
       });
