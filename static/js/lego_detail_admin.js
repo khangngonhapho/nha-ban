@@ -4632,11 +4632,13 @@
       }
 
       curatedImages.push({
+        url: sUrl,           // [US-160 FIX] Bắt buộc có `url` để activeImageTogglePublic/getPublicImagesFromForm match đúng
         image_url: sUrl,
         r2_url: sUrl.startsWith('https://pub-') ? sUrl : '',
         role: role,
         sequence_index: idx + 1,
         origin: originVal,
+        visible: visible,    // [US-160 FIX] Bắt buộc có `visible` để reindexNaturalSequence và isPublic check hoạt động đúng
         is_hidden: visible ? 0 : 1
       });
     });
