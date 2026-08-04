@@ -1394,10 +1394,9 @@
         }
       } else if (window.imageEditorSortMode === 'custom') {
         const oldSlides = window.imageEditorSlides || [];
-        const oldUrls = oldSlides.map(s => normalizeImgUrl(s.url));
         renderedCards.sort((a, b) => {
-          const idxA = oldUrls.indexOf(normalizeImgUrl(a.url));
-          const idxB = oldUrls.indexOf(normalizeImgUrl(b.url));
+          const idxA = oldSlides.findIndex(s => window.isSameImgUrl(s, a));
+          const idxB = oldSlides.findIndex(s => window.isSameImgUrl(s, b));
           return (idxA !== -1 ? idxA : 9999) - (idxB !== -1 ? idxB : 9999);
         });
       } else {
@@ -2166,7 +2165,7 @@
         
         if (orderInd) {
           if (isPublic || isCover) {
-            let orderIdx = normPublicImages.indexOf(normUrl);
+            let orderIdx = normPublicImages.findIndex(u => window.isSameImgUrl(u, c));
             if (orderIdx === -1 && isCover) orderIdx = 0;
             if (orderIdx !== -1) {
               orderInd.style.display = 'block';
@@ -3374,11 +3373,33 @@
         }, 4000);
       }
     };
-  // === getImgObjUrl ===
-    window.getImgObjUrl = function(img) {
+  // === getCanonicalImgUrl & isSameImgUrl ===
+    window.getCanonicalImgUrl = function(img) {
       if (!img) return '';
       if (typeof img === 'string') return img.trim();
-      return (img.r2_url || img.image_url || img.url || '').trim();
+      return (img.r2_url || img.image_url || '').trim();
+    };
+    window.getImgObjUrl = window.getCanonicalImgUrl;
+
+    window.isSameImgUrl = function(imgA, imgB) {
+      if (!imgA || !imgB) return false;
+      const urlA = typeof imgA === 'string' ? imgA : (imgA.r2_url || imgA.image_url || imgA.url || '');
+      const urlB = typeof imgB === 'string' ? imgB : (imgB.r2_url || imgB.image_url || imgB.url || '');
+      if (!urlA || !urlB) return false;
+
+      const normA = normalizeImgUrl(urlA);
+      const normB = normalizeImgUrl(urlB);
+      if (normA && normA === normB) return true;
+
+      if (typeof imgA === 'object' && typeof imgB === 'object') {
+        const urlsA = [imgA.r2_url, imgA.image_url, imgA.url].filter(Boolean).map(normalizeImgUrl);
+        const urlsB = [imgB.r2_url, imgB.image_url, imgB.url].filter(Boolean).map(normalizeImgUrl);
+        if (urlsA.some(uA => urlsB.includes(uA))) return true;
+      }
+
+      const fnA = urlA.split('/').pop().split('?')[0];
+      const fnB = urlB.split('/').pop().split('?')[0];
+      return !!(fnA && fnB && fnA === fnB);
     };
 
   // === getPublicImagesFromForm ===
