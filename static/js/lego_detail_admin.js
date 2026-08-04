@@ -1843,6 +1843,9 @@
           sodoSlides.push(s);
         } else if (norm && normCover && norm === normCover) {
           publicSlides.push(s);
+        } else if (s.type === 'facade') {
+          // [US-160] Mặt Tiền luôn đứng đầu khi Sort, bất kể visible
+          publicSlides.push(s);
         } else if (s.visible === true) {
           publicSlides.push(s);
         } else {
