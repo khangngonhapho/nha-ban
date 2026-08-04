@@ -1856,12 +1856,20 @@
         const uB = window.getCanonicalImgUrl ? window.getCanonicalImgUrl(b) : (b.url || '');
         const normA = normalizeImgUrl(uA);
         const normB = normalizeImgUrl(uB);
+        // 1. Cover (Ảnh nền) luôn đứng đầu
         if (normCover && normA === normCover) return -9999;
         if (normCover && normB === normCover) return 9999;
+        // 2. Mặt tiền luôn đứng thứ hai (sau cover, trước interior)
+        const aFacade = a.type === 'facade';
+        const bFacade = b.type === 'facade';
+        if (aFacade && !bFacade) return -9998;
+        if (bFacade && !aFacade) return 9998;
+        // 3. Các ảnh còn lại giữ nguyên thứ tự đã chọn
         const seqA = a.sequence_index !== undefined ? a.sequence_index : 999;
         const seqB = b.sequence_index !== undefined ? b.sequence_index : 999;
         return seqA - seqB;
       });
+
 
       // Contract gaps continuously from 1 to K
       let badgeSeq = 1;
