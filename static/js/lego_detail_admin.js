@@ -2044,15 +2044,25 @@
         const idxA = slides.indexOf(slide);
         const idxB = slides.indexOf(targetSlide);
 
-        // Swap positions in array
+        // 1. Swap positions in window.imageEditorSlides
         slides[idxA] = targetSlide;
         slides[idxB] = slide;
 
-        // Swap sequence_index để badge cập nhật đúng và Sort sau này giữ nguyên thứ tự mới
-        // KHÔNG gọi reindexNaturalSequence ở đây vì nó sort lại theo seq cũ → hoàn nguyên thứ tự
-        const tempSeq = slide.sequence_index;
-        slide.sequence_index = targetSlide.sequence_index;
-        targetSlide.sequence_index = tempSeq;
+        // 2. [US-160] Swap trong p.curated_config.images (source of truth cho render)
+        // renderImageEditorWidget đọc từ đây để build card ORDER và badge position.
+        // Seq_index không được giữ qua re-render nên chỉ swap ở đây mới đủ.
+        const imgs = p.curated_config && p.curated_config.images;
+        if (imgs) {
+          const slideNorm = normalizeImgUrl(slide.url || '');
+          const targetNorm = normalizeImgUrl(targetSlide.url || '');
+          const imgIdxA = imgs.findIndex(img => normalizeImgUrl(img.url || '') === slideNorm);
+          const imgIdxB = imgs.findIndex(img => normalizeImgUrl(img.url || '') === targetNorm);
+          if (imgIdxA !== -1 && imgIdxB !== -1) {
+            const temp = imgs[imgIdxA];
+            imgs[imgIdxA] = imgs[imgIdxB];
+            imgs[imgIdxB] = temp;
+          }
+        }
 
         window.activeImageEditorIndex = idxB;
         window.imageEditorSortMode = 'custom';
