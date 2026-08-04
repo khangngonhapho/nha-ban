@@ -2252,6 +2252,7 @@ module.exports = async (req, res) => {
       const foundSoNha = idxSoNha !== -1 ? matchedRow[idxSoNha] : '';
       const foundDuong = idxDuong !== -1 ? matchedRow[idxDuong] : '';
       const foundQuan = idxQuan !== -1 ? matchedRow[idxQuan] : '';
+      const foundAddr = `${foundSoNha} ${foundDuong}`.trim();
       const rawAdminJson = idxImagesAdmin !== -1 ? matchedRow[idxImagesAdmin] : '[]';
 
       const poolAdminImages = parseImageJson(rawAdminJson);
