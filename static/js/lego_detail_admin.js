@@ -1824,6 +1824,38 @@
       window.reRenderCurationEditorInPlace();
 
     };
+
+  // === reindexNaturalSequence ===
+    window.reindexNaturalSequence = function(slides) {
+      if (!Array.isArray(slides)) return;
+      const coverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
+      const normCover = normalizeImgUrl(coverUrl);
+
+      const publicSlides = [];
+      const hiddenSlides = [];
+      const sodoSlides = [];
+
+      slides.forEach(s => {
+        if (!s) return;
+        const u = window.getCanonicalImgUrl ? window.getCanonicalImgUrl(s) : (s.url || '');
+        const norm = normalizeImgUrl(u);
+        if (norm === normCover || s.type === 'cover') {
+          publicSlides.unshift(s);
+        } else if (s.visible === true && s.type !== 'sodo') {
+          publicSlides.push(s);
+        } else if (s.type === 'sodo') {
+          sodoSlides.push(s);
+        } else {
+          hiddenSlides.push(s);
+        }
+      });
+
+      let badgeSeq = 1;
+      publicSlides.forEach(s => { s.sequence_index = badgeSeq++; });
+      hiddenSlides.forEach((s, idx) => { s.sequence_index = 100 + (s.sequence_index || (idx + 1)); });
+      sodoSlides.forEach((s, idx) => { s.sequence_index = 1000 + (s.sequence_index || (idx + 1)); });
+    };
+
   // === activeImageTogglePublic ===
     window.activeImageTogglePublic = function() {
       const slides = window.imageEditorSlides || [];
@@ -1855,16 +1887,10 @@
       const p = window.activeCurationListing;
       if (p) window.initCuratedConfigFromRaw(p);
 
-      // Toggle slide visibility & assign sequence_index based on click order
+      // Toggle slide visibility & re-index natural sequence
       slide.visible = !(slide.visible === true);
 
-      if (slide.visible === true) {
-        const activePublicSlides = slides.filter(s => s && s.visible === true && s.sequence_index !== undefined && s.sequence_index !== null);
-        const maxSeq = activePublicSlides.length > 0 ? Math.max(...activePublicSlides.map(s => s.sequence_index || 0)) : 0;
-        slide.sequence_index = maxSeq + 1;
-      } else {
-        slide.sequence_index = undefined;
-      }
+      window.reindexNaturalSequence(slides);
 
       if (p && p.curated_config && Array.isArray(p.curated_config.images)) {
         const found = p.curated_config.images.find(img => normalizeImgUrl(img.url) === normUrl);
@@ -1962,7 +1988,6 @@
     };
 
   // === activeImageMoveOrder ===
-  // === activeImageMoveOrder ===
     window.activeImageMoveOrder = function(direction) {
       const p = window.activeCurationListing;
       if (!p) return;
@@ -1971,65 +1996,26 @@
       if (activeIdx < 0 || activeIdx >= slides.length) return;
       
       const slide = slides[activeIdx];
-      // Kiểm tra xem ảnh hiện tại có hiển thị public không
-      const isVisible = slide.visible === true;
-      const isPublicCover = normalizeImgUrl(document.getElementById('editPublicCoverUrl')?.value || '') === normalizeImgUrl(slide.url);
-      const isPublicInt = (slide.type === 'interior' || slide.type === 'deleted') && (document.getElementById('editPublicInteriorIndices')?.value || '').split(',').includes(String(slide.index));
-      const isPublicAlley = slide.type === 'alley' && (document.getElementById('editPublicAlleyIndices')?.value || '').split(',').includes(String(slide.index));
-      
-      if (!isVisible && !isPublicCover && !isPublicInt && !isPublicAlley) {
+      if (!slide || slide.visible !== true) {
         showToast("Hình này chưa được chọn hiển thị public để sắp xếp!", "warning");
         return;
       }
       
-      const newIdx = activeIdx + direction;
-      if (newIdx >= 0 && newIdx < slides.length) {
-        // Swap slides & their sequence_indices
-        const tempSeq = slides[activeIdx].sequence_index;
-        slides[activeIdx].sequence_index = slides[newIdx].sequence_index;
-        slides[newIdx].sequence_index = tempSeq;
+      const publicSlides = slides.filter(s => s && (s.visible === true || s.type === 'cover'));
+      const pubIndex = publicSlides.indexOf(slide);
+      const targetPubIndex = pubIndex + direction;
 
-        const temp = slides[activeIdx];
-        slides[activeIdx] = slides[newIdx];
-        slides[newIdx] = temp;
+      if (targetPubIndex >= 0 && targetPubIndex < publicSlides.length) {
+        const targetSlide = publicSlides[targetPubIndex];
+        const idxA = slides.indexOf(slide);
+        const idxB = slides.indexOf(targetSlide);
+
+        slides[idxA] = targetSlide;
+        slides[idxB] = slide;
         
-        window.activeImageEditorIndex = newIdx;
-        
-        // Cập nhật lại các input ẩn
-        const interiorIndices = [];
-        const alleyIndices = [];
-        slides.forEach(s => {
-          const sodoUrls = [
-            (document.getElementById('editSodo1Url')?.value || '').trim(),
-            (document.getElementById('editSodo2Url')?.value || '').trim(),
-            (document.getElementById('editSodo3Url')?.value || '').trim(),
-            (document.getElementById('editSodo4Url')?.value || '').trim(),
-            (document.getElementById('editSodo5Url')?.value || '').trim()
-          ];
-          const normSodos = sodoUrls.map(url => normalizeImgUrl(url));
-          const targetMatTien = p.img_mat_tien || (p.pool_row_data ? p.pool_row_data[29] : '') || '';
-          const normMatTien = normalizeImgUrl(targetMatTien);
-          const normUrl = normalizeImgUrl(s.url);
-          
-          const isSodo = normSodos.includes(normUrl);
-          const isFacade = normUrl !== '' && normUrl === normMatTien;
-          const isCover = normalizeImgUrl(document.getElementById('editPublicCoverUrl')?.value || '') === normalizeImgUrl(s.url);
-          
-          if (!isSodo && !isFacade && !isCover) {
-            if ((s.type === 'interior' || s.type === 'deleted') && s.visible !== false) {
-              interiorIndices.push(s.index);
-            }
-            if (s.type === 'alley' && s.visible !== false) {
-              alleyIndices.push(s.index);
-            }
-          }
-        });
-        
-        const inputInt = document.getElementById('editPublicInteriorIndices');
-        const inputAlley = document.getElementById('editPublicAlleyIndices');
-        if (inputInt) inputInt.value = interiorIndices.join(',');
-        if (inputAlley) inputAlley.value = alleyIndices.join(',');
-        
+        window.reindexNaturalSequence(slides);
+
+        window.activeImageEditorIndex = idxB;
         window.imageEditorSortMode = 'custom';
         window.reRenderCurationEditorInPlace();
       }
@@ -2038,32 +2024,20 @@
   // === sortSlidesByDisplayOrder ===
     window.sortSlidesByDisplayOrder = function(slides, p) {
       if (!p || !Array.isArray(slides)) return;
-      const coverUrl = (document.getElementById('editPublicCoverUrl')?.value || '').trim();
-      const normCover = normalizeImgUrl(coverUrl);
-      const facadeUrl = (document.getElementById('editCoverImgUrl')?.value || '').trim();
-      const normFacade = normalizeImgUrl(facadeUrl);
-
-      const getWeight = (c) => {
-        if (!c || !c.url) return 9999;
-        const norm = normalizeImgUrl(c.url);
-        if (c.type === 'facade' || (normFacade && norm === normFacade)) return 0;
-        if (c.type === 'cover' || (normCover && norm === normCover)) return 1;
-        if (c.type === 'sodo') return 4000 + (c.index || 0);
-        
-        const seqIndex = c.sequence_index || (c.index !== undefined ? c.index : 999);
-        return 100 + seqIndex;
-      };
-      
-      slides.sort((a, b) => getWeight(a) - getWeight(b));
+      window.reindexNaturalSequence(slides);
+      slides.sort((a, b) => (a.sequence_index || 9999) - (b.sequence_index || 9999));
     };
 
   // === activeImageSortByDisplay ===
     window.activeImageSortByDisplay = function() {
       const p = window.activeCurationListing;
       if (!p) return;
+      const slides = window.imageEditorSlides || [];
+      window.reindexNaturalSequence(slides);
+      window.sortSlidesByDisplayOrder(slides, p);
       window.imageEditorSortMode = 'display';
       window.reRenderCurationEditorInPlace();
-      showToast("Đã sắp xếp hình theo thứ tự hiển thị thực tế!", "success");
+      showToast("Đã gom nhóm ảnh public lên đầu Carousel!", "success");
     };
   // === reRenderCurationEditorInPlace ===
     window.reRenderCurationEditorInPlace = function() {
@@ -2164,16 +2138,10 @@
         const roleInd = document.getElementById(`carouselRoleIndicator-${idx}`);
         
         if (orderInd) {
-          if (isPublic || isCover) {
-            let orderIdx = normPublicImages.findIndex(u => window.isSameImgUrl(u, c));
-            if (orderIdx === -1 && isCover) orderIdx = 0;
-            if (orderIdx !== -1) {
-              orderInd.style.display = 'block';
-              orderInd.innerHTML = `#${orderIdx + 1}`;
-              orderInd.className = 'carousel-order-indicator public-order';
-            } else {
-              orderInd.style.display = 'none';
-            }
+          if (c.sequence_index && c.sequence_index <= 99) {
+            orderInd.style.display = 'block';
+            orderInd.innerHTML = `#${c.sequence_index}`;
+            orderInd.className = 'carousel-order-indicator public-order';
           } else {
             orderInd.style.display = 'none';
           }
@@ -4569,7 +4537,10 @@
 
     const removedSet = window.removedImageUrls || new Set();
 
-    slides.forEach((slide, idx) => {
+    window.reindexNaturalSequence(slides);
+    const sortedSlides = [...slides].sort((a, b) => (a.sequence_index || 9999) - (b.sequence_index || 9999));
+
+    sortedSlides.forEach((slide, idx) => {
       const sUrl = window.getImgObjUrl(slide);
       const norm = normalizeImgUrl(sUrl);
       if (!norm) return;
@@ -4626,7 +4597,7 @@
         image_url: sUrl,
         r2_url: sUrl.startsWith('https://pub-') ? sUrl : '',
         role: role,
-        sequence_index: slide.sequence_index !== undefined ? slide.sequence_index : (idx + 1),
+        sequence_index: idx + 1,
         origin: originVal,
         is_hidden: visible ? 0 : 1
       });
