@@ -2316,12 +2316,13 @@ module.exports = async (req, res) => {
               const pAddr = pir[1] ? String(pir[1]).trim() : '';
               const pLoai = pir[2] ? String(pir[2]).trim().toLowerCase() : '';
 
+              const cleanFoundAddr = (foundAddr || '').toLowerCase().trim();
+              const cleanPAddr = (pAddr || '').toLowerCase().trim();
+
               const isMatch = (foundTkId && pMa === foundTkId) || 
                               (foundSysId && pMa === foundSysId) || 
                               (foundMaKn && pMa === foundMaKn) || 
-                              (foundSoNha && pAddr.includes(foundSoNha)) ||
-                              (pAddr && queryStr && pAddr.toLowerCase().includes(queryStr.toLowerCase())) ||
-                              (pAddr && firstTok && pAddr.includes(firstTok));
+                              (cleanFoundAddr && cleanPAddr && (cleanPAddr === cleanFoundAddr || cleanPAddr.includes(cleanFoundAddr) || cleanFoundAddr.includes(cleanPAddr)));
 
               if (isMatch) {
                 const targetList = (pLoai === 'self') ? poolSelfList : poolCrawlList;
