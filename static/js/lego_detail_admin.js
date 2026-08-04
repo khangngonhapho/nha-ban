@@ -3748,9 +3748,13 @@
         };
 
         // Update curated_config.images FIRST from window.imageEditorSlides so getPublicImagesFromForm gets the latest sequence_index
-        const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
-        if (!p.curated_config) p.curated_config = {};
-        p.curated_config.images = curatedImages;
+        // [US-160 FIX] Chỉ rebuild khi Carousel Editor đã mở (slides tồn tại). Nếu chưa mở → giữ nguyên p.curated_config cũ
+        let curatedImages = null;
+        if (window.imageEditorSlides && window.imageEditorSlides.length > 0) {
+          curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
+          if (!p.curated_config) p.curated_config = {};
+          p.curated_config.images = curatedImages;
+        }
 
         const fullPublicImages = window.getPublicImagesFromForm(p);
         cleanPublicImages = Array.from(new Set(fullPublicImages.filter(Boolean)));
@@ -3874,35 +3878,41 @@
           const POOL_SHEET_ID = (window.LegoState && window.LegoState.config && window.LegoState.config.pool_sheet_id) || '1PJYJgfiCKwhJxQibZu1Pxn-ARlkYoUimw0flP3_yxzw';
           
           // 0. Đồng bộ Images_Admin_JSON sang Pool (Cột CQ)
-          try {
-            const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${p.pool_row_index}:${imagesAdminCol}${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
-            });
-            
-            // Backup hình ảnh sang sheet Pool_Images dòng self
+          // [US-160 FIX] Chỉ PUT khi Carousel Editor đã mở và curatedImages có dữ liệu thật.
+          // Nếu slides rỗng (chưa mở Editor) → skip hoàn toàn, bảo toàn Images_Admin_JSON cũ trên Sheet.
+          if (curatedImages && curatedImages.length > 0) {
             try {
-              const addressStr = (((p.pool_row_data[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (p.pool_row_data[getPoolColumnIndex("Đường", 5)] || ""))).trim();
-              await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
-            } catch (e_backup) {
-              console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
-            }
-            const imagesAdminPoolIdx = getPoolColumnIndex("Images_Admin_JSON", 94);
-            p.pool_row_data[imagesAdminPoolIdx] = JSON.stringify(curatedImages);
+              const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
+              await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${p.pool_row_index}:${imagesAdminCol}${p.pool_row_index}?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
+              });
+              
+              // Backup hình ảnh sang sheet Pool_Images dòng self
+              try {
+                const addressStr = (((p.pool_row_data[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "") + " " + (p.pool_row_data[getPoolColumnIndex("Đường", 5)] || ""))).trim();
+                await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
+              } catch (e_backup) {
+                console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
+              }
+              const imagesAdminPoolIdx = getPoolColumnIndex("Images_Admin_JSON", 94);
+              p.pool_row_data[imagesAdminPoolIdx] = JSON.stringify(curatedImages);
 
-            // US-157: Ghi audit log lịch sử biên tập ảnh Images_Admin_JSON sang tab Pool_Log
-            try {
-              await appendAuditLogFrontend(token, POOL_SHEET_ID, "Pool_Log", p.pool_row_data, "Update");
-            } catch (e_plog) {
-              console.warn("Không thể ghi log sang Pool_Log:", e_plog);
+              // US-157: Ghi audit log lịch sử biên tập ảnh Images_Admin_JSON sang tab Pool_Log
+              try {
+                await appendAuditLogFrontend(token, POOL_SHEET_ID, "Pool_Log", p.pool_row_data, "Update");
+              } catch (e_plog) {
+                console.warn("Không thể ghi log sang Pool_Log:", e_plog);
+              }
+            } catch (e) {
+              console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool:", e);
             }
-          } catch (e) {
-            console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool:", e);
+          } else {
+            console.log("[US-160] imageEditorSlides rỗng → bỏ qua PUT Images_Admin_JSON, bảo toàn dữ liệu cũ trên Sheet Pool.");
           }
 
           // 1. Đồng bộ các ảnh Sổ thửa đất (cột AB:AC)
@@ -4384,31 +4394,37 @@
           }
 
           // 0a. Đồng bộ Images_Admin_JSON sang Pool (Cột CP)
-          try {
-            const isSameListing = (p && p.system_id && String(p.system_id).trim() === String(systemId).trim());
-            const targetSlides = isSameListing ? window.imageEditorSlides : null;
-            const curatedImages = window.buildCuratedImages(p, targetSlides);
-            const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${poolRowNumber}:${imagesAdminCol}${poolRowNumber}?valueInputOption=USER_ENTERED`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
-            });
-            
-            // Backup hình ảnh sang sheet Pool_Images dòng self
+          // [US-160 FIX] Chỉ PUT khi Carousel Editor đã mở (slides tồn tại và có dữ liệu).
+          // Nếu slides rỗng → skip hoàn toàn, bảo toàn Images_Admin_JSON cũ trên Sheet.
+          if (window.imageEditorSlides && window.imageEditorSlides.length > 0) {
             try {
-              const soNhaStr = (matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "").trim();
-              const duongStr = (matchedRow[getPoolColumnIndex("Đường", 5)] || "").trim();
-              const addressStr = `${soNhaStr} ${duongStr}`.trim();
-              await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
-            } catch (e_backup) {
-              console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
+              const curatedImages = window.buildCuratedImages(p, window.imageEditorSlides);
+              if (curatedImages && curatedImages.length > 0) {
+                const imagesAdminCol = getPoolColumnLetter("Images_Admin_JSON", "CQ");
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${POOL_SHEET_ID}/values/Pool!${imagesAdminCol}${poolRowNumber}:${imagesAdminCol}${poolRowNumber}?valueInputOption=USER_ENTERED`, {
+                  method: 'PUT',
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ values: [[JSON.stringify(curatedImages)]] })
+                });
+                
+                // Backup hình ảnh sang sheet Pool_Images dòng self
+                try {
+                  const soNhaStr = (matchedRow[getPoolColumnIndex("Ngõ/Số nhà", 6)] || "").trim();
+                  const duongStr = (matchedRow[getPoolColumnIndex("Đường", 5)] || "").trim();
+                  const addressStr = `${soNhaStr} ${duongStr}`.trim();
+                  await backupPoolImagesSelf(token, POOL_SHEET_ID, p, addressStr, curatedImages);
+                } catch (e_backup) {
+                  console.warn("Không thể backup ảnh sang Pool_Images:", e_backup);
+                }
+              }
+            } catch (e) {
+              console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool trong publish:", e);
             }
-          } catch (e) {
-            console.warn("Không thể đồng bộ Images_Admin_JSON sang Pool trong publish:", e);
+          } else {
+            console.log("[US-160] imageEditorSlides rỗng → bỏ qua PUT Images_Admin_JSON trong publish, bảo toàn dữ liệu cũ trên Sheet Pool.");
           }
 
           // 0b. Cập nhật Hình Mặt Tiền (Cột AD) và Ảnh Bìa / Ảnh 1 (Cột AO) sang Pool thô (US-046.6)
