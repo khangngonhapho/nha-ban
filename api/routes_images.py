@@ -683,9 +683,7 @@ def fetch_pool_images_from_sheet_py(match_id, match_address="", target_type=None
             is_match = False
             if match_id and match_id == ma_val:
                 is_match = True
-            elif match_address and (match_address in addr_val or addr_val in match_address):
-                is_match = True
-            elif match_address and match_address.split()[0] and match_address.split()[0] in addr_val:
+            elif match_address and addr_val and (match_address.lower().strip() == addr_val.lower().strip() or match_address.lower().strip() in addr_val.lower().strip()):
                 is_match = True
 
             if is_match:
