@@ -2044,16 +2044,22 @@
         const idxA = slides.indexOf(slide);
         const idxB = slides.indexOf(targetSlide);
 
+        // Swap positions in array
         slides[idxA] = targetSlide;
         slides[idxB] = slide;
-        
-        window.reindexNaturalSequence(slides);
+
+        // Swap sequence_index để badge cập nhật đúng và Sort sau này giữ nguyên thứ tự mới
+        // KHÔNG gọi reindexNaturalSequence ở đây vì nó sort lại theo seq cũ → hoàn nguyên thứ tự
+        const tempSeq = slide.sequence_index;
+        slide.sequence_index = targetSlide.sequence_index;
+        targetSlide.sequence_index = tempSeq;
 
         window.activeImageEditorIndex = idxB;
         window.imageEditorSortMode = 'custom';
         window.reRenderCurationEditorInPlace();
       }
     };
+
 
   // === sortSlidesByDisplayOrder ===
     window.sortSlidesByDisplayOrder = function(slides, p) {
