@@ -3367,7 +3367,7 @@
     window.getCanonicalImgUrl = function(img) {
       if (!img) return '';
       if (typeof img === 'string') return img.trim();
-      return (img.r2_url || img.image_url || '').trim();
+      return (img.r2_url || img.image_url || img.url || '').trim();  // [US-160 FIX] thêm img.url để handle slide objects từ renderImageEditorWidget
     };
     window.getImgObjUrl = window.getCanonicalImgUrl;
 
