@@ -1382,8 +1382,12 @@
       }
       const normFinalImages = finalImages.filter(Boolean).map(url => normalizeImgUrl(url));
 
+      if (typeof window.reindexNaturalSequence === 'function') {
+        window.reindexNaturalSequence(renderedCards);
+      }
+
       const getCardSortWeight = (c) => {
-        return c.sequence_index || (c.index !== undefined ? c.index : 9999);
+        return c.sequence_index !== undefined ? c.sequence_index : 9999;
       };
 
       if (window.imageEditorSortMode === 'display') {
