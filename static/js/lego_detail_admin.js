@@ -1208,22 +1208,16 @@
         }
       }
       let currentPublicCover = '';
-      if (domPublicCover) {
+      if (domPublicCover && domPublicCover.value && (!window.isListingSodoUrl || !window.isListingSodoUrl(domPublicCover.value, p))) {
         currentPublicCover = domPublicCover.value;
       } else {
         if (p.curated_config && Array.isArray(p.curated_config.images)) {
-          const foundCover = p.curated_config.images.find(img => img.role === 'Bìa' || img.role === 'cover');
+          const foundCover = p.curated_config.images.find(img => (img.role === 'Bìa' || img.role === 'cover') && (!window.isListingSodoUrl || !window.isListingSodoUrl(img.url, p)));
           if (foundCover) currentPublicCover = foundCover.url;
         }
-        if (!currentPublicCover && !p.isFromPoolOnly) {
-          if (p.original_row_data && p.original_row_data[20]) {
-            currentPublicCover = p.original_row_data[20];
-          } else if (p.pool_row_data) {
-            currentPublicCover = p.pool_row_data[40] || '';
-          } else if (p.imgs && p.imgs.length > 0) {
-            currentPublicCover = p.imgs[0];
-          }
-        }
+      }
+      if (currentPublicCover && window.isListingSodoUrl && window.isListingSodoUrl(currentPublicCover, p)) {
+        currentPublicCover = '';
       }
       
       let currentInteriorIndices = '';
@@ -1843,12 +1837,14 @@
         if (!s) return;
         const u = window.getCanonicalImgUrl ? window.getCanonicalImgUrl(s) : (s.url || '');
         const norm = normalizeImgUrl(u);
-        if (norm === normCover || s.type === 'cover') {
-          publicSlides.unshift(s);
-        } else if (s.visible === true && s.type !== 'sodo') {
-          publicSlides.push(s);
-        } else if (s.type === 'sodo') {
+        const isSodo = s.type === 'sodo' || (window.isListingSodoUrl && window.isListingSodoUrl(u, window.activeCurationListing));
+
+        if (isSodo) {
           sodoSlides.push(s);
+        } else if (norm && normCover && norm === normCover) {
+          publicSlides.unshift(s);
+        } else if (s.visible === true) {
+          publicSlides.push(s);
         } else {
           hiddenSlides.push(s);
         }
