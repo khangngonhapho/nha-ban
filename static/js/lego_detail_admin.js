@@ -1842,7 +1842,7 @@
         if (isSodo) {
           sodoSlides.push(s);
         } else if (norm && normCover && norm === normCover) {
-          publicSlides.unshift(s);
+          publicSlides.push(s);
         } else if (s.visible === true) {
           publicSlides.push(s);
         } else {
@@ -1850,10 +1850,24 @@
         }
       });
 
+      // Sort publicSlides by existing sequence_index to preserve click selection order
+      publicSlides.sort((a, b) => {
+        const uA = window.getCanonicalImgUrl ? window.getCanonicalImgUrl(a) : (a.url || '');
+        const uB = window.getCanonicalImgUrl ? window.getCanonicalImgUrl(b) : (b.url || '');
+        const normA = normalizeImgUrl(uA);
+        const normB = normalizeImgUrl(uB);
+        if (normCover && normA === normCover) return -9999;
+        if (normCover && normB === normCover) return 9999;
+        const seqA = a.sequence_index !== undefined ? a.sequence_index : 999;
+        const seqB = b.sequence_index !== undefined ? b.sequence_index : 999;
+        return seqA - seqB;
+      });
+
+      // Contract gaps continuously from 1 to K
       let badgeSeq = 1;
       publicSlides.forEach(s => { s.sequence_index = badgeSeq++; });
-      hiddenSlides.forEach((s, idx) => { s.sequence_index = 100 + (s.sequence_index || (idx + 1)); });
-      sodoSlides.forEach((s, idx) => { s.sequence_index = 1000 + (s.sequence_index || (idx + 1)); });
+      hiddenSlides.forEach((s, idx) => { s.sequence_index = 100 + (idx + 1); });
+      sodoSlides.forEach((s, idx) => { s.sequence_index = 1000 + (idx + 1); });
     };
 
   // === activeImageTogglePublic ===
@@ -1887,8 +1901,16 @@
       const p = window.activeCurationListing;
       if (p) window.initCuratedConfigFromRaw(p);
 
-      // Toggle slide visibility & re-index natural sequence
+      // Toggle slide visibility & assign sequence_index based on click order
       slide.visible = !(slide.visible === true);
+
+      if (slide.visible === true) {
+        const activePublicSlides = slides.filter(s => s && s.visible === true && s.type !== 'sodo' && s.sequence_index && s.sequence_index <= 99);
+        const maxSeq = activePublicSlides.length > 0 ? Math.max(...activePublicSlides.map(s => s.sequence_index || 1)) : 1;
+        slide.sequence_index = maxSeq + 1;
+      } else {
+        delete slide.sequence_index;
+      }
 
       window.reindexNaturalSequence(slides);
 
